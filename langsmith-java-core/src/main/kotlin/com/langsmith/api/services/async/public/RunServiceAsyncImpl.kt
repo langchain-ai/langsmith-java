@@ -10,6 +10,8 @@ import com.langsmith.api.core.http.HttpResponse.Handler
 import com.langsmith.api.errors.LangSmithError
 import com.langsmith.api.models.PublicRunRetrieveParams
 import com.langsmith.api.models.RunPublicSchema
+import com.langsmith.api.services.async.public.runs.QueryServiceAsync
+import com.langsmith.api.services.async.public.runs.QueryServiceAsyncImpl
 import com.langsmith.api.services.errorHandler
 import com.langsmith.api.services.jsonHandler
 import com.langsmith.api.services.withErrorHandler
@@ -22,6 +24,10 @@ constructor(
 
     private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
 
+    private val query: QueryServiceAsync by lazy { QueryServiceAsyncImpl(clientOptions) }
+
+    override fun query(): QueryServiceAsync = query
+
     private val retrieveHandler: Handler<RunPublicSchema> =
         jsonHandler<RunPublicSchema>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
@@ -33,7 +39,7 @@ constructor(
         val request =
             HttpRequest.builder()
                 .method(HttpMethod.GET)
-                .addPathSegments("public", params.getPathParam(0), "run")
+                .addPathSegments("public", params.getPathParam(0), "run", params.getPathParam(1))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())

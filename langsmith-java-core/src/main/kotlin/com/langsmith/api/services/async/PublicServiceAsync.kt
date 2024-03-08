@@ -7,13 +7,14 @@ package com.langsmith.api.services.async
 import com.langsmith.api.services.async.public_.DatasetServiceAsync
 import com.langsmith.api.services.async.public_.ExampleServiceAsync
 import com.langsmith.api.services.async.public_.FeedbackServiceAsync
+import com.langsmith.api.services.async.public_.LatestRunServiceAsync
 import com.langsmith.api.services.async.public_.RunServiceAsync
 
 interface PublicServiceAsync {
 
-    fun run(): RunServiceAsync
-
     fun runs(): RunServiceAsync
+
+    fun latestRun(): LatestRunServiceAsync
 
     fun feedbacks(): FeedbackServiceAsync
 

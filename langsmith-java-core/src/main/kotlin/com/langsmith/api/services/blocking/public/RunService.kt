@@ -7,8 +7,11 @@ package com.langsmith.api.services.blocking.public
 import com.langsmith.api.core.RequestOptions
 import com.langsmith.api.models.PublicRunRetrieveParams
 import com.langsmith.api.models.RunPublicSchema
+import com.langsmith.api.services.blocking.public.runs.QueryService
 
 interface RunService {
+
+    fun query(): QueryService
 
     /** Get the shared run. */
     @JvmOverloads

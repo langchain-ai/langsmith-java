@@ -11,6 +11,8 @@ import com.langsmith.api.services.blocking.public_.ExampleService
 import com.langsmith.api.services.blocking.public_.ExampleServiceImpl
 import com.langsmith.api.services.blocking.public_.FeedbackService
 import com.langsmith.api.services.blocking.public_.FeedbackServiceImpl
+import com.langsmith.api.services.blocking.public_.LatestRunService
+import com.langsmith.api.services.blocking.public_.LatestRunServiceImpl
 import com.langsmith.api.services.blocking.public_.RunService
 import com.langsmith.api.services.blocking.public_.RunServiceImpl
 import com.langsmith.api.services.errorHandler
@@ -22,9 +24,9 @@ constructor(
 
     private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
 
-    private val run: RunService by lazy { RunServiceImpl(clientOptions) }
-
     private val runs: RunService by lazy { RunServiceImpl(clientOptions) }
+
+    private val latestRun: LatestRunService by lazy { LatestRunServiceImpl(clientOptions) }
 
     private val feedbacks: FeedbackService by lazy { FeedbackServiceImpl(clientOptions) }
 
@@ -32,9 +34,9 @@ constructor(
 
     private val examples: ExampleService by lazy { ExampleServiceImpl(clientOptions) }
 
-    override fun run(): RunService = run
-
     override fun runs(): RunService = runs
+
+    override fun latestRun(): LatestRunService = latestRun
 
     override fun feedbacks(): FeedbackService = feedbacks
 

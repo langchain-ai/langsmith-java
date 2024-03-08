@@ -11,6 +11,8 @@ import com.langsmith.api.services.async.public_.ExampleServiceAsync
 import com.langsmith.api.services.async.public_.ExampleServiceAsyncImpl
 import com.langsmith.api.services.async.public_.FeedbackServiceAsync
 import com.langsmith.api.services.async.public_.FeedbackServiceAsyncImpl
+import com.langsmith.api.services.async.public_.LatestRunServiceAsync
+import com.langsmith.api.services.async.public_.LatestRunServiceAsyncImpl
 import com.langsmith.api.services.async.public_.RunServiceAsync
 import com.langsmith.api.services.async.public_.RunServiceAsyncImpl
 import com.langsmith.api.services.errorHandler
@@ -22,9 +24,11 @@ constructor(
 
     private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
 
-    private val run: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
-
     private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
+
+    private val latestRun: LatestRunServiceAsync by lazy {
+        LatestRunServiceAsyncImpl(clientOptions)
+    }
 
     private val feedbacks: FeedbackServiceAsync by lazy { FeedbackServiceAsyncImpl(clientOptions) }
 
@@ -32,9 +36,9 @@ constructor(
 
     private val examples: ExampleServiceAsync by lazy { ExampleServiceAsyncImpl(clientOptions) }
 
-    override fun run(): RunServiceAsync = run
-
     override fun runs(): RunServiceAsync = runs
+
+    override fun latestRun(): LatestRunServiceAsync = latestRun
 
     override fun feedbacks(): FeedbackServiceAsync = feedbacks
 

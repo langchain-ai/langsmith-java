@@ -7,13 +7,14 @@ package com.langsmith.api.services.blocking
 import com.langsmith.api.services.blocking.public_.DatasetService
 import com.langsmith.api.services.blocking.public_.ExampleService
 import com.langsmith.api.services.blocking.public_.FeedbackService
+import com.langsmith.api.services.blocking.public_.LatestRunService
 import com.langsmith.api.services.blocking.public_.RunService
 
 interface PublicService {
 
-    fun run(): RunService
-
     fun runs(): RunService
+
+    fun latestRun(): LatestRunService
 
     fun feedbacks(): FeedbackService
 

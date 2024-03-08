@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(TestServerExtension::class)
-class RunServiceTest {
+class LatestRunServiceTest {
 
     @Test
     fun callRetrieve() {
@@ -20,12 +20,11 @@ class RunServiceTest {
                 .tenantId("My Tenant ID")
                 .bearerToken("My Bearer Token")
                 .build()
-        val runService = client.public_().runs()
+        val latestRunService = client.public_().latestRun()
         val runPublicSchema =
-            runService.retrieve(
-                PublicRunRetrieveParams.builder()
+            latestRunService.retrieve(
+                PublicLatestRunRetrieveParams.builder()
                     .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
         println(runPublicSchema)

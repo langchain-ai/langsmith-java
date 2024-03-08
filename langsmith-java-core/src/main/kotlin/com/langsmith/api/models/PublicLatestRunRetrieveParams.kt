@@ -7,17 +7,14 @@ import com.langsmith.api.core.toUnmodifiable
 import com.langsmith.api.models.*
 import java.util.Objects
 
-class PublicRunRetrieveParams
+class PublicLatestRunRetrieveParams
 constructor(
     private val shareToken: String,
-    private val id: String,
     private val additionalQueryParams: Map<String, List<String>>,
     private val additionalHeaders: Map<String, List<String>>,
 ) {
 
     fun shareToken(): String = shareToken
-
-    fun id(): String = id
 
     @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
 
@@ -26,7 +23,6 @@ constructor(
     fun getPathParam(index: Int): String {
         return when (index) {
             0 -> shareToken
-            1 -> id
             else -> ""
         }
     }
@@ -40,9 +36,8 @@ constructor(
             return true
         }
 
-        return other is PublicRunRetrieveParams &&
+        return other is PublicLatestRunRetrieveParams &&
             this.shareToken == other.shareToken &&
-            this.id == other.id &&
             this.additionalQueryParams == other.additionalQueryParams &&
             this.additionalHeaders == other.additionalHeaders
     }
@@ -50,14 +45,13 @@ constructor(
     override fun hashCode(): Int {
         return Objects.hash(
             shareToken,
-            id,
             additionalQueryParams,
             additionalHeaders,
         )
     }
 
     override fun toString() =
-        "PublicRunRetrieveParams{shareToken=$shareToken, id=$id, additionalQueryParams=$additionalQueryParams, additionalHeaders=$additionalHeaders}"
+        "PublicLatestRunRetrieveParams{shareToken=$shareToken, additionalQueryParams=$additionalQueryParams, additionalHeaders=$additionalHeaders}"
 
     fun toBuilder() = Builder().from(this)
 
@@ -70,21 +64,17 @@ constructor(
     class Builder {
 
         private var shareToken: String? = null
-        private var id: String? = null
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(publicRunRetrieveParams: PublicRunRetrieveParams) = apply {
-            this.shareToken = publicRunRetrieveParams.shareToken
-            this.id = publicRunRetrieveParams.id
-            additionalQueryParams(publicRunRetrieveParams.additionalQueryParams)
-            additionalHeaders(publicRunRetrieveParams.additionalHeaders)
+        internal fun from(publicLatestRunRetrieveParams: PublicLatestRunRetrieveParams) = apply {
+            this.shareToken = publicLatestRunRetrieveParams.shareToken
+            additionalQueryParams(publicLatestRunRetrieveParams.additionalQueryParams)
+            additionalHeaders(publicLatestRunRetrieveParams.additionalHeaders)
         }
 
         fun shareToken(shareToken: String) = apply { this.shareToken = shareToken }
-
-        fun id(id: String) = apply { this.id = id }
 
         fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
             this.additionalQueryParams.clear()
@@ -126,10 +116,9 @@ constructor(
 
         fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
 
-        fun build(): PublicRunRetrieveParams =
-            PublicRunRetrieveParams(
+        fun build(): PublicLatestRunRetrieveParams =
+            PublicLatestRunRetrieveParams(
                 checkNotNull(shareToken) { "`shareToken` is required but was not set" },
-                checkNotNull(id) { "`id` is required but was not set" },
                 additionalQueryParams.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
                 additionalHeaders.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
             )
