@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -10,39 +10,30 @@ import java.util.Objects
 import java.util.Optional
 
 class AnnotationQueueRunDeleteParams
-constructor( // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
-    private val queueId: String, // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
+constructor(
+    private val queueId: String,
     private val queueRunId: String,
     private val additionalQueryParams: Map<String, List<String>>,
     private val additionalHeaders: Map<String, List<String>>,
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun queueId(): String = queueId // templates/JavaSDK/entities/params.ts:145:14 //
-    // templates/JavaSDK/entities/params.ts:131:13
+    fun queueId(): String = queueId
 
     fun queueRunId(): String = queueRunId
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:165:16
-    internal fun getBody():
-        Optional<Map<String, JsonValue>> { // templates/JavaSDK/entities/params.ts:165:16
+    @JvmSynthetic
+    internal fun getBody(): Optional<Map<String, JsonValue>> {
         return Optional.ofNullable(additionalBodyProperties.ifEmpty { null })
     }
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
-    internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
+    @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
-    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
-    fun getPathParam(index: Int): String { // templates/JavaSDK/entities/params.ts:555:13
-        return when (index) { // templates/JavaSDK/entities/params.ts:560:26
-            0 -> queueId // templates/JavaSDK/entities/params.ts:560:26 //
-            // templates/JavaSDK/entities/params.ts:560:26
+    fun getPathParam(index: Int): String {
+        return when (index) {
+            0 -> queueId
             1 -> queueRunId
             else -> ""
         }
@@ -54,13 +45,12 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is
-            AnnotationQueueRunDeleteParams && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is AnnotationQueueRunDeleteParams &&
             this.queueId == other.queueId &&
             this.queueRunId == other.queueRunId &&
             this.additionalQueryParams == other.additionalQueryParams &&
@@ -68,10 +58,9 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             this.additionalBodyProperties == other.additionalBodyProperties
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-            // templates/JavaSDK/entities/fields.ts:181:14
-            queueId, // templates/JavaSDK/entities/fields.ts:163:19
+    override fun hashCode(): Int {
+        return Objects.hash(
+            queueId,
             queueRunId,
             additionalQueryParams,
             additionalHeaders,
@@ -84,125 +73,91 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun toBuilder() = Builder().from(this)
 
-    companion object { // templates/JavaSDK/entities/builders.ts:8:8
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
-        // templates/JavaSDK/entities/builders.ts:8:8
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
-    // templates/JavaSDK/entities/params.ts:235:14
-    class Builder { // templates/JavaSDK/entities/params.ts:235:14
+    @NoAutoDetect
+    class Builder {
 
-        private var queueId: String? = null // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:235:14
+        private var queueId: String? = null
         private var queueRunId: String? = null
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
-        internal fun from(annotationQueueRunDeleteParams: AnnotationQueueRunDeleteParams) =
-            apply { // templates/JavaSDK/entities/params.ts:257:34
-                this.queueId =
-                    annotationQueueRunDeleteParams
-                        .queueId // templates/JavaSDK/entities/params.ts:257:34 //
-                // templates/JavaSDK/entities/params.ts:257:34
-                this.queueRunId = annotationQueueRunDeleteParams.queueRunId
-                additionalQueryParams(annotationQueueRunDeleteParams.additionalQueryParams)
-                additionalHeaders(annotationQueueRunDeleteParams.additionalHeaders)
-                additionalBodyProperties(annotationQueueRunDeleteParams.additionalBodyProperties)
-            }
-
-        fun queueId(queueId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.queueId = queueId
+        @JvmSynthetic
+        internal fun from(annotationQueueRunDeleteParams: AnnotationQueueRunDeleteParams) = apply {
+            this.queueId = annotationQueueRunDeleteParams.queueId
+            this.queueRunId = annotationQueueRunDeleteParams.queueRunId
+            additionalQueryParams(annotationQueueRunDeleteParams.additionalQueryParams)
+            additionalHeaders(annotationQueueRunDeleteParams.additionalHeaders)
+            additionalBodyProperties(annotationQueueRunDeleteParams.additionalBodyProperties)
         }
 
-        fun queueRunId(queueRunId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.queueRunId = queueRunId
+        fun queueId(queueId: String) = apply { this.queueId = queueId }
+
+        fun queueRunId(queueRunId: String) = apply { this.queueRunId = queueRunId }
+
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllQueryParams(additionalQueryParams)
         }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:703:24
-                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
-                // templates/JavaSDK/entities/params.ts:703:24
-                putAllQueryParams(additionalQueryParams)
-            }
+        fun putQueryParam(name: String, value: String) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+        }
 
-        fun putQueryParam(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:713:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-            }
+        fun putQueryParams(name: String, values: Iterable<String>) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
 
-        fun putQueryParams(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:723:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            additionalQueryParams.forEach(this::putQueryParams)
+        }
 
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:733:24
-                additionalQueryParams.forEach(this::putQueryParams)
-            }
-
-        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
+        fun removeQueryParam(name: String) = apply {
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:755:24
-                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
-                // templates/JavaSDK/entities/params.ts:755:24
-                putAllHeaders(additionalHeaders)
-            }
-
-        fun putHeader(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:765:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putHeaders(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:775:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:785:24
-                additionalHeaders.forEach(this::putHeaders)
-            }
-
-        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
-            this.additionalHeaders.put(name, mutableListOf())
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllHeaders(additionalHeaders)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/params.ts:809:28
-                this.additionalBodyProperties
-                    .clear() // templates/JavaSDK/entities/params.ts:809:28 //
-                // templates/JavaSDK/entities/params.ts:809:28
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
+        fun putHeader(name: String, value: String) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+        }
 
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
-            apply { // templates/JavaSDK/entities/params.ts:822:28
-                this.additionalBodyProperties.put(key, value)
-            }
+        fun putHeaders(name: String, values: Iterable<String>) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            additionalHeaders.forEach(this::putHeaders)
+        }
+
+        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
+
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
+            this.additionalBodyProperties.clear()
+            this.additionalBodyProperties.putAll(additionalBodyProperties)
+        }
+
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
+            this.additionalBodyProperties.put(key, value)
+        }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/params.ts:832:28
+            apply {
                 this.additionalBodyProperties.putAll(additionalBodyProperties)
             }
 
         fun build(): AnnotationQueueRunDeleteParams =
-            AnnotationQueueRunDeleteParams( // templates/JavaSDK/entities/params.ts:683:22
-                checkNotNull(queueId) { // templates/JavaSDK/entities/params.ts:844:13 //
-                    // templates/JavaSDK/entities/params.ts:683:22
-                    "`queueId` is required but was not set"
-                },
-                checkNotNull(queueRunId) { // templates/JavaSDK/entities/params.ts:844:13
-                    "`queueRunId` is required but was not set"
-                },
+            AnnotationQueueRunDeleteParams(
+                checkNotNull(queueId) { "`queueId` is required but was not set" },
+                checkNotNull(queueRunId) { "`queueRunId` is required but was not set" },
                 additionalQueryParams.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
                 additionalHeaders.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
                 additionalBodyProperties.toUnmodifiable(),

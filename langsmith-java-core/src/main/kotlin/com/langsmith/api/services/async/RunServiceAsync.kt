@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 @file:Suppress("OVERLOADS_INTERFACE") // See https://youtrack.jetbrains.com/issue/KT-36102
 
@@ -20,11 +20,9 @@ import com.langsmith.api.services.async.runs.ShareServiceAsync
 import com.langsmith.api.services.async.runs.StatServiceAsync
 import java.util.concurrent.CompletableFuture
 
-interface RunServiceAsync { // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15
+interface RunServiceAsync {
 
-    fun share(): ShareServiceAsync // templates/JavaSDK/services.ts:55:15
+    fun share(): ShareServiceAsync
 
     fun query(): QueryServiceAsync
 
@@ -35,28 +33,28 @@ interface RunServiceAsync { // templates/JavaSDK/services.ts:55:15 //
     fun monitor(): MonitorServiceAsync
 
     /** Create a new run. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): CompletableFuture<RunCreateResponse>
 
     /** Get a specific run. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun retrieve(
         params: RunRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): CompletableFuture<RunSchema>
 
     /** Update a run. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): CompletableFuture<RunUpdateResponse>
 
     /** Batch ingest runs. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun batch(
         params: RunBatchParams,
         requestOptions: RequestOptions = RequestOptions.none()

@@ -1,10 +1,8 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
-// //
-// templates/JavaSDK/components/file.ts:28:17
-import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -20,24 +18,18 @@ import java.time.OffsetDateTime
 import java.util.Objects
 import java.util.Optional
 
-@JsonDeserialize(
-    builder = FeedbackConfigSchema.Builder::class
-) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13
+@JsonDeserialize(builder = FeedbackConfigSchema.Builder::class)
 @NoAutoDetect
 class FeedbackConfigSchema
-private constructor( // templates/JavaSDK/entities/objects.ts:76:13
-    private val feedbackKey: JsonField<String>, // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+private constructor(
+    private val feedbackKey: JsonField<String>,
     private val feedbackConfig: JsonField<FeedbackConfig>,
     private val tenantId: JsonField<String>,
     private val modifiedAt: JsonField<OffsetDateTime>,
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+    private var validated: Boolean = false
 
     private var hashCode: Int = 0
 
@@ -49,33 +41,21 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
     fun modifiedAt(): OffsetDateTime = modifiedAt.getRequired("modified_at")
 
-    @JsonProperty("feedback_key") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _feedbackKey() = feedbackKey
+    @JsonProperty("feedback_key") @ExcludeMissing fun _feedbackKey() = feedbackKey
 
-    @JsonProperty("feedback_config") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _feedbackConfig() = feedbackConfig
+    @JsonProperty("feedback_config") @ExcludeMissing fun _feedbackConfig() = feedbackConfig
 
-    @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _tenantId() = tenantId
+    @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId() = tenantId
 
-    @JsonProperty("modified_at") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _modifiedAt() = modifiedAt
+    @JsonProperty("modified_at") @ExcludeMissing fun _modifiedAt() = modifiedAt
 
-    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-    // templates/JavaSDK/entities/objects.ts:180:12
+    @JsonAnyGetter
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): FeedbackConfigSchema = apply { // templates/JavaSDK/entities/objects.ts:198:28
-        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:198:28 //
-            // templates/JavaSDK/entities/objects.ts:198:28
-            feedbackKey() // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:201:20
+    fun validate(): FeedbackConfigSchema = apply {
+        if (!validated) {
+            feedbackKey()
             feedbackConfig().validate()
             tenantId()
             modifiedAt()
@@ -85,12 +65,12 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is FeedbackConfigSchema && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is FeedbackConfigSchema &&
             this.feedbackKey == other.feedbackKey &&
             this.feedbackConfig == other.feedbackConfig &&
             this.tenantId == other.tenantId &&
@@ -98,15 +78,11 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16
+    override fun hashCode(): Int {
+        if (hashCode == 0) {
             hashCode =
-                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                    // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:175:16
-                    feedbackKey, // templates/JavaSDK/entities/fields.ts:163:19
+                Objects.hash(
+                    feedbackKey,
                     feedbackConfig,
                     tenantId,
                     modifiedAt,
@@ -119,102 +95,74 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     override fun toString() =
         "FeedbackConfigSchema{feedbackKey=$feedbackKey, feedbackConfig=$feedbackConfig, tenantId=$tenantId, modifiedAt=$modifiedAt, additionalProperties=$additionalProperties}"
 
-    companion object { // templates/JavaSDK/entities/objects.ts:217:10
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-        // templates/JavaSDK/entities/objects.ts:217:10
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+    class Builder {
 
-        private var feedbackKey: JsonField<String> =
-            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+        private var feedbackKey: JsonField<String> = JsonMissing.of()
         private var feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of()
         private var tenantId: JsonField<String> = JsonMissing.of()
         private var modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-        internal fun from(feedbackConfigSchema: FeedbackConfigSchema) =
-            apply { // templates/JavaSDK/entities/objects.ts:240:30
-                this.feedbackKey =
-                    feedbackConfigSchema
-                        .feedbackKey // templates/JavaSDK/entities/objects.ts:240:30 //
-                // templates/JavaSDK/entities/objects.ts:240:30
-                this.feedbackConfig = feedbackConfigSchema.feedbackConfig
-                this.tenantId = feedbackConfigSchema.tenantId
-                this.modifiedAt = feedbackConfigSchema.modifiedAt
-                additionalProperties(feedbackConfigSchema.additionalProperties)
-            }
+        @JvmSynthetic
+        internal fun from(feedbackConfigSchema: FeedbackConfigSchema) = apply {
+            this.feedbackKey = feedbackConfigSchema.feedbackKey
+            this.feedbackConfig = feedbackConfigSchema.feedbackConfig
+            this.tenantId = feedbackConfigSchema.tenantId
+            this.modifiedAt = feedbackConfigSchema.modifiedAt
+            additionalProperties(feedbackConfigSchema.additionalProperties)
+        }
 
-        fun feedbackKey(feedbackKey: String) =
-            feedbackKey(JsonField.of(feedbackKey)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun feedbackKey(feedbackKey: String) = feedbackKey(JsonField.of(feedbackKey))
 
-        @JsonProperty("feedback_key") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("feedback_key")
         @ExcludeMissing
-        fun feedbackKey(feedbackKey: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.feedbackKey = feedbackKey
-            }
+        fun feedbackKey(feedbackKey: JsonField<String>) = apply { this.feedbackKey = feedbackKey }
 
         fun feedbackConfig(feedbackConfig: FeedbackConfig) =
-            feedbackConfig(
-                JsonField.of(feedbackConfig)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+            feedbackConfig(JsonField.of(feedbackConfig))
 
-        @JsonProperty("feedback_config") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("feedback_config")
         @ExcludeMissing
-        fun feedbackConfig(feedbackConfig: JsonField<FeedbackConfig>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.feedbackConfig = feedbackConfig
-            }
+        fun feedbackConfig(feedbackConfig: JsonField<FeedbackConfig>) = apply {
+            this.feedbackConfig = feedbackConfig
+        }
 
-        fun tenantId(tenantId: String) =
-            tenantId(JsonField.of(tenantId)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun tenantId(tenantId: String) = tenantId(JsonField.of(tenantId))
 
-        @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("tenant_id")
         @ExcludeMissing
-        fun tenantId(tenantId: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.tenantId = tenantId
-            }
+        fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
 
-        fun modifiedAt(modifiedAt: OffsetDateTime) =
-            modifiedAt(JsonField.of(modifiedAt)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun modifiedAt(modifiedAt: OffsetDateTime) = modifiedAt(JsonField.of(modifiedAt))
 
-        @JsonProperty("modified_at") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("modified_at")
         @ExcludeMissing
-        fun modifiedAt(modifiedAt: JsonField<OffsetDateTime>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.modifiedAt = modifiedAt
-            }
+        fun modifiedAt(modifiedAt: JsonField<OffsetDateTime>) = apply {
+            this.modifiedAt = modifiedAt
+        }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.clear()
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
-        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-        fun putAdditionalProperty(key: String, value: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:304:30
-                this.additionalProperties.put(key, value)
-            }
+        @JsonAnySetter
+        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+            this.additionalProperties.put(key, value)
+        }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:316:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
         fun build(): FeedbackConfigSchema =
-            FeedbackConfigSchema( // templates/JavaSDK/entities/objects.ts:326:30
-                feedbackKey, // templates/JavaSDK/entities/objects.ts:326:30
+            FeedbackConfigSchema(
+                feedbackKey,
                 feedbackConfig,
                 tenantId,
                 modifiedAt,
@@ -222,24 +170,18 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
             )
     }
 
-    @JsonDeserialize(
-        builder = FeedbackConfig.Builder::class
-    ) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
-    // // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+    @JsonDeserialize(builder = FeedbackConfig.Builder::class)
     @NoAutoDetect
     class FeedbackConfig
-    private constructor( // templates/JavaSDK/entities/objects.ts:76:13
-        private val type: JsonField<Type>, // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+    private constructor(
+        private val type: JsonField<Type>,
         private val min: JsonField<Double>,
         private val max: JsonField<Double>,
-        private val categories: JsonField<List<FeedbackCategory>>,
+        private val categories: JsonField<List<Category>>,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+        private var validated: Boolean = false
 
         private var hashCode: Int = 0
 
@@ -250,37 +192,25 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
         fun max(): Optional<Double> = Optional.ofNullable(max.getNullable("max"))
 
-        fun categories(): Optional<List<FeedbackCategory>> =
+        fun categories(): Optional<List<Category>> =
             Optional.ofNullable(categories.getNullable("categories"))
 
         /** Enum for feedback types. */
-        @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:166:16
-        @ExcludeMissing
-        fun _type() = type
+        @JsonProperty("type") @ExcludeMissing fun _type() = type
 
-        @JsonProperty("min") // templates/JavaSDK/entities/objects.ts:166:16
-        @ExcludeMissing
-        fun _min() = min
+        @JsonProperty("min") @ExcludeMissing fun _min() = min
 
-        @JsonProperty("max") // templates/JavaSDK/entities/objects.ts:166:16
-        @ExcludeMissing
-        fun _max() = max
+        @JsonProperty("max") @ExcludeMissing fun _max() = max
 
-        @JsonProperty("categories") // templates/JavaSDK/entities/objects.ts:166:16
-        @ExcludeMissing
-        fun _categories() = categories
+        @JsonProperty("categories") @ExcludeMissing fun _categories() = categories
 
-        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-        // templates/JavaSDK/entities/objects.ts:180:12
+        @JsonAnyGetter
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun validate(): FeedbackConfig = apply { // templates/JavaSDK/entities/objects.ts:198:28
-            if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-                // templates/JavaSDK/entities/objects.ts:198:28 //
-                // templates/JavaSDK/entities/objects.ts:198:28
-                type() // templates/JavaSDK/entities/objects.ts:201:20 //
-                // templates/JavaSDK/entities/objects.ts:201:20
+        fun validate(): FeedbackConfig = apply {
+            if (!validated) {
+                type()
                 min()
                 max()
                 categories().map { it.forEach { it.validate() } }
@@ -290,12 +220,12 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is FeedbackConfig && // templates/JavaSDK/entities/fields.ts:143:33
+            return other is FeedbackConfig &&
                 this.type == other.type &&
                 this.min == other.min &&
                 this.max == other.max &&
@@ -303,15 +233,11 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16
+        override fun hashCode(): Int {
+            if (hashCode == 0) {
                 hashCode =
-                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                        // templates/JavaSDK/entities/fields.ts:175:16 //
-                        // templates/JavaSDK/entities/fields.ts:175:16
-                        type, // templates/JavaSDK/entities/fields.ts:163:19
+                    Objects.hash(
+                        type,
                         min,
                         max,
                         categories,
@@ -324,102 +250,73 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
         override fun toString() =
             "FeedbackConfig{type=$type, min=$min, max=$max, categories=$categories, additionalProperties=$additionalProperties}"
 
-        companion object { // templates/JavaSDK/entities/objects.ts:217:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-            // templates/JavaSDK/entities/objects.ts:217:10
-            fun builder() = Builder()
+            @JvmStatic fun builder() = Builder()
         }
 
-        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+        class Builder {
 
-            private var type: JsonField<Type> =
-                JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+            private var type: JsonField<Type> = JsonMissing.of()
             private var min: JsonField<Double> = JsonMissing.of()
             private var max: JsonField<Double> = JsonMissing.of()
-            private var categories: JsonField<List<FeedbackCategory>> = JsonMissing.of()
+            private var categories: JsonField<List<Category>> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-            internal fun from(feedbackConfig: FeedbackConfig) =
-                apply { // templates/JavaSDK/entities/objects.ts:240:30
-                    this.type =
-                        feedbackConfig.type // templates/JavaSDK/entities/objects.ts:240:30 //
-                    // templates/JavaSDK/entities/objects.ts:240:30
-                    this.min = feedbackConfig.min
-                    this.max = feedbackConfig.max
-                    this.categories = feedbackConfig.categories
-                    additionalProperties(feedbackConfig.additionalProperties)
-                }
+            @JvmSynthetic
+            internal fun from(feedbackConfig: FeedbackConfig) = apply {
+                this.type = feedbackConfig.type
+                this.min = feedbackConfig.min
+                this.max = feedbackConfig.max
+                this.categories = feedbackConfig.categories
+                additionalProperties(feedbackConfig.additionalProperties)
+            }
 
             /** Enum for feedback types. */
-            // templates/JavaSDK/entities/objects.ts:252:20
             fun type(type: Type) = type(JsonField.of(type))
 
             /** Enum for feedback types. */
-            @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:264:20
+            @JsonProperty("type")
             @ExcludeMissing
-            fun type(type: JsonField<Type>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.type = type
-                }
+            fun type(type: JsonField<Type>) = apply { this.type = type }
 
-            fun min(min: Double) =
-                min(JsonField.of(min)) // templates/JavaSDK/entities/objects.ts:252:20
+            fun min(min: Double) = min(JsonField.of(min))
 
-            @JsonProperty("min") // templates/JavaSDK/entities/objects.ts:264:20
+            @JsonProperty("min")
             @ExcludeMissing
-            fun min(min: JsonField<Double>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.min = min
-                }
+            fun min(min: JsonField<Double>) = apply { this.min = min }
 
-            fun max(max: Double) =
-                max(JsonField.of(max)) // templates/JavaSDK/entities/objects.ts:252:20
+            fun max(max: Double) = max(JsonField.of(max))
 
-            @JsonProperty("max") // templates/JavaSDK/entities/objects.ts:264:20
+            @JsonProperty("max")
             @ExcludeMissing
-            fun max(max: JsonField<Double>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.max = max
-                }
+            fun max(max: JsonField<Double>) = apply { this.max = max }
 
-            fun categories(categories: List<FeedbackCategory>) =
-                categories(JsonField.of(categories)) // templates/JavaSDK/entities/objects.ts:252:20
+            fun categories(categories: List<Category>) = categories(JsonField.of(categories))
 
-            @JsonProperty("categories") // templates/JavaSDK/entities/objects.ts:264:20
+            @JsonProperty("categories")
             @ExcludeMissing
-            fun categories(categories: JsonField<List<FeedbackCategory>>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.categories = categories
-                }
+            fun categories(categories: JsonField<List<Category>>) = apply {
+                this.categories = categories
+            }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties
-                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                    // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
-            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-            fun putAdditionalProperty(key: String, value: JsonValue) =
-                apply { // templates/JavaSDK/entities/objects.ts:304:30
-                    this.additionalProperties.put(key, value)
-                }
+            @JsonAnySetter
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                this.additionalProperties.put(key, value)
+            }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:316:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
             fun build(): FeedbackConfig =
-                FeedbackConfig( // templates/JavaSDK/entities/objects.ts:326:30
-                    type, // templates/JavaSDK/entities/objects.ts:326:30
+                FeedbackConfig(
+                    type,
                     min,
                     max,
                     categories.map { it.toUnmodifiable() },
@@ -431,35 +328,25 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
         @JsonCreator
         private constructor(
             private val value: JsonField<String>,
-        ) { // templates/JavaSDK/entities/enums.ts:56:13 //
-            // templates/JavaSDK/entities/enums.ts:56:13 //
-            // templates/JavaSDK/entities/enums.ts:56:13
+        ) {
 
-            @com.fasterxml.jackson.annotation.JsonValue // templates/JavaSDK/entities/enums.ts:62:10
-            // //
-            // templates/JavaSDK/entities/enums.ts:56:13
-            fun _value(): JsonField<String> = value
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 
-            override fun equals(
-                other: Any?
-            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
                     return true
                 }
 
-                return other is Type && // templates/JavaSDK/entities/fields.ts:143:33
-                    this.value == other.value
+                return other is Type && this.value == other.value
             }
 
             override fun hashCode() = value.hashCode()
 
             override fun toString() = value.toString()
 
-            companion object { // templates/JavaSDK/entities/enums.ts:71:10
+            companion object {
 
-                @JvmField
-                val CONTINUOUS =
-                    Type(JsonField.of("continuous")) // templates/JavaSDK/entities/enums.ts:71:10
+                @JvmField val CONTINUOUS = Type(JsonField.of("continuous"))
 
                 @JvmField val CATEGORICAL = Type(JsonField.of("categorical"))
 
@@ -468,34 +355,30 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
                 @JvmStatic fun of(value: String) = Type(JsonField.of(value))
             }
 
-            enum class Known { // templates/JavaSDK/entities/enums.ts:78:10
-                CONTINUOUS, // templates/JavaSDK/entities/enums.ts:78:10 //
-                // templates/JavaSDK/entities/enums.ts:78:10
+            enum class Known {
+                CONTINUOUS,
                 CATEGORICAL,
                 FREEFORM,
             }
 
-            enum class Value { // templates/JavaSDK/entities/enums.ts:82:10
-                CONTINUOUS, // templates/JavaSDK/entities/enums.ts:82:10 //
-                // templates/JavaSDK/entities/enums.ts:82:10
+            enum class Value {
+                CONTINUOUS,
                 CATEGORICAL,
                 FREEFORM,
                 _UNKNOWN,
             }
 
             fun value(): Value =
-                when (this) { // templates/JavaSDK/entities/enums.ts:91:29
-                    CONTINUOUS -> Value.CONTINUOUS // templates/JavaSDK/entities/enums.ts:54:10 //
-                    // templates/JavaSDK/entities/enums.ts:54:10
+                when (this) {
+                    CONTINUOUS -> Value.CONTINUOUS
                     CATEGORICAL -> Value.CATEGORICAL
                     FREEFORM -> Value.FREEFORM
                     else -> Value._UNKNOWN
                 }
 
             fun known(): Known =
-                when (this) { // templates/JavaSDK/entities/enums.ts:104:29
-                    CONTINUOUS -> Known.CONTINUOUS // templates/JavaSDK/entities/enums.ts:54:10 //
-                    // templates/JavaSDK/entities/enums.ts:54:10
+                when (this) {
+                    CONTINUOUS -> Known.CONTINUOUS
                     CATEGORICAL -> Known.CATEGORICAL
                     FREEFORM -> Known.FREEFORM
                     else -> throw LangSmithInvalidDataException("Unknown Type: $value")
@@ -505,22 +388,16 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
         }
 
         /** Specific value and label pair for feedback */
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
-        @JsonDeserialize(builder = FeedbackCategory.Builder::class)
+        @JsonDeserialize(builder = Category.Builder::class)
         @NoAutoDetect
-        class FeedbackCategory
+        class Category
         private constructor(
             private val value: JsonField<Double>,
             private val label: JsonField<String>,
             private val additionalProperties: Map<String, JsonValue>,
         ) {
 
-            private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-            // templates/JavaSDK/entities/objects.ts:76:13
+            private var validated: Boolean = false
 
             private var hashCode: Int = 0
 
@@ -528,55 +405,40 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
             fun label(): Optional<String> = Optional.ofNullable(label.getNullable("label"))
 
-            @JsonProperty("value") // templates/JavaSDK/entities/objects.ts:166:16
-            @ExcludeMissing
-            fun _value() = value
+            @JsonProperty("value") @ExcludeMissing fun _value() = value
 
-            @JsonProperty("label") // templates/JavaSDK/entities/objects.ts:166:16
-            @ExcludeMissing
-            fun _label() = label
+            @JsonProperty("label") @ExcludeMissing fun _label() = label
 
-            @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-            // templates/JavaSDK/entities/objects.ts:180:12
+            @JsonAnyGetter
             @ExcludeMissing
             fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-            fun validate(): FeedbackCategory =
-                apply { // templates/JavaSDK/entities/objects.ts:198:28
-                    if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-                        // templates/JavaSDK/entities/objects.ts:198:28 //
-                        // templates/JavaSDK/entities/objects.ts:198:28
-                        value() // templates/JavaSDK/entities/objects.ts:201:20 //
-                        // templates/JavaSDK/entities/objects.ts:201:20
-                        label()
-                        validated = true
-                    }
+            fun validate(): Category = apply {
+                if (!validated) {
+                    value()
+                    label()
+                    validated = true
                 }
+            }
 
             fun toBuilder() = Builder().from(this)
 
-            override fun equals(
-                other: Any?
-            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
                     return true
                 }
 
-                return other is FeedbackCategory && // templates/JavaSDK/entities/fields.ts:143:33
+                return other is Category &&
                     this.value == other.value &&
                     this.label == other.label &&
                     this.additionalProperties == other.additionalProperties
             }
 
-            override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-                if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16
+            override fun hashCode(): Int {
+                if (hashCode == 0) {
                     hashCode =
-                        Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                            // templates/JavaSDK/entities/fields.ts:175:16 //
-                            // templates/JavaSDK/entities/fields.ts:175:16
-                            value, // templates/JavaSDK/entities/fields.ts:163:19
+                        Objects.hash(
+                            value,
                             label,
                             additionalProperties,
                         )
@@ -585,79 +447,56 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
             }
 
             override fun toString() =
-                "FeedbackCategory{value=$value, label=$label, additionalProperties=$additionalProperties}"
+                "Category{value=$value, label=$label, additionalProperties=$additionalProperties}"
 
-            companion object { // templates/JavaSDK/entities/objects.ts:217:10
+            companion object {
 
-                @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-                // templates/JavaSDK/entities/objects.ts:217:10
-                fun builder() = Builder()
+                @JvmStatic fun builder() = Builder()
             }
 
-            class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+            class Builder {
 
-                private var value: JsonField<Double> =
-                    JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+                private var value: JsonField<Double> = JsonMissing.of()
                 private var label: JsonField<String> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-                internal fun from(feedbackCategory: FeedbackCategory) =
-                    apply { // templates/JavaSDK/entities/objects.ts:240:30
-                        this.value =
-                            feedbackCategory
-                                .value // templates/JavaSDK/entities/objects.ts:240:30 //
-                        // templates/JavaSDK/entities/objects.ts:240:30
-                        this.label = feedbackCategory.label
-                        additionalProperties(feedbackCategory.additionalProperties)
-                    }
+                @JvmSynthetic
+                internal fun from(category: Category) = apply {
+                    this.value = category.value
+                    this.label = category.label
+                    additionalProperties(category.additionalProperties)
+                }
 
-                fun value(value: Double) =
-                    value(JsonField.of(value)) // templates/JavaSDK/entities/objects.ts:252:20
+                fun value(value: Double) = value(JsonField.of(value))
 
-                @JsonProperty("value") // templates/JavaSDK/entities/objects.ts:264:20
+                @JsonProperty("value")
                 @ExcludeMissing
-                fun value(value: JsonField<Double>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:275:36
-                        this.value = value
-                    }
+                fun value(value: JsonField<Double>) = apply { this.value = value }
 
-                fun label(label: String) =
-                    label(JsonField.of(label)) // templates/JavaSDK/entities/objects.ts:252:20
+                fun label(label: String) = label(JsonField.of(label))
 
-                @JsonProperty("label") // templates/JavaSDK/entities/objects.ts:264:20
+                @JsonProperty("label")
                 @ExcludeMissing
-                fun label(label: JsonField<String>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:275:36
-                        this.label = label
-                    }
+                fun label(label: JsonField<String>) = apply { this.label = label }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties
-                            .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                        // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-                @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-                fun putAdditionalProperty(key: String, value: JsonValue) =
-                    apply { // templates/JavaSDK/entities/objects.ts:304:30
-                        this.additionalProperties.put(key, value)
-                    }
+                @JsonAnySetter
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    this.additionalProperties.put(key, value)
+                }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
-                fun build(): FeedbackCategory =
-                    FeedbackCategory( // templates/JavaSDK/entities/objects.ts:326:30
-                        value, // templates/JavaSDK/entities/objects.ts:326:30
+                fun build(): Category =
+                    Category(
+                        value,
                         label,
                         additionalProperties.toUnmodifiable(),
                     )

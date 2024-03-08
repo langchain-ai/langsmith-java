@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -7,16 +7,11 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class RunQueryCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class RunQueryCreateParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createRunQueryCreateParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        RunQueryCreateParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createRunQueryCreateParams() {
+        RunQueryCreateParams.builder()
             .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .cursor("string")
             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -29,21 +24,17 @@ class RunQueryCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
             .query("string")
             .referenceExample(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .runType(RunQueryCreateParams.RunType.TOOL)
-            .select(listOf(RunQueryCreateParams.RunSelect.ID))
+            .select(listOf(RunQueryCreateParams.Select.ID))
             .session(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:1011:17
-    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBody() {
         val params =
-            RunQueryCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            RunQueryCreateParams.builder()
                 .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .cursor("string")
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -56,7 +47,7 @@ class RunQueryCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
                 .query("string")
                 .referenceExample(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .runType(RunQueryCreateParams.RunType.TOOL)
-                .select(listOf(RunQueryCreateParams.RunSelect.ID))
+                .select(listOf(RunQueryCreateParams.Select.ID))
                 .session(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -76,18 +67,15 @@ class RunQueryCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
         assertThat(body.referenceExample())
             .isEqualTo(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
         assertThat(body.runType()).isEqualTo(RunQueryCreateParams.RunType.TOOL)
-        assertThat(body.select()).isEqualTo(listOf(RunQueryCreateParams.RunSelect.ID))
+        assertThat(body.select()).isEqualTo(listOf(RunQueryCreateParams.Select.ID))
         assertThat(body.session()).isEqualTo(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
         assertThat(body.startTime()).isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(body.trace()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
-        val params =
-            RunQueryCreateParams.builder()
-                .build() // templates/JavaSDK/entities/params.ts:1042:16 //
-        // templates/JavaSDK/entities/params.ts:1042:16
+    @Test
+    fun getBodyWithoutOptionalFields() {
+        val params = RunQueryCreateParams.builder().build()
         val body = params.getBody()
         assertThat(body).isNotNull
     }

@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -6,22 +6,17 @@ import com.langsmith.api.models.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class RunMonitorCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class RunMonitorCreateParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createRunMonitorCreateParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        RunMonitorCreateParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createRunMonitorCreateParams() {
+        RunMonitorCreateParams.builder()
             .groups(
                 listOf(
-                    RunMonitorCreateParams.MonitorGroupSpec.builder()
+                    RunMonitorCreateParams.Group.builder()
                         .session("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .metadata(
-                            RunMonitorCreateParams.MonitorGroupSpec.Metadata.builder()
+                            RunMonitorCreateParams.Group.Metadata.builder()
                                 .key("string")
                                 .value("string")
                                 .build()
@@ -44,20 +39,16 @@ class RunMonitorCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:1
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:1011:17
-    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBody() {
         val params =
-            RunMonitorCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            RunMonitorCreateParams.builder()
                 .groups(
                     listOf(
-                        RunMonitorCreateParams.MonitorGroupSpec.builder()
+                        RunMonitorCreateParams.Group.builder()
                             .session("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .metadata(
-                                RunMonitorCreateParams.MonitorGroupSpec.Metadata.builder()
+                                RunMonitorCreateParams.Group.Metadata.builder()
                                     .key("string")
                                     .value("string")
                                     .build()
@@ -87,11 +78,10 @@ class RunMonitorCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:1
         assertThat(body.groups())
             .isEqualTo(
                 listOf(
-                    RunMonitorCreateParams.MonitorGroupSpec
-                        .builder() // templates/JavaSDK/entities/params.ts:1055:14
+                    RunMonitorCreateParams.Group.builder()
                         .session("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .metadata(
-                            RunMonitorCreateParams.MonitorGroupSpec.Metadata.builder()
+                            RunMonitorCreateParams.Group.Metadata.builder()
                                 .key("string")
                                 .value("string")
                                 .build()
@@ -102,8 +92,7 @@ class RunMonitorCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:1
             )
         assertThat(body.interval())
             .isEqualTo(
-                RunMonitorCreateParams.Interval
-                    .builder() // templates/JavaSDK/entities/params.ts:1055:14
+                RunMonitorCreateParams.Interval.builder()
                     .days(123L)
                     .hours(123L)
                     .minutes(123L)
@@ -111,26 +100,18 @@ class RunMonitorCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:1
             )
         assertThat(body.stride())
             .isEqualTo(
-                RunMonitorCreateParams.Stride
-                    .builder() // templates/JavaSDK/entities/params.ts:1055:14
-                    .days(123L)
-                    .hours(123L)
-                    .minutes(123L)
-                    .build()
+                RunMonitorCreateParams.Stride.builder().days(123L).hours(123L).minutes(123L).build()
             )
         assertThat(body.timezone()).isEqualTo("string")
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBodyWithoutOptionalFields() {
         val params =
-            RunMonitorCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            RunMonitorCreateParams.builder()
                 .groups(
                     listOf(
-                        RunMonitorCreateParams.MonitorGroupSpec.builder()
+                        RunMonitorCreateParams.Group.builder()
                             .session("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .build()
                     )
@@ -141,8 +122,7 @@ class RunMonitorCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:1
         assertThat(body.groups())
             .isEqualTo(
                 listOf(
-                    RunMonitorCreateParams.MonitorGroupSpec
-                        .builder() // templates/JavaSDK/entities/params.ts:1055:14
+                    RunMonitorCreateParams.Group.builder()
                         .session("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .build()
                 )

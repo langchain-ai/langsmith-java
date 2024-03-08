@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.client
 
@@ -12,11 +12,9 @@ import com.langsmith.api.services.errorHandler
 class LangSmithClientImpl
 constructor(
     private val clientOptions: ClientOptions,
-) : LangSmithClient { // templates/JavaSDK/client.ts:54:13 // templates/JavaSDK/client.ts:54:13 //
-    // templates/JavaSDK/client.ts:54:13
+) : LangSmithClient {
 
-    private val errorHandler: Handler<LangSmithError> =
-        errorHandler(clientOptions.jsonMapper) // templates/JavaSDK/client.ts:54:13
+    private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
 
     private val async: LangSmithClientAsync by lazy { LangSmithClientAsyncImpl(clientOptions) }
 

@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -6,16 +6,11 @@ import com.langsmith.api.models.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class PublicExampleRunCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class PublicExampleRunCreateParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createPublicExampleRunCreateParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        PublicExampleRunCreateParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createPublicExampleRunCreateParams() {
+        PublicExampleRunCreateParams.builder()
             .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .sessionIds(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .filters(PublicExampleRunCreateParams.Filters.builder().build())
@@ -24,15 +19,10 @@ class PublicExampleRunCreateParamsTest { // templates/JavaSDK/entities/params.ts
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:1011:17
-    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBody() {
         val params =
-            PublicExampleRunCreateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            PublicExampleRunCreateParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sessionIds(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .filters(PublicExampleRunCreateParams.Filters.builder().build())
@@ -47,14 +37,10 @@ class PublicExampleRunCreateParamsTest { // templates/JavaSDK/entities/params.ts
         assertThat(body.offset()).isEqualTo(123L)
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBodyWithoutOptionalFields() {
         val params =
-            PublicExampleRunCreateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            PublicExampleRunCreateParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sessionIds(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .build()
@@ -63,14 +49,10 @@ class PublicExampleRunCreateParamsTest { // templates/JavaSDK/entities/params.ts
         assertThat(body.sessionIds()).isEqualTo(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getPathParam() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getPathParam() {
         val params =
-            PublicExampleRunCreateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1072:10 //
-                // templates/JavaSDK/entities/params.ts:1072:10 //
-                // templates/JavaSDK/entities/params.ts:1071:16 //
-                // templates/JavaSDK/entities/params.ts:1071:16
+            PublicExampleRunCreateParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sessionIds(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .build()

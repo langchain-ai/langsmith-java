@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.services.blocking
 
@@ -10,32 +10,20 @@ import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(
-    TestServerExtension::class
-) // templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15 //
-// templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15
+@ExtendWith(TestServerExtension::class)
 class ExampleServiceTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 // templates/JavaSDK/services.ts:298:15
-    fun callCreate() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callCreate() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val exampleService = client.examples()
         val example =
             exampleService.create(
-                ExampleCreateParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                ExampleCreateParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .inputs(JsonValue.from(mapOf<String, Any>()))
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -44,62 +32,40 @@ class ExampleServiceTest {
                     .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
-        println(
-            example
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
+        println(example)
         example.validate()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callRetrieve() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callRetrieve() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val exampleService = client.examples()
         val example =
             exampleService.retrieve(
-                ExampleRetrieveParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                ExampleRetrieveParams.builder()
                     .exampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .build()
             )
-        println(
-            example
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
+        println(example)
         example.validate()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callUpdate() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callUpdate() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val exampleService = client.examples()
         val exampleUpdateResponse =
             exampleService.update(
-                ExampleUpdateParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                ExampleUpdateParams.builder()
                     .exampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .inputs(JsonValue.from(mapOf<String, Any>()))
@@ -109,26 +75,17 @@ class ExampleServiceTest {
         println(exampleUpdateResponse)
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callList() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callList() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val exampleService = client.examples()
         val exampleListResponse =
             exampleService.list(
-                ExampleListParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                ExampleListParams.builder()
                     .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                     .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .dataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -136,34 +93,23 @@ class ExampleServiceTest {
                     .offset(123L)
                     .build()
             )
-        println(
-            exampleListResponse
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
-        for (example: Example in exampleListResponse) { // templates/JavaSDK/services.ts:509:10
+        println(exampleListResponse)
+        for (example: Example in exampleListResponse) {
             example.validate()
         }
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callDelete() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callDelete() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val exampleService = client.examples()
         val exampleDeleteResponse =
             exampleService.delete(
-                ExampleDeleteParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                ExampleDeleteParams.builder()
                     .exampleIds(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                     .build()
             )

@@ -1,10 +1,8 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
-// //
-// templates/JavaSDK/components/file.ts:28:17
-import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -18,16 +16,11 @@ import java.time.OffsetDateTime
 import java.util.Objects
 import java.util.Optional
 
-@JsonDeserialize(
-    builder = RunStats.Builder::class
-) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13
+@JsonDeserialize(builder = RunStats.Builder::class)
 @NoAutoDetect
 class RunStats
-private constructor( // templates/JavaSDK/entities/objects.ts:76:13
-    private val runCount: JsonField<Long>, // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+private constructor(
+    private val runCount: JsonField<Long>,
     private val latencyP50: JsonField<Double>,
     private val latencyP99: JsonField<Double>,
     private val firstTokenP50: JsonField<Double>,
@@ -47,8 +40,7 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+    private var validated: Boolean = false
 
     private var hashCode: Int = 0
 
@@ -93,85 +85,47 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     fun completionCost(): Optional<Double> =
         Optional.ofNullable(completionCost.getNullable("completion_cost"))
 
-    @JsonProperty("run_count") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _runCount() = runCount
+    @JsonProperty("run_count") @ExcludeMissing fun _runCount() = runCount
 
-    @JsonProperty("latency_p50") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _latencyP50() = latencyP50
+    @JsonProperty("latency_p50") @ExcludeMissing fun _latencyP50() = latencyP50
 
-    @JsonProperty("latency_p99") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _latencyP99() = latencyP99
+    @JsonProperty("latency_p99") @ExcludeMissing fun _latencyP99() = latencyP99
 
-    @JsonProperty("first_token_p50") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _firstTokenP50() = firstTokenP50
+    @JsonProperty("first_token_p50") @ExcludeMissing fun _firstTokenP50() = firstTokenP50
 
-    @JsonProperty("first_token_p99") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _firstTokenP99() = firstTokenP99
+    @JsonProperty("first_token_p99") @ExcludeMissing fun _firstTokenP99() = firstTokenP99
 
-    @JsonProperty("total_tokens") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _totalTokens() = totalTokens
+    @JsonProperty("total_tokens") @ExcludeMissing fun _totalTokens() = totalTokens
 
-    @JsonProperty("prompt_tokens") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _promptTokens() = promptTokens
+    @JsonProperty("prompt_tokens") @ExcludeMissing fun _promptTokens() = promptTokens
 
-    @JsonProperty("completion_tokens") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _completionTokens() = completionTokens
+    @JsonProperty("completion_tokens") @ExcludeMissing fun _completionTokens() = completionTokens
 
-    @JsonProperty("median_tokens") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _medianTokens() = medianTokens
+    @JsonProperty("median_tokens") @ExcludeMissing fun _medianTokens() = medianTokens
 
-    @JsonProperty("last_run_start_time") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _lastRunStartTime() = lastRunStartTime
+    @JsonProperty("last_run_start_time") @ExcludeMissing fun _lastRunStartTime() = lastRunStartTime
 
-    @JsonProperty("feedback_stats") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _feedbackStats() = feedbackStats
+    @JsonProperty("feedback_stats") @ExcludeMissing fun _feedbackStats() = feedbackStats
 
-    @JsonProperty("run_facets") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _runFacets() = runFacets
+    @JsonProperty("run_facets") @ExcludeMissing fun _runFacets() = runFacets
 
-    @JsonProperty("error_rate") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _errorRate() = errorRate
+    @JsonProperty("error_rate") @ExcludeMissing fun _errorRate() = errorRate
 
-    @JsonProperty("streaming_rate") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _streamingRate() = streamingRate
+    @JsonProperty("streaming_rate") @ExcludeMissing fun _streamingRate() = streamingRate
 
-    @JsonProperty("total_cost") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _totalCost() = totalCost
+    @JsonProperty("total_cost") @ExcludeMissing fun _totalCost() = totalCost
 
-    @JsonProperty("prompt_cost") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _promptCost() = promptCost
+    @JsonProperty("prompt_cost") @ExcludeMissing fun _promptCost() = promptCost
 
-    @JsonProperty("completion_cost") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _completionCost() = completionCost
+    @JsonProperty("completion_cost") @ExcludeMissing fun _completionCost() = completionCost
 
-    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-    // templates/JavaSDK/entities/objects.ts:180:12
+    @JsonAnyGetter
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): RunStats = apply { // templates/JavaSDK/entities/objects.ts:198:28
-        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:198:28 //
-            // templates/JavaSDK/entities/objects.ts:198:28
-            runCount() // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:201:20
+    fun validate(): RunStats = apply {
+        if (!validated) {
+            runCount()
             latencyP50()
             latencyP99()
             firstTokenP50()
@@ -193,12 +147,12 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is RunStats && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is RunStats &&
             this.runCount == other.runCount &&
             this.latencyP50 == other.latencyP50 &&
             this.latencyP99 == other.latencyP99 &&
@@ -219,15 +173,11 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16
+    override fun hashCode(): Int {
+        if (hashCode == 0) {
             hashCode =
-                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                    // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:175:16
-                    runCount, // templates/JavaSDK/entities/fields.ts:163:19
+                Objects.hash(
+                    runCount,
                     latencyP50,
                     latencyP99,
                     firstTokenP50,
@@ -253,21 +203,14 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     override fun toString() =
         "RunStats{runCount=$runCount, latencyP50=$latencyP50, latencyP99=$latencyP99, firstTokenP50=$firstTokenP50, firstTokenP99=$firstTokenP99, totalTokens=$totalTokens, promptTokens=$promptTokens, completionTokens=$completionTokens, medianTokens=$medianTokens, lastRunStartTime=$lastRunStartTime, feedbackStats=$feedbackStats, runFacets=$runFacets, errorRate=$errorRate, streamingRate=$streamingRate, totalCost=$totalCost, promptCost=$promptCost, completionCost=$completionCost, additionalProperties=$additionalProperties}"
 
-    companion object { // templates/JavaSDK/entities/objects.ts:217:10
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-        // templates/JavaSDK/entities/objects.ts:217:10
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+    class Builder {
 
-        private var runCount: JsonField<Long> =
-            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+        private var runCount: JsonField<Long> = JsonMissing.of()
         private var latencyP50: JsonField<Double> = JsonMissing.of()
         private var latencyP99: JsonField<Double> = JsonMissing.of()
         private var firstTokenP50: JsonField<Double> = JsonMissing.of()
@@ -286,231 +229,159 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
         private var completionCost: JsonField<Double> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-        internal fun from(runStats: RunStats) =
-            apply { // templates/JavaSDK/entities/objects.ts:240:30
-                this.runCount = runStats.runCount // templates/JavaSDK/entities/objects.ts:240:30 //
-                // templates/JavaSDK/entities/objects.ts:240:30
-                this.latencyP50 = runStats.latencyP50
-                this.latencyP99 = runStats.latencyP99
-                this.firstTokenP50 = runStats.firstTokenP50
-                this.firstTokenP99 = runStats.firstTokenP99
-                this.totalTokens = runStats.totalTokens
-                this.promptTokens = runStats.promptTokens
-                this.completionTokens = runStats.completionTokens
-                this.medianTokens = runStats.medianTokens
-                this.lastRunStartTime = runStats.lastRunStartTime
-                this.feedbackStats = runStats.feedbackStats
-                this.runFacets = runStats.runFacets
-                this.errorRate = runStats.errorRate
-                this.streamingRate = runStats.streamingRate
-                this.totalCost = runStats.totalCost
-                this.promptCost = runStats.promptCost
-                this.completionCost = runStats.completionCost
-                additionalProperties(runStats.additionalProperties)
-            }
+        @JvmSynthetic
+        internal fun from(runStats: RunStats) = apply {
+            this.runCount = runStats.runCount
+            this.latencyP50 = runStats.latencyP50
+            this.latencyP99 = runStats.latencyP99
+            this.firstTokenP50 = runStats.firstTokenP50
+            this.firstTokenP99 = runStats.firstTokenP99
+            this.totalTokens = runStats.totalTokens
+            this.promptTokens = runStats.promptTokens
+            this.completionTokens = runStats.completionTokens
+            this.medianTokens = runStats.medianTokens
+            this.lastRunStartTime = runStats.lastRunStartTime
+            this.feedbackStats = runStats.feedbackStats
+            this.runFacets = runStats.runFacets
+            this.errorRate = runStats.errorRate
+            this.streamingRate = runStats.streamingRate
+            this.totalCost = runStats.totalCost
+            this.promptCost = runStats.promptCost
+            this.completionCost = runStats.completionCost
+            additionalProperties(runStats.additionalProperties)
+        }
 
-        fun runCount(runCount: Long) =
-            runCount(JsonField.of(runCount)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun runCount(runCount: Long) = runCount(JsonField.of(runCount))
 
-        @JsonProperty("run_count") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("run_count")
         @ExcludeMissing
-        fun runCount(runCount: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.runCount = runCount
-            }
+        fun runCount(runCount: JsonField<Long>) = apply { this.runCount = runCount }
 
-        fun latencyP50(latencyP50: Double) =
-            latencyP50(JsonField.of(latencyP50)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun latencyP50(latencyP50: Double) = latencyP50(JsonField.of(latencyP50))
 
-        @JsonProperty("latency_p50") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("latency_p50")
         @ExcludeMissing
-        fun latencyP50(latencyP50: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.latencyP50 = latencyP50
-            }
+        fun latencyP50(latencyP50: JsonField<Double>) = apply { this.latencyP50 = latencyP50 }
 
-        fun latencyP99(latencyP99: Double) =
-            latencyP99(JsonField.of(latencyP99)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun latencyP99(latencyP99: Double) = latencyP99(JsonField.of(latencyP99))
 
-        @JsonProperty("latency_p99") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("latency_p99")
         @ExcludeMissing
-        fun latencyP99(latencyP99: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.latencyP99 = latencyP99
-            }
+        fun latencyP99(latencyP99: JsonField<Double>) = apply { this.latencyP99 = latencyP99 }
 
-        fun firstTokenP50(firstTokenP50: Double) =
-            firstTokenP50(
-                JsonField.of(firstTokenP50)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+        fun firstTokenP50(firstTokenP50: Double) = firstTokenP50(JsonField.of(firstTokenP50))
 
-        @JsonProperty("first_token_p50") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("first_token_p50")
         @ExcludeMissing
-        fun firstTokenP50(firstTokenP50: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.firstTokenP50 = firstTokenP50
-            }
+        fun firstTokenP50(firstTokenP50: JsonField<Double>) = apply {
+            this.firstTokenP50 = firstTokenP50
+        }
 
-        fun firstTokenP99(firstTokenP99: Double) =
-            firstTokenP99(
-                JsonField.of(firstTokenP99)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+        fun firstTokenP99(firstTokenP99: Double) = firstTokenP99(JsonField.of(firstTokenP99))
 
-        @JsonProperty("first_token_p99") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("first_token_p99")
         @ExcludeMissing
-        fun firstTokenP99(firstTokenP99: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.firstTokenP99 = firstTokenP99
-            }
+        fun firstTokenP99(firstTokenP99: JsonField<Double>) = apply {
+            this.firstTokenP99 = firstTokenP99
+        }
 
-        fun totalTokens(totalTokens: Long) =
-            totalTokens(JsonField.of(totalTokens)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun totalTokens(totalTokens: Long) = totalTokens(JsonField.of(totalTokens))
 
-        @JsonProperty("total_tokens") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("total_tokens")
         @ExcludeMissing
-        fun totalTokens(totalTokens: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.totalTokens = totalTokens
-            }
+        fun totalTokens(totalTokens: JsonField<Long>) = apply { this.totalTokens = totalTokens }
 
-        fun promptTokens(promptTokens: Long) =
-            promptTokens(JsonField.of(promptTokens)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun promptTokens(promptTokens: Long) = promptTokens(JsonField.of(promptTokens))
 
-        @JsonProperty("prompt_tokens") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("prompt_tokens")
         @ExcludeMissing
-        fun promptTokens(promptTokens: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.promptTokens = promptTokens
-            }
+        fun promptTokens(promptTokens: JsonField<Long>) = apply { this.promptTokens = promptTokens }
 
         fun completionTokens(completionTokens: Long) =
-            completionTokens(
-                JsonField.of(completionTokens)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+            completionTokens(JsonField.of(completionTokens))
 
-        @JsonProperty("completion_tokens") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("completion_tokens")
         @ExcludeMissing
-        fun completionTokens(completionTokens: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.completionTokens = completionTokens
-            }
+        fun completionTokens(completionTokens: JsonField<Long>) = apply {
+            this.completionTokens = completionTokens
+        }
 
-        fun medianTokens(medianTokens: Long) =
-            medianTokens(JsonField.of(medianTokens)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun medianTokens(medianTokens: Long) = medianTokens(JsonField.of(medianTokens))
 
-        @JsonProperty("median_tokens") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("median_tokens")
         @ExcludeMissing
-        fun medianTokens(medianTokens: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.medianTokens = medianTokens
-            }
+        fun medianTokens(medianTokens: JsonField<Long>) = apply { this.medianTokens = medianTokens }
 
         fun lastRunStartTime(lastRunStartTime: OffsetDateTime) =
-            lastRunStartTime(
-                JsonField.of(lastRunStartTime)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+            lastRunStartTime(JsonField.of(lastRunStartTime))
 
-        @JsonProperty("last_run_start_time") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("last_run_start_time")
         @ExcludeMissing
-        fun lastRunStartTime(lastRunStartTime: JsonField<OffsetDateTime>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.lastRunStartTime = lastRunStartTime
-            }
+        fun lastRunStartTime(lastRunStartTime: JsonField<OffsetDateTime>) = apply {
+            this.lastRunStartTime = lastRunStartTime
+        }
 
-        @JsonProperty("feedback_stats") // templates/JavaSDK/entities/objects.ts:264:20 //
-        // templates/JavaSDK/entities/objects.ts:252:20
+        @JsonProperty("feedback_stats")
         @ExcludeMissing
-        fun feedbackStats(feedbackStats: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.feedbackStats = feedbackStats
-            }
+        fun feedbackStats(feedbackStats: JsonValue) = apply { this.feedbackStats = feedbackStats }
 
-        fun runFacets(runFacets: List<JsonValue>) =
-            runFacets(JsonField.of(runFacets)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun runFacets(runFacets: List<JsonValue>) = runFacets(JsonField.of(runFacets))
 
-        @JsonProperty("run_facets") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("run_facets")
         @ExcludeMissing
-        fun runFacets(runFacets: JsonField<List<JsonValue>>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.runFacets = runFacets
-            }
+        fun runFacets(runFacets: JsonField<List<JsonValue>>) = apply { this.runFacets = runFacets }
 
-        fun errorRate(errorRate: Double) =
-            errorRate(JsonField.of(errorRate)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun errorRate(errorRate: Double) = errorRate(JsonField.of(errorRate))
 
-        @JsonProperty("error_rate") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("error_rate")
         @ExcludeMissing
-        fun errorRate(errorRate: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.errorRate = errorRate
-            }
+        fun errorRate(errorRate: JsonField<Double>) = apply { this.errorRate = errorRate }
 
-        fun streamingRate(streamingRate: Double) =
-            streamingRate(
-                JsonField.of(streamingRate)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+        fun streamingRate(streamingRate: Double) = streamingRate(JsonField.of(streamingRate))
 
-        @JsonProperty("streaming_rate") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("streaming_rate")
         @ExcludeMissing
-        fun streamingRate(streamingRate: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.streamingRate = streamingRate
-            }
+        fun streamingRate(streamingRate: JsonField<Double>) = apply {
+            this.streamingRate = streamingRate
+        }
 
-        fun totalCost(totalCost: Double) =
-            totalCost(JsonField.of(totalCost)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun totalCost(totalCost: Double) = totalCost(JsonField.of(totalCost))
 
-        @JsonProperty("total_cost") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("total_cost")
         @ExcludeMissing
-        fun totalCost(totalCost: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.totalCost = totalCost
-            }
+        fun totalCost(totalCost: JsonField<Double>) = apply { this.totalCost = totalCost }
 
-        fun promptCost(promptCost: Double) =
-            promptCost(JsonField.of(promptCost)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun promptCost(promptCost: Double) = promptCost(JsonField.of(promptCost))
 
-        @JsonProperty("prompt_cost") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("prompt_cost")
         @ExcludeMissing
-        fun promptCost(promptCost: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.promptCost = promptCost
-            }
+        fun promptCost(promptCost: JsonField<Double>) = apply { this.promptCost = promptCost }
 
-        fun completionCost(completionCost: Double) =
-            completionCost(
-                JsonField.of(completionCost)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+        fun completionCost(completionCost: Double) = completionCost(JsonField.of(completionCost))
 
-        @JsonProperty("completion_cost") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("completion_cost")
         @ExcludeMissing
-        fun completionCost(completionCost: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.completionCost = completionCost
-            }
+        fun completionCost(completionCost: JsonField<Double>) = apply {
+            this.completionCost = completionCost
+        }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.clear()
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
-        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-        fun putAdditionalProperty(key: String, value: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:304:30
-                this.additionalProperties.put(key, value)
-            }
+        @JsonAnySetter
+        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+            this.additionalProperties.put(key, value)
+        }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:316:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
         fun build(): RunStats =
-            RunStats( // templates/JavaSDK/entities/objects.ts:326:30
-                runCount, // templates/JavaSDK/entities/objects.ts:326:30
+            RunStats(
+                runCount,
                 latencyP50,
                 latencyP99,
                 firstTokenP50,

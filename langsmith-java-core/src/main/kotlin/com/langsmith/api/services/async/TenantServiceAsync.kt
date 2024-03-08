@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 @file:Suppress("OVERLOADS_INTERFACE") // See https://youtrack.jetbrains.com/issue/KT-36102
 
@@ -20,11 +20,9 @@ import com.langsmith.api.services.async.tenants.PendingServiceAsync
 import com.langsmith.api.services.async.tenants.UsageLimitServiceAsync
 import java.util.concurrent.CompletableFuture
 
-interface TenantServiceAsync { // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15
+interface TenantServiceAsync {
 
-    fun pending(): PendingServiceAsync // templates/JavaSDK/services.ts:55:15
+    fun pending(): PendingServiceAsync
 
     fun current(): CurrentServiceAsync
 
@@ -33,35 +31,35 @@ interface TenantServiceAsync { // templates/JavaSDK/services.ts:55:15 //
     fun usageLimits(): UsageLimitServiceAsync
 
     /** Create a new tenant. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun create(
         params: TenantCreateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): CompletableFuture<Tenant>
 
     /** Get all tenants visible to this auth */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun list(
         params: TenantListParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): CompletableFuture<List<TenantForUser>>
 
     /** Delete Pending Tenant Invite */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun pendingDelete(
         params: TenantPendingDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): CompletableFuture<TenantPendingDeleteResponse>
 
     /** Get all tenants visible to this auth */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun pendingList(
         params: TenantPendingListParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): CompletableFuture<List<Tenant>>
 
     /** Get Current Tenant Stats */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun statsList(
         params: TenantStatsListParams,
         requestOptions: RequestOptions = RequestOptions.none()

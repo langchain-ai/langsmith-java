@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -7,16 +7,11 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class AnnotationQueueRunUpdateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class AnnotationQueueRunUpdateParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createAnnotationQueueRunUpdateParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        AnnotationQueueRunUpdateParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createAnnotationQueueRunUpdateParams() {
+        AnnotationQueueRunUpdateParams.builder()
             .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -24,15 +19,10 @@ class AnnotationQueueRunUpdateParamsTest { // templates/JavaSDK/entities/params.
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:1011:17
-    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBody() {
         val params =
-            AnnotationQueueRunUpdateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            AnnotationQueueRunUpdateParams.builder()
                 .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -45,14 +35,10 @@ class AnnotationQueueRunUpdateParamsTest { // templates/JavaSDK/entities/params.
             .isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBodyWithoutOptionalFields() {
         val params =
-            AnnotationQueueRunUpdateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            AnnotationQueueRunUpdateParams.builder()
                 .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
@@ -60,14 +46,10 @@ class AnnotationQueueRunUpdateParamsTest { // templates/JavaSDK/entities/params.
         assertThat(body).isNotNull
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getPathParam() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getPathParam() {
         val params =
-            AnnotationQueueRunUpdateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1072:10 //
-                // templates/JavaSDK/entities/params.ts:1072:10 //
-                // templates/JavaSDK/entities/params.ts:1071:16 //
-                // templates/JavaSDK/entities/params.ts:1071:16
+            AnnotationQueueRunUpdateParams.builder()
                 .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()

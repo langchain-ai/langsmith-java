@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 @file:Suppress("OVERLOADS_INTERFACE") // See https://youtrack.jetbrains.com/issue/KT-36102
 
@@ -15,42 +15,40 @@ import com.langsmith.api.models.TracerSession
 import com.langsmith.api.models.TracerSessionWithoutVirtualFields
 import com.langsmith.api.services.blocking.sessions.MetadataService
 
-interface SessionService { // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15
+interface SessionService {
 
-    fun metadata(): MetadataService // templates/JavaSDK/services.ts:55:15
+    fun metadata(): MetadataService
 
     /** Create a new session. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun create(
         params: SessionCreateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): TracerSessionWithoutVirtualFields
 
     /** Get a specific session. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun retrieve(
         params: SessionRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): TracerSession
 
     /** Create a new session. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun update(
         params: SessionUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): TracerSessionWithoutVirtualFields
 
     /** Get all sessions. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun list(
         params: SessionListParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): List<TracerSession>
 
     /** Delete a specific session. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun delete(
         params: SessionDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none()

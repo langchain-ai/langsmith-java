@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.services.async
 
@@ -30,12 +30,9 @@ import java.util.concurrent.CompletableFuture
 class AnnotationQueueServiceAsyncImpl
 constructor(
     private val clientOptions: ClientOptions,
-) : AnnotationQueueServiceAsync { // templates/JavaSDK/services.ts:76:15 //
-    // templates/JavaSDK/services.ts:76:15 //
-    // templates/JavaSDK/services.ts:76:15
+) : AnnotationQueueServiceAsync {
 
-    private val errorHandler: Handler<LangSmithError> =
-        errorHandler(clientOptions.jsonMapper) // templates/JavaSDK/services.ts:76:15
+    private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
 
     private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
 
@@ -45,29 +42,17 @@ constructor(
 
     override fun queues(): QueueServiceAsync = queues
 
-    private val createHandler:
-        Handler<
-            AnnotationQueueSchema
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val createHandler: Handler<AnnotationQueueSchema> =
         jsonHandler<AnnotationQueueSchema>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Create Annotation Queue */
     override fun create(
         params: AnnotationQueueCreateParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<AnnotationQueueSchema> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<AnnotationQueueSchema> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.POST
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.POST)
                 .addPathSegments("annotation-queues")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
@@ -75,31 +60,18 @@ constructor(
                 .body(json(clientOptions.jsonMapper, params.getBody()))
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
+            ->
             response
-                .use { // templates/JavaSDK/services.ts:166:8 //
-                    // templates/JavaSDK/services.ts:233:30 //
-                    // templates/JavaSDK/services.ts:233:30 //
-                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                    createHandler.handle(it)
-                }
-                .apply { // templates/JavaSDK/services.ts:176:10
-                    if (
-                        requestOptions.responseValidation ?: clientOptions.responseValidation
-                    ) { // templates/JavaSDK/services.ts:179:14 //
-                        // templates/JavaSDK/services.ts:176:10 //
-                        // templates/JavaSDK/services.ts:176:10
+                .use { createHandler.handle(it) }
+                .apply {
+                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
                         validate()
                     }
                 }
         }
     }
 
-    private val updateHandler:
-        Handler<
-            AnnotationQueueUpdateResponse
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val updateHandler: Handler<AnnotationQueueUpdateResponse> =
         jsonHandler<AnnotationQueueUpdateResponse>(clientOptions.jsonMapper)
             .withErrorHandler(errorHandler)
 
@@ -107,18 +79,10 @@ constructor(
     override fun update(
         params: AnnotationQueueUpdateParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<AnnotationQueueUpdateResponse> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<AnnotationQueueUpdateResponse> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.PATCH
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.PATCH)
                 .addPathSegments("annotation-queues", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
@@ -126,21 +90,12 @@ constructor(
                 .body(json(clientOptions.jsonMapper, params.getBody()))
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
-            response.use { // templates/JavaSDK/services.ts:166:8 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                updateHandler.handle(it)
-            }
+            ->
+            response.use { updateHandler.handle(it) }
         }
     }
 
-    private val listHandler:
-        Handler<
-            List<AnnotationQueueSchema>
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val listHandler: Handler<List<AnnotationQueueSchema>> =
         jsonHandler<List<AnnotationQueueSchema>>(clientOptions.jsonMapper)
             .withErrorHandler(errorHandler)
 
@@ -148,49 +103,28 @@ constructor(
     override fun list(
         params: AnnotationQueueListParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<List<AnnotationQueueSchema>> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<List<AnnotationQueueSchema>> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.GET
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.GET)
                 .addPathSegments("annotation-queues")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
+            ->
             response
-                .use { // templates/JavaSDK/services.ts:166:8 //
-                    // templates/JavaSDK/services.ts:233:30 //
-                    // templates/JavaSDK/services.ts:233:30 //
-                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                    listHandler.handle(it)
-                }
-                .apply { // templates/JavaSDK/services.ts:176:10
-                    if (
-                        requestOptions.responseValidation ?: clientOptions.responseValidation
-                    ) { // templates/JavaSDK/services.ts:179:14 //
-                        // templates/JavaSDK/services.ts:176:10 //
-                        // templates/JavaSDK/services.ts:176:10
+                .use { listHandler.handle(it) }
+                .apply {
+                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
                         forEach { it.validate() }
                     }
                 }
         }
     }
 
-    private val deleteHandler:
-        Handler<
-            AnnotationQueueDeleteResponse
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val deleteHandler: Handler<AnnotationQueueDeleteResponse> =
         jsonHandler<AnnotationQueueDeleteResponse>(clientOptions.jsonMapper)
             .withErrorHandler(errorHandler)
 
@@ -198,46 +132,23 @@ constructor(
     override fun delete(
         params: AnnotationQueueDeleteParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<AnnotationQueueDeleteResponse> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<AnnotationQueueDeleteResponse> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.DELETE
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.DELETE)
                 .addPathSegments("annotation-queues", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
-                .apply { // templates/JavaSDK/services.ts:118:18
-                    params.getBody().ifPresent { // templates/JavaSDK/services.ts:121:41 //
-                        // templates/JavaSDK/services.ts:118:18 //
-                        // templates/JavaSDK/services.ts:118:18
-                        body(json(clientOptions.jsonMapper, it))
-                    }
-                }
+                .apply { params.getBody().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
-            response.use { // templates/JavaSDK/services.ts:166:8 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                deleteHandler.handle(it)
-            }
+            ->
+            response.use { deleteHandler.handle(it) }
         }
     }
 
-    private val sizeRetrieveHandler:
-        Handler<
-            AnnotationQueueSizeSchema
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val sizeRetrieveHandler: Handler<AnnotationQueueSizeSchema> =
         jsonHandler<AnnotationQueueSizeSchema>(clientOptions.jsonMapper)
             .withErrorHandler(errorHandler)
 
@@ -245,38 +156,21 @@ constructor(
     override fun sizeRetrieve(
         params: AnnotationQueueSizeRetrieveParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<AnnotationQueueSizeSchema> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<AnnotationQueueSizeSchema> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.GET
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.GET)
                 .addPathSegments("annotation-queues", params.getPathParam(0), "size")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
+            ->
             response
-                .use { // templates/JavaSDK/services.ts:166:8 //
-                    // templates/JavaSDK/services.ts:233:30 //
-                    // templates/JavaSDK/services.ts:233:30 //
-                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                    sizeRetrieveHandler.handle(it)
-                }
-                .apply { // templates/JavaSDK/services.ts:176:10
-                    if (
-                        requestOptions.responseValidation ?: clientOptions.responseValidation
-                    ) { // templates/JavaSDK/services.ts:179:14 //
-                        // templates/JavaSDK/services.ts:176:10 //
-                        // templates/JavaSDK/services.ts:176:10
+                .use { sizeRetrieveHandler.handle(it) }
+                .apply {
+                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
                         validate()
                     }
                 }

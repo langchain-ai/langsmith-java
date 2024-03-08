@@ -1,10 +1,8 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
-// //
-// templates/JavaSDK/components/file.ts:28:17
-import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -19,22 +17,17 @@ import java.util.Objects
 import java.util.Optional
 
 /** The LangSmith server info. */
-// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13
 @JsonDeserialize(builder = InfoGetResponse.Builder::class)
 @NoAutoDetect
 class InfoGetResponse
-private constructor( // templates/JavaSDK/entities/objects.ts:76:13
-    private val version: JsonField<String>, // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+private constructor(
+    private val version: JsonField<String>,
     private val licenseExpirationTime: JsonField<OffsetDateTime>,
     private val batchIngestConfig: JsonField<BatchIngestConfig>,
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+    private var validated: Boolean = false
 
     private var hashCode: Int = 0
 
@@ -47,30 +40,24 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     fun batchIngestConfig(): Optional<BatchIngestConfig> =
         Optional.ofNullable(batchIngestConfig.getNullable("batch_ingest_config"))
 
-    @JsonProperty("version") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _version() = version
+    @JsonProperty("version") @ExcludeMissing fun _version() = version
 
-    @JsonProperty("license_expiration_time") // templates/JavaSDK/entities/objects.ts:166:16
+    @JsonProperty("license_expiration_time")
     @ExcludeMissing
     fun _licenseExpirationTime() = licenseExpirationTime
 
     /** Batch ingest config. */
-    @JsonProperty("batch_ingest_config") // templates/JavaSDK/entities/objects.ts:166:16
+    @JsonProperty("batch_ingest_config")
     @ExcludeMissing
     fun _batchIngestConfig() = batchIngestConfig
 
-    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-    // templates/JavaSDK/entities/objects.ts:180:12
+    @JsonAnyGetter
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): InfoGetResponse = apply { // templates/JavaSDK/entities/objects.ts:198:28
-        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:198:28 //
-            // templates/JavaSDK/entities/objects.ts:198:28
-            version() // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:201:20
+    fun validate(): InfoGetResponse = apply {
+        if (!validated) {
+            version()
             licenseExpirationTime()
             batchIngestConfig().map { it.validate() }
             validated = true
@@ -79,27 +66,23 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is InfoGetResponse && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is InfoGetResponse &&
             this.version == other.version &&
             this.licenseExpirationTime == other.licenseExpirationTime &&
             this.batchIngestConfig == other.batchIngestConfig &&
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16
+    override fun hashCode(): Int {
+        if (hashCode == 0) {
             hashCode =
-                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                    // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:175:16
-                    version, // templates/JavaSDK/entities/fields.ts:163:19
+                Objects.hash(
+                    version,
                     licenseExpirationTime,
                     batchIngestConfig,
                     additionalProperties,
@@ -111,92 +94,69 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     override fun toString() =
         "InfoGetResponse{version=$version, licenseExpirationTime=$licenseExpirationTime, batchIngestConfig=$batchIngestConfig, additionalProperties=$additionalProperties}"
 
-    companion object { // templates/JavaSDK/entities/objects.ts:217:10
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-        // templates/JavaSDK/entities/objects.ts:217:10
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+    class Builder {
 
-        private var version: JsonField<String> =
-            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+        private var version: JsonField<String> = JsonMissing.of()
         private var licenseExpirationTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var batchIngestConfig: JsonField<BatchIngestConfig> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-        internal fun from(infoGetResponse: InfoGetResponse) =
-            apply { // templates/JavaSDK/entities/objects.ts:240:30
-                this.version =
-                    infoGetResponse.version // templates/JavaSDK/entities/objects.ts:240:30 //
-                // templates/JavaSDK/entities/objects.ts:240:30
-                this.licenseExpirationTime = infoGetResponse.licenseExpirationTime
-                this.batchIngestConfig = infoGetResponse.batchIngestConfig
-                additionalProperties(infoGetResponse.additionalProperties)
-            }
+        @JvmSynthetic
+        internal fun from(infoGetResponse: InfoGetResponse) = apply {
+            this.version = infoGetResponse.version
+            this.licenseExpirationTime = infoGetResponse.licenseExpirationTime
+            this.batchIngestConfig = infoGetResponse.batchIngestConfig
+            additionalProperties(infoGetResponse.additionalProperties)
+        }
 
-        fun version(version: String) =
-            version(JsonField.of(version)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun version(version: String) = version(JsonField.of(version))
 
-        @JsonProperty("version") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("version")
         @ExcludeMissing
-        fun version(version: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.version = version
-            }
+        fun version(version: JsonField<String>) = apply { this.version = version }
 
         fun licenseExpirationTime(licenseExpirationTime: OffsetDateTime) =
-            licenseExpirationTime(
-                JsonField.of(licenseExpirationTime)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+            licenseExpirationTime(JsonField.of(licenseExpirationTime))
 
-        @JsonProperty("license_expiration_time") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("license_expiration_time")
         @ExcludeMissing
-        fun licenseExpirationTime(licenseExpirationTime: JsonField<OffsetDateTime>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.licenseExpirationTime = licenseExpirationTime
-            }
+        fun licenseExpirationTime(licenseExpirationTime: JsonField<OffsetDateTime>) = apply {
+            this.licenseExpirationTime = licenseExpirationTime
+        }
 
         /** Batch ingest config. */
-        // templates/JavaSDK/entities/objects.ts:252:20
         fun batchIngestConfig(batchIngestConfig: BatchIngestConfig) =
             batchIngestConfig(JsonField.of(batchIngestConfig))
 
         /** Batch ingest config. */
-        @JsonProperty("batch_ingest_config") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("batch_ingest_config")
         @ExcludeMissing
-        fun batchIngestConfig(batchIngestConfig: JsonField<BatchIngestConfig>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.batchIngestConfig = batchIngestConfig
-            }
+        fun batchIngestConfig(batchIngestConfig: JsonField<BatchIngestConfig>) = apply {
+            this.batchIngestConfig = batchIngestConfig
+        }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.clear()
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
-        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-        fun putAdditionalProperty(key: String, value: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:304:30
-                this.additionalProperties.put(key, value)
-            }
+        @JsonAnySetter
+        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+            this.additionalProperties.put(key, value)
+        }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:316:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
         fun build(): InfoGetResponse =
-            InfoGetResponse( // templates/JavaSDK/entities/objects.ts:326:30
-                version, // templates/JavaSDK/entities/objects.ts:326:30
+            InfoGetResponse(
+                version,
                 licenseExpirationTime,
                 batchIngestConfig,
                 additionalProperties.toUnmodifiable(),
@@ -204,24 +164,18 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     }
 
     /** Batch ingest config. */
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13
     @JsonDeserialize(builder = BatchIngestConfig.Builder::class)
     @NoAutoDetect
     class BatchIngestConfig
-    private constructor( // templates/JavaSDK/entities/objects.ts:76:13
-        private val scaleUpQsizeTrigger:
-            JsonField<Long>, // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+    private constructor(
+        private val scaleUpQsizeTrigger: JsonField<Long>,
         private val scaleUpNthreadsLimit: JsonField<Long>,
         private val scaleDownNemptyTrigger: JsonField<Long>,
         private val sizeLimit: JsonField<Long>,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+        private var validated: Boolean = false
 
         private var hashCode: Int = 0
 
@@ -236,33 +190,27 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
         fun sizeLimit(): Optional<Long> = Optional.ofNullable(sizeLimit.getNullable("size_limit"))
 
-        @JsonProperty("scale_up_qsize_trigger") // templates/JavaSDK/entities/objects.ts:166:16
+        @JsonProperty("scale_up_qsize_trigger")
         @ExcludeMissing
         fun _scaleUpQsizeTrigger() = scaleUpQsizeTrigger
 
-        @JsonProperty("scale_up_nthreads_limit") // templates/JavaSDK/entities/objects.ts:166:16
+        @JsonProperty("scale_up_nthreads_limit")
         @ExcludeMissing
         fun _scaleUpNthreadsLimit() = scaleUpNthreadsLimit
 
-        @JsonProperty("scale_down_nempty_trigger") // templates/JavaSDK/entities/objects.ts:166:16
+        @JsonProperty("scale_down_nempty_trigger")
         @ExcludeMissing
         fun _scaleDownNemptyTrigger() = scaleDownNemptyTrigger
 
-        @JsonProperty("size_limit") // templates/JavaSDK/entities/objects.ts:166:16
-        @ExcludeMissing
-        fun _sizeLimit() = sizeLimit
+        @JsonProperty("size_limit") @ExcludeMissing fun _sizeLimit() = sizeLimit
 
-        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-        // templates/JavaSDK/entities/objects.ts:180:12
+        @JsonAnyGetter
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun validate(): BatchIngestConfig = apply { // templates/JavaSDK/entities/objects.ts:198:28
-            if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-                // templates/JavaSDK/entities/objects.ts:198:28 //
-                // templates/JavaSDK/entities/objects.ts:198:28
-                scaleUpQsizeTrigger() // templates/JavaSDK/entities/objects.ts:201:20 //
-                // templates/JavaSDK/entities/objects.ts:201:20
+        fun validate(): BatchIngestConfig = apply {
+            if (!validated) {
+                scaleUpQsizeTrigger()
                 scaleUpNthreadsLimit()
                 scaleDownNemptyTrigger()
                 sizeLimit()
@@ -272,12 +220,12 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is BatchIngestConfig && // templates/JavaSDK/entities/fields.ts:143:33
+            return other is BatchIngestConfig &&
                 this.scaleUpQsizeTrigger == other.scaleUpQsizeTrigger &&
                 this.scaleUpNthreadsLimit == other.scaleUpNthreadsLimit &&
                 this.scaleDownNemptyTrigger == other.scaleDownNemptyTrigger &&
@@ -285,15 +233,11 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16
+        override fun hashCode(): Int {
+            if (hashCode == 0) {
                 hashCode =
-                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                        // templates/JavaSDK/entities/fields.ts:175:16 //
-                        // templates/JavaSDK/entities/fields.ts:175:16
-                        scaleUpQsizeTrigger, // templates/JavaSDK/entities/fields.ts:163:19
+                    Objects.hash(
+                        scaleUpQsizeTrigger,
                         scaleUpNthreadsLimit,
                         scaleDownNemptyTrigger,
                         sizeLimit,
@@ -306,109 +250,78 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
         override fun toString() =
             "BatchIngestConfig{scaleUpQsizeTrigger=$scaleUpQsizeTrigger, scaleUpNthreadsLimit=$scaleUpNthreadsLimit, scaleDownNemptyTrigger=$scaleDownNemptyTrigger, sizeLimit=$sizeLimit, additionalProperties=$additionalProperties}"
 
-        companion object { // templates/JavaSDK/entities/objects.ts:217:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-            // templates/JavaSDK/entities/objects.ts:217:10
-            fun builder() = Builder()
+            @JvmStatic fun builder() = Builder()
         }
 
-        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+        class Builder {
 
-            private var scaleUpQsizeTrigger: JsonField<Long> =
-                JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+            private var scaleUpQsizeTrigger: JsonField<Long> = JsonMissing.of()
             private var scaleUpNthreadsLimit: JsonField<Long> = JsonMissing.of()
             private var scaleDownNemptyTrigger: JsonField<Long> = JsonMissing.of()
             private var sizeLimit: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-            internal fun from(batchIngestConfig: BatchIngestConfig) =
-                apply { // templates/JavaSDK/entities/objects.ts:240:30
-                    this.scaleUpQsizeTrigger =
-                        batchIngestConfig
-                            .scaleUpQsizeTrigger // templates/JavaSDK/entities/objects.ts:240:30 //
-                    // templates/JavaSDK/entities/objects.ts:240:30
-                    this.scaleUpNthreadsLimit = batchIngestConfig.scaleUpNthreadsLimit
-                    this.scaleDownNemptyTrigger = batchIngestConfig.scaleDownNemptyTrigger
-                    this.sizeLimit = batchIngestConfig.sizeLimit
-                    additionalProperties(batchIngestConfig.additionalProperties)
-                }
+            @JvmSynthetic
+            internal fun from(batchIngestConfig: BatchIngestConfig) = apply {
+                this.scaleUpQsizeTrigger = batchIngestConfig.scaleUpQsizeTrigger
+                this.scaleUpNthreadsLimit = batchIngestConfig.scaleUpNthreadsLimit
+                this.scaleDownNemptyTrigger = batchIngestConfig.scaleDownNemptyTrigger
+                this.sizeLimit = batchIngestConfig.sizeLimit
+                additionalProperties(batchIngestConfig.additionalProperties)
+            }
 
             fun scaleUpQsizeTrigger(scaleUpQsizeTrigger: Long) =
-                scaleUpQsizeTrigger(
-                    JsonField.of(scaleUpQsizeTrigger)
-                ) // templates/JavaSDK/entities/objects.ts:252:20
+                scaleUpQsizeTrigger(JsonField.of(scaleUpQsizeTrigger))
 
-            @JsonProperty("scale_up_qsize_trigger") // templates/JavaSDK/entities/objects.ts:264:20
+            @JsonProperty("scale_up_qsize_trigger")
             @ExcludeMissing
-            fun scaleUpQsizeTrigger(scaleUpQsizeTrigger: JsonField<Long>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.scaleUpQsizeTrigger = scaleUpQsizeTrigger
-                }
+            fun scaleUpQsizeTrigger(scaleUpQsizeTrigger: JsonField<Long>) = apply {
+                this.scaleUpQsizeTrigger = scaleUpQsizeTrigger
+            }
 
             fun scaleUpNthreadsLimit(scaleUpNthreadsLimit: Long) =
-                scaleUpNthreadsLimit(
-                    JsonField.of(scaleUpNthreadsLimit)
-                ) // templates/JavaSDK/entities/objects.ts:252:20
+                scaleUpNthreadsLimit(JsonField.of(scaleUpNthreadsLimit))
 
-            @JsonProperty("scale_up_nthreads_limit") // templates/JavaSDK/entities/objects.ts:264:20
+            @JsonProperty("scale_up_nthreads_limit")
             @ExcludeMissing
-            fun scaleUpNthreadsLimit(scaleUpNthreadsLimit: JsonField<Long>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.scaleUpNthreadsLimit = scaleUpNthreadsLimit
-                }
+            fun scaleUpNthreadsLimit(scaleUpNthreadsLimit: JsonField<Long>) = apply {
+                this.scaleUpNthreadsLimit = scaleUpNthreadsLimit
+            }
 
             fun scaleDownNemptyTrigger(scaleDownNemptyTrigger: Long) =
-                scaleDownNemptyTrigger(
-                    JsonField.of(scaleDownNemptyTrigger)
-                ) // templates/JavaSDK/entities/objects.ts:252:20
+                scaleDownNemptyTrigger(JsonField.of(scaleDownNemptyTrigger))
 
-            @JsonProperty(
-                "scale_down_nempty_trigger"
-            ) // templates/JavaSDK/entities/objects.ts:264:20
+            @JsonProperty("scale_down_nempty_trigger")
             @ExcludeMissing
-            fun scaleDownNemptyTrigger(scaleDownNemptyTrigger: JsonField<Long>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.scaleDownNemptyTrigger = scaleDownNemptyTrigger
-                }
+            fun scaleDownNemptyTrigger(scaleDownNemptyTrigger: JsonField<Long>) = apply {
+                this.scaleDownNemptyTrigger = scaleDownNemptyTrigger
+            }
 
-            fun sizeLimit(sizeLimit: Long) =
-                sizeLimit(JsonField.of(sizeLimit)) // templates/JavaSDK/entities/objects.ts:252:20
+            fun sizeLimit(sizeLimit: Long) = sizeLimit(JsonField.of(sizeLimit))
 
-            @JsonProperty("size_limit") // templates/JavaSDK/entities/objects.ts:264:20
+            @JsonProperty("size_limit")
             @ExcludeMissing
-            fun sizeLimit(sizeLimit: JsonField<Long>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.sizeLimit = sizeLimit
-                }
+            fun sizeLimit(sizeLimit: JsonField<Long>) = apply { this.sizeLimit = sizeLimit }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties
-                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                    // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
-            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-            fun putAdditionalProperty(key: String, value: JsonValue) =
-                apply { // templates/JavaSDK/entities/objects.ts:304:30
-                    this.additionalProperties.put(key, value)
-                }
+            @JsonAnySetter
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                this.additionalProperties.put(key, value)
+            }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:316:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
             fun build(): BatchIngestConfig =
-                BatchIngestConfig( // templates/JavaSDK/entities/objects.ts:326:30
-                    scaleUpQsizeTrigger, // templates/JavaSDK/entities/objects.ts:326:30
+                BatchIngestConfig(
+                    scaleUpQsizeTrigger,
                     scaleUpNthreadsLimit,
                     scaleDownNemptyTrigger,
                     sizeLimit,

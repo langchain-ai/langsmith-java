@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -13,12 +13,8 @@ import java.util.Objects
 import java.util.Optional
 
 class SessionListParams
-constructor( // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
-    private val id: List<String>?, // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
+constructor(
+    private val id: List<String>?,
     private val facets: Boolean?,
     private val limit: Long?,
     private val name: String?,
@@ -33,9 +29,7 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
     private val additionalHeaders: Map<String, List<String>>,
 ) {
 
-    fun id(): Optional<List<String>> =
-        Optional.ofNullable(id) // templates/JavaSDK/entities/params.ts:145:14 //
-    // templates/JavaSDK/entities/params.ts:131:13
+    fun id(): Optional<List<String>> = Optional.ofNullable(id)
 
     fun facets(): Optional<Boolean> = Optional.ofNullable(facets)
 
@@ -57,62 +51,38 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun sortByFeedbackKey(): Optional<String> = Optional.ofNullable(sortByFeedbackKey)
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
-    internal fun getQueryParams():
-        Map<String, List<String>> { // templates/JavaSDK/entities/params.ts:201:14
-        val params =
-            mutableMapOf<String, List<String>>() // templates/JavaSDK/entities/params.ts:210:30 //
-        // templates/JavaSDK/entities/params.ts:210:30
-        this.id?.let { // templates/JavaSDK/entities/objects.ts:392:21
-            params.put("id", listOf(it.joinToString(separator = ",")))
-        }
-        this.facets?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("facets", listOf(it.toString()))
-        }
-        this.limit?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("limit", listOf(it.toString()))
-        }
-        this.name?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("name", listOf(it.toString()))
-        }
-        this.nameContains?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("name_contains", listOf(it.toString()))
-        }
-        this.offset?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("offset", listOf(it.toString()))
-        }
-        this.referenceDataset?.let { // templates/JavaSDK/entities/objects.ts:392:21
+    @JvmSynthetic
+    internal fun getQueryParams(): Map<String, List<String>> {
+        val params = mutableMapOf<String, List<String>>()
+        this.id?.let { params.put("id", listOf(it.joinToString(separator = ","))) }
+        this.facets?.let { params.put("facets", listOf(it.toString())) }
+        this.limit?.let { params.put("limit", listOf(it.toString())) }
+        this.name?.let { params.put("name", listOf(it.toString())) }
+        this.nameContains?.let { params.put("name_contains", listOf(it.toString())) }
+        this.offset?.let { params.put("offset", listOf(it.toString())) }
+        this.referenceDataset?.let {
             params.put("reference_dataset", listOf(it.joinToString(separator = ",")))
         }
-        this.referenceFree?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("reference_free", listOf(it.toString()))
-        }
-        this.sortBy?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("sort_by", listOf(it.toString()))
-        }
-        this.sortByDesc?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("sort_by_desc", listOf(it.toString()))
-        }
-        this.sortByFeedbackKey?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("sort_by_feedback_key", listOf(it.toString()))
-        }
+        this.referenceFree?.let { params.put("reference_free", listOf(it.toString())) }
+        this.sortBy?.let { params.put("sort_by", listOf(it.toString())) }
+        this.sortByDesc?.let { params.put("sort_by_desc", listOf(it.toString())) }
+        this.sortByFeedbackKey?.let { params.put("sort_by_feedback_key", listOf(it.toString())) }
         params.putAll(additionalQueryParams)
         return params.toUnmodifiable()
     }
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
-    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
     fun _additionalQueryParams(): Map<String, List<String>> = additionalQueryParams
 
     fun _additionalHeaders(): Map<String, List<String>> = additionalHeaders
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is SessionListParams && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is SessionListParams &&
             this.id == other.id &&
             this.facets == other.facets &&
             this.limit == other.limit &&
@@ -128,10 +98,9 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             this.additionalHeaders == other.additionalHeaders
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-            // templates/JavaSDK/entities/fields.ts:181:14
-            id, // templates/JavaSDK/entities/fields.ts:163:19
+    override fun hashCode(): Int {
+        return Objects.hash(
+            id,
             facets,
             limit,
             name,
@@ -152,21 +121,15 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun toBuilder() = Builder().from(this)
 
-    companion object { // templates/JavaSDK/entities/builders.ts:8:8
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
-        // templates/JavaSDK/entities/builders.ts:8:8
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
-    // templates/JavaSDK/entities/params.ts:235:14
-    class Builder { // templates/JavaSDK/entities/params.ts:235:14
+    @NoAutoDetect
+    class Builder {
 
-        private var id: MutableList<String> =
-            mutableListOf() // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:235:14
+        private var id: MutableList<String> = mutableListOf()
         private var facets: Boolean? = null
         private var limit: Long? = null
         private var name: String? = null
@@ -180,145 +143,103 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
-        internal fun from(sessionListParams: SessionListParams) =
-            apply { // templates/JavaSDK/entities/params.ts:257:34
-                this.id(
-                    sessionListParams.id ?: listOf()
-                ) // templates/JavaSDK/entities/params.ts:257:34 //
-                // templates/JavaSDK/entities/params.ts:257:34
-                this.facets = sessionListParams.facets
-                this.limit = sessionListParams.limit
-                this.name = sessionListParams.name
-                this.nameContains = sessionListParams.nameContains
-                this.offset = sessionListParams.offset
-                this.referenceDataset(sessionListParams.referenceDataset ?: listOf())
-                this.referenceFree = sessionListParams.referenceFree
-                this.sortBy = sessionListParams.sortBy
-                this.sortByDesc = sessionListParams.sortByDesc
-                this.sortByFeedbackKey = sessionListParams.sortByFeedbackKey
-                additionalQueryParams(sessionListParams.additionalQueryParams)
-                additionalHeaders(sessionListParams.additionalHeaders)
-            }
+        @JvmSynthetic
+        internal fun from(sessionListParams: SessionListParams) = apply {
+            this.id(sessionListParams.id ?: listOf())
+            this.facets = sessionListParams.facets
+            this.limit = sessionListParams.limit
+            this.name = sessionListParams.name
+            this.nameContains = sessionListParams.nameContains
+            this.offset = sessionListParams.offset
+            this.referenceDataset(sessionListParams.referenceDataset ?: listOf())
+            this.referenceFree = sessionListParams.referenceFree
+            this.sortBy = sessionListParams.sortBy
+            this.sortByDesc = sessionListParams.sortByDesc
+            this.sortByFeedbackKey = sessionListParams.sortByFeedbackKey
+            additionalQueryParams(sessionListParams.additionalQueryParams)
+            additionalHeaders(sessionListParams.additionalHeaders)
+        }
 
-        fun id(id: List<String>) = apply { // templates/JavaSDK/entities/params.ts:609:26
-            this.id.clear() // templates/JavaSDK/entities/params.ts:609:26 //
-            // templates/JavaSDK/entities/params.ts:609:26
+        fun id(id: List<String>) = apply {
+            this.id.clear()
             this.id.addAll(id)
         }
 
-        fun addId(id: String) = apply { // templates/JavaSDK/entities/params.ts:620:26
-            this.id.add(id)
+        fun addId(id: String) = apply { this.id.add(id) }
+
+        fun facets(facets: Boolean) = apply { this.facets = facets }
+
+        fun limit(limit: Long) = apply { this.limit = limit }
+
+        fun name(name: String) = apply { this.name = name }
+
+        fun nameContains(nameContains: String) = apply { this.nameContains = nameContains }
+
+        fun offset(offset: Long) = apply { this.offset = offset }
+
+        fun referenceDataset(referenceDataset: List<String>) = apply {
+            this.referenceDataset.clear()
+            this.referenceDataset.addAll(referenceDataset)
         }
 
-        fun facets(facets: Boolean) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.facets = facets
+        fun addReferenceDataset(referenceDataset: String) = apply {
+            this.referenceDataset.add(referenceDataset)
         }
 
-        fun limit(limit: Long) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.limit = limit
-        }
-
-        fun name(name: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.name = name
-        }
-
-        fun nameContains(nameContains: String) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.nameContains = nameContains
-            }
-
-        fun offset(offset: Long) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.offset = offset
-        }
-
-        fun referenceDataset(referenceDataset: List<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:609:26
-                this.referenceDataset.clear() // templates/JavaSDK/entities/params.ts:609:26 //
-                // templates/JavaSDK/entities/params.ts:609:26
-                this.referenceDataset.addAll(referenceDataset)
-            }
-
-        fun addReferenceDataset(referenceDataset: String) =
-            apply { // templates/JavaSDK/entities/params.ts:620:26
-                this.referenceDataset.add(referenceDataset)
-            }
-
-        fun referenceFree(referenceFree: Boolean) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.referenceFree = referenceFree
-            }
+        fun referenceFree(referenceFree: Boolean) = apply { this.referenceFree = referenceFree }
 
         /** An enumeration. */
-        fun sortBy(sortBy: SortBy) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.sortBy = sortBy
+        fun sortBy(sortBy: SortBy) = apply { this.sortBy = sortBy }
+
+        fun sortByDesc(sortByDesc: Boolean) = apply { this.sortByDesc = sortByDesc }
+
+        fun sortByFeedbackKey(sortByFeedbackKey: String) = apply {
+            this.sortByFeedbackKey = sortByFeedbackKey
         }
 
-        fun sortByDesc(sortByDesc: Boolean) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.sortByDesc = sortByDesc
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllQueryParams(additionalQueryParams)
         }
 
-        fun sortByFeedbackKey(sortByFeedbackKey: String) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.sortByFeedbackKey = sortByFeedbackKey
-            }
+        fun putQueryParam(name: String, value: String) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+        }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:703:24
-                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
-                // templates/JavaSDK/entities/params.ts:703:24
-                putAllQueryParams(additionalQueryParams)
-            }
+        fun putQueryParams(name: String, values: Iterable<String>) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
 
-        fun putQueryParam(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:713:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-            }
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            additionalQueryParams.forEach(this::putQueryParams)
+        }
 
-        fun putQueryParams(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:723:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:733:24
-                additionalQueryParams.forEach(this::putQueryParams)
-            }
-
-        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
+        fun removeQueryParam(name: String) = apply {
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:755:24
-                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
-                // templates/JavaSDK/entities/params.ts:755:24
-                putAllHeaders(additionalHeaders)
-            }
-
-        fun putHeader(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:765:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putHeaders(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:775:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:785:24
-                additionalHeaders.forEach(this::putHeaders)
-            }
-
-        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
-            this.additionalHeaders.put(name, mutableListOf())
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllHeaders(additionalHeaders)
         }
 
+        fun putHeader(name: String, value: String) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+        }
+
+        fun putHeaders(name: String, values: Iterable<String>) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            additionalHeaders.forEach(this::putHeaders)
+        }
+
+        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
+
         fun build(): SessionListParams =
-            SessionListParams( // templates/JavaSDK/entities/params.ts:683:22
-                if (id.size == 0) null
-                else id.toUnmodifiable(), // templates/JavaSDK/entities/params.ts:683:22
+            SessionListParams(
+                if (id.size == 0) null else id.toUnmodifiable(),
                 facets,
                 limit,
                 name,
@@ -338,30 +259,25 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
     @JsonCreator
     private constructor(
         private val value: JsonField<String>,
-    ) { // templates/JavaSDK/entities/enums.ts:56:13 // templates/JavaSDK/entities/enums.ts:56:13 //
-        // templates/JavaSDK/entities/enums.ts:56:13
+    ) {
 
-        @com.fasterxml.jackson.annotation.JsonValue // templates/JavaSDK/entities/enums.ts:62:10 //
-        // templates/JavaSDK/entities/enums.ts:56:13
-        fun _value(): JsonField<String> = value
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is SortBy && // templates/JavaSDK/entities/fields.ts:143:33
-                this.value == other.value
+            return other is SortBy && this.value == other.value
         }
 
         override fun hashCode() = value.hashCode()
 
         override fun toString() = value.toString()
 
-        companion object { // templates/JavaSDK/entities/enums.ts:71:10
+        companion object {
 
-            @JvmField
-            val NAME = SortBy(JsonField.of("name")) // templates/JavaSDK/entities/enums.ts:71:10
+            @JvmField val NAME = SortBy(JsonField.of("name"))
 
             @JvmField val START_TIME = SortBy(JsonField.of("start_time"))
 
@@ -378,9 +294,8 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             @JvmStatic fun of(value: String) = SortBy(JsonField.of(value))
         }
 
-        enum class Known { // templates/JavaSDK/entities/enums.ts:78:10
-            NAME, // templates/JavaSDK/entities/enums.ts:78:10 //
-            // templates/JavaSDK/entities/enums.ts:78:10
+        enum class Known {
+            NAME,
             START_TIME,
             LAST_RUN_START_TIME,
             LATENCY_P50,
@@ -389,9 +304,8 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             FEEDBACK,
         }
 
-        enum class Value { // templates/JavaSDK/entities/enums.ts:82:10
-            NAME, // templates/JavaSDK/entities/enums.ts:82:10 //
-            // templates/JavaSDK/entities/enums.ts:82:10
+        enum class Value {
+            NAME,
             START_TIME,
             LAST_RUN_START_TIME,
             LATENCY_P50,
@@ -402,9 +316,8 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         }
 
         fun value(): Value =
-            when (this) { // templates/JavaSDK/entities/enums.ts:91:29
-                NAME -> Value.NAME // templates/JavaSDK/entities/enums.ts:54:10 //
-                // templates/JavaSDK/entities/enums.ts:54:10
+            when (this) {
+                NAME -> Value.NAME
                 START_TIME -> Value.START_TIME
                 LAST_RUN_START_TIME -> Value.LAST_RUN_START_TIME
                 LATENCY_P50 -> Value.LATENCY_P50
@@ -415,9 +328,8 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             }
 
         fun known(): Known =
-            when (this) { // templates/JavaSDK/entities/enums.ts:104:29
-                NAME -> Known.NAME // templates/JavaSDK/entities/enums.ts:54:10 //
-                // templates/JavaSDK/entities/enums.ts:54:10
+            when (this) {
+                NAME -> Known.NAME
                 START_TIME -> Known.START_TIME
                 LAST_RUN_START_TIME -> Known.LAST_RUN_START_TIME
                 LATENCY_P50 -> Known.LATENCY_P50

@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -8,32 +8,24 @@ import com.langsmith.api.models.*
 import java.util.Objects
 
 class PublicDatasetRunRetrieveParams
-constructor( // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
-    private val shareToken: String, // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
+constructor(
+    private val shareToken: String,
     private val runId: String,
     private val additionalQueryParams: Map<String, List<String>>,
     private val additionalHeaders: Map<String, List<String>>,
 ) {
 
-    fun shareToken(): String = shareToken // templates/JavaSDK/entities/params.ts:145:14 //
-    // templates/JavaSDK/entities/params.ts:131:13
+    fun shareToken(): String = shareToken
 
     fun runId(): String = runId
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
-    internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
+    @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
-    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
-    fun getPathParam(index: Int): String { // templates/JavaSDK/entities/params.ts:555:13
-        return when (index) { // templates/JavaSDK/entities/params.ts:560:26
-            0 -> shareToken // templates/JavaSDK/entities/params.ts:560:26 //
-            // templates/JavaSDK/entities/params.ts:560:26
+    fun getPathParam(index: Int): String {
+        return when (index) {
+            0 -> shareToken
             1 -> runId
             else -> ""
         }
@@ -43,23 +35,21 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun _additionalHeaders(): Map<String, List<String>> = additionalHeaders
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is
-            PublicDatasetRunRetrieveParams && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is PublicDatasetRunRetrieveParams &&
             this.shareToken == other.shareToken &&
             this.runId == other.runId &&
             this.additionalQueryParams == other.additionalQueryParams &&
             this.additionalHeaders == other.additionalHeaders
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-            // templates/JavaSDK/entities/fields.ts:181:14
-            shareToken, // templates/JavaSDK/entities/fields.ts:163:19
+    override fun hashCode(): Int {
+        return Objects.hash(
+            shareToken,
             runId,
             additionalQueryParams,
             additionalHeaders,
@@ -71,105 +61,75 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun toBuilder() = Builder().from(this)
 
-    companion object { // templates/JavaSDK/entities/builders.ts:8:8
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
-        // templates/JavaSDK/entities/builders.ts:8:8
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
-    // templates/JavaSDK/entities/params.ts:235:14
-    class Builder { // templates/JavaSDK/entities/params.ts:235:14
+    @NoAutoDetect
+    class Builder {
 
-        private var shareToken: String? = null // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:235:14
+        private var shareToken: String? = null
         private var runId: String? = null
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
-        internal fun from(publicDatasetRunRetrieveParams: PublicDatasetRunRetrieveParams) =
-            apply { // templates/JavaSDK/entities/params.ts:257:34
-                this.shareToken =
-                    publicDatasetRunRetrieveParams
-                        .shareToken // templates/JavaSDK/entities/params.ts:257:34 //
-                // templates/JavaSDK/entities/params.ts:257:34
-                this.runId = publicDatasetRunRetrieveParams.runId
-                additionalQueryParams(publicDatasetRunRetrieveParams.additionalQueryParams)
-                additionalHeaders(publicDatasetRunRetrieveParams.additionalHeaders)
-            }
-
-        fun shareToken(shareToken: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.shareToken = shareToken
+        @JvmSynthetic
+        internal fun from(publicDatasetRunRetrieveParams: PublicDatasetRunRetrieveParams) = apply {
+            this.shareToken = publicDatasetRunRetrieveParams.shareToken
+            this.runId = publicDatasetRunRetrieveParams.runId
+            additionalQueryParams(publicDatasetRunRetrieveParams.additionalQueryParams)
+            additionalHeaders(publicDatasetRunRetrieveParams.additionalHeaders)
         }
 
-        fun runId(runId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.runId = runId
+        fun shareToken(shareToken: String) = apply { this.shareToken = shareToken }
+
+        fun runId(runId: String) = apply { this.runId = runId }
+
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllQueryParams(additionalQueryParams)
         }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:703:24
-                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
-                // templates/JavaSDK/entities/params.ts:703:24
-                putAllQueryParams(additionalQueryParams)
-            }
+        fun putQueryParam(name: String, value: String) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+        }
 
-        fun putQueryParam(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:713:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-            }
+        fun putQueryParams(name: String, values: Iterable<String>) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
 
-        fun putQueryParams(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:723:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            additionalQueryParams.forEach(this::putQueryParams)
+        }
 
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:733:24
-                additionalQueryParams.forEach(this::putQueryParams)
-            }
-
-        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
+        fun removeQueryParam(name: String) = apply {
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:755:24
-                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
-                // templates/JavaSDK/entities/params.ts:755:24
-                putAllHeaders(additionalHeaders)
-            }
-
-        fun putHeader(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:765:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putHeaders(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:775:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:785:24
-                additionalHeaders.forEach(this::putHeaders)
-            }
-
-        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
-            this.additionalHeaders.put(name, mutableListOf())
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllHeaders(additionalHeaders)
         }
 
+        fun putHeader(name: String, value: String) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+        }
+
+        fun putHeaders(name: String, values: Iterable<String>) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            additionalHeaders.forEach(this::putHeaders)
+        }
+
+        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
+
         fun build(): PublicDatasetRunRetrieveParams =
-            PublicDatasetRunRetrieveParams( // templates/JavaSDK/entities/params.ts:683:22
-                checkNotNull(shareToken) { // templates/JavaSDK/entities/params.ts:844:13 //
-                    // templates/JavaSDK/entities/params.ts:683:22
-                    "`shareToken` is required but was not set"
-                },
-                checkNotNull(runId) { // templates/JavaSDK/entities/params.ts:844:13
-                    "`runId` is required but was not set"
-                },
+            PublicDatasetRunRetrieveParams(
+                checkNotNull(shareToken) { "`shareToken` is required but was not set" },
+                checkNotNull(runId) { "`runId` is required but was not set" },
                 additionalQueryParams.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
                 additionalHeaders.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
             )

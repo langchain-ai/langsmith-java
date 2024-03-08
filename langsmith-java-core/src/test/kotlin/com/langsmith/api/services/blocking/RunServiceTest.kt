@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.services.blocking
 
@@ -8,102 +8,61 @@ import com.langsmith.api.models.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(
-    TestServerExtension::class
-) // templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15 //
-// templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15
+@ExtendWith(TestServerExtension::class)
 class RunServiceTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 // templates/JavaSDK/services.ts:298:15
-    fun callCreate() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callCreate() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val runService = client.runs()
-        val runCreateResponse =
-            runService.create(
-                RunCreateParams.builder().build()
-            ) // templates/JavaSDK/services.ts:475:17 // templates/JavaSDK/services.ts:475:17
+        val runCreateResponse = runService.create(RunCreateParams.builder().build())
         println(runCreateResponse)
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callRetrieve() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callRetrieve() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val runService = client.runs()
         val runSchema =
             runService.retrieve(
-                RunRetrieveParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
-                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
+                RunRetrieveParams.builder().runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
             )
-        println(
-            runSchema
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
+        println(runSchema)
         runSchema.validate()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callUpdate() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callUpdate() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val runService = client.runs()
         val runUpdateResponse =
             runService.update(
-                RunUpdateParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
-                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
+                RunUpdateParams.builder().runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
             )
         println(runUpdateResponse)
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callBatch() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callBatch() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val runService = client.runs()
-        val runBatchResponse =
-            runService.batch(
-                RunBatchParams.builder().build()
-            ) // templates/JavaSDK/services.ts:475:17 // templates/JavaSDK/services.ts:475:17
+        val runBatchResponse = runService.batch(RunBatchParams.builder().build())
         println(runBatchResponse)
     }
 }

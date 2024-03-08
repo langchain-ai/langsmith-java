@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.services.blocking.annotationQueues
 
@@ -8,40 +8,25 @@ import com.langsmith.api.models.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(
-    TestServerExtension::class
-) // templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15 //
-// templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15
+@ExtendWith(TestServerExtension::class)
 class QueueServiceTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 // templates/JavaSDK/services.ts:298:15
-    fun callList() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callList() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val queueService = client.annotationQueues().queues()
         val annotationQueueQueueListResponse =
             queueService.list(
-                AnnotationQueueQueueListParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                AnnotationQueueQueueListParams.builder()
                     .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
-        println(
-            annotationQueueQueueListResponse
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
-        for (annotationQueueSchema: AnnotationQueueSchema in
-            annotationQueueQueueListResponse) { // templates/JavaSDK/services.ts:509:10
+        println(annotationQueueQueueListResponse)
+        for (annotationQueueSchema: AnnotationQueueSchema in annotationQueueQueueListResponse) {
             annotationQueueSchema.validate()
         }
     }

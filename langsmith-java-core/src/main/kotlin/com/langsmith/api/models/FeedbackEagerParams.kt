@@ -1,10 +1,8 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
-// //
-// templates/JavaSDK/components/file.ts:28:17
-import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -31,12 +29,8 @@ import java.util.Objects
 import java.util.Optional
 
 class FeedbackEagerParams
-constructor( // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
-    private val key: String, // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
+constructor(
+    private val key: String,
     private val runId: String,
     private val id: String?,
     private val comment: String?,
@@ -52,8 +46,7 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun key(): String = key // templates/JavaSDK/entities/params.ts:145:14 //
-    // templates/JavaSDK/entities/params.ts:131:13
+    fun key(): String = key
 
     fun runId(): String = runId
 
@@ -75,11 +68,10 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun value(): Optional<Value> = Optional.ofNullable(value)
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:165:16
-    internal fun getBody(): FeedbackEagerBody { // templates/JavaSDK/entities/params.ts:165:16
-        return FeedbackEagerBody( // templates/JavaSDK/entities/params.ts:180:26 //
-            // templates/JavaSDK/entities/params.ts:179:24
-            key, // templates/JavaSDK/entities/params.ts:180:26
+    @JvmSynthetic
+    internal fun getBody(): FeedbackEagerBody {
+        return FeedbackEagerBody(
+            key,
             runId,
             id,
             comment,
@@ -94,22 +86,16 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         )
     }
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
-    internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
+    @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
-    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
     /** Schema used for creating feedback. */
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13
     @JsonDeserialize(builder = FeedbackEagerBody.Builder::class)
     @NoAutoDetect
     class FeedbackEagerBody
-    internal constructor( // templates/JavaSDK/entities/objects.ts:76:13
-        private val key: String?, // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+    internal constructor(
+        private val key: String?,
         private val runId: String?,
         private val id: String?,
         private val comment: String?,
@@ -123,55 +109,42 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+        private var hashCode: Int = 0
 
-        @JsonProperty("key") // templates/JavaSDK/entities/objects.ts:113:14
-        fun key(): String? = key
+        @JsonProperty("key") fun key(): String? = key
 
-        @JsonProperty("run_id") // templates/JavaSDK/entities/objects.ts:113:14
-        fun runId(): String? = runId
+        @JsonProperty("run_id") fun runId(): String? = runId
 
-        @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:113:14
-        fun id(): String? = id
+        @JsonProperty("id") fun id(): String? = id
 
-        @JsonProperty("comment") // templates/JavaSDK/entities/objects.ts:113:14
-        fun comment(): String? = comment
+        @JsonProperty("comment") fun comment(): String? = comment
 
-        @JsonProperty("correction") // templates/JavaSDK/entities/objects.ts:113:14
-        fun correction(): JsonValue? = correction
+        @JsonProperty("correction") fun correction(): JsonValue? = correction
 
-        @JsonProperty("created_at") // templates/JavaSDK/entities/objects.ts:113:14
-        fun createdAt(): OffsetDateTime? = createdAt
+        @JsonProperty("created_at") fun createdAt(): OffsetDateTime? = createdAt
 
-        @JsonProperty("feedback_config") // templates/JavaSDK/entities/objects.ts:113:14
-        fun feedbackConfig(): FeedbackConfig? = feedbackConfig
+        @JsonProperty("feedback_config") fun feedbackConfig(): FeedbackConfig? = feedbackConfig
 
-        @JsonProperty("feedback_source") // templates/JavaSDK/entities/objects.ts:113:14
-        fun feedbackSource(): FeedbackSource? = feedbackSource
+        @JsonProperty("feedback_source") fun feedbackSource(): FeedbackSource? = feedbackSource
 
-        @JsonProperty("modified_at") // templates/JavaSDK/entities/objects.ts:113:14
-        fun modifiedAt(): OffsetDateTime? = modifiedAt
+        @JsonProperty("modified_at") fun modifiedAt(): OffsetDateTime? = modifiedAt
 
-        @JsonProperty("score") // templates/JavaSDK/entities/objects.ts:113:14
-        fun score(): Score? = score
+        @JsonProperty("score") fun score(): Score? = score
 
-        @JsonProperty("value") // templates/JavaSDK/entities/objects.ts:113:14
-        fun value(): Value? = value
+        @JsonProperty("value") fun value(): Value? = value
 
-        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-        // templates/JavaSDK/entities/objects.ts:180:12
+        @JsonAnyGetter
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is FeedbackEagerBody && // templates/JavaSDK/entities/fields.ts:143:33
+            return other is FeedbackEagerBody &&
                 this.key == other.key &&
                 this.runId == other.runId &&
                 this.id == other.id &&
@@ -186,15 +159,11 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16
+        override fun hashCode(): Int {
+            if (hashCode == 0) {
                 hashCode =
-                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                        // templates/JavaSDK/entities/fields.ts:175:16 //
-                        // templates/JavaSDK/entities/fields.ts:175:16
-                        key, // templates/JavaSDK/entities/fields.ts:163:19
+                    Objects.hash(
+                        key,
                         runId,
                         id,
                         comment,
@@ -214,20 +183,14 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         override fun toString() =
             "FeedbackEagerBody{key=$key, runId=$runId, id=$id, comment=$comment, correction=$correction, createdAt=$createdAt, feedbackConfig=$feedbackConfig, feedbackSource=$feedbackSource, modifiedAt=$modifiedAt, score=$score, value=$value, additionalProperties=$additionalProperties}"
 
-        companion object { // templates/JavaSDK/entities/objects.ts:217:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-            // templates/JavaSDK/entities/objects.ts:217:10
-            fun builder() = Builder()
+            @JvmStatic fun builder() = Builder()
         }
 
-        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+        class Builder {
 
-            private var key: String? = null // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+            private var key: String? = null
             private var runId: String? = null
             private var id: String? = null
             private var comment: String? = null
@@ -240,124 +203,71 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             private var value: Value? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-            internal fun from(feedbackEagerBody: FeedbackEagerBody) =
-                apply { // templates/JavaSDK/entities/objects.ts:240:30
-                    this.key =
-                        feedbackEagerBody.key // templates/JavaSDK/entities/objects.ts:240:30 //
-                    // templates/JavaSDK/entities/objects.ts:240:30
-                    this.runId = feedbackEagerBody.runId
-                    this.id = feedbackEagerBody.id
-                    this.comment = feedbackEagerBody.comment
-                    this.correction = feedbackEagerBody.correction
-                    this.createdAt = feedbackEagerBody.createdAt
-                    this.feedbackConfig = feedbackEagerBody.feedbackConfig
-                    this.feedbackSource = feedbackEagerBody.feedbackSource
-                    this.modifiedAt = feedbackEagerBody.modifiedAt
-                    this.score = feedbackEagerBody.score
-                    this.value = feedbackEagerBody.value
-                    additionalProperties(feedbackEagerBody.additionalProperties)
-                }
-
-            @JsonProperty("key") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun key(key: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.key = key
+            @JvmSynthetic
+            internal fun from(feedbackEagerBody: FeedbackEagerBody) = apply {
+                this.key = feedbackEagerBody.key
+                this.runId = feedbackEagerBody.runId
+                this.id = feedbackEagerBody.id
+                this.comment = feedbackEagerBody.comment
+                this.correction = feedbackEagerBody.correction
+                this.createdAt = feedbackEagerBody.createdAt
+                this.feedbackConfig = feedbackEagerBody.feedbackConfig
+                this.feedbackSource = feedbackEagerBody.feedbackSource
+                this.modifiedAt = feedbackEagerBody.modifiedAt
+                this.score = feedbackEagerBody.score
+                this.value = feedbackEagerBody.value
+                additionalProperties(feedbackEagerBody.additionalProperties)
             }
 
-            @JsonProperty("run_id") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun runId(runId: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.runId = runId
+            @JsonProperty("key") fun key(key: String) = apply { this.key = key }
+
+            @JsonProperty("run_id") fun runId(runId: String) = apply { this.runId = runId }
+
+            @JsonProperty("id") fun id(id: String) = apply { this.id = id }
+
+            @JsonProperty("comment") fun comment(comment: String) = apply { this.comment = comment }
+
+            @JsonProperty("correction")
+            fun correction(correction: JsonValue) = apply { this.correction = correction }
+
+            @JsonProperty("created_at")
+            fun createdAt(createdAt: OffsetDateTime) = apply { this.createdAt = createdAt }
+
+            @JsonProperty("feedback_config")
+            fun feedbackConfig(feedbackConfig: FeedbackConfig) = apply {
+                this.feedbackConfig = feedbackConfig
             }
 
-            @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun id(id: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.id = id
+            @JsonProperty("feedback_source")
+            fun feedbackSource(feedbackSource: FeedbackSource) = apply {
+                this.feedbackSource = feedbackSource
             }
 
-            @JsonProperty("comment") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun comment(comment: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.comment = comment
+            @JsonProperty("modified_at")
+            fun modifiedAt(modifiedAt: OffsetDateTime) = apply { this.modifiedAt = modifiedAt }
+
+            @JsonProperty("score") fun score(score: Score) = apply { this.score = score }
+
+            @JsonProperty("value") fun value(value: Value) = apply { this.value = value }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                this.additionalProperties.putAll(additionalProperties)
             }
 
-            @JsonProperty("correction") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun correction(correction: JsonValue) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.correction = correction
-                }
-
-            @JsonProperty("created_at") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun createdAt(createdAt: OffsetDateTime) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.createdAt = createdAt
-                }
-
-            @JsonProperty("feedback_config") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun feedbackConfig(feedbackConfig: FeedbackConfig) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.feedbackConfig = feedbackConfig
-                }
-
-            @JsonProperty("feedback_source") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun feedbackSource(feedbackSource: FeedbackSource) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.feedbackSource = feedbackSource
-                }
-
-            @JsonProperty("modified_at") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun modifiedAt(modifiedAt: OffsetDateTime) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.modifiedAt = modifiedAt
-                }
-
-            @JsonProperty("score") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun score(score: Score) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.score = score
+            @JsonAnySetter
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                this.additionalProperties.put(key, value)
             }
 
-            @JsonProperty("value") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun value(value: Value) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.value = value
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
             }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties
-                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                    // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
-
-            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-            fun putAdditionalProperty(key: String, value: JsonValue) =
-                apply { // templates/JavaSDK/entities/objects.ts:304:30
-                    this.additionalProperties.put(key, value)
-                }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:316:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
 
             fun build(): FeedbackEagerBody =
-                FeedbackEagerBody( // templates/JavaSDK/entities/objects.ts:326:30
-                    checkNotNull(key) { // templates/JavaSDK/entities/objects.ts:358:13 //
-                        // templates/JavaSDK/entities/objects.ts:326:30
-                        "`key` is required but was not set"
-                    },
-                    checkNotNull(runId) { // templates/JavaSDK/entities/objects.ts:358:13
-                        "`runId` is required but was not set"
-                    },
+                FeedbackEagerBody(
+                    checkNotNull(key) { "`key` is required but was not set" },
+                    checkNotNull(runId) { "`runId` is required but was not set" },
                     id,
                     comment,
                     correction,
@@ -378,12 +288,12 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is FeedbackEagerParams && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is FeedbackEagerParams &&
             this.key == other.key &&
             this.runId == other.runId &&
             this.id == other.id &&
@@ -400,10 +310,9 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             this.additionalBodyProperties == other.additionalBodyProperties
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-            // templates/JavaSDK/entities/fields.ts:181:14
-            key, // templates/JavaSDK/entities/fields.ts:163:19
+    override fun hashCode(): Int {
+        return Objects.hash(
+            key,
             runId,
             id,
             comment,
@@ -425,20 +334,15 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun toBuilder() = Builder().from(this)
 
-    companion object { // templates/JavaSDK/entities/builders.ts:8:8
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
-        // templates/JavaSDK/entities/builders.ts:8:8
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
-    // templates/JavaSDK/entities/params.ts:235:14
-    class Builder { // templates/JavaSDK/entities/params.ts:235:14
+    @NoAutoDetect
+    class Builder {
 
-        private var key: String? = null // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:235:14
+        private var key: String? = null
         private var runId: String? = null
         private var id: String? = null
         private var comment: String? = null
@@ -453,197 +357,136 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
-        internal fun from(feedbackEagerParams: FeedbackEagerParams) =
-            apply { // templates/JavaSDK/entities/params.ts:257:34
-                this.key = feedbackEagerParams.key // templates/JavaSDK/entities/params.ts:257:34 //
-                // templates/JavaSDK/entities/params.ts:257:34
-                this.runId = feedbackEagerParams.runId
-                this.id = feedbackEagerParams.id
-                this.comment = feedbackEagerParams.comment
-                this.correction = feedbackEagerParams.correction
-                this.createdAt = feedbackEagerParams.createdAt
-                this.feedbackConfig = feedbackEagerParams.feedbackConfig
-                this.feedbackSource = feedbackEagerParams.feedbackSource
-                this.modifiedAt = feedbackEagerParams.modifiedAt
-                this.score = feedbackEagerParams.score
-                this.value = feedbackEagerParams.value
-                additionalQueryParams(feedbackEagerParams.additionalQueryParams)
-                additionalHeaders(feedbackEagerParams.additionalHeaders)
-                additionalBodyProperties(feedbackEagerParams.additionalBodyProperties)
-            }
-
-        fun key(key: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.key = key
+        @JvmSynthetic
+        internal fun from(feedbackEagerParams: FeedbackEagerParams) = apply {
+            this.key = feedbackEagerParams.key
+            this.runId = feedbackEagerParams.runId
+            this.id = feedbackEagerParams.id
+            this.comment = feedbackEagerParams.comment
+            this.correction = feedbackEagerParams.correction
+            this.createdAt = feedbackEagerParams.createdAt
+            this.feedbackConfig = feedbackEagerParams.feedbackConfig
+            this.feedbackSource = feedbackEagerParams.feedbackSource
+            this.modifiedAt = feedbackEagerParams.modifiedAt
+            this.score = feedbackEagerParams.score
+            this.value = feedbackEagerParams.value
+            additionalQueryParams(feedbackEagerParams.additionalQueryParams)
+            additionalHeaders(feedbackEagerParams.additionalHeaders)
+            additionalBodyProperties(feedbackEagerParams.additionalBodyProperties)
         }
 
-        fun runId(runId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.runId = runId
+        fun key(key: String) = apply { this.key = key }
+
+        fun runId(runId: String) = apply { this.runId = runId }
+
+        fun id(id: String) = apply { this.id = id }
+
+        fun comment(comment: String) = apply { this.comment = comment }
+
+        fun correction(correction: JsonValue) = apply { this.correction = correction }
+
+        fun createdAt(createdAt: OffsetDateTime) = apply { this.createdAt = createdAt }
+
+        fun feedbackConfig(feedbackConfig: FeedbackConfig) = apply {
+            this.feedbackConfig = feedbackConfig
         }
-
-        fun id(id: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.id = id
-        }
-
-        fun comment(comment: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.comment = comment
-        }
-
-        fun correction(correction: JsonValue) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.correction = correction
-            }
-
-        fun createdAt(createdAt: OffsetDateTime) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.createdAt = createdAt
-            }
-
-        fun feedbackConfig(feedbackConfig: FeedbackConfig) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.feedbackConfig = feedbackConfig
-            }
 
         /** Feedback from the LangChainPlus App. */
-        fun feedbackSource(feedbackSource: FeedbackSource) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.feedbackSource = feedbackSource
-            }
+        fun feedbackSource(feedbackSource: FeedbackSource) = apply {
+            this.feedbackSource = feedbackSource
+        }
 
         /** Feedback from the LangChainPlus App. */
-        fun feedbackSource(appFeedbackSource: FeedbackSource.AppFeedbackSource) =
-            apply { // templates/JavaSDK/entities/params.ts:659:30
-                this.feedbackSource = FeedbackSource.ofAppFeedbackSource(appFeedbackSource)
-            }
+        fun feedbackSource(appFeedbackSource: AppFeedbackSource) = apply {
+            this.feedbackSource = FeedbackSource.ofAppFeedbackSource(appFeedbackSource)
+        }
 
         /** Feedback from the LangChainPlus App. */
-        fun feedbackSource(apiFeedbackSource: FeedbackSource.ApiFeedbackSource) =
-            apply { // templates/JavaSDK/entities/params.ts:659:30
-                this.feedbackSource = FeedbackSource.ofApiFeedbackSource(apiFeedbackSource)
-            }
+        fun feedbackSource(apiFeedbackSource: ApiFeedbackSource) = apply {
+            this.feedbackSource = FeedbackSource.ofApiFeedbackSource(apiFeedbackSource)
+        }
 
         /** Feedback from the LangChainPlus App. */
-        fun feedbackSource(modelFeedbackSource: FeedbackSource.ModelFeedbackSource) =
-            apply { // templates/JavaSDK/entities/params.ts:659:30
-                this.feedbackSource = FeedbackSource.ofModelFeedbackSource(modelFeedbackSource)
-            }
-
-        fun modifiedAt(modifiedAt: OffsetDateTime) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.modifiedAt = modifiedAt
-            }
-
-        fun score(score: Score) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.score = score
+        fun feedbackSource(modelFeedbackSource: ModelFeedbackSource) = apply {
+            this.feedbackSource = FeedbackSource.ofModelFeedbackSource(modelFeedbackSource)
         }
 
-        fun score(double: Double) = apply { // templates/JavaSDK/entities/params.ts:659:30
-            this.score = Score.ofDouble(double)
+        fun modifiedAt(modifiedAt: OffsetDateTime) = apply { this.modifiedAt = modifiedAt }
+
+        fun score(score: Score) = apply { this.score = score }
+
+        fun score(double: Double) = apply { this.score = Score.ofDouble(double) }
+
+        fun score(boolean: Boolean) = apply { this.score = Score.ofBoolean(boolean) }
+
+        fun value(value: Value) = apply { this.value = value }
+
+        fun value(double: Double) = apply { this.value = Value.ofDouble(double) }
+
+        fun value(boolean: Boolean) = apply { this.value = Value.ofBoolean(boolean) }
+
+        fun value(string: String) = apply { this.value = Value.ofString(string) }
+
+        fun value(jsonValue: JsonValue) = apply { this.value = Value.ofJsonValue(jsonValue) }
+
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllQueryParams(additionalQueryParams)
         }
 
-        fun score(boolean: Boolean) = apply { // templates/JavaSDK/entities/params.ts:659:30
-            this.score = Score.ofBoolean(boolean)
+        fun putQueryParam(name: String, value: String) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
         }
 
-        fun value(value: Value) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.value = value
+        fun putQueryParams(name: String, values: Iterable<String>) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
         }
 
-        fun value(double: Double) = apply { // templates/JavaSDK/entities/params.ts:659:30
-            this.value = Value.ofDouble(double)
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            additionalQueryParams.forEach(this::putQueryParams)
         }
 
-        fun value(boolean: Boolean) = apply { // templates/JavaSDK/entities/params.ts:659:30
-            this.value = Value.ofBoolean(boolean)
-        }
-
-        fun value(string: String) = apply { // templates/JavaSDK/entities/params.ts:659:30
-            this.value = Value.ofString(string)
-        }
-
-        fun value(jsonValue: JsonValue) = apply { // templates/JavaSDK/entities/params.ts:659:30
-            this.value = Value.ofJsonValue(jsonValue)
-        }
-
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:703:24
-                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
-                // templates/JavaSDK/entities/params.ts:703:24
-                putAllQueryParams(additionalQueryParams)
-            }
-
-        fun putQueryParam(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:713:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putQueryParams(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:723:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:733:24
-                additionalQueryParams.forEach(this::putQueryParams)
-            }
-
-        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
+        fun removeQueryParam(name: String) = apply {
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:755:24
-                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
-                // templates/JavaSDK/entities/params.ts:755:24
-                putAllHeaders(additionalHeaders)
-            }
-
-        fun putHeader(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:765:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putHeaders(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:775:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:785:24
-                additionalHeaders.forEach(this::putHeaders)
-            }
-
-        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
-            this.additionalHeaders.put(name, mutableListOf())
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllHeaders(additionalHeaders)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/params.ts:809:28
-                this.additionalBodyProperties
-                    .clear() // templates/JavaSDK/entities/params.ts:809:28 //
-                // templates/JavaSDK/entities/params.ts:809:28
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
+        fun putHeader(name: String, value: String) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+        }
 
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
-            apply { // templates/JavaSDK/entities/params.ts:822:28
-                this.additionalBodyProperties.put(key, value)
-            }
+        fun putHeaders(name: String, values: Iterable<String>) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            additionalHeaders.forEach(this::putHeaders)
+        }
+
+        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
+
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
+            this.additionalBodyProperties.clear()
+            this.additionalBodyProperties.putAll(additionalBodyProperties)
+        }
+
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
+            this.additionalBodyProperties.put(key, value)
+        }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/params.ts:832:28
+            apply {
                 this.additionalBodyProperties.putAll(additionalBodyProperties)
             }
 
         fun build(): FeedbackEagerParams =
-            FeedbackEagerParams( // templates/JavaSDK/entities/params.ts:683:22
-                checkNotNull(key) { // templates/JavaSDK/entities/params.ts:844:13 //
-                    // templates/JavaSDK/entities/params.ts:683:22
-                    "`key` is required but was not set"
-                },
-                checkNotNull(runId) { // templates/JavaSDK/entities/params.ts:844:13
-                    "`runId` is required but was not set"
-                },
+            FeedbackEagerParams(
+                checkNotNull(key) { "`key` is required but was not set" },
+                checkNotNull(runId) { "`runId` is required but was not set" },
                 id,
                 comment,
                 correction,
@@ -659,51 +502,40 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             )
     }
 
-    @JsonDeserialize(
-        builder = FeedbackConfig.Builder::class
-    ) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
-    // // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+    @JsonDeserialize(builder = FeedbackConfig.Builder::class)
     @NoAutoDetect
     class FeedbackConfig
-    private constructor( // templates/JavaSDK/entities/objects.ts:76:13
-        private val type: Type?, // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+    private constructor(
+        private val type: Type?,
         private val min: Double?,
         private val max: Double?,
-        private val categories: List<FeedbackCategory>?,
+        private val categories: List<Category>?,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+        private var hashCode: Int = 0
 
         /** Enum for feedback types. */
-        @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:113:14
-        fun type(): Type? = type
+        @JsonProperty("type") fun type(): Type? = type
 
-        @JsonProperty("min") // templates/JavaSDK/entities/objects.ts:113:14
-        fun min(): Double? = min
+        @JsonProperty("min") fun min(): Double? = min
 
-        @JsonProperty("max") // templates/JavaSDK/entities/objects.ts:113:14
-        fun max(): Double? = max
+        @JsonProperty("max") fun max(): Double? = max
 
-        @JsonProperty("categories") // templates/JavaSDK/entities/objects.ts:113:14
-        fun categories(): List<FeedbackCategory>? = categories
+        @JsonProperty("categories") fun categories(): List<Category>? = categories
 
-        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-        // templates/JavaSDK/entities/objects.ts:180:12
+        @JsonAnyGetter
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is FeedbackConfig && // templates/JavaSDK/entities/fields.ts:143:33
+            return other is FeedbackConfig &&
                 this.type == other.type &&
                 this.min == other.min &&
                 this.max == other.max &&
@@ -711,15 +543,11 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16
+        override fun hashCode(): Int {
+            if (hashCode == 0) {
                 hashCode =
-                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                        // templates/JavaSDK/entities/fields.ts:175:16 //
-                        // templates/JavaSDK/entities/fields.ts:175:16
-                        type, // templates/JavaSDK/entities/fields.ts:163:19
+                    Objects.hash(
+                        type,
                         min,
                         max,
                         categories,
@@ -732,88 +560,55 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         override fun toString() =
             "FeedbackConfig{type=$type, min=$min, max=$max, categories=$categories, additionalProperties=$additionalProperties}"
 
-        companion object { // templates/JavaSDK/entities/objects.ts:217:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-            // templates/JavaSDK/entities/objects.ts:217:10
-            fun builder() = Builder()
+            @JvmStatic fun builder() = Builder()
         }
 
-        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+        class Builder {
 
-            private var type: Type? = null // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+            private var type: Type? = null
             private var min: Double? = null
             private var max: Double? = null
-            private var categories: List<FeedbackCategory>? = null
+            private var categories: List<Category>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-            internal fun from(feedbackConfig: FeedbackConfig) =
-                apply { // templates/JavaSDK/entities/objects.ts:240:30
-                    this.type =
-                        feedbackConfig.type // templates/JavaSDK/entities/objects.ts:240:30 //
-                    // templates/JavaSDK/entities/objects.ts:240:30
-                    this.min = feedbackConfig.min
-                    this.max = feedbackConfig.max
-                    this.categories = feedbackConfig.categories
-                    additionalProperties(feedbackConfig.additionalProperties)
-                }
+            @JvmSynthetic
+            internal fun from(feedbackConfig: FeedbackConfig) = apply {
+                this.type = feedbackConfig.type
+                this.min = feedbackConfig.min
+                this.max = feedbackConfig.max
+                this.categories = feedbackConfig.categories
+                additionalProperties(feedbackConfig.additionalProperties)
+            }
 
             /** Enum for feedback types. */
-            // templates/JavaSDK/entities/objects.ts:252:20
-            @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:264:20
-            fun type(type: Type) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.type = type
+            @JsonProperty("type") fun type(type: Type) = apply { this.type = type }
+
+            @JsonProperty("min") fun min(min: Double) = apply { this.min = min }
+
+            @JsonProperty("max") fun max(max: Double) = apply { this.max = max }
+
+            @JsonProperty("categories")
+            fun categories(categories: List<Category>) = apply { this.categories = categories }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                this.additionalProperties.putAll(additionalProperties)
             }
 
-            @JsonProperty("min") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun min(min: Double) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.min = min
+            @JsonAnySetter
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                this.additionalProperties.put(key, value)
             }
 
-            @JsonProperty("max") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun max(max: Double) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.max = max
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
             }
-
-            @JsonProperty("categories") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun categories(categories: List<FeedbackCategory>) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.categories = categories
-                }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties
-                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                    // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
-
-            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-            fun putAdditionalProperty(key: String, value: JsonValue) =
-                apply { // templates/JavaSDK/entities/objects.ts:304:30
-                    this.additionalProperties.put(key, value)
-                }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:316:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
 
             fun build(): FeedbackConfig =
-                FeedbackConfig( // templates/JavaSDK/entities/objects.ts:326:30
-                    checkNotNull(type) { // templates/JavaSDK/entities/objects.ts:358:13 //
-                        // templates/JavaSDK/entities/objects.ts:326:30
-                        "`type` is required but was not set"
-                    },
+                FeedbackConfig(
+                    checkNotNull(type) { "`type` is required but was not set" },
                     min,
                     max,
                     categories?.toUnmodifiable(),
@@ -825,35 +620,25 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         @JsonCreator
         private constructor(
             private val value: JsonField<String>,
-        ) { // templates/JavaSDK/entities/enums.ts:56:13 //
-            // templates/JavaSDK/entities/enums.ts:56:13 //
-            // templates/JavaSDK/entities/enums.ts:56:13
+        ) {
 
-            @com.fasterxml.jackson.annotation.JsonValue // templates/JavaSDK/entities/enums.ts:62:10
-            // //
-            // templates/JavaSDK/entities/enums.ts:56:13
-            fun _value(): JsonField<String> = value
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 
-            override fun equals(
-                other: Any?
-            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
                     return true
                 }
 
-                return other is Type && // templates/JavaSDK/entities/fields.ts:143:33
-                    this.value == other.value
+                return other is Type && this.value == other.value
             }
 
             override fun hashCode() = value.hashCode()
 
             override fun toString() = value.toString()
 
-            companion object { // templates/JavaSDK/entities/enums.ts:71:10
+            companion object {
 
-                @JvmField
-                val CONTINUOUS =
-                    Type(JsonField.of("continuous")) // templates/JavaSDK/entities/enums.ts:71:10
+                @JvmField val CONTINUOUS = Type(JsonField.of("continuous"))
 
                 @JvmField val CATEGORICAL = Type(JsonField.of("categorical"))
 
@@ -862,34 +647,30 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
                 @JvmStatic fun of(value: String) = Type(JsonField.of(value))
             }
 
-            enum class Known { // templates/JavaSDK/entities/enums.ts:78:10
-                CONTINUOUS, // templates/JavaSDK/entities/enums.ts:78:10 //
-                // templates/JavaSDK/entities/enums.ts:78:10
+            enum class Known {
+                CONTINUOUS,
                 CATEGORICAL,
                 FREEFORM,
             }
 
-            enum class Value { // templates/JavaSDK/entities/enums.ts:82:10
-                CONTINUOUS, // templates/JavaSDK/entities/enums.ts:82:10 //
-                // templates/JavaSDK/entities/enums.ts:82:10
+            enum class Value {
+                CONTINUOUS,
                 CATEGORICAL,
                 FREEFORM,
                 _UNKNOWN,
             }
 
             fun value(): Value =
-                when (this) { // templates/JavaSDK/entities/enums.ts:91:29
-                    CONTINUOUS -> Value.CONTINUOUS // templates/JavaSDK/entities/enums.ts:54:10 //
-                    // templates/JavaSDK/entities/enums.ts:54:10
+                when (this) {
+                    CONTINUOUS -> Value.CONTINUOUS
                     CATEGORICAL -> Value.CATEGORICAL
                     FREEFORM -> Value.FREEFORM
                     else -> Value._UNKNOWN
                 }
 
             fun known(): Known =
-                when (this) { // templates/JavaSDK/entities/enums.ts:104:29
-                    CONTINUOUS -> Known.CONTINUOUS // templates/JavaSDK/entities/enums.ts:54:10 //
-                    // templates/JavaSDK/entities/enums.ts:54:10
+                when (this) {
+                    CONTINUOUS -> Known.CONTINUOUS
                     CATEGORICAL -> Known.CATEGORICAL
                     FREEFORM -> Known.FREEFORM
                     else -> throw LangSmithInvalidDataException("Unknown Type: $value")
@@ -899,58 +680,43 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         }
 
         /** Specific value and label pair for feedback */
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
-        @JsonDeserialize(builder = FeedbackCategory.Builder::class)
+        @JsonDeserialize(builder = Category.Builder::class)
         @NoAutoDetect
-        class FeedbackCategory
+        class Category
         private constructor(
             private val value: Double?,
             private val label: String?,
             private val additionalProperties: Map<String, JsonValue>,
         ) {
 
-            private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
-            // templates/JavaSDK/entities/objects.ts:76:13
+            private var hashCode: Int = 0
 
-            @JsonProperty("value") // templates/JavaSDK/entities/objects.ts:113:14
-            fun value(): Double? = value
+            @JsonProperty("value") fun value(): Double? = value
 
-            @JsonProperty("label") // templates/JavaSDK/entities/objects.ts:113:14
-            fun label(): String? = label
+            @JsonProperty("label") fun label(): String? = label
 
-            @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-            // templates/JavaSDK/entities/objects.ts:180:12
+            @JsonAnyGetter
             @ExcludeMissing
             fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
             fun toBuilder() = Builder().from(this)
 
-            override fun equals(
-                other: Any?
-            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
                     return true
                 }
 
-                return other is FeedbackCategory && // templates/JavaSDK/entities/fields.ts:143:33
+                return other is Category &&
                     this.value == other.value &&
                     this.label == other.label &&
                     this.additionalProperties == other.additionalProperties
             }
 
-            override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-                if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16
+            override fun hashCode(): Int {
+                if (hashCode == 0) {
                     hashCode =
-                        Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                            // templates/JavaSDK/entities/fields.ts:175:16 //
-                            // templates/JavaSDK/entities/fields.ts:175:16
-                            value, // templates/JavaSDK/entities/fields.ts:163:19
+                        Objects.hash(
+                            value,
                             label,
                             additionalProperties,
                         )
@@ -959,73 +725,48 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             }
 
             override fun toString() =
-                "FeedbackCategory{value=$value, label=$label, additionalProperties=$additionalProperties}"
+                "Category{value=$value, label=$label, additionalProperties=$additionalProperties}"
 
-            companion object { // templates/JavaSDK/entities/objects.ts:217:10
+            companion object {
 
-                @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-                // templates/JavaSDK/entities/objects.ts:217:10
-                fun builder() = Builder()
+                @JvmStatic fun builder() = Builder()
             }
 
-            class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+            class Builder {
 
-                private var value: Double? = null // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+                private var value: Double? = null
                 private var label: String? = null
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-                internal fun from(feedbackCategory: FeedbackCategory) =
-                    apply { // templates/JavaSDK/entities/objects.ts:240:30
-                        this.value =
-                            feedbackCategory
-                                .value // templates/JavaSDK/entities/objects.ts:240:30 //
-                        // templates/JavaSDK/entities/objects.ts:240:30
-                        this.label = feedbackCategory.label
-                        additionalProperties(feedbackCategory.additionalProperties)
-                    }
-
-                @JsonProperty("value") // templates/JavaSDK/entities/objects.ts:264:20 //
-                // templates/JavaSDK/entities/objects.ts:252:20
-                fun value(value: Double) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.value = value
+                @JvmSynthetic
+                internal fun from(category: Category) = apply {
+                    this.value = category.value
+                    this.label = category.label
+                    additionalProperties(category.additionalProperties)
                 }
 
-                @JsonProperty("label") // templates/JavaSDK/entities/objects.ts:264:20 //
-                // templates/JavaSDK/entities/objects.ts:252:20
-                fun label(label: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.label = label
+                @JsonProperty("value") fun value(value: Double) = apply { this.value = value }
+
+                @JsonProperty("label") fun label(label: String) = apply { this.label = label }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    this.additionalProperties.putAll(additionalProperties)
                 }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties
-                            .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                        // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
-
-                @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-                fun putAdditionalProperty(key: String, value: JsonValue) =
-                    apply { // templates/JavaSDK/entities/objects.ts:304:30
-                        this.additionalProperties.put(key, value)
-                    }
+                @JsonAnySetter
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    this.additionalProperties.put(key, value)
+                }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
-                fun build(): FeedbackCategory =
-                    FeedbackCategory( // templates/JavaSDK/entities/objects.ts:326:30
-                        checkNotNull(value) { // templates/JavaSDK/entities/objects.ts:358:13 //
-                            // templates/JavaSDK/entities/objects.ts:326:30
-                            "`value` is required but was not set"
-                        },
+                fun build(): Category =
+                    Category(
+                        checkNotNull(value) { "`value` is required but was not set" },
                         label,
                         additionalProperties.toUnmodifiable(),
                     )
@@ -1033,26 +774,19 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         }
     }
 
-    @JsonDeserialize(
-        using = FeedbackSource.Deserializer::class
-    ) // templates/JavaSDK/entities/unions.ts:68:13 // templates/JavaSDK/entities/unions.ts:68:13 //
-    // templates/JavaSDK/entities/unions.ts:68:13 // templates/JavaSDK/entities/unions.ts:68:13 //
-    // templates/JavaSDK/entities/unions.ts:68:13
+    @JsonDeserialize(using = FeedbackSource.Deserializer::class)
     @JsonSerialize(using = FeedbackSource.Serializer::class)
     class FeedbackSource
-    private constructor( // templates/JavaSDK/entities/unions.ts:68:13
-        private val appFeedbackSource: AppFeedbackSource? =
-            null, // templates/JavaSDK/entities/unions.ts:68:13 //
-        // templates/JavaSDK/entities/unions.ts:68:13
+    private constructor(
+        private val appFeedbackSource: AppFeedbackSource? = null,
         private val apiFeedbackSource: ApiFeedbackSource? = null,
         private val modelFeedbackSource: ModelFeedbackSource? = null,
         private val _json: JsonValue? = null,
     ) {
 
-        private var validated: Boolean = false // templates/JavaSDK/entities/unions.ts:68:13
+        private var validated: Boolean = false
 
         /** Feedback from the LangChainPlus App. */
-        // templates/JavaSDK/entities/unions.ts:89:12 // templates/JavaSDK/entities/unions.ts:89:12
         fun appFeedbackSource(): Optional<AppFeedbackSource> =
             Optional.ofNullable(appFeedbackSource)
         /** API feedback source. */
@@ -1062,19 +796,14 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         fun modelFeedbackSource(): Optional<ModelFeedbackSource> =
             Optional.ofNullable(modelFeedbackSource)
 
-        fun isAppFeedbackSource(): Boolean =
-            appFeedbackSource != null // templates/JavaSDK/entities/unions.ts:104:12 //
-        // templates/JavaSDK/entities/unions.ts:104:12
+        fun isAppFeedbackSource(): Boolean = appFeedbackSource != null
 
         fun isApiFeedbackSource(): Boolean = apiFeedbackSource != null
 
         fun isModelFeedbackSource(): Boolean = modelFeedbackSource != null
 
         fun asAppFeedbackSource(): AppFeedbackSource =
-            appFeedbackSource.getOrThrow(
-                "appFeedbackSource"
-            ) // templates/JavaSDK/entities/unions.ts:113:12 //
-        // templates/JavaSDK/entities/unions.ts:113:12
+            appFeedbackSource.getOrThrow("appFeedbackSource")
 
         fun asApiFeedbackSource(): ApiFeedbackSource =
             apiFeedbackSource.getOrThrow("apiFeedbackSource")
@@ -1084,30 +813,22 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
         fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
-        fun <T> accept(visitor: Visitor<T>): T { // templates/JavaSDK/entities/unions.ts:128:10
-            return when { // templates/JavaSDK/entities/unions.ts:134:30
-                appFeedbackSource != null ->
-                    visitor.visitAppFeedbackSource(
-                        appFeedbackSource
-                    ) // templates/JavaSDK/entities/unions.ts:134:30 //
-                // templates/JavaSDK/entities/unions.ts:134:30
+        fun <T> accept(visitor: Visitor<T>): T {
+            return when {
+                appFeedbackSource != null -> visitor.visitAppFeedbackSource(appFeedbackSource)
                 apiFeedbackSource != null -> visitor.visitApiFeedbackSource(apiFeedbackSource)
                 modelFeedbackSource != null -> visitor.visitModelFeedbackSource(modelFeedbackSource)
                 else -> visitor.unknown(_json)
             }
         }
 
-        fun validate(): FeedbackSource = apply { // templates/JavaSDK/entities/unions.ts:151:28
-            if (!validated) { // templates/JavaSDK/entities/unions.ts:154:20 //
-                // templates/JavaSDK/entities/unions.ts:151:28 //
-                // templates/JavaSDK/entities/unions.ts:151:28
+        fun validate(): FeedbackSource = apply {
+            if (!validated) {
                 if (
                     appFeedbackSource == null &&
                         apiFeedbackSource == null &&
                         modelFeedbackSource == null
-                ) { // templates/JavaSDK/entities/unions.ts:157:24 //
-                    // templates/JavaSDK/entities/unions.ts:154:20 //
-                    // templates/JavaSDK/entities/unions.ts:154:20
+                ) {
                     throw LangSmithInvalidDataException("Unknown FeedbackSource: $_json")
                 }
                 appFeedbackSource?.validate()
@@ -1117,30 +838,28 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             }
         }
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is FeedbackSource && // templates/JavaSDK/entities/fields.ts:143:33
+            return other is FeedbackSource &&
                 this.appFeedbackSource == other.appFeedbackSource &&
                 this.apiFeedbackSource == other.apiFeedbackSource &&
                 this.modelFeedbackSource == other.modelFeedbackSource
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-            return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                // templates/JavaSDK/entities/fields.ts:181:14
-                appFeedbackSource, // templates/JavaSDK/entities/fields.ts:163:19
+        override fun hashCode(): Int {
+            return Objects.hash(
+                appFeedbackSource,
                 apiFeedbackSource,
                 modelFeedbackSource,
             )
         }
 
-        override fun toString(): String { // templates/JavaSDK/entities/unions.ts:181:10
-            return when { // templates/JavaSDK/entities/unions.ts:188:16
-                appFeedbackSource != null ->
-                    "FeedbackSource{appFeedbackSource=$appFeedbackSource}" // templates/JavaSDK/entities/unions.ts:188:16 // templates/JavaSDK/entities/unions.ts:188:16
+        override fun toString(): String {
+            return when {
+                appFeedbackSource != null -> "FeedbackSource{appFeedbackSource=$appFeedbackSource}"
                 apiFeedbackSource != null -> "FeedbackSource{apiFeedbackSource=$apiFeedbackSource}"
                 modelFeedbackSource != null ->
                     "FeedbackSource{modelFeedbackSource=$modelFeedbackSource}"
@@ -1149,64 +868,48 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             }
         }
 
-        companion object { // templates/JavaSDK/entities/unions.ts:201:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14 //
-            // templates/JavaSDK/entities/unions.ts:201:10
+            @JvmStatic
             fun ofAppFeedbackSource(appFeedbackSource: AppFeedbackSource) =
                 FeedbackSource(appFeedbackSource = appFeedbackSource)
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14
+            @JvmStatic
             fun ofApiFeedbackSource(apiFeedbackSource: ApiFeedbackSource) =
                 FeedbackSource(apiFeedbackSource = apiFeedbackSource)
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14
+            @JvmStatic
             fun ofModelFeedbackSource(modelFeedbackSource: ModelFeedbackSource) =
                 FeedbackSource(modelFeedbackSource = modelFeedbackSource)
         }
 
-        interface Visitor<out T> { // templates/JavaSDK/entities/unions.ts:211:10 //
-            // templates/JavaSDK/entities/unions.ts:211:10 //
-            // templates/JavaSDK/entities/unions.ts:211:10
+        interface Visitor<out T> {
 
-            fun visitAppFeedbackSource(
-                appFeedbackSource: AppFeedbackSource
-            ): T // templates/JavaSDK/entities/unions.ts:211:10
+            fun visitAppFeedbackSource(appFeedbackSource: AppFeedbackSource): T
 
             fun visitApiFeedbackSource(apiFeedbackSource: ApiFeedbackSource): T
 
             fun visitModelFeedbackSource(modelFeedbackSource: ModelFeedbackSource): T
 
-            fun unknown(json: JsonValue?): T { // templates/JavaSDK/entities/unions.ts:230:14
+            fun unknown(json: JsonValue?): T {
                 throw LangSmithInvalidDataException("Unknown FeedbackSource: $json")
             }
         }
 
-        class Deserializer :
-            BaseDeserializer<FeedbackSource>(
-                FeedbackSource::class
-            ) { // templates/JavaSDK/entities/unions.ts:240:10 //
-            // templates/JavaSDK/entities/unions.ts:240:10 //
-            // templates/JavaSDK/entities/unions.ts:240:10
+        class Deserializer : BaseDeserializer<FeedbackSource>(FeedbackSource::class) {
 
-            override fun ObjectCodec.deserialize(
-                node: JsonNode
-            ): FeedbackSource { // templates/JavaSDK/entities/unions.ts:244:14 //
-                // templates/JavaSDK/entities/unions.ts:240:10
-                val json =
-                    JsonValue.fromJsonNode(node) // templates/JavaSDK/entities/unions.ts:251:22 //
-                // templates/JavaSDK/entities/unions.ts:251:22 //
-                // templates/JavaSDK/entities/unions.ts:250:28
+            override fun ObjectCodec.deserialize(node: JsonNode): FeedbackSource {
+                val json = JsonValue.fromJsonNode(node)
                 tryDeserialize(node, jacksonTypeRef<AppFeedbackSource>()) { it.validate() }
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
+                    ?.let {
                         return FeedbackSource(appFeedbackSource = it, _json = json)
                     }
                 tryDeserialize(node, jacksonTypeRef<ApiFeedbackSource>()) { it.validate() }
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
+                    ?.let {
                         return FeedbackSource(apiFeedbackSource = it, _json = json)
                     }
                 tryDeserialize(node, jacksonTypeRef<ModelFeedbackSource>()) { it.validate() }
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
+                    ?.let {
                         return FeedbackSource(modelFeedbackSource = it, _json = json)
                     }
 
@@ -1214,25 +917,16 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             }
         }
 
-        class Serializer :
-            BaseSerializer<FeedbackSource>(
-                FeedbackSource::class
-            ) { // templates/JavaSDK/entities/unions.ts:269:10 //
-            // templates/JavaSDK/entities/unions.ts:269:10 //
-            // templates/JavaSDK/entities/unions.ts:269:10
+        class Serializer : BaseSerializer<FeedbackSource>(FeedbackSource::class) {
 
             override fun serialize(
                 value: FeedbackSource,
                 generator: JsonGenerator,
                 provider: SerializerProvider
-            ) { // templates/JavaSDK/entities/unions.ts:273:14 //
-                // templates/JavaSDK/entities/unions.ts:269:10
-                when { // templates/JavaSDK/entities/unions.ts:278:24
+            ) {
+                when {
                     value.appFeedbackSource != null ->
-                        generator.writeObject(
-                            value.appFeedbackSource
-                        ) // templates/JavaSDK/entities/unions.ts:278:24 //
-                    // templates/JavaSDK/entities/unions.ts:278:24
+                        generator.writeObject(value.appFeedbackSource)
                     value.apiFeedbackSource != null ->
                         generator.writeObject(value.apiFeedbackSource)
                     value.modelFeedbackSource != null ->
@@ -1244,11 +938,6 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         }
 
         /** Feedback from the LangChainPlus App. */
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
         @JsonDeserialize(builder = AppFeedbackSource.Builder::class)
         @NoAutoDetect
         class AppFeedbackSource
@@ -1258,61 +947,45 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             private val additionalProperties: Map<String, JsonValue>,
         ) {
 
-            private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-            // templates/JavaSDK/entities/objects.ts:76:13
+            private var validated: Boolean = false
 
             private var hashCode: Int = 0
 
             fun type(): Optional<String> = Optional.ofNullable(type.getNullable("type"))
 
-            @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:166:16
-            @ExcludeMissing
-            fun _type() = type
+            @JsonProperty("type") @ExcludeMissing fun _type() = type
 
-            @JsonProperty("metadata") // templates/JavaSDK/entities/objects.ts:166:16
-            @ExcludeMissing
-            fun _metadata() = metadata
+            @JsonProperty("metadata") @ExcludeMissing fun _metadata() = metadata
 
-            @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-            // templates/JavaSDK/entities/objects.ts:180:12
+            @JsonAnyGetter
             @ExcludeMissing
             fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-            fun validate(): AppFeedbackSource =
-                apply { // templates/JavaSDK/entities/objects.ts:198:28
-                    if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-                        // templates/JavaSDK/entities/objects.ts:198:28 //
-                        // templates/JavaSDK/entities/objects.ts:198:28
-                        type() // templates/JavaSDK/entities/objects.ts:201:20 //
-                        // templates/JavaSDK/entities/objects.ts:201:20
-                        validated = true
-                    }
+            fun validate(): AppFeedbackSource = apply {
+                if (!validated) {
+                    type()
+                    validated = true
                 }
+            }
 
             fun toBuilder() = Builder().from(this)
 
-            override fun equals(
-                other: Any?
-            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
                     return true
                 }
 
-                return other is AppFeedbackSource && // templates/JavaSDK/entities/fields.ts:143:33
+                return other is AppFeedbackSource &&
                     this.type == other.type &&
                     this.metadata == other.metadata &&
                     this.additionalProperties == other.additionalProperties
             }
 
-            override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-                if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16
+            override fun hashCode(): Int {
+                if (hashCode == 0) {
                     hashCode =
-                        Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                            // templates/JavaSDK/entities/fields.ts:175:16 //
-                            // templates/JavaSDK/entities/fields.ts:175:16
-                            type, // templates/JavaSDK/entities/fields.ts:163:19
+                        Objects.hash(
+                            type,
                             metadata,
                             additionalProperties,
                         )
@@ -1323,75 +996,52 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             override fun toString() =
                 "AppFeedbackSource{type=$type, metadata=$metadata, additionalProperties=$additionalProperties}"
 
-            companion object { // templates/JavaSDK/entities/objects.ts:217:10
+            companion object {
 
-                @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-                // templates/JavaSDK/entities/objects.ts:217:10
-                fun builder() = Builder()
+                @JvmStatic fun builder() = Builder()
             }
 
-            class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+            class Builder {
 
-                private var type: JsonField<String> =
-                    JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+                private var type: JsonField<String> = JsonMissing.of()
                 private var metadata: JsonValue = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-                internal fun from(appFeedbackSource: AppFeedbackSource) =
-                    apply { // templates/JavaSDK/entities/objects.ts:240:30
-                        this.type =
-                            appFeedbackSource
-                                .type // templates/JavaSDK/entities/objects.ts:240:30 //
-                        // templates/JavaSDK/entities/objects.ts:240:30
-                        this.metadata = appFeedbackSource.metadata
-                        additionalProperties(appFeedbackSource.additionalProperties)
-                    }
+                @JvmSynthetic
+                internal fun from(appFeedbackSource: AppFeedbackSource) = apply {
+                    this.type = appFeedbackSource.type
+                    this.metadata = appFeedbackSource.metadata
+                    additionalProperties(appFeedbackSource.additionalProperties)
+                }
 
-                fun type(type: String) =
-                    type(JsonField.of(type)) // templates/JavaSDK/entities/objects.ts:252:20
+                fun type(type: String) = type(JsonField.of(type))
 
-                @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:264:20
+                @JsonProperty("type")
                 @ExcludeMissing
-                fun type(type: JsonField<String>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:275:36
-                        this.type = type
-                    }
+                fun type(type: JsonField<String>) = apply { this.type = type }
 
-                @JsonProperty("metadata") // templates/JavaSDK/entities/objects.ts:264:20 //
-                // templates/JavaSDK/entities/objects.ts:252:20
+                @JsonProperty("metadata")
                 @ExcludeMissing
-                fun metadata(metadata: JsonValue) =
-                    apply { // templates/JavaSDK/entities/objects.ts:275:36
-                        this.metadata = metadata
-                    }
+                fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties
-                            .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                        // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-                @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-                fun putAdditionalProperty(key: String, value: JsonValue) =
-                    apply { // templates/JavaSDK/entities/objects.ts:304:30
-                        this.additionalProperties.put(key, value)
-                    }
+                @JsonAnySetter
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    this.additionalProperties.put(key, value)
+                }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
                 fun build(): AppFeedbackSource =
-                    AppFeedbackSource( // templates/JavaSDK/entities/objects.ts:326:30
-                        type, // templates/JavaSDK/entities/objects.ts:326:30
+                    AppFeedbackSource(
+                        type,
                         metadata,
                         additionalProperties.toUnmodifiable(),
                     )
@@ -1399,11 +1049,6 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         }
 
         /** API feedback source. */
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
         @JsonDeserialize(builder = ApiFeedbackSource.Builder::class)
         @NoAutoDetect
         class ApiFeedbackSource
@@ -1413,61 +1058,45 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             private val additionalProperties: Map<String, JsonValue>,
         ) {
 
-            private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-            // templates/JavaSDK/entities/objects.ts:76:13
+            private var validated: Boolean = false
 
             private var hashCode: Int = 0
 
             fun type(): Optional<String> = Optional.ofNullable(type.getNullable("type"))
 
-            @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:166:16
-            @ExcludeMissing
-            fun _type() = type
+            @JsonProperty("type") @ExcludeMissing fun _type() = type
 
-            @JsonProperty("metadata") // templates/JavaSDK/entities/objects.ts:166:16
-            @ExcludeMissing
-            fun _metadata() = metadata
+            @JsonProperty("metadata") @ExcludeMissing fun _metadata() = metadata
 
-            @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-            // templates/JavaSDK/entities/objects.ts:180:12
+            @JsonAnyGetter
             @ExcludeMissing
             fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-            fun validate(): ApiFeedbackSource =
-                apply { // templates/JavaSDK/entities/objects.ts:198:28
-                    if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-                        // templates/JavaSDK/entities/objects.ts:198:28 //
-                        // templates/JavaSDK/entities/objects.ts:198:28
-                        type() // templates/JavaSDK/entities/objects.ts:201:20 //
-                        // templates/JavaSDK/entities/objects.ts:201:20
-                        validated = true
-                    }
+            fun validate(): ApiFeedbackSource = apply {
+                if (!validated) {
+                    type()
+                    validated = true
                 }
+            }
 
             fun toBuilder() = Builder().from(this)
 
-            override fun equals(
-                other: Any?
-            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
                     return true
                 }
 
-                return other is ApiFeedbackSource && // templates/JavaSDK/entities/fields.ts:143:33
+                return other is ApiFeedbackSource &&
                     this.type == other.type &&
                     this.metadata == other.metadata &&
                     this.additionalProperties == other.additionalProperties
             }
 
-            override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-                if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16
+            override fun hashCode(): Int {
+                if (hashCode == 0) {
                     hashCode =
-                        Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                            // templates/JavaSDK/entities/fields.ts:175:16 //
-                            // templates/JavaSDK/entities/fields.ts:175:16
-                            type, // templates/JavaSDK/entities/fields.ts:163:19
+                        Objects.hash(
+                            type,
                             metadata,
                             additionalProperties,
                         )
@@ -1478,75 +1107,52 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             override fun toString() =
                 "ApiFeedbackSource{type=$type, metadata=$metadata, additionalProperties=$additionalProperties}"
 
-            companion object { // templates/JavaSDK/entities/objects.ts:217:10
+            companion object {
 
-                @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-                // templates/JavaSDK/entities/objects.ts:217:10
-                fun builder() = Builder()
+                @JvmStatic fun builder() = Builder()
             }
 
-            class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+            class Builder {
 
-                private var type: JsonField<String> =
-                    JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+                private var type: JsonField<String> = JsonMissing.of()
                 private var metadata: JsonValue = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-                internal fun from(apiFeedbackSource: ApiFeedbackSource) =
-                    apply { // templates/JavaSDK/entities/objects.ts:240:30
-                        this.type =
-                            apiFeedbackSource
-                                .type // templates/JavaSDK/entities/objects.ts:240:30 //
-                        // templates/JavaSDK/entities/objects.ts:240:30
-                        this.metadata = apiFeedbackSource.metadata
-                        additionalProperties(apiFeedbackSource.additionalProperties)
-                    }
+                @JvmSynthetic
+                internal fun from(apiFeedbackSource: ApiFeedbackSource) = apply {
+                    this.type = apiFeedbackSource.type
+                    this.metadata = apiFeedbackSource.metadata
+                    additionalProperties(apiFeedbackSource.additionalProperties)
+                }
 
-                fun type(type: String) =
-                    type(JsonField.of(type)) // templates/JavaSDK/entities/objects.ts:252:20
+                fun type(type: String) = type(JsonField.of(type))
 
-                @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:264:20
+                @JsonProperty("type")
                 @ExcludeMissing
-                fun type(type: JsonField<String>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:275:36
-                        this.type = type
-                    }
+                fun type(type: JsonField<String>) = apply { this.type = type }
 
-                @JsonProperty("metadata") // templates/JavaSDK/entities/objects.ts:264:20 //
-                // templates/JavaSDK/entities/objects.ts:252:20
+                @JsonProperty("metadata")
                 @ExcludeMissing
-                fun metadata(metadata: JsonValue) =
-                    apply { // templates/JavaSDK/entities/objects.ts:275:36
-                        this.metadata = metadata
-                    }
+                fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties
-                            .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                        // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-                @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-                fun putAdditionalProperty(key: String, value: JsonValue) =
-                    apply { // templates/JavaSDK/entities/objects.ts:304:30
-                        this.additionalProperties.put(key, value)
-                    }
+                @JsonAnySetter
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    this.additionalProperties.put(key, value)
+                }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
                 fun build(): ApiFeedbackSource =
-                    ApiFeedbackSource( // templates/JavaSDK/entities/objects.ts:326:30
-                        type, // templates/JavaSDK/entities/objects.ts:326:30
+                    ApiFeedbackSource(
+                        type,
                         metadata,
                         additionalProperties.toUnmodifiable(),
                     )
@@ -1554,11 +1160,6 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         }
 
         /** Model feedback source. */
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
         @JsonDeserialize(builder = ModelFeedbackSource.Builder::class)
         @NoAutoDetect
         class ModelFeedbackSource
@@ -1568,62 +1169,45 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             private val additionalProperties: Map<String, JsonValue>,
         ) {
 
-            private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-            // templates/JavaSDK/entities/objects.ts:76:13
+            private var validated: Boolean = false
 
             private var hashCode: Int = 0
 
             fun type(): Optional<String> = Optional.ofNullable(type.getNullable("type"))
 
-            @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:166:16
-            @ExcludeMissing
-            fun _type() = type
+            @JsonProperty("type") @ExcludeMissing fun _type() = type
 
-            @JsonProperty("metadata") // templates/JavaSDK/entities/objects.ts:166:16
-            @ExcludeMissing
-            fun _metadata() = metadata
+            @JsonProperty("metadata") @ExcludeMissing fun _metadata() = metadata
 
-            @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-            // templates/JavaSDK/entities/objects.ts:180:12
+            @JsonAnyGetter
             @ExcludeMissing
             fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-            fun validate(): ModelFeedbackSource =
-                apply { // templates/JavaSDK/entities/objects.ts:198:28
-                    if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-                        // templates/JavaSDK/entities/objects.ts:198:28 //
-                        // templates/JavaSDK/entities/objects.ts:198:28
-                        type() // templates/JavaSDK/entities/objects.ts:201:20 //
-                        // templates/JavaSDK/entities/objects.ts:201:20
-                        validated = true
-                    }
+            fun validate(): ModelFeedbackSource = apply {
+                if (!validated) {
+                    type()
+                    validated = true
                 }
+            }
 
             fun toBuilder() = Builder().from(this)
 
-            override fun equals(
-                other: Any?
-            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
                     return true
                 }
 
-                return other is
-                    ModelFeedbackSource && // templates/JavaSDK/entities/fields.ts:143:33
+                return other is ModelFeedbackSource &&
                     this.type == other.type &&
                     this.metadata == other.metadata &&
                     this.additionalProperties == other.additionalProperties
             }
 
-            override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-                if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16 //
-                    // templates/JavaSDK/entities/fields.ts:174:16
+            override fun hashCode(): Int {
+                if (hashCode == 0) {
                     hashCode =
-                        Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                            // templates/JavaSDK/entities/fields.ts:175:16 //
-                            // templates/JavaSDK/entities/fields.ts:175:16
-                            type, // templates/JavaSDK/entities/fields.ts:163:19
+                        Objects.hash(
+                            type,
                             metadata,
                             additionalProperties,
                         )
@@ -1634,75 +1218,52 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             override fun toString() =
                 "ModelFeedbackSource{type=$type, metadata=$metadata, additionalProperties=$additionalProperties}"
 
-            companion object { // templates/JavaSDK/entities/objects.ts:217:10
+            companion object {
 
-                @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-                // templates/JavaSDK/entities/objects.ts:217:10
-                fun builder() = Builder()
+                @JvmStatic fun builder() = Builder()
             }
 
-            class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+            class Builder {
 
-                private var type: JsonField<String> =
-                    JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:226:16 //
-                // templates/JavaSDK/entities/objects.ts:224:10
+                private var type: JsonField<String> = JsonMissing.of()
                 private var metadata: JsonValue = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-                internal fun from(modelFeedbackSource: ModelFeedbackSource) =
-                    apply { // templates/JavaSDK/entities/objects.ts:240:30
-                        this.type =
-                            modelFeedbackSource
-                                .type // templates/JavaSDK/entities/objects.ts:240:30 //
-                        // templates/JavaSDK/entities/objects.ts:240:30
-                        this.metadata = modelFeedbackSource.metadata
-                        additionalProperties(modelFeedbackSource.additionalProperties)
-                    }
+                @JvmSynthetic
+                internal fun from(modelFeedbackSource: ModelFeedbackSource) = apply {
+                    this.type = modelFeedbackSource.type
+                    this.metadata = modelFeedbackSource.metadata
+                    additionalProperties(modelFeedbackSource.additionalProperties)
+                }
 
-                fun type(type: String) =
-                    type(JsonField.of(type)) // templates/JavaSDK/entities/objects.ts:252:20
+                fun type(type: String) = type(JsonField.of(type))
 
-                @JsonProperty("type") // templates/JavaSDK/entities/objects.ts:264:20
+                @JsonProperty("type")
                 @ExcludeMissing
-                fun type(type: JsonField<String>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:275:36
-                        this.type = type
-                    }
+                fun type(type: JsonField<String>) = apply { this.type = type }
 
-                @JsonProperty("metadata") // templates/JavaSDK/entities/objects.ts:264:20 //
-                // templates/JavaSDK/entities/objects.ts:252:20
+                @JsonProperty("metadata")
                 @ExcludeMissing
-                fun metadata(metadata: JsonValue) =
-                    apply { // templates/JavaSDK/entities/objects.ts:275:36
-                        this.metadata = metadata
-                    }
+                fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties
-                            .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                        // templates/JavaSDK/entities/objects.ts:290:30
-                        this.additionalProperties.putAll(additionalProperties)
-                    }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-                @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-                fun putAdditionalProperty(key: String, value: JsonValue) =
-                    apply { // templates/JavaSDK/entities/objects.ts:304:30
-                        this.additionalProperties.put(key, value)
-                    }
+                @JsonAnySetter
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    this.additionalProperties.put(key, value)
+                }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
                 fun build(): ModelFeedbackSource =
-                    ModelFeedbackSource( // templates/JavaSDK/entities/objects.ts:326:30
-                        type, // templates/JavaSDK/entities/objects.ts:326:30
+                    ModelFeedbackSource(
+                        type,
                         metadata,
                         additionalProperties.toUnmodifiable(),
                     )
@@ -1710,11 +1271,7 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         }
     }
 
-    @JsonDeserialize(
-        using = Score.Deserializer::class
-    ) // templates/JavaSDK/entities/unions.ts:68:13 // templates/JavaSDK/entities/unions.ts:68:13 //
-    // templates/JavaSDK/entities/unions.ts:68:13 // templates/JavaSDK/entities/unions.ts:68:13 //
-    // templates/JavaSDK/entities/unions.ts:68:13
+    @JsonDeserialize(using = Score.Deserializer::class)
     @JsonSerialize(using = Score.Serializer::class)
     class Score
     private constructor(
@@ -1723,145 +1280,102 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         private val _json: JsonValue? = null,
     ) {
 
-        private var validated: Boolean = false // templates/JavaSDK/entities/unions.ts:68:13
+        private var validated: Boolean = false
 
-        fun double(): Optional<Double> =
-            Optional.ofNullable(double) // templates/JavaSDK/entities/unions.ts:89:12 //
-        // templates/JavaSDK/entities/unions.ts:89:12
+        fun double(): Optional<Double> = Optional.ofNullable(double)
 
         fun boolean(): Optional<Boolean> = Optional.ofNullable(boolean)
 
-        fun isDouble(): Boolean = double != null // templates/JavaSDK/entities/unions.ts:104:12 //
-        // templates/JavaSDK/entities/unions.ts:104:12
+        fun isDouble(): Boolean = double != null
 
         fun isBoolean(): Boolean = boolean != null
 
-        fun asDouble(): Double =
-            double.getOrThrow("double") // templates/JavaSDK/entities/unions.ts:113:12 //
-        // templates/JavaSDK/entities/unions.ts:113:12
+        fun asDouble(): Double = double.getOrThrow("double")
 
         fun asBoolean(): Boolean = boolean.getOrThrow("boolean")
 
         fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
-        fun <T> accept(visitor: Visitor<T>): T { // templates/JavaSDK/entities/unions.ts:128:10
-            return when { // templates/JavaSDK/entities/unions.ts:134:30
-                double != null ->
-                    visitor.visitDouble(double) // templates/JavaSDK/entities/unions.ts:134:30 //
-                // templates/JavaSDK/entities/unions.ts:134:30
+        fun <T> accept(visitor: Visitor<T>): T {
+            return when {
+                double != null -> visitor.visitDouble(double)
                 boolean != null -> visitor.visitBoolean(boolean)
                 else -> visitor.unknown(_json)
             }
         }
 
-        fun validate(): Score = apply { // templates/JavaSDK/entities/unions.ts:151:28
-            if (!validated) { // templates/JavaSDK/entities/unions.ts:154:20 //
-                // templates/JavaSDK/entities/unions.ts:151:28 //
-                // templates/JavaSDK/entities/unions.ts:151:28
-                if (
-                    double == null && boolean == null
-                ) { // templates/JavaSDK/entities/unions.ts:157:24 //
-                    // templates/JavaSDK/entities/unions.ts:154:20 //
-                    // templates/JavaSDK/entities/unions.ts:154:20
+        fun validate(): Score = apply {
+            if (!validated) {
+                if (double == null && boolean == null) {
                     throw LangSmithInvalidDataException("Unknown Score: $_json")
                 }
                 validated = true
             }
         }
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is Score && // templates/JavaSDK/entities/fields.ts:143:33
-                this.double == other.double &&
-                this.boolean == other.boolean
+            return other is Score && this.double == other.double && this.boolean == other.boolean
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        override fun hashCode(): Int {
             return Objects.hash(double, boolean)
         }
 
-        override fun toString(): String { // templates/JavaSDK/entities/unions.ts:181:10
-            return when { // templates/JavaSDK/entities/unions.ts:188:16
-                double != null ->
-                    "Score{double=$double}" // templates/JavaSDK/entities/unions.ts:188:16 //
-                // templates/JavaSDK/entities/unions.ts:188:16
+        override fun toString(): String {
+            return when {
+                double != null -> "Score{double=$double}"
                 boolean != null -> "Score{boolean=$boolean}"
                 _json != null -> "Score{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid Score")
             }
         }
 
-        companion object { // templates/JavaSDK/entities/unions.ts:201:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14 //
-            // templates/JavaSDK/entities/unions.ts:201:10
-            fun ofDouble(double: Double) = Score(double = double)
+            @JvmStatic fun ofDouble(double: Double) = Score(double = double)
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14
-            fun ofBoolean(boolean: Boolean) = Score(boolean = boolean)
+            @JvmStatic fun ofBoolean(boolean: Boolean) = Score(boolean = boolean)
         }
 
-        interface Visitor<out T> { // templates/JavaSDK/entities/unions.ts:211:10 //
-            // templates/JavaSDK/entities/unions.ts:211:10 //
-            // templates/JavaSDK/entities/unions.ts:211:10
+        interface Visitor<out T> {
 
-            fun visitDouble(double: Double): T // templates/JavaSDK/entities/unions.ts:211:10
+            fun visitDouble(double: Double): T
 
             fun visitBoolean(boolean: Boolean): T
 
-            fun unknown(json: JsonValue?): T { // templates/JavaSDK/entities/unions.ts:230:14
+            fun unknown(json: JsonValue?): T {
                 throw LangSmithInvalidDataException("Unknown Score: $json")
             }
         }
 
-        class Deserializer :
-            BaseDeserializer<Score>(
-                Score::class
-            ) { // templates/JavaSDK/entities/unions.ts:240:10 //
-            // templates/JavaSDK/entities/unions.ts:240:10 //
-            // templates/JavaSDK/entities/unions.ts:240:10
+        class Deserializer : BaseDeserializer<Score>(Score::class) {
 
-            override fun ObjectCodec.deserialize(
-                node: JsonNode
-            ): Score { // templates/JavaSDK/entities/unions.ts:244:14 //
-                // templates/JavaSDK/entities/unions.ts:240:10
-                val json =
-                    JsonValue.fromJsonNode(node) // templates/JavaSDK/entities/unions.ts:251:22 //
-                // templates/JavaSDK/entities/unions.ts:251:22 //
-                // templates/JavaSDK/entities/unions.ts:250:28
-                tryDeserialize(node, jacksonTypeRef<Double>())
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
-                        return Score(double = it, _json = json)
-                    }
-                tryDeserialize(node, jacksonTypeRef<Boolean>())
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
-                        return Score(boolean = it, _json = json)
-                    }
+            override fun ObjectCodec.deserialize(node: JsonNode): Score {
+                val json = JsonValue.fromJsonNode(node)
+                tryDeserialize(node, jacksonTypeRef<Double>())?.let {
+                    return Score(double = it, _json = json)
+                }
+                tryDeserialize(node, jacksonTypeRef<Boolean>())?.let {
+                    return Score(boolean = it, _json = json)
+                }
 
                 return Score(_json = json)
             }
         }
 
-        class Serializer :
-            BaseSerializer<Score>(Score::class) { // templates/JavaSDK/entities/unions.ts:269:10 //
-            // templates/JavaSDK/entities/unions.ts:269:10 //
-            // templates/JavaSDK/entities/unions.ts:269:10
+        class Serializer : BaseSerializer<Score>(Score::class) {
 
             override fun serialize(
                 value: Score,
                 generator: JsonGenerator,
                 provider: SerializerProvider
-            ) { // templates/JavaSDK/entities/unions.ts:273:14 //
-                // templates/JavaSDK/entities/unions.ts:269:10
-                when { // templates/JavaSDK/entities/unions.ts:278:24
-                    value.double != null ->
-                        generator.writeObject(
-                            value.double
-                        ) // templates/JavaSDK/entities/unions.ts:278:24 //
-                    // templates/JavaSDK/entities/unions.ts:278:24
+            ) {
+                when {
+                    value.double != null -> generator.writeObject(value.double)
                     value.boolean != null -> generator.writeObject(value.boolean)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid Score")
@@ -1870,27 +1384,20 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         }
     }
 
-    @JsonDeserialize(
-        using = Value.Deserializer::class
-    ) // templates/JavaSDK/entities/unions.ts:68:13 // templates/JavaSDK/entities/unions.ts:68:13 //
-    // templates/JavaSDK/entities/unions.ts:68:13 // templates/JavaSDK/entities/unions.ts:68:13 //
-    // templates/JavaSDK/entities/unions.ts:68:13
+    @JsonDeserialize(using = Value.Deserializer::class)
     @JsonSerialize(using = Value.Serializer::class)
     class Value
-    private constructor( // templates/JavaSDK/entities/unions.ts:68:13
-        private val double: Double? = null, // templates/JavaSDK/entities/unions.ts:68:13 //
-        // templates/JavaSDK/entities/unions.ts:68:13
+    private constructor(
+        private val double: Double? = null,
         private val boolean: Boolean? = null,
         private val string: String? = null,
         private val jsonValue: JsonValue? = null,
         private val _json: JsonValue? = null,
     ) {
 
-        private var validated: Boolean = false // templates/JavaSDK/entities/unions.ts:68:13
+        private var validated: Boolean = false
 
-        fun double(): Optional<Double> =
-            Optional.ofNullable(double) // templates/JavaSDK/entities/unions.ts:89:12 //
-        // templates/JavaSDK/entities/unions.ts:89:12
+        fun double(): Optional<Double> = Optional.ofNullable(double)
 
         fun boolean(): Optional<Boolean> = Optional.ofNullable(boolean)
 
@@ -1898,8 +1405,7 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
         fun jsonValue(): Optional<JsonValue> = Optional.ofNullable(jsonValue)
 
-        fun isDouble(): Boolean = double != null // templates/JavaSDK/entities/unions.ts:104:12 //
-        // templates/JavaSDK/entities/unions.ts:104:12
+        fun isDouble(): Boolean = double != null
 
         fun isBoolean(): Boolean = boolean != null
 
@@ -1907,9 +1413,7 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
         fun isJsonValue(): Boolean = jsonValue != null
 
-        fun asDouble(): Double =
-            double.getOrThrow("double") // templates/JavaSDK/entities/unions.ts:113:12 //
-        // templates/JavaSDK/entities/unions.ts:113:12
+        fun asDouble(): Double = double.getOrThrow("double")
 
         fun asBoolean(): Boolean = boolean.getOrThrow("boolean")
 
@@ -1919,11 +1423,9 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
         fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
-        fun <T> accept(visitor: Visitor<T>): T { // templates/JavaSDK/entities/unions.ts:128:10
-            return when { // templates/JavaSDK/entities/unions.ts:134:30
-                double != null ->
-                    visitor.visitDouble(double) // templates/JavaSDK/entities/unions.ts:134:30 //
-                // templates/JavaSDK/entities/unions.ts:134:30
+        fun <T> accept(visitor: Visitor<T>): T {
+            return when {
+                double != null -> visitor.visitDouble(double)
                 boolean != null -> visitor.visitBoolean(boolean)
                 string != null -> visitor.visitString(string)
                 jsonValue != null -> visitor.visitJsonValue(jsonValue)
@@ -1931,48 +1433,39 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             }
         }
 
-        fun validate(): Value = apply { // templates/JavaSDK/entities/unions.ts:151:28
-            if (!validated) { // templates/JavaSDK/entities/unions.ts:154:20 //
-                // templates/JavaSDK/entities/unions.ts:151:28 //
-                // templates/JavaSDK/entities/unions.ts:151:28
-                if (
-                    double == null && boolean == null && string == null && jsonValue == null
-                ) { // templates/JavaSDK/entities/unions.ts:157:24 //
-                    // templates/JavaSDK/entities/unions.ts:154:20 //
-                    // templates/JavaSDK/entities/unions.ts:154:20
+        fun validate(): Value = apply {
+            if (!validated) {
+                if (double == null && boolean == null && string == null && jsonValue == null) {
                     throw LangSmithInvalidDataException("Unknown Value: $_json")
                 }
                 validated = true
             }
         }
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is Value && // templates/JavaSDK/entities/fields.ts:143:33
+            return other is Value &&
                 this.double == other.double &&
                 this.boolean == other.boolean &&
                 this.string == other.string &&
                 this.jsonValue == other.jsonValue
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-            return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                // templates/JavaSDK/entities/fields.ts:181:14
-                double, // templates/JavaSDK/entities/fields.ts:163:19
+        override fun hashCode(): Int {
+            return Objects.hash(
+                double,
                 boolean,
                 string,
                 jsonValue,
             )
         }
 
-        override fun toString(): String { // templates/JavaSDK/entities/unions.ts:181:10
-            return when { // templates/JavaSDK/entities/unions.ts:188:16
-                double != null ->
-                    "Value{double=$double}" // templates/JavaSDK/entities/unions.ts:188:16 //
-                // templates/JavaSDK/entities/unions.ts:188:16
+        override fun toString(): String {
+            return when {
+                double != null -> "Value{double=$double}"
                 boolean != null -> "Value{boolean=$boolean}"
                 string != null -> "Value{string=$string}"
                 jsonValue != null -> "Value{jsonValue=$jsonValue}"
@@ -1981,27 +1474,20 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             }
         }
 
-        companion object { // templates/JavaSDK/entities/unions.ts:201:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14 //
-            // templates/JavaSDK/entities/unions.ts:201:10
-            fun ofDouble(double: Double) = Value(double = double)
+            @JvmStatic fun ofDouble(double: Double) = Value(double = double)
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14
-            fun ofBoolean(boolean: Boolean) = Value(boolean = boolean)
+            @JvmStatic fun ofBoolean(boolean: Boolean) = Value(boolean = boolean)
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14
-            fun ofString(string: String) = Value(string = string)
+            @JvmStatic fun ofString(string: String) = Value(string = string)
 
-            @JvmStatic // templates/JavaSDK/entities/unions.ts:203:14
-            fun ofJsonValue(jsonValue: JsonValue) = Value(jsonValue = jsonValue)
+            @JvmStatic fun ofJsonValue(jsonValue: JsonValue) = Value(jsonValue = jsonValue)
         }
 
-        interface Visitor<out T> { // templates/JavaSDK/entities/unions.ts:211:10 //
-            // templates/JavaSDK/entities/unions.ts:211:10 //
-            // templates/JavaSDK/entities/unions.ts:211:10
+        interface Visitor<out T> {
 
-            fun visitDouble(double: Double): T // templates/JavaSDK/entities/unions.ts:211:10
+            fun visitDouble(double: Double): T
 
             fun visitBoolean(boolean: Boolean): T
 
@@ -2009,64 +1495,41 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
             fun visitJsonValue(jsonValue: JsonValue): T
 
-            fun unknown(json: JsonValue?): T { // templates/JavaSDK/entities/unions.ts:230:14
+            fun unknown(json: JsonValue?): T {
                 throw LangSmithInvalidDataException("Unknown Value: $json")
             }
         }
 
-        class Deserializer :
-            BaseDeserializer<Value>(
-                Value::class
-            ) { // templates/JavaSDK/entities/unions.ts:240:10 //
-            // templates/JavaSDK/entities/unions.ts:240:10 //
-            // templates/JavaSDK/entities/unions.ts:240:10
+        class Deserializer : BaseDeserializer<Value>(Value::class) {
 
-            override fun ObjectCodec.deserialize(
-                node: JsonNode
-            ): Value { // templates/JavaSDK/entities/unions.ts:244:14 //
-                // templates/JavaSDK/entities/unions.ts:240:10
-                val json =
-                    JsonValue.fromJsonNode(node) // templates/JavaSDK/entities/unions.ts:251:22 //
-                // templates/JavaSDK/entities/unions.ts:251:22 //
-                // templates/JavaSDK/entities/unions.ts:250:28
-                tryDeserialize(node, jacksonTypeRef<Double>())
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
-                        return Value(double = it, _json = json)
-                    }
-                tryDeserialize(node, jacksonTypeRef<Boolean>())
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
-                        return Value(boolean = it, _json = json)
-                    }
-                tryDeserialize(node, jacksonTypeRef<String>())
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
-                        return Value(string = it, _json = json)
-                    }
-                tryDeserialize(node, jacksonTypeRef<JsonValue>())
-                    ?.let { // templates/JavaSDK/entities/unions.ts:254:34
-                        return Value(jsonValue = it, _json = json)
-                    }
+            override fun ObjectCodec.deserialize(node: JsonNode): Value {
+                val json = JsonValue.fromJsonNode(node)
+                tryDeserialize(node, jacksonTypeRef<Double>())?.let {
+                    return Value(double = it, _json = json)
+                }
+                tryDeserialize(node, jacksonTypeRef<Boolean>())?.let {
+                    return Value(boolean = it, _json = json)
+                }
+                tryDeserialize(node, jacksonTypeRef<String>())?.let {
+                    return Value(string = it, _json = json)
+                }
+                tryDeserialize(node, jacksonTypeRef<JsonValue>())?.let {
+                    return Value(jsonValue = it, _json = json)
+                }
 
                 return Value(_json = json)
             }
         }
 
-        class Serializer :
-            BaseSerializer<Value>(Value::class) { // templates/JavaSDK/entities/unions.ts:269:10 //
-            // templates/JavaSDK/entities/unions.ts:269:10 //
-            // templates/JavaSDK/entities/unions.ts:269:10
+        class Serializer : BaseSerializer<Value>(Value::class) {
 
             override fun serialize(
                 value: Value,
                 generator: JsonGenerator,
                 provider: SerializerProvider
-            ) { // templates/JavaSDK/entities/unions.ts:273:14 //
-                // templates/JavaSDK/entities/unions.ts:269:10
-                when { // templates/JavaSDK/entities/unions.ts:278:24
-                    value.double != null ->
-                        generator.writeObject(
-                            value.double
-                        ) // templates/JavaSDK/entities/unions.ts:278:24 //
-                    // templates/JavaSDK/entities/unions.ts:278:24
+            ) {
+                when {
+                    value.double != null -> generator.writeObject(value.double)
                     value.boolean != null -> generator.writeObject(value.boolean)
                     value.string != null -> generator.writeObject(value.string)
                     value.jsonValue != null -> generator.writeObject(value.jsonValue)

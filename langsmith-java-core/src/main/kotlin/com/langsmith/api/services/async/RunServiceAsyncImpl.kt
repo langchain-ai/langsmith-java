@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.services.async
 
@@ -35,11 +35,9 @@ import java.util.concurrent.CompletableFuture
 class RunServiceAsyncImpl
 constructor(
     private val clientOptions: ClientOptions,
-) : RunServiceAsync { // templates/JavaSDK/services.ts:76:15 // templates/JavaSDK/services.ts:76:15
-    // // templates/JavaSDK/services.ts:76:15
+) : RunServiceAsync {
 
-    private val errorHandler: Handler<LangSmithError> =
-        errorHandler(clientOptions.jsonMapper) // templates/JavaSDK/services.ts:76:15
+    private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
 
     private val share: ShareServiceAsync by lazy { ShareServiceAsyncImpl(clientOptions) }
 
@@ -63,190 +61,100 @@ constructor(
 
     override fun monitor(): MonitorServiceAsync = monitor
 
-    private val createHandler:
-        Handler<
-            RunCreateResponse
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val createHandler: Handler<RunCreateResponse> =
         jsonHandler<RunCreateResponse>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Create a new run. */
     override fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<RunCreateResponse> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<RunCreateResponse> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.POST
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.POST)
                 .addPathSegments("runs")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
-                .apply { // templates/JavaSDK/services.ts:118:18
-                    params.getBody().ifPresent { // templates/JavaSDK/services.ts:121:41 //
-                        // templates/JavaSDK/services.ts:118:18 //
-                        // templates/JavaSDK/services.ts:118:18
-                        body(json(clientOptions.jsonMapper, it))
-                    }
-                }
+                .apply { params.getBody().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
-            response.use { // templates/JavaSDK/services.ts:166:8 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                createHandler.handle(it)
-            }
+            ->
+            response.use { createHandler.handle(it) }
         }
     }
 
-    private val retrieveHandler:
-        Handler<
-            RunSchema
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val retrieveHandler: Handler<RunSchema> =
         jsonHandler<RunSchema>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Get a specific run. */
     override fun retrieve(
         params: RunRetrieveParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<RunSchema> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<RunSchema> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.GET
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.GET)
                 .addPathSegments("runs", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
+            ->
             response
-                .use { // templates/JavaSDK/services.ts:166:8 //
-                    // templates/JavaSDK/services.ts:233:30 //
-                    // templates/JavaSDK/services.ts:233:30 //
-                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                    retrieveHandler.handle(it)
-                }
-                .apply { // templates/JavaSDK/services.ts:176:10
-                    if (
-                        requestOptions.responseValidation ?: clientOptions.responseValidation
-                    ) { // templates/JavaSDK/services.ts:179:14 //
-                        // templates/JavaSDK/services.ts:176:10 //
-                        // templates/JavaSDK/services.ts:176:10
+                .use { retrieveHandler.handle(it) }
+                .apply {
+                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
                         validate()
                     }
                 }
         }
     }
 
-    private val updateHandler:
-        Handler<
-            RunUpdateResponse
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val updateHandler: Handler<RunUpdateResponse> =
         jsonHandler<RunUpdateResponse>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Update a run. */
     override fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<RunUpdateResponse> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<RunUpdateResponse> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.PATCH
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.PATCH)
                 .addPathSegments("runs", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
-                .apply { // templates/JavaSDK/services.ts:118:18
-                    params.getBody().ifPresent { // templates/JavaSDK/services.ts:121:41 //
-                        // templates/JavaSDK/services.ts:118:18 //
-                        // templates/JavaSDK/services.ts:118:18
-                        body(json(clientOptions.jsonMapper, it))
-                    }
-                }
+                .apply { params.getBody().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
-            response.use { // templates/JavaSDK/services.ts:166:8 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                updateHandler.handle(it)
-            }
+            ->
+            response.use { updateHandler.handle(it) }
         }
     }
 
-    private val batchHandler:
-        Handler<
-            RunBatchResponse
-        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
-        // templates/JavaSDK/services.ts:825:19
+    private val batchHandler: Handler<RunBatchResponse> =
         jsonHandler<RunBatchResponse>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Batch ingest runs. */
     override fun batch(
         params: RunBatchParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<RunBatchResponse> { // templates/JavaSDK/services.ts:831:10
+    ): CompletableFuture<RunBatchResponse> {
         val request =
-            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:105:8 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:104:29 //
-                // templates/JavaSDK/services.ts:227:15 //
-                // templates/JavaSDK/services.ts:227:15
-                .method(
-                    HttpMethod.POST
-                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
+            HttpRequest.builder()
+                .method(HttpMethod.POST)
                 .addPathSegments("runs", "batch")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
-                .apply { // templates/JavaSDK/services.ts:118:18
-                    params.getBody().ifPresent { // templates/JavaSDK/services.ts:121:41 //
-                        // templates/JavaSDK/services.ts:118:18 //
-                        // templates/JavaSDK/services.ts:118:18
-                        body(json(clientOptions.jsonMapper, it))
-                    }
-                }
+                .apply { params.getBody().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            -> // templates/JavaSDK/services.ts:230:8
-            response.use { // templates/JavaSDK/services.ts:166:8 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:233:30 //
-                // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
-                batchHandler.handle(it)
-            }
+            ->
+            response.use { batchHandler.handle(it) }
         }
     }
 }

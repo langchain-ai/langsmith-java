@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 @file:Suppress("OVERLOADS_INTERFACE") // See https://youtrack.jetbrains.com/issue/KT-36102
 
@@ -17,44 +17,42 @@ import com.langsmith.api.models.AnnotationQueueUpdateResponse
 import com.langsmith.api.services.blocking.annotationQueues.QueueService
 import com.langsmith.api.services.blocking.annotationQueues.RunService
 
-interface AnnotationQueueService { // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15
+interface AnnotationQueueService {
 
-    fun runs(): RunService // templates/JavaSDK/services.ts:55:15
+    fun runs(): RunService
 
     fun queues(): QueueService
 
     /** Create Annotation Queue */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun create(
         params: AnnotationQueueCreateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): AnnotationQueueSchema
 
     /** Update Annotation Queue */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun update(
         params: AnnotationQueueUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): AnnotationQueueUpdateResponse
 
     /** Get Annotation Queues */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun list(
         params: AnnotationQueueListParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): List<AnnotationQueueSchema>
 
     /** Delete Annotation Queue */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun delete(
         params: AnnotationQueueDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): AnnotationQueueDeleteResponse
 
     /** Get Size From Annotation Queue */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun sizeRetrieve(
         params: AnnotationQueueSizeRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none()

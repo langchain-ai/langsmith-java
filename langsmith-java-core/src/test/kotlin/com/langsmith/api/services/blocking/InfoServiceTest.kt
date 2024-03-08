@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.services.blocking
 
@@ -8,31 +8,19 @@ import com.langsmith.api.models.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(
-    TestServerExtension::class
-) // templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15 //
-// templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15
+@ExtendWith(TestServerExtension::class)
 class InfoServiceTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 // templates/JavaSDK/services.ts:298:15
-    fun callRetrieve() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callRetrieve() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val infoService = client.info()
-        val infoGetResponse =
-            infoService.retrieve(
-                InfoRetrieveParams.builder().build()
-            ) // templates/JavaSDK/services.ts:475:17 // templates/JavaSDK/services.ts:475:17
-        println(
-            infoGetResponse
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
+        val infoGetResponse = infoService.retrieve(InfoRetrieveParams.builder().build())
+        println(infoGetResponse)
         infoGetResponse.validate()
     }
 }

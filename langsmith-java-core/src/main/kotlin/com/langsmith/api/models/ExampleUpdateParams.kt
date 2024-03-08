@@ -1,10 +1,8 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
-// //
-// templates/JavaSDK/components/file.ts:28:17
-import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -17,12 +15,8 @@ import java.util.Objects
 import java.util.Optional
 
 class ExampleUpdateParams
-constructor( // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
-    private val exampleId: String, // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
+constructor(
+    private val exampleId: String,
     private val datasetId: String?,
     private val inputs: JsonValue?,
     private val outputs: JsonValue?,
@@ -31,8 +25,7 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun exampleId(): String = exampleId // templates/JavaSDK/entities/params.ts:145:14 //
-    // templates/JavaSDK/entities/params.ts:131:13
+    fun exampleId(): String = exampleId
 
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
 
@@ -40,86 +33,69 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun outputs(): Optional<JsonValue> = Optional.ofNullable(outputs)
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:165:16
-    internal fun getBody(): ExampleUpdateBody { // templates/JavaSDK/entities/params.ts:165:16
-        return ExampleUpdateBody( // templates/JavaSDK/entities/params.ts:180:26 //
-            // templates/JavaSDK/entities/params.ts:179:24
-            datasetId, // templates/JavaSDK/entities/params.ts:180:26
+    @JvmSynthetic
+    internal fun getBody(): ExampleUpdateBody {
+        return ExampleUpdateBody(
+            datasetId,
             inputs,
             outputs,
             additionalBodyProperties,
         )
     }
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
-    internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
+    @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
-    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
-    fun getPathParam(index: Int): String { // templates/JavaSDK/entities/params.ts:555:13
-        return when (index) { // templates/JavaSDK/entities/params.ts:560:26
-            0 -> exampleId // templates/JavaSDK/entities/params.ts:560:26 //
-            // templates/JavaSDK/entities/params.ts:560:26
+    fun getPathParam(index: Int): String {
+        return when (index) {
+            0 -> exampleId
             else -> ""
         }
     }
 
     /** Update class for Example. */
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13
     @JsonDeserialize(builder = ExampleUpdateBody.Builder::class)
     @NoAutoDetect
     class ExampleUpdateBody
-    internal constructor( // templates/JavaSDK/entities/objects.ts:76:13
-        private val datasetId: String?, // templates/JavaSDK/entities/objects.ts:76:13 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+    internal constructor(
+        private val datasetId: String?,
         private val inputs: JsonValue?,
         private val outputs: JsonValue?,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+        private var hashCode: Int = 0
 
-        @JsonProperty("dataset_id") // templates/JavaSDK/entities/objects.ts:113:14
-        fun datasetId(): String? = datasetId
+        @JsonProperty("dataset_id") fun datasetId(): String? = datasetId
 
-        @JsonProperty("inputs") // templates/JavaSDK/entities/objects.ts:113:14
-        fun inputs(): JsonValue? = inputs
+        @JsonProperty("inputs") fun inputs(): JsonValue? = inputs
 
-        @JsonProperty("outputs") // templates/JavaSDK/entities/objects.ts:113:14
-        fun outputs(): JsonValue? = outputs
+        @JsonProperty("outputs") fun outputs(): JsonValue? = outputs
 
-        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-        // templates/JavaSDK/entities/objects.ts:180:12
+        @JsonAnyGetter
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is ExampleUpdateBody && // templates/JavaSDK/entities/fields.ts:143:33
+            return other is ExampleUpdateBody &&
                 this.datasetId == other.datasetId &&
                 this.inputs == other.inputs &&
                 this.outputs == other.outputs &&
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16
+        override fun hashCode(): Int {
+            if (hashCode == 0) {
                 hashCode =
-                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                        // templates/JavaSDK/entities/fields.ts:175:16 //
-                        // templates/JavaSDK/entities/fields.ts:175:16
-                        datasetId, // templates/JavaSDK/entities/fields.ts:163:19
+                    Objects.hash(
+                        datasetId,
                         inputs,
                         outputs,
                         additionalProperties,
@@ -131,78 +107,51 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         override fun toString() =
             "ExampleUpdateBody{datasetId=$datasetId, inputs=$inputs, outputs=$outputs, additionalProperties=$additionalProperties}"
 
-        companion object { // templates/JavaSDK/entities/objects.ts:217:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-            // templates/JavaSDK/entities/objects.ts:217:10
-            fun builder() = Builder()
+            @JvmStatic fun builder() = Builder()
         }
 
-        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+        class Builder {
 
-            private var datasetId: String? = null // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:226:16 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+            private var datasetId: String? = null
             private var inputs: JsonValue? = null
             private var outputs: JsonValue? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-            internal fun from(exampleUpdateBody: ExampleUpdateBody) =
-                apply { // templates/JavaSDK/entities/objects.ts:240:30
-                    this.datasetId =
-                        exampleUpdateBody
-                            .datasetId // templates/JavaSDK/entities/objects.ts:240:30 //
-                    // templates/JavaSDK/entities/objects.ts:240:30
-                    this.inputs = exampleUpdateBody.inputs
-                    this.outputs = exampleUpdateBody.outputs
-                    additionalProperties(exampleUpdateBody.additionalProperties)
-                }
-
-            @JsonProperty("dataset_id") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun datasetId(datasetId: String) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.datasetId = datasetId
-                }
-
-            @JsonProperty("inputs") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun inputs(inputs: JsonValue) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.inputs = inputs
+            @JvmSynthetic
+            internal fun from(exampleUpdateBody: ExampleUpdateBody) = apply {
+                this.datasetId = exampleUpdateBody.datasetId
+                this.inputs = exampleUpdateBody.inputs
+                this.outputs = exampleUpdateBody.outputs
+                additionalProperties(exampleUpdateBody.additionalProperties)
             }
 
-            @JsonProperty("outputs") // templates/JavaSDK/entities/objects.ts:264:20 //
-            // templates/JavaSDK/entities/objects.ts:252:20
-            fun outputs(outputs: JsonValue) =
-                apply { // templates/JavaSDK/entities/objects.ts:275:36
-                    this.outputs = outputs
-                }
+            @JsonProperty("dataset_id")
+            fun datasetId(datasetId: String) = apply { this.datasetId = datasetId }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties
-                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                    // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+            @JsonProperty("inputs") fun inputs(inputs: JsonValue) = apply { this.inputs = inputs }
 
-            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-            fun putAdditionalProperty(key: String, value: JsonValue) =
-                apply { // templates/JavaSDK/entities/objects.ts:304:30
-                    this.additionalProperties.put(key, value)
-                }
+            @JsonProperty("outputs")
+            fun outputs(outputs: JsonValue) = apply { this.outputs = outputs }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:316:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            @JsonAnySetter
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                this.additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
             fun build(): ExampleUpdateBody =
-                ExampleUpdateBody( // templates/JavaSDK/entities/objects.ts:326:30
-                    datasetId, // templates/JavaSDK/entities/objects.ts:326:30
+                ExampleUpdateBody(
+                    datasetId,
                     inputs,
                     outputs,
                     additionalProperties.toUnmodifiable(),
@@ -216,12 +165,12 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is ExampleUpdateParams && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is ExampleUpdateParams &&
             this.exampleId == other.exampleId &&
             this.datasetId == other.datasetId &&
             this.inputs == other.inputs &&
@@ -231,10 +180,9 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             this.additionalBodyProperties == other.additionalBodyProperties
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-            // templates/JavaSDK/entities/fields.ts:181:14
-            exampleId, // templates/JavaSDK/entities/fields.ts:163:19
+    override fun hashCode(): Int {
+        return Objects.hash(
+            exampleId,
             datasetId,
             inputs,
             outputs,
@@ -249,20 +197,15 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun toBuilder() = Builder().from(this)
 
-    companion object { // templates/JavaSDK/entities/builders.ts:8:8
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
-        // templates/JavaSDK/entities/builders.ts:8:8
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
-    // templates/JavaSDK/entities/params.ts:235:14
-    class Builder { // templates/JavaSDK/entities/params.ts:235:14
+    @NoAutoDetect
+    class Builder {
 
-        private var exampleId: String? = null // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:235:14
+        private var exampleId: String? = null
         private var datasetId: String? = null
         private var inputs: JsonValue? = null
         private var outputs: JsonValue? = null
@@ -270,112 +213,82 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
-        internal fun from(exampleUpdateParams: ExampleUpdateParams) =
-            apply { // templates/JavaSDK/entities/params.ts:257:34
-                this.exampleId =
-                    exampleUpdateParams.exampleId // templates/JavaSDK/entities/params.ts:257:34 //
-                // templates/JavaSDK/entities/params.ts:257:34
-                this.datasetId = exampleUpdateParams.datasetId
-                this.inputs = exampleUpdateParams.inputs
-                this.outputs = exampleUpdateParams.outputs
-                additionalQueryParams(exampleUpdateParams.additionalQueryParams)
-                additionalHeaders(exampleUpdateParams.additionalHeaders)
-                additionalBodyProperties(exampleUpdateParams.additionalBodyProperties)
-            }
-
-        fun exampleId(exampleId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.exampleId = exampleId
+        @JvmSynthetic
+        internal fun from(exampleUpdateParams: ExampleUpdateParams) = apply {
+            this.exampleId = exampleUpdateParams.exampleId
+            this.datasetId = exampleUpdateParams.datasetId
+            this.inputs = exampleUpdateParams.inputs
+            this.outputs = exampleUpdateParams.outputs
+            additionalQueryParams(exampleUpdateParams.additionalQueryParams)
+            additionalHeaders(exampleUpdateParams.additionalHeaders)
+            additionalBodyProperties(exampleUpdateParams.additionalBodyProperties)
         }
 
-        fun datasetId(datasetId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.datasetId = datasetId
+        fun exampleId(exampleId: String) = apply { this.exampleId = exampleId }
+
+        fun datasetId(datasetId: String) = apply { this.datasetId = datasetId }
+
+        fun inputs(inputs: JsonValue) = apply { this.inputs = inputs }
+
+        fun outputs(outputs: JsonValue) = apply { this.outputs = outputs }
+
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllQueryParams(additionalQueryParams)
         }
 
-        fun inputs(inputs: JsonValue) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.inputs = inputs
+        fun putQueryParam(name: String, value: String) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
         }
 
-        fun outputs(outputs: JsonValue) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.outputs = outputs
+        fun putQueryParams(name: String, values: Iterable<String>) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
         }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:703:24
-                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
-                // templates/JavaSDK/entities/params.ts:703:24
-                putAllQueryParams(additionalQueryParams)
-            }
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            additionalQueryParams.forEach(this::putQueryParams)
+        }
 
-        fun putQueryParam(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:713:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putQueryParams(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:723:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:733:24
-                additionalQueryParams.forEach(this::putQueryParams)
-            }
-
-        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
+        fun removeQueryParam(name: String) = apply {
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:755:24
-                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
-                // templates/JavaSDK/entities/params.ts:755:24
-                putAllHeaders(additionalHeaders)
-            }
-
-        fun putHeader(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:765:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putHeaders(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:775:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:785:24
-                additionalHeaders.forEach(this::putHeaders)
-            }
-
-        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
-            this.additionalHeaders.put(name, mutableListOf())
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllHeaders(additionalHeaders)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/params.ts:809:28
-                this.additionalBodyProperties
-                    .clear() // templates/JavaSDK/entities/params.ts:809:28 //
-                // templates/JavaSDK/entities/params.ts:809:28
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
+        fun putHeader(name: String, value: String) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+        }
 
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
-            apply { // templates/JavaSDK/entities/params.ts:822:28
-                this.additionalBodyProperties.put(key, value)
-            }
+        fun putHeaders(name: String, values: Iterable<String>) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            additionalHeaders.forEach(this::putHeaders)
+        }
+
+        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
+
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
+            this.additionalBodyProperties.clear()
+            this.additionalBodyProperties.putAll(additionalBodyProperties)
+        }
+
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
+            this.additionalBodyProperties.put(key, value)
+        }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/params.ts:832:28
+            apply {
                 this.additionalBodyProperties.putAll(additionalBodyProperties)
             }
 
         fun build(): ExampleUpdateParams =
-            ExampleUpdateParams( // templates/JavaSDK/entities/params.ts:683:22
-                checkNotNull(exampleId) { // templates/JavaSDK/entities/params.ts:844:13 //
-                    // templates/JavaSDK/entities/params.ts:683:22
-                    "`exampleId` is required but was not set"
-                },
+            ExampleUpdateParams(
+                checkNotNull(exampleId) { "`exampleId` is required but was not set" },
                 datasetId,
                 inputs,
                 outputs,

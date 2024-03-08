@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -7,17 +7,11 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class PublicDatasetRunQueryCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class PublicDatasetRunQueryCreateParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createPublicDatasetRunQueryCreateParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        PublicDatasetRunQueryCreateParams
-            .builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createPublicDatasetRunQueryCreateParams() {
+        PublicDatasetRunQueryCreateParams.builder()
             .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .cursor("string")
@@ -31,22 +25,17 @@ class PublicDatasetRunQueryCreateParamsTest { // templates/JavaSDK/entities/para
             .query("string")
             .referenceExample(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .runType(PublicDatasetRunQueryCreateParams.RunType.TOOL)
-            .select(listOf(PublicDatasetRunQueryCreateParams.RunSelect.ID))
+            .select(listOf(PublicDatasetRunQueryCreateParams.Select.ID))
             .session(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:1011:17
-    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBody() {
         val params =
-            PublicDatasetRunQueryCreateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            PublicDatasetRunQueryCreateParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .cursor("string")
@@ -60,7 +49,7 @@ class PublicDatasetRunQueryCreateParamsTest { // templates/JavaSDK/entities/para
                 .query("string")
                 .referenceExample(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .runType(PublicDatasetRunQueryCreateParams.RunType.TOOL)
-                .select(listOf(PublicDatasetRunQueryCreateParams.RunSelect.ID))
+                .select(listOf(PublicDatasetRunQueryCreateParams.Select.ID))
                 .session(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -80,34 +69,26 @@ class PublicDatasetRunQueryCreateParamsTest { // templates/JavaSDK/entities/para
         assertThat(body.referenceExample())
             .isEqualTo(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
         assertThat(body.runType()).isEqualTo(PublicDatasetRunQueryCreateParams.RunType.TOOL)
-        assertThat(body.select()).isEqualTo(listOf(PublicDatasetRunQueryCreateParams.RunSelect.ID))
+        assertThat(body.select()).isEqualTo(listOf(PublicDatasetRunQueryCreateParams.Select.ID))
         assertThat(body.session()).isEqualTo(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
         assertThat(body.startTime()).isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(body.trace()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBodyWithoutOptionalFields() {
         val params =
-            PublicDatasetRunQueryCreateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            PublicDatasetRunQueryCreateParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
         val body = params.getBody()
         assertThat(body).isNotNull
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getPathParam() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getPathParam() {
         val params =
-            PublicDatasetRunQueryCreateParams
-                .builder() // templates/JavaSDK/entities/params.ts:1072:10 //
-                // templates/JavaSDK/entities/params.ts:1072:10 //
-                // templates/JavaSDK/entities/params.ts:1071:16 //
-                // templates/JavaSDK/entities/params.ts:1071:16
+            PublicDatasetRunQueryCreateParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
         assertThat(params).isNotNull

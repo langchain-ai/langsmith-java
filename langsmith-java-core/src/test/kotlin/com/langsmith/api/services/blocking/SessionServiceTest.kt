@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.services.blocking
 
@@ -10,32 +10,20 @@ import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(
-    TestServerExtension::class
-) // templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15 //
-// templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15
+@ExtendWith(TestServerExtension::class)
 class SessionServiceTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 // templates/JavaSDK/services.ts:298:15
-    fun callCreate() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callCreate() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val sessionService = client.sessions()
         val tracerSessionWithoutVirtualFields =
             sessionService.create(
-                SessionCreateParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                SessionCreateParams.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .description("string")
@@ -47,62 +35,40 @@ class SessionServiceTest {
                     .upsert(true)
                     .build()
             )
-        println(
-            tracerSessionWithoutVirtualFields
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
+        println(tracerSessionWithoutVirtualFields)
         tracerSessionWithoutVirtualFields.validate()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callRetrieve() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callRetrieve() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val sessionService = client.sessions()
         val tracerSession =
             sessionService.retrieve(
-                SessionRetrieveParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                SessionRetrieveParams.builder()
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .includeStats(true)
                     .build()
             )
-        println(
-            tracerSession
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
+        println(tracerSession)
         tracerSession.validate()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callUpdate() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callUpdate() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val sessionService = client.sessions()
         val tracerSessionWithoutVirtualFields =
             sessionService.update(
-                SessionUpdateParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                SessionUpdateParams.builder()
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .description("string")
@@ -111,32 +77,21 @@ class SessionServiceTest {
                     .name("string")
                     .build()
             )
-        println(
-            tracerSessionWithoutVirtualFields
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
+        println(tracerSessionWithoutVirtualFields)
         tracerSessionWithoutVirtualFields.validate()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callList() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callList() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val sessionService = client.sessions()
         val sessionListResponse =
             sessionService.list(
-                SessionListParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                SessionListParams.builder()
                     .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                     .facets(true)
                     .limit(123L)
@@ -150,35 +105,23 @@ class SessionServiceTest {
                     .sortByFeedbackKey("string")
                     .build()
             )
-        println(
-            sessionListResponse
-        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
-        for (tracerSession: TracerSession in
-            sessionListResponse) { // templates/JavaSDK/services.ts:509:10
+        println(sessionListResponse)
+        for (tracerSession: TracerSession in sessionListResponse) {
             tracerSession.validate()
         }
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun callDelete() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun callDelete() {
         val client =
-            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
-                // templates/JavaSDK/services.ts:307:24 //
-                // templates/JavaSDK/services.ts:307:24
+            LangSmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .bearerToken("My Bearer Token")
                 .build()
         val sessionService = client.sessions()
         val sessionDeleteResponse =
             sessionService.delete(
-                SessionDeleteParams.builder() // templates/JavaSDK/services.ts:464:26 //
-                    // templates/JavaSDK/services.ts:479:20 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:476:10 //
-                    // templates/JavaSDK/services.ts:475:17 //
-                    // templates/JavaSDK/services.ts:475:17
+                SessionDeleteParams.builder()
                     .sessionIds(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                     .build()
             )

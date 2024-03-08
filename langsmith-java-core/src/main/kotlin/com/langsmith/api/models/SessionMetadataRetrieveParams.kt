@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -10,12 +10,8 @@ import java.util.Objects
 import java.util.Optional
 
 class SessionMetadataRetrieveParams
-constructor( // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
-    private val sessionId: String, // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
+constructor(
+    private val sessionId: String,
     private val k: Long?,
     private val metadataKeys: List<String>?,
     private val startTime: OffsetDateTime?,
@@ -23,8 +19,7 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
     private val additionalHeaders: Map<String, List<String>>,
 ) {
 
-    fun sessionId(): String = sessionId // templates/JavaSDK/entities/params.ts:145:14 //
-    // templates/JavaSDK/entities/params.ts:131:13
+    fun sessionId(): String = sessionId
 
     fun k(): Optional<Long> = Optional.ofNullable(k)
 
@@ -32,32 +27,23 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun startTime(): Optional<OffsetDateTime> = Optional.ofNullable(startTime)
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
-    internal fun getQueryParams():
-        Map<String, List<String>> { // templates/JavaSDK/entities/params.ts:201:14
-        val params =
-            mutableMapOf<String, List<String>>() // templates/JavaSDK/entities/params.ts:210:30 //
-        // templates/JavaSDK/entities/params.ts:210:30
-        this.k?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("k", listOf(it.toString()))
-        }
-        this.metadataKeys?.let { // templates/JavaSDK/entities/objects.ts:392:21
+    @JvmSynthetic
+    internal fun getQueryParams(): Map<String, List<String>> {
+        val params = mutableMapOf<String, List<String>>()
+        this.k?.let { params.put("k", listOf(it.toString())) }
+        this.metadataKeys?.let {
             params.put("metadata_keys", listOf(it.joinToString(separator = ",")))
         }
-        this.startTime?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("start_time", listOf(it.toString()))
-        }
+        this.startTime?.let { params.put("start_time", listOf(it.toString())) }
         params.putAll(additionalQueryParams)
         return params.toUnmodifiable()
     }
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
-    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
-    fun getPathParam(index: Int): String { // templates/JavaSDK/entities/params.ts:555:13
-        return when (index) { // templates/JavaSDK/entities/params.ts:560:26
-            0 -> sessionId // templates/JavaSDK/entities/params.ts:560:26 //
-            // templates/JavaSDK/entities/params.ts:560:26
+    fun getPathParam(index: Int): String {
+        return when (index) {
+            0 -> sessionId
             else -> ""
         }
     }
@@ -66,13 +52,12 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun _additionalHeaders(): Map<String, List<String>> = additionalHeaders
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is
-            SessionMetadataRetrieveParams && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is SessionMetadataRetrieveParams &&
             this.sessionId == other.sessionId &&
             this.k == other.k &&
             this.metadataKeys == other.metadataKeys &&
@@ -81,10 +66,9 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             this.additionalHeaders == other.additionalHeaders
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-            // templates/JavaSDK/entities/fields.ts:181:14
-            sessionId, // templates/JavaSDK/entities/fields.ts:163:19
+    override fun hashCode(): Int {
+        return Objects.hash(
+            sessionId,
             k,
             metadataKeys,
             startTime,
@@ -98,123 +82,87 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun toBuilder() = Builder().from(this)
 
-    companion object { // templates/JavaSDK/entities/builders.ts:8:8
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
-        // templates/JavaSDK/entities/builders.ts:8:8
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
-    // templates/JavaSDK/entities/params.ts:235:14
-    class Builder { // templates/JavaSDK/entities/params.ts:235:14
+    @NoAutoDetect
+    class Builder {
 
-        private var sessionId: String? = null // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:235:14
+        private var sessionId: String? = null
         private var k: Long? = null
         private var metadataKeys: MutableList<String> = mutableListOf()
         private var startTime: OffsetDateTime? = null
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
-        internal fun from(sessionMetadataRetrieveParams: SessionMetadataRetrieveParams) =
-            apply { // templates/JavaSDK/entities/params.ts:257:34
-                this.sessionId =
-                    sessionMetadataRetrieveParams
-                        .sessionId // templates/JavaSDK/entities/params.ts:257:34 //
-                // templates/JavaSDK/entities/params.ts:257:34
-                this.k = sessionMetadataRetrieveParams.k
-                this.metadataKeys(sessionMetadataRetrieveParams.metadataKeys ?: listOf())
-                this.startTime = sessionMetadataRetrieveParams.startTime
-                additionalQueryParams(sessionMetadataRetrieveParams.additionalQueryParams)
-                additionalHeaders(sessionMetadataRetrieveParams.additionalHeaders)
-            }
-
-        fun sessionId(sessionId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.sessionId = sessionId
+        @JvmSynthetic
+        internal fun from(sessionMetadataRetrieveParams: SessionMetadataRetrieveParams) = apply {
+            this.sessionId = sessionMetadataRetrieveParams.sessionId
+            this.k = sessionMetadataRetrieveParams.k
+            this.metadataKeys(sessionMetadataRetrieveParams.metadataKeys ?: listOf())
+            this.startTime = sessionMetadataRetrieveParams.startTime
+            additionalQueryParams(sessionMetadataRetrieveParams.additionalQueryParams)
+            additionalHeaders(sessionMetadataRetrieveParams.additionalHeaders)
         }
 
-        fun k(k: Long) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.k = k
+        fun sessionId(sessionId: String) = apply { this.sessionId = sessionId }
+
+        fun k(k: Long) = apply { this.k = k }
+
+        fun metadataKeys(metadataKeys: List<String>) = apply {
+            this.metadataKeys.clear()
+            this.metadataKeys.addAll(metadataKeys)
         }
 
-        fun metadataKeys(metadataKeys: List<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:609:26
-                this.metadataKeys.clear() // templates/JavaSDK/entities/params.ts:609:26 //
-                // templates/JavaSDK/entities/params.ts:609:26
-                this.metadataKeys.addAll(metadataKeys)
-            }
+        fun addMetadataKey(metadataKey: String) = apply { this.metadataKeys.add(metadataKey) }
 
-        fun addMetadataKey(metadataKey: String) =
-            apply { // templates/JavaSDK/entities/params.ts:620:26
-                this.metadataKeys.add(metadataKey)
-            }
+        fun startTime(startTime: OffsetDateTime) = apply { this.startTime = startTime }
 
-        fun startTime(startTime: OffsetDateTime) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.startTime = startTime
-            }
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllQueryParams(additionalQueryParams)
+        }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:703:24
-                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
-                // templates/JavaSDK/entities/params.ts:703:24
-                putAllQueryParams(additionalQueryParams)
-            }
+        fun putQueryParam(name: String, value: String) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+        }
 
-        fun putQueryParam(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:713:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-            }
+        fun putQueryParams(name: String, values: Iterable<String>) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
 
-        fun putQueryParams(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:723:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            additionalQueryParams.forEach(this::putQueryParams)
+        }
 
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:733:24
-                additionalQueryParams.forEach(this::putQueryParams)
-            }
-
-        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
+        fun removeQueryParam(name: String) = apply {
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:755:24
-                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
-                // templates/JavaSDK/entities/params.ts:755:24
-                putAllHeaders(additionalHeaders)
-            }
-
-        fun putHeader(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:765:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putHeaders(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:775:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:785:24
-                additionalHeaders.forEach(this::putHeaders)
-            }
-
-        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
-            this.additionalHeaders.put(name, mutableListOf())
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllHeaders(additionalHeaders)
         }
 
+        fun putHeader(name: String, value: String) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+        }
+
+        fun putHeaders(name: String, values: Iterable<String>) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            additionalHeaders.forEach(this::putHeaders)
+        }
+
+        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
+
         fun build(): SessionMetadataRetrieveParams =
-            SessionMetadataRetrieveParams( // templates/JavaSDK/entities/params.ts:683:22
-                checkNotNull(sessionId) { // templates/JavaSDK/entities/params.ts:844:13 //
-                    // templates/JavaSDK/entities/params.ts:683:22
-                    "`sessionId` is required but was not set"
-                },
+            SessionMetadataRetrieveParams(
+                checkNotNull(sessionId) { "`sessionId` is required but was not set" },
                 k,
                 if (metadataKeys.size == 0) null else metadataKeys.toUnmodifiable(),
                 startTime,

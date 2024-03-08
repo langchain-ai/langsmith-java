@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 @file:Suppress("OVERLOADS_INTERFACE") // See https://youtrack.jetbrains.com/issue/KT-36102
 
@@ -20,11 +20,9 @@ import com.langsmith.api.services.blocking.datasets.OpenAIService
 import com.langsmith.api.services.blocking.datasets.RunService
 import com.langsmith.api.services.blocking.datasets.ShareService
 
-interface DatasetService { // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15
+interface DatasetService {
 
-    fun openai(): OpenAIService // templates/JavaSDK/services.ts:55:15
+    fun openai(): OpenAIService
 
     fun openaiFt(): OpenAIFtService
 
@@ -35,42 +33,42 @@ interface DatasetService { // templates/JavaSDK/services.ts:55:15 //
     fun share(): ShareService
 
     /** Create a new dataset. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun create(
         params: DatasetCreateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): Dataset
 
     /** Get a specific dataset. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun retrieve(
         params: DatasetRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): Dataset
 
     /** Update a specific dataset. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun update(
         params: DatasetUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): DatasetSchemaForUpdate
 
     /** Get all datasets by query params and owner. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun list(
         params: DatasetListParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): List<Dataset>
 
     /** Delete a specific dataset. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun delete(
         params: DatasetDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): DatasetDeleteResponse
 
     /** Create a new dataset from a CSV file. */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun upload(
         params: DatasetUploadParams,
         requestOptions: RequestOptions = RequestOptions.none()

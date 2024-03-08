@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -7,18 +7,12 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class RunStatsTest { // templates/JavaSDK/entities/objects.ts:645:15 //
-    // templates/JavaSDK/entities/objects.ts:645:15 //
-    // templates/JavaSDK/entities/objects.ts:645:15
+class RunStatsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/objects.ts:645:15
-    fun createRunStats() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun createRunStats() {
         val runStats =
-            RunStats.builder() // templates/JavaSDK/entities/objects.ts:657:10 //
-                // templates/JavaSDK/entities/objects.ts:657:10 //
-                // templates/JavaSDK/entities/objects.ts:656:16 //
-                // templates/JavaSDK/entities/objects.ts:656:16
+            RunStats.builder()
                 .runCount(123L)
                 .completionCost(42.23)
                 .completionTokens(123L)

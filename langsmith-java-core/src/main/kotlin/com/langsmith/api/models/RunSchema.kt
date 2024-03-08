@@ -1,10 +1,8 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
-// //
-// templates/JavaSDK/components/file.ts:28:17
-import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -21,15 +19,11 @@ import java.util.Objects
 import java.util.Optional
 
 /** Run schema. */
-// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13
 @JsonDeserialize(builder = RunSchema.Builder::class)
 @NoAutoDetect
 class RunSchema
-private constructor( // templates/JavaSDK/entities/objects.ts:76:13
-    private val name: JsonField<String>, // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+private constructor(
+    private val name: JsonField<String>,
     private val inputs: JsonValue,
     private val runType: JsonField<RunType>,
     private val startTime: JsonField<OffsetDateTime>,
@@ -70,8 +64,7 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+    private var validated: Boolean = false
 
     private var hashCode: Int = 0
 
@@ -154,170 +147,94 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
     fun shareToken(): Optional<String> = Optional.ofNullable(shareToken.getNullable("share_token"))
 
-    @JsonProperty("name") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _name() = name
+    @JsonProperty("name") @ExcludeMissing fun _name() = name
 
-    @JsonProperty("inputs") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _inputs() = inputs
+    @JsonProperty("inputs") @ExcludeMissing fun _inputs() = inputs
 
     /** Enum for run types. */
-    @JsonProperty("run_type") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _runType() = runType
+    @JsonProperty("run_type") @ExcludeMissing fun _runType() = runType
 
-    @JsonProperty("start_time") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _startTime() = startTime
+    @JsonProperty("start_time") @ExcludeMissing fun _startTime() = startTime
 
-    @JsonProperty("end_time") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _endTime() = endTime
+    @JsonProperty("end_time") @ExcludeMissing fun _endTime() = endTime
 
-    @JsonProperty("extra") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _extra() = extra
+    @JsonProperty("extra") @ExcludeMissing fun _extra() = extra
 
-    @JsonProperty("error") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _error() = error
+    @JsonProperty("error") @ExcludeMissing fun _error() = error
 
-    @JsonProperty("execution_order") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _executionOrder() = executionOrder
+    @JsonProperty("execution_order") @ExcludeMissing fun _executionOrder() = executionOrder
 
-    @JsonProperty("serialized") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _serialized() = serialized
+    @JsonProperty("serialized") @ExcludeMissing fun _serialized() = serialized
 
-    @JsonProperty("outputs") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _outputs() = outputs
+    @JsonProperty("outputs") @ExcludeMissing fun _outputs() = outputs
 
-    @JsonProperty("parent_run_id") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _parentRunId() = parentRunId
+    @JsonProperty("parent_run_id") @ExcludeMissing fun _parentRunId() = parentRunId
 
-    @JsonProperty("manifest_id") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _manifestId() = manifestId
+    @JsonProperty("manifest_id") @ExcludeMissing fun _manifestId() = manifestId
 
-    @JsonProperty("manifest_s3_id") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _manifestS3Id() = manifestS3Id
+    @JsonProperty("manifest_s3_id") @ExcludeMissing fun _manifestS3Id() = manifestS3Id
 
-    @JsonProperty("events") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _events() = events
+    @JsonProperty("events") @ExcludeMissing fun _events() = events
 
-    @JsonProperty("tags") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _tags() = tags
+    @JsonProperty("tags") @ExcludeMissing fun _tags() = tags
 
-    @JsonProperty("inputs_s3_urls") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _inputsS3Urls() = inputsS3Urls
+    @JsonProperty("inputs_s3_urls") @ExcludeMissing fun _inputsS3Urls() = inputsS3Urls
 
-    @JsonProperty("outputs_s3_urls") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _outputsS3Urls() = outputsS3Urls
+    @JsonProperty("outputs_s3_urls") @ExcludeMissing fun _outputsS3Urls() = outputsS3Urls
 
-    @JsonProperty("trace_id") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _traceId() = traceId
+    @JsonProperty("trace_id") @ExcludeMissing fun _traceId() = traceId
 
-    @JsonProperty("dotted_order") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _dottedOrder() = dottedOrder
+    @JsonProperty("dotted_order") @ExcludeMissing fun _dottedOrder() = dottedOrder
 
-    @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _id() = id
+    @JsonProperty("id") @ExcludeMissing fun _id() = id
 
-    @JsonProperty("status") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _status() = status
+    @JsonProperty("status") @ExcludeMissing fun _status() = status
 
-    @JsonProperty("child_run_ids") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _childRunIds() = childRunIds
+    @JsonProperty("child_run_ids") @ExcludeMissing fun _childRunIds() = childRunIds
 
-    @JsonProperty("direct_child_run_ids") // templates/JavaSDK/entities/objects.ts:166:16
+    @JsonProperty("direct_child_run_ids")
     @ExcludeMissing
     fun _directChildRunIds() = directChildRunIds
 
-    @JsonProperty("parent_run_ids") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _parentRunIds() = parentRunIds
+    @JsonProperty("parent_run_ids") @ExcludeMissing fun _parentRunIds() = parentRunIds
 
-    @JsonProperty("feedback_stats") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _feedbackStats() = feedbackStats
+    @JsonProperty("feedback_stats") @ExcludeMissing fun _feedbackStats() = feedbackStats
 
-    @JsonProperty("reference_example_id") // templates/JavaSDK/entities/objects.ts:166:16
+    @JsonProperty("reference_example_id")
     @ExcludeMissing
     fun _referenceExampleId() = referenceExampleId
 
-    @JsonProperty("total_tokens") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _totalTokens() = totalTokens
+    @JsonProperty("total_tokens") @ExcludeMissing fun _totalTokens() = totalTokens
 
-    @JsonProperty("prompt_tokens") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _promptTokens() = promptTokens
+    @JsonProperty("prompt_tokens") @ExcludeMissing fun _promptTokens() = promptTokens
 
-    @JsonProperty("completion_tokens") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _completionTokens() = completionTokens
+    @JsonProperty("completion_tokens") @ExcludeMissing fun _completionTokens() = completionTokens
 
-    @JsonProperty("total_cost") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _totalCost() = totalCost
+    @JsonProperty("total_cost") @ExcludeMissing fun _totalCost() = totalCost
 
-    @JsonProperty("prompt_cost") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _promptCost() = promptCost
+    @JsonProperty("prompt_cost") @ExcludeMissing fun _promptCost() = promptCost
 
-    @JsonProperty("completion_cost") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _completionCost() = completionCost
+    @JsonProperty("completion_cost") @ExcludeMissing fun _completionCost() = completionCost
 
-    @JsonProperty("first_token_time") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _firstTokenTime() = firstTokenTime
+    @JsonProperty("first_token_time") @ExcludeMissing fun _firstTokenTime() = firstTokenTime
 
-    @JsonProperty("session_id") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _sessionId() = sessionId
+    @JsonProperty("session_id") @ExcludeMissing fun _sessionId() = sessionId
 
-    @JsonProperty("app_path") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _appPath() = appPath
+    @JsonProperty("app_path") @ExcludeMissing fun _appPath() = appPath
 
-    @JsonProperty("last_queued_at") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _lastQueuedAt() = lastQueuedAt
+    @JsonProperty("last_queued_at") @ExcludeMissing fun _lastQueuedAt() = lastQueuedAt
 
-    @JsonProperty("in_dataset") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _inDataset() = inDataset
+    @JsonProperty("in_dataset") @ExcludeMissing fun _inDataset() = inDataset
 
-    @JsonProperty("share_token") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _shareToken() = shareToken
+    @JsonProperty("share_token") @ExcludeMissing fun _shareToken() = shareToken
 
-    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-    // templates/JavaSDK/entities/objects.ts:180:12
+    @JsonAnyGetter
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): RunSchema = apply { // templates/JavaSDK/entities/objects.ts:198:28
-        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:198:28 //
-            // templates/JavaSDK/entities/objects.ts:198:28
-            name() // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:201:20
+    fun validate(): RunSchema = apply {
+        if (!validated) {
+            name()
             runType()
             startTime()
             endTime()
@@ -355,12 +272,12 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is RunSchema && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is RunSchema &&
             this.name == other.name &&
             this.inputs == other.inputs &&
             this.runType == other.runType &&
@@ -402,15 +319,11 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16
+    override fun hashCode(): Int {
+        if (hashCode == 0) {
             hashCode =
-                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                    // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:175:16
-                    name, // templates/JavaSDK/entities/fields.ts:163:19
+                Objects.hash(
+                    name,
                     inputs,
                     runType,
                     startTime,
@@ -457,21 +370,14 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     override fun toString() =
         "RunSchema{name=$name, inputs=$inputs, runType=$runType, startTime=$startTime, endTime=$endTime, extra=$extra, error=$error, executionOrder=$executionOrder, serialized=$serialized, outputs=$outputs, parentRunId=$parentRunId, manifestId=$manifestId, manifestS3Id=$manifestS3Id, events=$events, tags=$tags, inputsS3Urls=$inputsS3Urls, outputsS3Urls=$outputsS3Urls, traceId=$traceId, dottedOrder=$dottedOrder, id=$id, status=$status, childRunIds=$childRunIds, directChildRunIds=$directChildRunIds, parentRunIds=$parentRunIds, feedbackStats=$feedbackStats, referenceExampleId=$referenceExampleId, totalTokens=$totalTokens, promptTokens=$promptTokens, completionTokens=$completionTokens, totalCost=$totalCost, promptCost=$promptCost, completionCost=$completionCost, firstTokenTime=$firstTokenTime, sessionId=$sessionId, appPath=$appPath, lastQueuedAt=$lastQueuedAt, inDataset=$inDataset, shareToken=$shareToken, additionalProperties=$additionalProperties}"
 
-    companion object { // templates/JavaSDK/entities/objects.ts:217:10
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-        // templates/JavaSDK/entities/objects.ts:217:10
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+    class Builder {
 
-        private var name: JsonField<String> =
-            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+        private var name: JsonField<String> = JsonMissing.of()
         private var inputs: JsonValue = JsonMissing.of()
         private var runType: JsonField<RunType> = JsonMissing.of()
         private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -511,450 +417,308 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
         private var shareToken: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-        internal fun from(runSchema: RunSchema) =
-            apply { // templates/JavaSDK/entities/objects.ts:240:30
-                this.name = runSchema.name // templates/JavaSDK/entities/objects.ts:240:30 //
-                // templates/JavaSDK/entities/objects.ts:240:30
-                this.inputs = runSchema.inputs
-                this.runType = runSchema.runType
-                this.startTime = runSchema.startTime
-                this.endTime = runSchema.endTime
-                this.extra = runSchema.extra
-                this.error = runSchema.error
-                this.executionOrder = runSchema.executionOrder
-                this.serialized = runSchema.serialized
-                this.outputs = runSchema.outputs
-                this.parentRunId = runSchema.parentRunId
-                this.manifestId = runSchema.manifestId
-                this.manifestS3Id = runSchema.manifestS3Id
-                this.events = runSchema.events
-                this.tags = runSchema.tags
-                this.inputsS3Urls = runSchema.inputsS3Urls
-                this.outputsS3Urls = runSchema.outputsS3Urls
-                this.traceId = runSchema.traceId
-                this.dottedOrder = runSchema.dottedOrder
-                this.id = runSchema.id
-                this.status = runSchema.status
-                this.childRunIds = runSchema.childRunIds
-                this.directChildRunIds = runSchema.directChildRunIds
-                this.parentRunIds = runSchema.parentRunIds
-                this.feedbackStats = runSchema.feedbackStats
-                this.referenceExampleId = runSchema.referenceExampleId
-                this.totalTokens = runSchema.totalTokens
-                this.promptTokens = runSchema.promptTokens
-                this.completionTokens = runSchema.completionTokens
-                this.totalCost = runSchema.totalCost
-                this.promptCost = runSchema.promptCost
-                this.completionCost = runSchema.completionCost
-                this.firstTokenTime = runSchema.firstTokenTime
-                this.sessionId = runSchema.sessionId
-                this.appPath = runSchema.appPath
-                this.lastQueuedAt = runSchema.lastQueuedAt
-                this.inDataset = runSchema.inDataset
-                this.shareToken = runSchema.shareToken
-                additionalProperties(runSchema.additionalProperties)
-            }
-
-        fun name(name: String) =
-            name(JsonField.of(name)) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("name") // templates/JavaSDK/entities/objects.ts:264:20
-        @ExcludeMissing
-        fun name(name: JsonField<String>) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-            this.name = name
+        @JvmSynthetic
+        internal fun from(runSchema: RunSchema) = apply {
+            this.name = runSchema.name
+            this.inputs = runSchema.inputs
+            this.runType = runSchema.runType
+            this.startTime = runSchema.startTime
+            this.endTime = runSchema.endTime
+            this.extra = runSchema.extra
+            this.error = runSchema.error
+            this.executionOrder = runSchema.executionOrder
+            this.serialized = runSchema.serialized
+            this.outputs = runSchema.outputs
+            this.parentRunId = runSchema.parentRunId
+            this.manifestId = runSchema.manifestId
+            this.manifestS3Id = runSchema.manifestS3Id
+            this.events = runSchema.events
+            this.tags = runSchema.tags
+            this.inputsS3Urls = runSchema.inputsS3Urls
+            this.outputsS3Urls = runSchema.outputsS3Urls
+            this.traceId = runSchema.traceId
+            this.dottedOrder = runSchema.dottedOrder
+            this.id = runSchema.id
+            this.status = runSchema.status
+            this.childRunIds = runSchema.childRunIds
+            this.directChildRunIds = runSchema.directChildRunIds
+            this.parentRunIds = runSchema.parentRunIds
+            this.feedbackStats = runSchema.feedbackStats
+            this.referenceExampleId = runSchema.referenceExampleId
+            this.totalTokens = runSchema.totalTokens
+            this.promptTokens = runSchema.promptTokens
+            this.completionTokens = runSchema.completionTokens
+            this.totalCost = runSchema.totalCost
+            this.promptCost = runSchema.promptCost
+            this.completionCost = runSchema.completionCost
+            this.firstTokenTime = runSchema.firstTokenTime
+            this.sessionId = runSchema.sessionId
+            this.appPath = runSchema.appPath
+            this.lastQueuedAt = runSchema.lastQueuedAt
+            this.inDataset = runSchema.inDataset
+            this.shareToken = runSchema.shareToken
+            additionalProperties(runSchema.additionalProperties)
         }
 
-        @JsonProperty("inputs") // templates/JavaSDK/entities/objects.ts:264:20 //
-        // templates/JavaSDK/entities/objects.ts:252:20
+        fun name(name: String) = name(JsonField.of(name))
+
+        @JsonProperty("name")
         @ExcludeMissing
-        fun inputs(inputs: JsonValue) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-            this.inputs = inputs
-        }
+        fun name(name: JsonField<String>) = apply { this.name = name }
+
+        @JsonProperty("inputs")
+        @ExcludeMissing
+        fun inputs(inputs: JsonValue) = apply { this.inputs = inputs }
 
         /** Enum for run types. */
-        // templates/JavaSDK/entities/objects.ts:252:20
         fun runType(runType: RunType) = runType(JsonField.of(runType))
 
         /** Enum for run types. */
-        @JsonProperty("run_type") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("run_type")
         @ExcludeMissing
-        fun runType(runType: JsonField<RunType>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.runType = runType
-            }
+        fun runType(runType: JsonField<RunType>) = apply { this.runType = runType }
 
-        fun startTime(startTime: OffsetDateTime) =
-            startTime(JsonField.of(startTime)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun startTime(startTime: OffsetDateTime) = startTime(JsonField.of(startTime))
 
-        @JsonProperty("start_time") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("start_time")
         @ExcludeMissing
-        fun startTime(startTime: JsonField<OffsetDateTime>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.startTime = startTime
-            }
+        fun startTime(startTime: JsonField<OffsetDateTime>) = apply { this.startTime = startTime }
 
-        fun endTime(endTime: OffsetDateTime) =
-            endTime(JsonField.of(endTime)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun endTime(endTime: OffsetDateTime) = endTime(JsonField.of(endTime))
 
-        @JsonProperty("end_time") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("end_time")
         @ExcludeMissing
-        fun endTime(endTime: JsonField<OffsetDateTime>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.endTime = endTime
-            }
+        fun endTime(endTime: JsonField<OffsetDateTime>) = apply { this.endTime = endTime }
 
-        @JsonProperty("extra") // templates/JavaSDK/entities/objects.ts:264:20 //
-        // templates/JavaSDK/entities/objects.ts:252:20
+        @JsonProperty("extra")
         @ExcludeMissing
-        fun extra(extra: JsonValue) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-            this.extra = extra
+        fun extra(extra: JsonValue) = apply { this.extra = extra }
+
+        fun error(error: String) = error(JsonField.of(error))
+
+        @JsonProperty("error")
+        @ExcludeMissing
+        fun error(error: JsonField<String>) = apply { this.error = error }
+
+        fun executionOrder(executionOrder: Long) = executionOrder(JsonField.of(executionOrder))
+
+        @JsonProperty("execution_order")
+        @ExcludeMissing
+        fun executionOrder(executionOrder: JsonField<Long>) = apply {
+            this.executionOrder = executionOrder
         }
 
-        fun error(error: String) =
-            error(JsonField.of(error)) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("error") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("serialized")
         @ExcludeMissing
-        fun error(error: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.error = error
-            }
+        fun serialized(serialized: JsonValue) = apply { this.serialized = serialized }
 
-        fun executionOrder(executionOrder: Long) =
-            executionOrder(
-                JsonField.of(executionOrder)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("execution_order") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("outputs")
         @ExcludeMissing
-        fun executionOrder(executionOrder: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.executionOrder = executionOrder
-            }
+        fun outputs(outputs: JsonValue) = apply { this.outputs = outputs }
 
-        @JsonProperty("serialized") // templates/JavaSDK/entities/objects.ts:264:20 //
-        // templates/JavaSDK/entities/objects.ts:252:20
-        @ExcludeMissing
-        fun serialized(serialized: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.serialized = serialized
-            }
+        fun parentRunId(parentRunId: String) = parentRunId(JsonField.of(parentRunId))
 
-        @JsonProperty("outputs") // templates/JavaSDK/entities/objects.ts:264:20 //
-        // templates/JavaSDK/entities/objects.ts:252:20
+        @JsonProperty("parent_run_id")
         @ExcludeMissing
-        fun outputs(outputs: JsonValue) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-            this.outputs = outputs
+        fun parentRunId(parentRunId: JsonField<String>) = apply { this.parentRunId = parentRunId }
+
+        fun manifestId(manifestId: String) = manifestId(JsonField.of(manifestId))
+
+        @JsonProperty("manifest_id")
+        @ExcludeMissing
+        fun manifestId(manifestId: JsonField<String>) = apply { this.manifestId = manifestId }
+
+        fun manifestS3Id(manifestS3Id: String) = manifestS3Id(JsonField.of(manifestS3Id))
+
+        @JsonProperty("manifest_s3_id")
+        @ExcludeMissing
+        fun manifestS3Id(manifestS3Id: JsonField<String>) = apply {
+            this.manifestS3Id = manifestS3Id
         }
 
-        fun parentRunId(parentRunId: String) =
-            parentRunId(JsonField.of(parentRunId)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun events(events: List<JsonValue>) = events(JsonField.of(events))
 
-        @JsonProperty("parent_run_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("events")
         @ExcludeMissing
-        fun parentRunId(parentRunId: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.parentRunId = parentRunId
-            }
+        fun events(events: JsonField<List<JsonValue>>) = apply { this.events = events }
 
-        fun manifestId(manifestId: String) =
-            manifestId(JsonField.of(manifestId)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun tags(tags: List<String>) = tags(JsonField.of(tags))
 
-        @JsonProperty("manifest_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("tags")
         @ExcludeMissing
-        fun manifestId(manifestId: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.manifestId = manifestId
-            }
+        fun tags(tags: JsonField<List<String>>) = apply { this.tags = tags }
 
-        fun manifestS3Id(manifestS3Id: String) =
-            manifestS3Id(JsonField.of(manifestS3Id)) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("manifest_s3_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("inputs_s3_urls")
         @ExcludeMissing
-        fun manifestS3Id(manifestS3Id: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.manifestS3Id = manifestS3Id
-            }
+        fun inputsS3Urls(inputsS3Urls: JsonValue) = apply { this.inputsS3Urls = inputsS3Urls }
 
-        fun events(events: List<JsonValue>) =
-            events(JsonField.of(events)) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("events") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("outputs_s3_urls")
         @ExcludeMissing
-        fun events(events: JsonField<List<JsonValue>>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.events = events
-            }
+        fun outputsS3Urls(outputsS3Urls: JsonValue) = apply { this.outputsS3Urls = outputsS3Urls }
 
-        fun tags(tags: List<String>) =
-            tags(JsonField.of(tags)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun traceId(traceId: String) = traceId(JsonField.of(traceId))
 
-        @JsonProperty("tags") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("trace_id")
         @ExcludeMissing
-        fun tags(tags: JsonField<List<String>>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.tags = tags
-            }
+        fun traceId(traceId: JsonField<String>) = apply { this.traceId = traceId }
 
-        @JsonProperty("inputs_s3_urls") // templates/JavaSDK/entities/objects.ts:264:20 //
-        // templates/JavaSDK/entities/objects.ts:252:20
+        fun dottedOrder(dottedOrder: String) = dottedOrder(JsonField.of(dottedOrder))
+
+        @JsonProperty("dotted_order")
         @ExcludeMissing
-        fun inputsS3Urls(inputsS3Urls: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.inputsS3Urls = inputsS3Urls
-            }
+        fun dottedOrder(dottedOrder: JsonField<String>) = apply { this.dottedOrder = dottedOrder }
 
-        @JsonProperty("outputs_s3_urls") // templates/JavaSDK/entities/objects.ts:264:20 //
-        // templates/JavaSDK/entities/objects.ts:252:20
+        fun id(id: String) = id(JsonField.of(id))
+
+        @JsonProperty("id") @ExcludeMissing fun id(id: JsonField<String>) = apply { this.id = id }
+
+        fun status(status: String) = status(JsonField.of(status))
+
+        @JsonProperty("status")
         @ExcludeMissing
-        fun outputsS3Urls(outputsS3Urls: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.outputsS3Urls = outputsS3Urls
-            }
+        fun status(status: JsonField<String>) = apply { this.status = status }
 
-        fun traceId(traceId: String) =
-            traceId(JsonField.of(traceId)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun childRunIds(childRunIds: List<String>) = childRunIds(JsonField.of(childRunIds))
 
-        @JsonProperty("trace_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("child_run_ids")
         @ExcludeMissing
-        fun traceId(traceId: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.traceId = traceId
-            }
-
-        fun dottedOrder(dottedOrder: String) =
-            dottedOrder(JsonField.of(dottedOrder)) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("dotted_order") // templates/JavaSDK/entities/objects.ts:264:20
-        @ExcludeMissing
-        fun dottedOrder(dottedOrder: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.dottedOrder = dottedOrder
-            }
-
-        fun id(id: String) = id(JsonField.of(id)) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:264:20
-        @ExcludeMissing
-        fun id(id: JsonField<String>) = apply { // templates/JavaSDK/entities/objects.ts:275:36
-            this.id = id
+        fun childRunIds(childRunIds: JsonField<List<String>>) = apply {
+            this.childRunIds = childRunIds
         }
-
-        fun status(status: String) =
-            status(JsonField.of(status)) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("status") // templates/JavaSDK/entities/objects.ts:264:20
-        @ExcludeMissing
-        fun status(status: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.status = status
-            }
-
-        fun childRunIds(childRunIds: List<String>) =
-            childRunIds(JsonField.of(childRunIds)) // templates/JavaSDK/entities/objects.ts:252:20
-
-        @JsonProperty("child_run_ids") // templates/JavaSDK/entities/objects.ts:264:20
-        @ExcludeMissing
-        fun childRunIds(childRunIds: JsonField<List<String>>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.childRunIds = childRunIds
-            }
 
         fun directChildRunIds(directChildRunIds: List<String>) =
-            directChildRunIds(
-                JsonField.of(directChildRunIds)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+            directChildRunIds(JsonField.of(directChildRunIds))
 
-        @JsonProperty("direct_child_run_ids") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("direct_child_run_ids")
         @ExcludeMissing
-        fun directChildRunIds(directChildRunIds: JsonField<List<String>>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.directChildRunIds = directChildRunIds
-            }
+        fun directChildRunIds(directChildRunIds: JsonField<List<String>>) = apply {
+            this.directChildRunIds = directChildRunIds
+        }
 
-        fun parentRunIds(parentRunIds: List<String>) =
-            parentRunIds(JsonField.of(parentRunIds)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun parentRunIds(parentRunIds: List<String>) = parentRunIds(JsonField.of(parentRunIds))
 
-        @JsonProperty("parent_run_ids") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("parent_run_ids")
         @ExcludeMissing
-        fun parentRunIds(parentRunIds: JsonField<List<String>>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.parentRunIds = parentRunIds
-            }
+        fun parentRunIds(parentRunIds: JsonField<List<String>>) = apply {
+            this.parentRunIds = parentRunIds
+        }
 
-        fun feedbackStats(feedbackStats: FeedbackStats) =
-            feedbackStats(
-                JsonField.of(feedbackStats)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+        fun feedbackStats(feedbackStats: FeedbackStats) = feedbackStats(JsonField.of(feedbackStats))
 
-        @JsonProperty("feedback_stats") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("feedback_stats")
         @ExcludeMissing
-        fun feedbackStats(feedbackStats: JsonField<FeedbackStats>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.feedbackStats = feedbackStats
-            }
+        fun feedbackStats(feedbackStats: JsonField<FeedbackStats>) = apply {
+            this.feedbackStats = feedbackStats
+        }
 
         fun referenceExampleId(referenceExampleId: String) =
-            referenceExampleId(
-                JsonField.of(referenceExampleId)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+            referenceExampleId(JsonField.of(referenceExampleId))
 
-        @JsonProperty("reference_example_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("reference_example_id")
         @ExcludeMissing
-        fun referenceExampleId(referenceExampleId: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.referenceExampleId = referenceExampleId
-            }
+        fun referenceExampleId(referenceExampleId: JsonField<String>) = apply {
+            this.referenceExampleId = referenceExampleId
+        }
 
-        fun totalTokens(totalTokens: Long) =
-            totalTokens(JsonField.of(totalTokens)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun totalTokens(totalTokens: Long) = totalTokens(JsonField.of(totalTokens))
 
-        @JsonProperty("total_tokens") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("total_tokens")
         @ExcludeMissing
-        fun totalTokens(totalTokens: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.totalTokens = totalTokens
-            }
+        fun totalTokens(totalTokens: JsonField<Long>) = apply { this.totalTokens = totalTokens }
 
-        fun promptTokens(promptTokens: Long) =
-            promptTokens(JsonField.of(promptTokens)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun promptTokens(promptTokens: Long) = promptTokens(JsonField.of(promptTokens))
 
-        @JsonProperty("prompt_tokens") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("prompt_tokens")
         @ExcludeMissing
-        fun promptTokens(promptTokens: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.promptTokens = promptTokens
-            }
+        fun promptTokens(promptTokens: JsonField<Long>) = apply { this.promptTokens = promptTokens }
 
         fun completionTokens(completionTokens: Long) =
-            completionTokens(
-                JsonField.of(completionTokens)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+            completionTokens(JsonField.of(completionTokens))
 
-        @JsonProperty("completion_tokens") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("completion_tokens")
         @ExcludeMissing
-        fun completionTokens(completionTokens: JsonField<Long>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.completionTokens = completionTokens
-            }
+        fun completionTokens(completionTokens: JsonField<Long>) = apply {
+            this.completionTokens = completionTokens
+        }
 
-        fun totalCost(totalCost: Double) =
-            totalCost(JsonField.of(totalCost)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun totalCost(totalCost: Double) = totalCost(JsonField.of(totalCost))
 
-        @JsonProperty("total_cost") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("total_cost")
         @ExcludeMissing
-        fun totalCost(totalCost: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.totalCost = totalCost
-            }
+        fun totalCost(totalCost: JsonField<Double>) = apply { this.totalCost = totalCost }
 
-        fun promptCost(promptCost: Double) =
-            promptCost(JsonField.of(promptCost)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun promptCost(promptCost: Double) = promptCost(JsonField.of(promptCost))
 
-        @JsonProperty("prompt_cost") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("prompt_cost")
         @ExcludeMissing
-        fun promptCost(promptCost: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.promptCost = promptCost
-            }
+        fun promptCost(promptCost: JsonField<Double>) = apply { this.promptCost = promptCost }
 
-        fun completionCost(completionCost: Double) =
-            completionCost(
-                JsonField.of(completionCost)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+        fun completionCost(completionCost: Double) = completionCost(JsonField.of(completionCost))
 
-        @JsonProperty("completion_cost") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("completion_cost")
         @ExcludeMissing
-        fun completionCost(completionCost: JsonField<Double>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.completionCost = completionCost
-            }
+        fun completionCost(completionCost: JsonField<Double>) = apply {
+            this.completionCost = completionCost
+        }
 
         fun firstTokenTime(firstTokenTime: OffsetDateTime) =
-            firstTokenTime(
-                JsonField.of(firstTokenTime)
-            ) // templates/JavaSDK/entities/objects.ts:252:20
+            firstTokenTime(JsonField.of(firstTokenTime))
 
-        @JsonProperty("first_token_time") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("first_token_time")
         @ExcludeMissing
-        fun firstTokenTime(firstTokenTime: JsonField<OffsetDateTime>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.firstTokenTime = firstTokenTime
-            }
+        fun firstTokenTime(firstTokenTime: JsonField<OffsetDateTime>) = apply {
+            this.firstTokenTime = firstTokenTime
+        }
 
-        fun sessionId(sessionId: String) =
-            sessionId(JsonField.of(sessionId)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
 
-        @JsonProperty("session_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("session_id")
         @ExcludeMissing
-        fun sessionId(sessionId: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.sessionId = sessionId
-            }
+        fun sessionId(sessionId: JsonField<String>) = apply { this.sessionId = sessionId }
 
-        fun appPath(appPath: String) =
-            appPath(JsonField.of(appPath)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun appPath(appPath: String) = appPath(JsonField.of(appPath))
 
-        @JsonProperty("app_path") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("app_path")
         @ExcludeMissing
-        fun appPath(appPath: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.appPath = appPath
-            }
+        fun appPath(appPath: JsonField<String>) = apply { this.appPath = appPath }
 
-        fun lastQueuedAt(lastQueuedAt: OffsetDateTime) =
-            lastQueuedAt(JsonField.of(lastQueuedAt)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun lastQueuedAt(lastQueuedAt: OffsetDateTime) = lastQueuedAt(JsonField.of(lastQueuedAt))
 
-        @JsonProperty("last_queued_at") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("last_queued_at")
         @ExcludeMissing
-        fun lastQueuedAt(lastQueuedAt: JsonField<OffsetDateTime>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.lastQueuedAt = lastQueuedAt
-            }
+        fun lastQueuedAt(lastQueuedAt: JsonField<OffsetDateTime>) = apply {
+            this.lastQueuedAt = lastQueuedAt
+        }
 
-        fun inDataset(inDataset: Boolean) =
-            inDataset(JsonField.of(inDataset)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun inDataset(inDataset: Boolean) = inDataset(JsonField.of(inDataset))
 
-        @JsonProperty("in_dataset") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("in_dataset")
         @ExcludeMissing
-        fun inDataset(inDataset: JsonField<Boolean>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.inDataset = inDataset
-            }
+        fun inDataset(inDataset: JsonField<Boolean>) = apply { this.inDataset = inDataset }
 
-        fun shareToken(shareToken: String) =
-            shareToken(JsonField.of(shareToken)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun shareToken(shareToken: String) = shareToken(JsonField.of(shareToken))
 
-        @JsonProperty("share_token") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("share_token")
         @ExcludeMissing
-        fun shareToken(shareToken: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.shareToken = shareToken
-            }
+        fun shareToken(shareToken: JsonField<String>) = apply { this.shareToken = shareToken }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.clear()
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
-        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-        fun putAdditionalProperty(key: String, value: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:304:30
-                this.additionalProperties.put(key, value)
-            }
+        @JsonAnySetter
+        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+            this.additionalProperties.put(key, value)
+        }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:316:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
         fun build(): RunSchema =
-            RunSchema( // templates/JavaSDK/entities/objects.ts:326:30
-                name, // templates/JavaSDK/entities/objects.ts:326:30
+            RunSchema(
+                name,
                 inputs,
                 runType,
                 startTime,
@@ -1000,30 +764,25 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
     @JsonCreator
     private constructor(
         private val value: JsonField<String>,
-    ) { // templates/JavaSDK/entities/enums.ts:56:13 // templates/JavaSDK/entities/enums.ts:56:13 //
-        // templates/JavaSDK/entities/enums.ts:56:13
+    ) {
 
-        @com.fasterxml.jackson.annotation.JsonValue // templates/JavaSDK/entities/enums.ts:62:10 //
-        // templates/JavaSDK/entities/enums.ts:56:13
-        fun _value(): JsonField<String> = value
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is RunType && // templates/JavaSDK/entities/fields.ts:143:33
-                this.value == other.value
+            return other is RunType && this.value == other.value
         }
 
         override fun hashCode() = value.hashCode()
 
         override fun toString() = value.toString()
 
-        companion object { // templates/JavaSDK/entities/enums.ts:71:10
+        companion object {
 
-            @JvmField
-            val TOOL = RunType(JsonField.of("tool")) // templates/JavaSDK/entities/enums.ts:71:10
+            @JvmField val TOOL = RunType(JsonField.of("tool"))
 
             @JvmField val CHAIN = RunType(JsonField.of("chain"))
 
@@ -1040,9 +799,8 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
             @JvmStatic fun of(value: String) = RunType(JsonField.of(value))
         }
 
-        enum class Known { // templates/JavaSDK/entities/enums.ts:78:10
-            TOOL, // templates/JavaSDK/entities/enums.ts:78:10 //
-            // templates/JavaSDK/entities/enums.ts:78:10
+        enum class Known {
+            TOOL,
             CHAIN,
             LLM,
             RETRIEVER,
@@ -1051,9 +809,8 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
             PARSER,
         }
 
-        enum class Value { // templates/JavaSDK/entities/enums.ts:82:10
-            TOOL, // templates/JavaSDK/entities/enums.ts:82:10 //
-            // templates/JavaSDK/entities/enums.ts:82:10
+        enum class Value {
+            TOOL,
             CHAIN,
             LLM,
             RETRIEVER,
@@ -1064,9 +821,8 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
         }
 
         fun value(): Value =
-            when (this) { // templates/JavaSDK/entities/enums.ts:91:29
-                TOOL -> Value.TOOL // templates/JavaSDK/entities/enums.ts:54:10 //
-                // templates/JavaSDK/entities/enums.ts:54:10
+            when (this) {
+                TOOL -> Value.TOOL
                 CHAIN -> Value.CHAIN
                 LLM -> Value.LLM
                 RETRIEVER -> Value.RETRIEVER
@@ -1077,9 +833,8 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
             }
 
         fun known(): Known =
-            when (this) { // templates/JavaSDK/entities/enums.ts:104:29
-                TOOL -> Known.TOOL // templates/JavaSDK/entities/enums.ts:54:10 //
-                // templates/JavaSDK/entities/enums.ts:54:10
+            when (this) {
+                TOOL -> Known.TOOL
                 CHAIN -> Known.CHAIN
                 LLM -> Known.LLM
                 RETRIEVER -> Known.RETRIEVER
@@ -1092,50 +847,39 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
         fun asString(): String = _value().asStringOrThrow()
     }
 
-    @JsonDeserialize(
-        builder = FeedbackStats.Builder::class
-    ) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
-    // // templates/JavaSDK/entities/objects.ts:76:13 //
-    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+    @JsonDeserialize(builder = FeedbackStats.Builder::class)
     @NoAutoDetect
     class FeedbackStats
     private constructor(
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-        // templates/JavaSDK/entities/objects.ts:76:13
+        private var validated: Boolean = false
 
         private var hashCode: Int = 0
 
-        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-        // templates/JavaSDK/entities/objects.ts:180:12
+        @JsonAnyGetter
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun validate(): FeedbackStats = apply { // templates/JavaSDK/entities/objects.ts:198:28
-            if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-                // templates/JavaSDK/entities/objects.ts:198:28 //
-                // templates/JavaSDK/entities/objects.ts:198:28
+        fun validate(): FeedbackStats = apply {
+            if (!validated) {
                 validated = true
             }
         }
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
                 return true
             }
 
-            return other is FeedbackStats && // templates/JavaSDK/entities/fields.ts:143:33
-                this.additionalProperties == other.additionalProperties
+            return other is FeedbackStats && this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16 //
-                // templates/JavaSDK/entities/fields.ts:174:16
+        override fun hashCode(): Int {
+            if (hashCode == 0) {
                 hashCode = Objects.hash(additionalProperties)
             }
             return hashCode
@@ -1143,44 +887,33 @@ private constructor( // templates/JavaSDK/entities/objects.ts:76:13
 
         override fun toString() = "FeedbackStats{additionalProperties=$additionalProperties}"
 
-        companion object { // templates/JavaSDK/entities/objects.ts:217:10
+        companion object {
 
-            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-            // templates/JavaSDK/entities/objects.ts:217:10
-            fun builder() = Builder()
+            @JvmStatic fun builder() = Builder()
         }
 
-        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10 //
-            // templates/JavaSDK/entities/objects.ts:224:10
+        class Builder {
 
-            private var additionalProperties: MutableMap<String, JsonValue> =
-                mutableMapOf() // templates/JavaSDK/entities/objects.ts:224:10
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-            internal fun from(feedbackStats: FeedbackStats) =
-                apply { // templates/JavaSDK/entities/objects.ts:240:30
-                    additionalProperties(feedbackStats.additionalProperties)
-                }
+            @JvmSynthetic
+            internal fun from(feedbackStats: FeedbackStats) = apply {
+                additionalProperties(feedbackStats.additionalProperties)
+            }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties
-                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                    // templates/JavaSDK/entities/objects.ts:290:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
-            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-            fun putAdditionalProperty(key: String, value: JsonValue) =
-                apply { // templates/JavaSDK/entities/objects.ts:304:30
-                    this.additionalProperties.put(key, value)
-                }
+            @JsonAnySetter
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                this.additionalProperties.put(key, value)
+            }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                apply { // templates/JavaSDK/entities/objects.ts:316:30
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
             fun build(): FeedbackStats = FeedbackStats(additionalProperties.toUnmodifiable())
         }

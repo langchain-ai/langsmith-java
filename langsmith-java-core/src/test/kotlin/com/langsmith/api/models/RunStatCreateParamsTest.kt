@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -7,16 +7,11 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class RunStatCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class RunStatCreateParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createRunStatCreateParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        RunStatCreateParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createRunStatCreateParams() {
+        RunStatCreateParams.builder()
             .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .error(true)
@@ -33,14 +28,10 @@ class RunStatCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 /
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:1011:17
-    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBody() {
         val params =
-            RunStatCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            RunStatCreateParams.builder()
                 .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .error(true)
@@ -73,11 +64,9 @@ class RunStatCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 /
         assertThat(body.trace()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
-        val params =
-            RunStatCreateParams.builder().build() // templates/JavaSDK/entities/params.ts:1042:16 //
-        // templates/JavaSDK/entities/params.ts:1042:16
+    @Test
+    fun getBodyWithoutOptionalFields() {
+        val params = RunStatCreateParams.builder().build()
         val body = params.getBody()
         assertThat(body).isNotNull
     }

@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 @file:Suppress("OVERLOADS_INTERFACE") // See https://youtrack.jetbrains.com/issue/KT-36102
 
@@ -8,13 +8,10 @@ import com.langsmith.api.core.RequestOptions
 import com.langsmith.api.models.RunManifestRetrieveParams
 import com.langsmith.api.models.RunManifestSchema
 
-interface RunManifestService { // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15
+interface RunManifestService {
 
     /** Get a specific run manifest. */
-    // templates/JavaSDK/services.ts:55:15
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun retrieve(
         params: RunManifestRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none()

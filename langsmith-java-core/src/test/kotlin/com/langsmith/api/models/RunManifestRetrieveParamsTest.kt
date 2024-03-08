@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -6,27 +6,19 @@ import com.langsmith.api.models.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class RunManifestRetrieveParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class RunManifestRetrieveParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createRunManifestRetrieveParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        RunManifestRetrieveParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createRunManifestRetrieveParams() {
+        RunManifestRetrieveParams.builder()
             .runManifestId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getPathParam() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getPathParam() {
         val params =
-            RunManifestRetrieveParams.builder() // templates/JavaSDK/entities/params.ts:1072:10 //
-                // templates/JavaSDK/entities/params.ts:1072:10 //
-                // templates/JavaSDK/entities/params.ts:1071:16 //
-                // templates/JavaSDK/entities/params.ts:1071:16
+            RunManifestRetrieveParams.builder()
                 .runManifestId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
         assertThat(params).isNotNull

@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 @file:Suppress("OVERLOADS_INTERFACE") // See https://youtrack.jetbrains.com/issue/KT-36102
 
@@ -10,14 +10,12 @@ import com.langsmith.api.models.TenantMemberDeleteResponse
 import com.langsmith.api.services.async.tenants.members.PendingServiceAsync
 import java.util.concurrent.CompletableFuture
 
-interface MemberServiceAsync { // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15
+interface MemberServiceAsync {
 
-    fun pending(): PendingServiceAsync // templates/JavaSDK/services.ts:55:15
+    fun pending(): PendingServiceAsync
 
     /** Delete Current Tenant Member */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun delete(
         params: TenantMemberDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none()

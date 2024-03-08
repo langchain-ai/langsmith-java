@@ -1,10 +1,8 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
-// //
-// templates/JavaSDK/components/file.ts:28:17
-import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -16,11 +14,7 @@ import com.langsmith.api.core.NoAutoDetect
 import com.langsmith.api.core.toUnmodifiable
 import java.util.Objects
 
-@JsonDeserialize(
-    builder = DatasetShareSchema.Builder::class
-) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
-// templates/JavaSDK/entities/objects.ts:76:13
+@JsonDeserialize(builder = DatasetShareSchema.Builder::class)
 @NoAutoDetect
 class DatasetShareSchema
 private constructor(
@@ -29,8 +23,7 @@ private constructor(
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
-    // templates/JavaSDK/entities/objects.ts:76:13
+    private var validated: Boolean = false
 
     private var hashCode: Int = 0
 
@@ -38,25 +31,17 @@ private constructor(
 
     fun shareToken(): String = shareToken.getRequired("share_token")
 
-    @JsonProperty("dataset_id") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _datasetId() = datasetId
+    @JsonProperty("dataset_id") @ExcludeMissing fun _datasetId() = datasetId
 
-    @JsonProperty("share_token") // templates/JavaSDK/entities/objects.ts:166:16
-    @ExcludeMissing
-    fun _shareToken() = shareToken
+    @JsonProperty("share_token") @ExcludeMissing fun _shareToken() = shareToken
 
-    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
-    // templates/JavaSDK/entities/objects.ts:180:12
+    @JsonAnyGetter
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): DatasetShareSchema = apply { // templates/JavaSDK/entities/objects.ts:198:28
-        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:198:28 //
-            // templates/JavaSDK/entities/objects.ts:198:28
-            datasetId() // templates/JavaSDK/entities/objects.ts:201:20 //
-            // templates/JavaSDK/entities/objects.ts:201:20
+    fun validate(): DatasetShareSchema = apply {
+        if (!validated) {
+            datasetId()
             shareToken()
             validated = true
         }
@@ -64,26 +49,22 @@ private constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is DatasetShareSchema && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is DatasetShareSchema &&
             this.datasetId == other.datasetId &&
             this.shareToken == other.shareToken &&
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16 //
-            // templates/JavaSDK/entities/fields.ts:174:16
+    override fun hashCode(): Int {
+        if (hashCode == 0) {
             hashCode =
-                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-                    // templates/JavaSDK/entities/fields.ts:175:16 //
-                    // templates/JavaSDK/entities/fields.ts:175:16
-                    datasetId, // templates/JavaSDK/entities/fields.ts:163:19
+                Objects.hash(
+                    datasetId,
                     shareToken,
                     additionalProperties,
                 )
@@ -94,75 +75,53 @@ private constructor(
     override fun toString() =
         "DatasetShareSchema{datasetId=$datasetId, shareToken=$shareToken, additionalProperties=$additionalProperties}"
 
-    companion object { // templates/JavaSDK/entities/objects.ts:217:10
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
-        // templates/JavaSDK/entities/objects.ts:217:10
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+    class Builder {
 
-        private var datasetId: JsonField<String> =
-            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:226:16 //
-        // templates/JavaSDK/entities/objects.ts:224:10
+        private var datasetId: JsonField<String> = JsonMissing.of()
         private var shareToken: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
-        internal fun from(datasetShareSchema: DatasetShareSchema) =
-            apply { // templates/JavaSDK/entities/objects.ts:240:30
-                this.datasetId =
-                    datasetShareSchema.datasetId // templates/JavaSDK/entities/objects.ts:240:30 //
-                // templates/JavaSDK/entities/objects.ts:240:30
-                this.shareToken = datasetShareSchema.shareToken
-                additionalProperties(datasetShareSchema.additionalProperties)
-            }
+        @JvmSynthetic
+        internal fun from(datasetShareSchema: DatasetShareSchema) = apply {
+            this.datasetId = datasetShareSchema.datasetId
+            this.shareToken = datasetShareSchema.shareToken
+            additionalProperties(datasetShareSchema.additionalProperties)
+        }
 
-        fun datasetId(datasetId: String) =
-            datasetId(JsonField.of(datasetId)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun datasetId(datasetId: String) = datasetId(JsonField.of(datasetId))
 
-        @JsonProperty("dataset_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("dataset_id")
         @ExcludeMissing
-        fun datasetId(datasetId: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.datasetId = datasetId
-            }
+        fun datasetId(datasetId: JsonField<String>) = apply { this.datasetId = datasetId }
 
-        fun shareToken(shareToken: String) =
-            shareToken(JsonField.of(shareToken)) // templates/JavaSDK/entities/objects.ts:252:20
+        fun shareToken(shareToken: String) = shareToken(JsonField.of(shareToken))
 
-        @JsonProperty("share_token") // templates/JavaSDK/entities/objects.ts:264:20
+        @JsonProperty("share_token")
         @ExcludeMissing
-        fun shareToken(shareToken: JsonField<String>) =
-            apply { // templates/JavaSDK/entities/objects.ts:275:36
-                this.shareToken = shareToken
-            }
+        fun shareToken(shareToken: JsonField<String>) = apply { this.shareToken = shareToken }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
-                // templates/JavaSDK/entities/objects.ts:290:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.clear()
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
-        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
-        fun putAdditionalProperty(key: String, value: JsonValue) =
-            apply { // templates/JavaSDK/entities/objects.ts:304:30
-                this.additionalProperties.put(key, value)
-            }
+        @JsonAnySetter
+        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+            this.additionalProperties.put(key, value)
+        }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-            apply { // templates/JavaSDK/entities/objects.ts:316:30
-                this.additionalProperties.putAll(additionalProperties)
-            }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.putAll(additionalProperties)
+        }
 
         fun build(): DatasetShareSchema =
-            DatasetShareSchema( // templates/JavaSDK/entities/objects.ts:326:30
-                datasetId, // templates/JavaSDK/entities/objects.ts:326:30
+            DatasetShareSchema(
+                datasetId,
                 shareToken,
                 additionalProperties.toUnmodifiable(),
             )

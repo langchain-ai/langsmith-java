@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 @file:Suppress("OVERLOADS_INTERFACE") // See https://youtrack.jetbrains.com/issue/KT-36102
 
@@ -12,27 +12,24 @@ import com.langsmith.api.models.TenantCurrentStatsRetrieveParams
 import com.langsmith.api.models.TenantMembers
 import com.langsmith.api.models.TenantStats
 
-interface CurrentService { // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15 //
-    // templates/JavaSDK/services.ts:55:15
+interface CurrentService {
 
     /** Add Member To Current Tenant */
-    // templates/JavaSDK/services.ts:55:15
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun membersCreate(
         params: TenantCurrentMembersCreateParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): PendingIdentity
 
     /** Get Current Tenant Members */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun membersList(
         params: TenantCurrentMembersListParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): TenantMembers
 
     /** Get Current Tenant Stats */
-    @JvmOverloads // templates/JavaSDK/services.ts:738:15
+    @JvmOverloads
     fun statsRetrieve(
         params: TenantCurrentStatsRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none()

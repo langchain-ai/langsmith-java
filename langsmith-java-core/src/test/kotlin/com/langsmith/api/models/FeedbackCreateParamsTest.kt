@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -8,16 +8,11 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class FeedbackCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class FeedbackCreateParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createFeedbackCreateParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        FeedbackCreateParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createFeedbackCreateParams() {
+        FeedbackCreateParams.builder()
             .key("string")
             .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -29,7 +24,7 @@ class FeedbackCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
                     .type(FeedbackCreateParams.FeedbackConfig.Type.CONTINUOUS)
                     .categories(
                         listOf(
-                            FeedbackCreateParams.FeedbackConfig.FeedbackCategory.builder()
+                            FeedbackCreateParams.FeedbackConfig.Category.builder()
                                 .value(42.23)
                                 .label("x")
                                 .build()
@@ -53,14 +48,10 @@ class FeedbackCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:1011:17
-    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBody() {
         val params =
-            FeedbackCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            FeedbackCreateParams.builder()
                 .key("string")
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -72,7 +63,7 @@ class FeedbackCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
                         .type(FeedbackCreateParams.FeedbackConfig.Type.CONTINUOUS)
                         .categories(
                             listOf(
-                                FeedbackCreateParams.FeedbackConfig.FeedbackCategory.builder()
+                                FeedbackCreateParams.FeedbackConfig.Category.builder()
                                     .value(42.23)
                                     .label("x")
                                     .build()
@@ -104,12 +95,11 @@ class FeedbackCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
         assertThat(body.createdAt()).isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(body.feedbackConfig())
             .isEqualTo(
-                FeedbackCreateParams.FeedbackConfig
-                    .builder() // templates/JavaSDK/entities/params.ts:1055:14
+                FeedbackCreateParams.FeedbackConfig.builder()
                     .type(FeedbackCreateParams.FeedbackConfig.Type.CONTINUOUS)
                     .categories(
                         listOf(
-                            FeedbackCreateParams.FeedbackConfig.FeedbackCategory.builder()
+                            FeedbackCreateParams.FeedbackConfig.Category.builder()
                                 .value(42.23)
                                 .label("x")
                                 .build()
@@ -122,8 +112,7 @@ class FeedbackCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
         assertThat(body.feedbackSource())
             .isEqualTo(
                 FeedbackCreateParams.FeedbackSource.ofAppFeedbackSource(
-                    FeedbackCreateParams.FeedbackSource.AppFeedbackSource
-                        .builder() // templates/JavaSDK/entities/params.ts:1055:14
+                    FeedbackCreateParams.FeedbackSource.AppFeedbackSource.builder()
                         .metadata(JsonValue.from(mapOf<String, Any>()))
                         .type("string")
                         .build()
@@ -134,13 +123,10 @@ class FeedbackCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 
         assertThat(body.value()).isEqualTo(FeedbackCreateParams.Value.ofDouble(42.23))
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBodyWithoutOptionalFields() {
         val params =
-            FeedbackCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            FeedbackCreateParams.builder()
                 .key("string")
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()

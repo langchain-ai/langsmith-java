@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -8,19 +8,14 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ExampleBulkCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
+class ExampleBulkCreateParamsTest {
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:907:13
-    fun createExampleBulkCreateParams() { // templates/JavaSDK/entities/testing.ts:18:13
-        ExampleBulkCreateParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
-            // templates/JavaSDK/entities/params.ts:916:16 //
-            // templates/JavaSDK/entities/params.ts:916:16
+    @Test
+    fun createExampleBulkCreateParams() {
+        ExampleBulkCreateParams.builder()
             .body(
                 listOf(
-                    ExampleBulkCreateParams.ExampleCreate.builder()
+                    ExampleBulkCreateParams.Body.builder()
                         .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .inputs(JsonValue.from(mapOf<String, Any>()))
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -33,17 +28,13 @@ class ExampleBulkCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:
             .build()
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
-    // templates/JavaSDK/entities/params.ts:1011:17
-    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBody() {
         val params =
-            ExampleBulkCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            ExampleBulkCreateParams.builder()
                 .body(
                     listOf(
-                        ExampleBulkCreateParams.ExampleCreate.builder()
+                        ExampleBulkCreateParams.Body.builder()
                             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .inputs(JsonValue.from(mapOf<String, Any>()))
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -59,8 +50,7 @@ class ExampleBulkCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:
         assertThat(body.body())
             .isEqualTo(
                 listOf(
-                    ExampleBulkCreateParams.ExampleCreate
-                        .builder() // templates/JavaSDK/entities/params.ts:1055:14
+                    ExampleBulkCreateParams.Body.builder()
                         .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .inputs(JsonValue.from(mapOf<String, Any>()))
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -72,16 +62,13 @@ class ExampleBulkCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:
             )
     }
 
-    @Test // templates/JavaSDK/entities/testing.ts:18:13
-    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
+    @Test
+    fun getBodyWithoutOptionalFields() {
         val params =
-            ExampleBulkCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1043:10 //
-                // templates/JavaSDK/entities/params.ts:1042:16 //
-                // templates/JavaSDK/entities/params.ts:1042:16
+            ExampleBulkCreateParams.builder()
                 .body(
                     listOf(
-                        ExampleBulkCreateParams.ExampleCreate.builder()
+                        ExampleBulkCreateParams.Body.builder()
                             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .inputs(JsonValue.from(mapOf<String, Any>()))
                             .build()
@@ -93,8 +80,7 @@ class ExampleBulkCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:
         assertThat(body.body())
             .isEqualTo(
                 listOf(
-                    ExampleBulkCreateParams.ExampleCreate
-                        .builder() // templates/JavaSDK/entities/params.ts:1055:14
+                    ExampleBulkCreateParams.Body.builder()
                         .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .inputs(JsonValue.from(mapOf<String, Any>()))
                         .build()

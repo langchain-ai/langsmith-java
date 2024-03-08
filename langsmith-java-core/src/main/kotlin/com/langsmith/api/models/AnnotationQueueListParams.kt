@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
+// File generated from our OpenAPI spec by Stainless.
 
 package com.langsmith.api.models
 
@@ -9,12 +9,8 @@ import java.util.Objects
 import java.util.Optional
 
 class AnnotationQueueListParams
-constructor( // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
-    private val ids: List<String>?, // templates/JavaSDK/entities/params.ts:131:13 //
-    // templates/JavaSDK/entities/params.ts:131:13
+constructor(
+    private val ids: List<String>?,
     private val limit: Long?,
     private val name: String?,
     private val nameContains: String?,
@@ -23,9 +19,7 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
     private val additionalHeaders: Map<String, List<String>>,
 ) {
 
-    fun ids(): Optional<List<String>> =
-        Optional.ofNullable(ids) // templates/JavaSDK/entities/params.ts:145:14 //
-    // templates/JavaSDK/entities/params.ts:131:13
+    fun ids(): Optional<List<String>> = Optional.ofNullable(ids)
 
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
@@ -35,44 +29,30 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
-    internal fun getQueryParams():
-        Map<String, List<String>> { // templates/JavaSDK/entities/params.ts:201:14
-        val params =
-            mutableMapOf<String, List<String>>() // templates/JavaSDK/entities/params.ts:210:30 //
-        // templates/JavaSDK/entities/params.ts:210:30
-        this.ids?.let { // templates/JavaSDK/entities/objects.ts:392:21
-            params.put("ids", listOf(it.joinToString(separator = ",")))
-        }
-        this.limit?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("limit", listOf(it.toString()))
-        }
-        this.name?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("name", listOf(it.toString()))
-        }
-        this.nameContains?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("name_contains", listOf(it.toString()))
-        }
-        this.offset?.let { // templates/JavaSDK/entities/objects.ts:462:15
-            params.put("offset", listOf(it.toString()))
-        }
+    @JvmSynthetic
+    internal fun getQueryParams(): Map<String, List<String>> {
+        val params = mutableMapOf<String, List<String>>()
+        this.ids?.let { params.put("ids", listOf(it.joinToString(separator = ","))) }
+        this.limit?.let { params.put("limit", listOf(it.toString())) }
+        this.name?.let { params.put("name", listOf(it.toString())) }
+        this.nameContains?.let { params.put("name_contains", listOf(it.toString())) }
+        this.offset?.let { params.put("offset", listOf(it.toString())) }
         params.putAll(additionalQueryParams)
         return params.toUnmodifiable()
     }
 
-    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
-    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
     fun _additionalQueryParams(): Map<String, List<String>> = additionalQueryParams
 
     fun _additionalHeaders(): Map<String, List<String>> = additionalHeaders
 
-    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
-        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
 
-        return other is AnnotationQueueListParams && // templates/JavaSDK/entities/fields.ts:143:33
+        return other is AnnotationQueueListParams &&
             this.ids == other.ids &&
             this.limit == other.limit &&
             this.name == other.name &&
@@ -82,10 +62,9 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
             this.additionalHeaders == other.additionalHeaders
     }
 
-    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
-        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
-            // templates/JavaSDK/entities/fields.ts:181:14
-            ids, // templates/JavaSDK/entities/fields.ts:163:19
+    override fun hashCode(): Int {
+        return Objects.hash(
+            ids,
             limit,
             name,
             nameContains,
@@ -100,21 +79,15 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
 
     fun toBuilder() = Builder().from(this)
 
-    companion object { // templates/JavaSDK/entities/builders.ts:8:8
+    companion object {
 
-        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
-        // templates/JavaSDK/entities/builders.ts:8:8
-        fun builder() = Builder()
+        @JvmStatic fun builder() = Builder()
     }
 
-    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
-    // templates/JavaSDK/entities/params.ts:235:14
-    class Builder { // templates/JavaSDK/entities/params.ts:235:14
+    @NoAutoDetect
+    class Builder {
 
-        private var ids: MutableList<String> =
-            mutableListOf() // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:238:20 //
-        // templates/JavaSDK/entities/params.ts:235:14
+        private var ids: MutableList<String> = mutableListOf()
         private var limit: Long? = null
         private var name: String? = null
         private var nameContains: String? = null
@@ -122,104 +95,75 @@ constructor( // templates/JavaSDK/entities/params.ts:131:13 //
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
 
-        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
-        internal fun from(annotationQueueListParams: AnnotationQueueListParams) =
-            apply { // templates/JavaSDK/entities/params.ts:257:34
-                this.ids(
-                    annotationQueueListParams.ids ?: listOf()
-                ) // templates/JavaSDK/entities/params.ts:257:34 //
-                // templates/JavaSDK/entities/params.ts:257:34
-                this.limit = annotationQueueListParams.limit
-                this.name = annotationQueueListParams.name
-                this.nameContains = annotationQueueListParams.nameContains
-                this.offset = annotationQueueListParams.offset
-                additionalQueryParams(annotationQueueListParams.additionalQueryParams)
-                additionalHeaders(annotationQueueListParams.additionalHeaders)
-            }
+        @JvmSynthetic
+        internal fun from(annotationQueueListParams: AnnotationQueueListParams) = apply {
+            this.ids(annotationQueueListParams.ids ?: listOf())
+            this.limit = annotationQueueListParams.limit
+            this.name = annotationQueueListParams.name
+            this.nameContains = annotationQueueListParams.nameContains
+            this.offset = annotationQueueListParams.offset
+            additionalQueryParams(annotationQueueListParams.additionalQueryParams)
+            additionalHeaders(annotationQueueListParams.additionalHeaders)
+        }
 
-        fun ids(ids: List<String>) = apply { // templates/JavaSDK/entities/params.ts:609:26
-            this.ids.clear() // templates/JavaSDK/entities/params.ts:609:26 //
-            // templates/JavaSDK/entities/params.ts:609:26
+        fun ids(ids: List<String>) = apply {
+            this.ids.clear()
             this.ids.addAll(ids)
         }
 
-        fun addId(id: String) = apply { // templates/JavaSDK/entities/params.ts:620:26
-            this.ids.add(id)
+        fun addId(id: String) = apply { this.ids.add(id) }
+
+        fun limit(limit: Long) = apply { this.limit = limit }
+
+        fun name(name: String) = apply { this.name = name }
+
+        fun nameContains(nameContains: String) = apply { this.nameContains = nameContains }
+
+        fun offset(offset: Long) = apply { this.offset = offset }
+
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
+            this.additionalQueryParams.clear()
+            putAllQueryParams(additionalQueryParams)
         }
 
-        fun limit(limit: Long) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.limit = limit
+        fun putQueryParam(name: String, value: String) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
         }
 
-        fun name(name: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.name = name
+        fun putQueryParams(name: String, values: Iterable<String>) = apply {
+            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
         }
 
-        fun nameContains(nameContains: String) =
-            apply { // templates/JavaSDK/entities/params.ts:634:26
-                this.nameContains = nameContains
-            }
-
-        fun offset(offset: Long) = apply { // templates/JavaSDK/entities/params.ts:634:26
-            this.offset = offset
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
+            additionalQueryParams.forEach(this::putQueryParams)
         }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:703:24
-                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
-                // templates/JavaSDK/entities/params.ts:703:24
-                putAllQueryParams(additionalQueryParams)
-            }
-
-        fun putQueryParam(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:713:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putQueryParams(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:723:24
-                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:733:24
-                additionalQueryParams.forEach(this::putQueryParams)
-            }
-
-        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
+        fun removeQueryParam(name: String) = apply {
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:755:24
-                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
-                // templates/JavaSDK/entities/params.ts:755:24
-                putAllHeaders(additionalHeaders)
-            }
-
-        fun putHeader(name: String, value: String) =
-            apply { // templates/JavaSDK/entities/params.ts:765:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-            }
-
-        fun putHeaders(name: String, values: Iterable<String>) =
-            apply { // templates/JavaSDK/entities/params.ts:775:24
-                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-            }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
-            apply { // templates/JavaSDK/entities/params.ts:785:24
-                additionalHeaders.forEach(this::putHeaders)
-            }
-
-        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
-            this.additionalHeaders.put(name, mutableListOf())
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            this.additionalHeaders.clear()
+            putAllHeaders(additionalHeaders)
         }
 
+        fun putHeader(name: String, value: String) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+        }
+
+        fun putHeaders(name: String, values: Iterable<String>) = apply {
+            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+        }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
+            additionalHeaders.forEach(this::putHeaders)
+        }
+
+        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
+
         fun build(): AnnotationQueueListParams =
-            AnnotationQueueListParams( // templates/JavaSDK/entities/params.ts:683:22
-                if (ids.size == 0) null
-                else ids.toUnmodifiable(), // templates/JavaSDK/entities/params.ts:683:22
+            AnnotationQueueListParams(
+                if (ids.size == 0) null else ids.toUnmodifiable(),
                 limit,
                 name,
                 nameContains,
