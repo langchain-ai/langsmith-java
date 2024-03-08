@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -16,8 +18,12 @@ import java.util.Objects
 import java.util.Optional
 
 class AnnotationQueueRunUpdateParams
-constructor(
-    private val queueId: String,
+constructor( // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
+    private val queueId: String, // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
     private val queueRunId: String,
     private val addedAt: OffsetDateTime?,
     private val lastReviewedTime: OffsetDateTime?,
@@ -26,7 +32,8 @@ constructor(
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun queueId(): String = queueId
+    fun queueId(): String = queueId // templates/JavaSDK/entities/params.ts:145:14 //
+    // templates/JavaSDK/entities/params.ts:131:13
 
     fun queueRunId(): String = queueRunId
 
@@ -34,28 +41,37 @@ constructor(
 
     fun lastReviewedTime(): Optional<OffsetDateTime> = Optional.ofNullable(lastReviewedTime)
 
-    @JvmSynthetic
-    internal fun getBody(): AnnotationQueueRunUpdateBody {
-        return AnnotationQueueRunUpdateBody(
-            addedAt,
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:165:16
+    internal fun getBody():
+        AnnotationQueueRunUpdateBody { // templates/JavaSDK/entities/params.ts:165:16
+        return AnnotationQueueRunUpdateBody( // templates/JavaSDK/entities/params.ts:180:26 //
+            // templates/JavaSDK/entities/params.ts:179:24
+            addedAt, // templates/JavaSDK/entities/params.ts:180:26
             lastReviewedTime,
             additionalBodyProperties,
         )
     }
 
-    @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
+    internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
 
-    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
+    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
-    fun getPathParam(index: Int): String {
-        return when (index) {
-            0 -> queueId
+    fun getPathParam(index: Int): String { // templates/JavaSDK/entities/params.ts:555:13
+        return when (index) { // templates/JavaSDK/entities/params.ts:560:26
+            0 -> queueId // templates/JavaSDK/entities/params.ts:560:26 //
+            // templates/JavaSDK/entities/params.ts:560:26
             1 -> queueRunId
             else -> ""
         }
     }
 
-    @JsonDeserialize(builder = AnnotationQueueRunUpdateBody.Builder::class)
+    @JsonDeserialize(
+        builder = AnnotationQueueRunUpdateBody.Builder::class
+    ) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+    // // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
     @NoAutoDetect
     class AnnotationQueueRunUpdateBody
     internal constructor(
@@ -64,35 +80,43 @@ constructor(
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0
+        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
-        @JsonProperty("added_at") fun addedAt(): OffsetDateTime? = addedAt
+        @JsonProperty("added_at") // templates/JavaSDK/entities/objects.ts:113:14
+        fun addedAt(): OffsetDateTime? = addedAt
 
-        @JsonProperty("last_reviewed_time")
+        @JsonProperty("last_reviewed_time") // templates/JavaSDK/entities/objects.ts:113:14
         fun lastReviewedTime(): OffsetDateTime? = lastReviewedTime
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is AnnotationQueueRunUpdateBody &&
+            return other is
+                AnnotationQueueRunUpdateBody && // templates/JavaSDK/entities/fields.ts:143:33
                 this.addedAt == other.addedAt &&
                 this.lastReviewedTime == other.lastReviewedTime &&
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        addedAt,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        addedAt, // templates/JavaSDK/entities/fields.ts:163:19
                         lastReviewedTime,
                         additionalProperties,
                     )
@@ -103,49 +127,71 @@ constructor(
         override fun toString() =
             "AnnotationQueueRunUpdateBody{addedAt=$addedAt, lastReviewedTime=$lastReviewedTime, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var addedAt: OffsetDateTime? = null
+            private var addedAt: OffsetDateTime? =
+                null // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var lastReviewedTime: OffsetDateTime? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(annotationQueueRunUpdateBody: AnnotationQueueRunUpdateBody) = apply {
-                this.addedAt = annotationQueueRunUpdateBody.addedAt
-                this.lastReviewedTime = annotationQueueRunUpdateBody.lastReviewedTime
-                additionalProperties(annotationQueueRunUpdateBody.additionalProperties)
-            }
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(annotationQueueRunUpdateBody: AnnotationQueueRunUpdateBody) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.addedAt =
+                        annotationQueueRunUpdateBody
+                            .addedAt // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.lastReviewedTime = annotationQueueRunUpdateBody.lastReviewedTime
+                    additionalProperties(annotationQueueRunUpdateBody.additionalProperties)
+                }
 
-            @JsonProperty("added_at")
-            fun addedAt(addedAt: OffsetDateTime) = apply { this.addedAt = addedAt }
+            @JsonProperty("added_at") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun addedAt(addedAt: OffsetDateTime) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.addedAt = addedAt
+                }
 
-            @JsonProperty("last_reviewed_time")
-            fun lastReviewedTime(lastReviewedTime: OffsetDateTime) = apply {
-                this.lastReviewedTime = lastReviewedTime
-            }
+            @JsonProperty("last_reviewed_time") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun lastReviewedTime(lastReviewedTime: OffsetDateTime) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.lastReviewedTime = lastReviewedTime
+                }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
-            }
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
             fun build(): AnnotationQueueRunUpdateBody =
-                AnnotationQueueRunUpdateBody(
-                    addedAt,
+                AnnotationQueueRunUpdateBody( // templates/JavaSDK/entities/objects.ts:326:30
+                    addedAt, // templates/JavaSDK/entities/objects.ts:326:30
                     lastReviewedTime,
                     additionalProperties.toUnmodifiable(),
                 )
@@ -158,12 +204,13 @@ constructor(
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is AnnotationQueueRunUpdateParams &&
+        return other is
+            AnnotationQueueRunUpdateParams && // templates/JavaSDK/entities/fields.ts:143:33
             this.queueId == other.queueId &&
             this.queueRunId == other.queueRunId &&
             this.addedAt == other.addedAt &&
@@ -173,9 +220,10 @@ constructor(
             this.additionalBodyProperties == other.additionalBodyProperties
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(
-            queueId,
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+            // templates/JavaSDK/entities/fields.ts:181:14
+            queueId, // templates/JavaSDK/entities/fields.ts:163:19
             queueRunId,
             addedAt,
             lastReviewedTime,
@@ -190,15 +238,20 @@ constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/builders.ts:8:8
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
+        // templates/JavaSDK/entities/builders.ts:8:8
+        fun builder() = Builder()
     }
 
-    @NoAutoDetect
-    class Builder {
+    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
+    // templates/JavaSDK/entities/params.ts:235:14
+    class Builder { // templates/JavaSDK/entities/params.ts:235:14
 
-        private var queueId: String? = null
+        private var queueId: String? = null // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:235:14
         private var queueRunId: String? = null
         private var addedAt: OffsetDateTime? = null
         private var lastReviewedTime: OffsetDateTime? = null
@@ -206,85 +259,118 @@ constructor(
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(annotationQueueRunUpdateParams: AnnotationQueueRunUpdateParams) = apply {
-            this.queueId = annotationQueueRunUpdateParams.queueId
-            this.queueRunId = annotationQueueRunUpdateParams.queueRunId
-            this.addedAt = annotationQueueRunUpdateParams.addedAt
-            this.lastReviewedTime = annotationQueueRunUpdateParams.lastReviewedTime
-            additionalQueryParams(annotationQueueRunUpdateParams.additionalQueryParams)
-            additionalHeaders(annotationQueueRunUpdateParams.additionalHeaders)
-            additionalBodyProperties(annotationQueueRunUpdateParams.additionalBodyProperties)
+        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
+        internal fun from(annotationQueueRunUpdateParams: AnnotationQueueRunUpdateParams) =
+            apply { // templates/JavaSDK/entities/params.ts:257:34
+                this.queueId =
+                    annotationQueueRunUpdateParams
+                        .queueId // templates/JavaSDK/entities/params.ts:257:34 //
+                // templates/JavaSDK/entities/params.ts:257:34
+                this.queueRunId = annotationQueueRunUpdateParams.queueRunId
+                this.addedAt = annotationQueueRunUpdateParams.addedAt
+                this.lastReviewedTime = annotationQueueRunUpdateParams.lastReviewedTime
+                additionalQueryParams(annotationQueueRunUpdateParams.additionalQueryParams)
+                additionalHeaders(annotationQueueRunUpdateParams.additionalHeaders)
+                additionalBodyProperties(annotationQueueRunUpdateParams.additionalBodyProperties)
+            }
+
+        fun queueId(queueId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.queueId = queueId
         }
 
-        fun queueId(queueId: String) = apply { this.queueId = queueId }
-
-        fun queueRunId(queueRunId: String) = apply { this.queueRunId = queueRunId }
-
-        fun addedAt(addedAt: OffsetDateTime) = apply { this.addedAt = addedAt }
-
-        fun lastReviewedTime(lastReviewedTime: OffsetDateTime) = apply {
-            this.lastReviewedTime = lastReviewedTime
+        fun queueRunId(queueRunId: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.queueRunId = queueRunId
         }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllQueryParams(additionalQueryParams)
-        }
+        fun addedAt(addedAt: OffsetDateTime) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.addedAt = addedAt
+            }
 
-        fun putQueryParam(name: String, value: String) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-        }
+        fun lastReviewedTime(lastReviewedTime: OffsetDateTime) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.lastReviewedTime = lastReviewedTime
+            }
 
-        fun putQueryParams(name: String, values: Iterable<String>) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:703:24
+                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
+                // templates/JavaSDK/entities/params.ts:703:24
+                putAllQueryParams(additionalQueryParams)
+            }
 
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            additionalQueryParams.forEach(this::putQueryParams)
-        }
+        fun putQueryParam(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:713:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+            }
 
-        fun removeQueryParam(name: String) = apply {
+        fun putQueryParams(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:723:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
+
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:733:24
+                additionalQueryParams.forEach(this::putQueryParams)
+            }
+
+        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllHeaders(additionalHeaders)
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:755:24
+                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
+                // templates/JavaSDK/entities/params.ts:755:24
+                putAllHeaders(additionalHeaders)
+            }
+
+        fun putHeader(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:765:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+            }
+
+        fun putHeaders(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:775:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:785:24
+                additionalHeaders.forEach(this::putHeaders)
+            }
+
+        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
+            this.additionalHeaders.put(name, mutableListOf())
         }
 
-        fun putHeader(name: String, value: String) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-        }
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/params.ts:809:28
+                this.additionalBodyProperties
+                    .clear() // templates/JavaSDK/entities/params.ts:809:28 //
+                // templates/JavaSDK/entities/params.ts:809:28
+                this.additionalBodyProperties.putAll(additionalBodyProperties)
+            }
 
-        fun putHeaders(name: String, values: Iterable<String>) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            additionalHeaders.forEach(this::putHeaders)
-        }
-
-        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
-
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            this.additionalBodyProperties.putAll(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            this.additionalBodyProperties.put(key, value)
-        }
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/params.ts:822:28
+                this.additionalBodyProperties.put(key, value)
+            }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
+            apply { // templates/JavaSDK/entities/params.ts:832:28
                 this.additionalBodyProperties.putAll(additionalBodyProperties)
             }
 
         fun build(): AnnotationQueueRunUpdateParams =
-            AnnotationQueueRunUpdateParams(
-                checkNotNull(queueId) { "`queueId` is required but was not set" },
-                checkNotNull(queueRunId) { "`queueRunId` is required but was not set" },
+            AnnotationQueueRunUpdateParams( // templates/JavaSDK/entities/params.ts:683:22
+                checkNotNull(queueId) { // templates/JavaSDK/entities/params.ts:844:13 //
+                    // templates/JavaSDK/entities/params.ts:683:22
+                    "`queueId` is required but was not set"
+                },
+                checkNotNull(queueRunId) { // templates/JavaSDK/entities/params.ts:844:13
+                    "`queueRunId` is required but was not set"
+                },
                 addedAt,
                 lastReviewedTime,
                 additionalQueryParams.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),

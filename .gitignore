@@ -1,4 +1,4 @@
-.gradle
+.gradle // templates/JavaSDK/Root.ts:336:50
 .idea
 build
 codegen.log

@@ -1,16 +1,22 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class TenantStatsTest {
+class TenantStatsTest { // templates/JavaSDK/entities/objects.ts:645:15 //
+    // templates/JavaSDK/entities/objects.ts:645:15 //
+    // templates/JavaSDK/entities/objects.ts:645:15
 
-    @Test
-    fun createTenantStats() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
+    // templates/JavaSDK/entities/objects.ts:645:15
+    fun createTenantStats() { // templates/JavaSDK/entities/testing.ts:18:13
         val tenantStats =
-            TenantStats.builder()
+            TenantStats.builder() // templates/JavaSDK/entities/objects.ts:657:10 //
+                // templates/JavaSDK/entities/objects.ts:657:10 //
+                // templates/JavaSDK/entities/objects.ts:656:16 //
+                // templates/JavaSDK/entities/objects.ts:656:16
                 .annotationQueueCount(123L)
                 .datasetCount(123L)
                 .repoCount(123L)

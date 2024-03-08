@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -17,11 +19,15 @@ import java.util.Objects
 import java.util.Optional
 
 /** Tenant schema. */
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13
 @JsonDeserialize(builder = Tenant.Builder::class)
 @NoAutoDetect
 class Tenant
-private constructor(
-    private val id: JsonField<String>,
+private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+    private val id: JsonField<String>, // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
     private val organizationId: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val displayName: JsonField<String>,
@@ -30,7 +36,8 @@ private constructor(
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false
+    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+    // templates/JavaSDK/entities/objects.ts:76:13
 
     private var hashCode: Int = 0
 
@@ -54,13 +61,21 @@ private constructor(
     fun tenantHandle(): Optional<String> =
         Optional.ofNullable(tenantHandle.getNullable("tenant_handle"))
 
-    @JsonProperty("id") @ExcludeMissing fun _id() = id
+    @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _id() = id
 
-    @JsonProperty("organization_id") @ExcludeMissing fun _organizationId() = organizationId
+    @JsonProperty("organization_id") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _organizationId() = organizationId
 
-    @JsonProperty("created_at") @ExcludeMissing fun _createdAt() = createdAt
+    @JsonProperty("created_at") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _createdAt() = createdAt
 
-    @JsonProperty("display_name") @ExcludeMissing fun _displayName() = displayName
+    @JsonProperty("display_name") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _displayName() = displayName
 
     /**
      * Base class for settings, allowing values to be overridden by environment variables.
@@ -68,17 +83,25 @@ private constructor(
      * This is useful in production for secrets you do not wish to save in code, it plays nicely
      * with docker(-compose), Heroku and any 12 factor app design.
      */
-    @JsonProperty("config") @ExcludeMissing fun _config() = config
+    @JsonProperty("config") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _config() = config
 
-    @JsonProperty("tenant_handle") @ExcludeMissing fun _tenantHandle() = tenantHandle
+    @JsonProperty("tenant_handle") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _tenantHandle() = tenantHandle
 
-    @JsonAnyGetter
+    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+    // templates/JavaSDK/entities/objects.ts:180:12
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): Tenant = apply {
-        if (!validated) {
-            id()
+    fun validate(): Tenant = apply { // templates/JavaSDK/entities/objects.ts:198:28
+        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:198:28 //
+            // templates/JavaSDK/entities/objects.ts:198:28
+            id() // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:201:20
             organizationId()
             createdAt()
             displayName()
@@ -90,12 +113,12 @@ private constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is Tenant &&
+        return other is Tenant && // templates/JavaSDK/entities/fields.ts:143:33
             this.id == other.id &&
             this.organizationId == other.organizationId &&
             this.createdAt == other.createdAt &&
@@ -105,11 +128,15 @@ private constructor(
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int {
-        if (hashCode == 0) {
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16
             hashCode =
-                Objects.hash(
-                    id,
+                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                    // templates/JavaSDK/entities/fields.ts:175:16 //
+                    // templates/JavaSDK/entities/fields.ts:175:16
+                    id, // templates/JavaSDK/entities/fields.ts:163:19
                     organizationId,
                     createdAt,
                     displayName,
@@ -124,14 +151,21 @@ private constructor(
     override fun toString() =
         "Tenant{id=$id, organizationId=$organizationId, createdAt=$createdAt, displayName=$displayName, config=$config, tenantHandle=$tenantHandle, additionalProperties=$additionalProperties}"
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+        // templates/JavaSDK/entities/objects.ts:217:10
+        fun builder() = Builder()
     }
 
-    class Builder {
+    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10
 
-        private var id: JsonField<String> = JsonMissing.of()
+        private var id: JsonField<String> =
+            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:224:10
         private var organizationId: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var displayName: JsonField<String> = JsonMissing.of()
@@ -139,9 +173,10 @@ private constructor(
         private var tenantHandle: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(tenant: Tenant) = apply {
-            this.id = tenant.id
+        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+        internal fun from(tenant: Tenant) = apply { // templates/JavaSDK/entities/objects.ts:240:30
+            this.id = tenant.id // templates/JavaSDK/entities/objects.ts:240:30 //
+            // templates/JavaSDK/entities/objects.ts:240:30
             this.organizationId = tenant.organizationId
             this.createdAt = tenant.createdAt
             this.displayName = tenant.displayName
@@ -150,32 +185,49 @@ private constructor(
             additionalProperties(tenant.additionalProperties)
         }
 
-        fun id(id: String) = id(JsonField.of(id))
+        fun id(id: String) = id(JsonField.of(id)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("id") @ExcludeMissing fun id(id: JsonField<String>) = apply { this.id = id }
-
-        fun organizationId(organizationId: String) = organizationId(JsonField.of(organizationId))
-
-        @JsonProperty("organization_id")
+        @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun organizationId(organizationId: JsonField<String>) = apply {
-            this.organizationId = organizationId
+        fun id(id: JsonField<String>) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+            this.id = id
         }
 
-        fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+        fun organizationId(organizationId: String) =
+            organizationId(
+                JsonField.of(organizationId)
+            ) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("created_at")
+        @JsonProperty("organization_id") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
+        fun organizationId(organizationId: JsonField<String>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.organizationId = organizationId
+            }
 
-        fun displayName(displayName: String) = displayName(JsonField.of(displayName))
+        fun createdAt(createdAt: OffsetDateTime) =
+            createdAt(JsonField.of(createdAt)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("display_name")
+        @JsonProperty("created_at") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun displayName(displayName: JsonField<String>) = apply { this.displayName = displayName }
+        fun createdAt(createdAt: JsonField<OffsetDateTime>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.createdAt = createdAt
+            }
+
+        fun displayName(displayName: String) =
+            displayName(JsonField.of(displayName)) // templates/JavaSDK/entities/objects.ts:252:20
+
+        @JsonProperty("display_name") // templates/JavaSDK/entities/objects.ts:264:20
+        @ExcludeMissing
+        fun displayName(displayName: JsonField<String>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.displayName = displayName
+            }
 
         /**
-         * Base class for settings, allowing values to be overridden by environment variables.
+         * // templates/JavaSDK/entities/objects.ts:252:20 Base class for settings, allowing values
+         * to be overridden by environment variables.
          *
          * This is useful in production for secrets you do not wish to save in code, it plays nicely
          * with docker(-compose), Heroku and any 12 factor app design.
@@ -188,35 +240,44 @@ private constructor(
          * This is useful in production for secrets you do not wish to save in code, it plays nicely
          * with docker(-compose), Heroku and any 12 factor app design.
          */
-        @JsonProperty("config")
+        @JsonProperty("config") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun config(config: JsonField<Config>) = apply { this.config = config }
+        fun config(config: JsonField<Config>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.config = config
+            }
 
-        fun tenantHandle(tenantHandle: String) = tenantHandle(JsonField.of(tenantHandle))
+        fun tenantHandle(tenantHandle: String) =
+            tenantHandle(JsonField.of(tenantHandle)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("tenant_handle")
+        @JsonProperty("tenant_handle") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun tenantHandle(tenantHandle: JsonField<String>) = apply {
-            this.tenantHandle = tenantHandle
-        }
+        fun tenantHandle(tenantHandle: JsonField<String>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.tenantHandle = tenantHandle
+            }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.clear()
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
-        @JsonAnySetter
-        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-            this.additionalProperties.put(key, value)
-        }
+        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+        fun putAdditionalProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/objects.ts:304:30
+                this.additionalProperties.put(key, value)
+            }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:316:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
         fun build(): Tenant =
-            Tenant(
-                id,
+            Tenant( // templates/JavaSDK/entities/objects.ts:326:30
+                id, // templates/JavaSDK/entities/objects.ts:326:30
                 organizationId,
                 createdAt,
                 displayName,
@@ -227,7 +288,11 @@ private constructor(
     }
 
     /**
-     * Base class for settings, allowing values to be overridden by environment variables.
+     * // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+     * // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+     * // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+     * // templates/JavaSDK/entities/objects.ts:76:13 Base class for settings, allowing values to be
+     * overridden by environment variables.
      *
      * This is useful in production for secrets you do not wish to save in code, it plays nicely
      * with docker(-compose), Heroku and any 12 factor app design.
@@ -235,8 +300,10 @@ private constructor(
     @JsonDeserialize(builder = Config.Builder::class)
     @NoAutoDetect
     class Config
-    private constructor(
-        private val isPersonal: JsonField<Boolean>,
+    private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+        private val isPersonal:
+            JsonField<Boolean>, // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         private val maxIdentities: JsonField<Long>,
         private val maxHourlyTracingRequests: JsonField<Long>,
         private val maxHourlyTracingBytes: JsonField<Long>,
@@ -245,7 +312,8 @@ private constructor(
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var validated: Boolean = false
+        private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
         private var hashCode: Int = 0
 
@@ -268,31 +336,43 @@ private constructor(
 
         fun flags(): Optional<Flags> = Optional.ofNullable(flags.getNullable("flags"))
 
-        @JsonProperty("is_personal") @ExcludeMissing fun _isPersonal() = isPersonal
+        @JsonProperty("is_personal") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _isPersonal() = isPersonal
 
-        @JsonProperty("max_identities") @ExcludeMissing fun _maxIdentities() = maxIdentities
+        @JsonProperty("max_identities") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _maxIdentities() = maxIdentities
 
-        @JsonProperty("max_hourly_tracing_requests")
+        @JsonProperty("max_hourly_tracing_requests") // templates/JavaSDK/entities/objects.ts:166:16
         @ExcludeMissing
         fun _maxHourlyTracingRequests() = maxHourlyTracingRequests
 
-        @JsonProperty("max_hourly_tracing_bytes")
+        @JsonProperty("max_hourly_tracing_bytes") // templates/JavaSDK/entities/objects.ts:166:16
         @ExcludeMissing
         fun _maxHourlyTracingBytes() = maxHourlyTracingBytes
 
-        @JsonProperty("max_monthly_total_unique_traces")
+        @JsonProperty(
+            "max_monthly_total_unique_traces"
+        ) // templates/JavaSDK/entities/objects.ts:166:16
         @ExcludeMissing
         fun _maxMonthlyTotalUniqueTraces() = maxMonthlyTotalUniqueTraces
 
-        @JsonProperty("flags") @ExcludeMissing fun _flags() = flags
+        @JsonProperty("flags") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _flags() = flags
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun validate(): Config = apply {
-            if (!validated) {
-                isPersonal()
+        fun validate(): Config = apply { // templates/JavaSDK/entities/objects.ts:198:28
+            if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+                // templates/JavaSDK/entities/objects.ts:198:28 //
+                // templates/JavaSDK/entities/objects.ts:198:28
+                isPersonal() // templates/JavaSDK/entities/objects.ts:201:20 //
+                // templates/JavaSDK/entities/objects.ts:201:20
                 maxIdentities()
                 maxHourlyTracingRequests()
                 maxHourlyTracingBytes()
@@ -304,12 +384,12 @@ private constructor(
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is Config &&
+            return other is Config && // templates/JavaSDK/entities/fields.ts:143:33
                 this.isPersonal == other.isPersonal &&
                 this.maxIdentities == other.maxIdentities &&
                 this.maxHourlyTracingRequests == other.maxHourlyTracingRequests &&
@@ -319,11 +399,15 @@ private constructor(
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        isPersonal,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        isPersonal, // templates/JavaSDK/entities/fields.ts:163:19
                         maxIdentities,
                         maxHourlyTracingRequests,
                         maxHourlyTracingBytes,
@@ -338,14 +422,21 @@ private constructor(
         override fun toString() =
             "Config{isPersonal=$isPersonal, maxIdentities=$maxIdentities, maxHourlyTracingRequests=$maxHourlyTracingRequests, maxHourlyTracingBytes=$maxHourlyTracingBytes, maxMonthlyTotalUniqueTraces=$maxMonthlyTotalUniqueTraces, flags=$flags, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var isPersonal: JsonField<Boolean> = JsonMissing.of()
+            private var isPersonal: JsonField<Boolean> =
+                JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var maxIdentities: JsonField<Long> = JsonMissing.of()
             private var maxHourlyTracingRequests: JsonField<Long> = JsonMissing.of()
             private var maxHourlyTracingBytes: JsonField<Long> = JsonMissing.of()
@@ -353,81 +444,116 @@ private constructor(
             private var flags: JsonField<Flags> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(config: Config) = apply {
-                this.isPersonal = config.isPersonal
-                this.maxIdentities = config.maxIdentities
-                this.maxHourlyTracingRequests = config.maxHourlyTracingRequests
-                this.maxHourlyTracingBytes = config.maxHourlyTracingBytes
-                this.maxMonthlyTotalUniqueTraces = config.maxMonthlyTotalUniqueTraces
-                this.flags = config.flags
-                additionalProperties(config.additionalProperties)
-            }
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(config: Config) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.isPersonal =
+                        config.isPersonal // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.maxIdentities = config.maxIdentities
+                    this.maxHourlyTracingRequests = config.maxHourlyTracingRequests
+                    this.maxHourlyTracingBytes = config.maxHourlyTracingBytes
+                    this.maxMonthlyTotalUniqueTraces = config.maxMonthlyTotalUniqueTraces
+                    this.flags = config.flags
+                    additionalProperties(config.additionalProperties)
+                }
 
-            fun isPersonal(isPersonal: Boolean) = isPersonal(JsonField.of(isPersonal))
+            fun isPersonal(isPersonal: Boolean) =
+                isPersonal(JsonField.of(isPersonal)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("is_personal")
+            @JsonProperty("is_personal") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun isPersonal(isPersonal: JsonField<Boolean>) = apply { this.isPersonal = isPersonal }
+            fun isPersonal(isPersonal: JsonField<Boolean>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.isPersonal = isPersonal
+                }
 
-            fun maxIdentities(maxIdentities: Long) = maxIdentities(JsonField.of(maxIdentities))
+            fun maxIdentities(maxIdentities: Long) =
+                maxIdentities(
+                    JsonField.of(maxIdentities)
+                ) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("max_identities")
+            @JsonProperty("max_identities") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun maxIdentities(maxIdentities: JsonField<Long>) = apply {
-                this.maxIdentities = maxIdentities
-            }
+            fun maxIdentities(maxIdentities: JsonField<Long>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.maxIdentities = maxIdentities
+                }
 
             fun maxHourlyTracingRequests(maxHourlyTracingRequests: Long) =
-                maxHourlyTracingRequests(JsonField.of(maxHourlyTracingRequests))
+                maxHourlyTracingRequests(
+                    JsonField.of(maxHourlyTracingRequests)
+                ) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("max_hourly_tracing_requests")
+            @JsonProperty(
+                "max_hourly_tracing_requests"
+            ) // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun maxHourlyTracingRequests(maxHourlyTracingRequests: JsonField<Long>) = apply {
-                this.maxHourlyTracingRequests = maxHourlyTracingRequests
-            }
+            fun maxHourlyTracingRequests(maxHourlyTracingRequests: JsonField<Long>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.maxHourlyTracingRequests = maxHourlyTracingRequests
+                }
 
             fun maxHourlyTracingBytes(maxHourlyTracingBytes: Long) =
-                maxHourlyTracingBytes(JsonField.of(maxHourlyTracingBytes))
+                maxHourlyTracingBytes(
+                    JsonField.of(maxHourlyTracingBytes)
+                ) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("max_hourly_tracing_bytes")
+            @JsonProperty(
+                "max_hourly_tracing_bytes"
+            ) // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun maxHourlyTracingBytes(maxHourlyTracingBytes: JsonField<Long>) = apply {
-                this.maxHourlyTracingBytes = maxHourlyTracingBytes
-            }
+            fun maxHourlyTracingBytes(maxHourlyTracingBytes: JsonField<Long>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.maxHourlyTracingBytes = maxHourlyTracingBytes
+                }
 
             fun maxMonthlyTotalUniqueTraces(maxMonthlyTotalUniqueTraces: Long) =
-                maxMonthlyTotalUniqueTraces(JsonField.of(maxMonthlyTotalUniqueTraces))
+                maxMonthlyTotalUniqueTraces(
+                    JsonField.of(maxMonthlyTotalUniqueTraces)
+                ) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("max_monthly_total_unique_traces")
+            @JsonProperty(
+                "max_monthly_total_unique_traces"
+            ) // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun maxMonthlyTotalUniqueTraces(maxMonthlyTotalUniqueTraces: JsonField<Long>) = apply {
-                this.maxMonthlyTotalUniqueTraces = maxMonthlyTotalUniqueTraces
-            }
+            fun maxMonthlyTotalUniqueTraces(maxMonthlyTotalUniqueTraces: JsonField<Long>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.maxMonthlyTotalUniqueTraces = maxMonthlyTotalUniqueTraces
+                }
 
-            fun flags(flags: Flags) = flags(JsonField.of(flags))
+            fun flags(flags: Flags) =
+                flags(JsonField.of(flags)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("flags")
+            @JsonProperty("flags") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun flags(flags: JsonField<Flags>) = apply { this.flags = flags }
+            fun flags(flags: JsonField<Flags>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.flags = flags
+                }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
-            }
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
             fun build(): Config =
-                Config(
-                    isPersonal,
+                Config( // templates/JavaSDK/entities/objects.ts:326:30
+                    isPersonal, // templates/JavaSDK/entities/objects.ts:326:30
                     maxIdentities,
                     maxHourlyTracingRequests,
                     maxHourlyTracingBytes,
@@ -437,39 +563,54 @@ private constructor(
                 )
         }
 
-        @JsonDeserialize(builder = Flags.Builder::class)
+        @JsonDeserialize(
+            builder = Flags.Builder::class
+        ) // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         @NoAutoDetect
         class Flags
         private constructor(
             private val additionalProperties: Map<String, JsonValue>,
         ) {
 
-            private var validated: Boolean = false
+            private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+            // templates/JavaSDK/entities/objects.ts:76:13
 
             private var hashCode: Int = 0
 
-            @JsonAnyGetter
+            @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+            // templates/JavaSDK/entities/objects.ts:180:12
             @ExcludeMissing
             fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-            fun validate(): Flags = apply {
-                if (!validated) {
+            fun validate(): Flags = apply { // templates/JavaSDK/entities/objects.ts:198:28
+                if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+                    // templates/JavaSDK/entities/objects.ts:198:28 //
+                    // templates/JavaSDK/entities/objects.ts:198:28
                     validated = true
                 }
             }
 
             fun toBuilder() = Builder().from(this)
 
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
+            override fun equals(
+                other: Any?
+            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                     return true
                 }
 
-                return other is Flags && this.additionalProperties == other.additionalProperties
+                return other is Flags && // templates/JavaSDK/entities/fields.ts:143:33
+                    this.additionalProperties == other.additionalProperties
             }
 
-            override fun hashCode(): Int {
-                if (hashCode == 0) {
+            override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+                if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                    // templates/JavaSDK/entities/fields.ts:174:16 //
+                    // templates/JavaSDK/entities/fields.ts:174:16
                     hashCode = Objects.hash(additionalProperties)
                 }
                 return hashCode
@@ -477,32 +618,42 @@ private constructor(
 
             override fun toString() = "Flags{additionalProperties=$additionalProperties}"
 
-            companion object {
+            companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-                @JvmStatic fun builder() = Builder()
+                @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+                // templates/JavaSDK/entities/objects.ts:217:10
+                fun builder() = Builder()
             }
 
-            class Builder {
+            class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+                // templates/JavaSDK/entities/objects.ts:224:10 //
+                // templates/JavaSDK/entities/objects.ts:224:10
 
-                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+                private var additionalProperties: MutableMap<String, JsonValue> =
+                    mutableMapOf() // templates/JavaSDK/entities/objects.ts:224:10
 
-                @JvmSynthetic
-                internal fun from(flags: Flags) = apply {
-                    additionalProperties(flags.additionalProperties)
-                }
+                @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+                internal fun from(flags: Flags) =
+                    apply { // templates/JavaSDK/entities/objects.ts:240:30
+                        additionalProperties(flags.additionalProperties)
+                    }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    this.additionalProperties.putAll(additionalProperties)
-                }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply { // templates/JavaSDK/entities/objects.ts:290:30
+                        this.additionalProperties
+                            .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                        // templates/JavaSDK/entities/objects.ts:290:30
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
 
-                @JsonAnySetter
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    this.additionalProperties.put(key, value)
-                }
+                @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+                fun putAdditionalProperty(key: String, value: JsonValue) =
+                    apply { // templates/JavaSDK/entities/objects.ts:304:30
+                        this.additionalProperties.put(key, value)
+                    }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply {
+                    apply { // templates/JavaSDK/entities/objects.ts:316:30
                         this.additionalProperties.putAll(additionalProperties)
                     }
 

@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -15,17 +17,24 @@ import com.langsmith.api.core.toUnmodifiable
 import java.util.Objects
 import java.util.Optional
 
-@JsonDeserialize(builder = ListPublicRunsResponse.Builder::class)
+@JsonDeserialize(
+    builder = ListPublicRunsResponse.Builder::class
+) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13
 @NoAutoDetect
 class ListPublicRunsResponse
-private constructor(
-    private val runs: JsonField<List<RunPublicSchema>>,
+private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+    private val runs:
+        JsonField<List<RunPublicSchema>>, // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
     private val cursors: JsonField<Cursors>,
     private val parsedQuery: JsonField<String>,
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false
+    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+    // templates/JavaSDK/entities/objects.ts:76:13
 
     private var hashCode: Int = 0
 
@@ -36,19 +45,29 @@ private constructor(
     fun parsedQuery(): Optional<String> =
         Optional.ofNullable(parsedQuery.getNullable("parsed_query"))
 
-    @JsonProperty("runs") @ExcludeMissing fun _runs() = runs
+    @JsonProperty("runs") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _runs() = runs
 
-    @JsonProperty("cursors") @ExcludeMissing fun _cursors() = cursors
+    @JsonProperty("cursors") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _cursors() = cursors
 
-    @JsonProperty("parsed_query") @ExcludeMissing fun _parsedQuery() = parsedQuery
+    @JsonProperty("parsed_query") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _parsedQuery() = parsedQuery
 
-    @JsonAnyGetter
+    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+    // templates/JavaSDK/entities/objects.ts:180:12
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): ListPublicRunsResponse = apply {
-        if (!validated) {
-            runs().forEach { it.validate() }
+    fun validate(): ListPublicRunsResponse = apply { // templates/JavaSDK/entities/objects.ts:198:28
+        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:198:28 //
+            // templates/JavaSDK/entities/objects.ts:198:28
+            runs().forEach { it.validate() } // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:201:20
             cursors().validate()
             parsedQuery()
             validated = true
@@ -57,23 +76,27 @@ private constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is ListPublicRunsResponse &&
+        return other is ListPublicRunsResponse && // templates/JavaSDK/entities/fields.ts:143:33
             this.runs == other.runs &&
             this.cursors == other.cursors &&
             this.parsedQuery == other.parsedQuery &&
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int {
-        if (hashCode == 0) {
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16
             hashCode =
-                Objects.hash(
-                    runs,
+                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                    // templates/JavaSDK/entities/fields.ts:175:16 //
+                    // templates/JavaSDK/entities/fields.ts:175:16
+                    runs, // templates/JavaSDK/entities/fields.ts:163:19
                     cursors,
                     parsedQuery,
                     additionalProperties,
@@ -85,100 +108,137 @@ private constructor(
     override fun toString() =
         "ListPublicRunsResponse{runs=$runs, cursors=$cursors, parsedQuery=$parsedQuery, additionalProperties=$additionalProperties}"
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+        // templates/JavaSDK/entities/objects.ts:217:10
+        fun builder() = Builder()
     }
 
-    class Builder {
+    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10
 
-        private var runs: JsonField<List<RunPublicSchema>> = JsonMissing.of()
+        private var runs: JsonField<List<RunPublicSchema>> =
+            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:224:10
         private var cursors: JsonField<Cursors> = JsonMissing.of()
         private var parsedQuery: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(listPublicRunsResponse: ListPublicRunsResponse) = apply {
-            this.runs = listPublicRunsResponse.runs
-            this.cursors = listPublicRunsResponse.cursors
-            this.parsedQuery = listPublicRunsResponse.parsedQuery
-            additionalProperties(listPublicRunsResponse.additionalProperties)
-        }
+        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+        internal fun from(listPublicRunsResponse: ListPublicRunsResponse) =
+            apply { // templates/JavaSDK/entities/objects.ts:240:30
+                this.runs =
+                    listPublicRunsResponse.runs // templates/JavaSDK/entities/objects.ts:240:30 //
+                // templates/JavaSDK/entities/objects.ts:240:30
+                this.cursors = listPublicRunsResponse.cursors
+                this.parsedQuery = listPublicRunsResponse.parsedQuery
+                additionalProperties(listPublicRunsResponse.additionalProperties)
+            }
 
-        fun runs(runs: List<RunPublicSchema>) = runs(JsonField.of(runs))
+        fun runs(runs: List<RunPublicSchema>) =
+            runs(JsonField.of(runs)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("runs")
+        @JsonProperty("runs") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun runs(runs: JsonField<List<RunPublicSchema>>) = apply { this.runs = runs }
+        fun runs(runs: JsonField<List<RunPublicSchema>>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.runs = runs
+            }
 
-        fun cursors(cursors: Cursors) = cursors(JsonField.of(cursors))
+        fun cursors(cursors: Cursors) =
+            cursors(JsonField.of(cursors)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("cursors")
+        @JsonProperty("cursors") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun cursors(cursors: JsonField<Cursors>) = apply { this.cursors = cursors }
+        fun cursors(cursors: JsonField<Cursors>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.cursors = cursors
+            }
 
-        fun parsedQuery(parsedQuery: String) = parsedQuery(JsonField.of(parsedQuery))
+        fun parsedQuery(parsedQuery: String) =
+            parsedQuery(JsonField.of(parsedQuery)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("parsed_query")
+        @JsonProperty("parsed_query") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun parsedQuery(parsedQuery: JsonField<String>) = apply { this.parsedQuery = parsedQuery }
+        fun parsedQuery(parsedQuery: JsonField<String>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.parsedQuery = parsedQuery
+            }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.clear()
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
-        @JsonAnySetter
-        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-            this.additionalProperties.put(key, value)
-        }
+        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+        fun putAdditionalProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/objects.ts:304:30
+                this.additionalProperties.put(key, value)
+            }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:316:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
         fun build(): ListPublicRunsResponse =
-            ListPublicRunsResponse(
-                runs.map { it.toUnmodifiable() },
+            ListPublicRunsResponse( // templates/JavaSDK/entities/objects.ts:326:30
+                runs.map { it.toUnmodifiable() }, // templates/JavaSDK/entities/objects.ts:326:30
                 cursors,
                 parsedQuery,
                 additionalProperties.toUnmodifiable(),
             )
     }
 
-    @JsonDeserialize(builder = Cursors.Builder::class)
+    @JsonDeserialize(
+        builder = Cursors.Builder::class
+    ) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+    // // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
     @NoAutoDetect
     class Cursors
     private constructor(
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var validated: Boolean = false
+        private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
         private var hashCode: Int = 0
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun validate(): Cursors = apply {
-            if (!validated) {
+        fun validate(): Cursors = apply { // templates/JavaSDK/entities/objects.ts:198:28
+            if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+                // templates/JavaSDK/entities/objects.ts:198:28 //
+                // templates/JavaSDK/entities/objects.ts:198:28
                 validated = true
             }
         }
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is Cursors && this.additionalProperties == other.additionalProperties
+            return other is Cursors && // templates/JavaSDK/entities/fields.ts:143:33
+                this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode = Objects.hash(additionalProperties)
             }
             return hashCode
@@ -186,33 +246,44 @@ private constructor(
 
         override fun toString() = "Cursors{additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+            private var additionalProperties: MutableMap<String, JsonValue> =
+                mutableMapOf() // templates/JavaSDK/entities/objects.ts:224:10
 
-            @JvmSynthetic
-            internal fun from(cursors: Cursors) = apply {
-                additionalProperties(cursors.additionalProperties)
-            }
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(cursors: Cursors) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    additionalProperties(cursors.additionalProperties)
+                }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
-            }
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
             fun build(): Cursors = Cursors(additionalProperties.toUnmodifiable())
         }

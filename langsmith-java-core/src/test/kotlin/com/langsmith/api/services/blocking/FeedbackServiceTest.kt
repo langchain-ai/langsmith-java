@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.services.blocking
 
@@ -10,13 +10,18 @@ import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
+@ExtendWith(
+    TestServerExtension::class
+) // templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15 //
+// templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15
 class FeedbackServiceTest {
 
-    @Test
-    fun callCreate() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 // templates/JavaSDK/services.ts:298:15
+    fun callCreate() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -25,7 +30,12 @@ class FeedbackServiceTest {
         val feedbackService = client.feedback()
         val feedbackSchema =
             feedbackService.create(
-                FeedbackCreateParams.builder()
+                FeedbackCreateParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .key("string")
                     .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -37,7 +47,7 @@ class FeedbackServiceTest {
                             .type(FeedbackCreateParams.FeedbackConfig.Type.CONTINUOUS)
                             .categories(
                                 listOf(
-                                    FeedbackCreateParams.FeedbackConfig.Category.builder()
+                                    FeedbackCreateParams.FeedbackConfig.FeedbackCategory.builder()
                                         .value(42.23)
                                         .label("x")
                                         .build()
@@ -60,14 +70,18 @@ class FeedbackServiceTest {
                     .value(FeedbackCreateParams.Value.ofDouble(42.23))
                     .build()
             )
-        println(feedbackSchema)
+        println(
+            feedbackSchema
+        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
         feedbackSchema.validate()
     }
 
-    @Test
-    fun callRetrieve() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun callRetrieve() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -76,18 +90,27 @@ class FeedbackServiceTest {
         val feedbackService = client.feedback()
         val feedbackSchema =
             feedbackService.retrieve(
-                FeedbackRetrieveParams.builder()
+                FeedbackRetrieveParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .feedbackId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
-        println(feedbackSchema)
+        println(
+            feedbackSchema
+        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
         feedbackSchema.validate()
     }
 
-    @Test
-    fun callUpdate() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun callUpdate() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -96,7 +119,12 @@ class FeedbackServiceTest {
         val feedbackService = client.feedback()
         val feedbackSchema =
             feedbackService.update(
-                FeedbackUpdateParams.builder()
+                FeedbackUpdateParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .feedbackId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .comment("string")
                     .correction(JsonValue.from(mapOf<String, Any>()))
@@ -105,7 +133,7 @@ class FeedbackServiceTest {
                             .type(FeedbackUpdateParams.FeedbackConfig.Type.CONTINUOUS)
                             .categories(
                                 listOf(
-                                    FeedbackUpdateParams.FeedbackConfig.Category.builder()
+                                    FeedbackUpdateParams.FeedbackConfig.FeedbackCategory.builder()
                                         .value(42.23)
                                         .label("x")
                                         .build()
@@ -119,14 +147,18 @@ class FeedbackServiceTest {
                     .value(FeedbackUpdateParams.Value.ofDouble(42.23))
                     .build()
             )
-        println(feedbackSchema)
+        println(
+            feedbackSchema
+        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
         feedbackSchema.validate()
     }
 
-    @Test
-    fun callList() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun callList() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -135,7 +167,12 @@ class FeedbackServiceTest {
         val feedbackService = client.feedback()
         val feedbackListResponse =
             feedbackService.list(
-                FeedbackListParams.builder()
+                FeedbackListParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .hasComment(true)
                     .hasScore(true)
                     .key(listOf("string"))
@@ -143,20 +180,25 @@ class FeedbackServiceTest {
                     .offset(123L)
                     .run(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                     .session(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
-                    .source(listOf(FeedbackListParams.Source.API))
+                    .source(listOf(FeedbackListParams.SourceType.API))
                     .user(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                     .build()
             )
-        println(feedbackListResponse)
-        for (feedbackSchema: FeedbackSchema in feedbackListResponse) {
+        println(
+            feedbackListResponse
+        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
+        for (feedbackSchema: FeedbackSchema in
+            feedbackListResponse) { // templates/JavaSDK/services.ts:509:10
             feedbackSchema.validate()
         }
     }
 
-    @Test
-    fun callDelete() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun callDelete() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -165,17 +207,24 @@ class FeedbackServiceTest {
         val feedbackService = client.feedback()
         val feedbackDeleteResponse =
             feedbackService.delete(
-                FeedbackDeleteParams.builder()
+                FeedbackDeleteParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .feedbackId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
         println(feedbackDeleteResponse)
     }
 
-    @Test
-    fun callEager() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun callEager() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -184,7 +233,12 @@ class FeedbackServiceTest {
         val feedbackService = client.feedback()
         val feedbackSchema =
             feedbackService.eager(
-                FeedbackEagerParams.builder()
+                FeedbackEagerParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .key("string")
                     .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -196,7 +250,7 @@ class FeedbackServiceTest {
                             .type(FeedbackEagerParams.FeedbackConfig.Type.CONTINUOUS)
                             .categories(
                                 listOf(
-                                    FeedbackEagerParams.FeedbackConfig.Category.builder()
+                                    FeedbackEagerParams.FeedbackConfig.FeedbackCategory.builder()
                                         .value(42.23)
                                         .label("x")
                                         .build()
@@ -219,7 +273,9 @@ class FeedbackServiceTest {
                     .value(FeedbackEagerParams.Value.ofDouble(42.23))
                     .build()
             )
-        println(feedbackSchema)
+        println(
+            feedbackSchema
+        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
         feedbackSchema.validate()
     }
 }

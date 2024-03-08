@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -19,8 +21,12 @@ import java.util.Objects
 import java.util.Optional
 
 class RunStatCreateParams
-constructor(
-    private val id: List<String>?,
+constructor( // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
+    private val id: List<String>?, // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
     private val endTime: OffsetDateTime?,
     private val error: Boolean?,
     private val executionOrder: Long?,
@@ -38,7 +44,9 @@ constructor(
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun id(): Optional<List<String>> = Optional.ofNullable(id)
+    fun id(): Optional<List<String>> =
+        Optional.ofNullable(id) // templates/JavaSDK/entities/params.ts:145:14 //
+    // templates/JavaSDK/entities/params.ts:131:13
 
     fun endTime(): Optional<OffsetDateTime> = Optional.ofNullable(endTime)
 
@@ -64,10 +72,11 @@ constructor(
 
     fun trace(): Optional<String> = Optional.ofNullable(trace)
 
-    @JvmSynthetic
-    internal fun getBody(): RunStatCreateBody {
-        return RunStatCreateBody(
-            id,
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:165:16
+    internal fun getBody(): RunStatCreateBody { // templates/JavaSDK/entities/params.ts:165:16
+        return RunStatCreateBody( // templates/JavaSDK/entities/params.ts:180:26 //
+            // templates/JavaSDK/entities/params.ts:179:24
+            id, // templates/JavaSDK/entities/params.ts:180:26
             endTime,
             error,
             executionOrder,
@@ -84,16 +93,22 @@ constructor(
         )
     }
 
-    @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
+    internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
 
-    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
+    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
     /** Query params for run endpoints. */
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
     @JsonDeserialize(builder = RunStatCreateBody.Builder::class)
     @NoAutoDetect
     class RunStatCreateBody
-    internal constructor(
-        private val id: List<String>?,
+    internal constructor( // templates/JavaSDK/entities/objects.ts:76:13
+        private val id: List<String>?, // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         private val endTime: OffsetDateTime?,
         private val error: Boolean?,
         private val executionOrder: Long?,
@@ -109,47 +124,62 @@ constructor(
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0
+        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
-        @JsonProperty("id") fun id(): List<String>? = id
+        @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:113:14
+        fun id(): List<String>? = id
 
-        @JsonProperty("end_time") fun endTime(): OffsetDateTime? = endTime
+        @JsonProperty("end_time") // templates/JavaSDK/entities/objects.ts:113:14
+        fun endTime(): OffsetDateTime? = endTime
 
-        @JsonProperty("error") fun error(): Boolean? = error
+        @JsonProperty("error") // templates/JavaSDK/entities/objects.ts:113:14
+        fun error(): Boolean? = error
 
-        @JsonProperty("execution_order") fun executionOrder(): Long? = executionOrder
+        @JsonProperty("execution_order") // templates/JavaSDK/entities/objects.ts:113:14
+        fun executionOrder(): Long? = executionOrder
 
-        @JsonProperty("filter") fun filter(): String? = filter
+        @JsonProperty("filter") // templates/JavaSDK/entities/objects.ts:113:14
+        fun filter(): String? = filter
 
-        @JsonProperty("is_root") fun isRoot(): Boolean? = isRoot
+        @JsonProperty("is_root") // templates/JavaSDK/entities/objects.ts:113:14
+        fun isRoot(): Boolean? = isRoot
 
-        @JsonProperty("parent_run") fun parentRun(): String? = parentRun
+        @JsonProperty("parent_run") // templates/JavaSDK/entities/objects.ts:113:14
+        fun parentRun(): String? = parentRun
 
-        @JsonProperty("query") fun query(): String? = query
+        @JsonProperty("query") // templates/JavaSDK/entities/objects.ts:113:14
+        fun query(): String? = query
 
-        @JsonProperty("reference_example") fun referenceExample(): List<String>? = referenceExample
+        @JsonProperty("reference_example") // templates/JavaSDK/entities/objects.ts:113:14
+        fun referenceExample(): List<String>? = referenceExample
 
         /** Enum for run types. */
-        @JsonProperty("run_type") fun runType(): RunType? = runType
+        @JsonProperty("run_type") // templates/JavaSDK/entities/objects.ts:113:14
+        fun runType(): RunType? = runType
 
-        @JsonProperty("session") fun session(): List<String>? = session
+        @JsonProperty("session") // templates/JavaSDK/entities/objects.ts:113:14
+        fun session(): List<String>? = session
 
-        @JsonProperty("start_time") fun startTime(): OffsetDateTime? = startTime
+        @JsonProperty("start_time") // templates/JavaSDK/entities/objects.ts:113:14
+        fun startTime(): OffsetDateTime? = startTime
 
-        @JsonProperty("trace") fun trace(): String? = trace
+        @JsonProperty("trace") // templates/JavaSDK/entities/objects.ts:113:14
+        fun trace(): String? = trace
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is RunStatCreateBody &&
+            return other is RunStatCreateBody && // templates/JavaSDK/entities/fields.ts:143:33
                 this.id == other.id &&
                 this.endTime == other.endTime &&
                 this.error == other.error &&
@@ -166,11 +196,15 @@ constructor(
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        id,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        id, // templates/JavaSDK/entities/fields.ts:163:19
                         endTime,
                         error,
                         executionOrder,
@@ -192,14 +226,20 @@ constructor(
         override fun toString() =
             "RunStatCreateBody{id=$id, endTime=$endTime, error=$error, executionOrder=$executionOrder, filter=$filter, isRoot=$isRoot, parentRun=$parentRun, query=$query, referenceExample=$referenceExample, runType=$runType, session=$session, startTime=$startTime, trace=$trace, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var id: List<String>? = null
+            private var id: List<String>? = null // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var endTime: OffsetDateTime? = null
             private var error: Boolean? = null
             private var executionOrder: Long? = null
@@ -214,79 +254,134 @@ constructor(
             private var trace: String? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(runStatCreateBody: RunStatCreateBody) = apply {
-                this.id = runStatCreateBody.id
-                this.endTime = runStatCreateBody.endTime
-                this.error = runStatCreateBody.error
-                this.executionOrder = runStatCreateBody.executionOrder
-                this.filter = runStatCreateBody.filter
-                this.isRoot = runStatCreateBody.isRoot
-                this.parentRun = runStatCreateBody.parentRun
-                this.query = runStatCreateBody.query
-                this.referenceExample = runStatCreateBody.referenceExample
-                this.runType = runStatCreateBody.runType
-                this.session = runStatCreateBody.session
-                this.startTime = runStatCreateBody.startTime
-                this.trace = runStatCreateBody.trace
-                additionalProperties(runStatCreateBody.additionalProperties)
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(runStatCreateBody: RunStatCreateBody) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.id =
+                        runStatCreateBody.id // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.endTime = runStatCreateBody.endTime
+                    this.error = runStatCreateBody.error
+                    this.executionOrder = runStatCreateBody.executionOrder
+                    this.filter = runStatCreateBody.filter
+                    this.isRoot = runStatCreateBody.isRoot
+                    this.parentRun = runStatCreateBody.parentRun
+                    this.query = runStatCreateBody.query
+                    this.referenceExample = runStatCreateBody.referenceExample
+                    this.runType = runStatCreateBody.runType
+                    this.session = runStatCreateBody.session
+                    this.startTime = runStatCreateBody.startTime
+                    this.trace = runStatCreateBody.trace
+                    additionalProperties(runStatCreateBody.additionalProperties)
+                }
+
+            @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun id(id: List<String>) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.id = id
             }
 
-            @JsonProperty("id") fun id(id: List<String>) = apply { this.id = id }
+            @JsonProperty("end_time") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun endTime(endTime: OffsetDateTime) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.endTime = endTime
+                }
 
-            @JsonProperty("end_time")
-            fun endTime(endTime: OffsetDateTime) = apply { this.endTime = endTime }
-
-            @JsonProperty("error") fun error(error: Boolean) = apply { this.error = error }
-
-            @JsonProperty("execution_order")
-            fun executionOrder(executionOrder: Long) = apply {
-                this.executionOrder = executionOrder
+            @JsonProperty("error") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun error(error: Boolean) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.error = error
             }
 
-            @JsonProperty("filter") fun filter(filter: String) = apply { this.filter = filter }
+            @JsonProperty("execution_order") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun executionOrder(executionOrder: Long) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.executionOrder = executionOrder
+                }
 
-            @JsonProperty("is_root") fun isRoot(isRoot: Boolean) = apply { this.isRoot = isRoot }
-
-            @JsonProperty("parent_run")
-            fun parentRun(parentRun: String) = apply { this.parentRun = parentRun }
-
-            @JsonProperty("query") fun query(query: String) = apply { this.query = query }
-
-            @JsonProperty("reference_example")
-            fun referenceExample(referenceExample: List<String>) = apply {
-                this.referenceExample = referenceExample
+            @JsonProperty("filter") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun filter(filter: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.filter = filter
             }
+
+            @JsonProperty("is_root") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun isRoot(isRoot: Boolean) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.isRoot = isRoot
+            }
+
+            @JsonProperty("parent_run") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun parentRun(parentRun: String) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.parentRun = parentRun
+                }
+
+            @JsonProperty("query") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun query(query: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.query = query
+            }
+
+            @JsonProperty("reference_example") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun referenceExample(referenceExample: List<String>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.referenceExample = referenceExample
+                }
 
             /** Enum for run types. */
-            @JsonProperty("run_type")
-            fun runType(runType: RunType) = apply { this.runType = runType }
-
-            @JsonProperty("session")
-            fun session(session: List<String>) = apply { this.session = session }
-
-            @JsonProperty("start_time")
-            fun startTime(startTime: OffsetDateTime) = apply { this.startTime = startTime }
-
-            @JsonProperty("trace") fun trace(trace: String) = apply { this.trace = trace }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
+            // templates/JavaSDK/entities/objects.ts:252:20
+            @JsonProperty("run_type") // templates/JavaSDK/entities/objects.ts:264:20
+            fun runType(runType: RunType) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.runType = runType
             }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
+            @JsonProperty("session") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun session(session: List<String>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.session = session
+                }
+
+            @JsonProperty("start_time") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun startTime(startTime: OffsetDateTime) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.startTime = startTime
+                }
+
+            @JsonProperty("trace") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun trace(trace: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.trace = trace
             }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
+
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
             fun build(): RunStatCreateBody =
-                RunStatCreateBody(
-                    id?.toUnmodifiable(),
+                RunStatCreateBody( // templates/JavaSDK/entities/objects.ts:326:30
+                    id?.toUnmodifiable(), // templates/JavaSDK/entities/objects.ts:326:30
                     endTime,
                     error,
                     executionOrder,
@@ -310,12 +405,12 @@ constructor(
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is RunStatCreateParams &&
+        return other is RunStatCreateParams && // templates/JavaSDK/entities/fields.ts:143:33
             this.id == other.id &&
             this.endTime == other.endTime &&
             this.error == other.error &&
@@ -334,9 +429,10 @@ constructor(
             this.additionalBodyProperties == other.additionalBodyProperties
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(
-            id,
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+            // templates/JavaSDK/entities/fields.ts:181:14
+            id, // templates/JavaSDK/entities/fields.ts:163:19
             endTime,
             error,
             executionOrder,
@@ -360,15 +456,21 @@ constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/builders.ts:8:8
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
+        // templates/JavaSDK/entities/builders.ts:8:8
+        fun builder() = Builder()
     }
 
-    @NoAutoDetect
-    class Builder {
+    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
+    // templates/JavaSDK/entities/params.ts:235:14
+    class Builder { // templates/JavaSDK/entities/params.ts:235:14
 
-        private var id: MutableList<String> = mutableListOf()
+        private var id: MutableList<String> =
+            mutableListOf() // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:235:14
         private var endTime: OffsetDateTime? = null
         private var error: Boolean? = null
         private var executionOrder: Long? = null
@@ -385,127 +487,180 @@ constructor(
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(runStatCreateParams: RunStatCreateParams) = apply {
-            this.id(runStatCreateParams.id ?: listOf())
-            this.endTime = runStatCreateParams.endTime
-            this.error = runStatCreateParams.error
-            this.executionOrder = runStatCreateParams.executionOrder
-            this.filter = runStatCreateParams.filter
-            this.isRoot = runStatCreateParams.isRoot
-            this.parentRun = runStatCreateParams.parentRun
-            this.query = runStatCreateParams.query
-            this.referenceExample(runStatCreateParams.referenceExample ?: listOf())
-            this.runType = runStatCreateParams.runType
-            this.session(runStatCreateParams.session ?: listOf())
-            this.startTime = runStatCreateParams.startTime
-            this.trace = runStatCreateParams.trace
-            additionalQueryParams(runStatCreateParams.additionalQueryParams)
-            additionalHeaders(runStatCreateParams.additionalHeaders)
-            additionalBodyProperties(runStatCreateParams.additionalBodyProperties)
-        }
+        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
+        internal fun from(runStatCreateParams: RunStatCreateParams) =
+            apply { // templates/JavaSDK/entities/params.ts:257:34
+                this.id(
+                    runStatCreateParams.id ?: listOf()
+                ) // templates/JavaSDK/entities/params.ts:257:34 //
+                // templates/JavaSDK/entities/params.ts:257:34
+                this.endTime = runStatCreateParams.endTime
+                this.error = runStatCreateParams.error
+                this.executionOrder = runStatCreateParams.executionOrder
+                this.filter = runStatCreateParams.filter
+                this.isRoot = runStatCreateParams.isRoot
+                this.parentRun = runStatCreateParams.parentRun
+                this.query = runStatCreateParams.query
+                this.referenceExample(runStatCreateParams.referenceExample ?: listOf())
+                this.runType = runStatCreateParams.runType
+                this.session(runStatCreateParams.session ?: listOf())
+                this.startTime = runStatCreateParams.startTime
+                this.trace = runStatCreateParams.trace
+                additionalQueryParams(runStatCreateParams.additionalQueryParams)
+                additionalHeaders(runStatCreateParams.additionalHeaders)
+                additionalBodyProperties(runStatCreateParams.additionalBodyProperties)
+            }
 
-        fun id(id: List<String>) = apply {
-            this.id.clear()
+        fun id(id: List<String>) = apply { // templates/JavaSDK/entities/params.ts:609:26
+            this.id.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+            // templates/JavaSDK/entities/params.ts:609:26
             this.id.addAll(id)
         }
 
-        fun addId(id: String) = apply { this.id.add(id) }
-
-        fun endTime(endTime: OffsetDateTime) = apply { this.endTime = endTime }
-
-        fun error(error: Boolean) = apply { this.error = error }
-
-        fun executionOrder(executionOrder: Long) = apply { this.executionOrder = executionOrder }
-
-        fun filter(filter: String) = apply { this.filter = filter }
-
-        fun isRoot(isRoot: Boolean) = apply { this.isRoot = isRoot }
-
-        fun parentRun(parentRun: String) = apply { this.parentRun = parentRun }
-
-        fun query(query: String) = apply { this.query = query }
-
-        fun referenceExample(referenceExample: List<String>) = apply {
-            this.referenceExample.clear()
-            this.referenceExample.addAll(referenceExample)
+        fun addId(id: String) = apply { // templates/JavaSDK/entities/params.ts:620:26
+            this.id.add(id)
         }
 
-        fun addReferenceExample(referenceExample: String) = apply {
-            this.referenceExample.add(referenceExample)
+        fun endTime(endTime: OffsetDateTime) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.endTime = endTime
+            }
+
+        fun error(error: Boolean) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.error = error
         }
+
+        fun executionOrder(executionOrder: Long) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.executionOrder = executionOrder
+            }
+
+        fun filter(filter: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.filter = filter
+        }
+
+        fun isRoot(isRoot: Boolean) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.isRoot = isRoot
+        }
+
+        fun parentRun(parentRun: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.parentRun = parentRun
+        }
+
+        fun query(query: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.query = query
+        }
+
+        fun referenceExample(referenceExample: List<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:609:26
+                this.referenceExample.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+                // templates/JavaSDK/entities/params.ts:609:26
+                this.referenceExample.addAll(referenceExample)
+            }
+
+        fun addReferenceExample(referenceExample: String) =
+            apply { // templates/JavaSDK/entities/params.ts:620:26
+                this.referenceExample.add(referenceExample)
+            }
 
         /** Enum for run types. */
-        fun runType(runType: RunType) = apply { this.runType = runType }
+        fun runType(runType: RunType) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.runType = runType
+        }
 
-        fun session(session: List<String>) = apply {
-            this.session.clear()
+        fun session(session: List<String>) = apply { // templates/JavaSDK/entities/params.ts:609:26
+            this.session.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+            // templates/JavaSDK/entities/params.ts:609:26
             this.session.addAll(session)
         }
 
-        fun addSession(session: String) = apply { this.session.add(session) }
-
-        fun startTime(startTime: OffsetDateTime) = apply { this.startTime = startTime }
-
-        fun trace(trace: String) = apply { this.trace = trace }
-
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllQueryParams(additionalQueryParams)
+        fun addSession(session: String) = apply { // templates/JavaSDK/entities/params.ts:620:26
+            this.session.add(session)
         }
 
-        fun putQueryParam(name: String, value: String) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+        fun startTime(startTime: OffsetDateTime) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.startTime = startTime
+            }
+
+        fun trace(trace: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.trace = trace
         }
 
-        fun putQueryParams(name: String, values: Iterable<String>) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:703:24
+                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
+                // templates/JavaSDK/entities/params.ts:703:24
+                putAllQueryParams(additionalQueryParams)
+            }
 
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            additionalQueryParams.forEach(this::putQueryParams)
-        }
+        fun putQueryParam(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:713:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+            }
 
-        fun removeQueryParam(name: String) = apply {
+        fun putQueryParams(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:723:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
+
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:733:24
+                additionalQueryParams.forEach(this::putQueryParams)
+            }
+
+        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllHeaders(additionalHeaders)
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:755:24
+                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
+                // templates/JavaSDK/entities/params.ts:755:24
+                putAllHeaders(additionalHeaders)
+            }
+
+        fun putHeader(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:765:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+            }
+
+        fun putHeaders(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:775:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:785:24
+                additionalHeaders.forEach(this::putHeaders)
+            }
+
+        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
+            this.additionalHeaders.put(name, mutableListOf())
         }
 
-        fun putHeader(name: String, value: String) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-        }
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/params.ts:809:28
+                this.additionalBodyProperties
+                    .clear() // templates/JavaSDK/entities/params.ts:809:28 //
+                // templates/JavaSDK/entities/params.ts:809:28
+                this.additionalBodyProperties.putAll(additionalBodyProperties)
+            }
 
-        fun putHeaders(name: String, values: Iterable<String>) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            additionalHeaders.forEach(this::putHeaders)
-        }
-
-        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
-
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            this.additionalBodyProperties.putAll(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            this.additionalBodyProperties.put(key, value)
-        }
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/params.ts:822:28
+                this.additionalBodyProperties.put(key, value)
+            }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
+            apply { // templates/JavaSDK/entities/params.ts:832:28
                 this.additionalBodyProperties.putAll(additionalBodyProperties)
             }
 
         fun build(): RunStatCreateParams =
-            RunStatCreateParams(
-                if (id.size == 0) null else id.toUnmodifiable(),
+            RunStatCreateParams( // templates/JavaSDK/entities/params.ts:683:22
+                if (id.size == 0) null
+                else id.toUnmodifiable(), // templates/JavaSDK/entities/params.ts:683:22
                 endTime,
                 error,
                 executionOrder,
@@ -528,25 +683,30 @@ constructor(
     @JsonCreator
     private constructor(
         private val value: JsonField<String>,
-    ) {
+    ) { // templates/JavaSDK/entities/enums.ts:56:13 // templates/JavaSDK/entities/enums.ts:56:13 //
+        // templates/JavaSDK/entities/enums.ts:56:13
 
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+        @com.fasterxml.jackson.annotation.JsonValue // templates/JavaSDK/entities/enums.ts:62:10 //
+        // templates/JavaSDK/entities/enums.ts:56:13
+        fun _value(): JsonField<String> = value
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is RunType && this.value == other.value
+            return other is RunType && // templates/JavaSDK/entities/fields.ts:143:33
+                this.value == other.value
         }
 
         override fun hashCode() = value.hashCode()
 
         override fun toString() = value.toString()
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/enums.ts:71:10
 
-            @JvmField val TOOL = RunType(JsonField.of("tool"))
+            @JvmField
+            val TOOL = RunType(JsonField.of("tool")) // templates/JavaSDK/entities/enums.ts:71:10
 
             @JvmField val CHAIN = RunType(JsonField.of("chain"))
 
@@ -563,8 +723,9 @@ constructor(
             @JvmStatic fun of(value: String) = RunType(JsonField.of(value))
         }
 
-        enum class Known {
-            TOOL,
+        enum class Known { // templates/JavaSDK/entities/enums.ts:78:10
+            TOOL, // templates/JavaSDK/entities/enums.ts:78:10 //
+            // templates/JavaSDK/entities/enums.ts:78:10
             CHAIN,
             LLM,
             RETRIEVER,
@@ -573,8 +734,9 @@ constructor(
             PARSER,
         }
 
-        enum class Value {
-            TOOL,
+        enum class Value { // templates/JavaSDK/entities/enums.ts:82:10
+            TOOL, // templates/JavaSDK/entities/enums.ts:82:10 //
+            // templates/JavaSDK/entities/enums.ts:82:10
             CHAIN,
             LLM,
             RETRIEVER,
@@ -585,8 +747,9 @@ constructor(
         }
 
         fun value(): Value =
-            when (this) {
-                TOOL -> Value.TOOL
+            when (this) { // templates/JavaSDK/entities/enums.ts:91:29
+                TOOL -> Value.TOOL // templates/JavaSDK/entities/enums.ts:54:10 //
+                // templates/JavaSDK/entities/enums.ts:54:10
                 CHAIN -> Value.CHAIN
                 LLM -> Value.LLM
                 RETRIEVER -> Value.RETRIEVER
@@ -597,8 +760,9 @@ constructor(
             }
 
         fun known(): Known =
-            when (this) {
-                TOOL -> Known.TOOL
+            when (this) { // templates/JavaSDK/entities/enums.ts:104:29
+                TOOL -> Known.TOOL // templates/JavaSDK/entities/enums.ts:54:10 //
+                // templates/JavaSDK/entities/enums.ts:54:10
                 CHAIN -> Known.CHAIN
                 LLM -> Known.LLM
                 RETRIEVER -> Known.RETRIEVER

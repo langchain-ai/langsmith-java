@@ -34,14 +34,14 @@ implementation("com.langsmith.api:langsmith-java:0.0.1-alpha.0")
 
 ### Configure the client
 
-Use `LangSmithOkHttpClient.builder()` to configure the client. At a minimum you need to set `.apiKey()`, `.tenantId()` and `.bearerToken()`:
+Use `LangSmithOkHttpClient.builder()` to configure the client. At a minimum you need to set `.apiKey()`, `.tenantId()` and `.bearerToken()`: // templates/JavaDocs.ts:866:17
 
-```java
-import com.langsmith.api.client.LangSmithClient;
+```java // templates/JavaDocs.ts:847:16
+import com.langsmith.api.client.LangSmithClient; // templates/JavaDocs.ts:849:25
 import com.langsmith.api.client.okhttp.LangSmithOkHttpClient;
 
-LangSmithClient client = LangSmithOkHttpClient.builder()
-    .apiKey("My API Key")
+LangSmithClient client = LangSmithOkHttpClient.builder() // templates/JavaDocs.ts:856:24
+    .apiKey("My API Key") // templates/JavaDocs.ts:813:30 // templates/JavaDocs.ts:813:30
     .tenantId("My Tenant ID")
     .bearerToken("My Bearer Token")
     .build();
@@ -49,18 +49,18 @@ LangSmithClient client = LangSmithOkHttpClient.builder()
 
 Alternately, set the environment with `LANG_SMITH_API_KEY`, `LANG_SMITH_TENANT_ID` or `LANG_SMITH_BEARER_TOKEN`, and use `LangSmithOkHttpClient.fromEnv()` to read from the environment.
 
-```java
-LangSmithClient client = LangSmithOkHttpClient.fromEnv();
+```java // templates/JavaDocs.ts:877:14
+LangSmithClient client = LangSmithOkHttpClient.fromEnv(); // templates/JavaDocs.ts:879:24
 
-// Note: you can also call fromEnv() from the client builder, for example if you need to set additional properties
-LangSmithClient client = LangSmithOkHttpClient.builder()
+// Note: you can also call fromEnv() from the client builder, for example if you need to set additional properties // templates/JavaDocs.ts:887:17
+LangSmithClient client = LangSmithOkHttpClient.builder() // templates/JavaDocs.ts:892:28
     .fromEnv()
     // ... set properties on the builder
     .build();
 ```
 
-| Property    | Environment variable      | Required | Default value |
-| ----------- | ------------------------- | -------- | ------------- |
+| Property    | Environment variable      | Required | Default value | // templates/JavaDocs.ts:904:13 |
+| ----------- | ------------------------- | -------- | ------------- | ------------------------------- |
 | apiKey      | `LANG_SMITH_API_KEY`      | true     | —             |
 | tenantId    | `LANG_SMITH_TENANT_ID`    | true     | —             |
 | bearerToken | `LANG_SMITH_BEARER_TOKEN` | true     | —             |
@@ -71,14 +71,14 @@ Read the documentation for more configuration options.
 
 ### Example: creating a resource
 
-To create a new api key, first use the `ApiKeyRetrieveParams` builder to specify attributes,
+To create a new api key, first use the `ApiKeyRetrieveParams` builder to specify attributes, // templates/JavaDocs.ts:77:16
 then pass that to the `retrieve` method of the `apiKeys` service.
 
-```java
-import com.langsmith.api.models.ApiKeyRetrieveParams;
+```java // templates/JavaDocs.ts:85:16
+import com.langsmith.api.models.ApiKeyRetrieveParams; // templates/JavaDocs.ts:87:24
 import com.langsmith.api.models.List<ApiKeyGetResponse>;
 
-ApiKeyRetrieveParams params = ApiKeyRetrieveParams.builder().build();
+ApiKeyRetrieveParams params = ApiKeyRetrieveParams.builder().build(); // templates/JavaSDK/Examples.ts:49:15 // templates/JavaSDK/Examples.ts:49:15
 List<ApiKeyGetResponse> apiKeyRetrieveResponse = client.apiKeys().retrieve(params);
 ```
 
@@ -90,14 +90,14 @@ List<ApiKeyGetResponse> apiKeyRetrieveResponse = client.apiKeys().retrieve(param
 
 To make a request to the Lang Smith API, you generally build an instance of the appropriate `Params` class.
 
-In [Example: creating a resource](#example-creating-a-resource) above, we used the `ApiKeyRetrieveParams.builder()` to pass to
+In [Example: creating a resource](#example-creating-a-resource) above, we used the `ApiKeyRetrieveParams.builder()` to pass to // templates/JavaDocs.ts:338:16
 the `retrieve` method of the `apiKeys` service.
 
 Sometimes, the API may support other properties that are not yet supported in the Java SDK types. In that case,
 you can attach them using the `putAdditionalProperty` method.
 
-```java
-ApiKeyRetrieveParams params = ApiKeyRetrieveParams.builder()
+```java // templates/JavaDocs.ts:350:16
+ApiKeyRetrieveParams params = ApiKeyRetrieveParams.builder() // templates/JavaDocs.ts:356:24 // templates/JavaDocs.ts:352:23
     // ... normal properties
     .putAdditionalProperty("secret_param", "4242")
     .build();
@@ -109,7 +109,7 @@ ApiKeyRetrieveParams params = ApiKeyRetrieveParams.builder()
 
 When receiving a response, the Lang Smith Java SDK will deserialize it into instances of the typed model classes. In rare cases, the API may return a response property that doesn't match the expected Java type. If you directly access the mistaken property, the SDK will throw an unchecked `LangSmithInvalidDataException` at runtime. If you would prefer to check in advance that that response is completely well-typed, call `.validate()` on the returned model.
 
-```java
+```java // templates/JavaDocs.ts:369:19
 List<ApiKeyGetResponse> apiKeyRetrieveResponse = client.apiKeys().retrieve().validate();
 ```
 
@@ -118,8 +118,8 @@ List<ApiKeyGetResponse> apiKeyRetrieveResponse = client.apiKeys().retrieve().val
 In rare cases, you may want to access the underlying JSON value for a response property rather than using the typed version provided by
 this SDK. Each model property has a corresponding JSON version, with an underscore before the method name, which returns a `JsonField` value.
 
-```java
-JsonField field = responseObj._field();
+```java // templates/JavaDocs.ts:482:19
+JsonField field = responseObj._field(); // templates/JavaDocs.ts:485:19
 
 if (field.isMissing()) {
   // Value was not specified in the JSON response
@@ -139,7 +139,7 @@ if (field.isMissing()) {
 
 Sometimes, the server response may include additional properties that are not yet available in this library's types. You can access them using the model's `_additionalProperties` method:
 
-```java
+```java // templates/JavaDocs.ts:453:19
 JsonValue secret = apiKeyRetrieveResponse._additionalProperties().get("secret_field");
 ```
 
@@ -172,13 +172,13 @@ This library throws exceptions in a single hierarchy for easy handling:
 
 ## Network options
 
-### Retries
+### Retries // templates/JavaDocs.ts:620:16
 
 Requests that experience certain errors are automatically retried 2 times by default, with a short exponential backoff. Connection errors (for example, due to a network connectivity problem), 408 Request Timeout, 409 Conflict, 429 Rate Limit, and >=500 Internal errors will all be retried by default.
 You can provide a `maxRetries` on the client builder to configure this:
 
-```java
-LangSmithClient client = LangSmithOkHttpClient.builder()
+```java // templates/JavaDocs.ts:547:33
+LangSmithClient client = LangSmithOkHttpClient.builder() // templates/JavaDocs.ts:552:20
     .fromEnv()
     .maxRetries(4)
     .build();
@@ -188,8 +188,8 @@ LangSmithClient client = LangSmithOkHttpClient.builder()
 
 Requests time out after 1 minute by default. You can configure this on the client builder:
 
-```java
-LangSmithClient client = LangSmithOkHttpClient.builder()
+```java // templates/JavaDocs.ts:561:35
+LangSmithClient client = LangSmithOkHttpClient.builder() // templates/JavaDocs.ts:566:20
     .fromEnv()
     .timeout(Duration.ofSeconds(30))
     .build();
@@ -199,8 +199,8 @@ LangSmithClient client = LangSmithOkHttpClient.builder()
 
 Requests can be routed through a proxy. You can configure this on the client builder:
 
-```java
-LangSmithClient client = LangSmithOkHttpClient.builder()
+```java // templates/JavaDocs.ts:575:33
+LangSmithClient client = LangSmithOkHttpClient.builder() // templates/JavaDocs.ts:580:20
     .fromEnv()
     .proxy(new Proxy(
         Type.HTTP,

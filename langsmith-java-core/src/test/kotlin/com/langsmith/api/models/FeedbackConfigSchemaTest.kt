@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
@@ -6,18 +6,24 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class FeedbackConfigSchemaTest {
+class FeedbackConfigSchemaTest { // templates/JavaSDK/entities/objects.ts:645:15 //
+    // templates/JavaSDK/entities/objects.ts:645:15 //
+    // templates/JavaSDK/entities/objects.ts:645:15
 
-    @Test
-    fun createFeedbackConfigSchema() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
+    // templates/JavaSDK/entities/objects.ts:645:15
+    fun createFeedbackConfigSchema() { // templates/JavaSDK/entities/testing.ts:18:13
         val feedbackConfigSchema =
-            FeedbackConfigSchema.builder()
+            FeedbackConfigSchema.builder() // templates/JavaSDK/entities/objects.ts:657:10 //
+                // templates/JavaSDK/entities/objects.ts:657:10 //
+                // templates/JavaSDK/entities/objects.ts:656:16 //
+                // templates/JavaSDK/entities/objects.ts:656:16
                 .feedbackConfig(
                     FeedbackConfigSchema.FeedbackConfig.builder()
                         .type(FeedbackConfigSchema.FeedbackConfig.Type.CONTINUOUS)
                         .categories(
                             listOf(
-                                FeedbackConfigSchema.FeedbackConfig.Category.builder()
+                                FeedbackConfigSchema.FeedbackConfig.FeedbackCategory.builder()
                                     .value(42.23)
                                     .label("x")
                                     .build()
@@ -34,11 +40,12 @@ class FeedbackConfigSchemaTest {
         assertThat(feedbackConfigSchema).isNotNull
         assertThat(feedbackConfigSchema.feedbackConfig())
             .isEqualTo(
-                FeedbackConfigSchema.FeedbackConfig.builder()
+                FeedbackConfigSchema.FeedbackConfig
+                    .builder() // templates/JavaSDK/entities/objects.ts:717:13
                     .type(FeedbackConfigSchema.FeedbackConfig.Type.CONTINUOUS)
                     .categories(
                         listOf(
-                            FeedbackConfigSchema.FeedbackConfig.Category.builder()
+                            FeedbackConfigSchema.FeedbackConfig.FeedbackCategory.builder()
                                 .value(42.23)
                                 .label("x")
                                 .build()

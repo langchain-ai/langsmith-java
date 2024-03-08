@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.services.blocking.annotationQueues
 
@@ -9,13 +9,18 @@ import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
+@ExtendWith(
+    TestServerExtension::class
+) // templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15 //
+// templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15
 class RunServiceTest {
 
-    @Test
-    fun callCreate() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 // templates/JavaSDK/services.ts:298:15
+    fun callCreate() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -24,22 +29,31 @@ class RunServiceTest {
         val runService = client.annotationQueues().runs()
         val annotationQueueRunCreateResponse =
             runService.create(
-                AnnotationQueueRunCreateParams.builder()
+                AnnotationQueueRunCreateParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .body(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                     .build()
             )
-        println(annotationQueueRunCreateResponse)
+        println(
+            annotationQueueRunCreateResponse
+        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
         for (annotationQueueRunSchema: AnnotationQueueRunSchema in
-            annotationQueueRunCreateResponse) {
+            annotationQueueRunCreateResponse) { // templates/JavaSDK/services.ts:509:10
             annotationQueueRunSchema.validate()
         }
     }
 
-    @Test
-    fun callUpdate() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun callUpdate() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -48,7 +62,12 @@ class RunServiceTest {
         val runService = client.annotationQueues().runs()
         val annotationQueueRunUpdateResponse =
             runService.update(
-                AnnotationQueueRunUpdateParams.builder()
+                AnnotationQueueRunUpdateParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -58,10 +77,12 @@ class RunServiceTest {
         println(annotationQueueRunUpdateResponse)
     }
 
-    @Test
-    fun callList() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun callList() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -70,23 +91,32 @@ class RunServiceTest {
         val runService = client.annotationQueues().runs()
         val annotationQueueRunListResponse =
             runService.list(
-                AnnotationQueueRunListParams.builder()
+                AnnotationQueueRunListParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .limit(123L)
                     .offset(123L)
                     .build()
             )
-        println(annotationQueueRunListResponse)
+        println(
+            annotationQueueRunListResponse
+        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
         for (runSchemaWithAnnotationQueueInfo: RunSchemaWithAnnotationQueueInfo in
-            annotationQueueRunListResponse) {
+            annotationQueueRunListResponse) { // templates/JavaSDK/services.ts:509:10
             runSchemaWithAnnotationQueueInfo.validate()
         }
     }
 
-    @Test
-    fun callDelete() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun callDelete() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -95,7 +125,12 @@ class RunServiceTest {
         val runService = client.annotationQueues().runs()
         val annotationQueueRunDeleteResponse =
             runService.delete(
-                AnnotationQueueRunDeleteParams.builder()
+                AnnotationQueueRunDeleteParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()

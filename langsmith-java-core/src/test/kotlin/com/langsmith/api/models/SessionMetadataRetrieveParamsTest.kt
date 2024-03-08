@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
@@ -7,11 +7,16 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class SessionMetadataRetrieveParamsTest {
+class SessionMetadataRetrieveParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
+    // templates/JavaSDK/entities/params.ts:907:13 //
+    // templates/JavaSDK/entities/params.ts:907:13
 
-    @Test
-    fun createSessionMetadataRetrieveParams() {
-        SessionMetadataRetrieveParams.builder()
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
+    // templates/JavaSDK/entities/params.ts:907:13
+    fun createSessionMetadataRetrieveParams() { // templates/JavaSDK/entities/testing.ts:18:13
+        SessionMetadataRetrieveParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
+            // templates/JavaSDK/entities/params.ts:916:16 //
+            // templates/JavaSDK/entities/params.ts:916:16
             .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .k(123L)
             .metadataKeys(listOf("string"))
@@ -19,10 +24,15 @@ class SessionMetadataRetrieveParamsTest {
             .build()
     }
 
-    @Test
-    fun getQueryParams() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
+    // templates/JavaSDK/entities/params.ts:921:17
+    fun getQueryParams() { // templates/JavaSDK/entities/testing.ts:18:13
         val params =
-            SessionMetadataRetrieveParams.builder()
+            SessionMetadataRetrieveParams
+                .builder() // templates/JavaSDK/entities/params.ts:954:10 //
+                // templates/JavaSDK/entities/params.ts:954:10 //
+                // templates/JavaSDK/entities/params.ts:953:16 //
+                // templates/JavaSDK/entities/params.ts:953:16
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .k(123L)
                 .metadataKeys(listOf("string"))
@@ -35,20 +45,28 @@ class SessionMetadataRetrieveParamsTest {
         assertThat(params.getQueryParams()).isEqualTo(expected)
     }
 
-    @Test
-    fun getQueryParamsWithoutOptionalFields() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun getQueryParamsWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
         val params =
-            SessionMetadataRetrieveParams.builder()
+            SessionMetadataRetrieveParams
+                .builder() // templates/JavaSDK/entities/params.ts:954:10 //
+                // templates/JavaSDK/entities/params.ts:954:10 //
+                // templates/JavaSDK/entities/params.ts:953:16 //
+                // templates/JavaSDK/entities/params.ts:953:16
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
         val expected = mutableMapOf<String, List<String>>()
         assertThat(params.getQueryParams()).isEqualTo(expected)
     }
 
-    @Test
-    fun getPathParam() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun getPathParam() { // templates/JavaSDK/entities/testing.ts:18:13
         val params =
-            SessionMetadataRetrieveParams.builder()
+            SessionMetadataRetrieveParams
+                .builder() // templates/JavaSDK/entities/params.ts:1072:10 //
+                // templates/JavaSDK/entities/params.ts:1072:10 //
+                // templates/JavaSDK/entities/params.ts:1071:16 //
+                // templates/JavaSDK/entities/params.ts:1071:16
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
         assertThat(params).isNotNull

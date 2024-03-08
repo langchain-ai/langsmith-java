@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -15,8 +17,12 @@ import java.util.Objects
 import java.util.Optional
 
 class RunMonitorCreateParams
-constructor(
-    private val groups: List<Group>,
+constructor( // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
+    private val groups: List<MonitorGroupSpec>, // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
     private val interval: Interval?,
     private val stride: Stride?,
     private val timezone: String?,
@@ -25,7 +31,8 @@ constructor(
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun groups(): List<Group> = groups
+    fun groups(): List<MonitorGroupSpec> = groups // templates/JavaSDK/entities/params.ts:145:14 //
+    // templates/JavaSDK/entities/params.ts:131:13
 
     fun interval(): Optional<Interval> = Optional.ofNullable(interval)
 
@@ -33,10 +40,11 @@ constructor(
 
     fun timezone(): Optional<String> = Optional.ofNullable(timezone)
 
-    @JvmSynthetic
-    internal fun getBody(): RunMonitorCreateBody {
-        return RunMonitorCreateBody(
-            groups,
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:165:16
+    internal fun getBody(): RunMonitorCreateBody { // templates/JavaSDK/entities/params.ts:165:16
+        return RunMonitorCreateBody( // templates/JavaSDK/entities/params.ts:180:26 //
+            // templates/JavaSDK/entities/params.ts:179:24
+            groups, // templates/JavaSDK/entities/params.ts:180:26
             interval,
             stride,
             timezone,
@@ -44,45 +52,59 @@ constructor(
         )
     }
 
-    @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
+    internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
 
-    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
+    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
-    @JsonDeserialize(builder = RunMonitorCreateBody.Builder::class)
+    @JsonDeserialize(
+        builder = RunMonitorCreateBody.Builder::class
+    ) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+    // // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
     @NoAutoDetect
     class RunMonitorCreateBody
-    internal constructor(
-        private val groups: List<Group>?,
+    internal constructor( // templates/JavaSDK/entities/objects.ts:76:13
+        private val groups:
+            List<MonitorGroupSpec>?, // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         private val interval: Interval?,
         private val stride: Stride?,
         private val timezone: String?,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0
+        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
-        @JsonProperty("groups") fun groups(): List<Group>? = groups
+        @JsonProperty("groups") // templates/JavaSDK/entities/objects.ts:113:14
+        fun groups(): List<MonitorGroupSpec>? = groups
 
         /** Timedelta input. */
-        @JsonProperty("interval") fun interval(): Interval? = interval
+        @JsonProperty("interval") // templates/JavaSDK/entities/objects.ts:113:14
+        fun interval(): Interval? = interval
 
         /** Timedelta input. */
-        @JsonProperty("stride") fun stride(): Stride? = stride
+        @JsonProperty("stride") // templates/JavaSDK/entities/objects.ts:113:14
+        fun stride(): Stride? = stride
 
-        @JsonProperty("timezone") fun timezone(): String? = timezone
+        @JsonProperty("timezone") // templates/JavaSDK/entities/objects.ts:113:14
+        fun timezone(): String? = timezone
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is RunMonitorCreateBody &&
+            return other is RunMonitorCreateBody && // templates/JavaSDK/entities/fields.ts:143:33
                 this.groups == other.groups &&
                 this.interval == other.interval &&
                 this.stride == other.stride &&
@@ -90,11 +112,15 @@ constructor(
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        groups,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        groups, // templates/JavaSDK/entities/fields.ts:163:19
                         interval,
                         stride,
                         timezone,
@@ -107,57 +133,92 @@ constructor(
         override fun toString() =
             "RunMonitorCreateBody{groups=$groups, interval=$interval, stride=$stride, timezone=$timezone, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var groups: List<Group>? = null
+            private var groups: List<MonitorGroupSpec>? =
+                null // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var interval: Interval? = null
             private var stride: Stride? = null
             private var timezone: String? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(runMonitorCreateBody: RunMonitorCreateBody) = apply {
-                this.groups = runMonitorCreateBody.groups
-                this.interval = runMonitorCreateBody.interval
-                this.stride = runMonitorCreateBody.stride
-                this.timezone = runMonitorCreateBody.timezone
-                additionalProperties(runMonitorCreateBody.additionalProperties)
-            }
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(runMonitorCreateBody: RunMonitorCreateBody) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.groups =
+                        runMonitorCreateBody
+                            .groups // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.interval = runMonitorCreateBody.interval
+                    this.stride = runMonitorCreateBody.stride
+                    this.timezone = runMonitorCreateBody.timezone
+                    additionalProperties(runMonitorCreateBody.additionalProperties)
+                }
 
-            @JsonProperty("groups") fun groups(groups: List<Group>) = apply { this.groups = groups }
+            @JsonProperty("groups") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun groups(groups: List<MonitorGroupSpec>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.groups = groups
+                }
 
             /** Timedelta input. */
-            @JsonProperty("interval")
-            fun interval(interval: Interval) = apply { this.interval = interval }
+            // templates/JavaSDK/entities/objects.ts:252:20
+            @JsonProperty("interval") // templates/JavaSDK/entities/objects.ts:264:20
+            fun interval(interval: Interval) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.interval = interval
+                }
 
             /** Timedelta input. */
-            @JsonProperty("stride") fun stride(stride: Stride) = apply { this.stride = stride }
-
-            @JsonProperty("timezone")
-            fun timezone(timezone: String) = apply { this.timezone = timezone }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
+            // templates/JavaSDK/entities/objects.ts:252:20
+            @JsonProperty("stride") // templates/JavaSDK/entities/objects.ts:264:20
+            fun stride(stride: Stride) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.stride = stride
             }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
+            @JsonProperty("timezone") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun timezone(timezone: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.timezone = timezone
             }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
+
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
             fun build(): RunMonitorCreateBody =
-                RunMonitorCreateBody(
-                    checkNotNull(groups) { "`groups` is required but was not set" }
+                RunMonitorCreateBody( // templates/JavaSDK/entities/objects.ts:326:30
+                    checkNotNull(groups) { // templates/JavaSDK/entities/objects.ts:358:13 //
+                            // templates/JavaSDK/entities/objects.ts:326:30
+                            "`groups` is required but was not set"
+                        }
                         .toUnmodifiable(),
                     interval,
                     stride,
@@ -173,12 +234,12 @@ constructor(
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is RunMonitorCreateParams &&
+        return other is RunMonitorCreateParams && // templates/JavaSDK/entities/fields.ts:143:33
             this.groups == other.groups &&
             this.interval == other.interval &&
             this.stride == other.stride &&
@@ -188,9 +249,10 @@ constructor(
             this.additionalBodyProperties == other.additionalBodyProperties
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(
-            groups,
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+            // templates/JavaSDK/entities/fields.ts:181:14
+            groups, // templates/JavaSDK/entities/fields.ts:163:19
             interval,
             stride,
             timezone,
@@ -205,15 +267,21 @@ constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/builders.ts:8:8
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
+        // templates/JavaSDK/entities/builders.ts:8:8
+        fun builder() = Builder()
     }
 
-    @NoAutoDetect
-    class Builder {
+    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
+    // templates/JavaSDK/entities/params.ts:235:14
+    class Builder { // templates/JavaSDK/entities/params.ts:235:14
 
-        private var groups: MutableList<Group> = mutableListOf()
+        private var groups: MutableList<MonitorGroupSpec> =
+            mutableListOf() // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:235:14
         private var interval: Interval? = null
         private var stride: Stride? = null
         private var timezone: String? = null
@@ -221,89 +289,124 @@ constructor(
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(runMonitorCreateParams: RunMonitorCreateParams) = apply {
-            this.groups(runMonitorCreateParams.groups)
-            this.interval = runMonitorCreateParams.interval
-            this.stride = runMonitorCreateParams.stride
-            this.timezone = runMonitorCreateParams.timezone
-            additionalQueryParams(runMonitorCreateParams.additionalQueryParams)
-            additionalHeaders(runMonitorCreateParams.additionalHeaders)
-            additionalBodyProperties(runMonitorCreateParams.additionalBodyProperties)
-        }
+        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
+        internal fun from(runMonitorCreateParams: RunMonitorCreateParams) =
+            apply { // templates/JavaSDK/entities/params.ts:257:34
+                this.groups(
+                    runMonitorCreateParams.groups
+                ) // templates/JavaSDK/entities/params.ts:257:34 //
+                // templates/JavaSDK/entities/params.ts:257:34
+                this.interval = runMonitorCreateParams.interval
+                this.stride = runMonitorCreateParams.stride
+                this.timezone = runMonitorCreateParams.timezone
+                additionalQueryParams(runMonitorCreateParams.additionalQueryParams)
+                additionalHeaders(runMonitorCreateParams.additionalHeaders)
+                additionalBodyProperties(runMonitorCreateParams.additionalBodyProperties)
+            }
 
-        fun groups(groups: List<Group>) = apply {
-            this.groups.clear()
-            this.groups.addAll(groups)
-        }
+        fun groups(groups: List<MonitorGroupSpec>) =
+            apply { // templates/JavaSDK/entities/params.ts:609:26
+                this.groups.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+                // templates/JavaSDK/entities/params.ts:609:26
+                this.groups.addAll(groups)
+            }
 
-        fun addGroup(group: Group) = apply { this.groups.add(group) }
+        fun addGroup(group: MonitorGroupSpec) =
+            apply { // templates/JavaSDK/entities/params.ts:620:26
+                this.groups.add(group)
+            }
 
         /** Timedelta input. */
-        fun interval(interval: Interval) = apply { this.interval = interval }
+        fun interval(interval: Interval) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.interval = interval
+        }
 
         /** Timedelta input. */
-        fun stride(stride: Stride) = apply { this.stride = stride }
-
-        fun timezone(timezone: String) = apply { this.timezone = timezone }
-
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllQueryParams(additionalQueryParams)
+        fun stride(stride: Stride) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.stride = stride
         }
 
-        fun putQueryParam(name: String, value: String) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+        fun timezone(timezone: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.timezone = timezone
         }
 
-        fun putQueryParams(name: String, values: Iterable<String>) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:703:24
+                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
+                // templates/JavaSDK/entities/params.ts:703:24
+                putAllQueryParams(additionalQueryParams)
+            }
 
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            additionalQueryParams.forEach(this::putQueryParams)
-        }
+        fun putQueryParam(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:713:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+            }
 
-        fun removeQueryParam(name: String) = apply {
+        fun putQueryParams(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:723:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
+
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:733:24
+                additionalQueryParams.forEach(this::putQueryParams)
+            }
+
+        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllHeaders(additionalHeaders)
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:755:24
+                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
+                // templates/JavaSDK/entities/params.ts:755:24
+                putAllHeaders(additionalHeaders)
+            }
+
+        fun putHeader(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:765:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+            }
+
+        fun putHeaders(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:775:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:785:24
+                additionalHeaders.forEach(this::putHeaders)
+            }
+
+        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
+            this.additionalHeaders.put(name, mutableListOf())
         }
 
-        fun putHeader(name: String, value: String) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-        }
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/params.ts:809:28
+                this.additionalBodyProperties
+                    .clear() // templates/JavaSDK/entities/params.ts:809:28 //
+                // templates/JavaSDK/entities/params.ts:809:28
+                this.additionalBodyProperties.putAll(additionalBodyProperties)
+            }
 
-        fun putHeaders(name: String, values: Iterable<String>) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            additionalHeaders.forEach(this::putHeaders)
-        }
-
-        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
-
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            this.additionalBodyProperties.putAll(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            this.additionalBodyProperties.put(key, value)
-        }
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/params.ts:822:28
+                this.additionalBodyProperties.put(key, value)
+            }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
+            apply { // templates/JavaSDK/entities/params.ts:832:28
                 this.additionalBodyProperties.putAll(additionalBodyProperties)
             }
 
         fun build(): RunMonitorCreateParams =
-            RunMonitorCreateParams(
-                checkNotNull(groups) { "`groups` is required but was not set" }.toUnmodifiable(),
+            RunMonitorCreateParams( // templates/JavaSDK/entities/params.ts:683:22
+                checkNotNull(groups) { // templates/JavaSDK/entities/params.ts:844:13 //
+                        // templates/JavaSDK/entities/params.ts:683:22
+                        "`groups` is required but was not set"
+                    }
+                    .toUnmodifiable(),
                 interval,
                 stride,
                 timezone,
@@ -313,47 +416,61 @@ constructor(
             )
     }
 
-    @JsonDeserialize(builder = Group.Builder::class)
+    @JsonDeserialize(
+        builder = MonitorGroupSpec.Builder::class
+    ) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+    // // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
     @NoAutoDetect
-    class Group
-    private constructor(
-        private val session: String?,
+    class MonitorGroupSpec
+    private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+        private val session: String?, // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         private val tag: String?,
         private val metadata: Metadata?,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0
+        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
-        @JsonProperty("session") fun session(): String? = session
+        @JsonProperty("session") // templates/JavaSDK/entities/objects.ts:113:14
+        fun session(): String? = session
 
-        @JsonProperty("tag") fun tag(): String? = tag
+        @JsonProperty("tag") // templates/JavaSDK/entities/objects.ts:113:14
+        fun tag(): String? = tag
 
-        @JsonProperty("metadata") fun metadata(): Metadata? = metadata
+        @JsonProperty("metadata") // templates/JavaSDK/entities/objects.ts:113:14
+        fun metadata(): Metadata? = metadata
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is Group &&
+            return other is MonitorGroupSpec && // templates/JavaSDK/entities/fields.ts:143:33
                 this.session == other.session &&
                 this.tag == other.tag &&
                 this.metadata == other.metadata &&
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        session,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        session, // templates/JavaSDK/entities/fields.ts:163:19
                         tag,
                         metadata,
                         additionalProperties,
@@ -363,59 +480,94 @@ constructor(
         }
 
         override fun toString() =
-            "Group{session=$session, tag=$tag, metadata=$metadata, additionalProperties=$additionalProperties}"
+            "MonitorGroupSpec{session=$session, tag=$tag, metadata=$metadata, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var session: String? = null
+            private var session: String? = null // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var tag: String? = null
             private var metadata: Metadata? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(group: Group) = apply {
-                this.session = group.session
-                this.tag = group.tag
-                this.metadata = group.metadata
-                additionalProperties(group.additionalProperties)
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(monitorGroupSpec: MonitorGroupSpec) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.session =
+                        monitorGroupSpec.session // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.tag = monitorGroupSpec.tag
+                    this.metadata = monitorGroupSpec.metadata
+                    additionalProperties(monitorGroupSpec.additionalProperties)
+                }
+
+            @JsonProperty("session") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun session(session: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.session = session
             }
 
-            @JsonProperty("session") fun session(session: String) = apply { this.session = session }
-
-            @JsonProperty("tag") fun tag(tag: String) = apply { this.tag = tag }
-
-            @JsonProperty("metadata")
-            fun metadata(metadata: Metadata) = apply { this.metadata = metadata }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
+            @JsonProperty("tag") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun tag(tag: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.tag = tag
             }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
-            }
+            @JsonProperty("metadata") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun metadata(metadata: Metadata) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.metadata = metadata
+                }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            fun build(): Group =
-                Group(
-                    checkNotNull(session) { "`session` is required but was not set" },
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
+
+            fun build(): MonitorGroupSpec =
+                MonitorGroupSpec( // templates/JavaSDK/entities/objects.ts:326:30
+                    checkNotNull(session) { // templates/JavaSDK/entities/objects.ts:358:13 //
+                        // templates/JavaSDK/entities/objects.ts:326:30
+                        "`session` is required but was not set"
+                    },
                     tag,
                     metadata,
                     additionalProperties.toUnmodifiable(),
                 )
         }
 
-        @JsonDeserialize(builder = Metadata.Builder::class)
+        @JsonDeserialize(
+            builder = Metadata.Builder::class
+        ) // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         @NoAutoDetect
         class Metadata
         private constructor(
@@ -424,34 +576,44 @@ constructor(
             private val additionalProperties: Map<String, JsonValue>,
         ) {
 
-            private var hashCode: Int = 0
+            private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
+            // templates/JavaSDK/entities/objects.ts:76:13
 
-            @JsonProperty("key") fun key(): String? = key
+            @JsonProperty("key") // templates/JavaSDK/entities/objects.ts:113:14
+            fun key(): String? = key
 
-            @JsonProperty("value") fun value(): String? = value
+            @JsonProperty("value") // templates/JavaSDK/entities/objects.ts:113:14
+            fun value(): String? = value
 
-            @JsonAnyGetter
+            @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+            // templates/JavaSDK/entities/objects.ts:180:12
             @ExcludeMissing
             fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
             fun toBuilder() = Builder().from(this)
 
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
+            override fun equals(
+                other: Any?
+            ): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+                if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                     return true
                 }
 
-                return other is Metadata &&
+                return other is Metadata && // templates/JavaSDK/entities/fields.ts:143:33
                     this.key == other.key &&
                     this.value == other.value &&
                     this.additionalProperties == other.additionalProperties
             }
 
-            override fun hashCode(): Int {
-                if (hashCode == 0) {
+            override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+                if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                    // templates/JavaSDK/entities/fields.ts:174:16 //
+                    // templates/JavaSDK/entities/fields.ts:174:16
                     hashCode =
-                        Objects.hash(
-                            key,
+                        Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                            // templates/JavaSDK/entities/fields.ts:175:16 //
+                            // templates/JavaSDK/entities/fields.ts:175:16
+                            key, // templates/JavaSDK/entities/fields.ts:163:19
                             value,
                             additionalProperties,
                         )
@@ -462,47 +624,72 @@ constructor(
             override fun toString() =
                 "Metadata{key=$key, value=$value, additionalProperties=$additionalProperties}"
 
-            companion object {
+            companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-                @JvmStatic fun builder() = Builder()
+                @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+                // templates/JavaSDK/entities/objects.ts:217:10
+                fun builder() = Builder()
             }
 
-            class Builder {
+            class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+                // templates/JavaSDK/entities/objects.ts:224:10 //
+                // templates/JavaSDK/entities/objects.ts:224:10
 
-                private var key: String? = null
+                private var key: String? = null // templates/JavaSDK/entities/objects.ts:226:16 //
+                // templates/JavaSDK/entities/objects.ts:226:16 //
+                // templates/JavaSDK/entities/objects.ts:224:10
                 private var value: String? = null
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                @JvmSynthetic
-                internal fun from(metadata: Metadata) = apply {
-                    this.key = metadata.key
-                    this.value = metadata.value
-                    additionalProperties(metadata.additionalProperties)
+                @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+                internal fun from(metadata: Metadata) =
+                    apply { // templates/JavaSDK/entities/objects.ts:240:30
+                        this.key = metadata.key // templates/JavaSDK/entities/objects.ts:240:30 //
+                        // templates/JavaSDK/entities/objects.ts:240:30
+                        this.value = metadata.value
+                        additionalProperties(metadata.additionalProperties)
+                    }
+
+                @JsonProperty("key") // templates/JavaSDK/entities/objects.ts:264:20 //
+                // templates/JavaSDK/entities/objects.ts:252:20
+                fun key(key: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.key = key
                 }
 
-                @JsonProperty("key") fun key(key: String) = apply { this.key = key }
-
-                @JsonProperty("value") fun value(value: String) = apply { this.value = value }
-
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    this.additionalProperties.putAll(additionalProperties)
+                @JsonProperty("value") // templates/JavaSDK/entities/objects.ts:264:20 //
+                // templates/JavaSDK/entities/objects.ts:252:20
+                fun value(value: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.value = value
                 }
 
-                @JsonAnySetter
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    this.additionalProperties.put(key, value)
-                }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply { // templates/JavaSDK/entities/objects.ts:290:30
+                        this.additionalProperties
+                            .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                        // templates/JavaSDK/entities/objects.ts:290:30
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+                fun putAdditionalProperty(key: String, value: JsonValue) =
+                    apply { // templates/JavaSDK/entities/objects.ts:304:30
+                        this.additionalProperties.put(key, value)
+                    }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
-                    apply {
+                    apply { // templates/JavaSDK/entities/objects.ts:316:30
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
                 fun build(): Metadata =
-                    Metadata(
-                        checkNotNull(key) { "`key` is required but was not set" },
-                        checkNotNull(value) { "`value` is required but was not set" },
+                    Metadata( // templates/JavaSDK/entities/objects.ts:326:30
+                        checkNotNull(key) { // templates/JavaSDK/entities/objects.ts:358:13 //
+                            // templates/JavaSDK/entities/objects.ts:326:30
+                            "`key` is required but was not set"
+                        },
+                        checkNotNull(value) { // templates/JavaSDK/entities/objects.ts:358:13
+                            "`value` is required but was not set"
+                        },
                         additionalProperties.toUnmodifiable(),
                     )
             }
@@ -510,47 +697,60 @@ constructor(
     }
 
     /** Timedelta input. */
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
     @JsonDeserialize(builder = Interval.Builder::class)
     @NoAutoDetect
     class Interval
-    private constructor(
-        private val days: Long?,
+    private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+        private val days: Long?, // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         private val minutes: Long?,
         private val hours: Long?,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0
+        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
-        @JsonProperty("days") fun days(): Long? = days
+        @JsonProperty("days") // templates/JavaSDK/entities/objects.ts:113:14
+        fun days(): Long? = days
 
-        @JsonProperty("minutes") fun minutes(): Long? = minutes
+        @JsonProperty("minutes") // templates/JavaSDK/entities/objects.ts:113:14
+        fun minutes(): Long? = minutes
 
-        @JsonProperty("hours") fun hours(): Long? = hours
+        @JsonProperty("hours") // templates/JavaSDK/entities/objects.ts:113:14
+        fun hours(): Long? = hours
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is Interval &&
+            return other is Interval && // templates/JavaSDK/entities/fields.ts:143:33
                 this.days == other.days &&
                 this.minutes == other.minutes &&
                 this.hours == other.hours &&
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        days,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        days, // templates/JavaSDK/entities/fields.ts:163:19
                         minutes,
                         hours,
                         additionalProperties,
@@ -562,49 +762,74 @@ constructor(
         override fun toString() =
             "Interval{days=$days, minutes=$minutes, hours=$hours, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var days: Long? = null
+            private var days: Long? = null // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var minutes: Long? = null
             private var hours: Long? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(interval: Interval) = apply {
-                this.days = interval.days
-                this.minutes = interval.minutes
-                this.hours = interval.hours
-                additionalProperties(interval.additionalProperties)
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(interval: Interval) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.days = interval.days // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.minutes = interval.minutes
+                    this.hours = interval.hours
+                    additionalProperties(interval.additionalProperties)
+                }
+
+            @JsonProperty("days") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun days(days: Long) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.days = days
             }
 
-            @JsonProperty("days") fun days(days: Long) = apply { this.days = days }
-
-            @JsonProperty("minutes") fun minutes(minutes: Long) = apply { this.minutes = minutes }
-
-            @JsonProperty("hours") fun hours(hours: Long) = apply { this.hours = hours }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
+            @JsonProperty("minutes") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun minutes(minutes: Long) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.minutes = minutes
             }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
+            @JsonProperty("hours") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun hours(hours: Long) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.hours = hours
             }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
+
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
             fun build(): Interval =
-                Interval(
-                    days,
+                Interval( // templates/JavaSDK/entities/objects.ts:326:30
+                    days, // templates/JavaSDK/entities/objects.ts:326:30
                     minutes,
                     hours,
                     additionalProperties.toUnmodifiable(),
@@ -613,47 +838,60 @@ constructor(
     }
 
     /** Timedelta input. */
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
     @JsonDeserialize(builder = Stride.Builder::class)
     @NoAutoDetect
     class Stride
-    private constructor(
-        private val days: Long?,
+    private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+        private val days: Long?, // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         private val minutes: Long?,
         private val hours: Long?,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0
+        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
-        @JsonProperty("days") fun days(): Long? = days
+        @JsonProperty("days") // templates/JavaSDK/entities/objects.ts:113:14
+        fun days(): Long? = days
 
-        @JsonProperty("minutes") fun minutes(): Long? = minutes
+        @JsonProperty("minutes") // templates/JavaSDK/entities/objects.ts:113:14
+        fun minutes(): Long? = minutes
 
-        @JsonProperty("hours") fun hours(): Long? = hours
+        @JsonProperty("hours") // templates/JavaSDK/entities/objects.ts:113:14
+        fun hours(): Long? = hours
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is Stride &&
+            return other is Stride && // templates/JavaSDK/entities/fields.ts:143:33
                 this.days == other.days &&
                 this.minutes == other.minutes &&
                 this.hours == other.hours &&
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        days,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        days, // templates/JavaSDK/entities/fields.ts:163:19
                         minutes,
                         hours,
                         additionalProperties,
@@ -665,49 +903,74 @@ constructor(
         override fun toString() =
             "Stride{days=$days, minutes=$minutes, hours=$hours, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var days: Long? = null
+            private var days: Long? = null // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var minutes: Long? = null
             private var hours: Long? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(stride: Stride) = apply {
-                this.days = stride.days
-                this.minutes = stride.minutes
-                this.hours = stride.hours
-                additionalProperties(stride.additionalProperties)
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(stride: Stride) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.days = stride.days // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.minutes = stride.minutes
+                    this.hours = stride.hours
+                    additionalProperties(stride.additionalProperties)
+                }
+
+            @JsonProperty("days") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun days(days: Long) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.days = days
             }
 
-            @JsonProperty("days") fun days(days: Long) = apply { this.days = days }
-
-            @JsonProperty("minutes") fun minutes(minutes: Long) = apply { this.minutes = minutes }
-
-            @JsonProperty("hours") fun hours(hours: Long) = apply { this.hours = hours }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
+            @JsonProperty("minutes") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun minutes(minutes: Long) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.minutes = minutes
             }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
+            @JsonProperty("hours") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun hours(hours: Long) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.hours = hours
             }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
+
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
             fun build(): Stride =
-                Stride(
-                    days,
+                Stride( // templates/JavaSDK/entities/objects.ts:326:30
+                    days, // templates/JavaSDK/entities/objects.ts:326:30
                     minutes,
                     hours,
                     additionalProperties.toUnmodifiable(),

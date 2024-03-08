@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -15,11 +17,15 @@ import com.langsmith.api.core.toUnmodifiable
 import java.util.Objects
 
 /** Stats for a tenant. */
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13
 @JsonDeserialize(builder = TenantStats.Builder::class)
 @NoAutoDetect
 class TenantStats
-private constructor(
-    private val tenantId: JsonField<String>,
+private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+    private val tenantId: JsonField<String>, // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
     private val datasetCount: JsonField<Long>,
     private val tracerSessionCount: JsonField<Long>,
     private val repoCount: JsonField<Long>,
@@ -27,7 +33,8 @@ private constructor(
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false
+    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+    // templates/JavaSDK/entities/objects.ts:76:13
 
     private var hashCode: Int = 0
 
@@ -41,27 +48,37 @@ private constructor(
 
     fun annotationQueueCount(): Long = annotationQueueCount.getRequired("annotation_queue_count")
 
-    @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId() = tenantId
+    @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _tenantId() = tenantId
 
-    @JsonProperty("dataset_count") @ExcludeMissing fun _datasetCount() = datasetCount
+    @JsonProperty("dataset_count") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _datasetCount() = datasetCount
 
-    @JsonProperty("tracer_session_count")
+    @JsonProperty("tracer_session_count") // templates/JavaSDK/entities/objects.ts:166:16
     @ExcludeMissing
     fun _tracerSessionCount() = tracerSessionCount
 
-    @JsonProperty("repo_count") @ExcludeMissing fun _repoCount() = repoCount
+    @JsonProperty("repo_count") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _repoCount() = repoCount
 
-    @JsonProperty("annotation_queue_count")
+    @JsonProperty("annotation_queue_count") // templates/JavaSDK/entities/objects.ts:166:16
     @ExcludeMissing
     fun _annotationQueueCount() = annotationQueueCount
 
-    @JsonAnyGetter
+    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+    // templates/JavaSDK/entities/objects.ts:180:12
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): TenantStats = apply {
-        if (!validated) {
-            tenantId()
+    fun validate(): TenantStats = apply { // templates/JavaSDK/entities/objects.ts:198:28
+        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:198:28 //
+            // templates/JavaSDK/entities/objects.ts:198:28
+            tenantId() // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:201:20
             datasetCount()
             tracerSessionCount()
             repoCount()
@@ -72,12 +89,12 @@ private constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is TenantStats &&
+        return other is TenantStats && // templates/JavaSDK/entities/fields.ts:143:33
             this.tenantId == other.tenantId &&
             this.datasetCount == other.datasetCount &&
             this.tracerSessionCount == other.tracerSessionCount &&
@@ -86,11 +103,15 @@ private constructor(
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int {
-        if (hashCode == 0) {
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16
             hashCode =
-                Objects.hash(
-                    tenantId,
+                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                    // templates/JavaSDK/entities/fields.ts:175:16 //
+                    // templates/JavaSDK/entities/fields.ts:175:16
+                    tenantId, // templates/JavaSDK/entities/fields.ts:163:19
                     datasetCount,
                     tracerSessionCount,
                     repoCount,
@@ -104,83 +125,115 @@ private constructor(
     override fun toString() =
         "TenantStats{tenantId=$tenantId, datasetCount=$datasetCount, tracerSessionCount=$tracerSessionCount, repoCount=$repoCount, annotationQueueCount=$annotationQueueCount, additionalProperties=$additionalProperties}"
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+        // templates/JavaSDK/entities/objects.ts:217:10
+        fun builder() = Builder()
     }
 
-    class Builder {
+    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10
 
-        private var tenantId: JsonField<String> = JsonMissing.of()
+        private var tenantId: JsonField<String> =
+            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:224:10
         private var datasetCount: JsonField<Long> = JsonMissing.of()
         private var tracerSessionCount: JsonField<Long> = JsonMissing.of()
         private var repoCount: JsonField<Long> = JsonMissing.of()
         private var annotationQueueCount: JsonField<Long> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(tenantStats: TenantStats) = apply {
-            this.tenantId = tenantStats.tenantId
-            this.datasetCount = tenantStats.datasetCount
-            this.tracerSessionCount = tenantStats.tracerSessionCount
-            this.repoCount = tenantStats.repoCount
-            this.annotationQueueCount = tenantStats.annotationQueueCount
-            additionalProperties(tenantStats.additionalProperties)
-        }
+        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+        internal fun from(tenantStats: TenantStats) =
+            apply { // templates/JavaSDK/entities/objects.ts:240:30
+                this.tenantId =
+                    tenantStats.tenantId // templates/JavaSDK/entities/objects.ts:240:30 //
+                // templates/JavaSDK/entities/objects.ts:240:30
+                this.datasetCount = tenantStats.datasetCount
+                this.tracerSessionCount = tenantStats.tracerSessionCount
+                this.repoCount = tenantStats.repoCount
+                this.annotationQueueCount = tenantStats.annotationQueueCount
+                additionalProperties(tenantStats.additionalProperties)
+            }
 
-        fun tenantId(tenantId: String) = tenantId(JsonField.of(tenantId))
+        fun tenantId(tenantId: String) =
+            tenantId(JsonField.of(tenantId)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("tenant_id")
+        @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
+        fun tenantId(tenantId: JsonField<String>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.tenantId = tenantId
+            }
 
-        fun datasetCount(datasetCount: Long) = datasetCount(JsonField.of(datasetCount))
+        fun datasetCount(datasetCount: Long) =
+            datasetCount(JsonField.of(datasetCount)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("dataset_count")
+        @JsonProperty("dataset_count") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun datasetCount(datasetCount: JsonField<Long>) = apply { this.datasetCount = datasetCount }
+        fun datasetCount(datasetCount: JsonField<Long>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.datasetCount = datasetCount
+            }
 
         fun tracerSessionCount(tracerSessionCount: Long) =
-            tracerSessionCount(JsonField.of(tracerSessionCount))
+            tracerSessionCount(
+                JsonField.of(tracerSessionCount)
+            ) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("tracer_session_count")
+        @JsonProperty("tracer_session_count") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun tracerSessionCount(tracerSessionCount: JsonField<Long>) = apply {
-            this.tracerSessionCount = tracerSessionCount
-        }
+        fun tracerSessionCount(tracerSessionCount: JsonField<Long>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.tracerSessionCount = tracerSessionCount
+            }
 
-        fun repoCount(repoCount: Long) = repoCount(JsonField.of(repoCount))
+        fun repoCount(repoCount: Long) =
+            repoCount(JsonField.of(repoCount)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("repo_count")
+        @JsonProperty("repo_count") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun repoCount(repoCount: JsonField<Long>) = apply { this.repoCount = repoCount }
+        fun repoCount(repoCount: JsonField<Long>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.repoCount = repoCount
+            }
 
         fun annotationQueueCount(annotationQueueCount: Long) =
-            annotationQueueCount(JsonField.of(annotationQueueCount))
+            annotationQueueCount(
+                JsonField.of(annotationQueueCount)
+            ) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("annotation_queue_count")
+        @JsonProperty("annotation_queue_count") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun annotationQueueCount(annotationQueueCount: JsonField<Long>) = apply {
-            this.annotationQueueCount = annotationQueueCount
-        }
+        fun annotationQueueCount(annotationQueueCount: JsonField<Long>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.annotationQueueCount = annotationQueueCount
+            }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.clear()
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
-        @JsonAnySetter
-        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-            this.additionalProperties.put(key, value)
-        }
+        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+        fun putAdditionalProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/objects.ts:304:30
+                this.additionalProperties.put(key, value)
+            }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:316:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
         fun build(): TenantStats =
-            TenantStats(
-                tenantId,
+            TenantStats( // templates/JavaSDK/entities/objects.ts:326:30
+                tenantId, // templates/JavaSDK/entities/objects.ts:326:30
                 datasetCount,
                 tracerSessionCount,
                 repoCount,

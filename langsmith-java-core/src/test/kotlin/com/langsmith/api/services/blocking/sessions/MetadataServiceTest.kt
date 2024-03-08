@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.services.blocking.sessions
 
@@ -9,13 +9,18 @@ import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
+@ExtendWith(
+    TestServerExtension::class
+) // templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15 //
+// templates/JavaSDK/services.ts:298:15 // templates/JavaSDK/services.ts:298:15
 class MetadataServiceTest {
 
-    @Test
-    fun callRetrieve() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 // templates/JavaSDK/services.ts:298:15
+    fun callRetrieve() { // templates/JavaSDK/entities/testing.ts:18:13
         val client =
-            LangSmithOkHttpClient.builder()
+            LangSmithOkHttpClient.builder() // templates/JavaSDK/services.ts:308:18 //
+                // templates/JavaSDK/services.ts:307:24 //
+                // templates/JavaSDK/services.ts:307:24
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
@@ -24,14 +29,21 @@ class MetadataServiceTest {
         val metadataService = client.sessions().metadata()
         val tracerSessionMetadataResponse =
             metadataService.retrieve(
-                SessionMetadataRetrieveParams.builder()
+                SessionMetadataRetrieveParams.builder() // templates/JavaSDK/services.ts:464:26 //
+                    // templates/JavaSDK/services.ts:479:20 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:476:10 //
+                    // templates/JavaSDK/services.ts:475:17 //
+                    // templates/JavaSDK/services.ts:475:17
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .k(123L)
                     .metadataKeys(listOf("string"))
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .build()
             )
-        println(tracerSessionMetadataResponse)
+        println(
+            tracerSessionMetadataResponse
+        ) // templates/JavaSDK/services.ts:526:15 // templates/JavaSDK/services.ts:526:15
         tracerSessionMetadataResponse.validate()
     }
 }

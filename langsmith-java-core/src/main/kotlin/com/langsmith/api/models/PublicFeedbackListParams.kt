@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
@@ -13,8 +13,12 @@ import java.util.Objects
 import java.util.Optional
 
 class PublicFeedbackListParams
-constructor(
-    private val shareToken: String,
+constructor( // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
+    private val shareToken: String, // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
     private val hasComment: Boolean?,
     private val hasScore: Boolean?,
     private val key: List<String>?,
@@ -22,13 +26,14 @@ constructor(
     private val offset: Long?,
     private val run: List<String>?,
     private val session: List<String>?,
-    private val source: List<Source>?,
+    private val source: List<SourceType>?,
     private val user: List<String>?,
     private val additionalQueryParams: Map<String, List<String>>,
     private val additionalHeaders: Map<String, List<String>>,
 ) {
 
-    fun shareToken(): String = shareToken
+    fun shareToken(): String = shareToken // templates/JavaSDK/entities/params.ts:145:14 //
+    // templates/JavaSDK/entities/params.ts:131:13
 
     fun hasComment(): Optional<Boolean> = Optional.ofNullable(hasComment)
 
@@ -44,31 +49,54 @@ constructor(
 
     fun session(): Optional<List<String>> = Optional.ofNullable(session)
 
-    fun source(): Optional<List<Source>> = Optional.ofNullable(source)
+    fun source(): Optional<List<SourceType>> = Optional.ofNullable(source)
 
     fun user(): Optional<List<String>> = Optional.ofNullable(user)
 
-    @JvmSynthetic
-    internal fun getQueryParams(): Map<String, List<String>> {
-        val params = mutableMapOf<String, List<String>>()
-        this.hasComment?.let { params.put("has_comment", listOf(it.toString())) }
-        this.hasScore?.let { params.put("has_score", listOf(it.toString())) }
-        this.key?.let { params.put("key", listOf(it.joinToString(separator = ","))) }
-        this.limit?.let { params.put("limit", listOf(it.toString())) }
-        this.offset?.let { params.put("offset", listOf(it.toString())) }
-        this.run?.let { params.put("run", listOf(it.joinToString(separator = ","))) }
-        this.session?.let { params.put("session", listOf(it.joinToString(separator = ","))) }
-        this.source?.let { params.put("source", listOf(it.joinToString(separator = ","))) }
-        this.user?.let { params.put("user", listOf(it.joinToString(separator = ","))) }
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
+    internal fun getQueryParams():
+        Map<String, List<String>> { // templates/JavaSDK/entities/params.ts:201:14
+        val params =
+            mutableMapOf<String, List<String>>() // templates/JavaSDK/entities/params.ts:210:30 //
+        // templates/JavaSDK/entities/params.ts:210:30
+        this.hasComment?.let { // templates/JavaSDK/entities/objects.ts:462:15
+            params.put("has_comment", listOf(it.toString()))
+        }
+        this.hasScore?.let { // templates/JavaSDK/entities/objects.ts:462:15
+            params.put("has_score", listOf(it.toString()))
+        }
+        this.key?.let { // templates/JavaSDK/entities/objects.ts:392:21
+            params.put("key", listOf(it.joinToString(separator = ",")))
+        }
+        this.limit?.let { // templates/JavaSDK/entities/objects.ts:462:15
+            params.put("limit", listOf(it.toString()))
+        }
+        this.offset?.let { // templates/JavaSDK/entities/objects.ts:462:15
+            params.put("offset", listOf(it.toString()))
+        }
+        this.run?.let { // templates/JavaSDK/entities/objects.ts:392:21
+            params.put("run", listOf(it.joinToString(separator = ",")))
+        }
+        this.session?.let { // templates/JavaSDK/entities/objects.ts:392:21
+            params.put("session", listOf(it.joinToString(separator = ",")))
+        }
+        this.source?.let { // templates/JavaSDK/entities/objects.ts:392:21
+            params.put("source", listOf(it.joinToString(separator = ",")))
+        }
+        this.user?.let { // templates/JavaSDK/entities/objects.ts:392:21
+            params.put("user", listOf(it.joinToString(separator = ",")))
+        }
         params.putAll(additionalQueryParams)
         return params.toUnmodifiable()
     }
 
-    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
+    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
-    fun getPathParam(index: Int): String {
-        return when (index) {
-            0 -> shareToken
+    fun getPathParam(index: Int): String { // templates/JavaSDK/entities/params.ts:555:13
+        return when (index) { // templates/JavaSDK/entities/params.ts:560:26
+            0 -> shareToken // templates/JavaSDK/entities/params.ts:560:26 //
+            // templates/JavaSDK/entities/params.ts:560:26
             else -> ""
         }
     }
@@ -77,12 +105,12 @@ constructor(
 
     fun _additionalHeaders(): Map<String, List<String>> = additionalHeaders
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is PublicFeedbackListParams &&
+        return other is PublicFeedbackListParams && // templates/JavaSDK/entities/fields.ts:143:33
             this.shareToken == other.shareToken &&
             this.hasComment == other.hasComment &&
             this.hasScore == other.hasScore &&
@@ -97,9 +125,10 @@ constructor(
             this.additionalHeaders == other.additionalHeaders
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(
-            shareToken,
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+            // templates/JavaSDK/entities/fields.ts:181:14
+            shareToken, // templates/JavaSDK/entities/fields.ts:163:19
             hasComment,
             hasScore,
             key,
@@ -119,15 +148,20 @@ constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/builders.ts:8:8
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
+        // templates/JavaSDK/entities/builders.ts:8:8
+        fun builder() = Builder()
     }
 
-    @NoAutoDetect
-    class Builder {
+    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
+    // templates/JavaSDK/entities/params.ts:235:14
+    class Builder { // templates/JavaSDK/entities/params.ts:235:14
 
-        private var shareToken: String? = null
+        private var shareToken: String? = null // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:235:14
         private var hasComment: Boolean? = null
         private var hasScore: Boolean? = null
         private var key: MutableList<String> = mutableListOf()
@@ -135,115 +169,160 @@ constructor(
         private var offset: Long? = null
         private var run: MutableList<String> = mutableListOf()
         private var session: MutableList<String> = mutableListOf()
-        private var source: MutableList<Source> = mutableListOf()
+        private var source: MutableList<SourceType> = mutableListOf()
         private var user: MutableList<String> = mutableListOf()
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(publicFeedbackListParams: PublicFeedbackListParams) = apply {
-            this.shareToken = publicFeedbackListParams.shareToken
-            this.hasComment = publicFeedbackListParams.hasComment
-            this.hasScore = publicFeedbackListParams.hasScore
-            this.key(publicFeedbackListParams.key ?: listOf())
-            this.limit = publicFeedbackListParams.limit
-            this.offset = publicFeedbackListParams.offset
-            this.run(publicFeedbackListParams.run ?: listOf())
-            this.session(publicFeedbackListParams.session ?: listOf())
-            this.source(publicFeedbackListParams.source ?: listOf())
-            this.user(publicFeedbackListParams.user ?: listOf())
-            additionalQueryParams(publicFeedbackListParams.additionalQueryParams)
-            additionalHeaders(publicFeedbackListParams.additionalHeaders)
+        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
+        internal fun from(publicFeedbackListParams: PublicFeedbackListParams) =
+            apply { // templates/JavaSDK/entities/params.ts:257:34
+                this.shareToken =
+                    publicFeedbackListParams
+                        .shareToken // templates/JavaSDK/entities/params.ts:257:34 //
+                // templates/JavaSDK/entities/params.ts:257:34
+                this.hasComment = publicFeedbackListParams.hasComment
+                this.hasScore = publicFeedbackListParams.hasScore
+                this.key(publicFeedbackListParams.key ?: listOf())
+                this.limit = publicFeedbackListParams.limit
+                this.offset = publicFeedbackListParams.offset
+                this.run(publicFeedbackListParams.run ?: listOf())
+                this.session(publicFeedbackListParams.session ?: listOf())
+                this.source(publicFeedbackListParams.source ?: listOf())
+                this.user(publicFeedbackListParams.user ?: listOf())
+                additionalQueryParams(publicFeedbackListParams.additionalQueryParams)
+                additionalHeaders(publicFeedbackListParams.additionalHeaders)
+            }
+
+        fun shareToken(shareToken: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.shareToken = shareToken
         }
 
-        fun shareToken(shareToken: String) = apply { this.shareToken = shareToken }
+        fun hasComment(hasComment: Boolean) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.hasComment = hasComment
+        }
 
-        fun hasComment(hasComment: Boolean) = apply { this.hasComment = hasComment }
+        fun hasScore(hasScore: Boolean) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.hasScore = hasScore
+        }
 
-        fun hasScore(hasScore: Boolean) = apply { this.hasScore = hasScore }
-
-        fun key(key: List<String>) = apply {
-            this.key.clear()
+        fun key(key: List<String>) = apply { // templates/JavaSDK/entities/params.ts:609:26
+            this.key.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+            // templates/JavaSDK/entities/params.ts:609:26
             this.key.addAll(key)
         }
 
-        fun addKey(key: String) = apply { this.key.add(key) }
+        fun addKey(key: String) = apply { // templates/JavaSDK/entities/params.ts:620:26
+            this.key.add(key)
+        }
 
-        fun limit(limit: Long) = apply { this.limit = limit }
+        fun limit(limit: Long) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.limit = limit
+        }
 
-        fun offset(offset: Long) = apply { this.offset = offset }
+        fun offset(offset: Long) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.offset = offset
+        }
 
-        fun run(run: List<String>) = apply {
-            this.run.clear()
+        fun run(run: List<String>) = apply { // templates/JavaSDK/entities/params.ts:609:26
+            this.run.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+            // templates/JavaSDK/entities/params.ts:609:26
             this.run.addAll(run)
         }
 
-        fun addRun(run: String) = apply { this.run.add(run) }
+        fun addRun(run: String) = apply { // templates/JavaSDK/entities/params.ts:620:26
+            this.run.add(run)
+        }
 
-        fun session(session: List<String>) = apply {
-            this.session.clear()
+        fun session(session: List<String>) = apply { // templates/JavaSDK/entities/params.ts:609:26
+            this.session.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+            // templates/JavaSDK/entities/params.ts:609:26
             this.session.addAll(session)
         }
 
-        fun addSession(session: String) = apply { this.session.add(session) }
-
-        fun source(source: List<Source>) = apply {
-            this.source.clear()
-            this.source.addAll(source)
+        fun addSession(session: String) = apply { // templates/JavaSDK/entities/params.ts:620:26
+            this.session.add(session)
         }
 
-        fun addSource(source: Source) = apply { this.source.add(source) }
+        fun source(source: List<SourceType>) =
+            apply { // templates/JavaSDK/entities/params.ts:609:26
+                this.source.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+                // templates/JavaSDK/entities/params.ts:609:26
+                this.source.addAll(source)
+            }
 
-        fun user(user: List<String>) = apply {
-            this.user.clear()
+        fun addSource(source: SourceType) = apply { // templates/JavaSDK/entities/params.ts:620:26
+            this.source.add(source)
+        }
+
+        fun user(user: List<String>) = apply { // templates/JavaSDK/entities/params.ts:609:26
+            this.user.clear() // templates/JavaSDK/entities/params.ts:609:26 //
+            // templates/JavaSDK/entities/params.ts:609:26
             this.user.addAll(user)
         }
 
-        fun addUser(user: String) = apply { this.user.add(user) }
-
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllQueryParams(additionalQueryParams)
+        fun addUser(user: String) = apply { // templates/JavaSDK/entities/params.ts:620:26
+            this.user.add(user)
         }
 
-        fun putQueryParam(name: String, value: String) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:703:24
+                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
+                // templates/JavaSDK/entities/params.ts:703:24
+                putAllQueryParams(additionalQueryParams)
+            }
 
-        fun putQueryParams(name: String, values: Iterable<String>) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
+        fun putQueryParam(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:713:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+            }
 
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            additionalQueryParams.forEach(this::putQueryParams)
-        }
+        fun putQueryParams(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:723:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
 
-        fun removeQueryParam(name: String) = apply {
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:733:24
+                additionalQueryParams.forEach(this::putQueryParams)
+            }
+
+        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:755:24
+                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
+                // templates/JavaSDK/entities/params.ts:755:24
+                putAllHeaders(additionalHeaders)
+            }
 
-        fun putHeader(name: String, value: String) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-        }
+        fun putHeader(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:765:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+            }
 
-        fun putHeaders(name: String, values: Iterable<String>) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
+        fun putHeaders(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:775:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
 
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            additionalHeaders.forEach(this::putHeaders)
-        }
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:785:24
+                additionalHeaders.forEach(this::putHeaders)
+            }
 
-        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
+        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
+            this.additionalHeaders.put(name, mutableListOf())
+        }
 
         fun build(): PublicFeedbackListParams =
-            PublicFeedbackListParams(
-                checkNotNull(shareToken) { "`shareToken` is required but was not set" },
+            PublicFeedbackListParams( // templates/JavaSDK/entities/params.ts:683:22
+                checkNotNull(shareToken) { // templates/JavaSDK/entities/params.ts:844:13 //
+                    // templates/JavaSDK/entities/params.ts:683:22
+                    "`shareToken` is required but was not set"
+                },
                 hasComment,
                 hasScore,
                 if (key.size == 0) null else key.toUnmodifiable(),
@@ -258,64 +337,73 @@ constructor(
             )
     }
 
-    class Source
+    class SourceType
     @JsonCreator
     private constructor(
         private val value: JsonField<String>,
-    ) {
+    ) { // templates/JavaSDK/entities/enums.ts:56:13 // templates/JavaSDK/entities/enums.ts:56:13 //
+        // templates/JavaSDK/entities/enums.ts:56:13
 
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+        @com.fasterxml.jackson.annotation.JsonValue // templates/JavaSDK/entities/enums.ts:62:10 //
+        // templates/JavaSDK/entities/enums.ts:56:13
+        fun _value(): JsonField<String> = value
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is Source && this.value == other.value
+            return other is SourceType && // templates/JavaSDK/entities/fields.ts:143:33
+                this.value == other.value
         }
 
         override fun hashCode() = value.hashCode()
 
         override fun toString() = value.toString()
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/enums.ts:71:10
 
-            @JvmField val API = Source(JsonField.of("api"))
+            @JvmField
+            val API = SourceType(JsonField.of("api")) // templates/JavaSDK/entities/enums.ts:71:10
 
-            @JvmField val MODEL = Source(JsonField.of("model"))
+            @JvmField val MODEL = SourceType(JsonField.of("model"))
 
-            @JvmField val APP = Source(JsonField.of("app"))
+            @JvmField val APP = SourceType(JsonField.of("app"))
 
-            @JvmStatic fun of(value: String) = Source(JsonField.of(value))
+            @JvmStatic fun of(value: String) = SourceType(JsonField.of(value))
         }
 
-        enum class Known {
-            API,
+        enum class Known { // templates/JavaSDK/entities/enums.ts:78:10
+            API, // templates/JavaSDK/entities/enums.ts:78:10 //
+            // templates/JavaSDK/entities/enums.ts:78:10
             MODEL,
             APP,
         }
 
-        enum class Value {
-            API,
+        enum class Value { // templates/JavaSDK/entities/enums.ts:82:10
+            API, // templates/JavaSDK/entities/enums.ts:82:10 //
+            // templates/JavaSDK/entities/enums.ts:82:10
             MODEL,
             APP,
             _UNKNOWN,
         }
 
         fun value(): Value =
-            when (this) {
-                API -> Value.API
+            when (this) { // templates/JavaSDK/entities/enums.ts:91:29
+                API -> Value.API // templates/JavaSDK/entities/enums.ts:54:10 //
+                // templates/JavaSDK/entities/enums.ts:54:10
                 MODEL -> Value.MODEL
                 APP -> Value.APP
                 else -> Value._UNKNOWN
             }
 
         fun known(): Known =
-            when (this) {
-                API -> Known.API
+            when (this) { // templates/JavaSDK/entities/enums.ts:104:29
+                API -> Known.API // templates/JavaSDK/entities/enums.ts:54:10 //
+                // templates/JavaSDK/entities/enums.ts:54:10
                 MODEL -> Known.MODEL
                 APP -> Known.APP
-                else -> throw LangSmithInvalidDataException("Unknown Source: $value")
+                else -> throw LangSmithInvalidDataException("Unknown SourceType: $value")
             }
 
         fun asString(): String = _value().asStringOrThrow()

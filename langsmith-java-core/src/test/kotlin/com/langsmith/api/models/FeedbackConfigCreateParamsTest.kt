@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
@@ -6,17 +6,22 @@ import com.langsmith.api.models.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class FeedbackConfigCreateParamsTest {
+class FeedbackConfigCreateParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
+    // templates/JavaSDK/entities/params.ts:907:13 //
+    // templates/JavaSDK/entities/params.ts:907:13
 
-    @Test
-    fun createFeedbackConfigCreateParams() {
-        FeedbackConfigCreateParams.builder()
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
+    // templates/JavaSDK/entities/params.ts:907:13
+    fun createFeedbackConfigCreateParams() { // templates/JavaSDK/entities/testing.ts:18:13
+        FeedbackConfigCreateParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
+            // templates/JavaSDK/entities/params.ts:916:16 //
+            // templates/JavaSDK/entities/params.ts:916:16
             .feedbackConfig(
                 FeedbackConfigCreateParams.FeedbackConfig.builder()
                     .type(FeedbackConfigCreateParams.FeedbackConfig.Type.CONTINUOUS)
                     .categories(
                         listOf(
-                            FeedbackConfigCreateParams.FeedbackConfig.Category.builder()
+                            FeedbackConfigCreateParams.FeedbackConfig.FeedbackCategory.builder()
                                 .value(42.23)
                                 .label("x")
                                 .build()
@@ -30,16 +35,20 @@ class FeedbackConfigCreateParamsTest {
             .build()
     }
 
-    @Test
-    fun getBody() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
+    // templates/JavaSDK/entities/params.ts:1011:17
+    fun getBody() { // templates/JavaSDK/entities/testing.ts:18:13
         val params =
-            FeedbackConfigCreateParams.builder()
+            FeedbackConfigCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
+                // templates/JavaSDK/entities/params.ts:1043:10 //
+                // templates/JavaSDK/entities/params.ts:1042:16 //
+                // templates/JavaSDK/entities/params.ts:1042:16
                 .feedbackConfig(
                     FeedbackConfigCreateParams.FeedbackConfig.builder()
                         .type(FeedbackConfigCreateParams.FeedbackConfig.Type.CONTINUOUS)
                         .categories(
                             listOf(
-                                FeedbackConfigCreateParams.FeedbackConfig.Category.builder()
+                                FeedbackConfigCreateParams.FeedbackConfig.FeedbackCategory.builder()
                                     .value(42.23)
                                     .label("x")
                                     .build()
@@ -55,11 +64,12 @@ class FeedbackConfigCreateParamsTest {
         assertThat(body).isNotNull
         assertThat(body.feedbackConfig())
             .isEqualTo(
-                FeedbackConfigCreateParams.FeedbackConfig.builder()
+                FeedbackConfigCreateParams.FeedbackConfig
+                    .builder() // templates/JavaSDK/entities/params.ts:1055:14
                     .type(FeedbackConfigCreateParams.FeedbackConfig.Type.CONTINUOUS)
                     .categories(
                         listOf(
-                            FeedbackConfigCreateParams.FeedbackConfig.Category.builder()
+                            FeedbackConfigCreateParams.FeedbackConfig.FeedbackCategory.builder()
                                 .value(42.23)
                                 .label("x")
                                 .build()
@@ -72,10 +82,13 @@ class FeedbackConfigCreateParamsTest {
         assertThat(body.feedbackKey()).isEqualTo("string")
     }
 
-    @Test
-    fun getBodyWithoutOptionalFields() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun getBodyWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
         val params =
-            FeedbackConfigCreateParams.builder()
+            FeedbackConfigCreateParams.builder() // templates/JavaSDK/entities/params.ts:1043:10 //
+                // templates/JavaSDK/entities/params.ts:1043:10 //
+                // templates/JavaSDK/entities/params.ts:1042:16 //
+                // templates/JavaSDK/entities/params.ts:1042:16
                 .feedbackConfig(
                     FeedbackConfigCreateParams.FeedbackConfig.builder()
                         .type(FeedbackConfigCreateParams.FeedbackConfig.Type.CONTINUOUS)
@@ -87,7 +100,8 @@ class FeedbackConfigCreateParamsTest {
         assertThat(body).isNotNull
         assertThat(body.feedbackConfig())
             .isEqualTo(
-                FeedbackConfigCreateParams.FeedbackConfig.builder()
+                FeedbackConfigCreateParams.FeedbackConfig
+                    .builder() // templates/JavaSDK/entities/params.ts:1055:14
                     .type(FeedbackConfigCreateParams.FeedbackConfig.Type.CONTINUOUS)
                     .build()
             )

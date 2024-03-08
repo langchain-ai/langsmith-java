@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
@@ -7,11 +7,16 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class DatasetListParamsTest {
+class DatasetListParamsTest { // templates/JavaSDK/entities/params.ts:907:13 //
+    // templates/JavaSDK/entities/params.ts:907:13 //
+    // templates/JavaSDK/entities/params.ts:907:13
 
-    @Test
-    fun createDatasetListParams() {
-        DatasetListParams.builder()
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
+    // templates/JavaSDK/entities/params.ts:907:13
+    fun createDatasetListParams() { // templates/JavaSDK/entities/testing.ts:18:13
+        DatasetListParams.builder() // templates/JavaSDK/entities/params.ts:916:21 //
+            // templates/JavaSDK/entities/params.ts:916:16 //
+            // templates/JavaSDK/entities/params.ts:916:16
             .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .dataType(DatasetListParams.DataType.KV)
@@ -22,10 +27,14 @@ class DatasetListParamsTest {
             .build()
     }
 
-    @Test
-    fun getQueryParams() {
+    @Test // templates/JavaSDK/entities/testing.ts:18:13 //
+    // templates/JavaSDK/entities/params.ts:921:17
+    fun getQueryParams() { // templates/JavaSDK/entities/testing.ts:18:13
         val params =
-            DatasetListParams.builder()
+            DatasetListParams.builder() // templates/JavaSDK/entities/params.ts:954:10 //
+                // templates/JavaSDK/entities/params.ts:954:10 //
+                // templates/JavaSDK/entities/params.ts:953:16 //
+                // templates/JavaSDK/entities/params.ts:953:16
                 .id(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .dataType(DatasetListParams.DataType.KV)
@@ -45,9 +54,11 @@ class DatasetListParamsTest {
         assertThat(params.getQueryParams()).isEqualTo(expected)
     }
 
-    @Test
-    fun getQueryParamsWithoutOptionalFields() {
-        val params = DatasetListParams.builder().build()
+    @Test // templates/JavaSDK/entities/testing.ts:18:13
+    fun getQueryParamsWithoutOptionalFields() { // templates/JavaSDK/entities/testing.ts:18:13
+        val params =
+            DatasetListParams.builder().build() // templates/JavaSDK/entities/params.ts:953:16 //
+        // templates/JavaSDK/entities/params.ts:953:16
         val expected = mutableMapOf<String, List<String>>()
         assertThat(params.getQueryParams()).isEqualTo(expected)
     }

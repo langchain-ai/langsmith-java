@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.services.async
 
@@ -36,9 +36,12 @@ import java.util.concurrent.CompletableFuture
 class DatasetServiceAsyncImpl
 constructor(
     private val clientOptions: ClientOptions,
-) : DatasetServiceAsync {
+) : DatasetServiceAsync { // templates/JavaSDK/services.ts:76:15 //
+    // templates/JavaSDK/services.ts:76:15 //
+    // templates/JavaSDK/services.ts:76:15
 
-    private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
+    private val errorHandler: Handler<LangSmithError> =
+        errorHandler(clientOptions.jsonMapper) // templates/JavaSDK/services.ts:76:15
 
     private val openai: OpenAIServiceAsync by lazy { OpenAIServiceAsyncImpl(clientOptions) }
 
@@ -60,17 +63,29 @@ constructor(
 
     override fun share(): ShareServiceAsync = share
 
-    private val createHandler: Handler<Dataset> =
+    private val createHandler:
+        Handler<
+            Dataset
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<Dataset>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Create a new dataset. */
     override fun create(
         params: DatasetCreateParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<Dataset> {
+    ): CompletableFuture<Dataset> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.POST)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.POST
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("datasets")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
@@ -78,56 +93,98 @@ constructor(
                 .body(json(clientOptions.jsonMapper, params.getBody()))
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { createHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    createHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         validate()
                     }
                 }
         }
     }
 
-    private val retrieveHandler: Handler<Dataset> =
+    private val retrieveHandler:
+        Handler<
+            Dataset
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<Dataset>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Get a specific dataset. */
     override fun retrieve(
         params: DatasetRetrieveParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<Dataset> {
+    ): CompletableFuture<Dataset> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.GET)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.GET
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("datasets", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { retrieveHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    retrieveHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         validate()
                     }
                 }
         }
     }
 
-    private val updateHandler: Handler<DatasetSchemaForUpdate> =
+    private val updateHandler:
+        Handler<
+            DatasetSchemaForUpdate
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<DatasetSchemaForUpdate>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Update a specific dataset. */
     override fun update(
         params: DatasetUpdateParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<DatasetSchemaForUpdate> {
+    ): CompletableFuture<DatasetSchemaForUpdate> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.PATCH)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.PATCH
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("datasets", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
@@ -135,79 +192,144 @@ constructor(
                 .body(json(clientOptions.jsonMapper, params.getBody()))
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { updateHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    updateHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         validate()
                     }
                 }
         }
     }
 
-    private val listHandler: Handler<List<Dataset>> =
+    private val listHandler:
+        Handler<
+            List<Dataset>
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<List<Dataset>>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Get all datasets by query params and owner. */
     override fun list(
         params: DatasetListParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<List<Dataset>> {
+    ): CompletableFuture<List<Dataset>> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.GET)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.GET
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("datasets")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { listHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    listHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         forEach { it.validate() }
                     }
                 }
         }
     }
 
-    private val deleteHandler: Handler<DatasetDeleteResponse> =
+    private val deleteHandler:
+        Handler<
+            DatasetDeleteResponse
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<DatasetDeleteResponse>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Delete a specific dataset. */
     override fun delete(
         params: DatasetDeleteParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<DatasetDeleteResponse> {
+    ): CompletableFuture<DatasetDeleteResponse> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.DELETE)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.DELETE
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("datasets", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
-                .apply { params.getBody().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                .apply { // templates/JavaSDK/services.ts:118:18
+                    params.getBody().ifPresent { // templates/JavaSDK/services.ts:121:41 //
+                        // templates/JavaSDK/services.ts:118:18 //
+                        // templates/JavaSDK/services.ts:118:18
+                        body(json(clientOptions.jsonMapper, it))
+                    }
+                }
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
-            response.use { deleteHandler.handle(it) }
+            -> // templates/JavaSDK/services.ts:230:8
+            response.use { // templates/JavaSDK/services.ts:166:8 //
+                // templates/JavaSDK/services.ts:233:30 //
+                // templates/JavaSDK/services.ts:233:30 //
+                // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                deleteHandler.handle(it)
+            }
         }
     }
 
-    private val uploadHandler: Handler<Dataset> =
+    private val uploadHandler:
+        Handler<
+            Dataset
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<Dataset>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Create a new dataset from a CSV file. */
     override fun upload(
         params: DatasetUploadParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<Dataset> {
+    ): CompletableFuture<Dataset> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.POST)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.POST
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("datasets", "upload")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
@@ -215,11 +337,20 @@ constructor(
                 .body(json(clientOptions.jsonMapper, params.getBody()))
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { uploadHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    uploadHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         validate()
                     }
                 }

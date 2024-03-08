@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -17,11 +19,15 @@ import java.util.Objects
 import java.util.Optional
 
 /** AnnotationQueue schema. */
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13
 @JsonDeserialize(builder = AnnotationQueueSchema.Builder::class)
 @NoAutoDetect
 class AnnotationQueueSchema
-private constructor(
-    private val name: JsonField<String>,
+private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+    private val name: JsonField<String>, // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
     private val description: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val updatedAt: JsonField<OffsetDateTime>,
@@ -30,7 +36,8 @@ private constructor(
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false
+    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+    // templates/JavaSDK/entities/objects.ts:76:13
 
     private var hashCode: Int = 0
 
@@ -49,25 +56,41 @@ private constructor(
 
     fun tenantId(): String = tenantId.getRequired("tenant_id")
 
-    @JsonProperty("name") @ExcludeMissing fun _name() = name
+    @JsonProperty("name") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _name() = name
 
-    @JsonProperty("description") @ExcludeMissing fun _description() = description
+    @JsonProperty("description") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _description() = description
 
-    @JsonProperty("created_at") @ExcludeMissing fun _createdAt() = createdAt
+    @JsonProperty("created_at") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _createdAt() = createdAt
 
-    @JsonProperty("updated_at") @ExcludeMissing fun _updatedAt() = updatedAt
+    @JsonProperty("updated_at") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _updatedAt() = updatedAt
 
-    @JsonProperty("id") @ExcludeMissing fun _id() = id
+    @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _id() = id
 
-    @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId() = tenantId
+    @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _tenantId() = tenantId
 
-    @JsonAnyGetter
+    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+    // templates/JavaSDK/entities/objects.ts:180:12
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): AnnotationQueueSchema = apply {
-        if (!validated) {
-            name()
+    fun validate(): AnnotationQueueSchema = apply { // templates/JavaSDK/entities/objects.ts:198:28
+        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:198:28 //
+            // templates/JavaSDK/entities/objects.ts:198:28
+            name() // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:201:20
             description()
             createdAt()
             updatedAt()
@@ -79,12 +102,12 @@ private constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is AnnotationQueueSchema &&
+        return other is AnnotationQueueSchema && // templates/JavaSDK/entities/fields.ts:143:33
             this.name == other.name &&
             this.description == other.description &&
             this.createdAt == other.createdAt &&
@@ -94,11 +117,15 @@ private constructor(
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int {
-        if (hashCode == 0) {
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16
             hashCode =
-                Objects.hash(
-                    name,
+                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                    // templates/JavaSDK/entities/fields.ts:175:16 //
+                    // templates/JavaSDK/entities/fields.ts:175:16
+                    name, // templates/JavaSDK/entities/fields.ts:163:19
                     description,
                     createdAt,
                     updatedAt,
@@ -113,14 +140,21 @@ private constructor(
     override fun toString() =
         "AnnotationQueueSchema{name=$name, description=$description, createdAt=$createdAt, updatedAt=$updatedAt, id=$id, tenantId=$tenantId, additionalProperties=$additionalProperties}"
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+        // templates/JavaSDK/entities/objects.ts:217:10
+        fun builder() = Builder()
     }
 
-    class Builder {
+    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10
 
-        private var name: JsonField<String> = JsonMissing.of()
+        private var name: JsonField<String> =
+            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:224:10
         private var description: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -128,68 +162,98 @@ private constructor(
         private var tenantId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(annotationQueueSchema: AnnotationQueueSchema) = apply {
-            this.name = annotationQueueSchema.name
-            this.description = annotationQueueSchema.description
-            this.createdAt = annotationQueueSchema.createdAt
-            this.updatedAt = annotationQueueSchema.updatedAt
-            this.id = annotationQueueSchema.id
-            this.tenantId = annotationQueueSchema.tenantId
-            additionalProperties(annotationQueueSchema.additionalProperties)
+        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+        internal fun from(annotationQueueSchema: AnnotationQueueSchema) =
+            apply { // templates/JavaSDK/entities/objects.ts:240:30
+                this.name =
+                    annotationQueueSchema.name // templates/JavaSDK/entities/objects.ts:240:30 //
+                // templates/JavaSDK/entities/objects.ts:240:30
+                this.description = annotationQueueSchema.description
+                this.createdAt = annotationQueueSchema.createdAt
+                this.updatedAt = annotationQueueSchema.updatedAt
+                this.id = annotationQueueSchema.id
+                this.tenantId = annotationQueueSchema.tenantId
+                additionalProperties(annotationQueueSchema.additionalProperties)
+            }
+
+        fun name(name: String) =
+            name(JsonField.of(name)) // templates/JavaSDK/entities/objects.ts:252:20
+
+        @JsonProperty("name") // templates/JavaSDK/entities/objects.ts:264:20
+        @ExcludeMissing
+        fun name(name: JsonField<String>) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+            this.name = name
         }
 
-        fun name(name: String) = name(JsonField.of(name))
+        fun description(description: String) =
+            description(JsonField.of(description)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("name")
+        @JsonProperty("description") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun name(name: JsonField<String>) = apply { this.name = name }
+        fun description(description: JsonField<String>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.description = description
+            }
 
-        fun description(description: String) = description(JsonField.of(description))
+        fun createdAt(createdAt: OffsetDateTime) =
+            createdAt(JsonField.of(createdAt)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("description")
+        @JsonProperty("created_at") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun description(description: JsonField<String>) = apply { this.description = description }
+        fun createdAt(createdAt: JsonField<OffsetDateTime>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.createdAt = createdAt
+            }
 
-        fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+        fun updatedAt(updatedAt: OffsetDateTime) =
+            updatedAt(JsonField.of(updatedAt)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("created_at")
+        @JsonProperty("updated_at") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
+        fun updatedAt(updatedAt: JsonField<OffsetDateTime>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.updatedAt = updatedAt
+            }
 
-        fun updatedAt(updatedAt: OffsetDateTime) = updatedAt(JsonField.of(updatedAt))
+        fun id(id: String) = id(JsonField.of(id)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("updated_at")
+        @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun updatedAt(updatedAt: JsonField<OffsetDateTime>) = apply { this.updatedAt = updatedAt }
-
-        fun id(id: String) = id(JsonField.of(id))
-
-        @JsonProperty("id") @ExcludeMissing fun id(id: JsonField<String>) = apply { this.id = id }
-
-        fun tenantId(tenantId: String) = tenantId(JsonField.of(tenantId))
-
-        @JsonProperty("tenant_id")
-        @ExcludeMissing
-        fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
-
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.clear()
-            this.additionalProperties.putAll(additionalProperties)
+        fun id(id: JsonField<String>) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+            this.id = id
         }
 
-        @JsonAnySetter
-        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-            this.additionalProperties.put(key, value)
-        }
+        fun tenantId(tenantId: String) =
+            tenantId(JsonField.of(tenantId)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:264:20
+        @ExcludeMissing
+        fun tenantId(tenantId: JsonField<String>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.tenantId = tenantId
+            }
+
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+        fun putAdditionalProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/objects.ts:304:30
+                this.additionalProperties.put(key, value)
+            }
+
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:316:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
         fun build(): AnnotationQueueSchema =
-            AnnotationQueueSchema(
-                name,
+            AnnotationQueueSchema( // templates/JavaSDK/entities/objects.ts:326:30
+                name, // templates/JavaSDK/entities/objects.ts:326:30
                 description,
                 createdAt,
                 updatedAt,

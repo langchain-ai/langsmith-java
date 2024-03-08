@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -17,39 +19,54 @@ import java.util.Objects
 import java.util.Optional
 
 /** Tenant members schema. */
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+// templates/JavaSDK/entities/objects.ts:76:13
 @JsonDeserialize(builder = TenantMembers.Builder::class)
 @NoAutoDetect
 class TenantMembers
-private constructor(
-    private val tenantId: JsonField<String>,
-    private val members: JsonField<List<Member>>,
+private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+    private val tenantId: JsonField<String>, // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
+    private val members: JsonField<List<TenantMemberIdentity>>,
     private val pending: JsonField<List<PendingIdentity>>,
     private val additionalProperties: Map<String, JsonValue>,
 ) {
 
-    private var validated: Boolean = false
+    private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+    // templates/JavaSDK/entities/objects.ts:76:13
 
     private var hashCode: Int = 0
 
     fun tenantId(): String = tenantId.getRequired("tenant_id")
 
-    fun members(): List<Member> = members.getRequired("members")
+    fun members(): List<TenantMemberIdentity> = members.getRequired("members")
 
     fun pending(): List<PendingIdentity> = pending.getRequired("pending")
 
-    @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId() = tenantId
+    @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _tenantId() = tenantId
 
-    @JsonProperty("members") @ExcludeMissing fun _members() = members
+    @JsonProperty("members") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _members() = members
 
-    @JsonProperty("pending") @ExcludeMissing fun _pending() = pending
+    @JsonProperty("pending") // templates/JavaSDK/entities/objects.ts:166:16
+    @ExcludeMissing
+    fun _pending() = pending
 
-    @JsonAnyGetter
+    @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+    // templates/JavaSDK/entities/objects.ts:180:12
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-    fun validate(): TenantMembers = apply {
-        if (!validated) {
-            tenantId()
+    fun validate(): TenantMembers = apply { // templates/JavaSDK/entities/objects.ts:198:28
+        if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:198:28 //
+            // templates/JavaSDK/entities/objects.ts:198:28
+            tenantId() // templates/JavaSDK/entities/objects.ts:201:20 //
+            // templates/JavaSDK/entities/objects.ts:201:20
             members().forEach { it.validate() }
             pending().forEach { it.validate() }
             validated = true
@@ -58,23 +75,27 @@ private constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is TenantMembers &&
+        return other is TenantMembers && // templates/JavaSDK/entities/fields.ts:143:33
             this.tenantId == other.tenantId &&
             this.members == other.members &&
             this.pending == other.pending &&
             this.additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int {
-        if (hashCode == 0) {
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16 //
+            // templates/JavaSDK/entities/fields.ts:174:16
             hashCode =
-                Objects.hash(
-                    tenantId,
+                Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                    // templates/JavaSDK/entities/fields.ts:175:16 //
+                    // templates/JavaSDK/entities/fields.ts:175:16
+                    tenantId, // templates/JavaSDK/entities/fields.ts:163:19
                     members,
                     pending,
                     additionalProperties,
@@ -86,72 +107,103 @@ private constructor(
     override fun toString() =
         "TenantMembers{tenantId=$tenantId, members=$members, pending=$pending, additionalProperties=$additionalProperties}"
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+        // templates/JavaSDK/entities/objects.ts:217:10
+        fun builder() = Builder()
     }
 
-    class Builder {
+    class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10 //
+        // templates/JavaSDK/entities/objects.ts:224:10
 
-        private var tenantId: JsonField<String> = JsonMissing.of()
-        private var members: JsonField<List<Member>> = JsonMissing.of()
+        private var tenantId: JsonField<String> =
+            JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:226:16 //
+        // templates/JavaSDK/entities/objects.ts:224:10
+        private var members: JsonField<List<TenantMemberIdentity>> = JsonMissing.of()
         private var pending: JsonField<List<PendingIdentity>> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(tenantMembers: TenantMembers) = apply {
-            this.tenantId = tenantMembers.tenantId
-            this.members = tenantMembers.members
-            this.pending = tenantMembers.pending
-            additionalProperties(tenantMembers.additionalProperties)
-        }
+        @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+        internal fun from(tenantMembers: TenantMembers) =
+            apply { // templates/JavaSDK/entities/objects.ts:240:30
+                this.tenantId =
+                    tenantMembers.tenantId // templates/JavaSDK/entities/objects.ts:240:30 //
+                // templates/JavaSDK/entities/objects.ts:240:30
+                this.members = tenantMembers.members
+                this.pending = tenantMembers.pending
+                additionalProperties(tenantMembers.additionalProperties)
+            }
 
-        fun tenantId(tenantId: String) = tenantId(JsonField.of(tenantId))
+        fun tenantId(tenantId: String) =
+            tenantId(JsonField.of(tenantId)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("tenant_id")
+        @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
+        fun tenantId(tenantId: JsonField<String>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.tenantId = tenantId
+            }
 
-        fun members(members: List<Member>) = members(JsonField.of(members))
+        fun members(members: List<TenantMemberIdentity>) =
+            members(JsonField.of(members)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("members")
+        @JsonProperty("members") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun members(members: JsonField<List<Member>>) = apply { this.members = members }
+        fun members(members: JsonField<List<TenantMemberIdentity>>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.members = members
+            }
 
-        fun pending(pending: List<PendingIdentity>) = pending(JsonField.of(pending))
+        fun pending(pending: List<PendingIdentity>) =
+            pending(JsonField.of(pending)) // templates/JavaSDK/entities/objects.ts:252:20
 
-        @JsonProperty("pending")
+        @JsonProperty("pending") // templates/JavaSDK/entities/objects.ts:264:20
         @ExcludeMissing
-        fun pending(pending: JsonField<List<PendingIdentity>>) = apply { this.pending = pending }
+        fun pending(pending: JsonField<List<PendingIdentity>>) =
+            apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.pending = pending
+            }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.clear()
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                // templates/JavaSDK/entities/objects.ts:290:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
-        @JsonAnySetter
-        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-            this.additionalProperties.put(key, value)
-        }
+        @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+        fun putAdditionalProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/objects.ts:304:30
+                this.additionalProperties.put(key, value)
+            }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/objects.ts:316:30
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
         fun build(): TenantMembers =
-            TenantMembers(
-                tenantId,
+            TenantMembers( // templates/JavaSDK/entities/objects.ts:326:30
+                tenantId, // templates/JavaSDK/entities/objects.ts:326:30
                 members.map { it.toUnmodifiable() },
                 pending.map { it.toUnmodifiable() },
                 additionalProperties.toUnmodifiable(),
             )
     }
 
-    @JsonDeserialize(builder = Member.Builder::class)
+    @JsonDeserialize(
+        builder = TenantMemberIdentity.Builder::class
+    ) // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
+    // // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13
     @NoAutoDetect
-    class Member
-    private constructor(
-        private val id: JsonField<String>,
+    class TenantMemberIdentity
+    private constructor( // templates/JavaSDK/entities/objects.ts:76:13
+        private val id: JsonField<String>, // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         private val tenantId: JsonField<String>,
         private val organizationId: JsonField<String>,
         private val createdAt: JsonField<OffsetDateTime>,
@@ -163,7 +215,8 @@ private constructor(
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var validated: Boolean = false
+        private var validated: Boolean = false // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
         private var hashCode: Int = 0
 
@@ -186,51 +239,74 @@ private constructor(
 
         fun avatarUrl(): Optional<String> = Optional.ofNullable(avatarUrl.getNullable("avatar_url"))
 
-        @JsonProperty("id") @ExcludeMissing fun _id() = id
+        @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _id() = id
 
-        @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId() = tenantId
+        @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _tenantId() = tenantId
 
-        @JsonProperty("organization_id") @ExcludeMissing fun _organizationId() = organizationId
+        @JsonProperty("organization_id") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _organizationId() = organizationId
 
-        @JsonProperty("created_at") @ExcludeMissing fun _createdAt() = createdAt
+        @JsonProperty("created_at") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _createdAt() = createdAt
 
-        @JsonProperty("user_id") @ExcludeMissing fun _userId() = userId
+        @JsonProperty("user_id") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _userId() = userId
 
-        @JsonProperty("read_only") @ExcludeMissing fun _readOnly() = readOnly
+        @JsonProperty("read_only") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _readOnly() = readOnly
 
-        @JsonProperty("email") @ExcludeMissing fun _email() = email
+        @JsonProperty("email") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _email() = email
 
-        @JsonProperty("full_name") @ExcludeMissing fun _fullName() = fullName
+        @JsonProperty("full_name") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _fullName() = fullName
 
-        @JsonProperty("avatar_url") @ExcludeMissing fun _avatarUrl() = avatarUrl
+        @JsonProperty("avatar_url") // templates/JavaSDK/entities/objects.ts:166:16
+        @ExcludeMissing
+        fun _avatarUrl() = avatarUrl
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
-        fun validate(): Member = apply {
-            if (!validated) {
-                id()
-                tenantId()
-                organizationId()
-                createdAt()
-                userId()
-                readOnly()
-                email()
-                fullName()
-                avatarUrl()
-                validated = true
+        fun validate(): TenantMemberIdentity =
+            apply { // templates/JavaSDK/entities/objects.ts:198:28
+                if (!validated) { // templates/JavaSDK/entities/objects.ts:201:20 //
+                    // templates/JavaSDK/entities/objects.ts:198:28 //
+                    // templates/JavaSDK/entities/objects.ts:198:28
+                    id() // templates/JavaSDK/entities/objects.ts:201:20 //
+                    // templates/JavaSDK/entities/objects.ts:201:20
+                    tenantId()
+                    organizationId()
+                    createdAt()
+                    userId()
+                    readOnly()
+                    email()
+                    fullName()
+                    avatarUrl()
+                    validated = true
+                }
             }
-        }
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is Member &&
+            return other is TenantMemberIdentity && // templates/JavaSDK/entities/fields.ts:143:33
                 this.id == other.id &&
                 this.tenantId == other.tenantId &&
                 this.organizationId == other.organizationId &&
@@ -243,11 +319,15 @@ private constructor(
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        id,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        id, // templates/JavaSDK/entities/fields.ts:163:19
                         tenantId,
                         organizationId,
                         createdAt,
@@ -263,16 +343,23 @@ private constructor(
         }
 
         override fun toString() =
-            "Member{id=$id, tenantId=$tenantId, organizationId=$organizationId, createdAt=$createdAt, userId=$userId, readOnly=$readOnly, email=$email, fullName=$fullName, avatarUrl=$avatarUrl, additionalProperties=$additionalProperties}"
+            "TenantMemberIdentity{id=$id, tenantId=$tenantId, organizationId=$organizationId, createdAt=$createdAt, userId=$userId, readOnly=$readOnly, email=$email, fullName=$fullName, avatarUrl=$avatarUrl, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var id: JsonField<String> = JsonMissing.of()
+            private var id: JsonField<String> =
+                JsonMissing.of() // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var tenantId: JsonField<String> = JsonMissing.of()
             private var organizationId: JsonField<String> = JsonMissing.of()
             private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -283,96 +370,136 @@ private constructor(
             private var avatarUrl: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(member: Member) = apply {
-                this.id = member.id
-                this.tenantId = member.tenantId
-                this.organizationId = member.organizationId
-                this.createdAt = member.createdAt
-                this.userId = member.userId
-                this.readOnly = member.readOnly
-                this.email = member.email
-                this.fullName = member.fullName
-                this.avatarUrl = member.avatarUrl
-                additionalProperties(member.additionalProperties)
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(tenantMemberIdentity: TenantMemberIdentity) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.id =
+                        tenantMemberIdentity.id // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.tenantId = tenantMemberIdentity.tenantId
+                    this.organizationId = tenantMemberIdentity.organizationId
+                    this.createdAt = tenantMemberIdentity.createdAt
+                    this.userId = tenantMemberIdentity.userId
+                    this.readOnly = tenantMemberIdentity.readOnly
+                    this.email = tenantMemberIdentity.email
+                    this.fullName = tenantMemberIdentity.fullName
+                    this.avatarUrl = tenantMemberIdentity.avatarUrl
+                    additionalProperties(tenantMemberIdentity.additionalProperties)
+                }
+
+            fun id(id: String) =
+                id(JsonField.of(id)) // templates/JavaSDK/entities/objects.ts:252:20
+
+            @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:264:20
+            @ExcludeMissing
+            fun id(id: JsonField<String>) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.id = id
             }
 
-            fun id(id: String) = id(JsonField.of(id))
+            fun tenantId(tenantId: String) =
+                tenantId(JsonField.of(tenantId)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("id")
+            @JsonProperty("tenant_id") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun id(id: JsonField<String>) = apply { this.id = id }
-
-            fun tenantId(tenantId: String) = tenantId(JsonField.of(tenantId))
-
-            @JsonProperty("tenant_id")
-            @ExcludeMissing
-            fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
+            fun tenantId(tenantId: JsonField<String>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.tenantId = tenantId
+                }
 
             fun organizationId(organizationId: String) =
-                organizationId(JsonField.of(organizationId))
+                organizationId(
+                    JsonField.of(organizationId)
+                ) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("organization_id")
+            @JsonProperty("organization_id") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun organizationId(organizationId: JsonField<String>) = apply {
-                this.organizationId = organizationId
-            }
+            fun organizationId(organizationId: JsonField<String>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.organizationId = organizationId
+                }
 
-            fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+            fun createdAt(createdAt: OffsetDateTime) =
+                createdAt(JsonField.of(createdAt)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("created_at")
+            @JsonProperty("created_at") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply {
-                this.createdAt = createdAt
-            }
+            fun createdAt(createdAt: JsonField<OffsetDateTime>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.createdAt = createdAt
+                }
 
-            fun userId(userId: String) = userId(JsonField.of(userId))
+            fun userId(userId: String) =
+                userId(JsonField.of(userId)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("user_id")
+            @JsonProperty("user_id") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun userId(userId: JsonField<String>) = apply { this.userId = userId }
+            fun userId(userId: JsonField<String>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.userId = userId
+                }
 
-            fun readOnly(readOnly: Boolean) = readOnly(JsonField.of(readOnly))
+            fun readOnly(readOnly: Boolean) =
+                readOnly(JsonField.of(readOnly)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("read_only")
+            @JsonProperty("read_only") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun readOnly(readOnly: JsonField<Boolean>) = apply { this.readOnly = readOnly }
+            fun readOnly(readOnly: JsonField<Boolean>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.readOnly = readOnly
+                }
 
-            fun email(email: String) = email(JsonField.of(email))
+            fun email(email: String) =
+                email(JsonField.of(email)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("email")
+            @JsonProperty("email") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun email(email: JsonField<String>) = apply { this.email = email }
+            fun email(email: JsonField<String>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.email = email
+                }
 
-            fun fullName(fullName: String) = fullName(JsonField.of(fullName))
+            fun fullName(fullName: String) =
+                fullName(JsonField.of(fullName)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("full_name")
+            @JsonProperty("full_name") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun fullName(fullName: JsonField<String>) = apply { this.fullName = fullName }
+            fun fullName(fullName: JsonField<String>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.fullName = fullName
+                }
 
-            fun avatarUrl(avatarUrl: String) = avatarUrl(JsonField.of(avatarUrl))
+            fun avatarUrl(avatarUrl: String) =
+                avatarUrl(JsonField.of(avatarUrl)) // templates/JavaSDK/entities/objects.ts:252:20
 
-            @JsonProperty("avatar_url")
+            @JsonProperty("avatar_url") // templates/JavaSDK/entities/objects.ts:264:20
             @ExcludeMissing
-            fun avatarUrl(avatarUrl: JsonField<String>) = apply { this.avatarUrl = avatarUrl }
+            fun avatarUrl(avatarUrl: JsonField<String>) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.avatarUrl = avatarUrl
+                }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
-            }
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            fun build(): Member =
-                Member(
-                    id,
+            fun build(): TenantMemberIdentity =
+                TenantMemberIdentity( // templates/JavaSDK/entities/objects.ts:326:30
+                    id, // templates/JavaSDK/entities/objects.ts:326:30
                     tenantId,
                     organizationId,
                     createdAt,

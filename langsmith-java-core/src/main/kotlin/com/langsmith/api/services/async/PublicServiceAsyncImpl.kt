@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.services.async
 
@@ -20,9 +20,12 @@ import com.langsmith.api.services.errorHandler
 class PublicServiceAsyncImpl
 constructor(
     private val clientOptions: ClientOptions,
-) : PublicServiceAsync {
+) : PublicServiceAsync { // templates/JavaSDK/services.ts:76:15 //
+    // templates/JavaSDK/services.ts:76:15 //
+    // templates/JavaSDK/services.ts:76:15
 
-    private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
+    private val errorHandler: Handler<LangSmithError> =
+        errorHandler(clientOptions.jsonMapper) // templates/JavaSDK/services.ts:76:15
 
     private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
 

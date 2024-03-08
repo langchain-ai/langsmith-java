@@ -1,8 +1,10 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
+// //
+// templates/JavaSDK/components/file.ts:28:17
+import com.fasterxml.jackson.annotation.JsonAnyGetter // templates/JavaSDK/components/file.ts:28:17
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -16,8 +18,12 @@ import java.util.Objects
 import java.util.Optional
 
 class SessionCreateParams
-constructor(
-    private val id: String?,
+constructor( // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
+    private val id: String?, // templates/JavaSDK/entities/params.ts:131:13 //
+    // templates/JavaSDK/entities/params.ts:131:13
     private val defaultDatasetId: String?,
     private val description: String?,
     private val endTime: OffsetDateTime?,
@@ -31,7 +37,9 @@ constructor(
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun id(): Optional<String> = Optional.ofNullable(id)
+    fun id(): Optional<String> =
+        Optional.ofNullable(id) // templates/JavaSDK/entities/params.ts:145:14 //
+    // templates/JavaSDK/entities/params.ts:131:13
 
     fun defaultDatasetId(): Optional<String> = Optional.ofNullable(defaultDatasetId)
 
@@ -49,10 +57,11 @@ constructor(
 
     fun upsert(): Optional<Boolean> = Optional.ofNullable(upsert)
 
-    @JvmSynthetic
-    internal fun getBody(): SessionCreateBody {
-        return SessionCreateBody(
-            id,
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:165:16
+    internal fun getBody(): SessionCreateBody { // templates/JavaSDK/entities/params.ts:165:16
+        return SessionCreateBody( // templates/JavaSDK/entities/params.ts:180:26 //
+            // templates/JavaSDK/entities/params.ts:179:24
+            id, // templates/JavaSDK/entities/params.ts:180:26
             defaultDatasetId,
             description,
             endTime,
@@ -64,22 +73,32 @@ constructor(
         )
     }
 
-    @JvmSynthetic
-    internal fun getQueryParams(): Map<String, List<String>> {
-        val params = mutableMapOf<String, List<String>>()
-        this.upsert?.let { params.put("upsert", listOf(it.toString())) }
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:201:14
+    internal fun getQueryParams():
+        Map<String, List<String>> { // templates/JavaSDK/entities/params.ts:201:14
+        val params =
+            mutableMapOf<String, List<String>>() // templates/JavaSDK/entities/params.ts:210:30 //
+        // templates/JavaSDK/entities/params.ts:210:30
+        this.upsert?.let { // templates/JavaSDK/entities/objects.ts:462:15
+            params.put("upsert", listOf(it.toString()))
+        }
         params.putAll(additionalQueryParams)
         return params.toUnmodifiable()
     }
 
-    @JvmSynthetic internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
+    @JvmSynthetic // templates/JavaSDK/entities/params.ts:540:6
+    internal fun getHeaders(): Map<String, List<String>> = additionalHeaders
 
     /** Create class for TracerSession. */
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13 // templates/JavaSDK/entities/objects.ts:76:13 //
+    // templates/JavaSDK/entities/objects.ts:76:13
     @JsonDeserialize(builder = SessionCreateBody.Builder::class)
     @NoAutoDetect
     class SessionCreateBody
-    internal constructor(
-        private val id: String?,
+    internal constructor( // templates/JavaSDK/entities/objects.ts:76:13
+        private val id: String?, // templates/JavaSDK/entities/objects.ts:76:13 //
+        // templates/JavaSDK/entities/objects.ts:76:13
         private val defaultDatasetId: String?,
         private val description: String?,
         private val endTime: OffsetDateTime?,
@@ -90,36 +109,46 @@ constructor(
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
-        private var hashCode: Int = 0
+        private var hashCode: Int = 0 // templates/JavaSDK/entities/objects.ts:94:14 //
+        // templates/JavaSDK/entities/objects.ts:76:13
 
-        @JsonProperty("id") fun id(): String? = id
+        @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:113:14
+        fun id(): String? = id
 
-        @JsonProperty("default_dataset_id") fun defaultDatasetId(): String? = defaultDatasetId
+        @JsonProperty("default_dataset_id") // templates/JavaSDK/entities/objects.ts:113:14
+        fun defaultDatasetId(): String? = defaultDatasetId
 
-        @JsonProperty("description") fun description(): String? = description
+        @JsonProperty("description") // templates/JavaSDK/entities/objects.ts:113:14
+        fun description(): String? = description
 
-        @JsonProperty("end_time") fun endTime(): OffsetDateTime? = endTime
+        @JsonProperty("end_time") // templates/JavaSDK/entities/objects.ts:113:14
+        fun endTime(): OffsetDateTime? = endTime
 
-        @JsonProperty("extra") fun extra(): JsonValue? = extra
+        @JsonProperty("extra") // templates/JavaSDK/entities/objects.ts:113:14
+        fun extra(): JsonValue? = extra
 
-        @JsonProperty("name") fun name(): String? = name
+        @JsonProperty("name") // templates/JavaSDK/entities/objects.ts:113:14
+        fun name(): String? = name
 
-        @JsonProperty("reference_dataset_id") fun referenceDatasetId(): String? = referenceDatasetId
+        @JsonProperty("reference_dataset_id") // templates/JavaSDK/entities/objects.ts:113:14
+        fun referenceDatasetId(): String? = referenceDatasetId
 
-        @JsonProperty("start_time") fun startTime(): OffsetDateTime? = startTime
+        @JsonProperty("start_time") // templates/JavaSDK/entities/objects.ts:113:14
+        fun startTime(): OffsetDateTime? = startTime
 
-        @JsonAnyGetter
+        @JsonAnyGetter // templates/JavaSDK/entities/objects.ts:180:12 //
+        // templates/JavaSDK/entities/objects.ts:180:12
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
+        override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+            if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
                 return true
             }
 
-            return other is SessionCreateBody &&
+            return other is SessionCreateBody && // templates/JavaSDK/entities/fields.ts:143:33
                 this.id == other.id &&
                 this.defaultDatasetId == other.defaultDatasetId &&
                 this.description == other.description &&
@@ -131,11 +160,15 @@ constructor(
                 this.additionalProperties == other.additionalProperties
         }
 
-        override fun hashCode(): Int {
-            if (hashCode == 0) {
+        override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+            if (hashCode == 0) { // templates/JavaSDK/entities/fields.ts:175:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16 //
+                // templates/JavaSDK/entities/fields.ts:174:16
                 hashCode =
-                    Objects.hash(
-                        id,
+                    Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+                        // templates/JavaSDK/entities/fields.ts:175:16 //
+                        // templates/JavaSDK/entities/fields.ts:175:16
+                        id, // templates/JavaSDK/entities/fields.ts:163:19
                         defaultDatasetId,
                         description,
                         endTime,
@@ -152,14 +185,20 @@ constructor(
         override fun toString() =
             "SessionCreateBody{id=$id, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, extra=$extra, name=$name, referenceDatasetId=$referenceDatasetId, startTime=$startTime, additionalProperties=$additionalProperties}"
 
-        companion object {
+        companion object { // templates/JavaSDK/entities/objects.ts:217:10
 
-            @JvmStatic fun builder() = Builder()
+            @JvmStatic // templates/JavaSDK/entities/objects.ts:218:12 //
+            // templates/JavaSDK/entities/objects.ts:217:10
+            fun builder() = Builder()
         }
 
-        class Builder {
+        class Builder { // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10 //
+            // templates/JavaSDK/entities/objects.ts:224:10
 
-            private var id: String? = null
+            private var id: String? = null // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:226:16 //
+            // templates/JavaSDK/entities/objects.ts:224:10
             private var defaultDatasetId: String? = null
             private var description: String? = null
             private var endTime: OffsetDateTime? = null
@@ -169,61 +208,97 @@ constructor(
             private var startTime: OffsetDateTime? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            @JvmSynthetic
-            internal fun from(sessionCreateBody: SessionCreateBody) = apply {
-                this.id = sessionCreateBody.id
-                this.defaultDatasetId = sessionCreateBody.defaultDatasetId
-                this.description = sessionCreateBody.description
-                this.endTime = sessionCreateBody.endTime
-                this.extra = sessionCreateBody.extra
-                this.name = sessionCreateBody.name
-                this.referenceDatasetId = sessionCreateBody.referenceDatasetId
-                this.startTime = sessionCreateBody.startTime
-                additionalProperties(sessionCreateBody.additionalProperties)
+            @JvmSynthetic // templates/JavaSDK/entities/objects.ts:234:14
+            internal fun from(sessionCreateBody: SessionCreateBody) =
+                apply { // templates/JavaSDK/entities/objects.ts:240:30
+                    this.id =
+                        sessionCreateBody.id // templates/JavaSDK/entities/objects.ts:240:30 //
+                    // templates/JavaSDK/entities/objects.ts:240:30
+                    this.defaultDatasetId = sessionCreateBody.defaultDatasetId
+                    this.description = sessionCreateBody.description
+                    this.endTime = sessionCreateBody.endTime
+                    this.extra = sessionCreateBody.extra
+                    this.name = sessionCreateBody.name
+                    this.referenceDatasetId = sessionCreateBody.referenceDatasetId
+                    this.startTime = sessionCreateBody.startTime
+                    additionalProperties(sessionCreateBody.additionalProperties)
+                }
+
+            @JsonProperty("id") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun id(id: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.id = id
             }
 
-            @JsonProperty("id") fun id(id: String) = apply { this.id = id }
+            @JsonProperty("default_dataset_id") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun defaultDatasetId(defaultDatasetId: String) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.defaultDatasetId = defaultDatasetId
+                }
 
-            @JsonProperty("default_dataset_id")
-            fun defaultDatasetId(defaultDatasetId: String) = apply {
-                this.defaultDatasetId = defaultDatasetId
+            @JsonProperty("description") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun description(description: String) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.description = description
+                }
+
+            @JsonProperty("end_time") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun endTime(endTime: OffsetDateTime) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.endTime = endTime
+                }
+
+            @JsonProperty("extra") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun extra(extra: JsonValue) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.extra = extra
             }
 
-            @JsonProperty("description")
-            fun description(description: String) = apply { this.description = description }
-
-            @JsonProperty("end_time")
-            fun endTime(endTime: OffsetDateTime) = apply { this.endTime = endTime }
-
-            @JsonProperty("extra") fun extra(extra: JsonValue) = apply { this.extra = extra }
-
-            @JsonProperty("name") fun name(name: String) = apply { this.name = name }
-
-            @JsonProperty("reference_dataset_id")
-            fun referenceDatasetId(referenceDatasetId: String) = apply {
-                this.referenceDatasetId = referenceDatasetId
+            @JsonProperty("name") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun name(name: String) = apply { // templates/JavaSDK/entities/objects.ts:275:36
+                this.name = name
             }
 
-            @JsonProperty("start_time")
-            fun startTime(startTime: OffsetDateTime) = apply { this.startTime = startTime }
+            @JsonProperty("reference_dataset_id") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun referenceDatasetId(referenceDatasetId: String) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.referenceDatasetId = referenceDatasetId
+                }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            @JsonProperty("start_time") // templates/JavaSDK/entities/objects.ts:264:20 //
+            // templates/JavaSDK/entities/objects.ts:252:20
+            fun startTime(startTime: OffsetDateTime) =
+                apply { // templates/JavaSDK/entities/objects.ts:275:36
+                    this.startTime = startTime
+                }
 
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties
+                        .clear() // templates/JavaSDK/entities/objects.ts:290:30 //
+                    // templates/JavaSDK/entities/objects.ts:290:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            @JsonAnySetter // templates/JavaSDK/entities/objects.ts:299:14
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply { // templates/JavaSDK/entities/objects.ts:304:30
+                    this.additionalProperties.put(key, value)
+                }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply { // templates/JavaSDK/entities/objects.ts:316:30
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
             fun build(): SessionCreateBody =
-                SessionCreateBody(
-                    id,
+                SessionCreateBody( // templates/JavaSDK/entities/objects.ts:326:30
+                    id, // templates/JavaSDK/entities/objects.ts:326:30
                     defaultDatasetId,
                     description,
                     endTime,
@@ -242,12 +317,12 @@ constructor(
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) {
+    override fun equals(other: Any?): Boolean { // templates/JavaSDK/entities/fields.ts:131:6
+        if (this === other) { // templates/JavaSDK/entities/fields.ts:137:19
             return true
         }
 
-        return other is SessionCreateParams &&
+        return other is SessionCreateParams && // templates/JavaSDK/entities/fields.ts:143:33
             this.id == other.id &&
             this.defaultDatasetId == other.defaultDatasetId &&
             this.description == other.description &&
@@ -262,9 +337,10 @@ constructor(
             this.additionalBodyProperties == other.additionalBodyProperties
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(
-            id,
+    override fun hashCode(): Int { // templates/JavaSDK/entities/fields.ts:167:13
+        return Objects.hash( // templates/JavaSDK/entities/fields.ts:163:19 //
+            // templates/JavaSDK/entities/fields.ts:181:14
+            id, // templates/JavaSDK/entities/fields.ts:163:19
             defaultDatasetId,
             description,
             endTime,
@@ -284,15 +360,20 @@ constructor(
 
     fun toBuilder() = Builder().from(this)
 
-    companion object {
+    companion object { // templates/JavaSDK/entities/builders.ts:8:8
 
-        @JvmStatic fun builder() = Builder()
+        @JvmStatic // templates/JavaSDK/entities/builders.ts:9:10 //
+        // templates/JavaSDK/entities/builders.ts:8:8
+        fun builder() = Builder()
     }
 
-    @NoAutoDetect
-    class Builder {
+    @NoAutoDetect // templates/JavaSDK/entities/params.ts:235:14 //
+    // templates/JavaSDK/entities/params.ts:235:14
+    class Builder { // templates/JavaSDK/entities/params.ts:235:14
 
-        private var id: String? = null
+        private var id: String? = null // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:238:20 //
+        // templates/JavaSDK/entities/params.ts:235:14
         private var defaultDatasetId: String? = null
         private var description: String? = null
         private var endTime: OffsetDateTime? = null
@@ -305,101 +386,138 @@ constructor(
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        @JvmSynthetic
-        internal fun from(sessionCreateParams: SessionCreateParams) = apply {
-            this.id = sessionCreateParams.id
-            this.defaultDatasetId = sessionCreateParams.defaultDatasetId
-            this.description = sessionCreateParams.description
-            this.endTime = sessionCreateParams.endTime
-            this.extra = sessionCreateParams.extra
-            this.name = sessionCreateParams.name
-            this.referenceDatasetId = sessionCreateParams.referenceDatasetId
-            this.startTime = sessionCreateParams.startTime
-            this.upsert = sessionCreateParams.upsert
-            additionalQueryParams(sessionCreateParams.additionalQueryParams)
-            additionalHeaders(sessionCreateParams.additionalHeaders)
-            additionalBodyProperties(sessionCreateParams.additionalBodyProperties)
+        @JvmSynthetic // templates/JavaSDK/entities/params.ts:251:18
+        internal fun from(sessionCreateParams: SessionCreateParams) =
+            apply { // templates/JavaSDK/entities/params.ts:257:34
+                this.id = sessionCreateParams.id // templates/JavaSDK/entities/params.ts:257:34 //
+                // templates/JavaSDK/entities/params.ts:257:34
+                this.defaultDatasetId = sessionCreateParams.defaultDatasetId
+                this.description = sessionCreateParams.description
+                this.endTime = sessionCreateParams.endTime
+                this.extra = sessionCreateParams.extra
+                this.name = sessionCreateParams.name
+                this.referenceDatasetId = sessionCreateParams.referenceDatasetId
+                this.startTime = sessionCreateParams.startTime
+                this.upsert = sessionCreateParams.upsert
+                additionalQueryParams(sessionCreateParams.additionalQueryParams)
+                additionalHeaders(sessionCreateParams.additionalHeaders)
+                additionalBodyProperties(sessionCreateParams.additionalBodyProperties)
+            }
+
+        fun id(id: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.id = id
         }
 
-        fun id(id: String) = apply { this.id = id }
+        fun defaultDatasetId(defaultDatasetId: String) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.defaultDatasetId = defaultDatasetId
+            }
 
-        fun defaultDatasetId(defaultDatasetId: String) = apply {
-            this.defaultDatasetId = defaultDatasetId
+        fun description(description: String) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.description = description
+            }
+
+        fun endTime(endTime: OffsetDateTime) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.endTime = endTime
+            }
+
+        fun extra(extra: JsonValue) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.extra = extra
         }
 
-        fun description(description: String) = apply { this.description = description }
-
-        fun endTime(endTime: OffsetDateTime) = apply { this.endTime = endTime }
-
-        fun extra(extra: JsonValue) = apply { this.extra = extra }
-
-        fun name(name: String) = apply { this.name = name }
-
-        fun referenceDatasetId(referenceDatasetId: String) = apply {
-            this.referenceDatasetId = referenceDatasetId
+        fun name(name: String) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.name = name
         }
 
-        fun startTime(startTime: OffsetDateTime) = apply { this.startTime = startTime }
+        fun referenceDatasetId(referenceDatasetId: String) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.referenceDatasetId = referenceDatasetId
+            }
 
-        fun upsert(upsert: Boolean) = apply { this.upsert = upsert }
+        fun startTime(startTime: OffsetDateTime) =
+            apply { // templates/JavaSDK/entities/params.ts:634:26
+                this.startTime = startTime
+            }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllQueryParams(additionalQueryParams)
+        fun upsert(upsert: Boolean) = apply { // templates/JavaSDK/entities/params.ts:634:26
+            this.upsert = upsert
         }
 
-        fun putQueryParam(name: String, value: String) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:703:24
+                this.additionalQueryParams.clear() // templates/JavaSDK/entities/params.ts:703:24 //
+                // templates/JavaSDK/entities/params.ts:703:24
+                putAllQueryParams(additionalQueryParams)
+            }
 
-        fun putQueryParams(name: String, values: Iterable<String>) = apply {
-            this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
+        fun putQueryParam(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:713:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.add(value)
+            }
 
-        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            additionalQueryParams.forEach(this::putQueryParams)
-        }
+        fun putQueryParams(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:723:24
+                this.additionalQueryParams.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
 
-        fun removeQueryParam(name: String) = apply {
+        fun putAllQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:733:24
+                additionalQueryParams.forEach(this::putQueryParams)
+            }
+
+        fun removeQueryParam(name: String) = apply { // templates/JavaSDK/entities/params.ts:743:24
             this.additionalQueryParams.put(name, mutableListOf())
         }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllHeaders(additionalHeaders)
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:755:24
+                this.additionalHeaders.clear() // templates/JavaSDK/entities/params.ts:755:24 //
+                // templates/JavaSDK/entities/params.ts:755:24
+                putAllHeaders(additionalHeaders)
+            }
+
+        fun putHeader(name: String, value: String) =
+            apply { // templates/JavaSDK/entities/params.ts:765:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
+            }
+
+        fun putHeaders(name: String, values: Iterable<String>) =
+            apply { // templates/JavaSDK/entities/params.ts:775:24
+                this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
+            }
+
+        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply { // templates/JavaSDK/entities/params.ts:785:24
+                additionalHeaders.forEach(this::putHeaders)
+            }
+
+        fun removeHeader(name: String) = apply { // templates/JavaSDK/entities/params.ts:795:24
+            this.additionalHeaders.put(name, mutableListOf())
         }
 
-        fun putHeader(name: String, value: String) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.add(value)
-        }
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply { // templates/JavaSDK/entities/params.ts:809:28
+                this.additionalBodyProperties
+                    .clear() // templates/JavaSDK/entities/params.ts:809:28 //
+                // templates/JavaSDK/entities/params.ts:809:28
+                this.additionalBodyProperties.putAll(additionalBodyProperties)
+            }
 
-        fun putHeaders(name: String, values: Iterable<String>) = apply {
-            this.additionalHeaders.getOrPut(name) { mutableListOf() }.addAll(values)
-        }
-
-        fun putAllHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            additionalHeaders.forEach(this::putHeaders)
-        }
-
-        fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
-
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            this.additionalBodyProperties.putAll(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            this.additionalBodyProperties.put(key, value)
-        }
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
+            apply { // templates/JavaSDK/entities/params.ts:822:28
+                this.additionalBodyProperties.put(key, value)
+            }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
+            apply { // templates/JavaSDK/entities/params.ts:832:28
                 this.additionalBodyProperties.putAll(additionalBodyProperties)
             }
 
         fun build(): SessionCreateParams =
-            SessionCreateParams(
-                id,
+            SessionCreateParams( // templates/JavaSDK/entities/params.ts:683:22
+                id, // templates/JavaSDK/entities/params.ts:683:22
                 defaultDatasetId,
                 description,
                 endTime,

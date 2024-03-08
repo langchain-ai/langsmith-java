@@ -1,4 +1,4 @@
-// File generated from our OpenAPI spec by Stainless.
+// File generated from our OpenAPI spec by Stainless. // templates/JavaSDK/components/file.ts:28:17
 
 package com.langsmith.api.services.async
 
@@ -27,15 +27,22 @@ import java.util.concurrent.CompletableFuture
 class SessionServiceAsyncImpl
 constructor(
     private val clientOptions: ClientOptions,
-) : SessionServiceAsync {
+) : SessionServiceAsync { // templates/JavaSDK/services.ts:76:15 //
+    // templates/JavaSDK/services.ts:76:15 //
+    // templates/JavaSDK/services.ts:76:15
 
-    private val errorHandler: Handler<LangSmithError> = errorHandler(clientOptions.jsonMapper)
+    private val errorHandler: Handler<LangSmithError> =
+        errorHandler(clientOptions.jsonMapper) // templates/JavaSDK/services.ts:76:15
 
     private val metadata: MetadataServiceAsync by lazy { MetadataServiceAsyncImpl(clientOptions) }
 
     override fun metadata(): MetadataServiceAsync = metadata
 
-    private val createHandler: Handler<TracerSessionWithoutVirtualFields> =
+    private val createHandler:
+        Handler<
+            TracerSessionWithoutVirtualFields
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<TracerSessionWithoutVirtualFields>(clientOptions.jsonMapper)
             .withErrorHandler(errorHandler)
 
@@ -43,10 +50,20 @@ constructor(
     override fun create(
         params: SessionCreateParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<TracerSessionWithoutVirtualFields> {
+    ): CompletableFuture<
+        TracerSessionWithoutVirtualFields
+    > { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.POST)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.POST
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("sessions")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
@@ -54,46 +71,80 @@ constructor(
                 .body(json(clientOptions.jsonMapper, params.getBody()))
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { createHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    createHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         validate()
                     }
                 }
         }
     }
 
-    private val retrieveHandler: Handler<TracerSession> =
+    private val retrieveHandler:
+        Handler<
+            TracerSession
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<TracerSession>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Get a specific session. */
     override fun retrieve(
         params: SessionRetrieveParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<TracerSession> {
+    ): CompletableFuture<TracerSession> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.GET)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.GET
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("sessions", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { retrieveHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    retrieveHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         validate()
                     }
                 }
         }
     }
 
-    private val updateHandler: Handler<TracerSessionWithoutVirtualFields> =
+    private val updateHandler:
+        Handler<
+            TracerSessionWithoutVirtualFields
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<TracerSessionWithoutVirtualFields>(clientOptions.jsonMapper)
             .withErrorHandler(errorHandler)
 
@@ -101,10 +152,20 @@ constructor(
     override fun update(
         params: SessionUpdateParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<TracerSessionWithoutVirtualFields> {
+    ): CompletableFuture<
+        TracerSessionWithoutVirtualFields
+    > { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.PATCH)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.PATCH
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("sessions", params.getPathParam(0))
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
@@ -112,65 +173,118 @@ constructor(
                 .body(json(clientOptions.jsonMapper, params.getBody()))
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { updateHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    updateHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         validate()
                     }
                 }
         }
     }
 
-    private val listHandler: Handler<List<TracerSession>> =
+    private val listHandler:
+        Handler<
+            List<TracerSession>
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<List<TracerSession>>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Get all sessions. */
     override fun list(
         params: SessionListParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<List<TracerSession>> {
+    ): CompletableFuture<List<TracerSession>> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.GET)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.GET
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("sessions")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
+            -> // templates/JavaSDK/services.ts:230:8
             response
-                .use { listHandler.handle(it) }
-                .apply {
-                    if (requestOptions.responseValidation ?: clientOptions.responseValidation) {
+                .use { // templates/JavaSDK/services.ts:166:8 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:233:30 //
+                    // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                    listHandler.handle(it)
+                }
+                .apply { // templates/JavaSDK/services.ts:176:10
+                    if (
+                        requestOptions.responseValidation ?: clientOptions.responseValidation
+                    ) { // templates/JavaSDK/services.ts:179:14 //
+                        // templates/JavaSDK/services.ts:176:10 //
+                        // templates/JavaSDK/services.ts:176:10
                         forEach { it.validate() }
                     }
                 }
         }
     }
 
-    private val deleteHandler: Handler<SessionDeleteResponse> =
+    private val deleteHandler:
+        Handler<
+            SessionDeleteResponse
+        > = // templates/JavaSDK/services.ts:826:12 // templates/JavaSDK/services.ts:826:12 //
+        // templates/JavaSDK/services.ts:825:19
         jsonHandler<SessionDeleteResponse>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
     /** Delete a specific session. */
     override fun delete(
         params: SessionDeleteParams,
         requestOptions: RequestOptions
-    ): CompletableFuture<SessionDeleteResponse> {
+    ): CompletableFuture<SessionDeleteResponse> { // templates/JavaSDK/services.ts:831:10
         val request =
-            HttpRequest.builder()
-                .method(HttpMethod.DELETE)
+            HttpRequest.builder() // templates/JavaSDK/services.ts:107:20 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:105:8 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:104:29 //
+                // templates/JavaSDK/services.ts:227:15 //
+                // templates/JavaSDK/services.ts:227:15
+                .method(
+                    HttpMethod.DELETE
+                ) // templates/JavaSDK/services.ts:109:18 // templates/JavaSDK/services.ts:109:18
                 .addPathSegments("sessions")
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
-                .apply { params.getBody().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                .apply { // templates/JavaSDK/services.ts:118:18
+                    params.getBody().ifPresent { // templates/JavaSDK/services.ts:121:41 //
+                        // templates/JavaSDK/services.ts:118:18 //
+                        // templates/JavaSDK/services.ts:118:18
+                        body(json(clientOptions.jsonMapper, it))
+                    }
+                }
                 .build()
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
-            ->
-            response.use { deleteHandler.handle(it) }
+            -> // templates/JavaSDK/services.ts:230:8
+            response.use { // templates/JavaSDK/services.ts:166:8 //
+                // templates/JavaSDK/services.ts:233:30 //
+                // templates/JavaSDK/services.ts:233:30 //
+                // templates/JavaSDK/services.ts:230:8 // templates/JavaSDK/services.ts:230:8
+                deleteHandler.handle(it)
+            }
         }
     }
 }
