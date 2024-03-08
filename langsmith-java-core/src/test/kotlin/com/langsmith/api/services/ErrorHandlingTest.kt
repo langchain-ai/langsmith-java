@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.ok
+import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.status
 import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo
@@ -15,6 +16,7 @@ import com.google.common.collect.ListMultimap
 import com.langsmith.api.client.LangSmithClient
 import com.langsmith.api.client.okhttp.LangSmithOkHttpClient
 import com.langsmith.api.core.JsonString
+import com.langsmith.api.core.JsonValue
 import com.langsmith.api.core.jsonMapper
 import com.langsmith.api.errors.BadRequestException
 import com.langsmith.api.errors.InternalServerException
@@ -55,94 +57,164 @@ class ErrorHandlingTest {
     }
 
     @Test
-    fun apiKeysRetrieve200() {
-        val params = ApiKeyRetrieveParams.builder().build()
+    fun sessionsCreate200() {
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         val expected =
-            listOf(
-                ApiKeyGetResponse.builder()
-                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .readOnly(true)
-                    .shortKey("string")
-                    .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .build()
-            )
+            TracerSessionWithoutVirtualFields.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .lastRunStartTimeLive(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .build()
 
-        stubFor(get(anyUrl()).willReturn(ok().withBody(toJson(expected))))
+        stubFor(post(anyUrl()).willReturn(ok().withBody(toJson(expected))))
 
-        assertThat(client.apiKeys().retrieve(params)).isEqualTo(expected)
+        assertThat(client.sessions().create(params)).isEqualTo(expected)
     }
 
     @Test
-    fun apiKeysRetrieve400() {
-        val params = ApiKeyRetrieveParams.builder().build()
+    fun sessionsCreate400() {
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         stubFor(
-            get(anyUrl())
+            post(anyUrl())
                 .willReturn(status(400).withHeader("Foo", "Bar").withBody(toJson(LANG_SMITH_ERROR)))
         )
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertBadRequest(e, ImmutableListMultimap.of("Foo", "Bar"), LANG_SMITH_ERROR)
             })
     }
 
     @Test
-    fun apiKeysRetrieve401() {
-        val params = ApiKeyRetrieveParams.builder().build()
+    fun sessionsCreate401() {
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         stubFor(
-            get(anyUrl())
+            post(anyUrl())
                 .willReturn(status(401).withHeader("Foo", "Bar").withBody(toJson(LANG_SMITH_ERROR)))
         )
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertUnauthorized(e, ImmutableListMultimap.of("Foo", "Bar"), LANG_SMITH_ERROR)
             })
     }
 
     @Test
-    fun apiKeysRetrieve403() {
-        val params = ApiKeyRetrieveParams.builder().build()
+    fun sessionsCreate403() {
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         stubFor(
-            get(anyUrl())
+            post(anyUrl())
                 .willReturn(status(403).withHeader("Foo", "Bar").withBody(toJson(LANG_SMITH_ERROR)))
         )
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertPermissionDenied(e, ImmutableListMultimap.of("Foo", "Bar"), LANG_SMITH_ERROR)
             })
     }
 
     @Test
-    fun apiKeysRetrieve404() {
-        val params = ApiKeyRetrieveParams.builder().build()
+    fun sessionsCreate404() {
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         stubFor(
-            get(anyUrl())
+            post(anyUrl())
                 .willReturn(status(404).withHeader("Foo", "Bar").withBody(toJson(LANG_SMITH_ERROR)))
         )
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertNotFound(e, ImmutableListMultimap.of("Foo", "Bar"), LANG_SMITH_ERROR)
             })
     }
 
     @Test
-    fun apiKeysRetrieve422() {
-        val params = ApiKeyRetrieveParams.builder().build()
+    fun sessionsCreate422() {
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         stubFor(
-            get(anyUrl())
+            post(anyUrl())
                 .willReturn(status(422).withHeader("Foo", "Bar").withBody(toJson(LANG_SMITH_ERROR)))
         )
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertUnprocessableEntity(
                     e,
@@ -153,30 +225,52 @@ class ErrorHandlingTest {
     }
 
     @Test
-    fun apiKeysRetrieve429() {
-        val params = ApiKeyRetrieveParams.builder().build()
+    fun sessionsCreate429() {
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         stubFor(
-            get(anyUrl())
+            post(anyUrl())
                 .willReturn(status(429).withHeader("Foo", "Bar").withBody(toJson(LANG_SMITH_ERROR)))
         )
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertRateLimit(e, ImmutableListMultimap.of("Foo", "Bar"), LANG_SMITH_ERROR)
             })
     }
 
     @Test
-    fun apiKeysRetrieve500() {
-        val params = ApiKeyRetrieveParams.builder().build()
+    fun sessionsCreate500() {
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         stubFor(
-            get(anyUrl())
+            post(anyUrl())
                 .willReturn(status(500).withHeader("Foo", "Bar").withBody(toJson(LANG_SMITH_ERROR)))
         )
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertInternalServer(e, ImmutableListMultimap.of("Foo", "Bar"), LANG_SMITH_ERROR)
             })
@@ -184,14 +278,25 @@ class ErrorHandlingTest {
 
     @Test
     fun unexpectedStatusCode() {
-        val params = ApiKeyRetrieveParams.builder().build()
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
         stubFor(
-            get(anyUrl())
+            post(anyUrl())
                 .willReturn(status(999).withHeader("Foo", "Bar").withBody(toJson(LANG_SMITH_ERROR)))
         )
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertUnexpectedStatusCodeException(
                     e,
@@ -204,11 +309,22 @@ class ErrorHandlingTest {
 
     @Test
     fun invalidBody() {
-        val params = ApiKeyRetrieveParams.builder().build()
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
-        stubFor(get(anyUrl()).willReturn(status(200).withBody("Not JSON")))
+        stubFor(post(anyUrl()).willReturn(status(200).withBody("Not JSON")))
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertThat(e)
                     .isInstanceOf(LangSmithException::class.java)
@@ -218,11 +334,22 @@ class ErrorHandlingTest {
 
     @Test
     fun invalidErrorBody() {
-        val params = ApiKeyRetrieveParams.builder().build()
+        val params =
+            SessionCreateParams.builder()
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("string")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .extra(JsonValue.from(mapOf<String, Any>()))
+                .name("string")
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .upsert(true)
+                .build()
 
-        stubFor(get(anyUrl()).willReturn(status(400).withBody("Not JSON")))
+        stubFor(post(anyUrl()).willReturn(status(400).withBody("Not JSON")))
 
-        assertThatThrownBy({ client.apiKeys().retrieve(params) })
+        assertThatThrownBy({ client.sessions().create(params) })
             .satisfies({ e ->
                 assertBadRequest(e, ImmutableListMultimap.of(), LangSmithError.builder().build())
             })

@@ -67,15 +67,15 @@ Read the documentation for more configuration options.
 
 ### Example: creating a resource
 
-To create a new api key, first use the `ApiKeyRetrieveParams` builder to specify attributes,
-then pass that to the `retrieve` method of the `apiKeys` service.
+To create a new session, first use the `SessionCreateParams` builder to specify attributes,
+then pass that to the `create` method of the `sessions` service.
 
 ```java
-import com.langsmith.api.models.ApiKeyRetrieveParams;
-import com.langsmith.api.models.List<ApiKeyGetResponse>;
+import com.langsmith.api.models.SessionCreateParams;
+import com.langsmith.api.models.TracerSessionWithoutVirtualFields;
 
-ApiKeyRetrieveParams params = ApiKeyRetrieveParams.builder().build();
-List<ApiKeyGetResponse> apiKeyRetrieveResponse = client.apiKeys().retrieve(params);
+SessionCreateParams params = SessionCreateParams.builder().build();
+TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(params);
 ```
 
 ---
@@ -86,14 +86,14 @@ List<ApiKeyGetResponse> apiKeyRetrieveResponse = client.apiKeys().retrieve(param
 
 To make a request to the Lang Smith API, you generally build an instance of the appropriate `Params` class.
 
-In [Example: creating a resource](#example-creating-a-resource) above, we used the `ApiKeyRetrieveParams.builder()` to pass to
-the `retrieve` method of the `apiKeys` service.
+In [Example: creating a resource](#example-creating-a-resource) above, we used the `SessionCreateParams.builder()` to pass to
+the `create` method of the `sessions` service.
 
 Sometimes, the API may support other properties that are not yet supported in the Java SDK types. In that case,
 you can attach them using the `putAdditionalProperty` method.
 
 ```java
-ApiKeyRetrieveParams params = ApiKeyRetrieveParams.builder()
+SessionCreateParams params = SessionCreateParams.builder()
     // ... normal properties
     .putAdditionalProperty("secret_param", "4242")
     .build();
@@ -106,7 +106,7 @@ ApiKeyRetrieveParams params = ApiKeyRetrieveParams.builder()
 When receiving a response, the Lang Smith Java SDK will deserialize it into instances of the typed model classes. In rare cases, the API may return a response property that doesn't match the expected Java type. If you directly access the mistaken property, the SDK will throw an unchecked `LangSmithInvalidDataException` at runtime. If you would prefer to check in advance that that response is completely well-typed, call `.validate()` on the returned model.
 
 ```java
-List<ApiKeyGetResponse> apiKeyRetrieveResponse = client.apiKeys().retrieve().validate();
+TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create().validate();
 ```
 
 ### Response properties as JSON
@@ -136,7 +136,7 @@ if (field.isMissing()) {
 Sometimes, the server response may include additional properties that are not yet available in this library's types. You can access them using the model's `_additionalProperties` method:
 
 ```java
-JsonValue secret = apiKeyRetrieveResponse._additionalProperties().get("secret_field");
+JsonValue secret = tracerSessionWithoutVirtualFields._additionalProperties().get("secret_field");
 ```
 
 ---
