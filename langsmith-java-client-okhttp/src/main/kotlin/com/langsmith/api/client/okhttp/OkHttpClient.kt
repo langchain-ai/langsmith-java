@@ -115,10 +115,15 @@ private constructor(private val okHttpClient: okhttp3.OkHttpClient, private val 
 
     private fun HttpRequestBody.toRequestBody(): RequestBody {
         val mediaType = contentType()?.toMediaType()
+        val length = contentLength()
 
         return object : RequestBody() {
             override fun contentType(): MediaType? {
                 return mediaType
+            }
+
+            override fun contentLength(): Long {
+                return length
             }
 
             override fun isOneShot(): Boolean {

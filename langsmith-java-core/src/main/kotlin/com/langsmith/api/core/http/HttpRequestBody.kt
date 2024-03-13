@@ -10,6 +10,8 @@ interface HttpRequestBody : Closeable {
 
     fun contentType(): String?
 
+    fun contentLength(): Long
+
     /**
      * Determines if a request can be repeated in a meaningful way, for example before doing a
      * retry.
