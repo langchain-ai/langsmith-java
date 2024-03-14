@@ -67,15 +67,15 @@ Read the documentation for more configuration options.
 
 ### Example: creating a resource
 
-To create a new session, first use the `SessionCreateParams` builder to specify attributes,
-then pass that to the `create` method of the `sessions` service.
+To create a new run, first use the `RunBatchParams` builder to specify attributes,
+then pass that to the `batch` method of the `runs` service.
 
 ```java
-import com.langsmith.api.models.SessionCreateParams;
-import com.langsmith.api.models.TracerSessionWithoutVirtualFields;
+import com.langsmith.api.models.RunBatchParams;
+import com.langsmith.api.models.RunBatchResponse;
 
-SessionCreateParams params = SessionCreateParams.builder().build();
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(params);
+RunBatchParams params = RunBatchParams.builder().build();
+RunBatchResponse runBatchResponse = client.runs().batch(params);
 ```
 
 ---

@@ -96,4 +96,40 @@ class ServiceParamsTest {
 
         verify(postRequestedFor(anyUrl()))
     }
+
+    @Test
+    fun runsBatchWithAdditionalParams() {
+        val additionalHeaders = mutableMapOf<String, List<String>>()
+
+        additionalHeaders.put("x-test-header", listOf("abc1234"))
+
+        val additionalQueryParams = mutableMapOf<String, List<String>>()
+
+        additionalQueryParams.put("test_query_param", listOf("def567"))
+
+        val additionalBodyProperties = mutableMapOf<String, JsonValue>()
+
+        additionalBodyProperties.put("testBodyProperty", JsonString.of("ghi890"))
+
+        val params =
+            RunBatchParams.builder()
+                .additionalHeaders(additionalHeaders)
+                .additionalBodyProperties(additionalBodyProperties)
+                .additionalQueryParams(additionalQueryParams)
+                .build()
+
+        val apiResponse = JsonValue.from(mapOf<String, Any>())
+
+        stubFor(
+            post(anyUrl())
+                .withHeader("x-test-header", equalTo("abc1234"))
+                .withQueryParam("test_query_param", equalTo("def567"))
+                .withRequestBody(matchingJsonPath("$.testBodyProperty", equalTo("ghi890")))
+                .willReturn(ok(JSON_MAPPER.writeValueAsString(apiResponse)))
+        )
+
+        client.runs().batch(params)
+
+        verify(postRequestedFor(anyUrl()))
+    }
 }
