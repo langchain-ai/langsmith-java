@@ -15,6 +15,8 @@ import com.langsmith.api.models.DatasetDeleteResponse
 import com.langsmith.api.models.DatasetListParams
 import com.langsmith.api.models.DatasetRetrieveParams
 import com.langsmith.api.models.DatasetSchemaForUpdate
+import com.langsmith.api.models.DatasetShareParams
+import com.langsmith.api.models.DatasetShareResponse
 import com.langsmith.api.models.DatasetUpdateParams
 import com.langsmith.api.models.DatasetUploadParams
 import com.langsmith.api.services.async.datasets.CsvServiceAsync
@@ -48,7 +50,7 @@ constructor(
 
     private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
 
-    private val share: ShareServiceAsync by lazy { ShareServiceAsyncImpl(clientOptions) }
+    private val shares: ShareServiceAsync by lazy { ShareServiceAsyncImpl(clientOptions) }
 
     override fun openai(): OpenAIServiceAsync = openai
 
@@ -58,7 +60,7 @@ constructor(
 
     override fun runs(): RunServiceAsync = runs
 
-    override fun share(): ShareServiceAsync = share
+    override fun shares(): ShareServiceAsync = shares
 
     private val createHandler: Handler<Dataset> =
         jsonHandler<Dataset>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
@@ -194,6 +196,29 @@ constructor(
         return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
             ->
             response.use { deleteHandler.handle(it) }
+        }
+    }
+
+    private val shareHandler: Handler<DatasetShareResponse> =
+        jsonHandler<DatasetShareResponse>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
+
+    /** Unshare a dataset. */
+    override fun share(
+        params: DatasetShareParams,
+        requestOptions: RequestOptions
+    ): CompletableFuture<DatasetShareResponse> {
+        val request =
+            HttpRequest.builder()
+                .method(HttpMethod.DELETE)
+                .addPathSegments("datasets", params.getPathParam(0), "share")
+                .putAllQueryParams(params.getQueryParams())
+                .putAllHeaders(clientOptions.headers)
+                .putAllHeaders(params.getHeaders())
+                .apply { params.getBody().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                .build()
+        return clientOptions.httpClient.executeAsync(request, requestOptions).thenApply { response
+            ->
+            response.use { shareHandler.handle(it) }
         }
     }
 

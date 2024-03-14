@@ -13,8 +13,6 @@ interface LangSmithClient {
 
     fun sessions(): SessionService
 
-    fun apiKeys(): ApiKeyService
-
     fun examples(): ExampleService
 
     fun datasets(): DatasetService

@@ -20,8 +20,6 @@ constructor(
 
     private val sessions: SessionServiceAsync by lazy { SessionServiceAsyncImpl(clientOptions) }
 
-    private val apiKeys: ApiKeyServiceAsync by lazy { ApiKeyServiceAsyncImpl(clientOptions) }
-
     private val examples: ExampleServiceAsync by lazy { ExampleServiceAsyncImpl(clientOptions) }
 
     private val datasets: DatasetServiceAsync by lazy { DatasetServiceAsyncImpl(clientOptions) }
@@ -53,8 +51,6 @@ constructor(
     override fun sync(): LangSmithClient = sync
 
     override fun sessions(): SessionServiceAsync = sessions
-
-    override fun apiKeys(): ApiKeyServiceAsync = apiKeys
 
     override fun examples(): ExampleServiceAsync = examples
 

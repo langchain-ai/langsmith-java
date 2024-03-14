@@ -13,8 +13,6 @@ interface LangSmithClientAsync {
 
     fun sessions(): SessionServiceAsync
 
-    fun apiKeys(): ApiKeyServiceAsync
-
     fun examples(): ExampleServiceAsync
 
     fun datasets(): DatasetServiceAsync

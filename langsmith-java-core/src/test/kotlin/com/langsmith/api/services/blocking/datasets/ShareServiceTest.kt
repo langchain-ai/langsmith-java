@@ -18,7 +18,7 @@ class ShareServiceTest {
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .build()
-        val shareService = client.datasets().share()
+        val shareService = client.datasets().shares()
         val datasetShareSchema =
             shareService.retrieve(
                 DatasetShareRetrieveParams.builder()
@@ -36,7 +36,7 @@ class ShareServiceTest {
                 .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .build()
-        val shareService = client.datasets().share()
+        val shareService = client.datasets().shares()
         val datasetShareSchema =
             shareService.update(
                 DatasetShareUpdateParams.builder()

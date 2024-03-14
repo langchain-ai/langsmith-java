@@ -12,6 +12,8 @@ import com.langsmith.api.models.DatasetDeleteResponse
 import com.langsmith.api.models.DatasetListParams
 import com.langsmith.api.models.DatasetRetrieveParams
 import com.langsmith.api.models.DatasetSchemaForUpdate
+import com.langsmith.api.models.DatasetShareParams
+import com.langsmith.api.models.DatasetShareResponse
 import com.langsmith.api.models.DatasetUpdateParams
 import com.langsmith.api.models.DatasetUploadParams
 import com.langsmith.api.services.blocking.datasets.CsvService
@@ -30,7 +32,7 @@ interface DatasetService {
 
     fun runs(): RunService
 
-    fun share(): ShareService
+    fun shares(): ShareService
 
     /** Create a new dataset. */
     @JvmOverloads
@@ -66,6 +68,13 @@ interface DatasetService {
         params: DatasetDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none()
     ): DatasetDeleteResponse
+
+    /** Unshare a dataset. */
+    @JvmOverloads
+    fun share(
+        params: DatasetShareParams,
+        requestOptions: RequestOptions = RequestOptions.none()
+    ): DatasetShareResponse
 
     /** Create a new dataset from a CSV file. */
     @JvmOverloads

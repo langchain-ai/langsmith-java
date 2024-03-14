@@ -15,6 +15,8 @@ import com.langsmith.api.models.DatasetDeleteResponse
 import com.langsmith.api.models.DatasetListParams
 import com.langsmith.api.models.DatasetRetrieveParams
 import com.langsmith.api.models.DatasetSchemaForUpdate
+import com.langsmith.api.models.DatasetShareParams
+import com.langsmith.api.models.DatasetShareResponse
 import com.langsmith.api.models.DatasetUpdateParams
 import com.langsmith.api.models.DatasetUploadParams
 import com.langsmith.api.services.blocking.datasets.CsvService
@@ -47,7 +49,7 @@ constructor(
 
     private val runs: RunService by lazy { RunServiceImpl(clientOptions) }
 
-    private val share: ShareService by lazy { ShareServiceImpl(clientOptions) }
+    private val shares: ShareService by lazy { ShareServiceImpl(clientOptions) }
 
     override fun openai(): OpenAIService = openai
 
@@ -57,7 +59,7 @@ constructor(
 
     override fun runs(): RunService = runs
 
-    override fun share(): ShareService = share
+    override fun shares(): ShareService = shares
 
     private val createHandler: Handler<Dataset> =
         jsonHandler<Dataset>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
@@ -179,6 +181,28 @@ constructor(
                 .build()
         return clientOptions.httpClient.execute(request, requestOptions).let { response ->
             response.use { deleteHandler.handle(it) }
+        }
+    }
+
+    private val shareHandler: Handler<DatasetShareResponse> =
+        jsonHandler<DatasetShareResponse>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
+
+    /** Unshare a dataset. */
+    override fun share(
+        params: DatasetShareParams,
+        requestOptions: RequestOptions
+    ): DatasetShareResponse {
+        val request =
+            HttpRequest.builder()
+                .method(HttpMethod.DELETE)
+                .addPathSegments("datasets", params.getPathParam(0), "share")
+                .putAllQueryParams(params.getQueryParams())
+                .putAllHeaders(clientOptions.headers)
+                .putAllHeaders(params.getHeaders())
+                .apply { params.getBody().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                .build()
+        return clientOptions.httpClient.execute(request, requestOptions).let { response ->
+            response.use { shareHandler.handle(it) }
         }
     }
 
