@@ -397,17 +397,17 @@ constructor(
         }
 
         /** Feedback from the LangChainPlus App. */
-        fun feedbackSource(appFeedbackSource: AppFeedbackSource) = apply {
+        fun feedbackSource(appFeedbackSource: FeedbackSource.AppFeedbackSource) = apply {
             this.feedbackSource = FeedbackSource.ofAppFeedbackSource(appFeedbackSource)
         }
 
         /** Feedback from the LangChainPlus App. */
-        fun feedbackSource(apiFeedbackSource: ApiFeedbackSource) = apply {
+        fun feedbackSource(apiFeedbackSource: FeedbackSource.ApiFeedbackSource) = apply {
             this.feedbackSource = FeedbackSource.ofApiFeedbackSource(apiFeedbackSource)
         }
 
         /** Feedback from the LangChainPlus App. */
-        fun feedbackSource(modelFeedbackSource: ModelFeedbackSource) = apply {
+        fun feedbackSource(modelFeedbackSource: FeedbackSource.ModelFeedbackSource) = apply {
             this.feedbackSource = FeedbackSource.ofModelFeedbackSource(modelFeedbackSource)
         }
 
