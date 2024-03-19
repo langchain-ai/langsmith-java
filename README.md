@@ -1,10 +1,6 @@
 # Lang Smith Java API Library
 
-<!-- x-release-please-start-version -->
-
-[![Maven Central](https://img.shields.io/maven-central/v/com.langsmith.api/langsmith-java)](https://central.sonatype.com/artifact/com.langsmith.api/langsmith-java/0.1.0-alpha.1)
-
-<!-- x-release-please-end -->
+[![Maven Central](https://img.shields.io/maven-central/v/com.langsmith.api/langsmith-java)](https://central.sonatype.com/artifact/com.langsmith.api/langsmith-java/0.0.1-alpha.0)
 
 The Lang Smith Java SDK provides convenient access to the Lang Smith REST API from applications written in Java. It includes helper classes with helpful types and documentation for every request and response property.
 
@@ -12,7 +8,7 @@ The Lang Smith Java SDK is similar to the Lang Smith Kotlin SDK but with minor d
 
 ## Documentation
 
-The REST API documentation can be found [on docs.langsmith.com](https://docs.LangSmith.com).
+The REST API documentation can be found [on docs.langsmith.com](https://api.smith.langchain.com/redoc).
 
 ---
 
@@ -22,10 +18,8 @@ The REST API documentation can be found [on docs.langsmith.com](https://docs.La
 
 #### Gradle
 
-<!-- x-release-please-start-version -->
-
 ```kotlin
-implementation("com.langsmith.api:langsmith-java:0.1.0-alpha.1")
+implementation("com.langsmith.api:langsmith-java:0.0.1-alpha.0")
 ```
 
 #### Maven
@@ -34,11 +28,9 @@ implementation("com.langsmith.api:langsmith-java:0.1.0-alpha.1")
 <dependency>
     <groupId>com.langsmith.api</groupId>
     <artifactId>langsmith-java</artifactId>
-    <version>0.1.0-alpha.1</version>
+    <version>0.0.1-alpha.0</version>
 </dependency>
 ```
-
-<!-- x-release-please-end -->
 
 ### Configure the client
 
@@ -71,7 +63,79 @@ LangSmithClient client = LangSmithOkHttpClient.builder()
 
 Read the documentation for more configuration options.
 
+You can also set the `LANGCHAIN_PROJECT` to post runs to a specific project.
+If unspecified, runs will be posted to the `default` project.
+
+| Property | Environment variable | Required | Default value |
+| -------- | -------------------- | -------- | ------------- |
+| project  | `LANGCHAIN_PROJECT`  | false    | —             |
+
 ---
+
+### Example: using the RunTree API (experimental)
+The RunTree API is currently the recommended way to post runs to LangSmith.
+```java
+package com.langsmith.example;
+
+import com.langsmith.runtree.RunTree;
+import com.langsmith.runtree.RunTreeConfigBuilder;
+import com.theokanning.openai.service.OpenAiService;
+import com.theokanning.openai.completion.chat.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class OpenAiExample {
+    public static void main(String[] args) {
+        String apiKey = System.getenv("OPENAI_API_KEY");
+        OpenAiService service = new OpenAiService(apiKey);
+
+        String question = "Can you summarize this morning's meetings?";
+
+        // Create a top-level run
+        RunTreeConfigBuilder pipelineConfigBuilder = new RunTreeConfigBuilder()
+                .setName("Chat Pipeline")
+                .setRunType("chain")
+                .setInputs(Collections.singletonMap("question", question));
+
+        RunTree pipeline = new RunTree(pipelineConfigBuilder.build());
+
+        var context = "During this morning's meeting, we solved all world conflict.";
+
+        List<ChatMessage> messages = new ArrayList<>();
+        var systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), "You are a helpful assistant. Please respond to the user's request only based on the given context.");
+        messages.add(systemMessage);
+        var userMessage = new ChatMessage(ChatMessageRole.USER.value(), "Question: " + question + "\nContext: " + context);
+        messages.add(userMessage);
+
+        var completionRequest = ChatCompletionRequest
+                .builder()
+                .model("gpt-3.5-turbo")
+                .messages(messages)
+                .build();
+
+        // Create a child run
+        RunTreeConfigBuilder childConfigBuilder = new RunTreeConfigBuilder()
+                .setName("OpenAI Call")
+                .setRunType("llm")
+                .setInputs(Collections.singletonMap("messages", messages))
+                .setParentRun(pipeline);
+
+        RunTree childTree = pipeline.createChild(childConfigBuilder.build());
+
+        ChatMessage responseMessage = service.createChatCompletion(completionRequest).getChoices().get(0).getMessage();
+        System.out.println("Response: " + responseMessage.getContent());
+
+        // End the child run
+        childTree.end(Collections.singletonMap("response", responseMessage), null, null);
+
+        // End the parent run
+        pipeline.end(Collections.singletonMap("response", responseMessage.getContent()), null, null);
+        childTree.postRunAsync().join();
+        pipeline.postRunAsync().join();
+    }
+}
+```
 
 ### Example: creating a resource
 
@@ -157,22 +221,22 @@ This library throws exceptions in a single hierarchy for easy handling:
 
 - **`LangSmithException`** - Base exception for all exceptions
 
-  - **`LangSmithServiceException`** - HTTP errors with a well-formed response body we were able to parse. The exception message and the `.debuggingRequestId()` will be set by the server.
+    - **`LangSmithServiceException`** - HTTP errors with a well-formed response body we were able to parse. The exception message and the `.debuggingRequestId()` will be set by the server.
 
-    | 400    | BadRequestException           |
-    | ------ | ----------------------------- |
-    | 401    | AuthenticationException       |
-    | 403    | PermissionDeniedException     |
-    | 404    | NotFoundException             |
-    | 422    | UnprocessableEntityException  |
-    | 429    | RateLimitException            |
-    | 5xx    | InternalServerException       |
-    | others | UnexpectedStatusCodeException |
+      | 400    | BadRequestException           |
+          | ------ | ----------------------------- |
+      | 401    | AuthenticationException       |
+      | 403    | PermissionDeniedException     |
+      | 404    | NotFoundException             |
+      | 422    | UnprocessableEntityException  |
+      | 429    | RateLimitException            |
+      | 5xx    | InternalServerException       |
+      | others | UnexpectedStatusCodeException |
 
-  - **`LangSmithIoException`** - I/O networking errors
-  - **`LangSmithInvalidDataException`** - any other exceptions on the client side, e.g.:
-    - We failed to serialize the request body
-    - We failed to parse the response body (has access to response code and body)
+    - **`LangSmithIoException`** - I/O networking errors
+    - **`LangSmithInvalidDataException`** - any other exceptions on the client side, e.g.:
+        - We failed to serialize the request body
+        - We failed to parse the response body (has access to response code and body)
 
 ## Network options
 
