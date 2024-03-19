@@ -68,7 +68,7 @@ constructor(
     private val retrieveHandler: Handler<TracerSession> =
         jsonHandler<TracerSession>(clientOptions.jsonMapper).withErrorHandler(errorHandler)
 
-    /** Get a specific session. */
+    /** Get a specific session/project. */
     override fun retrieve(
         params: SessionRetrieveParams,
         requestOptions: RequestOptions

@@ -27,7 +27,7 @@ interface SessionServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none()
     ): CompletableFuture<TracerSessionWithoutVirtualFields>
 
-    /** Get a specific session. */
+    /** Get a specific session/project. */
     @JvmOverloads
     fun retrieve(
         params: SessionRetrieveParams,
