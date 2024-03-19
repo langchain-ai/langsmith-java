@@ -10,7 +10,7 @@ dependencies {
     // Assuming langsmith-java-core and langsmith-java-client-okhttp are needed for the examples
     implementation(project(":langsmith-java-core"))
     implementation(project(":langsmith-java-client-okhttp"))
-    implementation(project(":langsmith-traceable"))
+    implementation(project(":langsmith-java-trace"))
 
     // Add any additional dependencies your examples need
     implementation("com.google.guava:guava:33.0-jre")

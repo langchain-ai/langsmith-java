@@ -1,0 +1,8 @@
+<aspectj>
+    <aspects>
+        <aspect name="com.langsmith.traceable.TraceableAspect"/>
+    </aspects>
+    <weaver options="-verbose -showWeaveInfo">
+        <include within="com.langsmith.traceable.*"/>
+    </weaver>
+</aspectj>
