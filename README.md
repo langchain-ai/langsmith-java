@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langsmith.api/langsmith-java)](https://central.sonatype.com/artifact/com.langsmith.api/langsmith-java/0.0.1-alpha.0)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langsmith.api/langsmith-java)](https://central.sonatype.com/artifact/com.langsmith.api/langsmith-java/0.1.0-alpha.1)
 
 <!-- x-release-please-end -->
 
@@ -25,7 +25,7 @@ The REST API documentation can be found [on docs.langsmith.com](https://docs.La
 <!-- x-release-please-start-version -->
 
 ```kotlin
-implementation("com.langsmith.api:langsmith-java:0.0.1-alpha.0")
+implementation("com.langsmith.api:langsmith-java:0.1.0-alpha.1")
 ```
 
 #### Maven
@@ -34,7 +34,7 @@ implementation("com.langsmith.api:langsmith-java:0.0.1-alpha.0")
 <dependency>
     <groupId>com.langsmith.api</groupId>
     <artifactId>langsmith-java</artifactId>
-    <version>0.0.1-alpha.0</version>
+    <version>0.1.0-alpha.1</version>
 </dependency>
 ```
 
