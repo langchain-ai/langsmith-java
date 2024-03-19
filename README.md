@@ -1,6 +1,10 @@
 # Lang Smith Java API Library
 
+<!-- x-release-please-start-version -->
+
 [![Maven Central](https://img.shields.io/maven-central/v/com.langsmith.api/langsmith-java)](https://central.sonatype.com/artifact/com.langsmith.api/langsmith-java/0.0.1-alpha.0)
+
+<!-- x-release-please-end -->
 
 The Lang Smith Java SDK provides convenient access to the Lang Smith REST API from applications written in Java. It includes helper classes with helpful types and documentation for every request and response property.
 
@@ -18,6 +22,8 @@ The REST API documentation can be found [on docs.langsmith.com](https://docs.La
 
 #### Gradle
 
+<!-- x-release-please-start-version -->
+
 ```kotlin
 implementation("com.langsmith.api:langsmith-java:0.0.1-alpha.0")
 ```
@@ -31,6 +37,8 @@ implementation("com.langsmith.api:langsmith-java:0.0.1-alpha.0")
     <version>0.0.1-alpha.0</version>
 </dependency>
 ```
+
+<!-- x-release-please-end -->
 
 ### Configure the client
 
@@ -214,4 +222,4 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/langsmith-java/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/langchain-ai/langsmith-java/issues) with questions, bugs, or suggestions.

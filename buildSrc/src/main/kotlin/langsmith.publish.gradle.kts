@@ -33,9 +33,9 @@ configure<PublishingExtension> {
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/stainless-sdks/langsmith-java.git")
-                    developerConnection.set("scm:git:git://github.com/stainless-sdks/langsmith-java.git")
-                    url.set("https://github.com/stainless-sdks/langsmith-java")
+                    connection.set("scm:git:git://github.com/langchain-ai/langsmith-java.git")
+                    developerConnection.set("scm:git:git://github.com/langchain-ai/langsmith-java.git")
+                    url.set("https://github.com/langchain-ai/langsmith-java")
                 }
 
                 versionMapping {
