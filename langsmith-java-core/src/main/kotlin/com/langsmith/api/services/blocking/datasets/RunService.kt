@@ -12,7 +12,7 @@ interface RunService {
 
     /**
      * Fetch examples for a dataset, and fetch the runs for each example if they are associated with
-     * the given session_ids (project IDs).
+     * the given session_ids.
      */
     @JvmOverloads
     fun create(

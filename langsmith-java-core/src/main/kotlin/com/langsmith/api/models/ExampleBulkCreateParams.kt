@@ -16,13 +16,13 @@ import java.util.Objects
 
 class ExampleBulkCreateParams
 constructor(
-    private val body: List<Body>,
+    private val body: List<ExampleCreate>,
     private val additionalQueryParams: Map<String, List<String>>,
     private val additionalHeaders: Map<String, List<String>>,
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun body(): List<Body> = body
+    fun body(): List<ExampleCreate> = body
 
     @JvmSynthetic
     internal fun getBody(): ExampleBulkCreateBody {
@@ -37,13 +37,13 @@ constructor(
     @NoAutoDetect
     class ExampleBulkCreateBody
     internal constructor(
-        private val body: List<Body>?,
+        private val body: List<ExampleCreate>?,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
         private var hashCode: Int = 0
 
-        @JsonProperty("body") fun body(): List<Body>? = body
+        @JsonProperty("body") fun body(): List<ExampleCreate>? = body
 
         @JsonAnyGetter
         @ExcludeMissing
@@ -78,7 +78,7 @@ constructor(
 
         class Builder {
 
-            private var body: List<Body>? = null
+            private var body: List<ExampleCreate>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -87,7 +87,7 @@ constructor(
                 additionalProperties(exampleBulkCreateBody.additionalProperties)
             }
 
-            @JsonProperty("body") fun body(body: List<Body>) = apply { this.body = body }
+            @JsonProperty("body") fun body(body: List<ExampleCreate>) = apply { this.body = body }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -151,7 +151,7 @@ constructor(
     @NoAutoDetect
     class Builder {
 
-        private var body: MutableList<Body> = mutableListOf()
+        private var body: MutableList<ExampleCreate> = mutableListOf()
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -164,12 +164,12 @@ constructor(
             additionalBodyProperties(exampleBulkCreateParams.additionalBodyProperties)
         }
 
-        fun body(body: List<Body>) = apply {
+        fun body(body: List<ExampleCreate>) = apply {
             this.body.clear()
             this.body.addAll(body)
         }
 
-        fun addBody(body: Body) = apply { this.body.add(body) }
+        fun addBody(body: ExampleCreate) = apply { this.body.add(body) }
 
         fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
             this.additionalQueryParams.clear()

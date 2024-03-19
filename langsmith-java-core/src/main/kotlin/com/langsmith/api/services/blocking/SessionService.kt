@@ -26,7 +26,7 @@ interface SessionService {
         requestOptions: RequestOptions = RequestOptions.none()
     ): TracerSessionWithoutVirtualFields
 
-    /** Get a specific session/project. */
+    /** Get a specific session. */
     @JvmOverloads
     fun retrieve(
         params: SessionRetrieveParams,

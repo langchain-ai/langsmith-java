@@ -21,8 +21,7 @@ private constructor(
 ) {
 
     companion object {
-
-        const val PRODUCTION_URL = "https://localhost:8080/test-api"
+        const val PRODUCTION_URL = "https://api.smith.langchain.com"
 
         @JvmStatic fun builder() = Builder()
 
