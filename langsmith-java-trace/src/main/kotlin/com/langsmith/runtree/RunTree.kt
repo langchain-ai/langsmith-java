@@ -70,6 +70,30 @@ fun getTracerProject(): String {
         ?: "default"
 }
 
+data class EndOptions(
+    val outputs: Map<String, Any>? = null,
+    val errorMessage: String? = null,
+    val endTime: Long? = null
+) {
+    companion object {
+        @JvmStatic fun builder() = Builder()
+    }
+
+    class Builder {
+        private var outputs: Map<String, Any>? = null
+        private var errorMessage: String? = null
+        private var endTime: Long? = null
+
+        fun setOutputs(value: Map<String, Any>?) = apply { outputs = value }
+
+        fun setErrorMessage(value: String?) = apply { errorMessage = value }
+
+        fun setEndTime(value: Long?) = apply { endTime = value }
+
+        fun build(): EndOptions = EndOptions(outputs, errorMessage, endTime)
+    }
+}
+
 data class RunTreeConfig(
     val name: String,
     val runType: String = "chain",
@@ -89,87 +113,91 @@ data class RunTreeConfig(
     val referenceExampleId: String? = null,
     val client: LangSmithClientAsync = LangSmithOkHttpClientAsync.fromEnv(),
     val objectMapper: ObjectMapper = jacksonObjectMapper()
-)
+) {
+    companion object {
+        @JvmStatic fun builder() = Builder()
+    }
 
-class RunTreeConfigBuilder {
-    private var name: String = ""
-    private var runType: String = "chain"
-    private var id: String = UUID.randomUUID().toString()
-    private var projectName: String = getTracerProject()
-    private var parentRun: RunTree? = null
-    private var parentRunId: String? = null
-    private var childRuns: MutableList<RunTree> = mutableListOf()
-    private var startTime: Long = System.currentTimeMillis()
-    private var endTime: Long? = null
-    private var extra: Map<String, Any> = emptyMap()
-    private var tags: List<String> = ArrayList()
-    private var error: String? = null
-    private var serialized: Map<String, Any> = emptyMap()
-    private var inputs: Map<String, Any> = emptyMap()
-    private var outputs: Map<String, Any>? = emptyMap()
-    private var referenceExampleId: String? = null
-    private var client: LangSmithClientAsync? = null
-    private var objectMapper: ObjectMapper = jacksonObjectMapper()
+    class Builder {
+        private var name: String = ""
+        private var runType: String = "chain"
+        private var id: String = UUID.randomUUID().toString()
+        private var projectName: String = getTracerProject()
+        private var parentRun: RunTree? = null
+        private var parentRunId: String? = null
+        private var childRuns: MutableList<RunTree> = mutableListOf()
+        private var startTime: Long = System.currentTimeMillis()
+        private var endTime: Long? = null
+        private var extra: Map<String, Any> = emptyMap()
+        private var tags: List<String> = ArrayList()
+        private var error: String? = null
+        private var serialized: Map<String, Any> = emptyMap()
+        private var inputs: Map<String, Any> = emptyMap()
+        private var outputs: Map<String, Any>? = emptyMap()
+        private var referenceExampleId: String? = null
+        private var client: LangSmithClientAsync? = null
+        private var objectMapper: ObjectMapper = jacksonObjectMapper()
 
-    fun setName(value: String) = apply { name = value }
+        fun setName(value: String) = apply { name = value }
 
-    fun setRunType(value: String) = apply { runType = value }
+        fun setRunType(value: String) = apply { runType = value }
 
-    fun setId(value: String) = apply { id = value }
+        fun setId(value: String) = apply { id = value }
 
-    fun setProjectName(value: String) = apply { projectName = value }
+        fun setProjectName(value: String) = apply { projectName = value }
 
-    fun setParentRun(value: RunTree?) = apply { parentRun = value }
+        fun setParentRun(value: RunTree?) = apply { parentRun = value }
 
-    fun setParentRunId(value: String?) = apply { parentRunId = value }
+        fun setParentRunId(value: String?) = apply { parentRunId = value }
 
-    fun addChildRun(value: RunTree) = apply { childRuns.add(value) }
+        fun addChildRun(value: RunTree) = apply { childRuns.add(value) }
 
-    fun setStartTime(value: Long) = apply { startTime = value }
+        fun setStartTime(value: Long) = apply { startTime = value }
 
-    fun setEndTime(value: Long?) = apply { endTime = value }
+        fun setEndTime(value: Long?) = apply { endTime = value }
 
-    fun setExtra(value: Map<String, Any>) = apply { extra = value }
+        fun setExtra(value: Map<String, Any>) = apply { extra = value }
 
-    fun setTags(value: List<String>) = apply { tags = value }
+        fun setTags(value: List<String>) = apply { tags = value }
 
-    fun setError(value: String?) = apply { error = value }
+        fun setError(value: String?) = apply { error = value }
 
-    fun setSerialized(value: Map<String, Any>) = apply { serialized = value }
+        fun setSerialized(value: Map<String, Any>) = apply { serialized = value }
 
-    fun setInputs(value: Map<String, Any>) = apply { inputs = value }
+        fun setInputs(value: Map<String, Any>) = apply { inputs = value }
 
-    fun setOutputs(value: Map<String, Any>?) = apply { outputs = value }
+        fun setOutputs(value: Map<String, Any>?) = apply { outputs = value }
 
-    fun setReferenceExampleId(value: String?) = apply { referenceExampleId = value }
+        fun setReferenceExampleId(value: String?) = apply { referenceExampleId = value }
 
-    fun setClient(value: LangSmithClientAsync?) = apply { client = value }
+        fun setClient(value: LangSmithClientAsync?) = apply { client = value }
 
-    fun setObjectMapper(value: ObjectMapper) = apply { objectMapper = value }
+        fun setObjectMapper(value: ObjectMapper) = apply { objectMapper = value }
 
-    fun addExtra(key: String, value: Any) = apply { extra = extra.plus(key to value) }
+        fun addExtra(key: String, value: Any) = apply { extra = extra.plus(key to value) }
 
-    fun build(): RunTreeConfig =
-        RunTreeConfig(
-            name = name,
-            runType = runType,
-            id = id,
-            projectName = projectName,
-            parentRun = parentRun,
-            parentRunId = parentRunId,
-            childRuns = childRuns,
-            startTime = startTime,
-            endTime = endTime,
-            extra = extra,
-            tags = tags,
-            error = error,
-            serialized = serialized,
-            inputs = inputs,
-            outputs = outputs,
-            referenceExampleId = referenceExampleId,
-            client = client ?: LangSmithOkHttpClientAsync.fromEnv(),
-            objectMapper = objectMapper
-        )
+        fun build(): RunTreeConfig =
+            RunTreeConfig(
+                name = name,
+                runType = runType,
+                id = id,
+                projectName = projectName,
+                parentRun = parentRun,
+                parentRunId = parentRunId,
+                childRuns = childRuns,
+                startTime = startTime,
+                endTime = endTime,
+                extra = extra,
+                tags = tags,
+                error = error,
+                serialized = serialized,
+                inputs = inputs,
+                outputs = outputs,
+                referenceExampleId = referenceExampleId,
+                client = client ?: LangSmithOkHttpClientAsync.fromEnv(),
+                objectMapper = objectMapper
+            )
+    }
 }
 
 class RunTree(config: RunTreeConfig) {
@@ -284,9 +312,9 @@ class RunTree(config: RunTreeConfig) {
         return client.runs().update(updateParams).thenApply { _ -> Unit }
     }
 
-    fun end(outputs: Map<String, Any>? = null, error: String? = null, endTime: Long? = null) {
-        this.outputs = outputs
-        this.error = error
-        this.endTime = endTime ?: System.currentTimeMillis()
+    fun end(options: EndOptions = EndOptions()) {
+        this.outputs = options.outputs
+        this.error = options.errorMessage
+        this.endTime = options.endTime ?: System.currentTimeMillis()
     }
 }

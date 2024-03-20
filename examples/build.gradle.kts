@@ -32,7 +32,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 // Dynamically create a task for each example
-val examples = listOf("RunTreeExample", "OpenAiExample") // Add the names of your example classes here
+val examples = listOf("OpenAiExample") // Add the names of your example classes here
 
 examples.forEach { example ->
     tasks.create("run$example", org.gradle.api.tasks.JavaExec::class.java) {
