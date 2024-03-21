@@ -1,8 +1,9 @@
 package com.langsmith.traceable
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.langsmith.runtree.EndOptions
 import com.langsmith.runtree.RunTree
-import com.langsmith.runtree.RunTreeConfigBuilder
+import com.langsmith.runtree.RunTreeConfig
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
@@ -71,7 +72,7 @@ class Traceable {
         ): R {
             val traceConfig = config ?: TraceConfig()
             val builder =
-                RunTreeConfigBuilder()
+                RunTreeConfig.builder()
                     .setName(traceConfig.name ?: function::class.simpleName ?: "Anonymous")
                     .setRunType(traceConfig.runType ?: "chain")
                     .setTags(traceConfig.tags ?: emptyList())
@@ -95,11 +96,11 @@ class Traceable {
 
             try {
                 val result = function.apply(traceableInput.input)
-                runTree.end(convertToMap(result), null, null)
+                runTree.end(EndOptions(outputs = convertToMap(result)))
                 CompletableFuture.allOf(postFuture).join()
                 return result
             } catch (e: Throwable) {
-                runTree.end(null, e.toString(), null)
+                runTree.end(EndOptions(errorMessage = e.toString()))
                 CompletableFuture.allOf(postFuture).join()
                 throw e
             }
