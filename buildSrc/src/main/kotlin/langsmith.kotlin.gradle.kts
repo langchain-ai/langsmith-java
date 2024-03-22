@@ -1,4 +1,5 @@
 import com.diffplug.gradle.spotless.SpotlessExtension
+import com.vanniktech.maven.publish.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
