@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.2 (2024-03-22)
+
+Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
+
+### Features
+
+* do not inline example ([fa22fd7](https://github.com/langchain-ai/langsmith-java/commit/fa22fd702baaaaa6c1062c73571360210a63de5c))
+* fix link ([c6b8b73](https://github.com/langchain-ai/langsmith-java/commit/c6b8b737b6214b717f747002f4f5f314ebce7fbb))
+* update builder patterns, use end options ([33019db](https://github.com/langchain-ai/langsmith-java/commit/33019db58bbbb63590dacbecd60548ea3f76ebd3))
+* update README ([aa6b46d](https://github.com/langchain-ai/langsmith-java/commit/aa6b46d44f8f7b15d342d7bb4defc566fd6f5369))
+* updates ([eb0044a](https://github.com/langchain-ai/langsmith-java/commit/eb0044a2a4b0d7f90e9842eb7fa53503d7c85232))
+* Use new sonatype publishing plugin ([d3f8fb2](https://github.com/langchain-ai/langsmith-java/commit/d3f8fb2c0931c78f9a830b3fd4d0a398e5c481f1))
+
 ## 0.1.0-alpha.1 (2024-03-19)
 
 Full Changelog: [v0.0.1-alpha.0...v0.1.0-alpha.1](https://github.com/langchain-ai/langsmith-java/compare/v0.0.1-alpha.0...v0.1.0-alpha.1)
