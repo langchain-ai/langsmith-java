@@ -16,17 +16,17 @@ import java.util.Objects
 
 class ExampleBulkCreateParams
 constructor(
-    private val body: List<Body>,
+    private val items: List<Item>,
     private val additionalQueryParams: Map<String, List<String>>,
     private val additionalHeaders: Map<String, List<String>>,
     private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun body(): List<Body> = body
+    fun items(): List<Item> = items
 
     @JvmSynthetic
     internal fun getBody(): ExampleBulkCreateBody {
-        return ExampleBulkCreateBody(body, additionalBodyProperties)
+        return ExampleBulkCreateBody(items, additionalBodyProperties)
     }
 
     @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
@@ -37,13 +37,13 @@ constructor(
     @NoAutoDetect
     class ExampleBulkCreateBody
     internal constructor(
-        private val body: List<Body>?,
+        private val items: List<Item>?,
         private val additionalProperties: Map<String, JsonValue>,
     ) {
 
         private var hashCode: Int = 0
 
-        @JsonProperty("body") fun body(): List<Body>? = body
+        @JsonProperty("items") fun items(): List<Item>? = items
 
         @JsonAnyGetter
         @ExcludeMissing
@@ -57,19 +57,19 @@ constructor(
             }
 
             return other is ExampleBulkCreateBody &&
-                this.body == other.body &&
+                this.items == other.items &&
                 this.additionalProperties == other.additionalProperties
         }
 
         override fun hashCode(): Int {
             if (hashCode == 0) {
-                hashCode = Objects.hash(body, additionalProperties)
+                hashCode = Objects.hash(items, additionalProperties)
             }
             return hashCode
         }
 
         override fun toString() =
-            "ExampleBulkCreateBody{body=$body, additionalProperties=$additionalProperties}"
+            "ExampleBulkCreateBody{items=$items, additionalProperties=$additionalProperties}"
 
         companion object {
 
@@ -78,16 +78,16 @@ constructor(
 
         class Builder {
 
-            private var body: List<Body>? = null
+            private var items: List<Item>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(exampleBulkCreateBody: ExampleBulkCreateBody) = apply {
-                this.body = exampleBulkCreateBody.body
+                this.items = exampleBulkCreateBody.items
                 additionalProperties(exampleBulkCreateBody.additionalProperties)
             }
 
-            @JsonProperty("body") fun body(body: List<Body>) = apply { this.body = body }
+            @JsonProperty("items") fun items(items: List<Item>) = apply { this.items = items }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -105,7 +105,7 @@ constructor(
 
             fun build(): ExampleBulkCreateBody =
                 ExampleBulkCreateBody(
-                    checkNotNull(body) { "`body` is required but was not set" }.toUnmodifiable(),
+                    checkNotNull(items) { "`items` is required but was not set" }.toUnmodifiable(),
                     additionalProperties.toUnmodifiable()
                 )
         }
@@ -123,7 +123,7 @@ constructor(
         }
 
         return other is ExampleBulkCreateParams &&
-            this.body == other.body &&
+            this.items == other.items &&
             this.additionalQueryParams == other.additionalQueryParams &&
             this.additionalHeaders == other.additionalHeaders &&
             this.additionalBodyProperties == other.additionalBodyProperties
@@ -131,7 +131,7 @@ constructor(
 
     override fun hashCode(): Int {
         return Objects.hash(
-            body,
+            items,
             additionalQueryParams,
             additionalHeaders,
             additionalBodyProperties,
@@ -139,7 +139,7 @@ constructor(
     }
 
     override fun toString() =
-        "ExampleBulkCreateParams{body=$body, additionalQueryParams=$additionalQueryParams, additionalHeaders=$additionalHeaders, additionalBodyProperties=$additionalBodyProperties}"
+        "ExampleBulkCreateParams{items=$items, additionalQueryParams=$additionalQueryParams, additionalHeaders=$additionalHeaders, additionalBodyProperties=$additionalBodyProperties}"
 
     fun toBuilder() = Builder().from(this)
 
@@ -151,25 +151,25 @@ constructor(
     @NoAutoDetect
     class Builder {
 
-        private var body: MutableList<Body> = mutableListOf()
+        private var items: MutableList<Item> = mutableListOf()
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(exampleBulkCreateParams: ExampleBulkCreateParams) = apply {
-            this.body(exampleBulkCreateParams.body)
+            this.items(exampleBulkCreateParams.items)
             additionalQueryParams(exampleBulkCreateParams.additionalQueryParams)
             additionalHeaders(exampleBulkCreateParams.additionalHeaders)
             additionalBodyProperties(exampleBulkCreateParams.additionalBodyProperties)
         }
 
-        fun body(body: List<Body>) = apply {
-            this.body.clear()
-            this.body.addAll(body)
+        fun items(items: List<Item>) = apply {
+            this.items.clear()
+            this.items.addAll(items)
         }
 
-        fun addBody(body: Body) = apply { this.body.add(body) }
+        fun addItem(item: Item) = apply { this.items.add(item) }
 
         fun additionalQueryParams(additionalQueryParams: Map<String, List<String>>) = apply {
             this.additionalQueryParams.clear()
@@ -227,7 +227,7 @@ constructor(
 
         fun build(): ExampleBulkCreateParams =
             ExampleBulkCreateParams(
-                checkNotNull(body) { "`body` is required but was not set" }.toUnmodifiable(),
+                checkNotNull(items) { "`items` is required but was not set" }.toUnmodifiable(),
                 additionalQueryParams.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
                 additionalHeaders.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
                 additionalBodyProperties.toUnmodifiable(),
@@ -235,9 +235,9 @@ constructor(
     }
 
     /** Create class for Example. */
-    @JsonDeserialize(builder = ExampleCreate.Builder::class)
+    @JsonDeserialize(builder = Item.Builder::class)
     @NoAutoDetect
-    class ExampleCreate
+    class Item
     private constructor(
         private val createdAt: OffsetDateTime?,
         private val inputs: JsonValue?,
@@ -273,7 +273,7 @@ constructor(
                 return true
             }
 
-            return other is ExampleCreate &&
+            return other is Item &&
                 this.createdAt == other.createdAt &&
                 this.inputs == other.inputs &&
                 this.outputs == other.outputs &&
@@ -300,7 +300,7 @@ constructor(
         }
 
         override fun toString() =
-            "ExampleCreate{createdAt=$createdAt, inputs=$inputs, outputs=$outputs, datasetId=$datasetId, sourceRunId=$sourceRunId, id=$id, additionalProperties=$additionalProperties}"
+            "Item{createdAt=$createdAt, inputs=$inputs, outputs=$outputs, datasetId=$datasetId, sourceRunId=$sourceRunId, id=$id, additionalProperties=$additionalProperties}"
 
         companion object {
 
@@ -318,14 +318,14 @@ constructor(
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
-            internal fun from(exampleCreate: ExampleCreate) = apply {
-                this.createdAt = exampleCreate.createdAt
-                this.inputs = exampleCreate.inputs
-                this.outputs = exampleCreate.outputs
-                this.datasetId = exampleCreate.datasetId
-                this.sourceRunId = exampleCreate.sourceRunId
-                this.id = exampleCreate.id
-                additionalProperties(exampleCreate.additionalProperties)
+            internal fun from(item: Item) = apply {
+                this.createdAt = item.createdAt
+                this.inputs = item.inputs
+                this.outputs = item.outputs
+                this.datasetId = item.datasetId
+                this.sourceRunId = item.sourceRunId
+                this.id = item.id
+                additionalProperties(item.additionalProperties)
             }
 
             @JsonProperty("created_at")
@@ -358,8 +358,8 @@ constructor(
                 this.additionalProperties.putAll(additionalProperties)
             }
 
-            fun build(): ExampleCreate =
-                ExampleCreate(
+            fun build(): Item =
+                Item(
                     createdAt,
                     checkNotNull(inputs) { "`inputs` is required but was not set" },
                     outputs,
