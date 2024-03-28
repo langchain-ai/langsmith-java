@@ -24,9 +24,9 @@ class BulkServiceTest {
         val exampleBulkCreateResponse =
             bulkService.create(
                 ExampleBulkCreateParams.builder()
-                    .exampleCreate(
+                    .examples(
                         listOf(
-                            ExampleBulkCreateParams.ExampleCreate.builder()
+                            ExampleBulkCreateParams.Example.builder()
                                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .inputs(JsonValue.from(mapOf<String, Any>()))
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
