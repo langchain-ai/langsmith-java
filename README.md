@@ -215,6 +215,30 @@ LangSmithClient client = LangSmithOkHttpClient.builder()
     .build();
 ```
 
+## Making custom/undocumented requests
+
+This library is typed for convenient access to the documented API. If you need to access undocumented
+params or response properties, the library can still be used.
+
+### Undocumented request params
+
+To make requests using undocumented parameters, you can provide or override parameters on the params object
+while building it.
+
+```kotlin
+FooCreateParams address = FooCreateParams.builder()
+    .id("my_id")
+    .putAdditionalProperty("secret_prop", JsonValue.from("hello"))
+    .build();
+```
+
+### Undocumented response properties
+
+To access undocumented response properties, you can use `res._additionalProperties()` on a response object to
+get a map of untyped fields of type `Map<String, JsonValue>`. You can then access fields like
+`._additionalProperties().get("secret_prop").asString()` or use other helpers defined on the `JsonValue` class
+to extract it to a desired type.
+
 ## Semantic versioning
 
 This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
