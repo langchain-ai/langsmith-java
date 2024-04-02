@@ -2,12 +2,8 @@
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
-import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.langsmith.api.core.ExcludeMissing
-import com.langsmith.api.core.JsonValue
 import com.langsmith.api.core.NoAutoDetect
 import com.langsmith.api.core.toUnmodifiable
 import com.langsmith.api.models.*
@@ -19,7 +15,6 @@ constructor(
     private val body: List<String>,
     private val additionalQueryParams: Map<String, List<String>>,
     private val additionalHeaders: Map<String, List<String>>,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
     fun queueId(): String = queueId
@@ -27,8 +22,8 @@ constructor(
     fun body(): List<String> = body
 
     @JvmSynthetic
-    internal fun getBody(): AnnotationQueueRunCreateBody {
-        return AnnotationQueueRunCreateBody(body, additionalBodyProperties)
+    internal fun getBody(): List<String> {
+        return body
     }
 
     @JvmSynthetic internal fun getQueryParams(): Map<String, List<String>> = additionalQueryParams
@@ -47,16 +42,11 @@ constructor(
     class AnnotationQueueRunCreateBody
     internal constructor(
         private val body: List<String>?,
-        private val additionalProperties: Map<String, JsonValue>,
     ) {
 
         private var hashCode: Int = 0
 
         @JsonProperty("body") fun body(): List<String>? = body
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
         fun toBuilder() = Builder().from(this)
 
@@ -65,20 +55,17 @@ constructor(
                 return true
             }
 
-            return other is AnnotationQueueRunCreateBody &&
-                this.body == other.body &&
-                this.additionalProperties == other.additionalProperties
+            return other is AnnotationQueueRunCreateBody && this.body == other.body
         }
 
         override fun hashCode(): Int {
             if (hashCode == 0) {
-                hashCode = Objects.hash(body, additionalProperties)
+                hashCode = Objects.hash(body)
             }
             return hashCode
         }
 
-        override fun toString() =
-            "AnnotationQueueRunCreateBody{body=$body, additionalProperties=$additionalProperties}"
+        override fun toString() = "AnnotationQueueRunCreateBody{body=$body}"
 
         companion object {
 
@@ -88,43 +75,19 @@ constructor(
         class Builder {
 
             private var body: List<String>? = null
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(annotationQueueRunCreateBody: AnnotationQueueRunCreateBody) = apply {
                 this.body = annotationQueueRunCreateBody.body
-                additionalProperties(annotationQueueRunCreateBody.additionalProperties)
             }
 
             @JsonProperty("body") fun body(body: List<String>) = apply { this.body = body }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun build(): AnnotationQueueRunCreateBody =
-                AnnotationQueueRunCreateBody(
-                    checkNotNull(body) { "`body` is required but was not set" }.toUnmodifiable(),
-                    additionalProperties.toUnmodifiable()
-                )
         }
     }
 
     fun _additionalQueryParams(): Map<String, List<String>> = additionalQueryParams
 
     fun _additionalHeaders(): Map<String, List<String>> = additionalHeaders
-
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -135,8 +98,7 @@ constructor(
             this.queueId == other.queueId &&
             this.body == other.body &&
             this.additionalQueryParams == other.additionalQueryParams &&
-            this.additionalHeaders == other.additionalHeaders &&
-            this.additionalBodyProperties == other.additionalBodyProperties
+            this.additionalHeaders == other.additionalHeaders
     }
 
     override fun hashCode(): Int {
@@ -145,12 +107,11 @@ constructor(
             body,
             additionalQueryParams,
             additionalHeaders,
-            additionalBodyProperties,
         )
     }
 
     override fun toString() =
-        "AnnotationQueueRunCreateParams{queueId=$queueId, body=$body, additionalQueryParams=$additionalQueryParams, additionalHeaders=$additionalHeaders, additionalBodyProperties=$additionalBodyProperties}"
+        "AnnotationQueueRunCreateParams{queueId=$queueId, body=$body, additionalQueryParams=$additionalQueryParams, additionalHeaders=$additionalHeaders}"
 
     fun toBuilder() = Builder().from(this)
 
@@ -166,7 +127,6 @@ constructor(
         private var body: MutableList<String> = mutableListOf()
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(annotationQueueRunCreateParams: AnnotationQueueRunCreateParams) = apply {
@@ -174,7 +134,6 @@ constructor(
             this.body(annotationQueueRunCreateParams.body)
             additionalQueryParams(annotationQueueRunCreateParams.additionalQueryParams)
             additionalHeaders(annotationQueueRunCreateParams.additionalHeaders)
-            additionalBodyProperties(annotationQueueRunCreateParams.additionalBodyProperties)
         }
 
         fun queueId(queueId: String) = apply { this.queueId = queueId }
@@ -226,27 +185,12 @@ constructor(
 
         fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            this.additionalBodyProperties.putAll(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            this.additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
         fun build(): AnnotationQueueRunCreateParams =
             AnnotationQueueRunCreateParams(
                 checkNotNull(queueId) { "`queueId` is required but was not set" },
                 checkNotNull(body) { "`body` is required but was not set" }.toUnmodifiable(),
                 additionalQueryParams.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
                 additionalHeaders.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
-                additionalBodyProperties.toUnmodifiable(),
             )
     }
 }

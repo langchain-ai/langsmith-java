@@ -47,7 +47,7 @@ class ExampleBulkCreateParamsTest {
                 .build()
         val body = params.getBody()
         assertThat(body).isNotNull
-        assertThat(body.examples())
+        assertThat(body)
             .isEqualTo(
                 listOf(
                     ExampleBulkCreateParams.Example.builder()
@@ -77,7 +77,7 @@ class ExampleBulkCreateParamsTest {
                 .build()
         val body = params.getBody()
         assertThat(body).isNotNull
-        assertThat(body.examples())
+        assertThat(body)
             .isEqualTo(
                 listOf(
                     ExampleBulkCreateParams.Example.builder()
