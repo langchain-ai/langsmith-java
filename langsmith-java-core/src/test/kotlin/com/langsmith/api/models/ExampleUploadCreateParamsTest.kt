@@ -2,6 +2,8 @@
 
 package com.langsmith.api.models
 
+import com.langsmith.api.core.ContentTypes
+import com.langsmith.api.core.MultipartFormValue
 import com.langsmith.api.models.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -12,7 +14,7 @@ class ExampleUploadCreateParamsTest {
     fun createExampleUploadCreateParams() {
         ExampleUploadCreateParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .file("file.txt")
+            .file("some content".toByteArray())
             .inputKeys(listOf("string"))
             .outputKeys(listOf("string"))
             .build()
@@ -23,15 +25,30 @@ class ExampleUploadCreateParamsTest {
         val params =
             ExampleUploadCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .file("file.txt")
+                .file("some content".toByteArray())
                 .inputKeys(listOf("string"))
                 .outputKeys(listOf("string"))
                 .build()
         val body = params.getBody()
         assertThat(body).isNotNull
-        assertThat(body.file()).isEqualTo("file.txt")
-        assertThat(body.inputKeys()).isEqualTo(listOf("string"))
-        assertThat(body.outputKeys()).isEqualTo(listOf("string"))
+        assertThat(body)
+            .containsExactly(
+                MultipartFormValue.fromByteArray(
+                    "file",
+                    "some content".toByteArray(),
+                    ContentTypes.DefaultBinary
+                ),
+                MultipartFormValue.fromList<String>(
+                    "inputKeys",
+                    listOf("string"),
+                    ContentTypes.DefaultText
+                ),
+                MultipartFormValue.fromList<String>(
+                    "outputKeys",
+                    listOf("string"),
+                    ContentTypes.DefaultText
+                ),
+            )
     }
 
     @Test
@@ -39,13 +56,25 @@ class ExampleUploadCreateParamsTest {
         val params =
             ExampleUploadCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .file("file.txt")
+                .file("some content".toByteArray())
                 .inputKeys(listOf("string"))
                 .build()
         val body = params.getBody()
         assertThat(body).isNotNull
-        assertThat(body.file()).isEqualTo("file.txt")
-        assertThat(body.inputKeys()).isEqualTo(listOf("string"))
+        assertThat(body)
+            .containsExactly(
+                MultipartFormValue.fromByteArray(
+                    "file",
+                    "some content".toByteArray(),
+                    ContentTypes.DefaultBinary
+                ),
+                MultipartFormValue.fromList<String>(
+                    "inputKeys",
+                    listOf("string"),
+                    ContentTypes.DefaultText
+                ),
+                null,
+            )
     }
 
     @Test
@@ -53,7 +82,7 @@ class ExampleUploadCreateParamsTest {
         val params =
             ExampleUploadCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .file("file.txt")
+                .file("some content".toByteArray())
                 .inputKeys(listOf("string"))
                 .build()
         assertThat(params).isNotNull

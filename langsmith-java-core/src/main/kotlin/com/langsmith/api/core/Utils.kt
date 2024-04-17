@@ -57,3 +57,5 @@ internal fun ListMultimap<String, String>.getRequiredHeader(header: String): Str
     }
     return value.get()
 }
+
+internal interface Enum
