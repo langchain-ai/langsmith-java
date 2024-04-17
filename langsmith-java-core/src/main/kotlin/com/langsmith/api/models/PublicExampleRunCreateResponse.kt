@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langsmith.api.core.BaseDeserializer
 import com.langsmith.api.core.BaseSerializer
+import com.langsmith.api.core.Enum
 import com.langsmith.api.core.ExcludeMissing
 import com.langsmith.api.core.JsonField
 import com.langsmith.api.core.JsonMissing
@@ -1354,7 +1355,7 @@ private constructor(
             @JsonCreator
             private constructor(
                 private val value: JsonField<String>,
-            ) {
+            ) : Enum {
 
                 @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 

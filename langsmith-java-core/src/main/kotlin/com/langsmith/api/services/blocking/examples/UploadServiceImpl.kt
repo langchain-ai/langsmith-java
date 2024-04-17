@@ -11,8 +11,8 @@ import com.langsmith.api.errors.LangSmithError
 import com.langsmith.api.models.Example
 import com.langsmith.api.models.ExampleUploadCreateParams
 import com.langsmith.api.services.errorHandler
-import com.langsmith.api.services.json
 import com.langsmith.api.services.jsonHandler
+import com.langsmith.api.services.multipartFormData
 import com.langsmith.api.services.withErrorHandler
 
 class UploadServiceImpl
@@ -37,7 +37,7 @@ constructor(
                 .putAllQueryParams(params.getQueryParams())
                 .putAllHeaders(clientOptions.headers)
                 .putAllHeaders(params.getHeaders())
-                .body(json(clientOptions.jsonMapper, params.getBody()))
+                .body(multipartFormData(clientOptions.jsonMapper, params.getBody()))
                 .build()
         return clientOptions.httpClient.execute(request, requestOptions).let { response ->
             response
