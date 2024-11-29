@@ -6,6 +6,8 @@ The Lang Smith Java SDK provides convenient access to the Lang Smith REST API fr
 
 The Lang Smith Java SDK is similar to the Lang Smith Kotlin SDK but with minor differences that make it more ergonomic for use in Java, such as `Optional` instead of nullable values, `Stream` instead of `Sequence`, and `CompletableFuture` instead of suspend functions.
 
+It is generated with [Stainless](https://www.stainlessapi.com/).
+
 ## Documentation
 
 The REST API documentation can be found [on docs.langsmith.com](https://api.smith.langchain.com/redoc).
@@ -217,7 +219,7 @@ LangSmithClient client = LangSmithOkHttpClient.builder()
     .build();
 ```
 
-## Semantic Versioning
+## Semantic versioning
 
 This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
 
