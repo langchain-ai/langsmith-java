@@ -23,7 +23,7 @@ class UploadServiceTest {
             uploadService.create(
                 ExampleUploadCreateParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .file("file.txt")
+                    .file("some content".toByteArray())
                     .inputKeys(listOf("string"))
                     .outputKeys(listOf("string"))
                     .build()

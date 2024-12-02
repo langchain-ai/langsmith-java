@@ -2,44 +2,40 @@
 
 package com.langsmith.api.models
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter
-import com.fasterxml.jackson.annotation.JsonAnySetter
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.langsmith.api.core.ExcludeMissing
-import com.langsmith.api.core.JsonValue
+import com.langsmith.api.core.ContentTypes
+import com.langsmith.api.core.MultipartFormValue
 import com.langsmith.api.core.NoAutoDetect
 import com.langsmith.api.core.toUnmodifiable
 import com.langsmith.api.models.*
 import java.util.Objects
 import java.util.Optional
+import org.apache.hc.core5.http.ContentType
 
 class ExampleUploadCreateParams
 constructor(
-    private val datasetId: String,
-    private val file: String,
-    private val inputKeys: List<String>,
-    private val outputKeys: List<String>?,
+    private val datasetId: MultipartFormValue<String>,
+    private val file: MultipartFormValue<ByteArray>,
+    private val inputKeys: MultipartFormValue<List<String>>,
+    private val outputKeys: MultipartFormValue<List<String>>?,
     private val additionalQueryParams: Map<String, List<String>>,
     private val additionalHeaders: Map<String, List<String>>,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) {
 
-    fun datasetId(): String = datasetId
+    fun datasetId(): MultipartFormValue<String> = datasetId
 
-    fun file(): String = file
+    fun file(): MultipartFormValue<ByteArray> = file
 
-    fun inputKeys(): List<String> = inputKeys
+    fun inputKeys(): MultipartFormValue<List<String>> = inputKeys
 
-    fun outputKeys(): Optional<List<String>> = Optional.ofNullable(outputKeys)
+    fun outputKeys(): Optional<MultipartFormValue<List<String>>> = Optional.ofNullable(outputKeys)
 
     @JvmSynthetic
-    internal fun getBody(): ExampleUploadCreateBody {
-        return ExampleUploadCreateBody(
+    internal fun getBody(): Array<MultipartFormValue<*>?> {
+        return arrayOf(
             file,
             inputKeys,
             outputKeys,
-            additionalBodyProperties,
         )
     }
 
@@ -58,23 +54,18 @@ constructor(
     @NoAutoDetect
     class ExampleUploadCreateBody
     internal constructor(
-        private val file: String?,
+        private val file: ByteArray?,
         private val inputKeys: List<String>?,
         private val outputKeys: List<String>?,
-        private val additionalProperties: Map<String, JsonValue>,
     ) {
 
         private var hashCode: Int = 0
 
-        @JsonProperty("file") fun file(): String? = file
+        fun file(): ByteArray? = file
 
-        @JsonProperty("input_keys") fun inputKeys(): List<String>? = inputKeys
+        fun inputKeys(): List<String>? = inputKeys
 
-        @JsonProperty("output_keys") fun outputKeys(): List<String>? = outputKeys
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+        fun outputKeys(): List<String>? = outputKeys
 
         fun toBuilder() = Builder().from(this)
 
@@ -86,8 +77,7 @@ constructor(
             return other is ExampleUploadCreateBody &&
                 this.file == other.file &&
                 this.inputKeys == other.inputKeys &&
-                this.outputKeys == other.outputKeys &&
-                this.additionalProperties == other.additionalProperties
+                this.outputKeys == other.outputKeys
         }
 
         override fun hashCode(): Int {
@@ -97,14 +87,13 @@ constructor(
                         file,
                         inputKeys,
                         outputKeys,
-                        additionalProperties,
                     )
             }
             return hashCode
         }
 
         override fun toString() =
-            "ExampleUploadCreateBody{file=$file, inputKeys=$inputKeys, outputKeys=$outputKeys, additionalProperties=$additionalProperties}"
+            "ExampleUploadCreateBody{file=$file, inputKeys=$inputKeys, outputKeys=$outputKeys}"
 
         companion object {
 
@@ -113,57 +102,28 @@ constructor(
 
         class Builder {
 
-            private var file: String? = null
+            private var file: ByteArray? = null
             private var inputKeys: List<String>? = null
             private var outputKeys: List<String>? = null
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(exampleUploadCreateBody: ExampleUploadCreateBody) = apply {
                 this.file = exampleUploadCreateBody.file
                 this.inputKeys = exampleUploadCreateBody.inputKeys
                 this.outputKeys = exampleUploadCreateBody.outputKeys
-                additionalProperties(exampleUploadCreateBody.additionalProperties)
             }
 
-            @JsonProperty("file") fun file(file: String) = apply { this.file = file }
+            fun file(file: ByteArray) = apply { this.file = file }
 
-            @JsonProperty("input_keys")
             fun inputKeys(inputKeys: List<String>) = apply { this.inputKeys = inputKeys }
 
-            @JsonProperty("output_keys")
             fun outputKeys(outputKeys: List<String>) = apply { this.outputKeys = outputKeys }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            @JsonAnySetter
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                this.additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun build(): ExampleUploadCreateBody =
-                ExampleUploadCreateBody(
-                    checkNotNull(file) { "`file` is required but was not set" },
-                    checkNotNull(inputKeys) { "`inputKeys` is required but was not set" }
-                        .toUnmodifiable(),
-                    outputKeys?.toUnmodifiable(),
-                    additionalProperties.toUnmodifiable(),
-                )
         }
     }
 
     fun _additionalQueryParams(): Map<String, List<String>> = additionalQueryParams
 
     fun _additionalHeaders(): Map<String, List<String>> = additionalHeaders
-
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -176,8 +136,7 @@ constructor(
             this.inputKeys == other.inputKeys &&
             this.outputKeys == other.outputKeys &&
             this.additionalQueryParams == other.additionalQueryParams &&
-            this.additionalHeaders == other.additionalHeaders &&
-            this.additionalBodyProperties == other.additionalBodyProperties
+            this.additionalHeaders == other.additionalHeaders
     }
 
     override fun hashCode(): Int {
@@ -188,12 +147,11 @@ constructor(
             outputKeys,
             additionalQueryParams,
             additionalHeaders,
-            additionalBodyProperties,
         )
     }
 
     override fun toString() =
-        "ExampleUploadCreateParams{datasetId=$datasetId, file=$file, inputKeys=$inputKeys, outputKeys=$outputKeys, additionalQueryParams=$additionalQueryParams, additionalHeaders=$additionalHeaders, additionalBodyProperties=$additionalBodyProperties}"
+        "ExampleUploadCreateParams{datasetId=$datasetId, file=$file, inputKeys=$inputKeys, outputKeys=$outputKeys, additionalQueryParams=$additionalQueryParams, additionalHeaders=$additionalHeaders}"
 
     fun toBuilder() = Builder().from(this)
 
@@ -205,13 +163,12 @@ constructor(
     @NoAutoDetect
     class Builder {
 
-        private var datasetId: String? = null
-        private var file: String? = null
-        private var inputKeys: MutableList<String> = mutableListOf()
-        private var outputKeys: MutableList<String> = mutableListOf()
+        private var datasetId: MultipartFormValue<String>? = null
+        private var file: MultipartFormValue<ByteArray>? = null
+        private var inputKeys: MutableMultipartFormValue<List<String>> = mutableListOf()
+        private var outputKeys: MutableMultipartFormValue<List<String>> = mutableListOf()
         private var additionalQueryParams: MutableMap<String, MutableList<String>> = mutableMapOf()
         private var additionalHeaders: MutableMap<String, MutableList<String>> = mutableMapOf()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(exampleUploadCreateParams: ExampleUploadCreateParams) = apply {
@@ -221,12 +178,20 @@ constructor(
             this.outputKeys(exampleUploadCreateParams.outputKeys ?: listOf())
             additionalQueryParams(exampleUploadCreateParams.additionalQueryParams)
             additionalHeaders(exampleUploadCreateParams.additionalHeaders)
-            additionalBodyProperties(exampleUploadCreateParams.additionalBodyProperties)
         }
 
-        fun datasetId(datasetId: String) = apply { this.datasetId = datasetId }
+        fun datasetId(datasetId: String, contentType: ContentType = ContentTypes.DefaultText) =
+            apply {
+                this.datasetId = MultipartFormValue.fromString("datasetId", datasetId, contentType)
+            }
 
-        fun file(file: String) = apply { this.file = file }
+        fun file(
+            content: ByteArray,
+            filename: String? = null,
+            contentType: ContentType = ContentTypes.DefaultBinary
+        ) = apply {
+            this.file = MultipartFormValue.fromByteArray("file", content, contentType, filename)
+        }
 
         fun inputKeys(inputKeys: List<String>) = apply {
             this.inputKeys.clear()
@@ -282,20 +247,6 @@ constructor(
 
         fun removeHeader(name: String) = apply { this.additionalHeaders.put(name, mutableListOf()) }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            this.additionalBodyProperties.putAll(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            this.additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
         fun build(): ExampleUploadCreateParams =
             ExampleUploadCreateParams(
                 checkNotNull(datasetId) { "`datasetId` is required but was not set" },
@@ -305,7 +256,6 @@ constructor(
                 if (outputKeys.size == 0) null else outputKeys.toUnmodifiable(),
                 additionalQueryParams.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
                 additionalHeaders.mapValues { it.value.toUnmodifiable() }.toUnmodifiable(),
-                additionalBodyProperties.toUnmodifiable(),
             )
     }
 }

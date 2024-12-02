@@ -143,7 +143,7 @@ class DatasetServiceTest {
         val dataset =
             datasetService.upload(
                 DatasetUploadParams.builder()
-                    .file("file.txt")
+                    .file("some content".toByteArray())
                     .inputKeys(listOf("string"))
                     .dataType(DatasetUploadParams.DataType.KV)
                     .description("string")
