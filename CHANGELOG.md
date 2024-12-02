@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.0-alpha.3 (2024-12-02)
+
+Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
+
+### Features
+
+* **api:** update via SDK Studio ([#33](https://github.com/langchain-ai/langsmith-java/issues/33)) ([5b525d2](https://github.com/langchain-ai/langsmith-java/commit/5b525d28d5d276c3630c9dd29a10b22d39e7083c))
+* **api:** update via SDK Studio ([#35](https://github.com/langchain-ai/langsmith-java/issues/35)) ([5a39cb5](https://github.com/langchain-ai/langsmith-java/commit/5a39cb5b3e0ffcfe829af50194e7b6b8ab8fbeb6))
+* **api:** update via SDK Studio ([#36](https://github.com/langchain-ai/langsmith-java/issues/36)) ([63a7b34](https://github.com/langchain-ai/langsmith-java/commit/63a7b34badf0657b660f220eb96dc72636b3596e))
+* **api:** update via SDK Studio ([#37](https://github.com/langchain-ai/langsmith-java/issues/37)) ([2da0806](https://github.com/langchain-ai/langsmith-java/commit/2da08069d6a41580fb161e68f69ad2c867db09e2))
+* **api:** update via SDK Studio ([#38](https://github.com/langchain-ai/langsmith-java/issues/38)) ([644aa0e](https://github.com/langchain-ai/langsmith-java/commit/644aa0e91164b69331e83f800eebe01911a6dd80))
+
+
+### Chores
+
+* remove .gradle cache files ([9931bd3](https://github.com/langchain-ai/langsmith-java/commit/9931bd3b64e2fe03421fbeb824b3b2e2324517f9))
+
 ## 0.1.0-alpha.2 (2024-03-22)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
