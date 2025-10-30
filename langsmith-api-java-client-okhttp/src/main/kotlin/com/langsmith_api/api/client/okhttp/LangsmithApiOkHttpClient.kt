@@ -1,0 +1,332 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langsmith_api.api.client.okhttp
+
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.langsmith_api.api.client.LangsmithApiClient
+import com.langsmith_api.api.client.LangsmithApiClientImpl
+import com.langsmith_api.api.core.ClientOptions
+import com.langsmith_api.api.core.Sleeper
+import com.langsmith_api.api.core.Timeout
+import com.langsmith_api.api.core.http.Headers
+import com.langsmith_api.api.core.http.HttpClient
+import com.langsmith_api.api.core.http.QueryParams
+import com.langsmith_api.api.core.jsonMapper
+import java.net.Proxy
+import java.time.Clock
+import java.time.Duration
+import java.util.Optional
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.X509TrustManager
+import kotlin.jvm.optionals.getOrNull
+
+/**
+ * A class that allows building an instance of [LangsmithApiClient] with [OkHttpClient] as the
+ * underlying [HttpClient].
+ */
+class LangsmithApiOkHttpClient private constructor() {
+
+    companion object {
+
+        /** Returns a mutable builder for constructing an instance of [LangsmithApiClient]. */
+        @JvmStatic fun builder() = Builder()
+
+        /**
+         * Returns a client configured using system properties and environment variables.
+         *
+         * @see ClientOptions.Builder.fromEnv
+         */
+        @JvmStatic fun fromEnv(): LangsmithApiClient = builder().fromEnv().build()
+    }
+
+    /** A builder for [LangsmithApiOkHttpClient]. */
+    class Builder internal constructor() {
+
+        private var clientOptions: ClientOptions.Builder = ClientOptions.builder()
+        private var proxy: Proxy? = null
+        private var sslSocketFactory: SSLSocketFactory? = null
+        private var trustManager: X509TrustManager? = null
+        private var hostnameVerifier: HostnameVerifier? = null
+
+        fun proxy(proxy: Proxy?) = apply { this.proxy = proxy }
+
+        /** Alias for calling [Builder.proxy] with `proxy.orElse(null)`. */
+        fun proxy(proxy: Optional<Proxy>) = proxy(proxy.getOrNull())
+
+        /**
+         * The socket factory used to secure HTTPS connections.
+         *
+         * If this is set, then [trustManager] must also be set.
+         *
+         * If unset, then the system default is used. Most applications should not call this method,
+         * and instead use the system default. The default include special optimizations that can be
+         * lost if the implementation is modified.
+         */
+        fun sslSocketFactory(sslSocketFactory: SSLSocketFactory?) = apply {
+            this.sslSocketFactory = sslSocketFactory
+        }
+
+        /** Alias for calling [Builder.sslSocketFactory] with `sslSocketFactory.orElse(null)`. */
+        fun sslSocketFactory(sslSocketFactory: Optional<SSLSocketFactory>) =
+            sslSocketFactory(sslSocketFactory.getOrNull())
+
+        /**
+         * The trust manager used to secure HTTPS connections.
+         *
+         * If this is set, then [sslSocketFactory] must also be set.
+         *
+         * If unset, then the system default is used. Most applications should not call this method,
+         * and instead use the system default. The default include special optimizations that can be
+         * lost if the implementation is modified.
+         */
+        fun trustManager(trustManager: X509TrustManager?) = apply {
+            this.trustManager = trustManager
+        }
+
+        /** Alias for calling [Builder.trustManager] with `trustManager.orElse(null)`. */
+        fun trustManager(trustManager: Optional<X509TrustManager>) =
+            trustManager(trustManager.getOrNull())
+
+        /**
+         * The verifier used to confirm that response certificates apply to requested hostnames for
+         * HTTPS connections.
+         *
+         * If unset, then a default hostname verifier is used.
+         */
+        fun hostnameVerifier(hostnameVerifier: HostnameVerifier?) = apply {
+            this.hostnameVerifier = hostnameVerifier
+        }
+
+        /** Alias for calling [Builder.hostnameVerifier] with `hostnameVerifier.orElse(null)`. */
+        fun hostnameVerifier(hostnameVerifier: Optional<HostnameVerifier>) =
+            hostnameVerifier(hostnameVerifier.getOrNull())
+
+        /**
+         * Whether to throw an exception if any of the Jackson versions detected at runtime are
+         * incompatible with the SDK's minimum supported Jackson version (2.13.4).
+         *
+         * Defaults to true. Use extreme caution when disabling this option. There is no guarantee
+         * that the SDK will work correctly when using an incompatible Jackson version.
+         */
+        fun checkJacksonVersionCompatibility(checkJacksonVersionCompatibility: Boolean) = apply {
+            clientOptions.checkJacksonVersionCompatibility(checkJacksonVersionCompatibility)
+        }
+
+        /**
+         * The Jackson JSON mapper to use for serializing and deserializing JSON.
+         *
+         * Defaults to [com.langsmith_api.api.core.jsonMapper]. The default is usually sufficient
+         * and rarely needs to be overridden.
+         */
+        fun jsonMapper(jsonMapper: JsonMapper) = apply { clientOptions.jsonMapper(jsonMapper) }
+
+        /**
+         * The interface to use for delaying execution, like during retries.
+         *
+         * This is primarily useful for using fake delays in tests.
+         *
+         * Defaults to real execution delays.
+         *
+         * This class takes ownership of the sleeper and closes it when closed.
+         */
+        fun sleeper(sleeper: Sleeper) = apply { clientOptions.sleeper(sleeper) }
+
+        /**
+         * The clock to use for operations that require timing, like retries.
+         *
+         * This is primarily useful for using a fake clock in tests.
+         *
+         * Defaults to [Clock.systemUTC].
+         */
+        fun clock(clock: Clock) = apply { clientOptions.clock(clock) }
+
+        /**
+         * The base URL to use for every request.
+         *
+         * Defaults to the production environment: `https://api.example.com`.
+         */
+        fun baseUrl(baseUrl: String?) = apply { clientOptions.baseUrl(baseUrl) }
+
+        /** Alias for calling [Builder.baseUrl] with `baseUrl.orElse(null)`. */
+        fun baseUrl(baseUrl: Optional<String>) = baseUrl(baseUrl.getOrNull())
+
+        /**
+         * Whether to call `validate` on every response before returning it.
+         *
+         * Defaults to false, which means the shape of the response will not be validated upfront.
+         * Instead, validation will only occur for the parts of the response that are accessed.
+         */
+        fun responseValidation(responseValidation: Boolean) = apply {
+            clientOptions.responseValidation(responseValidation)
+        }
+
+        /**
+         * Sets the maximum time allowed for various parts of an HTTP call's lifecycle, excluding
+         * retries.
+         *
+         * Defaults to [Timeout.default].
+         */
+        fun timeout(timeout: Timeout) = apply { clientOptions.timeout(timeout) }
+
+        /**
+         * Sets the maximum time allowed for a complete HTTP call, not including retries.
+         *
+         * See [Timeout.request] for more details.
+         *
+         * For fine-grained control, pass a [Timeout] object.
+         */
+        fun timeout(timeout: Duration) = apply { clientOptions.timeout(timeout) }
+
+        /**
+         * The maximum number of times to retry failed requests, with a short exponential backoff
+         * between requests.
+         *
+         * Only the following error types are retried:
+         * - Connection errors (for example, due to a network connectivity problem)
+         * - 408 Request Timeout
+         * - 409 Conflict
+         * - 429 Rate Limit
+         * - 5xx Internal
+         *
+         * The API may also explicitly instruct the SDK to retry or not retry a request.
+         *
+         * Defaults to 2.
+         */
+        fun maxRetries(maxRetries: Int) = apply { clientOptions.maxRetries(maxRetries) }
+
+        fun apiKey(apiKey: String?) = apply { clientOptions.apiKey(apiKey) }
+
+        /** Alias for calling [Builder.apiKey] with `apiKey.orElse(null)`. */
+        fun apiKey(apiKey: Optional<String>) = apiKey(apiKey.getOrNull())
+
+        fun tenantId(tenantId: String?) = apply { clientOptions.tenantId(tenantId) }
+
+        /** Alias for calling [Builder.tenantId] with `tenantId.orElse(null)`. */
+        fun tenantId(tenantId: Optional<String>) = tenantId(tenantId.getOrNull())
+
+        /**
+         * Bearer tokens are used to authenticate from the UI. Must also specify x-tenant-id or
+         * x-organization-id (for org scoped apis).
+         */
+        fun bearerToken(bearerToken: String?) = apply { clientOptions.bearerToken(bearerToken) }
+
+        /** Alias for calling [Builder.bearerToken] with `bearerToken.orElse(null)`. */
+        fun bearerToken(bearerToken: Optional<String>) = bearerToken(bearerToken.getOrNull())
+
+        fun organizationId(organizationId: String?) = apply {
+            clientOptions.organizationId(organizationId)
+        }
+
+        /** Alias for calling [Builder.organizationId] with `organizationId.orElse(null)`. */
+        fun organizationId(organizationId: Optional<String>) =
+            organizationId(organizationId.getOrNull())
+
+        fun headers(headers: Headers) = apply { clientOptions.headers(headers) }
+
+        fun headers(headers: Map<String, Iterable<String>>) = apply {
+            clientOptions.headers(headers)
+        }
+
+        fun putHeader(name: String, value: String) = apply { clientOptions.putHeader(name, value) }
+
+        fun putHeaders(name: String, values: Iterable<String>) = apply {
+            clientOptions.putHeaders(name, values)
+        }
+
+        fun putAllHeaders(headers: Headers) = apply { clientOptions.putAllHeaders(headers) }
+
+        fun putAllHeaders(headers: Map<String, Iterable<String>>) = apply {
+            clientOptions.putAllHeaders(headers)
+        }
+
+        fun replaceHeaders(name: String, value: String) = apply {
+            clientOptions.replaceHeaders(name, value)
+        }
+
+        fun replaceHeaders(name: String, values: Iterable<String>) = apply {
+            clientOptions.replaceHeaders(name, values)
+        }
+
+        fun replaceAllHeaders(headers: Headers) = apply { clientOptions.replaceAllHeaders(headers) }
+
+        fun replaceAllHeaders(headers: Map<String, Iterable<String>>) = apply {
+            clientOptions.replaceAllHeaders(headers)
+        }
+
+        fun removeHeaders(name: String) = apply { clientOptions.removeHeaders(name) }
+
+        fun removeAllHeaders(names: Set<String>) = apply { clientOptions.removeAllHeaders(names) }
+
+        fun queryParams(queryParams: QueryParams) = apply { clientOptions.queryParams(queryParams) }
+
+        fun queryParams(queryParams: Map<String, Iterable<String>>) = apply {
+            clientOptions.queryParams(queryParams)
+        }
+
+        fun putQueryParam(key: String, value: String) = apply {
+            clientOptions.putQueryParam(key, value)
+        }
+
+        fun putQueryParams(key: String, values: Iterable<String>) = apply {
+            clientOptions.putQueryParams(key, values)
+        }
+
+        fun putAllQueryParams(queryParams: QueryParams) = apply {
+            clientOptions.putAllQueryParams(queryParams)
+        }
+
+        fun putAllQueryParams(queryParams: Map<String, Iterable<String>>) = apply {
+            clientOptions.putAllQueryParams(queryParams)
+        }
+
+        fun replaceQueryParams(key: String, value: String) = apply {
+            clientOptions.replaceQueryParams(key, value)
+        }
+
+        fun replaceQueryParams(key: String, values: Iterable<String>) = apply {
+            clientOptions.replaceQueryParams(key, values)
+        }
+
+        fun replaceAllQueryParams(queryParams: QueryParams) = apply {
+            clientOptions.replaceAllQueryParams(queryParams)
+        }
+
+        fun replaceAllQueryParams(queryParams: Map<String, Iterable<String>>) = apply {
+            clientOptions.replaceAllQueryParams(queryParams)
+        }
+
+        fun removeQueryParams(key: String) = apply { clientOptions.removeQueryParams(key) }
+
+        fun removeAllQueryParams(keys: Set<String>) = apply {
+            clientOptions.removeAllQueryParams(keys)
+        }
+
+        /**
+         * Updates configuration using system properties and environment variables.
+         *
+         * @see ClientOptions.Builder.fromEnv
+         */
+        fun fromEnv() = apply { clientOptions.fromEnv() }
+
+        /**
+         * Returns an immutable instance of [LangsmithApiClient].
+         *
+         * Further updates to this [Builder] will not mutate the returned instance.
+         */
+        fun build(): LangsmithApiClient =
+            LangsmithApiClientImpl(
+                clientOptions
+                    .httpClient(
+                        OkHttpClient.builder()
+                            .timeout(clientOptions.timeout())
+                            .proxy(proxy)
+                            .sslSocketFactory(sslSocketFactory)
+                            .trustManager(trustManager)
+                            .hostnameVerifier(hostnameVerifier)
+                            .build()
+                    )
+                    .build()
+            )
+    }
+}

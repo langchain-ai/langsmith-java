@@ -1,0 +1,24 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langsmith_api.api.models.api.v1.oauth
+
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+internal class OAuthRetrieveCurrentUserParamsTest {
+
+    @Test
+    fun create() {
+        OAuthRetrieveCurrentUserParams.builder().provider(OAuthProvider.CUSTOM_OIDC).build()
+    }
+
+    @Test
+    fun pathParams() {
+        val params =
+            OAuthRetrieveCurrentUserParams.builder().provider(OAuthProvider.CUSTOM_OIDC).build()
+
+        assertThat(params._pathParam(0)).isEqualTo("custom-oidc")
+        // out-of-bound path param
+        assertThat(params._pathParam(1)).isEqualTo("")
+    }
+}

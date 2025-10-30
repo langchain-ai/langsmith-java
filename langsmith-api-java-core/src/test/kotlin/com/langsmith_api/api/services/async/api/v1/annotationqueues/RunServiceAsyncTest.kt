@@ -1,0 +1,121 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langsmith_api.api.services.async.api.v1.annotationqueues
+
+import com.langsmith_api.api.TestServerExtension
+import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClientAsync
+import com.langsmith_api.api.models.api.v1.annotationqueues.runs.RunCreateParams
+import com.langsmith_api.api.models.api.v1.annotationqueues.runs.RunDeleteParams
+import com.langsmith_api.api.models.api.v1.annotationqueues.runs.RunListParams
+import com.langsmith_api.api.models.api.v1.annotationqueues.runs.RunUpdateParams
+import java.time.OffsetDateTime
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+
+@ExtendWith(TestServerExtension::class)
+internal class RunServiceAsyncTest {
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun create() {
+        val client =
+            LangsmithApiOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val runServiceAsync = client.api().v1().annotationQueues().runs()
+
+        val runsFuture =
+            runServiceAsync.create(
+                RunCreateParams.builder()
+                    .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addBody("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
+
+        val runs = runsFuture.get()
+        runs.forEach { it.validate() }
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun update() {
+        val client =
+            LangsmithApiOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val runServiceAsync = client.api().v1().annotationQueues().runs()
+
+        val runFuture =
+            runServiceAsync.update(
+                RunUpdateParams.builder()
+                    .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .lastReviewedTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .build()
+            )
+
+        val run = runFuture.get()
+        run.validate()
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun list() {
+        val client =
+            LangsmithApiOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val runServiceAsync = client.api().v1().annotationQueues().runs()
+
+        val runSchemaWithAnnotationQueueInfosFuture =
+            runServiceAsync.list(
+                RunListParams.builder()
+                    .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .archived(true)
+                    .includeStats(true)
+                    .limit(1L)
+                    .offset(0L)
+                    .build()
+            )
+
+        val runSchemaWithAnnotationQueueInfos = runSchemaWithAnnotationQueueInfosFuture.get()
+        runSchemaWithAnnotationQueueInfos.forEach { it.validate() }
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun delete() {
+        val client =
+            LangsmithApiOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val runServiceAsync = client.api().v1().annotationQueues().runs()
+
+        val runFuture =
+            runServiceAsync.delete(
+                RunDeleteParams.builder()
+                    .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .deleteAll(true)
+                    .addExcludeRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
+
+        val run = runFuture.get()
+        run.validate()
+    }
+}
