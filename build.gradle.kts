@@ -8,7 +8,7 @@ repositories {
 }
 
 allprojects {
-    group = "com.langsmith_api.api"
+    group = "com.langchain.smith"
     version = "0.0.1"
 }
 
@@ -32,7 +32,7 @@ subprojects {
 // Avoid race conditions between `dokkaJavadocCollector` and `dokkaJavadocJar` tasks
 tasks.named("dokkaJavadocCollector").configure {
     subprojects.flatMap { it.tasks }
-        .filter { it.project.name != "langsmith-api-java" && it.name == "dokkaJavadocJar" }
+        .filter { it.project.name != "langsmith-java" && it.name == "dokkaJavadocJar" }
         .forEach { mustRunAfter(it) }
 }
 

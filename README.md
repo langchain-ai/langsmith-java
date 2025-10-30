@@ -1,28 +1,28 @@
-# Langsmith API Java API Library
+# Langsmith Java API Library
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langsmith_api.api/langsmith-api-java)](https://central.sonatype.com/artifact/com.langsmith_api.api/langsmith-api-java/0.0.1)
-[![javadoc](https://javadoc.io/badge2/com.langsmith_api.api/langsmith-api-java/0.0.1/javadoc.svg)](https://javadoc.io/doc/com.langsmith_api.api/langsmith-api-java/0.0.1)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.0.1)
+[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith-java/0.0.1/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.0.1)
 
-The Langsmith API Java SDK provides convenient access to the Langsmith API REST API from applications written in Java.
+The Langsmith Java SDK provides convenient access to the Langsmith REST API from applications written in Java.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
-Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langsmith_api.api/langsmith-api-java/0.0.1).
+Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.0.1).
 
 ## Installation
 
 ### Gradle
 
 ```kotlin
-implementation("com.langsmith_api.api:langsmith-api-java:0.0.1")
+implementation("com.langchain.smith:langsmith-java:0.0.1")
 ```
 
 ### Maven
 
 ```xml
 <dependency>
-  <groupId>com.langsmith_api.api</groupId>
-  <artifactId>langsmith-api-java</artifactId>
+  <groupId>com.langchain.smith</groupId>
+  <artifactId>langsmith-java</artifactId>
   <version>0.0.1</version>
 </dependency>
 ```
@@ -34,21 +34,21 @@ This library requires Java 8 or later.
 ## Usage
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSection;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSectionRequest;
-import com.langsmith_api.api.models.api.v1.sessions.SessionDashboardParams;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
-// Configures using the `langsmithapi.apiKey`, `langsmithapi.tenantId`, `langsmithapi.bearerToken`, `langsmithapi.organizationId` and `langsmithapi.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_API_KEY`, `LANGSMITH_API_TENANT_ID`, `LANGSMITH_API_BEARER_TOKEN`, `LANGSMITH_API_ORGANIZATION_ID` and `LANGSMITH_API_BASE_URL` environment variables
-LangsmithApiClient client = LangsmithApiOkHttpClient.fromEnv();
+// Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
     .sessionId("REPLACE_ME")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
-CustomChartsSection customChartsSection = client.api().v1().sessions().dashboard(params);
+CustomChartsSection customChartsSection = client.sessions().dashboard(params);
 ```
 
 ## Client configuration
@@ -56,21 +56,21 @@ CustomChartsSection customChartsSection = client.api().v1().sessions().dashboard
 Configure the client using system properties or environment variables:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
-// Configures using the `langsmithapi.apiKey`, `langsmithapi.tenantId`, `langsmithapi.bearerToken`, `langsmithapi.organizationId` and `langsmithapi.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_API_KEY`, `LANGSMITH_API_TENANT_ID`, `LANGSMITH_API_BEARER_TOKEN`, `LANGSMITH_API_ORGANIZATION_ID` and `LANGSMITH_API_BASE_URL` environment variables
-LangsmithApiClient client = LangsmithApiOkHttpClient.fromEnv();
+// Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 ```
 
 Or manually:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
-LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
+LangsmithClient client = LangsmithOkHttpClient.builder()
     .apiKey("My API Key")
     .tenantId("My Tenant ID")
     .organizationId("My Organization ID")
@@ -80,12 +80,12 @@ LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
 Or using a combination of the two approaches:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
-LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
-    // Configures using the `langsmithapi.apiKey`, `langsmithapi.tenantId`, `langsmithapi.bearerToken`, `langsmithapi.organizationId` and `langsmithapi.baseUrl` system properties
-    // Or configures using the `LANGSMITH_API_API_KEY`, `LANGSMITH_API_TENANT_ID`, `LANGSMITH_API_BEARER_TOKEN`, `LANGSMITH_API_ORGANIZATION_ID` and `LANGSMITH_API_BASE_URL` environment variables
+LangsmithClient client = LangsmithOkHttpClient.builder()
+    // Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
+    // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
     .fromEnv()
     .apiKey("My API Key")
     .build();
@@ -93,13 +93,13 @@ LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
 
 See this table for the available options:
 
-| Setter           | System property               | Environment variable            | Required | Default value               |
-| ---------------- | ----------------------------- | ------------------------------- | -------- | --------------------------- |
-| `apiKey`         | `langsmithapi.apiKey`         | `LANGSMITH_API_API_KEY`         | false    | -                           |
-| `tenantId`       | `langsmithapi.tenantId`       | `LANGSMITH_API_TENANT_ID`       | false    | -                           |
-| `bearerToken`    | `langsmithapi.bearerToken`    | `LANGSMITH_API_BEARER_TOKEN`    | false    | -                           |
-| `organizationId` | `langsmithapi.organizationId` | `LANGSMITH_API_ORGANIZATION_ID` | false    | -                           |
-| `baseUrl`        | `langsmithapi.baseUrl`        | `LANGSMITH_API_BASE_URL`        | true     | `"https://api.example.com"` |
+| Setter           | System property            | Environment variable        | Required | Default value               |
+| ---------------- | -------------------------- | --------------------------- | -------- | --------------------------- |
+| `apiKey`         | `langsmith.apiKey`         | `LANGSMITH_API_KEY`         | false    | -                           |
+| `tenantId`       | `langsmith.tenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                           |
+| `bearerToken`    | `langsmith.bearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                           |
+| `organizationId` | `langsmith.organizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                           |
+| `baseUrl`        | `langsmith.baseUrl`        | `LANGSMITH_BASE_URL`        | true     | `"https://api.example.com"` |
 
 System properties take precedence over environment variables.
 
@@ -112,9 +112,9 @@ System properties take precedence over environment variables.
 To temporarily use a modified client configuration, while reusing the same connection and thread pools, call `withOptions()` on any client or service:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
+import com.langchain.smith.client.LangsmithClient;
 
-LangsmithApiClient clientWithOptions = client.withOptions(optionsBuilder -> {
+LangsmithClient clientWithOptions = client.withOptions(optionsBuilder -> {
     optionsBuilder.baseUrl("https://example.com");
     optionsBuilder.maxRetries(42);
 });
@@ -124,9 +124,9 @@ The `withOptions()` method does not affect the original client or service.
 
 ## Requests and responses
 
-To send a request to the Langsmith API API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
+To send a request to the Langsmith API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
 
-For example, `client.api().v1().sessions().dashboard(...)` should be called with an instance of `SessionDashboardParams`, and it will return an instance of `CustomChartsSection`.
+For example, `client.sessions().dashboard(...)` should be called with an instance of `SessionDashboardParams`, and it will return an instance of `CustomChartsSection`.
 
 ## Immutability
 
@@ -141,43 +141,43 @@ Because each class is immutable, builder modification will _never_ affect alread
 The default client is synchronous. To switch to asynchronous execution, call the `async()` method:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSection;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSectionRequest;
-import com.langsmith_api.api.models.api.v1.sessions.SessionDashboardParams;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `langsmithapi.apiKey`, `langsmithapi.tenantId`, `langsmithapi.bearerToken`, `langsmithapi.organizationId` and `langsmithapi.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_API_KEY`, `LANGSMITH_API_TENANT_ID`, `LANGSMITH_API_BEARER_TOKEN`, `LANGSMITH_API_ORGANIZATION_ID` and `LANGSMITH_API_BASE_URL` environment variables
-LangsmithApiClient client = LangsmithApiOkHttpClient.fromEnv();
+// Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
     .sessionId("REPLACE_ME")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
-CompletableFuture<CustomChartsSection> customChartsSection = client.async().api().v1().sessions().dashboard(params);
+CompletableFuture<CustomChartsSection> customChartsSection = client.async().sessions().dashboard(params);
 ```
 
 Or create an asynchronous client from the beginning:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClientAsync;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClientAsync;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSection;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSectionRequest;
-import com.langsmith_api.api.models.api.v1.sessions.SessionDashboardParams;
+import com.langchain.smith.client.LangsmithClientAsync;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `langsmithapi.apiKey`, `langsmithapi.tenantId`, `langsmithapi.bearerToken`, `langsmithapi.organizationId` and `langsmithapi.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_API_KEY`, `LANGSMITH_API_TENANT_ID`, `LANGSMITH_API_BEARER_TOKEN`, `LANGSMITH_API_ORGANIZATION_ID` and `LANGSMITH_API_BASE_URL` environment variables
-LangsmithApiClientAsync client = LangsmithApiOkHttpClientAsync.fromEnv();
+// Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+LangsmithClientAsync client = LangsmithOkHttpClientAsync.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
     .sessionId("REPLACE_ME")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
-CompletableFuture<CustomChartsSection> customChartsSection = client.api().v1().sessions().dashboard(params);
+CompletableFuture<CustomChartsSection> customChartsSection = client.sessions().dashboard(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -189,57 +189,57 @@ The SDK defines methods that accept files.
 To upload a file, pass a [`Path`](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html):
 
 ```java
-import com.langsmith_api.api.models.api.v1.examples.Example;
-import com.langsmith_api.api.models.api.v1.examples.ExampleUpdateParams;
+import com.langchain.smith.models.examples.Example;
+import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
 import java.nio.file.Paths;
 
-ExampleUpdateParams params = ExampleUpdateParams.builder()
+ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     .addInputKey("string")
     .file(Paths.get("/path/to/file"))
     .build();
-List<Example> examples = client.api().v1().examples().update(params);
+List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
 Or an arbitrary [`InputStream`](https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html):
 
 ```java
-import com.langsmith_api.api.models.api.v1.examples.Example;
-import com.langsmith_api.api.models.api.v1.examples.ExampleUpdateParams;
+import com.langchain.smith.models.examples.Example;
+import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
 import java.net.URL;
 
-ExampleUpdateParams params = ExampleUpdateParams.builder()
+ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     .addInputKey("string")
     .file(new URL("https://example.com//path/to/file").openStream())
     .build();
-List<Example> examples = client.api().v1().examples().update(params);
+List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
 Or a `byte[]` array:
 
 ```java
-import com.langsmith_api.api.models.api.v1.examples.Example;
-import com.langsmith_api.api.models.api.v1.examples.ExampleUpdateParams;
+import com.langchain.smith.models.examples.Example;
+import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
 
-ExampleUpdateParams params = ExampleUpdateParams.builder()
+ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     .addInputKey("string")
     .file("content".getBytes())
     .build();
-List<Example> examples = client.api().v1().examples().update(params);
+List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
-Note that when passing a non-`Path` its filename is unknown so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/core/Values.kt):
+Note that when passing a non-`Path` its filename is unknown so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
 
 ```java
-import com.langsmith_api.api.core.MultipartField;
-import com.langsmith_api.api.models.api.v1.examples.Example;
-import com.langsmith_api.api.models.api.v1.examples.ExampleUpdateParams;
+import com.langchain.smith.core.MultipartField;
+import com.langchain.smith.models.examples.Example;
+import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
 import java.io.InputStream;
 import java.net.URL;
 
-ExampleUpdateParams params = ExampleUpdateParams.builder()
+ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     .addInputKey("string")
     .file(MultipartField.<InputStream>builder()
@@ -247,7 +247,7 @@ ExampleUpdateParams params = ExampleUpdateParams.builder()
         .filename("/path/to/file")
         .build())
     .build();
-List<Example> examples = client.api().v1().examples().update(params);
+List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
 ## Raw responses
@@ -257,17 +257,17 @@ The SDK defines methods that deserialize responses into instances of Java classe
 To access this data, prefix any HTTP method call on a client or service with `withRawResponse()`:
 
 ```java
-import com.langsmith_api.api.core.http.Headers;
-import com.langsmith_api.api.core.http.HttpResponseFor;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSection;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSectionRequest;
-import com.langsmith_api.api.models.api.v1.sessions.SessionDashboardParams;
+import com.langchain.smith.core.http.Headers;
+import com.langchain.smith.core.http.HttpResponseFor;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
 SessionDashboardParams params = SessionDashboardParams.builder()
     .sessionId("REPLACE_ME")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
-HttpResponseFor<CustomChartsSection> customChartsSection = client.api().v1().sessions().withRawResponse().dashboard(params);
+HttpResponseFor<CustomChartsSection> customChartsSection = client.sessions().withRawResponse().dashboard(params);
 
 int statusCode = customChartsSection.statusCode();
 Headers headers = customChartsSection.headers();
@@ -276,7 +276,7 @@ Headers headers = customChartsSection.headers();
 You can still deserialize the response into an instance of a Java class if needed:
 
 ```java
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSection;
 
 CustomChartsSection parsedCustomChartsSection = customChartsSection.parse();
 ```
@@ -285,46 +285,46 @@ CustomChartsSection parsedCustomChartsSection = customChartsSection.parse();
 
 The SDK throws custom unchecked exception types:
 
-- [`LangsmithApiServiceException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/LangsmithApiServiceException.kt): Base class for HTTP errors. See this table for which exception subclass is thrown for each HTTP status code:
+- [`LangsmithServiceException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangsmithServiceException.kt): Base class for HTTP errors. See this table for which exception subclass is thrown for each HTTP status code:
 
-  | Status | Exception                                                                                                                                |
-  | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
-  | 400    | [`BadRequestException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/BadRequestException.kt)                     |
-  | 401    | [`UnauthorizedException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/UnauthorizedException.kt)                 |
-  | 403    | [`PermissionDeniedException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/PermissionDeniedException.kt)         |
-  | 404    | [`NotFoundException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/NotFoundException.kt)                         |
-  | 422    | [`UnprocessableEntityException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/UnprocessableEntityException.kt)   |
-  | 429    | [`RateLimitException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/RateLimitException.kt)                       |
-  | 5xx    | [`InternalServerException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/InternalServerException.kt)             |
-  | others | [`UnexpectedStatusCodeException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/UnexpectedStatusCodeException.kt) |
+  | Status | Exception                                                                                                                          |
+  | ------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+  | 400    | [`BadRequestException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/BadRequestException.kt)                     |
+  | 401    | [`UnauthorizedException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/UnauthorizedException.kt)                 |
+  | 403    | [`PermissionDeniedException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/PermissionDeniedException.kt)         |
+  | 404    | [`NotFoundException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/NotFoundException.kt)                         |
+  | 422    | [`UnprocessableEntityException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/UnprocessableEntityException.kt)   |
+  | 429    | [`RateLimitException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/RateLimitException.kt)                       |
+  | 5xx    | [`InternalServerException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/InternalServerException.kt)             |
+  | others | [`UnexpectedStatusCodeException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/UnexpectedStatusCodeException.kt) |
 
-- [`LangsmithApiIoException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/LangsmithApiIoException.kt): I/O networking errors.
+- [`LangsmithIoException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangsmithIoException.kt): I/O networking errors.
 
-- [`LangsmithApiRetryableException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/LangsmithApiRetryableException.kt): Generic error indicating a failure that could be retried by the client.
+- [`LangsmithRetryableException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangsmithRetryableException.kt): Generic error indicating a failure that could be retried by the client.
 
-- [`LangsmithApiInvalidDataException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/LangsmithApiInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
+- [`LangsmithInvalidDataException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangsmithInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
 
-- [`LangsmithApiException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/LangsmithApiException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
+- [`LangsmithException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangsmithException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
 
 ## Logging
 
 The SDK uses the standard [OkHttp logging interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor).
 
-Enable logging by setting the `LANGSMITH_API_LOG` environment variable to `info`:
+Enable logging by setting the `LANGSMITH_LOG` environment variable to `info`:
 
 ```sh
-$ export LANGSMITH_API_LOG=info
+$ export LANGSMITH_LOG=info
 ```
 
 Or to `debug` for more verbose logging:
 
 ```sh
-$ export LANGSMITH_API_LOG=debug
+$ export LANGSMITH_LOG=debug
 ```
 
 ## ProGuard and R8
 
-Although the SDK uses reflection, it is still usable with [ProGuard](https://github.com/Guardsquare/proguard) and [R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization) because `langsmith-api-java-core` is published with a [configuration file](langsmith-api-java-core/src/main/resources/META-INF/proguard/langsmith-api-java-core.pro) containing [keep rules](https://www.guardsquare.com/manual/configuration/usage).
+Although the SDK uses reflection, it is still usable with [ProGuard](https://github.com/Guardsquare/proguard) and [R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization) because `langsmith-java-core` is published with a [configuration file](langsmith-java-core/src/main/resources/META-INF/proguard/langsmith-java-core.pro) containing [keep rules](https://www.guardsquare.com/manual/configuration/usage).
 
 ProGuard and R8 should automatically detect and use the published rules, but you can also manually copy the keep rules if necessary.
 
@@ -334,7 +334,7 @@ The SDK depends on [Jackson](https://github.com/FasterXML/jackson) for JSON seri
 
 The SDK throws an exception if it detects an incompatible Jackson version at runtime (e.g. if the default version was overridden in your Maven or Gradle config).
 
-If the SDK threw an exception, but you're _certain_ the version is compatible, then disable the version check using the `checkJacksonVersionCompatibility` on [`LangsmithApiOkHttpClient`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/LangsmithApiOkHttpClient.kt) or [`LangsmithApiOkHttpClientAsync`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/LangsmithApiOkHttpClientAsync.kt).
+If the SDK threw an exception, but you're _certain_ the version is compatible, then disable the version check using the `checkJacksonVersionCompatibility` on [`LangsmithOkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt).
 
 > [!CAUTION]
 > We make no guarantee that the SDK works correctly when the Jackson version check is disabled.
@@ -358,10 +358,10 @@ The API may also explicitly instruct the SDK to retry or not retry a request.
 To set a custom number of retries, configure the client using the `maxRetries` method:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
-LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
+LangsmithClient client = LangsmithOkHttpClient.builder()
     .fromEnv()
     .maxRetries(4)
     .build();
@@ -374,9 +374,9 @@ Requests time out after 1 minute by default.
 To set a custom timeout, configure the method call using the `timeout` method:
 
 ```java
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSection;
 
-CustomChartsSection customChartsSection = client.api().v1().sessions().dashboard(
+CustomChartsSection customChartsSection = client.sessions().dashboard(
   params, RequestOptions.builder().timeout(Duration.ofSeconds(30)).build()
 );
 ```
@@ -384,11 +384,11 @@ CustomChartsSection customChartsSection = client.api().v1().sessions().dashboard
 Or configure the default for all method calls at the client level:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 import java.time.Duration;
 
-LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
+LangsmithClient client = LangsmithOkHttpClient.builder()
     .fromEnv()
     .timeout(Duration.ofSeconds(30))
     .build();
@@ -399,12 +399,12 @@ LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
 To route requests through a proxy, configure the client using the `proxy` method:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 
-LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
+LangsmithClient client = LangsmithOkHttpClient.builder()
     .fromEnv()
     .proxy(new Proxy(
       Proxy.Type.HTTP, new InetSocketAddress(
@@ -423,10 +423,10 @@ LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
 To configure how HTTPS connections are secured, configure the client using the `sslSocketFactory`, `trustManager`, and `hostnameVerifier` methods:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
-LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
+LangsmithClient client = LangsmithOkHttpClient.builder()
     .fromEnv()
     // If `sslSocketFactory` is set, then `trustManager` must be set, and vice versa.
     .sslSocketFactory(yourSSLSocketFactory)
@@ -439,15 +439,15 @@ LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
 
 The SDK consists of three artifacts:
 
-- `langsmith-api-java-core`
+- `langsmith-java-core`
   - Contains core SDK logic
   - Does not depend on [OkHttp](https://square.github.io/okhttp)
-  - Exposes [`LangsmithApiClient`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClient.kt), [`LangsmithApiClientAsync`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientAsync.kt), [`LangsmithApiClientImpl`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientImpl.kt), and [`LangsmithApiClientAsyncImpl`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientAsyncImpl.kt), all of which can work with any HTTP client
-- `langsmith-api-java-client-okhttp`
+  - Exposes [`LangsmithClient`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClient.kt), [`LangsmithClientAsync`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsync.kt), [`LangsmithClientImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt), and [`LangsmithClientAsyncImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), all of which can work with any HTTP client
+- `langsmith-java-client-okhttp`
   - Depends on [OkHttp](https://square.github.io/okhttp)
-  - Exposes [`LangsmithApiOkHttpClient`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/LangsmithApiOkHttpClient.kt) and [`LangsmithApiOkHttpClientAsync`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/LangsmithApiOkHttpClientAsync.kt), which provide a way to construct [`LangsmithApiClientImpl`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientImpl.kt) and [`LangsmithApiClientAsyncImpl`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientAsyncImpl.kt), respectively, using OkHttp
-- `langsmith-api-java`
-  - Depends on and exposes the APIs of both `langsmith-api-java-core` and `langsmith-api-java-client-okhttp`
+  - Exposes [`LangsmithOkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) and [`LangsmithOkHttpClientAsync`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), which provide a way to construct [`LangsmithClientImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) and [`LangsmithClientAsyncImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), respectively, using OkHttp
+- `langsmith-java`
+  - Depends on and exposes the APIs of both `langsmith-java-core` and `langsmith-java-client-okhttp`
   - Does not have its own logic
 
 This structure allows replacing the SDK's default HTTP client without pulling in unnecessary dependencies.
@@ -459,17 +459,17 @@ This structure allows replacing the SDK's default HTTP client without pulling in
 
 To use a customized `OkHttpClient`:
 
-1. Replace your [`langsmith-api-java` dependency](#installation) with `langsmith-api-java-core`
-2. Copy `langsmith-api-java-client-okhttp`'s [`OkHttpClient`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/OkHttpClient.kt) class into your code and customize it
-3. Construct [`LangsmithApiClientImpl`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientImpl.kt) or [`LangsmithApiClientAsyncImpl`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientAsyncImpl.kt), similarly to [`LangsmithApiOkHttpClient`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/LangsmithApiOkHttpClient.kt) or [`LangsmithApiOkHttpClientAsync`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/LangsmithApiOkHttpClientAsync.kt), using your customized client
+1. Replace your [`langsmith-java` dependency](#installation) with `langsmith-java-core`
+2. Copy `langsmith-java-client-okhttp`'s [`OkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/OkHttpClient.kt) class into your code and customize it
+3. Construct [`LangsmithClientImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) or [`LangsmithClientAsyncImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), similarly to [`LangsmithOkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), using your customized client
 
 ### Completely custom HTTP client
 
 To use a completely custom HTTP client:
 
-1. Replace your [`langsmith-api-java` dependency](#installation) with `langsmith-api-java-core`
-2. Write a class that implements the [`HttpClient`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/core/http/HttpClient.kt) interface
-3. Construct [`LangsmithApiClientImpl`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientImpl.kt) or [`LangsmithApiClientAsyncImpl`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/client/LangsmithApiClientAsyncImpl.kt), similarly to [`LangsmithApiOkHttpClient`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/LangsmithApiOkHttpClient.kt) or [`LangsmithApiOkHttpClientAsync`](langsmith-api-java-client-okhttp/src/main/kotlin/com/langsmith_api/api/client/okhttp/LangsmithApiOkHttpClientAsync.kt), using your new client class
+1. Replace your [`langsmith-java` dependency](#installation) with `langsmith-java-core`
+2. Write a class that implements the [`HttpClient`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/http/HttpClient.kt) interface
+3. Construct [`LangsmithClientImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) or [`LangsmithClientAsyncImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), similarly to [`LangsmithOkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), using your new client class
 
 ## Undocumented API functionality
 
@@ -480,8 +480,8 @@ The SDK is typed for convenient usage of the documented API. However, it also su
 To set undocumented parameters, call the `putAdditionalHeader`, `putAdditionalQueryParam`, or `putAdditionalBodyProperty` methods on any `Params` class:
 
 ```java
-import com.langsmith_api.api.core.JsonValue;
-import com.langsmith_api.api.models.api.v1.sessions.SessionDashboardParams;
+import com.langchain.smith.core.JsonValue;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
 SessionDashboardParams params = SessionDashboardParams.builder()
     .putAdditionalHeader("Secret-Header", "42")
@@ -492,21 +492,21 @@ SessionDashboardParams params = SessionDashboardParams.builder()
 
 These can be accessed on the built object later using the `_additionalHeaders()`, `_additionalQueryParams()`, and `_additionalBodyProperties()` methods.
 
-To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/core/Values.kt) object to its setter:
+To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt) object to its setter:
 
 ```java
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSectionRequest;
-import com.langsmith_api.api.models.api.v1.sessions.SessionDashboardParams;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
 SessionDashboardParams params = SessionDashboardParams.builder()
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
 ```
 
-The most straightforward way to create a [`JsonValue`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/core/Values.kt) is using its `from(...)` method:
+The most straightforward way to create a [`JsonValue`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt) is using its `from(...)` method:
 
 ```java
-import com.langsmith_api.api.core.JsonValue;
+import com.langchain.smith.core.JsonValue;
 import java.util.List;
 import java.util.Map;
 
@@ -544,12 +544,12 @@ JsonValue complexValue = JsonValue.from(Map.of(
 
 Normally a `Builder` class's `build` method will throw [`IllegalStateException`](https://docs.oracle.com/javase/8/docs/api/java/lang/IllegalStateException.html) if any required parameter or property is unset.
 
-To forcibly omit a required parameter or property, pass [`JsonMissing`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/core/Values.kt):
+To forcibly omit a required parameter or property, pass [`JsonMissing`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
 
 ```java
-import com.langsmith_api.api.core.JsonMissing;
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSectionRequest;
-import com.langsmith_api.api.models.api.v1.sessions.SessionDashboardParams;
+import com.langchain.smith.core.JsonMissing;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
 SessionDashboardParams params = SessionDashboardParams.builder()
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
@@ -562,10 +562,10 @@ SessionDashboardParams params = SessionDashboardParams.builder()
 To access undocumented response properties, call the `_additionalProperties()` method:
 
 ```java
-import com.langsmith_api.api.core.JsonValue;
+import com.langchain.smith.core.JsonValue;
 import java.util.Map;
 
-Map<String, JsonValue> additionalProperties = client.api().v1().sessions().dashboard(params)._additionalProperties();
+Map<String, JsonValue> additionalProperties = client.sessions().dashboard(params)._additionalProperties();
 JsonValue secretPropertyValue = additionalProperties.get("secretProperty");
 
 String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
@@ -592,10 +592,10 @@ String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
 To access a property's raw JSON value, which may be undocumented, call its `_` prefixed method:
 
 ```java
-import com.langsmith_api.api.core.JsonField;
+import com.langchain.smith.core.JsonField;
 import java.util.Optional;
 
-JsonField<Object> field = client.api().v1().sessions().dashboard(params)._field();
+JsonField<Object> field = client.sessions().dashboard(params)._field();
 
 if (field.isMissing()) {
   // The property is absent from the JSON response
@@ -615,22 +615,22 @@ if (field.isMissing()) {
 
 In rare cases, the API may return a response that doesn't match the expected type. For example, the SDK may expect a property to contain a `String`, but the API could return something else.
 
-By default, the SDK will not throw an exception in this case. It will throw [`LangsmithApiInvalidDataException`](langsmith-api-java-core/src/main/kotlin/com/langsmith_api/api/errors/LangsmithApiInvalidDataException.kt) only if you directly access the property.
+By default, the SDK will not throw an exception in this case. It will throw [`LangsmithInvalidDataException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangsmithInvalidDataException.kt) only if you directly access the property.
 
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSection;
 
-CustomChartsSection customChartsSection = client.api().v1().sessions().dashboard(params).validate();
+CustomChartsSection customChartsSection = client.sessions().dashboard(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
 
 ```java
-import com.langsmith_api.api.models.api.v1.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSection;
 
-CustomChartsSection customChartsSection = client.api().v1().sessions().dashboard(
+CustomChartsSection customChartsSection = client.sessions().dashboard(
   params, RequestOptions.builder().responseValidation(true).build()
 );
 ```
@@ -638,10 +638,10 @@ CustomChartsSection customChartsSection = client.api().v1().sessions().dashboard
 Or configure the default for all method calls at the client level:
 
 ```java
-import com.langsmith_api.api.client.LangsmithApiClient;
-import com.langsmith_api.api.client.okhttp.LangsmithApiOkHttpClient;
+import com.langchain.smith.client.LangsmithClient;
+import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
-LangsmithApiClient client = LangsmithApiOkHttpClient.builder()
+LangsmithClient client = LangsmithOkHttpClient.builder()
     .fromEnv()
     .responseValidation(true)
     .build();
