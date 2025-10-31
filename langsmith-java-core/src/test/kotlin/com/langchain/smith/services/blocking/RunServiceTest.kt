@@ -390,7 +390,7 @@ internal class RunServiceTest {
         val response =
             runService.ingestMultipart(
                 RunIngestMultipartParams.builder()
-                    .attachmentRunIdFilename(JsonValue.from(mapOf<String, Any>()))
+                    .attachmentRunIdFilename("some content".byteInputStream())
                     .feedbackRunId("some content".byteInputStream())
                     .patchRunId("some content".byteInputStream())
                     .patchRunIdOutputs("some content".byteInputStream())

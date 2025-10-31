@@ -2,7 +2,6 @@
 
 package com.langchain.smith.models.runs
 
-import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.MultipartField
 import java.io.InputStream
 import org.assertj.core.api.Assertions.assertThat
@@ -13,7 +12,7 @@ internal class RunIngestMultipartParamsTest {
     @Test
     fun create() {
         RunIngestMultipartParams.builder()
-            .attachmentRunIdFilename(JsonValue.from(mapOf<String, Any>()))
+            .attachmentRunIdFilename("some content".byteInputStream())
             .feedbackRunId("some content".byteInputStream())
             .patchRunId("some content".byteInputStream())
             .patchRunIdOutputs("some content".byteInputStream())
@@ -26,7 +25,7 @@ internal class RunIngestMultipartParamsTest {
     fun body() {
         val params =
             RunIngestMultipartParams.builder()
-                .attachmentRunIdFilename(JsonValue.from(mapOf<String, Any>()))
+                .attachmentRunIdFilename("some content".byteInputStream())
                 .feedbackRunId("some content".byteInputStream())
                 .patchRunId("some content".byteInputStream())
                 .patchRunIdOutputs("some content".byteInputStream())
@@ -47,7 +46,7 @@ internal class RunIngestMultipartParamsTest {
             .isEqualTo(
                 mapOf(
                         "attachment.{run_id}.{filename}" to
-                            MultipartField.of(JsonValue.from(mapOf<String, Any>())),
+                            MultipartField.of("some content".byteInputStream()),
                         "feedback.{run_id}" to MultipartField.of("some content".byteInputStream()),
                         "patch.{run_id}" to MultipartField.of("some content".byteInputStream()),
                         "patch.{run_id}.outputs" to

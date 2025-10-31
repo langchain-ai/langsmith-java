@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.langchain.smith.core.ExcludeMissing
-import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.MultipartField
 import com.langchain.smith.core.Params
@@ -42,8 +41,13 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    /** Binary attachment linked to run {run_id} */
-    fun _attachmentRunIdFilename(): JsonValue = body._attachmentRunIdFilename()
+    /**
+     * Binary attachment linked to run {run_id}
+     *
+     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun attachmentRunIdFilename(): Optional<InputStream> = body.attachmentRunIdFilename()
 
     /**
      * Feedback object (JSON) – must include trace_id
@@ -84,6 +88,14 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun postRunIdInputs(): Optional<InputStream> = body.postRunIdInputs()
+
+    /**
+     * Returns the raw multipart value of [attachmentRunIdFilename].
+     *
+     * Unlike [attachmentRunIdFilename], this method doesn't throw if the multipart field has an
+     * unexpected type.
+     */
+    fun _attachmentRunIdFilename(): MultipartField<InputStream> = body._attachmentRunIdFilename()
 
     /**
      * Returns the raw multipart value of [feedbackRunId].
@@ -170,9 +182,28 @@ private constructor(
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /** Binary attachment linked to run {run_id} */
-        fun attachmentRunIdFilename(attachmentRunIdFilename: JsonValue) = apply {
+        fun attachmentRunIdFilename(attachmentRunIdFilename: InputStream) = apply {
             body.attachmentRunIdFilename(attachmentRunIdFilename)
         }
+
+        /**
+         * Sets [Builder.attachmentRunIdFilename] to an arbitrary multipart value.
+         *
+         * You should usually call [Builder.attachmentRunIdFilename] with a well-typed [InputStream]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun attachmentRunIdFilename(attachmentRunIdFilename: MultipartField<InputStream>) = apply {
+            body.attachmentRunIdFilename(attachmentRunIdFilename)
+        }
+
+        /** Binary attachment linked to run {run_id} */
+        fun attachmentRunIdFilename(attachmentRunIdFilename: ByteArray) = apply {
+            body.attachmentRunIdFilename(attachmentRunIdFilename)
+        }
+
+        /** Binary attachment linked to run {run_id} */
+        fun attachmentRunIdFilename(path: Path) = apply { body.attachmentRunIdFilename(path) }
 
         /** Feedback object (JSON) – must include trace_id */
         fun feedbackRunId(feedbackRunId: InputStream) = apply { body.feedbackRunId(feedbackRunId) }
@@ -427,7 +458,7 @@ private constructor(
 
     class Body
     private constructor(
-        private val attachmentRunIdFilename: JsonValue,
+        private val attachmentRunIdFilename: MultipartField<InputStream>,
         private val feedbackRunId: MultipartField<InputStream>,
         private val patchRunId: MultipartField<InputStream>,
         private val patchRunIdOutputs: MultipartField<InputStream>,
@@ -436,10 +467,14 @@ private constructor(
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
-        /** Binary attachment linked to run {run_id} */
-        @JsonProperty("attachment.{run_id}.{filename}")
-        @ExcludeMissing
-        fun _attachmentRunIdFilename(): JsonValue = attachmentRunIdFilename
+        /**
+         * Binary attachment linked to run {run_id}
+         *
+         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun attachmentRunIdFilename(): Optional<InputStream> =
+            attachmentRunIdFilename.value.getOptional("attachment.{run_id}.{filename}")
 
         /**
          * Feedback object (JSON) – must include trace_id
@@ -483,6 +518,16 @@ private constructor(
          */
         fun postRunIdInputs(): Optional<InputStream> =
             postRunIdInputs.value.getOptional("post.{run_id}.inputs")
+
+        /**
+         * Returns the raw multipart value of [attachmentRunIdFilename].
+         *
+         * Unlike [attachmentRunIdFilename], this method doesn't throw if the multipart field has an
+         * unexpected type.
+         */
+        @JsonProperty("attachment.{run_id}.{filename}")
+        @ExcludeMissing
+        fun _attachmentRunIdFilename(): MultipartField<InputStream> = attachmentRunIdFilename
 
         /**
          * Returns the raw multipart value of [feedbackRunId].
@@ -555,7 +600,8 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var attachmentRunIdFilename: JsonValue = JsonMissing.of()
+            private var attachmentRunIdFilename: MultipartField<InputStream> =
+                MultipartField.of(null)
             private var feedbackRunId: MultipartField<InputStream> = MultipartField.of(null)
             private var patchRunId: MultipartField<InputStream> = MultipartField.of(null)
             private var patchRunIdOutputs: MultipartField<InputStream> = MultipartField.of(null)
@@ -575,9 +621,33 @@ private constructor(
             }
 
             /** Binary attachment linked to run {run_id} */
-            fun attachmentRunIdFilename(attachmentRunIdFilename: JsonValue) = apply {
-                this.attachmentRunIdFilename = attachmentRunIdFilename
-            }
+            fun attachmentRunIdFilename(attachmentRunIdFilename: InputStream) =
+                attachmentRunIdFilename(MultipartField.of(attachmentRunIdFilename))
+
+            /**
+             * Sets [Builder.attachmentRunIdFilename] to an arbitrary multipart value.
+             *
+             * You should usually call [Builder.attachmentRunIdFilename] with a well-typed
+             * [InputStream] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun attachmentRunIdFilename(attachmentRunIdFilename: MultipartField<InputStream>) =
+                apply {
+                    this.attachmentRunIdFilename = attachmentRunIdFilename
+                }
+
+            /** Binary attachment linked to run {run_id} */
+            fun attachmentRunIdFilename(attachmentRunIdFilename: ByteArray) =
+                attachmentRunIdFilename(attachmentRunIdFilename.inputStream())
+
+            /** Binary attachment linked to run {run_id} */
+            fun attachmentRunIdFilename(path: Path) =
+                attachmentRunIdFilename(
+                    MultipartField.builder<InputStream>()
+                        .value(path.inputStream())
+                        .filename(path.name)
+                        .build()
+                )
 
             /** Feedback object (JSON) – must include trace_id */
             fun feedbackRunId(feedbackRunId: InputStream) =
@@ -757,6 +827,7 @@ private constructor(
                 return@apply
             }
 
+            attachmentRunIdFilename()
             feedbackRunId()
             patchRunId()
             patchRunIdOutputs()
