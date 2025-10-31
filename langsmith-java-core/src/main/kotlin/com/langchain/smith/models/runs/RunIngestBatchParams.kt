@@ -23,7 +23,7 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Ingests a batch of runs in a single JSON payload. The payload must have `post` and/or `patch`
- * arrays containing run objects. Prefer this endpoint over singleâ€‘run ingestion when submitting
+ * arrays containing run objects. Prefer this endpoint over single‑run ingestion when submitting
  * hundreds of runs, but `/runs/multipart` offers better handling for very large fields and
  * attachments.
  */

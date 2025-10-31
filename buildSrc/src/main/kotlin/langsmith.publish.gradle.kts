@@ -10,7 +10,7 @@ configure<PublishingExtension> {
 
             pom {
                 name.set("LangSmith")
-                description.set("The LangSmith API is used to programmatically create and manage LangSmith\nresources.\n\n## Host\n\nhttps://api.smith.langchain.com\n\n## Authentication\n\nTo authenticate with the LangSmith API, set the `X-Api-Key` header to a valid\n[LangSmith API key](https://docs.langchain.com/langsmith/create-account-api-key#create-an-api-key).")
+                description.set("The LangSmith API is used to programmatically create and manage LangSmith\nresources.\n\n## Host\n\nhttps://dev.api.smith.langchain.com\n\n## Authentication\n\nTo authenticate with the LangSmith API, set the `X-Api-Key` header to a valid\n[LangSmith API key](https://docs.langchain.com/langsmith/create-account-api-key#create-an-api-key).")
                 url.set("https://www.github.com/stainless-sdks/langsmith-api-java")
 
                 licenses {

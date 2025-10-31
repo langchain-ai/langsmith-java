@@ -24,17 +24,16 @@ import kotlin.io.path.name
 
 /**
  * Ingests multiple runs, feedback objects, and binary attachments in a single `multipart/form-data`
- * request. **Partâ€‘name pattern**: `<event>.<run_id>[.<field>]` where `event` âˆˆ {`post`,
- * `patch`, `feedback`, `attachment`}.
- * * `post|patch.<run_id>` â€“Â JSON run payload.
- * * `post|patch.<run_id>.<field>` â€“ outâ€‘ofâ€‘band run data (`inputs`, `outputs`, `events`,
- *   `error`, `extra`, `serialized`).
- * * `feedback.<run_id>` â€“ JSON feedback payload (must include `trace_id`).
- * * `attachment.<run_id>.<filename>` â€“ arbitrary binary attachment stored in S3. **Headers**:
- *   every part must set `Content-Type` **and** either a `Content-Length` header or `length`
- *   parameter. Perâ€‘part `Content-Encoding` is **not** allowed; the topâ€‘level request may be
- *   `Content-Encoding: gzip` or `Content-Encoding: zstd`. **Best performance** for highâ€‘volume
- *   ingestion.
+ * request. **Part‑name pattern**: `<event>.<run_id>[.<field>]` where `event` ∈ {`post`, `patch`,
+ * `feedback`, `attachment`}.
+ * * `post|patch.<run_id>` – JSON run payload.
+ * * `post|patch.<run_id>.<field>` – out‑of‑band run data (`inputs`, `outputs`, `events`, `error`,
+ *   `extra`, `serialized`).
+ * * `feedback.<run_id>` – JSON feedback payload (must include `trace_id`).
+ * * `attachment.<run_id>.<filename>` – arbitrary binary attachment stored in S3. **Headers**: every
+ *   part must set `Content-Type` **and** either a `Content-Length` header or `length` parameter.
+ *   Per‑part `Content-Encoding` is **not** allowed; the top‑level request may be `Content-Encoding:
+ *   gzip` or `Content-Encoding: zstd`. **Best performance** for high‑volume ingestion.
  */
 class RunIngestMultipartParams
 private constructor(
@@ -47,7 +46,7 @@ private constructor(
     fun _attachmentRunIdFilename(): JsonValue = body._attachmentRunIdFilename()
 
     /**
-     * Feedback object (JSON) â€“ must include trace_id
+     * Feedback object (JSON) – must include trace_id
      *
      * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -63,7 +62,7 @@ private constructor(
     fun patchRunId(): Optional<InputStream> = body.patchRunId()
 
     /**
-     * Large outputs object (JSON) stored outâ€‘ofâ€‘band
+     * Large outputs object (JSON) stored out‑of‑band
      *
      * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -79,7 +78,7 @@ private constructor(
     fun postRunId(): Optional<InputStream> = body.postRunId()
 
     /**
-     * Large inputs object (JSON) stored outâ€‘ofâ€‘band
+     * Large inputs object (JSON) stored out‑of‑band
      *
      * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -175,7 +174,7 @@ private constructor(
             body.attachmentRunIdFilename(attachmentRunIdFilename)
         }
 
-        /** Feedback object (JSON) â€“ must include trace_id */
+        /** Feedback object (JSON) – must include trace_id */
         fun feedbackRunId(feedbackRunId: InputStream) = apply { body.feedbackRunId(feedbackRunId) }
 
         /**
@@ -189,10 +188,10 @@ private constructor(
             body.feedbackRunId(feedbackRunId)
         }
 
-        /** Feedback object (JSON) â€“ must include trace_id */
+        /** Feedback object (JSON) – must include trace_id */
         fun feedbackRunId(feedbackRunId: ByteArray) = apply { body.feedbackRunId(feedbackRunId) }
 
-        /** Feedback object (JSON) â€“ must include trace_id */
+        /** Feedback object (JSON) – must include trace_id */
         fun feedbackRunId(path: Path) = apply { body.feedbackRunId(path) }
 
         /** Run to update (JSON) */
@@ -215,7 +214,7 @@ private constructor(
         /** Run to update (JSON) */
         fun patchRunId(path: Path) = apply { body.patchRunId(path) }
 
-        /** Large outputs object (JSON) stored outâ€‘ofâ€‘band */
+        /** Large outputs object (JSON) stored out‑of‑band */
         fun patchRunIdOutputs(patchRunIdOutputs: InputStream) = apply {
             body.patchRunIdOutputs(patchRunIdOutputs)
         }
@@ -231,12 +230,12 @@ private constructor(
             body.patchRunIdOutputs(patchRunIdOutputs)
         }
 
-        /** Large outputs object (JSON) stored outâ€‘ofâ€‘band */
+        /** Large outputs object (JSON) stored out‑of‑band */
         fun patchRunIdOutputs(patchRunIdOutputs: ByteArray) = apply {
             body.patchRunIdOutputs(patchRunIdOutputs)
         }
 
-        /** Large outputs object (JSON) stored outâ€‘ofâ€‘band */
+        /** Large outputs object (JSON) stored out‑of‑band */
         fun patchRunIdOutputs(path: Path) = apply { body.patchRunIdOutputs(path) }
 
         /** Run to create (JSON) */
@@ -257,7 +256,7 @@ private constructor(
         /** Run to create (JSON) */
         fun postRunId(path: Path) = apply { body.postRunId(path) }
 
-        /** Large inputs object (JSON) stored outâ€‘ofâ€‘band */
+        /** Large inputs object (JSON) stored out‑of‑band */
         fun postRunIdInputs(postRunIdInputs: InputStream) = apply {
             body.postRunIdInputs(postRunIdInputs)
         }
@@ -273,12 +272,12 @@ private constructor(
             body.postRunIdInputs(postRunIdInputs)
         }
 
-        /** Large inputs object (JSON) stored outâ€‘ofâ€‘band */
+        /** Large inputs object (JSON) stored out‑of‑band */
         fun postRunIdInputs(postRunIdInputs: ByteArray) = apply {
             body.postRunIdInputs(postRunIdInputs)
         }
 
-        /** Large inputs object (JSON) stored outâ€‘ofâ€‘band */
+        /** Large inputs object (JSON) stored out‑of‑band */
         fun postRunIdInputs(path: Path) = apply { body.postRunIdInputs(path) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
@@ -443,7 +442,7 @@ private constructor(
         fun _attachmentRunIdFilename(): JsonValue = attachmentRunIdFilename
 
         /**
-         * Feedback object (JSON) â€“ must include trace_id
+         * Feedback object (JSON) – must include trace_id
          *
          * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -460,7 +459,7 @@ private constructor(
         fun patchRunId(): Optional<InputStream> = patchRunId.value.getOptional("patch.{run_id}")
 
         /**
-         * Large outputs object (JSON) stored outâ€‘ofâ€‘band
+         * Large outputs object (JSON) stored out‑of‑band
          *
          * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -477,7 +476,7 @@ private constructor(
         fun postRunId(): Optional<InputStream> = postRunId.value.getOptional("post.{run_id}")
 
         /**
-         * Large inputs object (JSON) stored outâ€‘ofâ€‘band
+         * Large inputs object (JSON) stored out‑of‑band
          *
          * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -580,7 +579,7 @@ private constructor(
                 this.attachmentRunIdFilename = attachmentRunIdFilename
             }
 
-            /** Feedback object (JSON) â€“ must include trace_id */
+            /** Feedback object (JSON) – must include trace_id */
             fun feedbackRunId(feedbackRunId: InputStream) =
                 feedbackRunId(MultipartField.of(feedbackRunId))
 
@@ -595,10 +594,10 @@ private constructor(
                 this.feedbackRunId = feedbackRunId
             }
 
-            /** Feedback object (JSON) â€“ must include trace_id */
+            /** Feedback object (JSON) – must include trace_id */
             fun feedbackRunId(feedbackRunId: ByteArray) = feedbackRunId(feedbackRunId.inputStream())
 
-            /** Feedback object (JSON) â€“ must include trace_id */
+            /** Feedback object (JSON) – must include trace_id */
             fun feedbackRunId(path: Path) =
                 feedbackRunId(
                     MultipartField.builder<InputStream>()
@@ -633,7 +632,7 @@ private constructor(
                         .build()
                 )
 
-            /** Large outputs object (JSON) stored outâ€‘ofâ€‘band */
+            /** Large outputs object (JSON) stored out‑of‑band */
             fun patchRunIdOutputs(patchRunIdOutputs: InputStream) =
                 patchRunIdOutputs(MultipartField.of(patchRunIdOutputs))
 
@@ -648,11 +647,11 @@ private constructor(
                 this.patchRunIdOutputs = patchRunIdOutputs
             }
 
-            /** Large outputs object (JSON) stored outâ€‘ofâ€‘band */
+            /** Large outputs object (JSON) stored out‑of‑band */
             fun patchRunIdOutputs(patchRunIdOutputs: ByteArray) =
                 patchRunIdOutputs(patchRunIdOutputs.inputStream())
 
-            /** Large outputs object (JSON) stored outâ€‘ofâ€‘band */
+            /** Large outputs object (JSON) stored out‑of‑band */
             fun patchRunIdOutputs(path: Path) =
                 patchRunIdOutputs(
                     MultipartField.builder<InputStream>()
@@ -687,7 +686,7 @@ private constructor(
                         .build()
                 )
 
-            /** Large inputs object (JSON) stored outâ€‘ofâ€‘band */
+            /** Large inputs object (JSON) stored out‑of‑band */
             fun postRunIdInputs(postRunIdInputs: InputStream) =
                 postRunIdInputs(MultipartField.of(postRunIdInputs))
 
@@ -702,11 +701,11 @@ private constructor(
                 this.postRunIdInputs = postRunIdInputs
             }
 
-            /** Large inputs object (JSON) stored outâ€‘ofâ€‘band */
+            /** Large inputs object (JSON) stored out‑of‑band */
             fun postRunIdInputs(postRunIdInputs: ByteArray) =
                 postRunIdInputs(postRunIdInputs.inputStream())
 
-            /** Large inputs object (JSON) stored outâ€‘ofâ€‘band */
+            /** Large inputs object (JSON) stored out‑of‑band */
             fun postRunIdInputs(path: Path) =
                 postRunIdInputs(
                     MultipartField.builder<InputStream>()
