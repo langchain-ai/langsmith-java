@@ -36,24 +36,6 @@ internal class BulkExportServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun update() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val bulkExportServiceAsync = client.bulkExports()
-
-        val bulkExportFuture = bulkExportServiceAsync.update("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-
-        val bulkExport = bulkExportFuture.get()
-        bulkExport.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
     fun bulkExports() {
         val client =
             LangsmithOkHttpClientAsync.builder()

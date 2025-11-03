@@ -20,7 +20,6 @@ import com.langchain.smith.models.bulkexports.BulkExport
 import com.langchain.smith.models.bulkexports.BulkExportBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportRetrieveBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportRetrieveParams
-import com.langchain.smith.models.bulkexports.BulkExportUpdateParams
 import com.langchain.smith.services.async.bulkexports.DestinationServiceAsync
 import com.langchain.smith.services.async.bulkexports.DestinationServiceAsyncImpl
 import com.langchain.smith.services.async.bulkexports.RunServiceAsync
@@ -57,13 +56,6 @@ class BulkExportServiceAsyncImpl internal constructor(private val clientOptions:
     ): CompletableFuture<BulkExport> =
         // get /api/v1/bulk-exports/{bulk_export_id}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
-
-    override fun update(
-        params: BulkExportUpdateParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<BulkExport> =
-        // patch /api/v1/bulk-exports/{bulk_export_id}
-        withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
     override fun bulkExports(
         params: BulkExportBulkExportsParams,
@@ -128,40 +120,6 @@ class BulkExportServiceAsyncImpl internal constructor(private val clientOptions:
                     errorHandler.handle(response).parseable {
                         response
                             .use { retrieveHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val updateHandler: Handler<BulkExport> =
-            jsonHandler<BulkExport>(clientOptions.jsonMapper)
-
-        override fun update(
-            params: BulkExportUpdateParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BulkExport>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("bulkExportId", params.bulkExportId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.PATCH)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "bulk-exports", params._pathParam(0))
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { updateHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

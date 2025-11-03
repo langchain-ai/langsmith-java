@@ -9,7 +9,6 @@ import com.langchain.smith.models.bulkexports.BulkExport
 import com.langchain.smith.models.bulkexports.BulkExportBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportRetrieveBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportRetrieveParams
-import com.langchain.smith.models.bulkexports.BulkExportUpdateParams
 import com.langchain.smith.services.async.bulkexports.DestinationServiceAsync
 import com.langchain.smith.services.async.bulkexports.RunServiceAsync
 import java.util.concurrent.CompletableFuture
@@ -67,41 +66,6 @@ interface BulkExportServiceAsync {
         requestOptions: RequestOptions,
     ): CompletableFuture<BulkExport> =
         retrieve(bulkExportId, BulkExportRetrieveParams.none(), requestOptions)
-
-    /** Cancel a bulk export by ID */
-    fun update(bulkExportId: String): CompletableFuture<BulkExport> =
-        update(bulkExportId, BulkExportUpdateParams.none())
-
-    /** @see update */
-    fun update(
-        bulkExportId: String,
-        params: BulkExportUpdateParams = BulkExportUpdateParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BulkExport> =
-        update(params.toBuilder().bulkExportId(bulkExportId).build(), requestOptions)
-
-    /** @see update */
-    fun update(
-        bulkExportId: String,
-        params: BulkExportUpdateParams = BulkExportUpdateParams.none(),
-    ): CompletableFuture<BulkExport> = update(bulkExportId, params, RequestOptions.none())
-
-    /** @see update */
-    fun update(
-        params: BulkExportUpdateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BulkExport>
-
-    /** @see update */
-    fun update(params: BulkExportUpdateParams): CompletableFuture<BulkExport> =
-        update(params, RequestOptions.none())
-
-    /** @see update */
-    fun update(
-        bulkExportId: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<BulkExport> =
-        update(bulkExportId, BulkExportUpdateParams.none(), requestOptions)
 
     /** Create a new bulk export */
     fun bulkExports(params: BulkExportBulkExportsParams): CompletableFuture<BulkExport> =
@@ -190,45 +154,6 @@ interface BulkExportServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<BulkExport>> =
             retrieve(bulkExportId, BulkExportRetrieveParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `patch /api/v1/bulk-exports/{bulk_export_id}`, but is
-         * otherwise the same as [BulkExportServiceAsync.update].
-         */
-        fun update(bulkExportId: String): CompletableFuture<HttpResponseFor<BulkExport>> =
-            update(bulkExportId, BulkExportUpdateParams.none())
-
-        /** @see update */
-        fun update(
-            bulkExportId: String,
-            params: BulkExportUpdateParams = BulkExportUpdateParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BulkExport>> =
-            update(params.toBuilder().bulkExportId(bulkExportId).build(), requestOptions)
-
-        /** @see update */
-        fun update(
-            bulkExportId: String,
-            params: BulkExportUpdateParams = BulkExportUpdateParams.none(),
-        ): CompletableFuture<HttpResponseFor<BulkExport>> =
-            update(bulkExportId, params, RequestOptions.none())
-
-        /** @see update */
-        fun update(
-            params: BulkExportUpdateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BulkExport>>
-
-        /** @see update */
-        fun update(params: BulkExportUpdateParams): CompletableFuture<HttpResponseFor<BulkExport>> =
-            update(params, RequestOptions.none())
-
-        /** @see update */
-        fun update(
-            bulkExportId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BulkExport>> =
-            update(bulkExportId, BulkExportUpdateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /api/v1/bulk-exports`, but is otherwise the same as
