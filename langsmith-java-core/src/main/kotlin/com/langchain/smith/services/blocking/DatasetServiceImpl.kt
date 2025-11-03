@@ -25,7 +25,6 @@ import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
 import com.langchain.smith.models.datasets.DatasetGenerateParams
 import com.langchain.smith.models.datasets.DatasetGenerateResponse
-import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -140,10 +139,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
     ): DatasetUpdateResponse =
         // patch /api/v1/datasets/{dataset_id}
         withRawResponse().update(params, requestOptions).parse()
-
-    override fun list(params: DatasetListParams, requestOptions: RequestOptions): List<Dataset> =
-        // get /api/v1/datasets
-        withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(
         params: DatasetDeleteParams,
@@ -391,33 +386,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val listHandler: Handler<List<Dataset>> =
-            jsonHandler<List<Dataset>>(clientOptions.jsonMapper)
-
-        override fun list(
-            params: DatasetListParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<List<Dataset>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.forEach { it.validate() }
                         }
                     }
             }

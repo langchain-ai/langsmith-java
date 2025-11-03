@@ -9,7 +9,6 @@ import com.langchain.smith.models.datasets.DataType
 import com.langchain.smith.models.datasets.DatasetCloneParams
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetGenerateParams
-import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIFtParams
@@ -23,7 +22,6 @@ import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
 import com.langchain.smith.models.datasets.DatasetUploadExperimentParams
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.FeedbackCreateCoreSchema
-import com.langchain.smith.models.datasets.SortByDatasetColumn
 import com.langchain.smith.models.feedback.AppFeedbackSource
 import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import java.time.OffsetDateTime
@@ -150,39 +148,6 @@ internal class DatasetServiceAsyncTest {
 
         val dataset = datasetFuture.get()
         dataset.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun list() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val datasetServiceAsync = client.datasets()
-
-        val datasetsFuture =
-            datasetServiceAsync.list(
-                DatasetListParams.builder()
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .dataTypeOfTypes(listOf(DataType.KV))
-                    .excludeCorrectionsDatasets(true)
-                    .limit(1L)
-                    .metadata("metadata")
-                    .name("name")
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .sortBy(SortByDatasetColumn.NAME)
-                    .sortByDesc(true)
-                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
-
-        val datasets = datasetsFuture.get()
-        datasets.forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")
