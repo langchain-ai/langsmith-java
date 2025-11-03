@@ -10,6 +10,7 @@ import com.langchain.smith.models.bulkexports.BulkExport
 import com.langchain.smith.models.bulkexports.BulkExportBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportRetrieveBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportRetrieveParams
+import com.langchain.smith.models.bulkexports.BulkExportUpdateParams
 import com.langchain.smith.services.blocking.bulkexports.DestinationService
 import com.langchain.smith.services.blocking.bulkexports.RunService
 import java.util.function.Consumer
@@ -62,6 +63,36 @@ interface BulkExportService {
     /** @see retrieve */
     fun retrieve(bulkExportId: String, requestOptions: RequestOptions): BulkExport =
         retrieve(bulkExportId, BulkExportRetrieveParams.none(), requestOptions)
+
+    /** Cancel a bulk export by ID */
+    fun update(bulkExportId: String): BulkExport =
+        update(bulkExportId, BulkExportUpdateParams.none())
+
+    /** @see update */
+    fun update(
+        bulkExportId: String,
+        params: BulkExportUpdateParams = BulkExportUpdateParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): BulkExport = update(params.toBuilder().bulkExportId(bulkExportId).build(), requestOptions)
+
+    /** @see update */
+    fun update(
+        bulkExportId: String,
+        params: BulkExportUpdateParams = BulkExportUpdateParams.none(),
+    ): BulkExport = update(bulkExportId, params, RequestOptions.none())
+
+    /** @see update */
+    fun update(
+        params: BulkExportUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): BulkExport
+
+    /** @see update */
+    fun update(params: BulkExportUpdateParams): BulkExport = update(params, RequestOptions.none())
+
+    /** @see update */
+    fun update(bulkExportId: String, requestOptions: RequestOptions): BulkExport =
+        update(bulkExportId, BulkExportUpdateParams.none(), requestOptions)
 
     /** Create a new bulk export */
     fun bulkExports(params: BulkExportBulkExportsParams): BulkExport =
@@ -151,6 +182,50 @@ interface BulkExportService {
             requestOptions: RequestOptions,
         ): HttpResponseFor<BulkExport> =
             retrieve(bulkExportId, BulkExportRetrieveParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `patch /api/v1/bulk-exports/{bulk_export_id}`, but is
+         * otherwise the same as [BulkExportService.update].
+         */
+        @MustBeClosed
+        fun update(bulkExportId: String): HttpResponseFor<BulkExport> =
+            update(bulkExportId, BulkExportUpdateParams.none())
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            bulkExportId: String,
+            params: BulkExportUpdateParams = BulkExportUpdateParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<BulkExport> =
+            update(params.toBuilder().bulkExportId(bulkExportId).build(), requestOptions)
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            bulkExportId: String,
+            params: BulkExportUpdateParams = BulkExportUpdateParams.none(),
+        ): HttpResponseFor<BulkExport> = update(bulkExportId, params, RequestOptions.none())
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            params: BulkExportUpdateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<BulkExport>
+
+        /** @see update */
+        @MustBeClosed
+        fun update(params: BulkExportUpdateParams): HttpResponseFor<BulkExport> =
+            update(params, RequestOptions.none())
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            bulkExportId: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<BulkExport> =
+            update(bulkExportId, BulkExportUpdateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /api/v1/bulk-exports`, but is otherwise the same as

@@ -7,6 +7,7 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.models.bulkexports.BulkExportBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportCompression
 import com.langchain.smith.models.bulkexports.BulkExportFormat
+import com.langchain.smith.models.bulkexports.BulkExportUpdateParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -29,6 +30,30 @@ internal class BulkExportServiceAsyncTest {
 
         val bulkExportFuture =
             bulkExportServiceAsync.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+
+        val bulkExport = bulkExportFuture.get()
+        bulkExport.validate()
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun update() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val bulkExportServiceAsync = client.bulkExports()
+
+        val bulkExportFuture =
+            bulkExportServiceAsync.update(
+                BulkExportUpdateParams.builder()
+                    .bulkExportId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .status(BulkExportUpdateParams.Status.CANCELLED)
+                    .build()
+            )
 
         val bulkExport = bulkExportFuture.get()
         bulkExport.validate()

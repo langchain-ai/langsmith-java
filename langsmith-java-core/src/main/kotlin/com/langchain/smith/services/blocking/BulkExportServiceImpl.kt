@@ -20,6 +20,7 @@ import com.langchain.smith.models.bulkexports.BulkExport
 import com.langchain.smith.models.bulkexports.BulkExportBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportRetrieveBulkExportsParams
 import com.langchain.smith.models.bulkexports.BulkExportRetrieveParams
+import com.langchain.smith.models.bulkexports.BulkExportUpdateParams
 import com.langchain.smith.services.blocking.bulkexports.DestinationService
 import com.langchain.smith.services.blocking.bulkexports.DestinationServiceImpl
 import com.langchain.smith.services.blocking.bulkexports.RunService
@@ -53,6 +54,13 @@ class BulkExportServiceImpl internal constructor(private val clientOptions: Clie
     ): BulkExport =
         // get /api/v1/bulk-exports/{bulk_export_id}
         withRawResponse().retrieve(params, requestOptions).parse()
+
+    override fun update(
+        params: BulkExportUpdateParams,
+        requestOptions: RequestOptions,
+    ): BulkExport =
+        // patch /api/v1/bulk-exports/{bulk_export_id}
+        withRawResponse().update(params, requestOptions).parse()
 
     override fun bulkExports(
         params: BulkExportBulkExportsParams,
@@ -115,6 +123,37 @@ class BulkExportServiceImpl internal constructor(private val clientOptions: Clie
             return errorHandler.handle(response).parseable {
                 response
                     .use { retrieveHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val updateHandler: Handler<BulkExport> =
+            jsonHandler<BulkExport>(clientOptions.jsonMapper)
+
+        override fun update(
+            params: BulkExportUpdateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<BulkExport> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("bulkExportId", params.bulkExportId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "bulk-exports", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { updateHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
