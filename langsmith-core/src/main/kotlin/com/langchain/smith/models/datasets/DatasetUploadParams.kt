@@ -14,7 +14,7 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.io.InputStream
 import java.nio.file.Path
 import java.util.Collections
@@ -33,13 +33,13 @@ private constructor(
 ) : Params {
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun file(): InputStream = body.file()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun inputKeys(): List<String> = body.inputKeys()
@@ -47,67 +47,67 @@ private constructor(
     /**
      * Enum for dataset data types.
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun dataType(): Optional<DataType> = body.dataType()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = body.description()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun inputKeyMappings(): Optional<String> = body.inputKeyMappings()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun inputsSchemaDefinition(): Optional<String> = body.inputsSchemaDefinition()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun metadataKeyMappings(): Optional<String> = body.metadataKeyMappings()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun metadataKeys(): Optional<List<String>> = body.metadataKeys()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun name(): Optional<String> = body.name()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun outputKeyMappings(): Optional<String> = body.outputKeyMappings()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun outputKeys(): Optional<List<String>> = body.outputKeys()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun outputsSchemaDefinition(): Optional<String> = body.outputsSchemaDefinition()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun transformations(): Optional<String> = body.transformations()
@@ -678,13 +678,13 @@ private constructor(
     ) {
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun file(): InputStream = file.value.getRequired("file")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun inputKeys(): List<String> = inputKeys.value.getRequired("input_keys")
@@ -692,72 +692,72 @@ private constructor(
         /**
          * Enum for dataset data types.
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun dataType(): Optional<DataType> = dataType.value.getOptional("data_type")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun description(): Optional<String> = description.value.getOptional("description")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun inputKeyMappings(): Optional<String> =
             inputKeyMappings.value.getOptional("input_key_mappings")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun inputsSchemaDefinition(): Optional<String> =
             inputsSchemaDefinition.value.getOptional("inputs_schema_definition")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun metadataKeyMappings(): Optional<String> =
             metadataKeyMappings.value.getOptional("metadata_key_mappings")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun metadataKeys(): Optional<List<String>> = metadataKeys.value.getOptional("metadata_keys")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun name(): Optional<String> = name.value.getOptional("name")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun outputKeyMappings(): Optional<String> =
             outputKeyMappings.value.getOptional("output_key_mappings")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun outputKeys(): Optional<List<String>> = outputKeys.value.getOptional("output_keys")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun outputsSchemaDefinition(): Optional<String> =
             outputsSchemaDefinition.value.getOptional("outputs_schema_definition")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun transformations(): Optional<String> =
@@ -1287,7 +1287,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

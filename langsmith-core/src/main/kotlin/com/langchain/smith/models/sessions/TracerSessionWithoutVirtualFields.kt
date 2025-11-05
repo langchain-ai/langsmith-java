@@ -11,7 +11,7 @@ import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkRequired
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import java.time.OffsetDateTime
 import java.util.Collections
@@ -80,31 +80,31 @@ private constructor(
     )
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun id(): String = id.getRequired("id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun tenantId(): String = tenantId.getRequired("tenant_id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun defaultDatasetId(): Optional<String> = defaultDatasetId.getOptional("default_dataset_id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = description.getOptional("description")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun endTime(): Optional<OffsetDateTime> = endTime.getOptional("end_time")
@@ -112,33 +112,33 @@ private constructor(
     @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonValue = extra
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun lastRunStartTimeLive(): Optional<OffsetDateTime> =
         lastRunStartTimeLive.getOptional("last_run_start_time_live")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun name(): Optional<String> = name.getOptional("name")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun referenceDatasetId(): Optional<String> =
         referenceDatasetId.getOptional("reference_dataset_id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun traceTier(): Optional<TraceTier> = traceTier.getOptional("trace_tier")
@@ -502,7 +502,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 

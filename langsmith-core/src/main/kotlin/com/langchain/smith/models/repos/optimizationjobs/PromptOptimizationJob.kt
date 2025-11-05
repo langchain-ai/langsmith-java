@@ -24,7 +24,7 @@ import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.repos.DemoConfig
 import com.langchain.smith.models.repos.EPromptOptimizationAlgorithm
 import com.langchain.smith.models.repos.PromptimConfig
@@ -84,55 +84,55 @@ private constructor(
     )
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun id(): String = id.getRequired("id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun algorithm(): EPromptOptimizationAlgorithm = algorithm.getRequired("algorithm")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun config(): Config = config.getRequired("config")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun createdAt(): OffsetDateTime = createdAt.getRequired("created_at")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun repoId(): String = repoId.getRequired("repo_id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun status(): EPromptOptimizationJobStatus = status.getRequired("status")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun tenantId(): String = tenantId.getRequired("tenant_id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun updatedAt(): OffsetDateTime = updatedAt.getRequired("updated_at")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun results(): Optional<List<PromptOptimizationResult>> = results.getOptional("results")
@@ -463,7 +463,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 
@@ -539,7 +539,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -601,10 +601,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Config: $json")
+                throw LangChainInvalidDataException("Unknown Config: $json")
             }
         }
 

@@ -14,7 +14,7 @@ import com.langchain.smith.core.Params
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -35,37 +35,37 @@ private constructor(
     fun viewId(): Optional<String> = Optional.ofNullable(viewId)
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = body.description()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun displayName(): Optional<String> = body.displayName()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun filterString(): Optional<String> = body.filterString()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun traceFilterString(): Optional<String> = body.traceFilterString()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun treeFilterString(): Optional<String> = body.treeFilterString()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun type(): Optional<FilterViewType> = body.type()
@@ -465,39 +465,39 @@ private constructor(
         )
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun description(): Optional<String> = description.getOptional("description")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun displayName(): Optional<String> = displayName.getOptional("display_name")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun filterString(): Optional<String> = filterString.getOptional("filter_string")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun traceFilterString(): Optional<String> =
             traceFilterString.getOptional("trace_filter_string")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun treeFilterString(): Optional<String> =
             treeFilterString.getOptional("tree_filter_string")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun type(): Optional<FilterViewType> = type.getOptional("type")
@@ -757,7 +757,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

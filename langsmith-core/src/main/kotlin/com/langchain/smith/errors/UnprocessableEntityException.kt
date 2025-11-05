@@ -10,7 +10,7 @@ import kotlin.jvm.optionals.getOrNull
 
 class UnprocessableEntityException
 private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    LangsmithServiceException("422: $body", cause) {
+    LangChainServiceException("422: $body", cause) {
 
     override fun statusCode(): Int = 422
 

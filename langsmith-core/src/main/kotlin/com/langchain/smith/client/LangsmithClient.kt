@@ -49,7 +49,7 @@ import com.langchain.smith.services.blocking.WorkspaceService
 import java.util.function.Consumer
 
 /**
- * A client for interacting with the Langsmith REST API synchronously. You can also switch to
+ * A client for interacting with the LangChain REST API synchronously. You can also switch to
  * asynchronous execution via the [async] method.
  *
  * This client performs best when you create a single instance and reuse it for all interactions

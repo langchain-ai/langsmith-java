@@ -23,7 +23,7 @@ import com.langchain.smith.core.allMaxBy
 import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -73,7 +73,7 @@ private constructor(
     )
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun callbacks(): Optional<Callbacks> = callbacks.getOptional("callbacks")
@@ -81,7 +81,7 @@ private constructor(
     @JsonProperty("configurable") @ExcludeMissing fun _configurable(): JsonValue = configurable
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun maxConcurrency(): Optional<Long> = maxConcurrency.getOptional("max_concurrency")
@@ -89,25 +89,25 @@ private constructor(
     @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun recursionLimit(): Optional<Long> = recursionLimit.getOptional("recursion_limit")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun runId(): Optional<String> = runId.getOptional("run_id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun runName(): Optional<String> = runName.getOptional("run_name")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun tags(): Optional<List<String>> = tags.getOptional("tags")
@@ -368,7 +368,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 
@@ -437,7 +437,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -505,10 +505,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Callbacks: $json")
+                throw LangChainInvalidDataException("Unknown Callbacks: $json")
             }
         }
 

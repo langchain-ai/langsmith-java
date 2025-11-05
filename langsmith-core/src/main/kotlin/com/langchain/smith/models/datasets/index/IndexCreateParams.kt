@@ -13,7 +13,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -31,7 +31,7 @@ private constructor(
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun tag(): Optional<String> = body.tag()
@@ -261,7 +261,7 @@ private constructor(
         ) : this(tag, mutableMapOf())
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun tag(): Optional<String> = tag.getOptional("tag")
@@ -359,7 +359,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

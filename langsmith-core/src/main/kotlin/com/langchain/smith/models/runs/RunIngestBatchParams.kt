@@ -15,7 +15,7 @@ import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -35,13 +35,13 @@ private constructor(
 ) : Params {
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun patch(): Optional<List<Run>> = body.patch()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun post(): Optional<List<Run>> = body.post()
@@ -287,13 +287,13 @@ private constructor(
         ) : this(patch, post, mutableMapOf())
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun patch(): Optional<List<Run>> = patch.getOptional("patch")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun post(): Optional<List<Run>> = post.getOptional("post")
@@ -442,7 +442,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

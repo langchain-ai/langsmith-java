@@ -1,5 +1,5 @@
 plugins {
-    id("langsmith.java")
+    id("langchain.java")
     application
 }
 

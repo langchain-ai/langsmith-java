@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.langchain.smith.core.MultipartField
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.jvm.optionals.getOrNull
@@ -97,7 +97,7 @@ internal fun multipartFormData(
                                         JsonNodeType.ARRAY,
                                         JsonNodeType.OBJECT,
                                         JsonNodeType.POJO ->
-                                            throw LangsmithInvalidDataException(
+                                            throw LangChainInvalidDataException(
                                                 "Unexpected JsonNode type in array: ${node.nodeType}"
                                             )
                                     }
@@ -111,7 +111,7 @@ internal fun multipartFormData(
                     }
                 JsonNodeType.POJO,
                 null ->
-                    throw LangsmithInvalidDataException(
+                    throw LangChainInvalidDataException(
                         "Unexpected JsonNode type: ${node.nodeType}"
                     )
             }

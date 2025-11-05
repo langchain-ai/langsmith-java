@@ -5,7 +5,7 @@ package com.langchain.smith.models.feedback.tokens
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -112,7 +112,7 @@ internal class TokenCreateResponseTest {
         val tokenCreateResponse =
             jsonMapper().convertValue(testCase.value, jacksonTypeRef<TokenCreateResponse>())
 
-        val e = assertThrows<LangsmithInvalidDataException> { tokenCreateResponse.validate() }
+        val e = assertThrows<LangChainInvalidDataException> { tokenCreateResponse.validate() }
         assertThat(e).hasMessageStartingWith("Unknown ")
     }
 }

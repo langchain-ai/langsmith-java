@@ -15,7 +15,7 @@ import com.langchain.smith.core.Params
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -30,25 +30,25 @@ private constructor(
 ) : Params {
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun eventType(): EventType = body.eventType()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun owner(): String = body.owner()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun repo(): String = body.repo()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun commit(): Optional<String> = body.commit()
@@ -342,25 +342,25 @@ private constructor(
         ) : this(eventType, owner, repo, commit, mutableMapOf())
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun eventType(): EventType = eventType.getRequired("event_type")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun owner(): String = owner.getRequired("owner")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun repo(): String = repo.getRequired("repo")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun commit(): Optional<String> = commit.getOptional("commit")
@@ -548,7 +548,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -653,14 +653,14 @@ private constructor(
          * Use the [value] method instead if you're uncertain the value is always known and don't
          * want to throw for the unknown case.
          *
-         * @throws LangsmithInvalidDataException if this class instance's value is a not a known
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
          *   member.
          */
         fun known(): Known =
             when (this) {
                 PLAYGROUND_VIEW -> Known.PLAYGROUND_VIEW
                 PLAYGROUND_RUN -> Known.PLAYGROUND_RUN
-                else -> throw LangsmithInvalidDataException("Unknown EventType: $value")
+                else -> throw LangChainInvalidDataException("Unknown EventType: $value")
             }
 
         /**
@@ -669,12 +669,12 @@ private constructor(
          * This differs from the [toString] method because that method is primarily for debugging
          * and generally doesn't throw.
          *
-         * @throws LangsmithInvalidDataException if this class instance's value does not have the
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
          *   expected primitive type.
          */
         fun asString(): String =
             _value().asString().orElseThrow {
-                LangsmithInvalidDataException("Value is not a String")
+                LangChainInvalidDataException("Value is not a String")
             }
 
         private var validated: Boolean = false
@@ -692,7 +692,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

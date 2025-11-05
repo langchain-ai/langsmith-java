@@ -13,7 +13,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -36,7 +36,7 @@ private constructor(
     /**
      * Evaluator structured output schema.
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun structured(): Structured = structured.getRequired("structured")
@@ -152,7 +152,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 
@@ -193,7 +193,7 @@ private constructor(
         ) : this(hubRef, model, prompt, schema, templateFormat, variableMapping, mutableMapOf())
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun hubRef(): Optional<String> = hubRef.getOptional("hub_ref")
@@ -201,7 +201,7 @@ private constructor(
         @JsonProperty("model") @ExcludeMissing fun _model(): JsonValue = model
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun prompt(): Optional<List<List<JsonValue>>> = prompt.getOptional("prompt")
@@ -209,13 +209,13 @@ private constructor(
         @JsonProperty("schema") @ExcludeMissing fun _schema(): JsonValue = schema
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun templateFormat(): Optional<String> = templateFormat.getOptional("template_format")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun variableMapping(): Optional<VariableMapping> =
@@ -433,7 +433,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -523,7 +523,7 @@ private constructor(
                 try {
                     validate()
                     true
-                } catch (e: LangsmithInvalidDataException) {
+                } catch (e: LangChainInvalidDataException) {
                     false
                 }
 

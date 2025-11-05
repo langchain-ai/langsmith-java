@@ -1,6 +1,6 @@
 plugins {
-    id("langsmith.kotlin")
-    id("langsmith.publish")
+    id("langchain.kotlin")
+    id("langchain.publish")
 }
 
 configurations.all {

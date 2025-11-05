@@ -10,7 +10,7 @@ import kotlin.jvm.optionals.getOrNull
 
 class PermissionDeniedException
 private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    LangsmithServiceException("403: $body", cause) {
+    LangChainServiceException("403: $body", cause) {
 
     override fun statusCode(): Int = 403
 

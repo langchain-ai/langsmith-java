@@ -1,5 +1,5 @@
 plugins {
-    id("langsmith.kotlin")
+    id("langchain.kotlin")
     id("com.gradleup.shadow") version "8.3.8"
 }
 

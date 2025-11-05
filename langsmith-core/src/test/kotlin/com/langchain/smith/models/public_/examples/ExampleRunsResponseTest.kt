@@ -5,7 +5,7 @@ package com.langchain.smith.models.public_.examples
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
 import com.langchain.smith.models.public_.datasets.runs.RunPublicDatasetSchema
 import com.langchain.smith.models.runs.RunTypeEnum
@@ -376,7 +376,7 @@ internal class ExampleRunsResponseTest {
         val exampleRunsResponse =
             jsonMapper().convertValue(testCase.value, jacksonTypeRef<ExampleRunsResponse>())
 
-        val e = assertThrows<LangsmithInvalidDataException> { exampleRunsResponse.validate() }
+        val e = assertThrows<LangChainInvalidDataException> { exampleRunsResponse.validate() }
         assertThat(e).hasMessageStartingWith("Unknown ")
     }
 }

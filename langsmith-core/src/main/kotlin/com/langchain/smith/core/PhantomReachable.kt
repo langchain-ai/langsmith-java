@@ -2,7 +2,7 @@
 
 package com.langchain.smith.core
 
-import com.langchain.smith.errors.LangsmithException
+import com.langchain.smith.errors.LangChainException
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -46,7 +46,7 @@ private val closeWhenPhantomReachable: ((Any, () -> Unit) -> Unit)? by lazy {
                         is Error -> throw cause
                     }
                 }
-                throw LangsmithException("Unexpected reflective invocation failure", e)
+                throw LangChainException("Unexpected reflective invocation failure", e)
             }
         }
     } catch (e: ReflectiveOperationException) {

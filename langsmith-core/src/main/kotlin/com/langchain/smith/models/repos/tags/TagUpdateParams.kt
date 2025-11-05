@@ -26,7 +26,7 @@ import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -50,13 +50,13 @@ private constructor(
     fun tagName(): Optional<String> = Optional.ofNullable(tagName)
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun commitId(): String = body.commitId()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun skipWebhooks(): Optional<SkipWebhooks> = body.skipWebhooks()
@@ -346,13 +346,13 @@ private constructor(
         ) : this(commitId, skipWebhooks, mutableMapOf())
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun commitId(): String = commitId.getRequired("commit_id")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun skipWebhooks(): Optional<SkipWebhooks> = skipWebhooks.getOptional("skip_webhooks")
@@ -499,7 +499,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -586,7 +586,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -652,10 +652,10 @@ private constructor(
              * older version than the API, then the API may respond with new variants that the SDK
              * is unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown SkipWebhooks: $json")
+                throw LangChainInvalidDataException("Unknown SkipWebhooks: $json")
             }
         }
 

@@ -21,7 +21,7 @@ configure<PublishingExtension> {
 
                 developers {
                     developer {
-                        name.set("Langsmith")
+                        name.set("LangChain")
                     }
                 }
 

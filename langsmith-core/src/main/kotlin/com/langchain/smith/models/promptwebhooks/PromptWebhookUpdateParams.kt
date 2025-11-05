@@ -15,7 +15,7 @@ import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -33,7 +33,7 @@ private constructor(
     fun webhookId(): Optional<String> = Optional.ofNullable(webhookId)
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun excludePrompts(): Optional<List<String>> = body.excludePrompts()
@@ -41,19 +41,19 @@ private constructor(
     fun _headers_(): JsonValue = body._headers_()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun includePrompts(): Optional<List<String>> = body.includePrompts()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun triggers(): Optional<List<EPromptWebhookTrigger>> = body.triggers()
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun url(): Optional<String> = body.url()
@@ -403,7 +403,7 @@ private constructor(
         ) : this(excludePrompts, headers, includePrompts, triggers, url, mutableMapOf())
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun excludePrompts(): Optional<List<String>> = excludePrompts.getOptional("exclude_prompts")
@@ -411,19 +411,19 @@ private constructor(
         @JsonProperty("headers") @ExcludeMissing fun _headers_(): JsonValue = headers
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun includePrompts(): Optional<List<String>> = includePrompts.getOptional("include_prompts")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun triggers(): Optional<List<EPromptWebhookTrigger>> = triggers.getOptional("triggers")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun url(): Optional<String> = url.getOptional("url")
@@ -661,7 +661,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

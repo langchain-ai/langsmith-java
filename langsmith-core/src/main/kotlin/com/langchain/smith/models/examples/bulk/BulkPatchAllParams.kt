@@ -26,7 +26,7 @@ import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.examples.AttachmentsOperations
 import java.util.Collections
 import java.util.Objects
@@ -260,20 +260,20 @@ private constructor(
         )
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun id(): String = id.getRequired("id")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun attachmentsOperations(): Optional<AttachmentsOperations> =
             attachmentsOperations.getOptional("attachments_operations")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun datasetId(): Optional<String> = datasetId.getOptional("dataset_id")
@@ -285,13 +285,13 @@ private constructor(
         @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonValue = outputs
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun overwrite(): Optional<Boolean> = overwrite.getOptional("overwrite")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun split(): Optional<Split> = split.getOptional("split")
@@ -533,7 +533,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -602,7 +602,7 @@ private constructor(
                 try {
                     validate()
                     true
-                } catch (e: LangsmithInvalidDataException) {
+                } catch (e: LangChainInvalidDataException) {
                     false
                 }
 
@@ -667,10 +667,10 @@ private constructor(
                  * version than the API, then the API may respond with new variants that the SDK is
                  * unaware of.
                  *
-                 * @throws LangsmithInvalidDataException in the default implementation.
+                 * @throws LangChainInvalidDataException in the default implementation.
                  */
                 fun unknown(json: JsonValue?): T {
-                    throw LangsmithInvalidDataException("Unknown Split: $json")
+                    throw LangChainInvalidDataException("Unknown Split: $json")
                 }
             }
 

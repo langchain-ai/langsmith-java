@@ -10,7 +10,7 @@ import kotlin.jvm.optionals.getOrNull
 
 class RateLimitException
 private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    LangsmithServiceException("429: $body", cause) {
+    LangChainServiceException("429: $body", cause) {
 
     override fun statusCode(): Int = 429
 

@@ -17,7 +17,7 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -278,19 +278,19 @@ private constructor(
         )
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun id(): Optional<String> = id.getOptional("id")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun comment(): Optional<String> = comment.getOptional("comment")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun comparativeExperimentId(): Optional<String> =
@@ -299,51 +299,51 @@ private constructor(
         @JsonProperty("correction") @ExcludeMissing fun _correction(): JsonValue = correction
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun createdAt(): Optional<String> = createdAt.getOptional("created_at")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun error(): Optional<Boolean> = error.getOptional("error")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun feedbackConfig(): Optional<FeedbackConfig> =
             feedbackConfig.getOptional("feedback_config")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun feedbackGroupId(): Optional<String> = feedbackGroupId.getOptional("feedback_group_id")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun feedbackSource(): Optional<FeedbackSource> =
             feedbackSource.getOptional("feedback_source")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun key(): Optional<String> = key.getOptional("key")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun modifiedAt(): Optional<String> = modifiedAt.getOptional("modified_at")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun runId(): Optional<String> = runId.getOptional("run_id")
@@ -351,13 +351,13 @@ private constructor(
         @JsonProperty("score") @ExcludeMissing fun _score(): JsonValue = score
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun sessionId(): Optional<String> = sessionId.getOptional("session_id")
 
         /**
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun traceId(): Optional<String> = traceId.getOptional("trace_id")
@@ -763,7 +763,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -810,25 +810,25 @@ private constructor(
             ) : this(categories, max, min, type, mutableMapOf())
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun categories(): Optional<List<Category>> = categories.getOptional("categories")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun max(): Optional<Double> = max.getOptional("max")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun min(): Optional<Double> = min.getOptional("min")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun type(): Optional<Type> = type.getOptional("type")
@@ -1013,7 +1013,7 @@ private constructor(
                 try {
                     validate()
                     true
-                } catch (e: LangsmithInvalidDataException) {
+                } catch (e: LangChainInvalidDataException) {
                     false
                 }
 
@@ -1049,13 +1049,13 @@ private constructor(
                 ) : this(label, value, mutableMapOf())
 
                 /**
-                 * @throws LangsmithInvalidDataException if the JSON field has an unexpected type
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun label(): Optional<String> = label.getOptional("label")
 
                 /**
-                 * @throws LangsmithInvalidDataException if the JSON field has an unexpected type
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun value(): Optional<Double> = value.getOptional("value")
@@ -1177,7 +1177,7 @@ private constructor(
                     try {
                         validate()
                         true
-                    } catch (e: LangsmithInvalidDataException) {
+                    } catch (e: LangChainInvalidDataException) {
                         false
                     }
 
@@ -1284,7 +1284,7 @@ private constructor(
                  * Use the [value] method instead if you're uncertain the value is always known and
                  * don't want to throw for the unknown case.
                  *
-                 * @throws LangsmithInvalidDataException if this class instance's value is a not a
+                 * @throws LangChainInvalidDataException if this class instance's value is a not a
                  *   known member.
                  */
                 fun known(): Known =
@@ -1292,7 +1292,7 @@ private constructor(
                         CONTINUOUS -> Known.CONTINUOUS
                         CATEGORICAL -> Known.CATEGORICAL
                         FREEFORM -> Known.FREEFORM
-                        else -> throw LangsmithInvalidDataException("Unknown Type: $value")
+                        else -> throw LangChainInvalidDataException("Unknown Type: $value")
                     }
 
                 /**
@@ -1301,12 +1301,12 @@ private constructor(
                  * This differs from the [toString] method because that method is primarily for
                  * debugging and generally doesn't throw.
                  *
-                 * @throws LangsmithInvalidDataException if this class instance's value does not
+                 * @throws LangChainInvalidDataException if this class instance's value does not
                  *   have the expected primitive type.
                  */
                 fun asString(): String =
                     _value().asString().orElseThrow {
-                        LangsmithInvalidDataException("Value is not a String")
+                        LangChainInvalidDataException("Value is not a String")
                     }
 
                 private var validated: Boolean = false
@@ -1324,7 +1324,7 @@ private constructor(
                     try {
                         validate()
                         true
-                    } catch (e: LangsmithInvalidDataException) {
+                    } catch (e: LangChainInvalidDataException) {
                         false
                     }
 
@@ -1389,13 +1389,13 @@ private constructor(
             ) : this(metadata, type, mutableMapOf())
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun type(): Optional<String> = type.getOptional("type")
@@ -1518,7 +1518,7 @@ private constructor(
                 try {
                     validate()
                     true
-                } catch (e: LangsmithInvalidDataException) {
+                } catch (e: LangChainInvalidDataException) {
                     false
                 }
 
@@ -1606,7 +1606,7 @@ private constructor(
                     try {
                         validate()
                         true
-                    } catch (e: LangsmithInvalidDataException) {
+                    } catch (e: LangChainInvalidDataException) {
                         false
                     }
 

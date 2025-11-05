@@ -5,9 +5,9 @@ package com.langchain.smith.errors
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.http.Headers
 
-abstract class LangsmithServiceException
+abstract class LangChainServiceException
 protected constructor(message: String, cause: Throwable? = null) :
-    LangsmithException(message, cause) {
+    LangChainException(message, cause) {
 
     abstract fun statusCode(): Int
 

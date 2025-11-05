@@ -402,28 +402,29 @@ private constructor(
          *
          * See this table for the available options:
          *
-         * |Setter          |System property           |Environment variable       |Required|Default value              |
-         * |----------------|--------------------------|---------------------------|--------|---------------------------|
-         * |`apiKey`        |`langsmith.apiKey`        |`LANGSMITH_API_KEY`        |false   |-                          |
-         * |`tenantId`      |`langsmith.tenantId`      |`LANGSMITH_TENANT_ID`      |false   |-                          |
-         * |`bearerToken`   |`langsmith.bearerToken`   |`LANGSMITH_BEARER_TOKEN`   |false   |-                          |
-         * |`organizationId`|`langsmith.organizationId`|`LANGSMITH_ORGANIZATION_ID`|false   |-                          |
-         * |`baseUrl`       |`langsmith.baseUrl`       |`LANGSMITH_BASE_URL`       |true    |`"https://api.example.com"`|
+         * |Setter          |System property                    |Environment variable       |Required|Default value              |
+         * |----------------|-----------------------------------|---------------------------|--------|---------------------------|
+         * |`apiKey`        |`langchain.langsmithApiKey`        |`LANGSMITH_API_KEY`        |false   |-                          |
+         * |`tenantId`      |`langchain.langsmithTenantId`      |`LANGSMITH_TENANT_ID`      |false   |-                          |
+         * |`bearerToken`   |`langchain.langsmithBearerToken`   |`LANGSMITH_BEARER_TOKEN`   |false   |-                          |
+         * |`organizationId`|`langchain.langsmithOrganizationId`|`LANGSMITH_ORGANIZATION_ID`|false   |-                          |
+         * |`baseUrl`       |`langchain.baseUrl`                |`LANGCHAIN_BASE_URL`       |true    |`"https://api.example.com"`|
          *
          * System properties take precedence over environment variables.
          */
         fun fromEnv() = apply {
-            (System.getProperty("langsmith.baseUrl") ?: System.getenv("LANGSMITH_BASE_URL"))?.let {
+            (System.getProperty("langchain.baseUrl") ?: System.getenv("LANGCHAIN_BASE_URL"))?.let {
                 baseUrl(it)
             }
-            (System.getProperty("langsmith.apiKey") ?: System.getenv("LANGSMITH_API_KEY"))?.let {
-                apiKey(it)
-            }
-            (System.getProperty("langsmith.tenantId") ?: System.getenv("LANGSMITH_TENANT_ID"))
+            (System.getProperty("langchain.langsmithApiKey") ?: System.getenv("LANGSMITH_API_KEY"))
+                ?.let { apiKey(it) }
+            (System.getProperty("langchain.langsmithTenantId")
+                    ?: System.getenv("LANGSMITH_TENANT_ID"))
                 ?.let { tenantId(it) }
-            (System.getProperty("langsmith.bearerToken") ?: System.getenv("LANGSMITH_BEARER_TOKEN"))
+            (System.getProperty("langchain.langsmithBearerToken")
+                    ?: System.getenv("LANGSMITH_BEARER_TOKEN"))
                 ?.let { bearerToken(it) }
-            (System.getProperty("langsmith.organizationId")
+            (System.getProperty("langchain.langsmithOrganizationId")
                     ?: System.getenv("LANGSMITH_ORGANIZATION_ID"))
                 ?.let { organizationId(it) }
         }

@@ -22,7 +22,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.allMaxBy
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.getOrThrow
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -59,25 +59,25 @@ private constructor(
     ) : this(id, args, error, name, type, extras, index, mutableMapOf())
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun id(): Optional<String> = id.getOptional("id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun args(): Optional<String> = args.getOptional("args")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun error(): Optional<String> = error.getOptional("error")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun name(): Optional<String> = name.getOptional("name")
@@ -96,7 +96,7 @@ private constructor(
     @JsonProperty("extras") @ExcludeMissing fun _extras(): JsonValue = extras
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun index(): Optional<Index> = index.getOptional("index")
@@ -332,7 +332,7 @@ private constructor(
         name()
         _type().let {
             if (it != JsonValue.from("invalid_tool_call")) {
-                throw LangsmithInvalidDataException("'type' is invalid, received $it")
+                throw LangChainInvalidDataException("'type' is invalid, received $it")
             }
         }
         index().ifPresent { it.validate() }
@@ -343,7 +343,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 
@@ -412,7 +412,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -474,10 +474,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Index: $json")
+                throw LangChainInvalidDataException("Unknown Index: $json")
             }
         }
 

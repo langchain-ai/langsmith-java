@@ -10,7 +10,7 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -298,361 +298,361 @@ private constructor(
     )
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun allowCustomIframes(): Optional<Boolean> =
         allowCustomIframes.getOptional("allow_custom_iframes")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canAddSeats(): Optional<Boolean> = canAddSeats.getOptional("can_add_seats")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canDisablePublicSharing(): Optional<Boolean> =
         canDisablePublicSharing.getOptional("can_disable_public_sharing")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canServeDatasets(): Optional<Boolean> = canServeDatasets.getOptional("can_serve_datasets")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canUseAbac(): Optional<Boolean> = canUseAbac.getOptional("can_use_abac")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canUseAgentBuilder(): Optional<Boolean> =
         canUseAgentBuilder.getOptional("can_use_agent_builder")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canUseBulkExport(): Optional<Boolean> = canUseBulkExport.getOptional("can_use_bulk_export")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canUseLanggraphCloud(): Optional<Boolean> =
         canUseLanggraphCloud.getOptional("can_use_langgraph_cloud")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canUseRbac(): Optional<Boolean> = canUseRbac.getOptional("can_use_rbac")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun canUseSamlSso(): Optional<Boolean> = canUseSamlSso.getOptional("can_use_saml_sso")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun clioEnabled(): Optional<Boolean> = clioEnabled.getOptional("clio_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun datadogRumSessionSampleRate(): Optional<Long> =
         datadogRumSessionSampleRate.getOptional("datadog_rum_session_sample_rate")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun demoLgpNewGraphEnabled(): Optional<Boolean> =
         demoLgpNewGraphEnabled.getOptional("demo_lgp_new_graph_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableAlignEvaluators(): Optional<Boolean> =
         enableAlignEvaluators.getOptional("enable_align_evaluators")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableIncludeExtendedStats(): Optional<Boolean> =
         enableIncludeExtendedStats.getOptional("enable_include_extended_stats")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableLanggraphPricing(): Optional<Boolean> =
         enableLanggraphPricing.getOptional("enable_langgraph_pricing")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableLgpListenersPage(): Optional<Boolean> =
         enableLgpListenersPage.getOptional("enable_lgp_listeners_page")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableMarkdownInTracing(): Optional<Boolean> =
         enableMarkdownInTracing.getOptional("enable_markdown_in_tracing")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableMonthlyUsageCharts(): Optional<Boolean> =
         enableMonthlyUsageCharts.getOptional("enable_monthly_usage_charts")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableOrgUsageCharts(): Optional<Boolean> =
         enableOrgUsageCharts.getOptional("enable_org_usage_charts")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enablePricingRedesign(): Optional<Boolean> =
         enablePricingRedesign.getOptional("enable_pricing_redesign")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableQueryingV2Endpoints(): Optional<Boolean> =
         enableQueryingV2Endpoints.getOptional("enable_querying_v2_endpoints")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableRunTreeStreaming(): Optional<Boolean> =
         enableRunTreeStreaming.getOptional("enable_run_tree_streaming")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableThreadViewPlayground(): Optional<Boolean> =
         enableThreadViewPlayground.getOptional("enable_thread_view_playground")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun enableThreadsImprovements(): Optional<Boolean> =
         enableThreadsImprovements.getOptional("enable_threads_improvements")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun kvDatasetMessageSupport(): Optional<Boolean> =
         kvDatasetMessageSupport.getOptional("kv_dataset_message_support")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun langgraphDeployOwnCloudEnabled(): Optional<Boolean> =
         langgraphDeployOwnCloudEnabled.getOptional("langgraph_deploy_own_cloud_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun langgraphEnterpriseEnabled(): Optional<Boolean> =
         langgraphEnterpriseEnabled.getOptional("langgraph_enterprise_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun langgraphRemoteReconcilerEnabled(): Optional<Boolean> =
         langgraphRemoteReconcilerEnabled.getOptional("langgraph_remote_reconciler_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun langsmithAlertsLegacyPocEnabled(): Optional<Boolean> =
         langsmithAlertsLegacyPocEnabled.getOptional("langsmith_alerts_legacy_poc_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun langsmithAlertsPocEnabled(): Optional<Boolean> =
         langsmithAlertsPocEnabled.getOptional("langsmith_alerts_poc_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun langsmithExperimentalSearchEnabled(): Optional<Boolean> =
         langsmithExperimentalSearchEnabled.getOptional("langsmith_experimental_search_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun lgpTemplatesEnabled(): Optional<Boolean> =
         lgpTemplatesEnabled.getOptional("lgp_templates_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun maxFreeLanggraphCloudDeployments(): Optional<Long> =
         maxFreeLanggraphCloudDeployments.getOptional("max_free_langgraph_cloud_deployments")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun maxIdentities(): Optional<Long> = maxIdentities.getOptional("max_identities")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun maxLanggraphCloudDeployments(): Optional<Long> =
         maxLanggraphCloudDeployments.getOptional("max_langgraph_cloud_deployments")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun maxPromptWebhooks(): Optional<Long> = maxPromptWebhooks.getOptional("max_prompt_webhooks")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun maxThreadEvaluatorsPerTenant(): Optional<Long> =
         maxThreadEvaluatorsPerTenant.getOptional("max_thread_evaluators_per_tenant")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun maxWorkspaces(): Optional<Long> = maxWorkspaces.getOptional("max_workspaces")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun newRuleEvaluatorCreationVersion(): Optional<Long> =
         newRuleEvaluatorCreationVersion.getOptional("new_rule_evaluator_creation_version")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun partnerPlanApprovalDate(): Optional<String> =
         partnerPlanApprovalDate.getOptional("partner_plan_approval_date")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun playgroundEvaluatorStrategy(): Optional<String> =
         playgroundEvaluatorStrategy.getOptional("playground_evaluator_strategy")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun premierPlanApprovalDate(): Optional<String> =
         premierPlanApprovalDate.getOptional("premier_plan_approval_date")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun promptOptimizationJobsEnabled(): Optional<Boolean> =
         promptOptimizationJobsEnabled.getOptional("prompt_optimization_jobs_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun requireCodeEvaluatorLanguageField(): Optional<Boolean> =
         requireCodeEvaluatorLanguageField.getOptional("require_code_evaluator_language_field")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun showPlaygroundPromptCanvas(): Optional<Boolean> =
         showPlaygroundPromptCanvas.getOptional("show_playground_prompt_canvas")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun showUpdatedResourceTags(): Optional<Boolean> =
         showUpdatedResourceTags.getOptional("show_updated_resource_tags")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun showUpdatedSidenav(): Optional<Boolean> =
         showUpdatedSidenav.getOptional("show_updated_sidenav")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun startupPlanApprovalDate(): Optional<String> =
         startupPlanApprovalDate.getOptional("startup_plan_approval_date")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun tenantSkipTopkFacets(): Optional<Boolean> =
         tenantSkipTopkFacets.getOptional("tenant_skip_topk_facets")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun threadEvaluatorsEnabled(): Optional<Boolean> =
         threadEvaluatorsEnabled.getOptional("thread_evaluators_enabled")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun useExactSearchForPrompts(): Optional<Boolean> =
         useExactSearchForPrompts.getOptional("use_exact_search_for_prompts")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun usePythonPlaygroundService(): Optional<Boolean> =
@@ -2224,7 +2224,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 

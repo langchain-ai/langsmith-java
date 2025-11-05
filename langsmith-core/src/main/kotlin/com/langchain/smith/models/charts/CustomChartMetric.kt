@@ -5,7 +5,7 @@ package com.langchain.smith.models.charts
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.langchain.smith.core.Enum
 import com.langchain.smith.core.JsonField
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 
 /** Metrics you can chart. Feedback metrics are not available for organization-scoped charts. */
 class CustomChartMetric @JsonCreator private constructor(private val value: JsonField<String>) :
@@ -189,7 +189,7 @@ class CustomChartMetric @JsonCreator private constructor(private val value: Json
      * Use the [value] method instead if you're uncertain the value is always known and don't want
      * to throw for the unknown case.
      *
-     * @throws LangsmithInvalidDataException if this class instance's value is a not a known member.
+     * @throws LangChainInvalidDataException if this class instance's value is a not a known member.
      */
     fun known(): Known =
         when (this) {
@@ -218,7 +218,7 @@ class CustomChartMetric @JsonCreator private constructor(private val value: Json
             STREAMING_RATE -> Known.STREAMING_RATE
             COST_P50 -> Known.COST_P50
             COST_P99 -> Known.COST_P99
-            else -> throw LangsmithInvalidDataException("Unknown CustomChartMetric: $value")
+            else -> throw LangChainInvalidDataException("Unknown CustomChartMetric: $value")
         }
 
     /**
@@ -227,11 +227,11 @@ class CustomChartMetric @JsonCreator private constructor(private val value: Json
      * This differs from the [toString] method because that method is primarily for debugging and
      * generally doesn't throw.
      *
-     * @throws LangsmithInvalidDataException if this class instance's value does not have the
+     * @throws LangChainInvalidDataException if this class instance's value does not have the
      *   expected primitive type.
      */
     fun asString(): String =
-        _value().asString().orElseThrow { LangsmithInvalidDataException("Value is not a String") }
+        _value().asString().orElseThrow { LangChainInvalidDataException("Value is not a String") }
 
     private var validated: Boolean = false
 
@@ -248,7 +248,7 @@ class CustomChartMetric @JsonCreator private constructor(private val value: Json
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 

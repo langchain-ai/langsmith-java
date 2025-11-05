@@ -2,7 +2,7 @@
 
 package com.langchain.smith.core
 
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.SortedMap
 import java.util.concurrent.CompletableFuture
@@ -10,7 +10,7 @@ import java.util.concurrent.locks.Lock
 
 @JvmSynthetic
 internal fun <T : Any> T?.getOrThrow(name: String): T =
-    this ?: throw LangsmithInvalidDataException("`${name}` is not present")
+    this ?: throw LangChainInvalidDataException("`${name}` is not present")
 
 @JvmSynthetic
 internal fun <T> List<T>.toImmutable(): List<T> =

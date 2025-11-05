@@ -13,7 +13,7 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.io.InputStream
 import java.nio.file.Path
 import java.util.Collections
@@ -42,7 +42,7 @@ private constructor(
      * The Example info as JSON. Can have fields 'metadata', 'split', 'use_source_run_io',
      * 'source_run_id', 'created_at', 'modified_at'
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun exampleId(): InputStream = body.exampleId()
@@ -50,7 +50,7 @@ private constructor(
     /**
      * The Example inputs as JSON
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun exampleIdInputs(): InputStream = body.exampleIdInputs()
@@ -58,7 +58,7 @@ private constructor(
     /**
      * File attachment named {name}
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun exampleIdAttachmentsName(): Optional<InputStream> = body.exampleIdAttachmentsName()
@@ -66,7 +66,7 @@ private constructor(
     /**
      * THe Example outputs as JSON
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun exampleIdOutputs(): Optional<InputStream> = body.exampleIdOutputs()
@@ -430,7 +430,7 @@ private constructor(
          * The Example info as JSON. Can have fields 'metadata', 'split', 'use_source_run_io',
          * 'source_run_id', 'created_at', 'modified_at'
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun exampleId(): InputStream = exampleId.value.getRequired("{example_id}")
@@ -438,7 +438,7 @@ private constructor(
         /**
          * The Example inputs as JSON
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun exampleIdInputs(): InputStream =
@@ -447,7 +447,7 @@ private constructor(
         /**
          * File attachment named {name}
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun exampleIdAttachmentsName(): Optional<InputStream> =
@@ -456,7 +456,7 @@ private constructor(
         /**
          * THe Example outputs as JSON
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun exampleIdOutputs(): Optional<InputStream> =
@@ -727,7 +727,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

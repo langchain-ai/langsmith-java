@@ -16,7 +16,7 @@ import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import kotlin.jvm.optionals.getOrNull
@@ -37,7 +37,7 @@ private constructor(
     /**
      * ExampleIDs is a list of UUIDs identifying the examples to delete.
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun exampleIds(): List<String> = body.exampleIds()
@@ -45,7 +45,7 @@ private constructor(
     /**
      * HardDelete indicates whether to perform a hard delete. Currently only True is supported.
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun hardDelete(): Boolean = body.hardDelete()
@@ -310,7 +310,7 @@ private constructor(
         /**
          * ExampleIDs is a list of UUIDs identifying the examples to delete.
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun exampleIds(): List<String> = exampleIds.getRequired("example_ids")
@@ -318,7 +318,7 @@ private constructor(
         /**
          * HardDelete indicates whether to perform a hard delete. Currently only True is supported.
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun hardDelete(): Boolean = hardDelete.getRequired("hard_delete")
@@ -478,7 +478,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

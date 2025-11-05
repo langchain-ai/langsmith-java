@@ -23,7 +23,7 @@ import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
@@ -45,7 +45,7 @@ private constructor(
     ) : this(entities, mutableMapOf())
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun entities(): List<Entity> = entities.getRequired("entities")
@@ -178,7 +178,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 
@@ -246,7 +246,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -308,10 +308,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Entity: $json")
+                throw LangChainInvalidDataException("Unknown Entity: $json")
             }
         }
 
@@ -403,21 +403,21 @@ private constructor(
             )
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
             fun createdAt(): OffsetDateTime = createdAt.getRequired("created_at")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
             fun runId(): String = runId.getRequired("run_id")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
@@ -435,25 +435,25 @@ private constructor(
             @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun runName(): Optional<String> = runName.getOptional("run_name")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun runType(): Optional<String> = runType.getOptional("run_type")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun sessionId(): Optional<String> = sessionId.getOptional("session_id")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun sessionName(): Optional<String> = sessionName.getOptional("session_name")
@@ -745,7 +745,7 @@ private constructor(
                 shareToken()
                 _type().let {
                     if (it != JsonValue.from("run")) {
-                        throw LangsmithInvalidDataException("'type' is invalid, received $it")
+                        throw LangChainInvalidDataException("'type' is invalid, received $it")
                     }
                 }
                 runName()
@@ -759,7 +759,7 @@ private constructor(
                 try {
                     validate()
                     true
-                } catch (e: LangsmithInvalidDataException) {
+                } catch (e: LangChainInvalidDataException) {
                     false
                 }
 
@@ -846,21 +846,21 @@ private constructor(
             ) : this(createdAt, datasetId, shareToken, type, datasetName, mutableMapOf())
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
             fun createdAt(): OffsetDateTime = createdAt.getRequired("created_at")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
             fun datasetId(): String = datasetId.getRequired("dataset_id")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
@@ -878,7 +878,7 @@ private constructor(
             @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun datasetName(): Optional<String> = datasetName.getOptional("dataset_name")
@@ -1098,7 +1098,7 @@ private constructor(
                 shareToken()
                 _type().let {
                     if (it != JsonValue.from("dataset")) {
-                        throw LangsmithInvalidDataException("'type' is invalid, received $it")
+                        throw LangChainInvalidDataException("'type' is invalid, received $it")
                     }
                 }
                 datasetName()
@@ -1109,7 +1109,7 @@ private constructor(
                 try {
                     validate()
                     true
-                } catch (e: LangsmithInvalidDataException) {
+                } catch (e: LangChainInvalidDataException) {
                     false
                 }
 

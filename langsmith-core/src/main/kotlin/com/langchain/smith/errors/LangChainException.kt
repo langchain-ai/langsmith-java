@@ -1,5 +1,5 @@
 package com.langchain.smith.errors
 
-open class LangsmithException
+open class LangChainException
 @JvmOverloads
 constructor(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause)

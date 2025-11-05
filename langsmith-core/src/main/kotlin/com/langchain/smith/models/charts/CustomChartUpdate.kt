@@ -23,7 +23,7 @@ import com.langchain.smith.core.allMaxBy
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.datasets.Missing
 import com.langchain.smith.models.sessions.RunStatsGroupBy
 import java.util.Collections
@@ -78,49 +78,49 @@ private constructor(
     /**
      * Enum for custom chart types.
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun chartType(): Optional<ChartType> = chartType.getOptional("chart_type")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun commonFilters(): Optional<CommonFilters> = commonFilters.getOptional("common_filters")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun description(): Optional<Description> = description.getOptional("description")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun index(): Optional<Index> = index.getOptional("index")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun sectionId(): Optional<SectionId> = sectionId.getOptional("section_id")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun series(): Optional<Series> = series.getOptional("series")
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun title(): Optional<Title> = title.getOptional("title")
@@ -447,7 +447,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 
@@ -525,7 +525,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -591,10 +591,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown ChartType: $json")
+                throw LangChainInvalidDataException("Unknown ChartType: $json")
             }
         }
 
@@ -704,7 +704,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -775,10 +775,10 @@ private constructor(
              * older version than the API, then the API may respond with new variants that the SDK
              * is unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown CommonFilters: $json")
+                throw LangChainInvalidDataException("Unknown CommonFilters: $json")
             }
         }
 
@@ -883,7 +883,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -948,10 +948,10 @@ private constructor(
              * older version than the API, then the API may respond with new variants that the SDK
              * is unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Description: $json")
+                throw LangChainInvalidDataException("Unknown Description: $json")
             }
         }
 
@@ -1055,7 +1055,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -1117,10 +1117,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Index: $json")
+                throw LangChainInvalidDataException("Unknown Index: $json")
             }
         }
 
@@ -1224,7 +1224,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -1288,10 +1288,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Metadata: $json")
+                throw LangChainInvalidDataException("Unknown Metadata: $json")
             }
         }
 
@@ -1395,7 +1395,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -1459,10 +1459,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown SectionId: $json")
+                throw LangChainInvalidDataException("Unknown SectionId: $json")
             }
         }
 
@@ -1573,7 +1573,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -1645,10 +1645,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Series: $json")
+                throw LangChainInvalidDataException("Unknown Series: $json")
             }
         }
 
@@ -1750,33 +1750,33 @@ private constructor(
              * Metrics you can chart. Feedback metrics are not available for organization-scoped
              * charts.
              *
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
             fun metric(): CustomChartMetric = metric.getRequired("metric")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
             fun name(): String = name.getRequired("name")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun id(): Optional<String> = id.getOptional("id")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun feedbackKey(): Optional<String> = feedbackKey.getOptional("feedback_key")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun filters(): Optional<CustomChartSeriesFilters> = filters.getOptional("filters")
@@ -1784,7 +1784,7 @@ private constructor(
             /**
              * Group by param for run stats.
              *
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun groupBy(): Optional<RunStatsGroupBy> = groupBy.getOptional("group_by")
@@ -1792,14 +1792,14 @@ private constructor(
             /**
              * LGP Metrics you can chart.
              *
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun projectMetric(): Optional<HostProjectChartMetric> =
                 projectMetric.getOptional("project_metric")
 
             /**
-             * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g.
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
             fun workspaceId(): Optional<String> = workspaceId.getOptional("workspace_id")
@@ -2128,7 +2128,7 @@ private constructor(
                 try {
                     validate()
                     true
-                } catch (e: LangsmithInvalidDataException) {
+                } catch (e: LangChainInvalidDataException) {
                     false
                 }
 
@@ -2240,7 +2240,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 
@@ -2302,10 +2302,10 @@ private constructor(
              * version than the API, then the API may respond with new variants that the SDK is
              * unaware of.
              *
-             * @throws LangsmithInvalidDataException in the default implementation.
+             * @throws LangChainInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw LangsmithInvalidDataException("Unknown Title: $json")
+                throw LangChainInvalidDataException("Unknown Title: $json")
             }
         }
 

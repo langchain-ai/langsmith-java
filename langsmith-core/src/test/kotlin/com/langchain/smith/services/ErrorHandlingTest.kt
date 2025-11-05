@@ -15,7 +15,7 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.errors.BadRequestException
 import com.langchain.smith.errors.InternalServerException
-import com.langchain.smith.errors.LangsmithException
+import com.langchain.smith.errors.LangChainException
 import com.langchain.smith.errors.NotFoundException
 import com.langchain.smith.errors.PermissionDeniedException
 import com.langchain.smith.errors.RateLimitException
@@ -761,7 +761,7 @@ internal class ErrorHandlingTest {
         )
 
         val e =
-            assertThrows<LangsmithException> {
+            assertThrows<LangChainException> {
                 sessionService.dashboard(
                     SessionDashboardParams.builder()
                         .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

@@ -7,7 +7,7 @@ import com.github.tomakehurst.wiremock.stubbing.Scenario
 import com.langchain.smith.client.okhttp.OkHttpClient
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.Sleeper
-import com.langchain.smith.errors.LangsmithRetryableException
+import com.langchain.smith.errors.LangChainRetryableException
 import java.io.InputStream
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
@@ -267,7 +267,7 @@ internal class RetryingHttpClientTest {
                 ): HttpResponse {
                     callCount++
                     if (callCount == 1) {
-                        throw LangsmithRetryableException("Simulated retryable failure")
+                        throw LangChainRetryableException("Simulated retryable failure")
                     }
                     return httpClient.execute(request, requestOptions)
                 }
@@ -280,7 +280,7 @@ internal class RetryingHttpClientTest {
                     if (callCount == 1) {
                         val future = CompletableFuture<HttpResponse>()
                         future.completeExceptionally(
-                            LangsmithRetryableException("Simulated retryable failure")
+                            LangChainRetryableException("Simulated retryable failure")
                         )
                         return future
                     }

@@ -1,9 +1,9 @@
-# Langsmith Java API Library
+# LangChain Java API Library
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith/0.0.1)
 [![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith/0.0.1/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith/0.0.1)
 
-The Langsmith Java SDK provides convenient access to the Langsmith REST API from applications written in Java.
+The LangChain Java SDK provides convenient access to the LangChain REST API from applications written in Java.
 
 It is generated with [Stainless](https://www.stainless.com/).
 
@@ -40,8 +40,8 @@ import com.langchain.smith.models.sessions.CustomChartsSection;
 import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
 import com.langchain.smith.models.sessions.SessionDashboardParams;
 
-// Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
@@ -59,8 +59,8 @@ Configure the client using system properties or environment variables:
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
-// Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 ```
 
@@ -84,8 +84,8 @@ import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
 LangsmithClient client = LangsmithOkHttpClient.builder()
-    // Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
-    // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+    // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
+    // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
     .fromEnv()
     .apiKey("My API Key")
     .build();
@@ -93,13 +93,13 @@ LangsmithClient client = LangsmithOkHttpClient.builder()
 
 See this table for the available options:
 
-| Setter           | System property            | Environment variable        | Required | Default value               |
-| ---------------- | -------------------------- | --------------------------- | -------- | --------------------------- |
-| `apiKey`         | `langsmith.apiKey`         | `LANGSMITH_API_KEY`         | false    | -                           |
-| `tenantId`       | `langsmith.tenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                           |
-| `bearerToken`    | `langsmith.bearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                           |
-| `organizationId` | `langsmith.organizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                           |
-| `baseUrl`        | `langsmith.baseUrl`        | `LANGSMITH_BASE_URL`        | true     | `"https://api.example.com"` |
+| Setter           | System property                     | Environment variable        | Required | Default value               |
+| ---------------- | ----------------------------------- | --------------------------- | -------- | --------------------------- |
+| `apiKey`         | `langchain.langsmithApiKey`         | `LANGSMITH_API_KEY`         | false    | -                           |
+| `tenantId`       | `langchain.langsmithTenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                           |
+| `bearerToken`    | `langchain.langsmithBearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                           |
+| `organizationId` | `langchain.langsmithOrganizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                           |
+| `baseUrl`        | `langchain.baseUrl`                 | `LANGCHAIN_BASE_URL`        | true     | `"https://api.example.com"` |
 
 System properties take precedence over environment variables.
 
@@ -124,7 +124,7 @@ The `withOptions()` method does not affect the original client or service.
 
 ## Requests and responses
 
-To send a request to the Langsmith API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
+To send a request to the LangChain API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
 
 For example, `client.sessions().dashboard(...)` should be called with an instance of `SessionDashboardParams`, and it will return an instance of `CustomChartsSection`.
 
@@ -148,8 +148,8 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
 import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
@@ -169,8 +169,8 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
 import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `langsmith.apiKey`, `langsmith.tenantId`, `langsmith.bearerToken`, `langsmith.organizationId` and `langsmith.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_BASE_URL` environment variables
+// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClientAsync client = LangsmithOkHttpClientAsync.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
@@ -285,7 +285,7 @@ CustomChartsSection parsedCustomChartsSection = customChartsSection.parse();
 
 The SDK throws custom unchecked exception types:
 
-- [`LangsmithServiceException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangsmithServiceException.kt): Base class for HTTP errors. See this table for which exception subclass is thrown for each HTTP status code:
+- [`LangChainServiceException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainServiceException.kt): Base class for HTTP errors. See this table for which exception subclass is thrown for each HTTP status code:
 
   | Status | Exception                                                                                                                     |
   | ------ | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -298,28 +298,28 @@ The SDK throws custom unchecked exception types:
   | 5xx    | [`InternalServerException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/InternalServerException.kt)             |
   | others | [`UnexpectedStatusCodeException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/UnexpectedStatusCodeException.kt) |
 
-- [`LangsmithIoException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangsmithIoException.kt): I/O networking errors.
+- [`LangChainIoException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainIoException.kt): I/O networking errors.
 
-- [`LangsmithRetryableException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangsmithRetryableException.kt): Generic error indicating a failure that could be retried by the client.
+- [`LangChainRetryableException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainRetryableException.kt): Generic error indicating a failure that could be retried by the client.
 
-- [`LangsmithInvalidDataException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangsmithInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
+- [`LangChainInvalidDataException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
 
-- [`LangsmithException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangsmithException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
+- [`LangChainException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
 
 ## Logging
 
 The SDK uses the standard [OkHttp logging interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor).
 
-Enable logging by setting the `LANGSMITH_LOG` environment variable to `info`:
+Enable logging by setting the `LANGCHAIN_LOG` environment variable to `info`:
 
 ```sh
-$ export LANGSMITH_LOG=info
+$ export LANGCHAIN_LOG=info
 ```
 
 Or to `debug` for more verbose logging:
 
 ```sh
-$ export LANGSMITH_LOG=debug
+$ export LANGCHAIN_LOG=debug
 ```
 
 ## ProGuard and R8
@@ -615,7 +615,7 @@ if (field.isMissing()) {
 
 In rare cases, the API may return a response that doesn't match the expected type. For example, the SDK may expect a property to contain a `String`, but the API could return something else.
 
-By default, the SDK will not throw an exception in this case. It will throw [`LangsmithInvalidDataException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangsmithInvalidDataException.kt) only if you directly access the property.
+By default, the SDK will not throw an exception in this case. It will throw [`LangChainInvalidDataException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainInvalidDataException.kt) only if you directly access the property.
 
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 

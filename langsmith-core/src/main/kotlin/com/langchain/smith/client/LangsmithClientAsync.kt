@@ -49,7 +49,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
 /**
- * A client for interacting with the Langsmith REST API asynchronously. You can also switch to
+ * A client for interacting with the LangChain REST API asynchronously. You can also switch to
  * synchronous execution via the [sync] method.
  *
  * This client performs best when you create a single instance and reuse it for all interactions

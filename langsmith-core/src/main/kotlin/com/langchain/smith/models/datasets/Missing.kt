@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 
@@ -116,7 +116,7 @@ private constructor(
 
         __missing().let {
             if (it != JsonValue.from("__missing__")) {
-                throw LangsmithInvalidDataException("'_missing' is invalid, received $it")
+                throw LangChainInvalidDataException("'_missing' is invalid, received $it")
             }
         }
         validated = true
@@ -126,7 +126,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 

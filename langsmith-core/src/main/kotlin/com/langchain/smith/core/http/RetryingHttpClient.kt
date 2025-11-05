@@ -4,8 +4,8 @@ import com.langchain.smith.core.DefaultSleeper
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.Sleeper
 import com.langchain.smith.core.checkRequired
-import com.langchain.smith.errors.LangsmithIoException
-import com.langchain.smith.errors.LangsmithRetryableException
+import com.langchain.smith.errors.LangChainIoException
+import com.langchain.smith.errors.LangChainRetryableException
 import java.io.IOException
 import java.time.Clock
 import java.time.Duration
@@ -182,8 +182,8 @@ private constructor(
     private fun shouldRetry(throwable: Throwable): Boolean =
         // Only retry known retryable exceptions, other exceptions are not intended to be retried.
         throwable is IOException ||
-            throwable is LangsmithIoException ||
-            throwable is LangsmithRetryableException
+            throwable is LangChainIoException ||
+            throwable is LangChainRetryableException
 
     private fun getRetryBackoffDuration(retries: Int, response: HttpResponse?): Duration {
         // About the Retry-After header:

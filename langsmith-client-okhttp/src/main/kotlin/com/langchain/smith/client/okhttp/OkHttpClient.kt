@@ -8,7 +8,7 @@ import com.langchain.smith.core.http.HttpMethod
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpRequestBody
 import com.langchain.smith.core.http.HttpResponse
-import com.langchain.smith.errors.LangsmithIoException
+import com.langchain.smith.errors.LangChainIoException
 import java.io.IOException
 import java.io.InputStream
 import java.net.Proxy
@@ -38,7 +38,7 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
         return try {
             call.execute().toResponse()
         } catch (e: IOException) {
-            throw LangsmithIoException("Request failed", e)
+            throw LangChainIoException("Request failed", e)
         } finally {
             request.body?.close()
         }
@@ -60,7 +60,7 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
                     }
 
                     override fun onFailure(call: Call, e: IOException) {
-                        future.completeExceptionally(LangsmithIoException("Request failed", e))
+                        future.completeExceptionally(LangChainIoException("Request failed", e))
                     }
                 }
             )
@@ -78,7 +78,7 @@ class OkHttpClient private constructor(private val okHttpClient: okhttp3.OkHttpC
         val clientBuilder = okHttpClient.newBuilder()
 
         val logLevel =
-            when (System.getenv("LANGSMITH_LOG")?.lowercase()) {
+            when (System.getenv("LANGCHAIN_LOG")?.lowercase()) {
                 "info" -> HttpLoggingInterceptor.Level.BASIC
                 "debug" -> HttpLoggingInterceptor.Level.BODY
                 else -> null

@@ -12,7 +12,7 @@ import com.langchain.smith.core.Params
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.io.InputStream
 import java.nio.file.Path
 import java.util.Collections
@@ -44,7 +44,7 @@ private constructor(
     /**
      * Binary attachment linked to run {run_id}
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun attachmentRunIdFilename(): Optional<InputStream> = body.attachmentRunIdFilename()
@@ -52,7 +52,7 @@ private constructor(
     /**
      * Feedback object (JSON) – must include trace_id
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun feedbackRunId(): Optional<InputStream> = body.feedbackRunId()
@@ -60,7 +60,7 @@ private constructor(
     /**
      * Run to update (JSON)
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun patchRunId(): Optional<InputStream> = body.patchRunId()
@@ -68,7 +68,7 @@ private constructor(
     /**
      * Large outputs object (JSON) stored out‑of‑band
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun patchRunIdOutputs(): Optional<InputStream> = body.patchRunIdOutputs()
@@ -76,7 +76,7 @@ private constructor(
     /**
      * Run to create (JSON)
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun postRunId(): Optional<InputStream> = body.postRunId()
@@ -84,7 +84,7 @@ private constructor(
     /**
      * Large inputs object (JSON) stored out‑of‑band
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun postRunIdInputs(): Optional<InputStream> = body.postRunIdInputs()
@@ -470,7 +470,7 @@ private constructor(
         /**
          * Binary attachment linked to run {run_id}
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun attachmentRunIdFilename(): Optional<InputStream> =
@@ -479,7 +479,7 @@ private constructor(
         /**
          * Feedback object (JSON) – must include trace_id
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun feedbackRunId(): Optional<InputStream> =
@@ -488,7 +488,7 @@ private constructor(
         /**
          * Run to update (JSON)
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun patchRunId(): Optional<InputStream> = patchRunId.value.getOptional("patch.{run_id}")
@@ -496,7 +496,7 @@ private constructor(
         /**
          * Large outputs object (JSON) stored out‑of‑band
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun patchRunIdOutputs(): Optional<InputStream> =
@@ -505,7 +505,7 @@ private constructor(
         /**
          * Run to create (JSON)
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun postRunId(): Optional<InputStream> = postRunId.value.getOptional("post.{run_id}")
@@ -513,7 +513,7 @@ private constructor(
         /**
          * Large inputs object (JSON) stored out‑of‑band
          *
-         * @throws LangsmithInvalidDataException if the JSON field has an unexpected type (e.g. if
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun postRunIdInputs(): Optional<InputStream> =
@@ -840,7 +840,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

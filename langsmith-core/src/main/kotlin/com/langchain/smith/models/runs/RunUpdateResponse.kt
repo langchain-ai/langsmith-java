@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Objects
 
 class RunUpdateResponse
@@ -80,7 +80,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 

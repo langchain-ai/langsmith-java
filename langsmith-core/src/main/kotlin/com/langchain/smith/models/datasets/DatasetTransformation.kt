@@ -14,7 +14,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import kotlin.jvm.optionals.getOrNull
@@ -36,7 +36,7 @@ private constructor(
     ) : this(path, transformationType, mutableMapOf())
 
     /**
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun path(): List<String> = path.getRequired("path")
@@ -45,7 +45,7 @@ private constructor(
      * Enum for dataset transformation types. Ordering determines the order in which transformations
      * are applied if there are multiple transformations on the same path.
      *
-     * @throws LangsmithInvalidDataException if the JSON field has an unexpected type or is
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun transformationType(): TransformationType =
@@ -207,7 +207,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 
@@ -308,7 +308,7 @@ private constructor(
          * Use the [value] method instead if you're uncertain the value is always known and don't
          * want to throw for the unknown case.
          *
-         * @throws LangsmithInvalidDataException if this class instance's value is a not a known
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
          *   member.
          */
         fun known(): Known =
@@ -318,7 +318,7 @@ private constructor(
                 REMOVE_SYSTEM_MESSAGES -> Known.REMOVE_SYSTEM_MESSAGES
                 REMOVE_EXTRA_FIELDS -> Known.REMOVE_EXTRA_FIELDS
                 EXTRACT_TOOLS_FROM_RUN -> Known.EXTRACT_TOOLS_FROM_RUN
-                else -> throw LangsmithInvalidDataException("Unknown TransformationType: $value")
+                else -> throw LangChainInvalidDataException("Unknown TransformationType: $value")
             }
 
         /**
@@ -327,12 +327,12 @@ private constructor(
          * This differs from the [toString] method because that method is primarily for debugging
          * and generally doesn't throw.
          *
-         * @throws LangsmithInvalidDataException if this class instance's value does not have the
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
          *   expected primitive type.
          */
         fun asString(): String =
             _value().asString().orElseThrow {
-                LangsmithInvalidDataException("Value is not a String")
+                LangChainInvalidDataException("Value is not a String")
             }
 
         private var validated: Boolean = false
@@ -350,7 +350,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

@@ -18,7 +18,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.allMaxBy
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.public_.datasets.runs.RunStats
 import java.util.Objects
 import java.util.Optional
@@ -78,7 +78,7 @@ private constructor(
         try {
             validate()
             true
-        } catch (e: LangsmithInvalidDataException) {
+        } catch (e: LangChainInvalidDataException) {
             false
         }
 
@@ -146,10 +146,10 @@ private constructor(
          * version than the API, then the API may respond with new variants that the SDK is unaware
          * of.
          *
-         * @throws LangsmithInvalidDataException in the default implementation.
+         * @throws LangChainInvalidDataException in the default implementation.
          */
         fun unknown(json: JsonValue?): T {
-            throw LangsmithInvalidDataException("Unknown RunStatsResponse: $json")
+            throw LangChainInvalidDataException("Unknown RunStatsResponse: $json")
         }
     }
 
@@ -268,7 +268,7 @@ private constructor(
             try {
                 validate()
                 true
-            } catch (e: LangsmithInvalidDataException) {
+            } catch (e: LangChainInvalidDataException) {
                 false
             }
 

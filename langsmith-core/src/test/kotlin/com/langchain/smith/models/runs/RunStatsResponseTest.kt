@@ -5,7 +5,7 @@ package com.langchain.smith.models.runs
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.errors.LangsmithInvalidDataException
+import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.public_.datasets.runs.RunStats
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -216,7 +216,7 @@ internal class RunStatsResponseTest {
         val runStatsResponse =
             jsonMapper().convertValue(testCase.value, jacksonTypeRef<RunStatsResponse>())
 
-        val e = assertThrows<LangsmithInvalidDataException> { runStatsResponse.validate() }
+        val e = assertThrows<LangChainInvalidDataException> { runStatsResponse.validate() }
         assertThat(e).hasMessageStartingWith("Unknown ")
     }
 }
