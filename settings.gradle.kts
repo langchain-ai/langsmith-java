@@ -1,11 +1,11 @@
-rootProject.name = "langsmith-root"
+rootProject.name = "langsmith-java-root"
 
 val projectNames = rootDir.listFiles()
     ?.asSequence()
     .orEmpty()
     .filter { file ->
         file.isDirectory &&
-        file.name.startsWith("langsmith") &&
+        file.name.startsWith("langsmith-java") &&
         file.listFiles()?.asSequence().orEmpty().any { it.name == "build.gradle.kts" }
     }
     .map { it.name }
