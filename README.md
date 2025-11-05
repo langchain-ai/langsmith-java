@@ -1,4 +1,4 @@
-# LangChain Java API Library
+# LangSmith Java SDK
 
 <!-- x-release-please-start-version -->
 
