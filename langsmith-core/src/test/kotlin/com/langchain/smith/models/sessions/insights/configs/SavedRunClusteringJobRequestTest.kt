@@ -28,6 +28,11 @@ internal class SavedRunClusteringJobRequestTest {
                 )
                 .sample(0.0)
                 .summaryPrompt("summary_prompt")
+                .userContext(
+                    SavedRunClusteringJobRequest.UserContext.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .build()
 
         assertThat(savedRunClusteringJobRequest._attributeSchemas())
@@ -46,6 +51,12 @@ internal class SavedRunClusteringJobRequestTest {
             )
         assertThat(savedRunClusteringJobRequest.sample()).contains(0.0)
         assertThat(savedRunClusteringJobRequest.summaryPrompt()).contains("summary_prompt")
+        assertThat(savedRunClusteringJobRequest.userContext())
+            .contains(
+                SavedRunClusteringJobRequest.UserContext.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
     }
 
     @Test
@@ -66,6 +77,11 @@ internal class SavedRunClusteringJobRequestTest {
                 )
                 .sample(0.0)
                 .summaryPrompt("summary_prompt")
+                .userContext(
+                    SavedRunClusteringJobRequest.UserContext.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .build()
 
         val roundtrippedSavedRunClusteringJobRequest =

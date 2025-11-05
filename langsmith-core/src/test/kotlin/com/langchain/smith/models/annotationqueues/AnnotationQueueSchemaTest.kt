@@ -3,6 +3,7 @@
 package com.langchain.smith.models.annotationqueues
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -21,6 +22,7 @@ internal class AnnotationQueueSchemaTest {
                 .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
                 .enableReservations(true)
+                .metadata(JsonValue.from(mapOf<String, Any>()))
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
                 .runRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -38,6 +40,8 @@ internal class AnnotationQueueSchemaTest {
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(annotationQueueSchema.description()).contains("description")
         assertThat(annotationQueueSchema.enableReservations()).contains(true)
+        assertThat(annotationQueueSchema._metadata())
+            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(annotationQueueSchema.numReviewersPerItem()).contains(0L)
         assertThat(annotationQueueSchema.reservationMinutes()).contains(0L)
         assertThat(annotationQueueSchema.runRuleId())
@@ -60,6 +64,7 @@ internal class AnnotationQueueSchemaTest {
                 .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
                 .enableReservations(true)
+                .metadata(JsonValue.from(mapOf<String, Any>()))
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
                 .runRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

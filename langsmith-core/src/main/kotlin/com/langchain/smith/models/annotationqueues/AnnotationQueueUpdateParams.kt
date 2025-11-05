@@ -6,16 +6,28 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.core.ObjectCodec
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.SerializerProvider
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.BaseDeserializer
+import com.langchain.smith.core.BaseSerializer
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
+import com.langchain.smith.core.allMaxBy
 import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
+import com.langchain.smith.models.datasets.Missing
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -49,6 +61,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun enableReservations(): Optional<Boolean> = body.enableReservations()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun metadata(): Optional<Metadata> = body.metadata()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -101,6 +119,13 @@ private constructor(
      * type.
      */
     fun _enableReservations(): JsonField<Boolean> = body._enableReservations()
+
+    /**
+     * Returns the raw JSON value of [metadata].
+     *
+     * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _metadata(): JsonField<Metadata> = body._metadata()
 
     /**
      * Returns the raw JSON value of [name].
@@ -189,8 +214,8 @@ private constructor(
          * - [defaultDataset]
          * - [description]
          * - [enableReservations]
+         * - [metadata]
          * - [name]
-         * - [numReviewersPerItem]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -240,6 +265,26 @@ private constructor(
         fun enableReservations(enableReservations: JsonField<Boolean>) = apply {
             body.enableReservations(enableReservations)
         }
+
+        fun metadata(metadata: Metadata?) = apply { body.metadata(metadata) }
+
+        /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+        fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+        /**
+         * Sets [Builder.metadata] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.metadata] with a well-typed [Metadata] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun metadata(metadata: JsonField<Metadata>) = apply { body.metadata(metadata) }
+
+        /** Alias for calling [metadata] with `Metadata.ofJsonValue(jsonValue)`. */
+        fun metadata(jsonValue: JsonValue) = apply { body.metadata(jsonValue) }
+
+        /** Alias for calling [metadata] with `Metadata.ofMissing(missing)`. */
+        fun metadata(missing: Missing) = apply { body.metadata(missing) }
 
         fun name(name: String?) = apply { body.name(name) }
 
@@ -511,6 +556,7 @@ private constructor(
         private val defaultDataset: JsonField<String>,
         private val description: JsonField<String>,
         private val enableReservations: JsonField<Boolean>,
+        private val metadata: JsonField<Metadata>,
         private val name: JsonField<String>,
         private val numReviewersPerItem: JsonField<Long>,
         private val reservationMinutes: JsonField<Long>,
@@ -530,6 +576,9 @@ private constructor(
             @JsonProperty("enable_reservations")
             @ExcludeMissing
             enableReservations: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("metadata")
+            @ExcludeMissing
+            metadata: JsonField<Metadata> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("num_reviewers_per_item")
             @ExcludeMissing
@@ -547,6 +596,7 @@ private constructor(
             defaultDataset,
             description,
             enableReservations,
+            metadata,
             name,
             numReviewersPerItem,
             reservationMinutes,
@@ -573,6 +623,12 @@ private constructor(
          */
         fun enableReservations(): Optional<Boolean> =
             enableReservations.getOptional("enable_reservations")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -636,6 +692,13 @@ private constructor(
         @JsonProperty("enable_reservations")
         @ExcludeMissing
         fun _enableReservations(): JsonField<Boolean> = enableReservations
+
+        /**
+         * Returns the raw JSON value of [metadata].
+         *
+         * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
 
         /**
          * Returns the raw JSON value of [name].
@@ -707,6 +770,7 @@ private constructor(
             private var defaultDataset: JsonField<String> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
             private var enableReservations: JsonField<Boolean> = JsonMissing.of()
+            private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var numReviewersPerItem: JsonField<Long> = JsonMissing.of()
             private var reservationMinutes: JsonField<Long> = JsonMissing.of()
@@ -719,6 +783,7 @@ private constructor(
                 defaultDataset = body.defaultDataset
                 description = body.description
                 enableReservations = body.enableReservations
+                metadata = body.metadata
                 name = body.name
                 numReviewersPerItem = body.numReviewersPerItem
                 reservationMinutes = body.reservationMinutes
@@ -774,6 +839,26 @@ private constructor(
             fun enableReservations(enableReservations: JsonField<Boolean>) = apply {
                 this.enableReservations = enableReservations
             }
+
+            fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+            /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+            fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+            /**
+             * Sets [Builder.metadata] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.metadata] with a well-typed [Metadata] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
+
+            /** Alias for calling [metadata] with `Metadata.ofJsonValue(jsonValue)`. */
+            fun metadata(jsonValue: JsonValue) = metadata(Metadata.ofJsonValue(jsonValue))
+
+            /** Alias for calling [metadata] with `Metadata.ofMissing(missing)`. */
+            fun metadata(missing: Missing) = metadata(Metadata.ofMissing(missing))
 
             fun name(name: String?) = name(JsonField.ofNullable(name))
 
@@ -927,6 +1012,7 @@ private constructor(
                     defaultDataset,
                     description,
                     enableReservations,
+                    metadata,
                     name,
                     numReviewersPerItem,
                     reservationMinutes,
@@ -946,6 +1032,7 @@ private constructor(
             defaultDataset()
             description()
             enableReservations()
+            metadata().ifPresent { it.validate() }
             name()
             numReviewersPerItem()
             reservationMinutes()
@@ -973,6 +1060,7 @@ private constructor(
             (if (defaultDataset.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (enableReservations.asKnown().isPresent) 1 else 0) +
+                (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (if (numReviewersPerItem.asKnown().isPresent) 1 else 0) +
                 (if (reservationMinutes.asKnown().isPresent) 1 else 0) +
@@ -988,6 +1076,7 @@ private constructor(
                 defaultDataset == other.defaultDataset &&
                 description == other.description &&
                 enableReservations == other.enableReservations &&
+                metadata == other.metadata &&
                 name == other.name &&
                 numReviewersPerItem == other.numReviewersPerItem &&
                 reservationMinutes == other.reservationMinutes &&
@@ -1001,6 +1090,7 @@ private constructor(
                 defaultDataset,
                 description,
                 enableReservations,
+                metadata,
                 name,
                 numReviewersPerItem,
                 reservationMinutes,
@@ -1013,7 +1103,178 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, name=$name, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, additionalProperties=$additionalProperties}"
+            "Body{defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, name=$name, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, additionalProperties=$additionalProperties}"
+    }
+
+    @JsonDeserialize(using = Metadata.Deserializer::class)
+    @JsonSerialize(using = Metadata.Serializer::class)
+    class Metadata
+    private constructor(
+        private val jsonValue: JsonValue? = null,
+        private val missing: Missing? = null,
+        private val _json: JsonValue? = null,
+    ) {
+
+        fun jsonValue(): Optional<JsonValue> = Optional.ofNullable(jsonValue)
+
+        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
+
+        fun isJsonValue(): Boolean = jsonValue != null
+
+        fun isMissing(): Boolean = missing != null
+
+        fun asJsonValue(): JsonValue = jsonValue.getOrThrow("jsonValue")
+
+        fun asMissing(): Missing = missing.getOrThrow("missing")
+
+        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                jsonValue != null -> visitor.visitJsonValue(jsonValue)
+                missing != null -> visitor.visitMissing(missing)
+                else -> visitor.unknown(_json)
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): Metadata = apply {
+            if (validated) {
+                return@apply
+            }
+
+            accept(
+                object : Visitor<Unit> {
+                    override fun visitJsonValue(jsonValue: JsonValue) {}
+
+                    override fun visitMissing(missing: Missing) {
+                        missing.validate()
+                    }
+                }
+            )
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            accept(
+                object : Visitor<Int> {
+                    override fun visitJsonValue(jsonValue: JsonValue) = 1
+
+                    override fun visitMissing(missing: Missing) = missing.validity()
+
+                    override fun unknown(json: JsonValue?) = 0
+                }
+            )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Metadata && jsonValue == other.jsonValue && missing == other.missing
+        }
+
+        override fun hashCode(): Int = Objects.hash(jsonValue, missing)
+
+        override fun toString(): String =
+            when {
+                jsonValue != null -> "Metadata{jsonValue=$jsonValue}"
+                missing != null -> "Metadata{missing=$missing}"
+                _json != null -> "Metadata{_unknown=$_json}"
+                else -> throw IllegalStateException("Invalid Metadata")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofJsonValue(jsonValue: JsonValue) = Metadata(jsonValue = jsonValue)
+
+            @JvmStatic fun ofMissing(missing: Missing) = Metadata(missing = missing)
+        }
+
+        /**
+         * An interface that defines how to map each variant of [Metadata] to a value of type [T].
+         */
+        interface Visitor<out T> {
+
+            fun visitJsonValue(jsonValue: JsonValue): T
+
+            fun visitMissing(missing: Missing): T
+
+            /**
+             * Maps an unknown variant of [Metadata] to a value of type [T].
+             *
+             * An instance of [Metadata] can contain an unknown variant if it was deserialized from
+             * data that doesn't match any known variant. For example, if the SDK is on an older
+             * version than the API, then the API may respond with new variants that the SDK is
+             * unaware of.
+             *
+             * @throws LangChainInvalidDataException in the default implementation.
+             */
+            fun unknown(json: JsonValue?): T {
+                throw LangChainInvalidDataException("Unknown Metadata: $json")
+            }
+        }
+
+        internal class Deserializer : BaseDeserializer<Metadata>(Metadata::class) {
+
+            override fun ObjectCodec.deserialize(node: JsonNode): Metadata {
+                val json = JsonValue.fromJsonNode(node)
+
+                val bestMatches =
+                    sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
+                                Metadata(missing = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<JsonValue>())?.let {
+                                Metadata(jsonValue = it, _json = json)
+                            },
+                        )
+                        .filterNotNull()
+                        .allMaxBy { it.validity() }
+                        .toList()
+                return when (bestMatches.size) {
+                    // This can happen if what we're deserializing is completely incompatible with
+                    // all the possible variants.
+                    0 -> Metadata(_json = json)
+                    1 -> bestMatches.single()
+                    // If there's more than one match with the highest validity, then use the first
+                    // completely valid match, or simply the first match if none are completely
+                    // valid.
+                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                }
+            }
+        }
+
+        internal class Serializer : BaseSerializer<Metadata>(Metadata::class) {
+
+            override fun serialize(
+                value: Metadata,
+                generator: JsonGenerator,
+                provider: SerializerProvider,
+            ) {
+                when {
+                    value.jsonValue != null -> generator.writeObject(value.jsonValue)
+                    value.missing != null -> generator.writeObject(value.missing)
+                    value._json != null -> generator.writeObject(value._json)
+                    else -> throw IllegalStateException("Invalid Metadata")
+                }
+            }
+        }
     }
 
     override fun equals(other: Any?): Boolean {

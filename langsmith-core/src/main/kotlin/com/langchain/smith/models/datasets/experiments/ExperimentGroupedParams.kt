@@ -38,7 +38,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun metadataKey(): String = body.metadataKey()
+    fun metadataKeys(): List<String> = body.metadataKeys()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -83,11 +83,11 @@ private constructor(
     fun useApproxStats(): Optional<Boolean> = body.useApproxStats()
 
     /**
-     * Returns the raw JSON value of [metadataKey].
+     * Returns the raw JSON value of [metadataKeys].
      *
-     * Unlike [metadataKey], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [metadataKeys], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _metadataKey(): JsonField<String> = body._metadataKey()
+    fun _metadataKeys(): JsonField<List<String>> = body._metadataKeys()
 
     /**
      * Returns the raw JSON value of [datasetVersion].
@@ -155,7 +155,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .metadataKey()
+         * .metadataKeys()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -187,7 +187,7 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [metadataKey]
+         * - [metadataKeys]
          * - [datasetVersion]
          * - [experimentLimit]
          * - [filter]
@@ -196,16 +196,25 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        fun metadataKey(metadataKey: String) = apply { body.metadataKey(metadataKey) }
+        fun metadataKeys(metadataKeys: List<String>) = apply { body.metadataKeys(metadataKeys) }
 
         /**
-         * Sets [Builder.metadataKey] to an arbitrary JSON value.
+         * Sets [Builder.metadataKeys] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.metadataKey] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.metadataKeys] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun metadataKey(metadataKey: JsonField<String>) = apply { body.metadataKey(metadataKey) }
+        fun metadataKeys(metadataKeys: JsonField<List<String>>) = apply {
+            body.metadataKeys(metadataKeys)
+        }
+
+        /**
+         * Adds a single [String] to [metadataKeys].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addMetadataKey(metadataKey: String) = apply { body.addMetadataKey(metadataKey) }
 
         fun datasetVersion(datasetVersion: String?) = apply { body.datasetVersion(datasetVersion) }
 
@@ -443,7 +452,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .metadataKey()
+         * .metadataKeys()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -473,7 +482,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val metadataKey: JsonField<String>,
+        private val metadataKeys: JsonField<List<String>>,
         private val datasetVersion: JsonField<String>,
         private val experimentLimit: JsonField<Long>,
         private val filter: JsonField<String>,
@@ -486,9 +495,9 @@ private constructor(
 
         @JsonCreator
         private constructor(
-            @JsonProperty("metadata_key")
+            @JsonProperty("metadata_keys")
             @ExcludeMissing
-            metadataKey: JsonField<String> = JsonMissing.of(),
+            metadataKeys: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("dataset_version")
             @ExcludeMissing
             datasetVersion: JsonField<String> = JsonMissing.of(),
@@ -509,7 +518,7 @@ private constructor(
             @ExcludeMissing
             useApproxStats: JsonField<Boolean> = JsonMissing.of(),
         ) : this(
-            metadataKey,
+            metadataKeys,
             datasetVersion,
             experimentLimit,
             filter,
@@ -524,7 +533,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun metadataKey(): String = metadataKey.getRequired("metadata_key")
+        fun metadataKeys(): List<String> = metadataKeys.getRequired("metadata_keys")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -570,13 +579,14 @@ private constructor(
         fun useApproxStats(): Optional<Boolean> = useApproxStats.getOptional("use_approx_stats")
 
         /**
-         * Returns the raw JSON value of [metadataKey].
+         * Returns the raw JSON value of [metadataKeys].
          *
-         * Unlike [metadataKey], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [metadataKeys], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
-        @JsonProperty("metadata_key")
+        @JsonProperty("metadata_keys")
         @ExcludeMissing
-        fun _metadataKey(): JsonField<String> = metadataKey
+        fun _metadataKeys(): JsonField<List<String>> = metadataKeys
 
         /**
          * Returns the raw JSON value of [datasetVersion].
@@ -663,7 +673,7 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .metadataKey()
+             * .metadataKeys()
              * ```
              */
             @JvmStatic fun builder() = Builder()
@@ -672,7 +682,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var metadataKey: JsonField<String>? = null
+            private var metadataKeys: JsonField<MutableList<String>>? = null
             private var datasetVersion: JsonField<String> = JsonMissing.of()
             private var experimentLimit: JsonField<Long> = JsonMissing.of()
             private var filter: JsonField<String> = JsonMissing.of()
@@ -684,7 +694,7 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                metadataKey = body.metadataKey
+                metadataKeys = body.metadataKeys.map { it.toMutableList() }
                 datasetVersion = body.datasetVersion
                 experimentLimit = body.experimentLimit
                 filter = body.filter
@@ -695,17 +705,29 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            fun metadataKey(metadataKey: String) = metadataKey(JsonField.of(metadataKey))
+            fun metadataKeys(metadataKeys: List<String>) = metadataKeys(JsonField.of(metadataKeys))
 
             /**
-             * Sets [Builder.metadataKey] to an arbitrary JSON value.
+             * Sets [Builder.metadataKeys] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.metadataKey] with a well-typed [String] value
+             * You should usually call [Builder.metadataKeys] with a well-typed `List<String>` value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun metadataKey(metadataKey: JsonField<String>) = apply {
-                this.metadataKey = metadataKey
+            fun metadataKeys(metadataKeys: JsonField<List<String>>) = apply {
+                this.metadataKeys = metadataKeys.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [metadataKeys].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addMetadataKey(metadataKey: String) = apply {
+                metadataKeys =
+                    (metadataKeys ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("metadataKeys", it).add(metadataKey)
+                    }
             }
 
             fun datasetVersion(datasetVersion: String?) =
@@ -858,14 +880,14 @@ private constructor(
              *
              * The following fields are required:
              * ```java
-             * .metadataKey()
+             * .metadataKeys()
              * ```
              *
              * @throws IllegalStateException if any required field is unset.
              */
             fun build(): Body =
                 Body(
-                    checkRequired("metadataKey", metadataKey),
+                    checkRequired("metadataKeys", metadataKeys).map { it.toImmutable() },
                     datasetVersion,
                     experimentLimit,
                     filter,
@@ -884,7 +906,7 @@ private constructor(
                 return@apply
             }
 
-            metadataKey()
+            metadataKeys()
             datasetVersion()
             experimentLimit()
             filter()
@@ -911,7 +933,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (metadataKey.asKnown().isPresent) 1 else 0) +
+            (metadataKeys.asKnown().getOrNull()?.size ?: 0) +
                 (if (datasetVersion.asKnown().isPresent) 1 else 0) +
                 (if (experimentLimit.asKnown().isPresent) 1 else 0) +
                 (if (filter.asKnown().isPresent) 1 else 0) +
@@ -926,7 +948,7 @@ private constructor(
             }
 
             return other is Body &&
-                metadataKey == other.metadataKey &&
+                metadataKeys == other.metadataKeys &&
                 datasetVersion == other.datasetVersion &&
                 experimentLimit == other.experimentLimit &&
                 filter == other.filter &&
@@ -939,7 +961,7 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
-                metadataKey,
+                metadataKeys,
                 datasetVersion,
                 experimentLimit,
                 filter,
@@ -954,7 +976,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{metadataKey=$metadataKey, datasetVersion=$datasetVersion, experimentLimit=$experimentLimit, filter=$filter, nameContains=$nameContains, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, additionalProperties=$additionalProperties}"
+            "Body{metadataKeys=$metadataKeys, datasetVersion=$datasetVersion, experimentLimit=$experimentLimit, filter=$filter, nameContains=$nameContains, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

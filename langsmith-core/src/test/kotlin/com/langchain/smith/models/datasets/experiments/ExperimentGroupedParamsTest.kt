@@ -13,7 +13,7 @@ internal class ExperimentGroupedParamsTest {
     fun create() {
         ExperimentGroupedParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .metadataKey("x")
+            .addMetadataKey("string")
             .datasetVersion("dataset_version")
             .experimentLimit(1L)
             .filter("filter")
@@ -29,7 +29,7 @@ internal class ExperimentGroupedParamsTest {
         val params =
             ExperimentGroupedParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .metadataKey("x")
+                .addMetadataKey("string")
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -42,7 +42,7 @@ internal class ExperimentGroupedParamsTest {
         val params =
             ExperimentGroupedParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .metadataKey("x")
+                .addMetadataKey("string")
                 .datasetVersion("dataset_version")
                 .experimentLimit(1L)
                 .filter("filter")
@@ -54,7 +54,7 @@ internal class ExperimentGroupedParamsTest {
 
         val body = params._body()
 
-        assertThat(body.metadataKey()).isEqualTo("x")
+        assertThat(body.metadataKeys()).containsExactly("string")
         assertThat(body.datasetVersion()).contains("dataset_version")
         assertThat(body.experimentLimit()).contains(1L)
         assertThat(body.filter()).contains("filter")
@@ -70,11 +70,11 @@ internal class ExperimentGroupedParamsTest {
         val params =
             ExperimentGroupedParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .metadataKey("x")
+                .addMetadataKey("string")
                 .build()
 
         val body = params._body()
 
-        assertThat(body.metadataKey()).isEqualTo("x")
+        assertThat(body.metadataKeys()).containsExactly("string")
     }
 }

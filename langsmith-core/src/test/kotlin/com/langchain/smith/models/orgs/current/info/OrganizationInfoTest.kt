@@ -20,6 +20,7 @@ internal class OrganizationInfoTest {
                 .config(
                     OrganizationConfig.builder()
                         .allowCustomIframes(true)
+                        .arbitraryCostTrackingEnabled(true)
                         .canAddSeats(true)
                         .canDisablePublicSharing(true)
                         .canServeDatasets(true)
@@ -96,6 +97,7 @@ internal class OrganizationInfoTest {
             .isEqualTo(
                 OrganizationConfig.builder()
                     .allowCustomIframes(true)
+                    .arbitraryCostTrackingEnabled(true)
                     .canAddSeats(true)
                     .canDisablePublicSharing(true)
                     .canServeDatasets(true)
@@ -177,6 +179,7 @@ internal class OrganizationInfoTest {
                 .config(
                     OrganizationConfig.builder()
                         .allowCustomIframes(true)
+                        .arbitraryCostTrackingEnabled(true)
                         .canAddSeats(true)
                         .canDisablePublicSharing(true)
                         .canServeDatasets(true)

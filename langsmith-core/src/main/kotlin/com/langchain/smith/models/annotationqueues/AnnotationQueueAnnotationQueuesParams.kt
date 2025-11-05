@@ -67,6 +67,8 @@ private constructor(
      */
     fun enableReservations(): Optional<Boolean> = body.enableReservations()
 
+    fun _metadata(): JsonValue = body._metadata()
+
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -336,6 +338,8 @@ private constructor(
         fun enableReservations(enableReservations: JsonField<Boolean>) = apply {
             body.enableReservations(enableReservations)
         }
+
+        fun metadata(metadata: JsonValue) = apply { body.metadata(metadata) }
 
         fun numReviewersPerItem(numReviewersPerItem: Long?) = apply {
             body.numReviewersPerItem(numReviewersPerItem)
@@ -629,6 +633,7 @@ private constructor(
         private val defaultDataset: JsonField<String>,
         private val description: JsonField<String>,
         private val enableReservations: JsonField<Boolean>,
+        private val metadata: JsonValue,
         private val numReviewersPerItem: JsonField<Long>,
         private val reservationMinutes: JsonField<Long>,
         private val rubricInstructions: JsonField<String>,
@@ -654,6 +659,7 @@ private constructor(
             @JsonProperty("enable_reservations")
             @ExcludeMissing
             enableReservations: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
             @JsonProperty("num_reviewers_per_item")
             @ExcludeMissing
             numReviewersPerItem: JsonField<Long> = JsonMissing.of(),
@@ -679,6 +685,7 @@ private constructor(
             defaultDataset,
             description,
             enableReservations,
+            metadata,
             numReviewersPerItem,
             reservationMinutes,
             rubricInstructions,
@@ -724,6 +731,8 @@ private constructor(
          */
         fun enableReservations(): Optional<Boolean> =
             enableReservations.getOptional("enable_reservations")
+
+        @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -908,6 +917,7 @@ private constructor(
             private var defaultDataset: JsonField<String> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
             private var enableReservations: JsonField<Boolean> = JsonMissing.of()
+            private var metadata: JsonValue = JsonMissing.of()
             private var numReviewersPerItem: JsonField<Long> = JsonMissing.of()
             private var reservationMinutes: JsonField<Long> = JsonMissing.of()
             private var rubricInstructions: JsonField<String> = JsonMissing.of()
@@ -924,6 +934,7 @@ private constructor(
                 defaultDataset = body.defaultDataset
                 description = body.description
                 enableReservations = body.enableReservations
+                metadata = body.metadata
                 numReviewersPerItem = body.numReviewersPerItem
                 reservationMinutes = body.reservationMinutes
                 rubricInstructions = body.rubricInstructions
@@ -1030,6 +1041,8 @@ private constructor(
             fun enableReservations(enableReservations: JsonField<Boolean>) = apply {
                 this.enableReservations = enableReservations
             }
+
+            fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
 
             fun numReviewersPerItem(numReviewersPerItem: Long?) =
                 numReviewersPerItem(JsonField.ofNullable(numReviewersPerItem))
@@ -1220,6 +1233,7 @@ private constructor(
                     defaultDataset,
                     description,
                     enableReservations,
+                    metadata,
                     numReviewersPerItem,
                     reservationMinutes,
                     rubricInstructions,
@@ -1293,6 +1307,7 @@ private constructor(
                 defaultDataset == other.defaultDataset &&
                 description == other.description &&
                 enableReservations == other.enableReservations &&
+                metadata == other.metadata &&
                 numReviewersPerItem == other.numReviewersPerItem &&
                 reservationMinutes == other.reservationMinutes &&
                 rubricInstructions == other.rubricInstructions &&
@@ -1310,6 +1325,7 @@ private constructor(
                 defaultDataset,
                 description,
                 enableReservations,
+                metadata,
                 numReviewersPerItem,
                 reservationMinutes,
                 rubricInstructions,
@@ -1323,7 +1339,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{name=$name, id=$id, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, sessionIds=$sessionIds, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+            "Body{name=$name, id=$id, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, sessionIds=$sessionIds, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

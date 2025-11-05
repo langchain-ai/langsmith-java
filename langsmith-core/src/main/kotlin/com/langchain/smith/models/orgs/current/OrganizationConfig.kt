@@ -24,6 +24,7 @@ class OrganizationConfig
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val allowCustomIframes: JsonField<Boolean>,
+    private val arbitraryCostTrackingEnabled: JsonField<Boolean>,
     private val canAddSeats: JsonField<Boolean>,
     private val canDisablePublicSharing: JsonField<Boolean>,
     private val canServeDatasets: JsonField<Boolean>,
@@ -84,6 +85,9 @@ private constructor(
         @JsonProperty("allow_custom_iframes")
         @ExcludeMissing
         allowCustomIframes: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("arbitrary_cost_tracking_enabled")
+        @ExcludeMissing
+        arbitraryCostTrackingEnabled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("can_add_seats")
         @ExcludeMissing
         canAddSeats: JsonField<Boolean> = JsonMissing.of(),
@@ -242,6 +246,7 @@ private constructor(
         usePythonPlaygroundService: JsonField<Boolean> = JsonMissing.of(),
     ) : this(
         allowCustomIframes,
+        arbitraryCostTrackingEnabled,
         canAddSeats,
         canDisablePublicSharing,
         canServeDatasets,
@@ -303,6 +308,13 @@ private constructor(
      */
     fun allowCustomIframes(): Optional<Boolean> =
         allowCustomIframes.getOptional("allow_custom_iframes")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun arbitraryCostTrackingEnabled(): Optional<Boolean> =
+        arbitraryCostTrackingEnabled.getOptional("arbitrary_cost_tracking_enabled")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -667,6 +679,16 @@ private constructor(
     @JsonProperty("allow_custom_iframes")
     @ExcludeMissing
     fun _allowCustomIframes(): JsonField<Boolean> = allowCustomIframes
+
+    /**
+     * Returns the raw JSON value of [arbitraryCostTrackingEnabled].
+     *
+     * Unlike [arbitraryCostTrackingEnabled], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("arbitrary_cost_tracking_enabled")
+    @ExcludeMissing
+    fun _arbitraryCostTrackingEnabled(): JsonField<Boolean> = arbitraryCostTrackingEnabled
 
     /**
      * Returns the raw JSON value of [canAddSeats].
@@ -1200,6 +1222,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var allowCustomIframes: JsonField<Boolean> = JsonMissing.of()
+        private var arbitraryCostTrackingEnabled: JsonField<Boolean> = JsonMissing.of()
         private var canAddSeats: JsonField<Boolean> = JsonMissing.of()
         private var canDisablePublicSharing: JsonField<Boolean> = JsonMissing.of()
         private var canServeDatasets: JsonField<Boolean> = JsonMissing.of()
@@ -1257,6 +1280,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(organizationConfig: OrganizationConfig) = apply {
             allowCustomIframes = organizationConfig.allowCustomIframes
+            arbitraryCostTrackingEnabled = organizationConfig.arbitraryCostTrackingEnabled
             canAddSeats = organizationConfig.canAddSeats
             canDisablePublicSharing = organizationConfig.canDisablePublicSharing
             canServeDatasets = organizationConfig.canServeDatasets
@@ -1325,6 +1349,20 @@ private constructor(
          */
         fun allowCustomIframes(allowCustomIframes: JsonField<Boolean>) = apply {
             this.allowCustomIframes = allowCustomIframes
+        }
+
+        fun arbitraryCostTrackingEnabled(arbitraryCostTrackingEnabled: Boolean) =
+            arbitraryCostTrackingEnabled(JsonField.of(arbitraryCostTrackingEnabled))
+
+        /**
+         * Sets [Builder.arbitraryCostTrackingEnabled] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.arbitraryCostTrackingEnabled] with a well-typed
+         * [Boolean] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun arbitraryCostTrackingEnabled(arbitraryCostTrackingEnabled: JsonField<Boolean>) = apply {
+            this.arbitraryCostTrackingEnabled = arbitraryCostTrackingEnabled
         }
 
         fun canAddSeats(canAddSeats: Boolean) = canAddSeats(JsonField.of(canAddSeats))
@@ -2101,6 +2139,7 @@ private constructor(
         fun build(): OrganizationConfig =
             OrganizationConfig(
                 allowCustomIframes,
+                arbitraryCostTrackingEnabled,
                 canAddSeats,
                 canDisablePublicSharing,
                 canServeDatasets,
@@ -2165,6 +2204,7 @@ private constructor(
         }
 
         allowCustomIframes()
+        arbitraryCostTrackingEnabled()
         canAddSeats()
         canDisablePublicSharing()
         canServeDatasets()
@@ -2236,6 +2276,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (allowCustomIframes.asKnown().isPresent) 1 else 0) +
+            (if (arbitraryCostTrackingEnabled.asKnown().isPresent) 1 else 0) +
             (if (canAddSeats.asKnown().isPresent) 1 else 0) +
             (if (canDisablePublicSharing.asKnown().isPresent) 1 else 0) +
             (if (canServeDatasets.asKnown().isPresent) 1 else 0) +
@@ -2296,6 +2337,7 @@ private constructor(
 
         return other is OrganizationConfig &&
             allowCustomIframes == other.allowCustomIframes &&
+            arbitraryCostTrackingEnabled == other.arbitraryCostTrackingEnabled &&
             canAddSeats == other.canAddSeats &&
             canDisablePublicSharing == other.canDisablePublicSharing &&
             canServeDatasets == other.canServeDatasets &&
@@ -2354,6 +2396,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             allowCustomIframes,
+            arbitraryCostTrackingEnabled,
             canAddSeats,
             canDisablePublicSharing,
             canServeDatasets,
@@ -2413,5 +2456,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "OrganizationConfig{allowCustomIframes=$allowCustomIframes, canAddSeats=$canAddSeats, canDisablePublicSharing=$canDisablePublicSharing, canServeDatasets=$canServeDatasets, canUseAbac=$canUseAbac, canUseAgentBuilder=$canUseAgentBuilder, canUseBulkExport=$canUseBulkExport, canUseLanggraphCloud=$canUseLanggraphCloud, canUseRbac=$canUseRbac, canUseSamlSso=$canUseSamlSso, clioEnabled=$clioEnabled, datadogRumSessionSampleRate=$datadogRumSessionSampleRate, demoLgpNewGraphEnabled=$demoLgpNewGraphEnabled, enableAlignEvaluators=$enableAlignEvaluators, enableIncludeExtendedStats=$enableIncludeExtendedStats, enableLanggraphPricing=$enableLanggraphPricing, enableLgpListenersPage=$enableLgpListenersPage, enableMarkdownInTracing=$enableMarkdownInTracing, enableMonthlyUsageCharts=$enableMonthlyUsageCharts, enableOrgUsageCharts=$enableOrgUsageCharts, enablePricingRedesign=$enablePricingRedesign, enableQueryingV2Endpoints=$enableQueryingV2Endpoints, enableRunTreeStreaming=$enableRunTreeStreaming, enableThreadViewPlayground=$enableThreadViewPlayground, enableThreadsImprovements=$enableThreadsImprovements, kvDatasetMessageSupport=$kvDatasetMessageSupport, langgraphDeployOwnCloudEnabled=$langgraphDeployOwnCloudEnabled, langgraphEnterpriseEnabled=$langgraphEnterpriseEnabled, langgraphRemoteReconcilerEnabled=$langgraphRemoteReconcilerEnabled, langsmithAlertsLegacyPocEnabled=$langsmithAlertsLegacyPocEnabled, langsmithAlertsPocEnabled=$langsmithAlertsPocEnabled, langsmithExperimentalSearchEnabled=$langsmithExperimentalSearchEnabled, lgpTemplatesEnabled=$lgpTemplatesEnabled, maxFreeLanggraphCloudDeployments=$maxFreeLanggraphCloudDeployments, maxIdentities=$maxIdentities, maxLanggraphCloudDeployments=$maxLanggraphCloudDeployments, maxPromptWebhooks=$maxPromptWebhooks, maxThreadEvaluatorsPerTenant=$maxThreadEvaluatorsPerTenant, maxWorkspaces=$maxWorkspaces, newRuleEvaluatorCreationVersion=$newRuleEvaluatorCreationVersion, partnerPlanApprovalDate=$partnerPlanApprovalDate, playgroundEvaluatorStrategy=$playgroundEvaluatorStrategy, premierPlanApprovalDate=$premierPlanApprovalDate, promptOptimizationJobsEnabled=$promptOptimizationJobsEnabled, requireCodeEvaluatorLanguageField=$requireCodeEvaluatorLanguageField, showPlaygroundPromptCanvas=$showPlaygroundPromptCanvas, showUpdatedResourceTags=$showUpdatedResourceTags, showUpdatedSidenav=$showUpdatedSidenav, startupPlanApprovalDate=$startupPlanApprovalDate, tenantSkipTopkFacets=$tenantSkipTopkFacets, threadEvaluatorsEnabled=$threadEvaluatorsEnabled, useExactSearchForPrompts=$useExactSearchForPrompts, usePythonPlaygroundService=$usePythonPlaygroundService, additionalProperties=$additionalProperties}"
+        "OrganizationConfig{allowCustomIframes=$allowCustomIframes, arbitraryCostTrackingEnabled=$arbitraryCostTrackingEnabled, canAddSeats=$canAddSeats, canDisablePublicSharing=$canDisablePublicSharing, canServeDatasets=$canServeDatasets, canUseAbac=$canUseAbac, canUseAgentBuilder=$canUseAgentBuilder, canUseBulkExport=$canUseBulkExport, canUseLanggraphCloud=$canUseLanggraphCloud, canUseRbac=$canUseRbac, canUseSamlSso=$canUseSamlSso, clioEnabled=$clioEnabled, datadogRumSessionSampleRate=$datadogRumSessionSampleRate, demoLgpNewGraphEnabled=$demoLgpNewGraphEnabled, enableAlignEvaluators=$enableAlignEvaluators, enableIncludeExtendedStats=$enableIncludeExtendedStats, enableLanggraphPricing=$enableLanggraphPricing, enableLgpListenersPage=$enableLgpListenersPage, enableMarkdownInTracing=$enableMarkdownInTracing, enableMonthlyUsageCharts=$enableMonthlyUsageCharts, enableOrgUsageCharts=$enableOrgUsageCharts, enablePricingRedesign=$enablePricingRedesign, enableQueryingV2Endpoints=$enableQueryingV2Endpoints, enableRunTreeStreaming=$enableRunTreeStreaming, enableThreadViewPlayground=$enableThreadViewPlayground, enableThreadsImprovements=$enableThreadsImprovements, kvDatasetMessageSupport=$kvDatasetMessageSupport, langgraphDeployOwnCloudEnabled=$langgraphDeployOwnCloudEnabled, langgraphEnterpriseEnabled=$langgraphEnterpriseEnabled, langgraphRemoteReconcilerEnabled=$langgraphRemoteReconcilerEnabled, langsmithAlertsLegacyPocEnabled=$langsmithAlertsLegacyPocEnabled, langsmithAlertsPocEnabled=$langsmithAlertsPocEnabled, langsmithExperimentalSearchEnabled=$langsmithExperimentalSearchEnabled, lgpTemplatesEnabled=$lgpTemplatesEnabled, maxFreeLanggraphCloudDeployments=$maxFreeLanggraphCloudDeployments, maxIdentities=$maxIdentities, maxLanggraphCloudDeployments=$maxLanggraphCloudDeployments, maxPromptWebhooks=$maxPromptWebhooks, maxThreadEvaluatorsPerTenant=$maxThreadEvaluatorsPerTenant, maxWorkspaces=$maxWorkspaces, newRuleEvaluatorCreationVersion=$newRuleEvaluatorCreationVersion, partnerPlanApprovalDate=$partnerPlanApprovalDate, playgroundEvaluatorStrategy=$playgroundEvaluatorStrategy, premierPlanApprovalDate=$premierPlanApprovalDate, promptOptimizationJobsEnabled=$promptOptimizationJobsEnabled, requireCodeEvaluatorLanguageField=$requireCodeEvaluatorLanguageField, showPlaygroundPromptCanvas=$showPlaygroundPromptCanvas, showUpdatedResourceTags=$showUpdatedResourceTags, showUpdatedSidenav=$showUpdatedSidenav, startupPlanApprovalDate=$startupPlanApprovalDate, tenantSkipTopkFacets=$tenantSkipTopkFacets, threadEvaluatorsEnabled=$threadEvaluatorsEnabled, useExactSearchForPrompts=$useExactSearchForPrompts, usePythonPlaygroundService=$usePythonPlaygroundService, additionalProperties=$additionalProperties}"
 }

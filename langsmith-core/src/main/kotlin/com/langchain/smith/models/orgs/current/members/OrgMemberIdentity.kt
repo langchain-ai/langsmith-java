@@ -32,6 +32,7 @@ private constructor(
     private val userId: JsonField<String>,
     private val accessScope: JsonField<AccessScope>,
     private val avatarUrl: JsonField<String>,
+    private val displayName: JsonField<String>,
     private val email: JsonField<String>,
     private val fullName: JsonField<String>,
     private val linkedLoginMethods: JsonField<List<ProviderUserSlim>>,
@@ -60,6 +61,9 @@ private constructor(
         @ExcludeMissing
         accessScope: JsonField<AccessScope> = JsonMissing.of(),
         @JsonProperty("avatar_url") @ExcludeMissing avatarUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("display_name")
+        @ExcludeMissing
+        displayName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
         @JsonProperty("full_name") @ExcludeMissing fullName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("linked_login_methods")
@@ -86,6 +90,7 @@ private constructor(
         userId,
         accessScope,
         avatarUrl,
+        displayName,
         email,
         fullName,
         linkedLoginMethods,
@@ -145,6 +150,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun avatarUrl(): Optional<String> = avatarUrl.getOptional("avatar_url")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun displayName(): Optional<String> = displayName.getOptional("display_name")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -264,6 +275,15 @@ private constructor(
     @JsonProperty("avatar_url") @ExcludeMissing fun _avatarUrl(): JsonField<String> = avatarUrl
 
     /**
+     * Returns the raw JSON value of [displayName].
+     *
+     * Unlike [displayName], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("display_name")
+    @ExcludeMissing
+    fun _displayName(): JsonField<String> = displayName
+
+    /**
      * Returns the raw JSON value of [email].
      *
      * Unlike [email], this method doesn't throw if the JSON field has an unexpected type.
@@ -374,6 +394,7 @@ private constructor(
         private var userId: JsonField<String>? = null
         private var accessScope: JsonField<AccessScope> = JsonMissing.of()
         private var avatarUrl: JsonField<String> = JsonMissing.of()
+        private var displayName: JsonField<String> = JsonMissing.of()
         private var email: JsonField<String> = JsonMissing.of()
         private var fullName: JsonField<String> = JsonMissing.of()
         private var linkedLoginMethods: JsonField<MutableList<ProviderUserSlim>>? = null
@@ -395,6 +416,7 @@ private constructor(
             userId = orgMemberIdentity.userId
             accessScope = orgMemberIdentity.accessScope
             avatarUrl = orgMemberIdentity.avatarUrl
+            displayName = orgMemberIdentity.displayName
             email = orgMemberIdentity.email
             fullName = orgMemberIdentity.fullName
             linkedLoginMethods = orgMemberIdentity.linkedLoginMethods.map { it.toMutableList() }
@@ -498,6 +520,20 @@ private constructor(
          * value.
          */
         fun avatarUrl(avatarUrl: JsonField<String>) = apply { this.avatarUrl = avatarUrl }
+
+        fun displayName(displayName: String?) = displayName(JsonField.ofNullable(displayName))
+
+        /** Alias for calling [Builder.displayName] with `displayName.orElse(null)`. */
+        fun displayName(displayName: Optional<String>) = displayName(displayName.getOrNull())
+
+        /**
+         * Sets [Builder.displayName] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.displayName] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun displayName(displayName: JsonField<String>) = apply { this.displayName = displayName }
 
         fun email(email: String?) = email(JsonField.ofNullable(email))
 
@@ -689,6 +725,7 @@ private constructor(
                 checkRequired("userId", userId),
                 accessScope,
                 avatarUrl,
+                displayName,
                 email,
                 fullName,
                 (linkedLoginMethods ?: JsonMissing.of()).map { it.toImmutable() },
@@ -717,6 +754,7 @@ private constructor(
         userId()
         accessScope().ifPresent { it.validate() }
         avatarUrl()
+        displayName()
         email()
         fullName()
         linkedLoginMethods().ifPresent { it.forEach { it.validate() } }
@@ -752,6 +790,7 @@ private constructor(
             (if (userId.asKnown().isPresent) 1 else 0) +
             (accessScope.asKnown().getOrNull()?.validity() ?: 0) +
             (if (avatarUrl.asKnown().isPresent) 1 else 0) +
+            (if (displayName.asKnown().isPresent) 1 else 0) +
             (if (email.asKnown().isPresent) 1 else 0) +
             (if (fullName.asKnown().isPresent) 1 else 0) +
             (linkedLoginMethods.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
@@ -776,6 +815,7 @@ private constructor(
             userId == other.userId &&
             accessScope == other.accessScope &&
             avatarUrl == other.avatarUrl &&
+            displayName == other.displayName &&
             email == other.email &&
             fullName == other.fullName &&
             linkedLoginMethods == other.linkedLoginMethods &&
@@ -798,6 +838,7 @@ private constructor(
             userId,
             accessScope,
             avatarUrl,
+            displayName,
             email,
             fullName,
             linkedLoginMethods,
@@ -814,5 +855,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "OrgMemberIdentity{id=$id, createdAt=$createdAt, lsUserId=$lsUserId, organizationId=$organizationId, readOnly=$readOnly, userId=$userId, accessScope=$accessScope, avatarUrl=$avatarUrl, email=$email, fullName=$fullName, linkedLoginMethods=$linkedLoginMethods, orgRoleId=$orgRoleId, orgRoleName=$orgRoleName, roleId=$roleId, roleName=$roleName, tenantId=$tenantId, tenantIds=$tenantIds, additionalProperties=$additionalProperties}"
+        "OrgMemberIdentity{id=$id, createdAt=$createdAt, lsUserId=$lsUserId, organizationId=$organizationId, readOnly=$readOnly, userId=$userId, accessScope=$accessScope, avatarUrl=$avatarUrl, displayName=$displayName, email=$email, fullName=$fullName, linkedLoginMethods=$linkedLoginMethods, orgRoleId=$orgRoleId, orgRoleName=$orgRoleName, roleId=$roleId, roleName=$roleName, tenantId=$tenantId, tenantIds=$tenantIds, additionalProperties=$additionalProperties}"
 }

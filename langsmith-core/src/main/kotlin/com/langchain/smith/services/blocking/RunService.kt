@@ -201,7 +201,7 @@ interface RunService {
      * Ingests multiple runs, feedback objects, and binary attachments in a single
      * `multipart/form-data` request. **Part‑name pattern**: `<event>.<run_id>[.<field>]` where
      * `event` ∈ {`post`, `patch`, `feedback`, `attachment`}.
-     * * `post|patch.<run_id>` – JSON run payload.
+     * * `post|patch.<run_id>` – JSON run payload.
      * * `post|patch.<run_id>.<field>` – out‑of‑band run data (`inputs`, `outputs`, `events`,
      *   `error`, `extra`, `serialized`).
      * * `feedback.<run_id>` – JSON feedback payload (must include `trace_id`).

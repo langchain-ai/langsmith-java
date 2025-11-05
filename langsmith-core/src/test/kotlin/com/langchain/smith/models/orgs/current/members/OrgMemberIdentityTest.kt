@@ -24,6 +24,7 @@ internal class OrgMemberIdentityTest {
                 .userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .accessScope(AccessScope.ORGANIZATION)
                 .avatarUrl("avatar_url")
+                .displayName("display_name")
                 .email("email")
                 .fullName("full_name")
                 .addLinkedLoginMethod(
@@ -63,6 +64,7 @@ internal class OrgMemberIdentityTest {
         assertThat(orgMemberIdentity.userId()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(orgMemberIdentity.accessScope()).contains(AccessScope.ORGANIZATION)
         assertThat(orgMemberIdentity.avatarUrl()).contains("avatar_url")
+        assertThat(orgMemberIdentity.displayName()).contains("display_name")
         assertThat(orgMemberIdentity.email()).contains("email")
         assertThat(orgMemberIdentity.fullName()).contains("full_name")
         assertThat(orgMemberIdentity.linkedLoginMethods().getOrNull())
@@ -107,6 +109,7 @@ internal class OrgMemberIdentityTest {
                 .userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .accessScope(AccessScope.ORGANIZATION)
                 .avatarUrl("avatar_url")
+                .displayName("display_name")
                 .email("email")
                 .fullName("full_name")
                 .addLinkedLoginMethod(

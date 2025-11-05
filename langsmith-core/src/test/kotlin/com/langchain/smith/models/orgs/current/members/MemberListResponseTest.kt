@@ -26,6 +26,7 @@ internal class MemberListResponseTest {
                         .userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .accessScope(AccessScope.ORGANIZATION)
                         .avatarUrl("avatar_url")
+                        .displayName("display_name")
                         .email("email")
                         .fullName("full_name")
                         .addLinkedLoginMethod(
@@ -90,6 +91,7 @@ internal class MemberListResponseTest {
                     .userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .accessScope(AccessScope.ORGANIZATION)
                     .avatarUrl("avatar_url")
+                    .displayName("display_name")
                     .email("email")
                     .fullName("full_name")
                     .addLinkedLoginMethod(
@@ -160,6 +162,7 @@ internal class MemberListResponseTest {
                         .userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .accessScope(AccessScope.ORGANIZATION)
                         .avatarUrl("avatar_url")
+                        .displayName("display_name")
                         .email("email")
                         .fullName("full_name")
                         .addLinkedLoginMethod(

@@ -16,6 +16,7 @@ internal class AnnotationQueueUpdateParamsTest {
             .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .description("description")
             .enableReservations(true)
+            .metadata(JsonValue.from(mapOf<String, Any>()))
             .name("name")
             .numReviewersPerItem(0L)
             .reservationMinutes(0L)
@@ -59,6 +60,7 @@ internal class AnnotationQueueUpdateParamsTest {
                 .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
                 .enableReservations(true)
+                .metadata(JsonValue.from(mapOf<String, Any>()))
                 .name("name")
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
@@ -86,6 +88,12 @@ internal class AnnotationQueueUpdateParamsTest {
         assertThat(body.defaultDataset()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.description()).contains("description")
         assertThat(body.enableReservations()).contains(true)
+        assertThat(body.metadata())
+            .contains(
+                AnnotationQueueUpdateParams.Metadata.ofJsonValue(
+                    JsonValue.from(mapOf<String, Any>())
+                )
+            )
         assertThat(body.name()).contains("name")
         assertThat(body.numReviewersPerItem()).contains(0L)
         assertThat(body.reservationMinutes()).contains(0L)

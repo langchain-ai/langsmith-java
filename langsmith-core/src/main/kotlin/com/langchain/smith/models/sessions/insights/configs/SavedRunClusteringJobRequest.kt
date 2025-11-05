@@ -33,6 +33,7 @@ private constructor(
     private val partitions: JsonField<Partitions>,
     private val sample: JsonField<Double>,
     private val summaryPrompt: JsonField<String>,
+    private val userContext: JsonField<UserContext>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -57,6 +58,9 @@ private constructor(
         @JsonProperty("summary_prompt")
         @ExcludeMissing
         summaryPrompt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("user_context")
+        @ExcludeMissing
+        userContext: JsonField<UserContext> = JsonMissing.of(),
     ) : this(
         attributeSchemas,
         filter,
@@ -67,6 +71,7 @@ private constructor(
         partitions,
         sample,
         summaryPrompt,
+        userContext,
         mutableMapOf(),
     )
 
@@ -121,6 +126,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun summaryPrompt(): Optional<String> = summaryPrompt.getOptional("summary_prompt")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun userContext(): Optional<UserContext> = userContext.getOptional("user_context")
 
     /**
      * Returns the raw JSON value of [filter].
@@ -182,6 +193,15 @@ private constructor(
     @ExcludeMissing
     fun _summaryPrompt(): JsonField<String> = summaryPrompt
 
+    /**
+     * Returns the raw JSON value of [userContext].
+     *
+     * Unlike [userContext], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("user_context")
+    @ExcludeMissing
+    fun _userContext(): JsonField<UserContext> = userContext
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -227,6 +247,7 @@ private constructor(
         private var partitions: JsonField<Partitions>? = null
         private var sample: JsonField<Double>? = null
         private var summaryPrompt: JsonField<String>? = null
+        private var userContext: JsonField<UserContext> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -240,6 +261,7 @@ private constructor(
             partitions = savedRunClusteringJobRequest.partitions
             sample = savedRunClusteringJobRequest.sample
             summaryPrompt = savedRunClusteringJobRequest.summaryPrompt
+            userContext = savedRunClusteringJobRequest.userContext
             additionalProperties = savedRunClusteringJobRequest.additionalProperties.toMutableMap()
         }
 
@@ -370,6 +392,22 @@ private constructor(
             this.summaryPrompt = summaryPrompt
         }
 
+        fun userContext(userContext: UserContext?) = userContext(JsonField.ofNullable(userContext))
+
+        /** Alias for calling [Builder.userContext] with `userContext.orElse(null)`. */
+        fun userContext(userContext: Optional<UserContext>) = userContext(userContext.getOrNull())
+
+        /**
+         * Sets [Builder.userContext] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.userContext] with a well-typed [UserContext] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun userContext(userContext: JsonField<UserContext>) = apply {
+            this.userContext = userContext
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -420,6 +458,7 @@ private constructor(
                 checkRequired("partitions", partitions),
                 checkRequired("sample", sample),
                 checkRequired("summaryPrompt", summaryPrompt),
+                userContext,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -439,6 +478,7 @@ private constructor(
         partitions().ifPresent { it.validate() }
         sample()
         summaryPrompt()
+        userContext().ifPresent { it.validate() }
         validated = true
     }
 
@@ -464,7 +504,8 @@ private constructor(
             (if (name.asKnown().isPresent) 1 else 0) +
             (partitions.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sample.asKnown().isPresent) 1 else 0) +
-            (if (summaryPrompt.asKnown().isPresent) 1 else 0)
+            (if (summaryPrompt.asKnown().isPresent) 1 else 0) +
+            (userContext.asKnown().getOrNull()?.validity() ?: 0)
 
     class Model @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -692,6 +733,105 @@ private constructor(
         override fun toString() = "Partitions{additionalProperties=$additionalProperties}"
     }
 
+    class UserContext
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [UserContext]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [UserContext]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(userContext: UserContext) = apply {
+                additionalProperties = userContext.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [UserContext].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): UserContext = UserContext(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): UserContext = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is UserContext && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "UserContext{additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -707,6 +847,7 @@ private constructor(
             partitions == other.partitions &&
             sample == other.sample &&
             summaryPrompt == other.summaryPrompt &&
+            userContext == other.userContext &&
             additionalProperties == other.additionalProperties
     }
 
@@ -721,6 +862,7 @@ private constructor(
             partitions,
             sample,
             summaryPrompt,
+            userContext,
             additionalProperties,
         )
     }
@@ -728,5 +870,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SavedRunClusteringJobRequest{attributeSchemas=$attributeSchemas, filter=$filter, hierarchy=$hierarchy, lastNHours=$lastNHours, model=$model, name=$name, partitions=$partitions, sample=$sample, summaryPrompt=$summaryPrompt, additionalProperties=$additionalProperties}"
+        "SavedRunClusteringJobRequest{attributeSchemas=$attributeSchemas, filter=$filter, hierarchy=$hierarchy, lastNHours=$lastNHours, model=$model, name=$name, partitions=$partitions, sample=$sample, summaryPrompt=$summaryPrompt, userContext=$userContext, additionalProperties=$additionalProperties}"
 }

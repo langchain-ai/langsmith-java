@@ -19,6 +19,7 @@ internal class CurrentListResponseTest {
                 .config(
                     OrganizationConfig.builder()
                         .allowCustomIframes(true)
+                        .arbitraryCostTrackingEnabled(true)
                         .canAddSeats(true)
                         .canDisablePublicSharing(true)
                         .canServeDatasets(true)
@@ -115,6 +116,7 @@ internal class CurrentListResponseTest {
             .isEqualTo(
                 OrganizationConfig.builder()
                     .allowCustomIframes(true)
+                    .arbitraryCostTrackingEnabled(true)
                     .canAddSeats(true)
                     .canDisablePublicSharing(true)
                     .canServeDatasets(true)
@@ -220,6 +222,7 @@ internal class CurrentListResponseTest {
                 .config(
                     OrganizationConfig.builder()
                         .allowCustomIframes(true)
+                        .arbitraryCostTrackingEnabled(true)
                         .canAddSeats(true)
                         .canDisablePublicSharing(true)
                         .canServeDatasets(true)

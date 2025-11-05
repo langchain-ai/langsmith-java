@@ -14,6 +14,7 @@ internal class OrganizationConfigTest {
         val organizationConfig =
             OrganizationConfig.builder()
                 .allowCustomIframes(true)
+                .arbitraryCostTrackingEnabled(true)
                 .canAddSeats(true)
                 .canDisablePublicSharing(true)
                 .canServeDatasets(true)
@@ -69,6 +70,7 @@ internal class OrganizationConfigTest {
                 .build()
 
         assertThat(organizationConfig.allowCustomIframes()).contains(true)
+        assertThat(organizationConfig.arbitraryCostTrackingEnabled()).contains(true)
         assertThat(organizationConfig.canAddSeats()).contains(true)
         assertThat(organizationConfig.canDisablePublicSharing()).contains(true)
         assertThat(organizationConfig.canServeDatasets()).contains(true)
@@ -133,6 +135,7 @@ internal class OrganizationConfigTest {
         val organizationConfig =
             OrganizationConfig.builder()
                 .allowCustomIframes(true)
+                .arbitraryCostTrackingEnabled(true)
                 .canAddSeats(true)
                 .canDisablePublicSharing(true)
                 .canServeDatasets(true)

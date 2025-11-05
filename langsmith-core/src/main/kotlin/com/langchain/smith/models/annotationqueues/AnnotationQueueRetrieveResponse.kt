@@ -31,6 +31,7 @@ private constructor(
     private val defaultDataset: JsonField<String>,
     private val description: JsonField<String>,
     private val enableReservations: JsonField<Boolean>,
+    private val metadata: JsonValue,
     private val numReviewersPerItem: JsonField<Long>,
     private val reservationMinutes: JsonField<Long>,
     private val rubricInstructions: JsonField<String>,
@@ -58,6 +59,7 @@ private constructor(
         @JsonProperty("enable_reservations")
         @ExcludeMissing
         enableReservations: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
         @JsonProperty("num_reviewers_per_item")
         @ExcludeMissing
         numReviewersPerItem: JsonField<Long> = JsonMissing.of(),
@@ -87,6 +89,7 @@ private constructor(
         defaultDataset,
         description,
         enableReservations,
+        metadata,
         numReviewersPerItem,
         reservationMinutes,
         rubricInstructions,
@@ -139,6 +142,8 @@ private constructor(
      */
     fun enableReservations(): Optional<Boolean> =
         enableReservations.getOptional("enable_reservations")
+
+    @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -343,6 +348,7 @@ private constructor(
         private var defaultDataset: JsonField<String> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
         private var enableReservations: JsonField<Boolean> = JsonMissing.of()
+        private var metadata: JsonValue = JsonMissing.of()
         private var numReviewersPerItem: JsonField<Long> = JsonMissing.of()
         private var reservationMinutes: JsonField<Long> = JsonMissing.of()
         private var rubricInstructions: JsonField<String> = JsonMissing.of()
@@ -362,6 +368,7 @@ private constructor(
                 defaultDataset = annotationQueueRetrieveResponse.defaultDataset
                 description = annotationQueueRetrieveResponse.description
                 enableReservations = annotationQueueRetrieveResponse.enableReservations
+                metadata = annotationQueueRetrieveResponse.metadata
                 numReviewersPerItem = annotationQueueRetrieveResponse.numReviewersPerItem
                 reservationMinutes = annotationQueueRetrieveResponse.reservationMinutes
                 rubricInstructions = annotationQueueRetrieveResponse.rubricInstructions
@@ -473,6 +480,8 @@ private constructor(
         fun enableReservations(enableReservations: JsonField<Boolean>) = apply {
             this.enableReservations = enableReservations
         }
+
+        fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
 
         fun numReviewersPerItem(numReviewersPerItem: Long?) =
             numReviewersPerItem(JsonField.ofNullable(numReviewersPerItem))
@@ -663,6 +672,7 @@ private constructor(
                 defaultDataset,
                 description,
                 enableReservations,
+                metadata,
                 numReviewersPerItem,
                 reservationMinutes,
                 rubricInstructions,
@@ -741,6 +751,7 @@ private constructor(
             defaultDataset == other.defaultDataset &&
             description == other.description &&
             enableReservations == other.enableReservations &&
+            metadata == other.metadata &&
             numReviewersPerItem == other.numReviewersPerItem &&
             reservationMinutes == other.reservationMinutes &&
             rubricInstructions == other.rubricInstructions &&
@@ -760,6 +771,7 @@ private constructor(
             defaultDataset,
             description,
             enableReservations,
+            metadata,
             numReviewersPerItem,
             reservationMinutes,
             rubricInstructions,
@@ -774,5 +786,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AnnotationQueueRetrieveResponse{id=$id, name=$name, tenantId=$tenantId, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, runRuleId=$runRuleId, sourceRuleId=$sourceRuleId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "AnnotationQueueRetrieveResponse{id=$id, name=$name, tenantId=$tenantId, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, runRuleId=$runRuleId, sourceRuleId=$sourceRuleId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }
