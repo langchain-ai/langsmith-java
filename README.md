@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith/0.0.1)
-[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith/0.0.1/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith/0.0.1)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.0.1)
+[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith-java/0.0.1/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.0.1)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith/0.0.1).
+Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.0.1).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smit
 ### Gradle
 
 ```kotlin
-implementation("com.langchain.smith:langsmith:0.0.1")
+implementation("com.langchain.smith:langsmith-java:0.0.1")
 ```
 
 ### Maven
@@ -32,7 +32,7 @@ implementation("com.langchain.smith:langsmith:0.0.1")
 ```xml
 <dependency>
   <groupId>com.langchain.smith</groupId>
-  <artifactId>langsmith</artifactId>
+  <artifactId>langsmith-java</artifactId>
   <version>0.0.1</version>
 </dependency>
 ```
@@ -270,7 +270,7 @@ ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
 List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
-Note that when passing a non-`Path` its filename is unknown so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](langsmith-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
+Note that when passing a non-`Path` its filename is unknown so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
 
 ```java
 import com.langchain.smith.core.MultipartField;
@@ -325,26 +325,26 @@ CustomChartsSection parsedCustomChartsSection = customChartsSection.parse();
 
 The SDK throws custom unchecked exception types:
 
-- [`LangChainServiceException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainServiceException.kt): Base class for HTTP errors. See this table for which exception subclass is thrown for each HTTP status code:
+- [`LangChainServiceException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangChainServiceException.kt): Base class for HTTP errors. See this table for which exception subclass is thrown for each HTTP status code:
 
-  | Status | Exception                                                                                                                     |
-  | ------ | ----------------------------------------------------------------------------------------------------------------------------- |
-  | 400    | [`BadRequestException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/BadRequestException.kt)                     |
-  | 401    | [`UnauthorizedException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/UnauthorizedException.kt)                 |
-  | 403    | [`PermissionDeniedException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/PermissionDeniedException.kt)         |
-  | 404    | [`NotFoundException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/NotFoundException.kt)                         |
-  | 422    | [`UnprocessableEntityException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/UnprocessableEntityException.kt)   |
-  | 429    | [`RateLimitException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/RateLimitException.kt)                       |
-  | 5xx    | [`InternalServerException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/InternalServerException.kt)             |
-  | others | [`UnexpectedStatusCodeException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/UnexpectedStatusCodeException.kt) |
+  | Status | Exception                                                                                                                          |
+  | ------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+  | 400    | [`BadRequestException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/BadRequestException.kt)                     |
+  | 401    | [`UnauthorizedException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/UnauthorizedException.kt)                 |
+  | 403    | [`PermissionDeniedException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/PermissionDeniedException.kt)         |
+  | 404    | [`NotFoundException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/NotFoundException.kt)                         |
+  | 422    | [`UnprocessableEntityException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/UnprocessableEntityException.kt)   |
+  | 429    | [`RateLimitException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/RateLimitException.kt)                       |
+  | 5xx    | [`InternalServerException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/InternalServerException.kt)             |
+  | others | [`UnexpectedStatusCodeException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/UnexpectedStatusCodeException.kt) |
 
-- [`LangChainIoException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainIoException.kt): I/O networking errors.
+- [`LangChainIoException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangChainIoException.kt): I/O networking errors.
 
-- [`LangChainRetryableException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainRetryableException.kt): Generic error indicating a failure that could be retried by the client.
+- [`LangChainRetryableException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangChainRetryableException.kt): Generic error indicating a failure that could be retried by the client.
 
-- [`LangChainInvalidDataException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
+- [`LangChainInvalidDataException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangChainInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
 
-- [`LangChainException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
+- [`LangChainException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangChainException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
 
 ## Logging
 
@@ -364,7 +364,7 @@ $ export LANGCHAIN_LOG=debug
 
 ## ProGuard and R8
 
-Although the SDK uses reflection, it is still usable with [ProGuard](https://github.com/Guardsquare/proguard) and [R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization) because `langsmith-core` is published with a [configuration file](langsmith-core/src/main/resources/META-INF/proguard/langsmith-core.pro) containing [keep rules](https://www.guardsquare.com/manual/configuration/usage).
+Although the SDK uses reflection, it is still usable with [ProGuard](https://github.com/Guardsquare/proguard) and [R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization) because `langsmith-java-core` is published with a [configuration file](langsmith-java-core/src/main/resources/META-INF/proguard/langsmith-java-core.pro) containing [keep rules](https://www.guardsquare.com/manual/configuration/usage).
 
 ProGuard and R8 should automatically detect and use the published rules, but you can also manually copy the keep rules if necessary.
 
@@ -374,7 +374,7 @@ The SDK depends on [Jackson](https://github.com/FasterXML/jackson) for JSON seri
 
 The SDK throws an exception if it detects an incompatible Jackson version at runtime (e.g. if the default version was overridden in your Maven or Gradle config).
 
-If the SDK threw an exception, but you're _certain_ the version is compatible, then disable the version check using the `checkJacksonVersionCompatibility` on [`LangsmithOkHttpClient`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt).
+If the SDK threw an exception, but you're _certain_ the version is compatible, then disable the version check using the `checkJacksonVersionCompatibility` on [`LangsmithOkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt).
 
 > [!CAUTION]
 > We make no guarantee that the SDK works correctly when the Jackson version check is disabled.
@@ -479,15 +479,15 @@ LangsmithClient client = LangsmithOkHttpClient.builder()
 
 The SDK consists of three artifacts:
 
-- `langsmith-core`
+- `langsmith-java-core`
   - Contains core SDK logic
   - Does not depend on [OkHttp](https://square.github.io/okhttp)
-  - Exposes [`LangsmithClient`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClient.kt), [`LangsmithClientAsync`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsync.kt), [`LangsmithClientImpl`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt), and [`LangsmithClientAsyncImpl`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), all of which can work with any HTTP client
-- `langsmith-client-okhttp`
+  - Exposes [`LangsmithClient`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClient.kt), [`LangsmithClientAsync`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsync.kt), [`LangsmithClientImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt), and [`LangsmithClientAsyncImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), all of which can work with any HTTP client
+- `langsmith-java-client-okhttp`
   - Depends on [OkHttp](https://square.github.io/okhttp)
-  - Exposes [`LangsmithOkHttpClient`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) and [`LangsmithOkHttpClientAsync`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), which provide a way to construct [`LangsmithClientImpl`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) and [`LangsmithClientAsyncImpl`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), respectively, using OkHttp
-- `langsmith`
-  - Depends on and exposes the APIs of both `langsmith-core` and `langsmith-client-okhttp`
+  - Exposes [`LangsmithOkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) and [`LangsmithOkHttpClientAsync`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), which provide a way to construct [`LangsmithClientImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) and [`LangsmithClientAsyncImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), respectively, using OkHttp
+- `langsmith-java`
+  - Depends on and exposes the APIs of both `langsmith-java-core` and `langsmith-java-client-okhttp`
   - Does not have its own logic
 
 This structure allows replacing the SDK's default HTTP client without pulling in unnecessary dependencies.
@@ -499,17 +499,17 @@ This structure allows replacing the SDK's default HTTP client without pulling in
 
 To use a customized `OkHttpClient`:
 
-1. Replace your [`langsmith` dependency](#installation) with `langsmith-core`
-2. Copy `langsmith-client-okhttp`'s [`OkHttpClient`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/OkHttpClient.kt) class into your code and customize it
-3. Construct [`LangsmithClientImpl`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) or [`LangsmithClientAsyncImpl`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), similarly to [`LangsmithOkHttpClient`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), using your customized client
+1. Replace your [`langsmith-java` dependency](#installation) with `langsmith-java-core`
+2. Copy `langsmith-java-client-okhttp`'s [`OkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/OkHttpClient.kt) class into your code and customize it
+3. Construct [`LangsmithClientImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) or [`LangsmithClientAsyncImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), similarly to [`LangsmithOkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), using your customized client
 
 ### Completely custom HTTP client
 
 To use a completely custom HTTP client:
 
-1. Replace your [`langsmith` dependency](#installation) with `langsmith-core`
-2. Write a class that implements the [`HttpClient`](langsmith-core/src/main/kotlin/com/langchain/smith/core/http/HttpClient.kt) interface
-3. Construct [`LangsmithClientImpl`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) or [`LangsmithClientAsyncImpl`](langsmith-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), similarly to [`LangsmithOkHttpClient`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), using your new client class
+1. Replace your [`langsmith-java` dependency](#installation) with `langsmith-java-core`
+2. Write a class that implements the [`HttpClient`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/http/HttpClient.kt) interface
+3. Construct [`LangsmithClientImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientImpl.kt) or [`LangsmithClientAsyncImpl`](langsmith-java-core/src/main/kotlin/com/langchain/smith/client/LangsmithClientAsyncImpl.kt), similarly to [`LangsmithOkHttpClient`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClient.kt) or [`LangsmithOkHttpClientAsync`](langsmith-java-client-okhttp/src/main/kotlin/com/langchain/smith/client/okhttp/LangsmithOkHttpClientAsync.kt), using your new client class
 
 ## Undocumented API functionality
 
@@ -532,7 +532,7 @@ SessionDashboardParams params = SessionDashboardParams.builder()
 
 These can be accessed on the built object later using the `_additionalHeaders()`, `_additionalQueryParams()`, and `_additionalBodyProperties()` methods.
 
-To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](langsmith-core/src/main/kotlin/com/langchain/smith/core/Values.kt) object to its setter:
+To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt) object to its setter:
 
 ```java
 import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
@@ -543,7 +543,7 @@ SessionDashboardParams params = SessionDashboardParams.builder()
     .build();
 ```
 
-The most straightforward way to create a [`JsonValue`](langsmith-core/src/main/kotlin/com/langchain/smith/core/Values.kt) is using its `from(...)` method:
+The most straightforward way to create a [`JsonValue`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt) is using its `from(...)` method:
 
 ```java
 import com.langchain.smith.core.JsonValue;
@@ -584,7 +584,7 @@ JsonValue complexValue = JsonValue.from(Map.of(
 
 Normally a `Builder` class's `build` method will throw [`IllegalStateException`](https://docs.oracle.com/javase/8/docs/api/java/lang/IllegalStateException.html) if any required parameter or property is unset.
 
-To forcibly omit a required parameter or property, pass [`JsonMissing`](langsmith-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
+To forcibly omit a required parameter or property, pass [`JsonMissing`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
 
 ```java
 import com.langchain.smith.core.JsonMissing;
@@ -655,7 +655,7 @@ if (field.isMissing()) {
 
 In rare cases, the API may return a response that doesn't match the expected type. For example, the SDK may expect a property to contain a `String`, but the API could return something else.
 
-By default, the SDK will not throw an exception in this case. It will throw [`LangChainInvalidDataException`](langsmith-core/src/main/kotlin/com/langchain/smith/errors/LangChainInvalidDataException.kt) only if you directly access the property.
+By default, the SDK will not throw an exception in this case. It will throw [`LangChainInvalidDataException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangChainInvalidDataException.kt) only if you directly access the property.
 
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
