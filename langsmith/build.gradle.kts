@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":langsmith-java-client-okhttp"))
+    api(project(":langsmith-client-okhttp"))
 }
 
 // Redefine `dokkaJavadoc` to:

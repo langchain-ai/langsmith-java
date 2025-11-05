@@ -52,7 +52,7 @@ internal class ProGuardCompatibilityTest {
     @Test
     fun proguardRules() {
         val rulesFile =
-            javaClass.classLoader.getResourceAsStream("META-INF/proguard/langsmith-java-core.pro")
+            javaClass.classLoader.getResourceAsStream("META-INF/proguard/langsmith-core.pro")
 
         assertThat(rulesFile).isNotNull()
     }
