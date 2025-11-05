@@ -11,7 +11,7 @@ configure<PublishingExtension> {
             pom {
                 name.set("LangSmith")
                 description.set("The LangSmith API is used to programmatically create and manage LangSmith\nresources.\n\n## Host\n\nhttps://api.smith.langchain.com\n\n## Authentication\n\nTo authenticate with the LangSmith API, set the `X-Api-Key` header to a valid\n[LangSmith API key](https://docs.langchain.com/langsmith/create-account-api-key#create-an-api-key).")
-                url.set("https://www.github.com/stainless-sdks/langsmith-api-java")
+                url.set("https://www.github.com/langchain-ai/langsmith-java")
 
                 licenses {
                     license {
@@ -26,9 +26,9 @@ configure<PublishingExtension> {
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/stainless-sdks/langsmith-api-java.git")
-                    developerConnection.set("scm:git:git://github.com/stainless-sdks/langsmith-api-java.git")
-                    url.set("https://github.com/stainless-sdks/langsmith-api-java")
+                    connection.set("scm:git:git://github.com/langchain-ai/langsmith-java.git")
+                    developerConnection.set("scm:git:git://github.com/langchain-ai/langsmith-java.git")
+                    url.set("https://github.com/langchain-ai/langsmith-java")
                 }
 
                 versionMapping {
