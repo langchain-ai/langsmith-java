@@ -1,0 +1,238 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langchain.smith.services.blocking.orgcharts
+
+import com.langchain.smith.core.ClientOptions
+import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.checkRequired
+import com.langchain.smith.core.handlers.errorBodyHandler
+import com.langchain.smith.core.handlers.errorHandler
+import com.langchain.smith.core.handlers.jsonHandler
+import com.langchain.smith.core.http.HttpMethod
+import com.langchain.smith.core.http.HttpRequest
+import com.langchain.smith.core.http.HttpResponse
+import com.langchain.smith.core.http.HttpResponse.Handler
+import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.core.http.json
+import com.langchain.smith.core.http.parseable
+import com.langchain.smith.core.prepare
+import com.langchain.smith.models.charts.section.CustomChartsSectionResponse
+import com.langchain.smith.models.orgcharts.section.SectionCreateParams
+import com.langchain.smith.models.orgcharts.section.SectionDeleteParams
+import com.langchain.smith.models.orgcharts.section.SectionDeleteResponse
+import com.langchain.smith.models.orgcharts.section.SectionListParams
+import com.langchain.smith.models.orgcharts.section.SectionRetrieveParams
+import com.langchain.smith.models.orgcharts.section.SectionUpdateParams
+import com.langchain.smith.models.sessions.CustomChartsSection
+import java.util.function.Consumer
+import kotlin.jvm.optionals.getOrNull
+
+class SectionServiceImpl internal constructor(private val clientOptions: ClientOptions) :
+    SectionService {
+
+    private val withRawResponse: SectionService.WithRawResponse by lazy {
+        WithRawResponseImpl(clientOptions)
+    }
+
+    override fun withRawResponse(): SectionService.WithRawResponse = withRawResponse
+
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): SectionService =
+        SectionServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun create(
+        params: SectionCreateParams,
+        requestOptions: RequestOptions,
+    ): CustomChartsSectionResponse =
+        // post /api/v1/org-charts/section
+        withRawResponse().create(params, requestOptions).parse()
+
+    override fun retrieve(
+        params: SectionRetrieveParams,
+        requestOptions: RequestOptions,
+    ): CustomChartsSection =
+        // post /api/v1/org-charts/section/{section_id}
+        withRawResponse().retrieve(params, requestOptions).parse()
+
+    override fun update(
+        params: SectionUpdateParams,
+        requestOptions: RequestOptions,
+    ): CustomChartsSectionResponse =
+        // patch /api/v1/org-charts/section/{section_id}
+        withRawResponse().update(params, requestOptions).parse()
+
+    override fun list(
+        params: SectionListParams,
+        requestOptions: RequestOptions,
+    ): List<CustomChartsSectionResponse> =
+        // get /api/v1/org-charts/section
+        withRawResponse().list(params, requestOptions).parse()
+
+    override fun delete(
+        params: SectionDeleteParams,
+        requestOptions: RequestOptions,
+    ): SectionDeleteResponse =
+        // delete /api/v1/org-charts/section/{section_id}
+        withRawResponse().delete(params, requestOptions).parse()
+
+    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
+        SectionService.WithRawResponse {
+
+        private val errorHandler: Handler<HttpResponse> =
+            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(
+            modifier: Consumer<ClientOptions.Builder>
+        ): SectionService.WithRawResponse =
+            SectionServiceImpl.WithRawResponseImpl(
+                clientOptions.toBuilder().apply(modifier::accept).build()
+            )
+
+        private val createHandler: Handler<CustomChartsSectionResponse> =
+            jsonHandler<CustomChartsSectionResponse>(clientOptions.jsonMapper)
+
+        override fun create(
+            params: SectionCreateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<CustomChartsSectionResponse> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "org-charts", "section")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { createHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val retrieveHandler: Handler<CustomChartsSection> =
+            jsonHandler<CustomChartsSection>(clientOptions.jsonMapper)
+
+        override fun retrieve(
+            params: SectionRetrieveParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<CustomChartsSection> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("sectionId", params.sectionId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "org-charts", "section", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { retrieveHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val updateHandler: Handler<CustomChartsSectionResponse> =
+            jsonHandler<CustomChartsSectionResponse>(clientOptions.jsonMapper)
+
+        override fun update(
+            params: SectionUpdateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<CustomChartsSectionResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("sectionId", params.sectionId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "org-charts", "section", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { updateHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val listHandler: Handler<List<CustomChartsSectionResponse>> =
+            jsonHandler<List<CustomChartsSectionResponse>>(clientOptions.jsonMapper)
+
+        override fun list(
+            params: SectionListParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<List<CustomChartsSectionResponse>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "org-charts", "section")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.forEach { it.validate() }
+                        }
+                    }
+            }
+        }
+
+        private val deleteHandler: Handler<SectionDeleteResponse> =
+            jsonHandler<SectionDeleteResponse>(clientOptions.jsonMapper)
+
+        override fun delete(
+            params: SectionDeleteParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<SectionDeleteResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("sectionId", params.sectionId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.DELETE)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "org-charts", "section", params._pathParam(0))
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { deleteHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+    }
+}
