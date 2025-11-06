@@ -33,6 +33,7 @@ private constructor(
     private val updatedAt: JsonField<OffsetDateTime>,
     private val compression: JsonField<BulkExportCompression>,
     private val endTime: JsonField<OffsetDateTime>,
+    private val exportFormatVersion: JsonField<ExportFormatVersion>,
     private val filter: JsonField<String>,
     private val format: JsonField<BulkExportFormat>,
     private val intervalHours: JsonField<Long>,
@@ -67,6 +68,9 @@ private constructor(
         @JsonProperty("end_time")
         @ExcludeMissing
         endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("export_format_version")
+        @ExcludeMissing
+        exportFormatVersion: JsonField<ExportFormatVersion> = JsonMissing.of(),
         @JsonProperty("filter") @ExcludeMissing filter: JsonField<String> = JsonMissing.of(),
         @JsonProperty("format")
         @ExcludeMissing
@@ -89,6 +93,7 @@ private constructor(
         updatedAt,
         compression,
         endTime,
+        exportFormatVersion,
         filter,
         format,
         intervalHours,
@@ -162,6 +167,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun endTime(): Optional<OffsetDateTime> = endTime.getOptional("end_time")
+
+    /**
+     * Enum for bulk export format versions.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun exportFormatVersion(): Optional<ExportFormatVersion> =
+        exportFormatVersion.getOptional("export_format_version")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -279,6 +293,16 @@ private constructor(
     @JsonProperty("end_time") @ExcludeMissing fun _endTime(): JsonField<OffsetDateTime> = endTime
 
     /**
+     * Returns the raw JSON value of [exportFormatVersion].
+     *
+     * Unlike [exportFormatVersion], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("export_format_version")
+    @ExcludeMissing
+    fun _exportFormatVersion(): JsonField<ExportFormatVersion> = exportFormatVersion
+
+    /**
      * Returns the raw JSON value of [filter].
      *
      * Unlike [filter], this method doesn't throw if the JSON field has an unexpected type.
@@ -358,6 +382,7 @@ private constructor(
         private var updatedAt: JsonField<OffsetDateTime>? = null
         private var compression: JsonField<BulkExportCompression> = JsonMissing.of()
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var exportFormatVersion: JsonField<ExportFormatVersion> = JsonMissing.of()
         private var filter: JsonField<String> = JsonMissing.of()
         private var format: JsonField<BulkExportFormat> = JsonMissing.of()
         private var intervalHours: JsonField<Long> = JsonMissing.of()
@@ -377,6 +402,7 @@ private constructor(
             updatedAt = bulkExport.updatedAt
             compression = bulkExport.compression
             endTime = bulkExport.endTime
+            exportFormatVersion = bulkExport.exportFormatVersion
             filter = bulkExport.filter
             format = bulkExport.format
             intervalHours = bulkExport.intervalHours
@@ -515,6 +541,21 @@ private constructor(
          */
         fun endTime(endTime: JsonField<OffsetDateTime>) = apply { this.endTime = endTime }
 
+        /** Enum for bulk export format versions. */
+        fun exportFormatVersion(exportFormatVersion: ExportFormatVersion) =
+            exportFormatVersion(JsonField.of(exportFormatVersion))
+
+        /**
+         * Sets [Builder.exportFormatVersion] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.exportFormatVersion] with a well-typed
+         * [ExportFormatVersion] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun exportFormatVersion(exportFormatVersion: JsonField<ExportFormatVersion>) = apply {
+            this.exportFormatVersion = exportFormatVersion
+        }
+
         fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
 
         /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
@@ -634,6 +675,7 @@ private constructor(
                 checkRequired("updatedAt", updatedAt),
                 compression,
                 endTime,
+                exportFormatVersion,
                 filter,
                 format,
                 intervalHours,
@@ -660,6 +702,7 @@ private constructor(
         updatedAt()
         compression().ifPresent { it.validate() }
         endTime()
+        exportFormatVersion().ifPresent { it.validate() }
         filter()
         format().ifPresent { it.validate() }
         intervalHours()
@@ -693,6 +736,7 @@ private constructor(
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (compression.asKnown().getOrNull()?.validity() ?: 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
+            (exportFormatVersion.asKnown().getOrNull()?.validity() ?: 0) +
             (if (filter.asKnown().isPresent) 1 else 0) +
             (format.asKnown().getOrNull()?.validity() ?: 0) +
             (if (intervalHours.asKnown().isPresent) 1 else 0) +
@@ -855,6 +899,139 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    /** Enum for bulk export format versions. */
+    class ExportFormatVersion
+    @JsonCreator
+    private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val V1 = of("v1")
+
+            @JvmField val V2_BETA = of("v2_beta")
+
+            @JvmStatic fun of(value: String) = ExportFormatVersion(JsonField.of(value))
+        }
+
+        /** An enum containing [ExportFormatVersion]'s known values. */
+        enum class Known {
+            V1,
+            V2_BETA,
+        }
+
+        /**
+         * An enum containing [ExportFormatVersion]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [ExportFormatVersion] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            V1,
+            V2_BETA,
+            /**
+             * An enum member indicating that [ExportFormatVersion] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                V1 -> Value.V1
+                V2_BETA -> Value.V2_BETA
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                V1 -> Known.V1
+                V2_BETA -> Known.V2_BETA
+                else -> throw LangChainInvalidDataException("Unknown ExportFormatVersion: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): ExportFormatVersion = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ExportFormatVersion && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -872,6 +1049,7 @@ private constructor(
             updatedAt == other.updatedAt &&
             compression == other.compression &&
             endTime == other.endTime &&
+            exportFormatVersion == other.exportFormatVersion &&
             filter == other.filter &&
             format == other.format &&
             intervalHours == other.intervalHours &&
@@ -892,6 +1070,7 @@ private constructor(
             updatedAt,
             compression,
             endTime,
+            exportFormatVersion,
             filter,
             format,
             intervalHours,
@@ -903,5 +1082,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BulkExport{id=$id, bulkExportDestinationId=$bulkExportDestinationId, createdAt=$createdAt, finishedAt=$finishedAt, sessionId=$sessionId, startTime=$startTime, status=$status, tenantId=$tenantId, updatedAt=$updatedAt, compression=$compression, endTime=$endTime, filter=$filter, format=$format, intervalHours=$intervalHours, sourceBulkExportId=$sourceBulkExportId, additionalProperties=$additionalProperties}"
+        "BulkExport{id=$id, bulkExportDestinationId=$bulkExportDestinationId, createdAt=$createdAt, finishedAt=$finishedAt, sessionId=$sessionId, startTime=$startTime, status=$status, tenantId=$tenantId, updatedAt=$updatedAt, compression=$compression, endTime=$endTime, exportFormatVersion=$exportFormatVersion, filter=$filter, format=$format, intervalHours=$intervalHours, sourceBulkExportId=$sourceBulkExportId, additionalProperties=$additionalProperties}"
 }

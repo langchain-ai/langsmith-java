@@ -96,7 +96,6 @@ internal class ExampleServiceTest {
                                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                     .build()
                             )
-                            .format(QueryExampleSchemaWithRuns.Format.CSV)
                             .limit(1L)
                             .offset(0L)
                             .preview(true)

@@ -34,6 +34,7 @@ private constructor(
     private val displayName: JsonField<String>,
     private val jitProvisioningEnabled: JsonField<Boolean>,
     private val marketplacePayoutsEnabled: JsonField<Boolean>,
+    private val memberDisabled: JsonField<Boolean>,
     private val patCreationDisabled: JsonField<Boolean>,
     private val permissions: JsonField<List<String>>,
     private val publicSharingDisabled: JsonField<Boolean>,
@@ -68,6 +69,9 @@ private constructor(
         @JsonProperty("marketplace_payouts_enabled")
         @ExcludeMissing
         marketplacePayoutsEnabled: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("member_disabled")
+        @ExcludeMissing
+        memberDisabled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("pat_creation_disabled")
         @ExcludeMissing
         patCreationDisabled: JsonField<Boolean> = JsonMissing.of(),
@@ -98,6 +102,7 @@ private constructor(
         displayName,
         jitProvisioningEnabled,
         marketplacePayoutsEnabled,
+        memberDisabled,
         patCreationDisabled,
         permissions,
         publicSharingDisabled,
@@ -163,6 +168,12 @@ private constructor(
      */
     fun marketplacePayoutsEnabled(): Optional<Boolean> =
         marketplacePayoutsEnabled.getOptional("marketplace_payouts_enabled")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun memberDisabled(): Optional<Boolean> = memberDisabled.getOptional("member_disabled")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -290,6 +301,15 @@ private constructor(
     fun _marketplacePayoutsEnabled(): JsonField<Boolean> = marketplacePayoutsEnabled
 
     /**
+     * Returns the raw JSON value of [memberDisabled].
+     *
+     * Unlike [memberDisabled], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("member_disabled")
+    @ExcludeMissing
+    fun _memberDisabled(): JsonField<Boolean> = memberDisabled
+
+    /**
      * Returns the raw JSON value of [patCreationDisabled].
      *
      * Unlike [patCreationDisabled], this method doesn't throw if the JSON field has an unexpected
@@ -405,6 +425,7 @@ private constructor(
         private var displayName: JsonField<String> = JsonMissing.of()
         private var jitProvisioningEnabled: JsonField<Boolean> = JsonMissing.of()
         private var marketplacePayoutsEnabled: JsonField<Boolean> = JsonMissing.of()
+        private var memberDisabled: JsonField<Boolean> = JsonMissing.of()
         private var patCreationDisabled: JsonField<Boolean> = JsonMissing.of()
         private var permissions: JsonField<MutableList<String>>? = null
         private var publicSharingDisabled: JsonField<Boolean> = JsonMissing.of()
@@ -426,6 +447,7 @@ private constructor(
             displayName = organizationInfo.displayName
             jitProvisioningEnabled = organizationInfo.jitProvisioningEnabled
             marketplacePayoutsEnabled = organizationInfo.marketplacePayoutsEnabled
+            memberDisabled = organizationInfo.memberDisabled
             patCreationDisabled = organizationInfo.patCreationDisabled
             permissions = organizationInfo.permissions.map { it.toMutableList() }
             publicSharingDisabled = organizationInfo.publicSharingDisabled
@@ -542,6 +564,19 @@ private constructor(
          */
         fun marketplacePayoutsEnabled(marketplacePayoutsEnabled: JsonField<Boolean>) = apply {
             this.marketplacePayoutsEnabled = marketplacePayoutsEnabled
+        }
+
+        fun memberDisabled(memberDisabled: Boolean) = memberDisabled(JsonField.of(memberDisabled))
+
+        /**
+         * Sets [Builder.memberDisabled] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.memberDisabled] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun memberDisabled(memberDisabled: JsonField<Boolean>) = apply {
+            this.memberDisabled = memberDisabled
         }
 
         fun patCreationDisabled(patCreationDisabled: Boolean) =
@@ -720,6 +755,7 @@ private constructor(
                 displayName,
                 jitProvisioningEnabled,
                 marketplacePayoutsEnabled,
+                memberDisabled,
                 patCreationDisabled,
                 (permissions ?: JsonMissing.of()).map { it.toImmutable() },
                 publicSharingDisabled,
@@ -748,6 +784,7 @@ private constructor(
         displayName()
         jitProvisioningEnabled()
         marketplacePayoutsEnabled()
+        memberDisabled()
         patCreationDisabled()
         permissions()
         publicSharingDisabled()
@@ -783,6 +820,7 @@ private constructor(
             (if (displayName.asKnown().isPresent) 1 else 0) +
             (if (jitProvisioningEnabled.asKnown().isPresent) 1 else 0) +
             (if (marketplacePayoutsEnabled.asKnown().isPresent) 1 else 0) +
+            (if (memberDisabled.asKnown().isPresent) 1 else 0) +
             (if (patCreationDisabled.asKnown().isPresent) 1 else 0) +
             (permissions.asKnown().getOrNull()?.size ?: 0) +
             (if (publicSharingDisabled.asKnown().isPresent) 1 else 0) +
@@ -807,6 +845,7 @@ private constructor(
             displayName == other.displayName &&
             jitProvisioningEnabled == other.jitProvisioningEnabled &&
             marketplacePayoutsEnabled == other.marketplacePayoutsEnabled &&
+            memberDisabled == other.memberDisabled &&
             patCreationDisabled == other.patCreationDisabled &&
             permissions == other.permissions &&
             publicSharingDisabled == other.publicSharingDisabled &&
@@ -829,6 +868,7 @@ private constructor(
             displayName,
             jitProvisioningEnabled,
             marketplacePayoutsEnabled,
+            memberDisabled,
             patCreationDisabled,
             permissions,
             publicSharingDisabled,
@@ -845,5 +885,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "OrganizationInfo{config=$config, isPersonal=$isPersonal, id=$id, defaultSsoProvision=$defaultSsoProvision, disabled=$disabled, displayName=$displayName, jitProvisioningEnabled=$jitProvisioningEnabled, marketplacePayoutsEnabled=$marketplacePayoutsEnabled, patCreationDisabled=$patCreationDisabled, permissions=$permissions, publicSharingDisabled=$publicSharingDisabled, reachedMaxWorkspaces=$reachedMaxWorkspaces, ssoLoginSlug=$ssoLoginSlug, ssoOnly=$ssoOnly, tier=$tier, wallet=$wallet, workspaceAdminCanInviteToOrg=$workspaceAdminCanInviteToOrg, additionalProperties=$additionalProperties}"
+        "OrganizationInfo{config=$config, isPersonal=$isPersonal, id=$id, defaultSsoProvision=$defaultSsoProvision, disabled=$disabled, displayName=$displayName, jitProvisioningEnabled=$jitProvisioningEnabled, marketplacePayoutsEnabled=$marketplacePayoutsEnabled, memberDisabled=$memberDisabled, patCreationDisabled=$patCreationDisabled, permissions=$permissions, publicSharingDisabled=$publicSharingDisabled, reachedMaxWorkspaces=$reachedMaxWorkspaces, ssoLoginSlug=$ssoLoginSlug, ssoOnly=$ssoOnly, tier=$tier, wallet=$wallet, workspaceAdminCanInviteToOrg=$workspaceAdminCanInviteToOrg, additionalProperties=$additionalProperties}"
 }

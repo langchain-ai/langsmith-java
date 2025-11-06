@@ -36,6 +36,7 @@ private constructor(
     private val displayName: JsonField<String>,
     private val email: JsonField<String>,
     private val fullName: JsonField<String>,
+    private val isDisabled: JsonField<Boolean>,
     private val linkedLoginMethods: JsonField<List<ProviderUserSlim>>,
     private val orgRoleId: JsonField<String>,
     private val orgRoleName: JsonField<String>,
@@ -66,6 +67,9 @@ private constructor(
         displayName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
         @JsonProperty("full_name") @ExcludeMissing fullName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("is_disabled")
+        @ExcludeMissing
+        isDisabled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("linked_login_methods")
         @ExcludeMissing
         linkedLoginMethods: JsonField<List<ProviderUserSlim>> = JsonMissing.of(),
@@ -90,6 +94,7 @@ private constructor(
         displayName,
         email,
         fullName,
+        isDisabled,
         linkedLoginMethods,
         orgRoleId,
         orgRoleName,
@@ -164,6 +169,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun fullName(): Optional<String> = fullName.getOptional("full_name")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isDisabled(): Optional<Boolean> = isDisabled.getOptional("is_disabled")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -288,6 +299,13 @@ private constructor(
     @JsonProperty("full_name") @ExcludeMissing fun _fullName(): JsonField<String> = fullName
 
     /**
+     * Returns the raw JSON value of [isDisabled].
+     *
+     * Unlike [isDisabled], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_disabled") @ExcludeMissing fun _isDisabled(): JsonField<Boolean> = isDisabled
+
+    /**
      * Returns the raw JSON value of [linkedLoginMethods].
      *
      * Unlike [linkedLoginMethods], this method doesn't throw if the JSON field has an unexpected
@@ -378,6 +396,7 @@ private constructor(
         private var displayName: JsonField<String> = JsonMissing.of()
         private var email: JsonField<String> = JsonMissing.of()
         private var fullName: JsonField<String> = JsonMissing.of()
+        private var isDisabled: JsonField<Boolean> = JsonMissing.of()
         private var linkedLoginMethods: JsonField<MutableList<ProviderUserSlim>>? = null
         private var orgRoleId: JsonField<String> = JsonMissing.of()
         private var orgRoleName: JsonField<String> = JsonMissing.of()
@@ -399,6 +418,7 @@ private constructor(
             displayName = memberIdentity.displayName
             email = memberIdentity.email
             fullName = memberIdentity.fullName
+            isDisabled = memberIdentity.isDisabled
             linkedLoginMethods = memberIdentity.linkedLoginMethods.map { it.toMutableList() }
             orgRoleId = memberIdentity.orgRoleId
             orgRoleName = memberIdentity.orgRoleName
@@ -539,6 +559,17 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun fullName(fullName: JsonField<String>) = apply { this.fullName = fullName }
+
+        fun isDisabled(isDisabled: Boolean) = isDisabled(JsonField.of(isDisabled))
+
+        /**
+         * Sets [Builder.isDisabled] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isDisabled] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isDisabled(isDisabled: JsonField<Boolean>) = apply { this.isDisabled = isDisabled }
 
         fun linkedLoginMethods(linkedLoginMethods: List<ProviderUserSlim>) =
             linkedLoginMethods(JsonField.of(linkedLoginMethods))
@@ -682,6 +713,7 @@ private constructor(
                 displayName,
                 email,
                 fullName,
+                isDisabled,
                 (linkedLoginMethods ?: JsonMissing.of()).map { it.toImmutable() },
                 orgRoleId,
                 orgRoleName,
@@ -710,6 +742,7 @@ private constructor(
         displayName()
         email()
         fullName()
+        isDisabled()
         linkedLoginMethods().ifPresent { it.forEach { it.validate() } }
         orgRoleId()
         orgRoleName()
@@ -745,6 +778,7 @@ private constructor(
             (if (displayName.asKnown().isPresent) 1 else 0) +
             (if (email.asKnown().isPresent) 1 else 0) +
             (if (fullName.asKnown().isPresent) 1 else 0) +
+            (if (isDisabled.asKnown().isPresent) 1 else 0) +
             (linkedLoginMethods.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (orgRoleId.asKnown().isPresent) 1 else 0) +
             (if (orgRoleName.asKnown().isPresent) 1 else 0) +
@@ -769,6 +803,7 @@ private constructor(
             displayName == other.displayName &&
             email == other.email &&
             fullName == other.fullName &&
+            isDisabled == other.isDisabled &&
             linkedLoginMethods == other.linkedLoginMethods &&
             orgRoleId == other.orgRoleId &&
             orgRoleName == other.orgRoleName &&
@@ -791,6 +826,7 @@ private constructor(
             displayName,
             email,
             fullName,
+            isDisabled,
             linkedLoginMethods,
             orgRoleId,
             orgRoleName,
@@ -804,5 +840,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "MemberIdentity{id=$id, createdAt=$createdAt, lsUserId=$lsUserId, organizationId=$organizationId, readOnly=$readOnly, userId=$userId, accessScope=$accessScope, avatarUrl=$avatarUrl, displayName=$displayName, email=$email, fullName=$fullName, linkedLoginMethods=$linkedLoginMethods, orgRoleId=$orgRoleId, orgRoleName=$orgRoleName, roleId=$roleId, roleName=$roleName, tenantId=$tenantId, additionalProperties=$additionalProperties}"
+        "MemberIdentity{id=$id, createdAt=$createdAt, lsUserId=$lsUserId, organizationId=$organizationId, readOnly=$readOnly, userId=$userId, accessScope=$accessScope, avatarUrl=$avatarUrl, displayName=$displayName, email=$email, fullName=$fullName, isDisabled=$isDisabled, linkedLoginMethods=$linkedLoginMethods, orgRoleId=$orgRoleId, orgRoleName=$orgRoleName, roleId=$roleId, roleName=$roleName, tenantId=$tenantId, additionalProperties=$additionalProperties}"
 }
