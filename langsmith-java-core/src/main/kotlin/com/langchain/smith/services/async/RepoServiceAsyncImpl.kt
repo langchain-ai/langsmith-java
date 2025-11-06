@@ -28,8 +28,6 @@ import com.langchain.smith.models.repos.RepoOptimizeJobParams
 import com.langchain.smith.models.repos.RepoOptimizeJobResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
-import com.langchain.smith.services.async.repos.OptimizationJobServiceAsync
-import com.langchain.smith.services.async.repos.OptimizationJobServiceAsyncImpl
 import com.langchain.smith.services.async.repos.TagServiceAsync
 import com.langchain.smith.services.async.repos.TagServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
@@ -45,18 +43,12 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
 
     private val tags: TagServiceAsync by lazy { TagServiceAsyncImpl(clientOptions) }
 
-    private val optimizationJobs: OptimizationJobServiceAsync by lazy {
-        OptimizationJobServiceAsyncImpl(clientOptions)
-    }
-
     override fun withRawResponse(): RepoServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync =
         RepoServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun tags(): TagServiceAsync = tags
-
-    override fun optimizationJobs(): OptimizationJobServiceAsync = optimizationJobs
 
     override fun create(
         params: RepoCreateParams,
@@ -117,10 +109,6 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
             TagServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val optimizationJobs: OptimizationJobServiceAsync.WithRawResponse by lazy {
-            OptimizationJobServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): RepoServiceAsync.WithRawResponse =
@@ -129,9 +117,6 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
             )
 
         override fun tags(): TagServiceAsync.WithRawResponse = tags
-
-        override fun optimizationJobs(): OptimizationJobServiceAsync.WithRawResponse =
-            optimizationJobs
 
         private val createHandler: Handler<CreateRepoResponse> =
             jsonHandler<CreateRepoResponse>(clientOptions.jsonMapper)
