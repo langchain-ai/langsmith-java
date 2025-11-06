@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.0-alpha.4 (2025-11-06)
+
+Full Changelog: [v0.1.0-alpha.3...v0.1.0-alpha.4](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.3...v0.1.0-alpha.4)
+
+### Features
+
+* **api:** api update ([1d38234](https://github.com/langchain-ai/langsmith-java/commit/1d382347b2bc40d0fc5c408a2d210d5a8b7b04ee))
+* **api:** disabling charts and org-charts ([9513b86](https://github.com/langchain-ai/langsmith-java/commit/9513b866e94bcbc1feccbf993a7d858399b9836c))
+
+
+### Bug Fixes
+
+* **api:** disable /api/v1/repos/optimize-job ([48b96d6](https://github.com/langchain-ai/langsmith-java/commit/48b96d6df48665af0abba2480f0e91d5811c8267))
+* **api:** disable optimization-jobs ([945edb4](https://github.com/langchain-ai/langsmith-java/commit/945edb47b4bc0fa82c2dbd7a629e51db43254579))
+* **api:** excluding post /api/v1/prompts* ([e1a0439](https://github.com/langchain-ai/langsmith-java/commit/e1a0439908c777b281d2a6b91cbf8bfcb35afa4c))
+* **api:** Rename RunRules*.transient for java target ([ea54d5a](https://github.com/langchain-ai/langsmith-java/commit/ea54d5a1a04e8b9ad6b1f80b18cb7e65a0dbc3e1))
+
+
+### Chores
+
+* disable javadocs ([0f8c477](https://github.com/langchain-ai/langsmith-java/commit/0f8c477a271c4e7771d56778f6aebcf7dc03d29e))
+
 ## 0.1.0-alpha.3 (2025-11-05)
 
 Full Changelog: [v0.1.0...v0.1.0-alpha.3](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0...v0.1.0-alpha.3)
