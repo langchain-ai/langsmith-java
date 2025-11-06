@@ -79,6 +79,7 @@ internal class BulkExportServiceAsyncTest {
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .compression(BulkExportCompression.NONE)
                     .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .exportFormatVersion(BulkExportBulkExportsParams.ExportFormatVersion.V1)
                     .filter("filter")
                     .format(BulkExportFormat.PARQUET)
                     .intervalHours(0L)

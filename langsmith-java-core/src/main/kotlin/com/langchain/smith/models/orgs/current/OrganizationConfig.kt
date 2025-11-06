@@ -33,6 +33,7 @@ private constructor(
     private val canUseBulkExport: JsonField<Boolean>,
     private val canUseLanggraphCloud: JsonField<Boolean>,
     private val canUseRbac: JsonField<Boolean>,
+    private val canUseRemoteMcpServers: JsonField<Boolean>,
     private val canUseSamlSso: JsonField<Boolean>,
     private val clioEnabled: JsonField<Boolean>,
     private val datadogRumSessionSampleRate: JsonField<Long>,
@@ -112,6 +113,9 @@ private constructor(
         @JsonProperty("can_use_rbac")
         @ExcludeMissing
         canUseRbac: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("can_use_remote_mcp_servers")
+        @ExcludeMissing
+        canUseRemoteMcpServers: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("can_use_saml_sso")
         @ExcludeMissing
         canUseSamlSso: JsonField<Boolean> = JsonMissing.of(),
@@ -255,6 +259,7 @@ private constructor(
         canUseBulkExport,
         canUseLanggraphCloud,
         canUseRbac,
+        canUseRemoteMcpServers,
         canUseSamlSso,
         clioEnabled,
         datadogRumSessionSampleRate,
@@ -366,6 +371,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun canUseRbac(): Optional<Boolean> = canUseRbac.getOptional("can_use_rbac")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun canUseRemoteMcpServers(): Optional<Boolean> =
+        canUseRemoteMcpServers.getOptional("can_use_remote_mcp_servers")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -762,6 +774,16 @@ private constructor(
      * Unlike [canUseRbac], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("can_use_rbac") @ExcludeMissing fun _canUseRbac(): JsonField<Boolean> = canUseRbac
+
+    /**
+     * Returns the raw JSON value of [canUseRemoteMcpServers].
+     *
+     * Unlike [canUseRemoteMcpServers], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("can_use_remote_mcp_servers")
+    @ExcludeMissing
+    fun _canUseRemoteMcpServers(): JsonField<Boolean> = canUseRemoteMcpServers
 
     /**
      * Returns the raw JSON value of [canUseSamlSso].
@@ -1231,6 +1253,7 @@ private constructor(
         private var canUseBulkExport: JsonField<Boolean> = JsonMissing.of()
         private var canUseLanggraphCloud: JsonField<Boolean> = JsonMissing.of()
         private var canUseRbac: JsonField<Boolean> = JsonMissing.of()
+        private var canUseRemoteMcpServers: JsonField<Boolean> = JsonMissing.of()
         private var canUseSamlSso: JsonField<Boolean> = JsonMissing.of()
         private var clioEnabled: JsonField<Boolean> = JsonMissing.of()
         private var datadogRumSessionSampleRate: JsonField<Long> = JsonMissing.of()
@@ -1289,6 +1312,7 @@ private constructor(
             canUseBulkExport = organizationConfig.canUseBulkExport
             canUseLanggraphCloud = organizationConfig.canUseLanggraphCloud
             canUseRbac = organizationConfig.canUseRbac
+            canUseRemoteMcpServers = organizationConfig.canUseRemoteMcpServers
             canUseSamlSso = organizationConfig.canUseSamlSso
             clioEnabled = organizationConfig.clioEnabled
             datadogRumSessionSampleRate = organizationConfig.datadogRumSessionSampleRate
@@ -1467,6 +1491,20 @@ private constructor(
          * value.
          */
         fun canUseRbac(canUseRbac: JsonField<Boolean>) = apply { this.canUseRbac = canUseRbac }
+
+        fun canUseRemoteMcpServers(canUseRemoteMcpServers: Boolean) =
+            canUseRemoteMcpServers(JsonField.of(canUseRemoteMcpServers))
+
+        /**
+         * Sets [Builder.canUseRemoteMcpServers] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.canUseRemoteMcpServers] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun canUseRemoteMcpServers(canUseRemoteMcpServers: JsonField<Boolean>) = apply {
+            this.canUseRemoteMcpServers = canUseRemoteMcpServers
+        }
 
         fun canUseSamlSso(canUseSamlSso: Boolean) = canUseSamlSso(JsonField.of(canUseSamlSso))
 
@@ -2148,6 +2186,7 @@ private constructor(
                 canUseBulkExport,
                 canUseLanggraphCloud,
                 canUseRbac,
+                canUseRemoteMcpServers,
                 canUseSamlSso,
                 clioEnabled,
                 datadogRumSessionSampleRate,
@@ -2213,6 +2252,7 @@ private constructor(
         canUseBulkExport()
         canUseLanggraphCloud()
         canUseRbac()
+        canUseRemoteMcpServers()
         canUseSamlSso()
         clioEnabled()
         datadogRumSessionSampleRate()
@@ -2285,6 +2325,7 @@ private constructor(
             (if (canUseBulkExport.asKnown().isPresent) 1 else 0) +
             (if (canUseLanggraphCloud.asKnown().isPresent) 1 else 0) +
             (if (canUseRbac.asKnown().isPresent) 1 else 0) +
+            (if (canUseRemoteMcpServers.asKnown().isPresent) 1 else 0) +
             (if (canUseSamlSso.asKnown().isPresent) 1 else 0) +
             (if (clioEnabled.asKnown().isPresent) 1 else 0) +
             (if (datadogRumSessionSampleRate.asKnown().isPresent) 1 else 0) +
@@ -2346,6 +2387,7 @@ private constructor(
             canUseBulkExport == other.canUseBulkExport &&
             canUseLanggraphCloud == other.canUseLanggraphCloud &&
             canUseRbac == other.canUseRbac &&
+            canUseRemoteMcpServers == other.canUseRemoteMcpServers &&
             canUseSamlSso == other.canUseSamlSso &&
             clioEnabled == other.clioEnabled &&
             datadogRumSessionSampleRate == other.datadogRumSessionSampleRate &&
@@ -2405,6 +2447,7 @@ private constructor(
             canUseBulkExport,
             canUseLanggraphCloud,
             canUseRbac,
+            canUseRemoteMcpServers,
             canUseSamlSso,
             clioEnabled,
             datadogRumSessionSampleRate,
@@ -2456,5 +2499,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "OrganizationConfig{allowCustomIframes=$allowCustomIframes, arbitraryCostTrackingEnabled=$arbitraryCostTrackingEnabled, canAddSeats=$canAddSeats, canDisablePublicSharing=$canDisablePublicSharing, canServeDatasets=$canServeDatasets, canUseAbac=$canUseAbac, canUseAgentBuilder=$canUseAgentBuilder, canUseBulkExport=$canUseBulkExport, canUseLanggraphCloud=$canUseLanggraphCloud, canUseRbac=$canUseRbac, canUseSamlSso=$canUseSamlSso, clioEnabled=$clioEnabled, datadogRumSessionSampleRate=$datadogRumSessionSampleRate, demoLgpNewGraphEnabled=$demoLgpNewGraphEnabled, enableAlignEvaluators=$enableAlignEvaluators, enableIncludeExtendedStats=$enableIncludeExtendedStats, enableLanggraphPricing=$enableLanggraphPricing, enableLgpListenersPage=$enableLgpListenersPage, enableMarkdownInTracing=$enableMarkdownInTracing, enableMonthlyUsageCharts=$enableMonthlyUsageCharts, enableOrgUsageCharts=$enableOrgUsageCharts, enablePricingRedesign=$enablePricingRedesign, enableQueryingV2Endpoints=$enableQueryingV2Endpoints, enableRunTreeStreaming=$enableRunTreeStreaming, enableThreadViewPlayground=$enableThreadViewPlayground, enableThreadsImprovements=$enableThreadsImprovements, kvDatasetMessageSupport=$kvDatasetMessageSupport, langgraphDeployOwnCloudEnabled=$langgraphDeployOwnCloudEnabled, langgraphEnterpriseEnabled=$langgraphEnterpriseEnabled, langgraphRemoteReconcilerEnabled=$langgraphRemoteReconcilerEnabled, langsmithAlertsLegacyPocEnabled=$langsmithAlertsLegacyPocEnabled, langsmithAlertsPocEnabled=$langsmithAlertsPocEnabled, langsmithExperimentalSearchEnabled=$langsmithExperimentalSearchEnabled, lgpTemplatesEnabled=$lgpTemplatesEnabled, maxFreeLanggraphCloudDeployments=$maxFreeLanggraphCloudDeployments, maxIdentities=$maxIdentities, maxLanggraphCloudDeployments=$maxLanggraphCloudDeployments, maxPromptWebhooks=$maxPromptWebhooks, maxThreadEvaluatorsPerTenant=$maxThreadEvaluatorsPerTenant, maxWorkspaces=$maxWorkspaces, newRuleEvaluatorCreationVersion=$newRuleEvaluatorCreationVersion, partnerPlanApprovalDate=$partnerPlanApprovalDate, playgroundEvaluatorStrategy=$playgroundEvaluatorStrategy, premierPlanApprovalDate=$premierPlanApprovalDate, promptOptimizationJobsEnabled=$promptOptimizationJobsEnabled, requireCodeEvaluatorLanguageField=$requireCodeEvaluatorLanguageField, showPlaygroundPromptCanvas=$showPlaygroundPromptCanvas, showUpdatedResourceTags=$showUpdatedResourceTags, showUpdatedSidenav=$showUpdatedSidenav, startupPlanApprovalDate=$startupPlanApprovalDate, tenantSkipTopkFacets=$tenantSkipTopkFacets, threadEvaluatorsEnabled=$threadEvaluatorsEnabled, useExactSearchForPrompts=$useExactSearchForPrompts, usePythonPlaygroundService=$usePythonPlaygroundService, additionalProperties=$additionalProperties}"
+        "OrganizationConfig{allowCustomIframes=$allowCustomIframes, arbitraryCostTrackingEnabled=$arbitraryCostTrackingEnabled, canAddSeats=$canAddSeats, canDisablePublicSharing=$canDisablePublicSharing, canServeDatasets=$canServeDatasets, canUseAbac=$canUseAbac, canUseAgentBuilder=$canUseAgentBuilder, canUseBulkExport=$canUseBulkExport, canUseLanggraphCloud=$canUseLanggraphCloud, canUseRbac=$canUseRbac, canUseRemoteMcpServers=$canUseRemoteMcpServers, canUseSamlSso=$canUseSamlSso, clioEnabled=$clioEnabled, datadogRumSessionSampleRate=$datadogRumSessionSampleRate, demoLgpNewGraphEnabled=$demoLgpNewGraphEnabled, enableAlignEvaluators=$enableAlignEvaluators, enableIncludeExtendedStats=$enableIncludeExtendedStats, enableLanggraphPricing=$enableLanggraphPricing, enableLgpListenersPage=$enableLgpListenersPage, enableMarkdownInTracing=$enableMarkdownInTracing, enableMonthlyUsageCharts=$enableMonthlyUsageCharts, enableOrgUsageCharts=$enableOrgUsageCharts, enablePricingRedesign=$enablePricingRedesign, enableQueryingV2Endpoints=$enableQueryingV2Endpoints, enableRunTreeStreaming=$enableRunTreeStreaming, enableThreadViewPlayground=$enableThreadViewPlayground, enableThreadsImprovements=$enableThreadsImprovements, kvDatasetMessageSupport=$kvDatasetMessageSupport, langgraphDeployOwnCloudEnabled=$langgraphDeployOwnCloudEnabled, langgraphEnterpriseEnabled=$langgraphEnterpriseEnabled, langgraphRemoteReconcilerEnabled=$langgraphRemoteReconcilerEnabled, langsmithAlertsLegacyPocEnabled=$langsmithAlertsLegacyPocEnabled, langsmithAlertsPocEnabled=$langsmithAlertsPocEnabled, langsmithExperimentalSearchEnabled=$langsmithExperimentalSearchEnabled, lgpTemplatesEnabled=$lgpTemplatesEnabled, maxFreeLanggraphCloudDeployments=$maxFreeLanggraphCloudDeployments, maxIdentities=$maxIdentities, maxLanggraphCloudDeployments=$maxLanggraphCloudDeployments, maxPromptWebhooks=$maxPromptWebhooks, maxThreadEvaluatorsPerTenant=$maxThreadEvaluatorsPerTenant, maxWorkspaces=$maxWorkspaces, newRuleEvaluatorCreationVersion=$newRuleEvaluatorCreationVersion, partnerPlanApprovalDate=$partnerPlanApprovalDate, playgroundEvaluatorStrategy=$playgroundEvaluatorStrategy, premierPlanApprovalDate=$premierPlanApprovalDate, promptOptimizationJobsEnabled=$promptOptimizationJobsEnabled, requireCodeEvaluatorLanguageField=$requireCodeEvaluatorLanguageField, showPlaygroundPromptCanvas=$showPlaygroundPromptCanvas, showUpdatedResourceTags=$showUpdatedResourceTags, showUpdatedSidenav=$showUpdatedSidenav, startupPlanApprovalDate=$startupPlanApprovalDate, tenantSkipTopkFacets=$tenantSkipTopkFacets, threadEvaluatorsEnabled=$threadEvaluatorsEnabled, useExactSearchForPrompts=$useExactSearchForPrompts, usePythonPlaygroundService=$usePythonPlaygroundService, additionalProperties=$additionalProperties}"
 }

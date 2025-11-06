@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
@@ -26,7 +25,6 @@ private constructor(
     private val sessionIds: JsonField<List<String>>,
     private val comparativeExperimentId: JsonField<String>,
     private val filters: JsonField<Filters>,
-    private val format: JsonField<Format>,
     private val limit: JsonField<Long>,
     private val offset: JsonField<Long>,
     private val preview: JsonField<Boolean>,
@@ -43,7 +41,6 @@ private constructor(
         @ExcludeMissing
         comparativeExperimentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("filters") @ExcludeMissing filters: JsonField<Filters> = JsonMissing.of(),
-        @JsonProperty("format") @ExcludeMissing format: JsonField<Format> = JsonMissing.of(),
         @JsonProperty("limit") @ExcludeMissing limit: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("offset") @ExcludeMissing offset: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("preview") @ExcludeMissing preview: JsonField<Boolean> = JsonMissing.of(),
@@ -54,7 +51,6 @@ private constructor(
         sessionIds,
         comparativeExperimentId,
         filters,
-        format,
         limit,
         offset,
         preview,
@@ -80,12 +76,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun filters(): Optional<Filters> = filters.getOptional("filters")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun format(): Optional<Format> = format.getOptional("format")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -137,13 +127,6 @@ private constructor(
      * Unlike [filters], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("filters") @ExcludeMissing fun _filters(): JsonField<Filters> = filters
-
-    /**
-     * Returns the raw JSON value of [format].
-     *
-     * Unlike [format], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("format") @ExcludeMissing fun _format(): JsonField<Format> = format
 
     /**
      * Returns the raw JSON value of [limit].
@@ -206,7 +189,6 @@ private constructor(
         private var sessionIds: JsonField<MutableList<String>>? = null
         private var comparativeExperimentId: JsonField<String> = JsonMissing.of()
         private var filters: JsonField<Filters> = JsonMissing.of()
-        private var format: JsonField<Format> = JsonMissing.of()
         private var limit: JsonField<Long> = JsonMissing.of()
         private var offset: JsonField<Long> = JsonMissing.of()
         private var preview: JsonField<Boolean> = JsonMissing.of()
@@ -218,7 +200,6 @@ private constructor(
             sessionIds = queryExampleSchemaWithRuns.sessionIds.map { it.toMutableList() }
             comparativeExperimentId = queryExampleSchemaWithRuns.comparativeExperimentId
             filters = queryExampleSchemaWithRuns.filters
-            format = queryExampleSchemaWithRuns.format
             limit = queryExampleSchemaWithRuns.limit
             offset = queryExampleSchemaWithRuns.offset
             preview = queryExampleSchemaWithRuns.preview
@@ -284,19 +265,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun filters(filters: JsonField<Filters>) = apply { this.filters = filters }
-
-        fun format(format: Format?) = format(JsonField.ofNullable(format))
-
-        /** Alias for calling [Builder.format] with `format.orElse(null)`. */
-        fun format(format: Optional<Format>) = format(format.getOrNull())
-
-        /**
-         * Sets [Builder.format] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.format] with a well-typed [Format] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun format(format: JsonField<Format>) = apply { this.format = format }
 
         fun limit(limit: Long) = limit(JsonField.of(limit))
 
@@ -382,7 +350,6 @@ private constructor(
                 checkRequired("sessionIds", sessionIds).map { it.toImmutable() },
                 comparativeExperimentId,
                 filters,
-                format,
                 limit,
                 offset,
                 preview,
@@ -401,7 +368,6 @@ private constructor(
         sessionIds()
         comparativeExperimentId()
         filters().ifPresent { it.validate() }
-        format().ifPresent { it.validate() }
         limit()
         offset()
         preview()
@@ -427,7 +393,6 @@ private constructor(
         (sessionIds.asKnown().getOrNull()?.size ?: 0) +
             (if (comparativeExperimentId.asKnown().isPresent) 1 else 0) +
             (filters.asKnown().getOrNull()?.validity() ?: 0) +
-            (format.asKnown().getOrNull()?.validity() ?: 0) +
             (if (limit.asKnown().isPresent) 1 else 0) +
             (if (offset.asKnown().isPresent) 1 else 0) +
             (if (preview.asKnown().isPresent) 1 else 0) +
@@ -532,127 +497,6 @@ private constructor(
         override fun toString() = "Filters{additionalProperties=$additionalProperties}"
     }
 
-    class Format @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
-
-        /**
-         * Returns this class instance's raw value.
-         *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
-         */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-        companion object {
-
-            @JvmField val CSV = of("csv")
-
-            @JvmStatic fun of(value: String) = Format(JsonField.of(value))
-        }
-
-        /** An enum containing [Format]'s known values. */
-        enum class Known {
-            CSV
-        }
-
-        /**
-         * An enum containing [Format]'s known values, as well as an [_UNKNOWN] member.
-         *
-         * An instance of [Format] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
-         * - It was constructed with an arbitrary value using the [of] method.
-         */
-        enum class Value {
-            CSV,
-            /** An enum member indicating that [Format] was instantiated with an unknown value. */
-            _UNKNOWN,
-        }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
-         *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
-         */
-        fun value(): Value =
-            when (this) {
-                CSV -> Value.CSV
-                else -> Value._UNKNOWN
-            }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value.
-         *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value is a not a known
-         *   member.
-         */
-        fun known(): Known =
-            when (this) {
-                CSV -> Known.CSV
-                else -> throw LangChainInvalidDataException("Unknown Format: $value")
-            }
-
-        /**
-         * Returns this class instance's primitive wire representation.
-         *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
-         */
-        fun asString(): String =
-            _value().asString().orElseThrow {
-                LangChainInvalidDataException("Value is not a String")
-            }
-
-        private var validated: Boolean = false
-
-        fun validate(): Format = apply {
-            if (validated) {
-                return@apply
-            }
-
-            known()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Format && value == other.value
-        }
-
-        override fun hashCode() = value.hashCode()
-
-        override fun toString() = value.toString()
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -662,7 +506,6 @@ private constructor(
             sessionIds == other.sessionIds &&
             comparativeExperimentId == other.comparativeExperimentId &&
             filters == other.filters &&
-            format == other.format &&
             limit == other.limit &&
             offset == other.offset &&
             preview == other.preview &&
@@ -675,7 +518,6 @@ private constructor(
             sessionIds,
             comparativeExperimentId,
             filters,
-            format,
             limit,
             offset,
             preview,
@@ -687,5 +529,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "QueryExampleSchemaWithRuns{sessionIds=$sessionIds, comparativeExperimentId=$comparativeExperimentId, filters=$filters, format=$format, limit=$limit, offset=$offset, preview=$preview, sortParams=$sortParams, additionalProperties=$additionalProperties}"
+        "QueryExampleSchemaWithRuns{sessionIds=$sessionIds, comparativeExperimentId=$comparativeExperimentId, filters=$filters, limit=$limit, offset=$offset, preview=$preview, sortParams=$sortParams, additionalProperties=$additionalProperties}"
 }

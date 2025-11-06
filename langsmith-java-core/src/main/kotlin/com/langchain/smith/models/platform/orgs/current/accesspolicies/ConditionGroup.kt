@@ -630,7 +630,18 @@ private constructor(
 
                 @JvmField val NOT_MATCHES = of("not_matches")
 
+                @JvmField val EQUALS_IF_EXISTS = of("equals_if_exists")
+
                 @JvmField val NOT_EQUALS_IF_EXISTS = of("not_equals_if_exists")
+
+                @JvmField val EQUALS_IGNORE_CASE_IF_EXISTS = of("equals_ignore_case_if_exists")
+
+                @JvmField
+                val NOT_EQUALS_IGNORE_CASE_IF_EXISTS = of("not_equals_ignore_case_if_exists")
+
+                @JvmField val MATCHES_IF_EXISTS = of("matches_if_exists")
+
+                @JvmField val NOT_MATCHES_IF_EXISTS = of("not_matches_if_exists")
 
                 @JvmStatic fun of(value: String) = Operator(JsonField.of(value))
             }
@@ -643,7 +654,12 @@ private constructor(
                 NOT_EQUALS_IGNORE_CASE,
                 MATCHES,
                 NOT_MATCHES,
+                EQUALS_IF_EXISTS,
                 NOT_EQUALS_IF_EXISTS,
+                EQUALS_IGNORE_CASE_IF_EXISTS,
+                NOT_EQUALS_IGNORE_CASE_IF_EXISTS,
+                MATCHES_IF_EXISTS,
+                NOT_MATCHES_IF_EXISTS,
             }
 
             /**
@@ -662,7 +678,12 @@ private constructor(
                 NOT_EQUALS_IGNORE_CASE,
                 MATCHES,
                 NOT_MATCHES,
+                EQUALS_IF_EXISTS,
                 NOT_EQUALS_IF_EXISTS,
+                EQUALS_IGNORE_CASE_IF_EXISTS,
+                NOT_EQUALS_IGNORE_CASE_IF_EXISTS,
+                MATCHES_IF_EXISTS,
+                NOT_MATCHES_IF_EXISTS,
                 /**
                  * An enum member indicating that [Operator] was instantiated with an unknown value.
                  */
@@ -684,7 +705,12 @@ private constructor(
                     NOT_EQUALS_IGNORE_CASE -> Value.NOT_EQUALS_IGNORE_CASE
                     MATCHES -> Value.MATCHES
                     NOT_MATCHES -> Value.NOT_MATCHES
+                    EQUALS_IF_EXISTS -> Value.EQUALS_IF_EXISTS
                     NOT_EQUALS_IF_EXISTS -> Value.NOT_EQUALS_IF_EXISTS
+                    EQUALS_IGNORE_CASE_IF_EXISTS -> Value.EQUALS_IGNORE_CASE_IF_EXISTS
+                    NOT_EQUALS_IGNORE_CASE_IF_EXISTS -> Value.NOT_EQUALS_IGNORE_CASE_IF_EXISTS
+                    MATCHES_IF_EXISTS -> Value.MATCHES_IF_EXISTS
+                    NOT_MATCHES_IF_EXISTS -> Value.NOT_MATCHES_IF_EXISTS
                     else -> Value._UNKNOWN
                 }
 
@@ -705,7 +731,12 @@ private constructor(
                     NOT_EQUALS_IGNORE_CASE -> Known.NOT_EQUALS_IGNORE_CASE
                     MATCHES -> Known.MATCHES
                     NOT_MATCHES -> Known.NOT_MATCHES
+                    EQUALS_IF_EXISTS -> Known.EQUALS_IF_EXISTS
                     NOT_EQUALS_IF_EXISTS -> Known.NOT_EQUALS_IF_EXISTS
+                    EQUALS_IGNORE_CASE_IF_EXISTS -> Known.EQUALS_IGNORE_CASE_IF_EXISTS
+                    NOT_EQUALS_IGNORE_CASE_IF_EXISTS -> Known.NOT_EQUALS_IGNORE_CASE_IF_EXISTS
+                    MATCHES_IF_EXISTS -> Known.MATCHES_IF_EXISTS
+                    NOT_MATCHES_IF_EXISTS -> Known.NOT_MATCHES_IF_EXISTS
                     else -> throw LangChainInvalidDataException("Unknown Operator: $value")
                 }
 

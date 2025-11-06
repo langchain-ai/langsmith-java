@@ -14,6 +14,7 @@ import kotlin.jvm.optionals.getOrNull
 class MemberRetrieveActiveParams
 private constructor(
     private val emails: List<String>?,
+    private val isDisabled: Boolean?,
     private val limit: Long?,
     private val lsUserIds: List<String>?,
     private val offset: Long?,
@@ -23,6 +24,8 @@ private constructor(
 ) : Params {
 
     fun emails(): Optional<List<String>> = Optional.ofNullable(emails)
+
+    fun isDisabled(): Optional<Boolean> = Optional.ofNullable(isDisabled)
 
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
@@ -54,6 +57,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var emails: MutableList<String>? = null
+        private var isDisabled: Boolean? = null
         private var limit: Long? = null
         private var lsUserIds: MutableList<String>? = null
         private var offset: Long? = null
@@ -64,6 +68,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(memberRetrieveActiveParams: MemberRetrieveActiveParams) = apply {
             emails = memberRetrieveActiveParams.emails?.toMutableList()
+            isDisabled = memberRetrieveActiveParams.isDisabled
             limit = memberRetrieveActiveParams.limit
             lsUserIds = memberRetrieveActiveParams.lsUserIds?.toMutableList()
             offset = memberRetrieveActiveParams.offset
@@ -85,6 +90,18 @@ private constructor(
         fun addEmail(email: String) = apply {
             emails = (emails ?: mutableListOf()).apply { add(email) }
         }
+
+        fun isDisabled(isDisabled: Boolean?) = apply { this.isDisabled = isDisabled }
+
+        /**
+         * Alias for [Builder.isDisabled].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun isDisabled(isDisabled: Boolean) = isDisabled(isDisabled as Boolean?)
+
+        /** Alias for calling [Builder.isDisabled] with `isDisabled.orElse(null)`. */
+        fun isDisabled(isDisabled: Optional<Boolean>) = isDisabled(isDisabled.getOrNull())
 
         fun limit(limit: Long?) = apply { this.limit = limit }
 
@@ -249,6 +266,7 @@ private constructor(
         fun build(): MemberRetrieveActiveParams =
             MemberRetrieveActiveParams(
                 emails?.toImmutable(),
+                isDisabled,
                 limit,
                 lsUserIds?.toImmutable(),
                 offset,
@@ -264,6 +282,7 @@ private constructor(
         QueryParams.builder()
             .apply {
                 emails?.let { put("emails", it.joinToString(",")) }
+                isDisabled?.let { put("is_disabled", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 lsUserIds?.let { put("ls_user_ids", it.joinToString(",")) }
                 offset?.let { put("offset", it.toString()) }
@@ -279,6 +298,7 @@ private constructor(
 
         return other is MemberRetrieveActiveParams &&
             emails == other.emails &&
+            isDisabled == other.isDisabled &&
             limit == other.limit &&
             lsUserIds == other.lsUserIds &&
             offset == other.offset &&
@@ -290,6 +310,7 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             emails,
+            isDisabled,
             limit,
             lsUserIds,
             offset,
@@ -299,5 +320,5 @@ private constructor(
         )
 
     override fun toString() =
-        "MemberRetrieveActiveParams{emails=$emails, limit=$limit, lsUserIds=$lsUserIds, offset=$offset, userIds=$userIds, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "MemberRetrieveActiveParams{emails=$emails, isDisabled=$isDisabled, limit=$limit, lsUserIds=$lsUserIds, offset=$offset, userIds=$userIds, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
