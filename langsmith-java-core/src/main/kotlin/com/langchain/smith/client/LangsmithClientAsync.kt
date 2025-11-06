@@ -32,7 +32,6 @@ import com.langchain.smith.services.async.OrgChartServiceAsync
 import com.langchain.smith.services.async.OrgServiceAsync
 import com.langchain.smith.services.async.PlatformServiceAsync
 import com.langchain.smith.services.async.PlaygroundSettingServiceAsync
-import com.langchain.smith.services.async.PromptServiceAsync
 import com.langchain.smith.services.async.PromptWebhookServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
@@ -121,8 +120,6 @@ interface LangsmithClientAsync {
     fun usageLimits(): UsageLimitServiceAsync
 
     fun ttlSettings(): TtlSettingServiceAsync
-
-    fun prompts(): PromptServiceAsync
 
     fun promptWebhooks(): PromptWebhookServiceAsync
 
@@ -281,8 +278,6 @@ interface LangsmithClientAsync {
         fun usageLimits(): UsageLimitServiceAsync.WithRawResponse
 
         fun ttlSettings(): TtlSettingServiceAsync.WithRawResponse
-
-        fun prompts(): PromptServiceAsync.WithRawResponse
 
         fun promptWebhooks(): PromptWebhookServiceAsync.WithRawResponse
 

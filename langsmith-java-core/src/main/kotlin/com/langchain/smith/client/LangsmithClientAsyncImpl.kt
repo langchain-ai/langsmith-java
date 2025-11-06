@@ -63,8 +63,6 @@ import com.langchain.smith.services.async.PlatformServiceAsync
 import com.langchain.smith.services.async.PlatformServiceAsyncImpl
 import com.langchain.smith.services.async.PlaygroundSettingServiceAsync
 import com.langchain.smith.services.async.PlaygroundSettingServiceAsyncImpl
-import com.langchain.smith.services.async.PromptServiceAsync
-import com.langchain.smith.services.async.PromptServiceAsyncImpl
 import com.langchain.smith.services.async.PromptWebhookServiceAsync
 import com.langchain.smith.services.async.PromptWebhookServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
@@ -176,10 +174,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         TtlSettingServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val prompts: PromptServiceAsync by lazy {
-        PromptServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
     private val promptWebhooks: PromptWebhookServiceAsync by lazy {
         PromptWebhookServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -268,8 +262,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun usageLimits(): UsageLimitServiceAsync = usageLimits
 
     override fun ttlSettings(): TtlSettingServiceAsync = ttlSettings
-
-    override fun prompts(): PromptServiceAsync = prompts
 
     override fun promptWebhooks(): PromptWebhookServiceAsync = promptWebhooks
 
@@ -407,10 +399,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             TtlSettingServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val prompts: PromptServiceAsync.WithRawResponse by lazy {
-            PromptServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val promptWebhooks: PromptWebhookServiceAsync.WithRawResponse by lazy {
             PromptWebhookServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -504,8 +492,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun usageLimits(): UsageLimitServiceAsync.WithRawResponse = usageLimits
 
         override fun ttlSettings(): TtlSettingServiceAsync.WithRawResponse = ttlSettings
-
-        override fun prompts(): PromptServiceAsync.WithRawResponse = prompts
 
         override fun promptWebhooks(): PromptWebhookServiceAsync.WithRawResponse = promptWebhooks
 
