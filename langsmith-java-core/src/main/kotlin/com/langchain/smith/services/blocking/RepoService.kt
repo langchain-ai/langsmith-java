@@ -18,7 +18,6 @@ import com.langchain.smith.models.repos.RepoOptimizeJobParams
 import com.langchain.smith.models.repos.RepoOptimizeJobResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
-import com.langchain.smith.services.blocking.repos.OptimizationJobService
 import com.langchain.smith.services.blocking.repos.TagService
 import java.util.function.Consumer
 
@@ -37,8 +36,6 @@ interface RepoService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService
 
     fun tags(): TagService
-
-    fun optimizationJobs(): OptimizationJobService
 
     /** Create a repo. */
     fun create(params: RepoCreateParams): CreateRepoResponse = create(params, RequestOptions.none())
@@ -168,8 +165,6 @@ interface RepoService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService.WithRawResponse
 
         fun tags(): TagService.WithRawResponse
-
-        fun optimizationJobs(): OptimizationJobService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/repos`, but is otherwise the same as

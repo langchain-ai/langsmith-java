@@ -17,7 +17,6 @@ import com.langchain.smith.models.repos.RepoOptimizeJobParams
 import com.langchain.smith.models.repos.RepoOptimizeJobResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
-import com.langchain.smith.services.async.repos.OptimizationJobServiceAsync
 import com.langchain.smith.services.async.repos.TagServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -37,8 +36,6 @@ interface RepoServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync
 
     fun tags(): TagServiceAsync
-
-    fun optimizationJobs(): OptimizationJobServiceAsync
 
     /** Create a repo. */
     fun create(params: RepoCreateParams): CompletableFuture<CreateRepoResponse> =
@@ -176,8 +173,6 @@ interface RepoServiceAsync {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync.WithRawResponse
 
         fun tags(): TagServiceAsync.WithRawResponse
-
-        fun optimizationJobs(): OptimizationJobServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/repos`, but is otherwise the same as
