@@ -33,7 +33,6 @@ import com.langchain.smith.services.blocking.OrgChartService
 import com.langchain.smith.services.blocking.OrgService
 import com.langchain.smith.services.blocking.PlatformService
 import com.langchain.smith.services.blocking.PlaygroundSettingService
-import com.langchain.smith.services.blocking.PromptService
 import com.langchain.smith.services.blocking.PromptWebhookService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
@@ -121,8 +120,6 @@ interface LangsmithClient {
     fun usageLimits(): UsageLimitService
 
     fun ttlSettings(): TtlSettingService
-
-    fun prompts(): PromptService
 
     fun promptWebhooks(): PromptWebhookService
 
@@ -274,8 +271,6 @@ interface LangsmithClient {
         fun usageLimits(): UsageLimitService.WithRawResponse
 
         fun ttlSettings(): TtlSettingService.WithRawResponse
-
-        fun prompts(): PromptService.WithRawResponse
 
         fun promptWebhooks(): PromptWebhookService.WithRawResponse
 
