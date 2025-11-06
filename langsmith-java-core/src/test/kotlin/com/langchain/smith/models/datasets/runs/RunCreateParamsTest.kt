@@ -13,7 +13,7 @@ internal class RunCreateParamsTest {
     fun create() {
         RunCreateParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .queryFormat("format")
+            .format("format")
             .queryExampleSchemaWithRuns(
                 QueryExampleSchemaWithRuns.builder()
                     .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -23,7 +23,6 @@ internal class RunCreateParamsTest {
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
-                    .format(QueryExampleSchemaWithRuns.Format.CSV)
                     .limit(1L)
                     .offset(0L)
                     .preview(true)
@@ -60,7 +59,7 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .queryFormat("format")
+                .format("format")
                 .queryExampleSchemaWithRuns(
                     QueryExampleSchemaWithRuns.builder()
                         .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -70,7 +69,6 @@ internal class RunCreateParamsTest {
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
-                        .format(QueryExampleSchemaWithRuns.Format.CSV)
                         .limit(1L)
                         .offset(0L)
                         .preview(true)
@@ -111,7 +109,7 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .queryFormat("format")
+                .format("format")
                 .queryExampleSchemaWithRuns(
                     QueryExampleSchemaWithRuns.builder()
                         .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -121,7 +119,6 @@ internal class RunCreateParamsTest {
                                 .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                                 .build()
                         )
-                        .format(QueryExampleSchemaWithRuns.Format.CSV)
                         .limit(1L)
                         .offset(0L)
                         .preview(true)
@@ -147,7 +144,6 @@ internal class RunCreateParamsTest {
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
-                    .format(QueryExampleSchemaWithRuns.Format.CSV)
                     .limit(1L)
                     .offset(0L)
                     .preview(true)

@@ -12,6 +12,7 @@ internal class MemberRetrieveActiveParamsTest {
     fun create() {
         MemberRetrieveActiveParams.builder()
             .addEmail("string")
+            .isDisabled(true)
             .limit(1L)
             .addLsUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .offset(0L)
@@ -24,6 +25,7 @@ internal class MemberRetrieveActiveParamsTest {
         val params =
             MemberRetrieveActiveParams.builder()
                 .addEmail("string")
+                .isDisabled(true)
                 .limit(1L)
                 .addLsUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .offset(0L)
@@ -36,6 +38,7 @@ internal class MemberRetrieveActiveParamsTest {
             .isEqualTo(
                 QueryParams.builder()
                     .put("emails", listOf("string").joinToString(","))
+                    .put("is_disabled", "true")
                     .put("limit", "1")
                     .put(
                         "ls_user_ids",

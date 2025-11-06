@@ -18,7 +18,7 @@ import kotlin.jvm.optionals.getOrNull
 class RunCreateParams
 private constructor(
     private val datasetId: String?,
-    private val queryFormat: String?,
+    private val format: String?,
     private val queryExampleSchemaWithRuns: QueryExampleSchemaWithRuns,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -27,7 +27,7 @@ private constructor(
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
 
     /** Response format, e.g., 'csv' */
-    fun queryFormat(): Optional<String> = Optional.ofNullable(queryFormat)
+    fun format(): Optional<String> = Optional.ofNullable(format)
 
     fun queryExampleSchemaWithRuns(): QueryExampleSchemaWithRuns = queryExampleSchemaWithRuns
 
@@ -59,7 +59,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var datasetId: String? = null
-        private var queryFormat: String? = null
+        private var format: String? = null
         private var queryExampleSchemaWithRuns: QueryExampleSchemaWithRuns? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -67,7 +67,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(runCreateParams: RunCreateParams) = apply {
             datasetId = runCreateParams.datasetId
-            queryFormat = runCreateParams.queryFormat
+            format = runCreateParams.format
             queryExampleSchemaWithRuns = runCreateParams.queryExampleSchemaWithRuns
             additionalHeaders = runCreateParams.additionalHeaders.toBuilder()
             additionalQueryParams = runCreateParams.additionalQueryParams.toBuilder()
@@ -79,10 +79,10 @@ private constructor(
         fun datasetId(datasetId: Optional<String>) = datasetId(datasetId.getOrNull())
 
         /** Response format, e.g., 'csv' */
-        fun queryFormat(queryFormat: String?) = apply { this.queryFormat = queryFormat }
+        fun format(format: String?) = apply { this.format = format }
 
-        /** Alias for calling [Builder.queryFormat] with `queryFormat.orElse(null)`. */
-        fun queryFormat(queryFormat: Optional<String>) = queryFormat(queryFormat.getOrNull())
+        /** Alias for calling [Builder.format] with `format.orElse(null)`. */
+        fun format(format: Optional<String>) = format(format.getOrNull())
 
         fun queryExampleSchemaWithRuns(queryExampleSchemaWithRuns: QueryExampleSchemaWithRuns) =
             apply {
@@ -202,7 +202,7 @@ private constructor(
         fun build(): RunCreateParams =
             RunCreateParams(
                 datasetId,
-                queryFormat,
+                format,
                 checkRequired("queryExampleSchemaWithRuns", queryExampleSchemaWithRuns),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -222,7 +222,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                queryFormat?.let { put("format", it) }
+                format?.let { put("format", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -234,7 +234,7 @@ private constructor(
 
         return other is RunCreateParams &&
             datasetId == other.datasetId &&
-            queryFormat == other.queryFormat &&
+            format == other.format &&
             queryExampleSchemaWithRuns == other.queryExampleSchemaWithRuns &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -243,12 +243,12 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             datasetId,
-            queryFormat,
+            format,
             queryExampleSchemaWithRuns,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "RunCreateParams{datasetId=$datasetId, queryFormat=$queryFormat, queryExampleSchemaWithRuns=$queryExampleSchemaWithRuns, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RunCreateParams{datasetId=$datasetId, format=$format, queryExampleSchemaWithRuns=$queryExampleSchemaWithRuns, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

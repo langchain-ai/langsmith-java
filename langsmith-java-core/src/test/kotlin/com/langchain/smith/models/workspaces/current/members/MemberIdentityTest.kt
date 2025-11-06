@@ -28,6 +28,7 @@ internal class MemberIdentityTest {
                 .displayName("display_name")
                 .email("email")
                 .fullName("full_name")
+                .isDisabled(true)
                 .addLinkedLoginMethod(
                     ProviderUserSlim.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -67,6 +68,7 @@ internal class MemberIdentityTest {
         assertThat(memberIdentity.displayName()).contains("display_name")
         assertThat(memberIdentity.email()).contains("email")
         assertThat(memberIdentity.fullName()).contains("full_name")
+        assertThat(memberIdentity.isDisabled()).contains(true)
         assertThat(memberIdentity.linkedLoginMethods().getOrNull())
             .containsExactly(
                 ProviderUserSlim.builder()
@@ -110,6 +112,7 @@ internal class MemberIdentityTest {
                 .displayName("display_name")
                 .email("email")
                 .fullName("full_name")
+                .isDisabled(true)
                 .addLinkedLoginMethod(
                     ProviderUserSlim.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
