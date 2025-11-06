@@ -86,7 +86,6 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.modelPriceMap()).isNotNull()
         assertThat(client.usageLimits()).isNotNull()
         assertThat(client.ttlSettings()).isNotNull()
-        assertThat(client.prompts()).isNotNull()
         assertThat(client.promptWebhooks()).isNotNull()
         assertThat(client.workspaces()).isNotNull()
         assertThat(client.playgroundSettings()).isNotNull()

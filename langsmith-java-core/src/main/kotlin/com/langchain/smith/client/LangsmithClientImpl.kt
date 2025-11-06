@@ -63,8 +63,6 @@ import com.langchain.smith.services.blocking.PlatformService
 import com.langchain.smith.services.blocking.PlatformServiceImpl
 import com.langchain.smith.services.blocking.PlaygroundSettingService
 import com.langchain.smith.services.blocking.PlaygroundSettingServiceImpl
-import com.langchain.smith.services.blocking.PromptService
-import com.langchain.smith.services.blocking.PromptServiceImpl
 import com.langchain.smith.services.blocking.PromptWebhookService
 import com.langchain.smith.services.blocking.PromptWebhookServiceImpl
 import com.langchain.smith.services.blocking.PublicService
@@ -161,8 +159,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         TtlSettingServiceImpl(clientOptionsWithUserAgent)
     }
 
-    private val prompts: PromptService by lazy { PromptServiceImpl(clientOptionsWithUserAgent) }
-
     private val promptWebhooks: PromptWebhookService by lazy {
         PromptWebhookServiceImpl(clientOptionsWithUserAgent)
     }
@@ -243,8 +239,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun usageLimits(): UsageLimitService = usageLimits
 
     override fun ttlSettings(): TtlSettingService = ttlSettings
-
-    override fun prompts(): PromptService = prompts
 
     override fun promptWebhooks(): PromptWebhookService = promptWebhooks
 
@@ -382,10 +376,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             TtlSettingServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val prompts: PromptService.WithRawResponse by lazy {
-            PromptServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val promptWebhooks: PromptWebhookService.WithRawResponse by lazy {
             PromptWebhookServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -478,8 +468,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun usageLimits(): UsageLimitService.WithRawResponse = usageLimits
 
         override fun ttlSettings(): TtlSettingService.WithRawResponse = ttlSettings
-
-        override fun prompts(): PromptService.WithRawResponse = prompts
 
         override fun promptWebhooks(): PromptWebhookService.WithRawResponse = promptWebhooks
 
