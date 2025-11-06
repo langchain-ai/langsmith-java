@@ -33,8 +33,6 @@ import com.langchain.smith.services.blocking.ApiKeyService
 import com.langchain.smith.services.blocking.ApiKeyServiceImpl
 import com.langchain.smith.services.blocking.BulkExportService
 import com.langchain.smith.services.blocking.BulkExportServiceImpl
-import com.langchain.smith.services.blocking.ChartService
-import com.langchain.smith.services.blocking.ChartServiceImpl
 import com.langchain.smith.services.blocking.CommentService
 import com.langchain.smith.services.blocking.CommentServiceImpl
 import com.langchain.smith.services.blocking.CommitService
@@ -55,8 +53,6 @@ import com.langchain.smith.services.blocking.ModelPriceMapService
 import com.langchain.smith.services.blocking.ModelPriceMapServiceImpl
 import com.langchain.smith.services.blocking.OAuthService
 import com.langchain.smith.services.blocking.OAuthServiceImpl
-import com.langchain.smith.services.blocking.OrgChartService
-import com.langchain.smith.services.blocking.OrgChartServiceImpl
 import com.langchain.smith.services.blocking.OrgService
 import com.langchain.smith.services.blocking.OrgServiceImpl
 import com.langchain.smith.services.blocking.PlatformService
@@ -177,12 +173,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         ServiceAccountServiceImpl(clientOptionsWithUserAgent)
     }
 
-    private val charts: ChartService by lazy { ChartServiceImpl(clientOptionsWithUserAgent) }
-
-    private val orgCharts: OrgChartService by lazy {
-        OrgChartServiceImpl(clientOptionsWithUserAgent)
-    }
-
     private val repos: RepoService by lazy { RepoServiceImpl(clientOptionsWithUserAgent) }
 
     private val commits: CommitService by lazy { CommitServiceImpl(clientOptionsWithUserAgent) }
@@ -249,10 +239,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun me(): MeService = me
 
     override fun serviceAccounts(): ServiceAccountService = serviceAccounts
-
-    override fun charts(): ChartService = charts
-
-    override fun orgCharts(): OrgChartService = orgCharts
 
     override fun repos(): RepoService = repos
 
@@ -396,14 +382,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             ServiceAccountServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val charts: ChartService.WithRawResponse by lazy {
-            ChartServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val orgCharts: OrgChartService.WithRawResponse by lazy {
-            OrgChartServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val repos: RepoService.WithRawResponse by lazy {
             RepoServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -479,10 +457,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun me(): MeService.WithRawResponse = me
 
         override fun serviceAccounts(): ServiceAccountService.WithRawResponse = serviceAccounts
-
-        override fun charts(): ChartService.WithRawResponse = charts
-
-        override fun orgCharts(): OrgChartService.WithRawResponse = orgCharts
 
         override fun repos(): RepoService.WithRawResponse = repos
 

@@ -18,7 +18,6 @@ import com.langchain.smith.services.blocking.AceService
 import com.langchain.smith.services.blocking.AnnotationQueueService
 import com.langchain.smith.services.blocking.ApiKeyService
 import com.langchain.smith.services.blocking.BulkExportService
-import com.langchain.smith.services.blocking.ChartService
 import com.langchain.smith.services.blocking.CommentService
 import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.DatasetService
@@ -29,7 +28,6 @@ import com.langchain.smith.services.blocking.InfoService
 import com.langchain.smith.services.blocking.MeService
 import com.langchain.smith.services.blocking.ModelPriceMapService
 import com.langchain.smith.services.blocking.OAuthService
-import com.langchain.smith.services.blocking.OrgChartService
 import com.langchain.smith.services.blocking.OrgService
 import com.langchain.smith.services.blocking.PlatformService
 import com.langchain.smith.services.blocking.PlaygroundSettingService
@@ -130,10 +128,6 @@ interface LangsmithClient {
     fun me(): MeService
 
     fun serviceAccounts(): ServiceAccountService
-
-    fun charts(): ChartService
-
-    fun orgCharts(): OrgChartService
 
     fun repos(): RepoService
 
@@ -281,10 +275,6 @@ interface LangsmithClient {
         fun me(): MeService.WithRawResponse
 
         fun serviceAccounts(): ServiceAccountService.WithRawResponse
-
-        fun charts(): ChartService.WithRawResponse
-
-        fun orgCharts(): OrgChartService.WithRawResponse
 
         fun repos(): RepoService.WithRawResponse
 

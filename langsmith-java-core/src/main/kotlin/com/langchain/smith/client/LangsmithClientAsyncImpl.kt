@@ -33,8 +33,6 @@ import com.langchain.smith.services.async.ApiKeyServiceAsync
 import com.langchain.smith.services.async.ApiKeyServiceAsyncImpl
 import com.langchain.smith.services.async.BulkExportServiceAsync
 import com.langchain.smith.services.async.BulkExportServiceAsyncImpl
-import com.langchain.smith.services.async.ChartServiceAsync
-import com.langchain.smith.services.async.ChartServiceAsyncImpl
 import com.langchain.smith.services.async.CommentServiceAsync
 import com.langchain.smith.services.async.CommentServiceAsyncImpl
 import com.langchain.smith.services.async.CommitServiceAsync
@@ -55,8 +53,6 @@ import com.langchain.smith.services.async.ModelPriceMapServiceAsync
 import com.langchain.smith.services.async.ModelPriceMapServiceAsyncImpl
 import com.langchain.smith.services.async.OAuthServiceAsync
 import com.langchain.smith.services.async.OAuthServiceAsyncImpl
-import com.langchain.smith.services.async.OrgChartServiceAsync
-import com.langchain.smith.services.async.OrgChartServiceAsyncImpl
 import com.langchain.smith.services.async.OrgServiceAsync
 import com.langchain.smith.services.async.OrgServiceAsyncImpl
 import com.langchain.smith.services.async.PlatformServiceAsync
@@ -192,14 +188,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         ServiceAccountServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val charts: ChartServiceAsync by lazy {
-        ChartServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
-    private val orgCharts: OrgChartServiceAsync by lazy {
-        OrgChartServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
     private val repos: RepoServiceAsync by lazy { RepoServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val commits: CommitServiceAsync by lazy {
@@ -272,10 +260,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun me(): MeServiceAsync = me
 
     override fun serviceAccounts(): ServiceAccountServiceAsync = serviceAccounts
-
-    override fun charts(): ChartServiceAsync = charts
-
-    override fun orgCharts(): OrgChartServiceAsync = orgCharts
 
     override fun repos(): RepoServiceAsync = repos
 
@@ -419,14 +403,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             ServiceAccountServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val charts: ChartServiceAsync.WithRawResponse by lazy {
-            ChartServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val orgCharts: OrgChartServiceAsync.WithRawResponse by lazy {
-            OrgChartServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val repos: RepoServiceAsync.WithRawResponse by lazy {
             RepoServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -503,10 +479,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun me(): MeServiceAsync.WithRawResponse = me
 
         override fun serviceAccounts(): ServiceAccountServiceAsync.WithRawResponse = serviceAccounts
-
-        override fun charts(): ChartServiceAsync.WithRawResponse = charts
-
-        override fun orgCharts(): OrgChartServiceAsync.WithRawResponse = orgCharts
 
         override fun repos(): RepoServiceAsync.WithRawResponse = repos
 
