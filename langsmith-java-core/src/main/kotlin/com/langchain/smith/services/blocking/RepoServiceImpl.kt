@@ -28,8 +28,6 @@ import com.langchain.smith.models.repos.RepoOptimizeJobParams
 import com.langchain.smith.models.repos.RepoOptimizeJobResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
-import com.langchain.smith.services.blocking.repos.OptimizationJobService
-import com.langchain.smith.services.blocking.repos.OptimizationJobServiceImpl
 import com.langchain.smith.services.blocking.repos.TagService
 import com.langchain.smith.services.blocking.repos.TagServiceImpl
 import java.util.function.Consumer
@@ -43,18 +41,12 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
 
     private val tags: TagService by lazy { TagServiceImpl(clientOptions) }
 
-    private val optimizationJobs: OptimizationJobService by lazy {
-        OptimizationJobServiceImpl(clientOptions)
-    }
-
     override fun withRawResponse(): RepoService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService =
         RepoServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun tags(): TagService = tags
-
-    override fun optimizationJobs(): OptimizationJobService = optimizationJobs
 
     override fun create(
         params: RepoCreateParams,
@@ -109,10 +101,6 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
             TagServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val optimizationJobs: OptimizationJobService.WithRawResponse by lazy {
-            OptimizationJobServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): RepoService.WithRawResponse =
@@ -121,8 +109,6 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
             )
 
         override fun tags(): TagService.WithRawResponse = tags
-
-        override fun optimizationJobs(): OptimizationJobService.WithRawResponse = optimizationJobs
 
         private val createHandler: Handler<CreateRepoResponse> =
             jsonHandler<CreateRepoResponse>(clientOptions.jsonMapper)
