@@ -67,7 +67,7 @@ internal class RuleUpdateParamsTest {
             .numFewShotExamples(0L)
             .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .traceFilter("trace_filter")
-            .transient_(true)
+            .isTransient(true)
             .treeFilter("tree_filter")
             .useCorrectionsDataset(true)
             .addWebhook(
@@ -155,7 +155,7 @@ internal class RuleUpdateParamsTest {
                 .numFewShotExamples(0L)
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .traceFilter("trace_filter")
-                .transient_(true)
+                .isTransient(true)
                 .treeFilter("tree_filter")
                 .useCorrectionsDataset(true)
                 .addWebhook(
@@ -228,7 +228,7 @@ internal class RuleUpdateParamsTest {
         assertThat(body.numFewShotExamples()).contains(0L)
         assertThat(body.sessionId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.traceFilter()).contains("trace_filter")
-        assertThat(body.transient_()).contains(true)
+        assertThat(body.isTransient()).contains(true)
         assertThat(body.treeFilter()).contains("tree_filter")
         assertThat(body.useCorrectionsDataset()).contains(true)
         assertThat(body.webhooks().getOrNull())

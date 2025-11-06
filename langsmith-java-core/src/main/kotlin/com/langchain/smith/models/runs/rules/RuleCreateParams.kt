@@ -156,7 +156,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun transient_(): Optional<Boolean> = body.transient_()
+    fun isTransient(): Optional<Boolean> = body.isTransient()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -323,11 +323,11 @@ private constructor(
     fun _traceFilter(): JsonField<String> = body._traceFilter()
 
     /**
-     * Returns the raw JSON value of [transient_].
+     * Returns the raw JSON value of [isTransient].
      *
-     * Unlike [transient_], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [isTransient], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _transient_(): JsonField<Boolean> = body._transient_()
+    fun _isTransient(): JsonField<Boolean> = body._isTransient()
 
     /**
      * Returns the raw JSON value of [treeFilter].
@@ -749,16 +749,16 @@ private constructor(
          */
         fun traceFilter(traceFilter: JsonField<String>) = apply { body.traceFilter(traceFilter) }
 
-        fun transient_(transient_: Boolean) = apply { body.transient_(transient_) }
+        fun isTransient(isTransient: Boolean) = apply { body.isTransient(isTransient) }
 
         /**
-         * Sets [Builder.transient_] to an arbitrary JSON value.
+         * Sets [Builder.isTransient] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.transient_] with a well-typed [Boolean] value instead.
+         * You should usually call [Builder.isTransient] with a well-typed [Boolean] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun transient_(transient_: JsonField<Boolean>) = apply { body.transient_(transient_) }
+        fun isTransient(isTransient: JsonField<Boolean>) = apply { body.isTransient(isTransient) }
 
         fun treeFilter(treeFilter: String?) = apply { body.treeFilter(treeFilter) }
 
@@ -976,7 +976,7 @@ private constructor(
         private val numFewShotExamples: JsonField<Long>,
         private val sessionId: JsonField<String>,
         private val traceFilter: JsonField<String>,
-        private val transient_: JsonField<Boolean>,
+        private val isTransient: JsonField<Boolean>,
         private val treeFilter: JsonField<String>,
         private val useCorrectionsDataset: JsonField<Boolean>,
         private val webhooks: JsonField<List<RunRulesWebhookSchema>>,
@@ -1045,7 +1045,7 @@ private constructor(
             traceFilter: JsonField<String> = JsonMissing.of(),
             @JsonProperty("transient")
             @ExcludeMissing
-            transient_: JsonField<Boolean> = JsonMissing.of(),
+            isTransient: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("tree_filter")
             @ExcludeMissing
             treeFilter: JsonField<String> = JsonMissing.of(),
@@ -1076,7 +1076,7 @@ private constructor(
             numFewShotExamples,
             sessionId,
             traceFilter,
-            transient_,
+            isTransient,
             treeFilter,
             useCorrectionsDataset,
             webhooks,
@@ -1213,7 +1213,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun transient_(): Optional<Boolean> = transient_.getOptional("transient")
+        fun isTransient(): Optional<Boolean> = isTransient.getOptional("transient")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1415,13 +1415,13 @@ private constructor(
         fun _traceFilter(): JsonField<String> = traceFilter
 
         /**
-         * Returns the raw JSON value of [transient_].
+         * Returns the raw JSON value of [isTransient].
          *
-         * Unlike [transient_], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [isTransient], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("transient")
         @ExcludeMissing
-        fun _transient_(): JsonField<Boolean> = transient_
+        fun _isTransient(): JsonField<Boolean> = isTransient
 
         /**
          * Returns the raw JSON value of [treeFilter].
@@ -1500,7 +1500,7 @@ private constructor(
             private var numFewShotExamples: JsonField<Long> = JsonMissing.of()
             private var sessionId: JsonField<String> = JsonMissing.of()
             private var traceFilter: JsonField<String> = JsonMissing.of()
-            private var transient_: JsonField<Boolean> = JsonMissing.of()
+            private var isTransient: JsonField<Boolean> = JsonMissing.of()
             private var treeFilter: JsonField<String> = JsonMissing.of()
             private var useCorrectionsDataset: JsonField<Boolean> = JsonMissing.of()
             private var webhooks: JsonField<MutableList<RunRulesWebhookSchema>>? = null
@@ -1528,7 +1528,7 @@ private constructor(
                 numFewShotExamples = body.numFewShotExamples
                 sessionId = body.sessionId
                 traceFilter = body.traceFilter
-                transient_ = body.transient_
+                isTransient = body.isTransient
                 treeFilter = body.treeFilter
                 useCorrectionsDataset = body.useCorrectionsDataset
                 webhooks = body.webhooks.map { it.toMutableList() }
@@ -1902,16 +1902,18 @@ private constructor(
                 this.traceFilter = traceFilter
             }
 
-            fun transient_(transient_: Boolean) = transient_(JsonField.of(transient_))
+            fun isTransient(isTransient: Boolean) = isTransient(JsonField.of(isTransient))
 
             /**
-             * Sets [Builder.transient_] to an arbitrary JSON value.
+             * Sets [Builder.isTransient] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.transient_] with a well-typed [Boolean] value
+             * You should usually call [Builder.isTransient] with a well-typed [Boolean] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun transient_(transient_: JsonField<Boolean>) = apply { this.transient_ = transient_ }
+            fun isTransient(isTransient: JsonField<Boolean>) = apply {
+                this.isTransient = isTransient
+            }
 
             fun treeFilter(treeFilter: String?) = treeFilter(JsonField.ofNullable(treeFilter))
 
@@ -2025,7 +2027,7 @@ private constructor(
                     numFewShotExamples,
                     sessionId,
                     traceFilter,
-                    transient_,
+                    isTransient,
                     treeFilter,
                     useCorrectionsDataset,
                     (webhooks ?: JsonMissing.of()).map { it.toImmutable() },
@@ -2060,7 +2062,7 @@ private constructor(
             numFewShotExamples()
             sessionId()
             traceFilter()
-            transient_()
+            isTransient()
             treeFilter()
             useCorrectionsDataset()
             webhooks().ifPresent { it.forEach { it.validate() } }
@@ -2103,7 +2105,7 @@ private constructor(
                 (if (numFewShotExamples.asKnown().isPresent) 1 else 0) +
                 (if (sessionId.asKnown().isPresent) 1 else 0) +
                 (if (traceFilter.asKnown().isPresent) 1 else 0) +
-                (if (transient_.asKnown().isPresent) 1 else 0) +
+                (if (isTransient.asKnown().isPresent) 1 else 0) +
                 (if (treeFilter.asKnown().isPresent) 1 else 0) +
                 (if (useCorrectionsDataset.asKnown().isPresent) 1 else 0) +
                 (webhooks.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
@@ -2134,7 +2136,7 @@ private constructor(
                 numFewShotExamples == other.numFewShotExamples &&
                 sessionId == other.sessionId &&
                 traceFilter == other.traceFilter &&
-                transient_ == other.transient_ &&
+                isTransient == other.isTransient &&
                 treeFilter == other.treeFilter &&
                 useCorrectionsDataset == other.useCorrectionsDataset &&
                 webhooks == other.webhooks &&
@@ -2163,7 +2165,7 @@ private constructor(
                 numFewShotExamples,
                 sessionId,
                 traceFilter,
-                transient_,
+                isTransient,
                 treeFilter,
                 useCorrectionsDataset,
                 webhooks,
@@ -2174,7 +2176,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{displayName=$displayName, samplingRate=$samplingRate, addToAnnotationQueueId=$addToAnnotationQueueId, addToDatasetId=$addToDatasetId, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, backfillFrom=$backfillFrom, codeEvaluators=$codeEvaluators, createAlignmentQueue=$createAlignmentQueue, datasetId=$datasetId, evaluatorVersion=$evaluatorVersion, evaluators=$evaluators, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, traceFilter=$traceFilter, transient_=$transient_, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, webhooks=$webhooks, additionalProperties=$additionalProperties}"
+            "Body{displayName=$displayName, samplingRate=$samplingRate, addToAnnotationQueueId=$addToAnnotationQueueId, addToDatasetId=$addToDatasetId, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, backfillFrom=$backfillFrom, codeEvaluators=$codeEvaluators, createAlignmentQueue=$createAlignmentQueue, datasetId=$datasetId, evaluatorVersion=$evaluatorVersion, evaluators=$evaluators, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, webhooks=$webhooks, additionalProperties=$additionalProperties}"
     }
 
     class GroupBy @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
