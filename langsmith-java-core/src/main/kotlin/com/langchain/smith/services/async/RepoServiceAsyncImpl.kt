@@ -24,8 +24,6 @@ import com.langchain.smith.models.repos.RepoDeleteResponse
 import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoListResponse
-import com.langchain.smith.models.repos.RepoOptimizeJobParams
-import com.langchain.smith.models.repos.RepoOptimizeJobResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import com.langchain.smith.services.async.repos.TagServiceAsync
@@ -91,13 +89,6 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
     ): CompletableFuture<GetRepoResponse> =
         // post /api/v1/repos/{owner}/{repo}/fork
         withRawResponse().fork(params, requestOptions).thenApply { it.parse() }
-
-    override fun optimizeJob(
-        params: RepoOptimizeJobParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<RepoOptimizeJobResponse> =
-        // post /api/v1/repos/optimize-job
-        withRawResponse().optimizeJob(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RepoServiceAsync.WithRawResponse {
@@ -330,37 +321,6 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     errorHandler.handle(response).parseable {
                         response
                             .use { forkHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val optimizeJobHandler: Handler<RepoOptimizeJobResponse> =
-            jsonHandler<RepoOptimizeJobResponse>(clientOptions.jsonMapper)
-
-        override fun optimizeJob(
-            params: RepoOptimizeJobParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RepoOptimizeJobResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "repos", "optimize-job")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { optimizeJobHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
