@@ -17,7 +17,6 @@ import com.langchain.smith.services.async.AceServiceAsync
 import com.langchain.smith.services.async.AnnotationQueueServiceAsync
 import com.langchain.smith.services.async.ApiKeyServiceAsync
 import com.langchain.smith.services.async.BulkExportServiceAsync
-import com.langchain.smith.services.async.ChartServiceAsync
 import com.langchain.smith.services.async.CommentServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsync
@@ -28,7 +27,6 @@ import com.langchain.smith.services.async.InfoServiceAsync
 import com.langchain.smith.services.async.MeServiceAsync
 import com.langchain.smith.services.async.ModelPriceMapServiceAsync
 import com.langchain.smith.services.async.OAuthServiceAsync
-import com.langchain.smith.services.async.OrgChartServiceAsync
 import com.langchain.smith.services.async.OrgServiceAsync
 import com.langchain.smith.services.async.PlatformServiceAsync
 import com.langchain.smith.services.async.PlaygroundSettingServiceAsync
@@ -130,10 +128,6 @@ interface LangsmithClientAsync {
     fun me(): MeServiceAsync
 
     fun serviceAccounts(): ServiceAccountServiceAsync
-
-    fun charts(): ChartServiceAsync
-
-    fun orgCharts(): OrgChartServiceAsync
 
     fun repos(): RepoServiceAsync
 
@@ -288,10 +282,6 @@ interface LangsmithClientAsync {
         fun me(): MeServiceAsync.WithRawResponse
 
         fun serviceAccounts(): ServiceAccountServiceAsync.WithRawResponse
-
-        fun charts(): ChartServiceAsync.WithRawResponse
-
-        fun orgCharts(): OrgChartServiceAsync.WithRawResponse
 
         fun repos(): RepoServiceAsync.WithRawResponse
 
