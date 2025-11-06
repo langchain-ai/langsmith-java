@@ -13,8 +13,6 @@ import com.langchain.smith.models.repos.RepoDeleteResponse
 import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoListResponse
-import com.langchain.smith.models.repos.RepoOptimizeJobParams
-import com.langchain.smith.models.repos.RepoOptimizeJobResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import com.langchain.smith.services.async.repos.TagServiceAsync
@@ -151,16 +149,6 @@ interface RepoServiceAsync {
         params: RepoForkParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<GetRepoResponse>
-
-    /** Optimize prompt */
-    fun optimizeJob(params: RepoOptimizeJobParams): CompletableFuture<RepoOptimizeJobResponse> =
-        optimizeJob(params, RequestOptions.none())
-
-    /** @see optimizeJob */
-    fun optimizeJob(
-        params: RepoOptimizeJobParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RepoOptimizeJobResponse>
 
     /** A view of [RepoServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -331,20 +319,5 @@ interface RepoServiceAsync {
             params: RepoForkParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<GetRepoResponse>>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/repos/optimize-job`, but is otherwise the
-         * same as [RepoServiceAsync.optimizeJob].
-         */
-        fun optimizeJob(
-            params: RepoOptimizeJobParams
-        ): CompletableFuture<HttpResponseFor<RepoOptimizeJobResponse>> =
-            optimizeJob(params, RequestOptions.none())
-
-        /** @see optimizeJob */
-        fun optimizeJob(
-            params: RepoOptimizeJobParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RepoOptimizeJobResponse>>
     }
 }

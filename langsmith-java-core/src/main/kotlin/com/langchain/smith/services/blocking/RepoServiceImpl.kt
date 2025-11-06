@@ -24,8 +24,6 @@ import com.langchain.smith.models.repos.RepoDeleteResponse
 import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoListResponse
-import com.langchain.smith.models.repos.RepoOptimizeJobParams
-import com.langchain.smith.models.repos.RepoOptimizeJobResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import com.langchain.smith.services.blocking.repos.TagService
@@ -83,13 +81,6 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
     override fun fork(params: RepoForkParams, requestOptions: RequestOptions): GetRepoResponse =
         // post /api/v1/repos/{owner}/{repo}/fork
         withRawResponse().fork(params, requestOptions).parse()
-
-    override fun optimizeJob(
-        params: RepoOptimizeJobParams,
-        requestOptions: RequestOptions,
-    ): RepoOptimizeJobResponse =
-        // post /api/v1/repos/optimize-job
-        withRawResponse().optimizeJob(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RepoService.WithRawResponse {
@@ -305,34 +296,6 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
             return errorHandler.handle(response).parseable {
                 response
                     .use { forkHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val optimizeJobHandler: Handler<RepoOptimizeJobResponse> =
-            jsonHandler<RepoOptimizeJobResponse>(clientOptions.jsonMapper)
-
-        override fun optimizeJob(
-            params: RepoOptimizeJobParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<RepoOptimizeJobResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "repos", "optimize-job")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { optimizeJobHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
