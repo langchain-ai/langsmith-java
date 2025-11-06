@@ -14,8 +14,6 @@ import com.langchain.smith.models.repos.RepoDeleteResponse
 import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoListResponse
-import com.langchain.smith.models.repos.RepoOptimizeJobParams
-import com.langchain.smith.models.repos.RepoOptimizeJobResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import com.langchain.smith.services.blocking.repos.TagService
@@ -143,16 +141,6 @@ interface RepoService {
         params: RepoForkParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): GetRepoResponse
-
-    /** Optimize prompt */
-    fun optimizeJob(params: RepoOptimizeJobParams): RepoOptimizeJobResponse =
-        optimizeJob(params, RequestOptions.none())
-
-    /** @see optimizeJob */
-    fun optimizeJob(
-        params: RepoOptimizeJobParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): RepoOptimizeJobResponse
 
     /** A view of [RepoService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -320,20 +308,5 @@ interface RepoService {
             params: RepoForkParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<GetRepoResponse>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/repos/optimize-job`, but is otherwise the
-         * same as [RepoService.optimizeJob].
-         */
-        @MustBeClosed
-        fun optimizeJob(params: RepoOptimizeJobParams): HttpResponseFor<RepoOptimizeJobResponse> =
-            optimizeJob(params, RequestOptions.none())
-
-        /** @see optimizeJob */
-        @MustBeClosed
-        fun optimizeJob(
-            params: RepoOptimizeJobParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RepoOptimizeJobResponse>
     }
 }

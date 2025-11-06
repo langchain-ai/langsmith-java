@@ -4,13 +4,10 @@ package com.langchain.smith.services.async
 
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
-import com.langchain.smith.models.repos.EPromptOptimizationAlgorithm
-import com.langchain.smith.models.repos.PromptimConfig
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
-import com.langchain.smith.models.repos.RepoOptimizeJobParams
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import org.junit.jupiter.api.Disabled
@@ -180,42 +177,5 @@ internal class RepoServiceAsyncTest {
 
         val getRepoResponse = getRepoResponseFuture.get()
         getRepoResponse.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun optimizeJob() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val repoServiceAsync = client.repos()
-
-        val responseFuture =
-            repoServiceAsync.optimizeJob(
-                RepoOptimizeJobParams.builder()
-                    .algorithm(EPromptOptimizationAlgorithm.PROMPTIM)
-                    .config(
-                        PromptimConfig.builder()
-                            .autoCommit(true)
-                            .datasetName("dataset_name")
-                            .devSplit("dev_split")
-                            .addEvaluator("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .messageIndex(0L)
-                            .numEpochs(0L)
-                            .taskDescription("task_description")
-                            .testSplit("test_split")
-                            .trainSplit("train_split")
-                            .build()
-                    )
-                    .promptName("prompt_name")
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
     }
 }
