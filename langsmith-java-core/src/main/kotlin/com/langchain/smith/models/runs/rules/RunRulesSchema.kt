@@ -56,7 +56,7 @@ private constructor(
     private val sessionId: JsonField<String>,
     private val sessionName: JsonField<String>,
     private val traceFilter: JsonField<String>,
-    private val transient_: JsonField<Boolean>,
+    private val isTransient: JsonField<Boolean>,
     private val treeFilter: JsonField<String>,
     private val useCorrectionsDataset: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -147,7 +147,7 @@ private constructor(
         traceFilter: JsonField<String> = JsonMissing.of(),
         @JsonProperty("transient")
         @ExcludeMissing
-        transient_: JsonField<Boolean> = JsonMissing.of(),
+        isTransient: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("tree_filter")
         @ExcludeMissing
         treeFilter: JsonField<String> = JsonMissing.of(),
@@ -186,7 +186,7 @@ private constructor(
         sessionId,
         sessionName,
         traceFilter,
-        transient_,
+        isTransient,
         treeFilter,
         useCorrectionsDataset,
         mutableMapOf(),
@@ -390,7 +390,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun transient_(): Optional<Boolean> = transient_.getOptional("transient")
+    fun isTransient(): Optional<Boolean> = isTransient.getOptional("transient")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -678,11 +678,11 @@ private constructor(
     fun _traceFilter(): JsonField<String> = traceFilter
 
     /**
-     * Returns the raw JSON value of [transient_].
+     * Returns the raw JSON value of [isTransient].
      *
-     * Unlike [transient_], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [isTransient], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("transient") @ExcludeMissing fun _transient_(): JsonField<Boolean> = transient_
+    @JsonProperty("transient") @ExcludeMissing fun _isTransient(): JsonField<Boolean> = isTransient
 
     /**
      * Returns the raw JSON value of [treeFilter].
@@ -767,7 +767,7 @@ private constructor(
         private var sessionId: JsonField<String> = JsonMissing.of()
         private var sessionName: JsonField<String> = JsonMissing.of()
         private var traceFilter: JsonField<String> = JsonMissing.of()
-        private var transient_: JsonField<Boolean> = JsonMissing.of()
+        private var isTransient: JsonField<Boolean> = JsonMissing.of()
         private var treeFilter: JsonField<String> = JsonMissing.of()
         private var useCorrectionsDataset: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -805,7 +805,7 @@ private constructor(
             sessionId = runRulesSchema.sessionId
             sessionName = runRulesSchema.sessionName
             traceFilter = runRulesSchema.traceFilter
-            transient_ = runRulesSchema.transient_
+            isTransient = runRulesSchema.isTransient
             treeFilter = runRulesSchema.treeFilter
             useCorrectionsDataset = runRulesSchema.useCorrectionsDataset
             additionalProperties = runRulesSchema.additionalProperties.toMutableMap()
@@ -1337,16 +1337,16 @@ private constructor(
          */
         fun traceFilter(traceFilter: JsonField<String>) = apply { this.traceFilter = traceFilter }
 
-        fun transient_(transient_: Boolean) = transient_(JsonField.of(transient_))
+        fun isTransient(isTransient: Boolean) = isTransient(JsonField.of(isTransient))
 
         /**
-         * Sets [Builder.transient_] to an arbitrary JSON value.
+         * Sets [Builder.isTransient] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.transient_] with a well-typed [Boolean] value instead.
+         * You should usually call [Builder.isTransient] with a well-typed [Boolean] value instead.
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun transient_(transient_: JsonField<Boolean>) = apply { this.transient_ = transient_ }
+        fun isTransient(isTransient: JsonField<Boolean>) = apply { this.isTransient = isTransient }
 
         fun treeFilter(treeFilter: String?) = treeFilter(JsonField.ofNullable(treeFilter))
 
@@ -1447,7 +1447,7 @@ private constructor(
                 sessionId,
                 sessionName,
                 traceFilter,
-                transient_,
+                isTransient,
                 treeFilter,
                 useCorrectionsDataset,
                 additionalProperties.toMutableMap(),
@@ -1492,7 +1492,7 @@ private constructor(
         sessionId()
         sessionName()
         traceFilter()
-        transient_()
+        isTransient()
         treeFilter()
         useCorrectionsDataset()
         validated = true
@@ -1544,7 +1544,7 @@ private constructor(
             (if (sessionId.asKnown().isPresent) 1 else 0) +
             (if (sessionName.asKnown().isPresent) 1 else 0) +
             (if (traceFilter.asKnown().isPresent) 1 else 0) +
-            (if (transient_.asKnown().isPresent) 1 else 0) +
+            (if (isTransient.asKnown().isPresent) 1 else 0) +
             (if (treeFilter.asKnown().isPresent) 1 else 0) +
             (if (useCorrectionsDataset.asKnown().isPresent) 1 else 0)
 
@@ -1706,7 +1706,7 @@ private constructor(
             sessionId == other.sessionId &&
             sessionName == other.sessionName &&
             traceFilter == other.traceFilter &&
-            transient_ == other.transient_ &&
+            isTransient == other.isTransient &&
             treeFilter == other.treeFilter &&
             useCorrectionsDataset == other.useCorrectionsDataset &&
             additionalProperties == other.additionalProperties
@@ -1745,7 +1745,7 @@ private constructor(
             sessionId,
             sessionName,
             traceFilter,
-            transient_,
+            isTransient,
             treeFilter,
             useCorrectionsDataset,
             additionalProperties,
@@ -1755,5 +1755,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunRulesSchema{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillFrom=$backfillFrom, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, traceFilter=$traceFilter, transient_=$transient_, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "RunRulesSchema{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillFrom=$backfillFrom, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }

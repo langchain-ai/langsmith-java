@@ -90,7 +90,7 @@ internal class RuleServiceAsyncTest {
                     .numFewShotExamples(0L)
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .traceFilter("trace_filter")
-                    .transient_(true)
+                    .isTransient(true)
                     .treeFilter("tree_filter")
                     .useCorrectionsDataset(true)
                     .addWebhook(
@@ -179,7 +179,7 @@ internal class RuleServiceAsyncTest {
                     .numFewShotExamples(0L)
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .traceFilter("trace_filter")
-                    .transient_(true)
+                    .isTransient(true)
                     .treeFilter("tree_filter")
                     .useCorrectionsDataset(true)
                     .addWebhook(
