@@ -33,8 +33,6 @@ import com.langchain.smith.models.runs.RunRetrieveParams
 import com.langchain.smith.models.runs.RunRetrieveThreadPreviewParams
 import com.langchain.smith.models.runs.RunRetrieveThreadPreviewResponse
 import com.langchain.smith.models.runs.RunSchema
-import com.langchain.smith.models.runs.RunStatsParams
-import com.langchain.smith.models.runs.RunStatsResponse
 import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
@@ -135,13 +133,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<RunRetrieveThreadPreviewResponse> =
         // get /api/v1/runs/threads/{thread_id}
         withRawResponse().retrieveThreadPreview(params, requestOptions).thenApply { it.parse() }
-
-    override fun stats(
-        params: RunStatsParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<RunStatsResponse> =
-        // post /api/v1/runs/stats
-        withRawResponse().stats(params, requestOptions).thenApply { it.parse() }
 
     override fun update2(
         params: RunUpdate2Params,
@@ -455,37 +446,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                     errorHandler.handle(response).parseable {
                         response
                             .use { retrieveThreadPreviewHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val statsHandler: Handler<RunStatsResponse> =
-            jsonHandler<RunStatsResponse>(clientOptions.jsonMapper)
-
-        override fun stats(
-            params: RunStatsParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RunStatsResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "runs", "stats")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { statsHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
