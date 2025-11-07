@@ -15,12 +15,12 @@ internal class AutoEvalFeedbackSourceTest {
         val autoEvalFeedbackSource =
             AutoEvalFeedbackSource.builder()
                 .metadata(JsonValue.from(mapOf<String, Any>()))
-                .type("type")
+                .type(AutoEvalFeedbackSource.Type.AUTO_EVAL)
                 .build()
 
         assertThat(autoEvalFeedbackSource._metadata())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(autoEvalFeedbackSource.type()).contains("type")
+        assertThat(autoEvalFeedbackSource.type()).contains(AutoEvalFeedbackSource.Type.AUTO_EVAL)
     }
 
     @Test
@@ -29,7 +29,7 @@ internal class AutoEvalFeedbackSourceTest {
         val autoEvalFeedbackSource =
             AutoEvalFeedbackSource.builder()
                 .metadata(JsonValue.from(mapOf<String, Any>()))
-                .type("type")
+                .type(AutoEvalFeedbackSource.Type.AUTO_EVAL)
                 .build()
 
         val roundtrippedAutoEvalFeedbackSource =

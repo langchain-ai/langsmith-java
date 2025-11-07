@@ -1647,35 +1647,32 @@ private constructor(
 
             override fun ObjectCodec.deserialize(node: JsonNode): FeedbackSource {
                 val json = JsonValue.fromJsonNode(node)
+                val type = json.asObject().getOrNull()?.get("type")?.asString()?.getOrNull()
 
-                val bestMatches =
-                    sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<AppFeedbackSource>())?.let {
-                                FeedbackSource(app = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<ApiFeedbackSource>())?.let {
-                                FeedbackSource(api = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<ModelFeedbackSource>())?.let {
-                                FeedbackSource(model = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<AutoEvalFeedbackSource>())?.let {
-                                FeedbackSource(autoEval = it, _json = json)
-                            },
-                        )
-                        .filterNotNull()
-                        .allMaxBy { it.validity() }
-                        .toList()
-                return when (bestMatches.size) {
-                    // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from boolean).
-                    0 -> FeedbackSource(_json = json)
-                    1 -> bestMatches.single()
-                    // If there's more than one match with the highest validity, then use the first
-                    // completely valid match, or simply the first match if none are completely
-                    // valid.
-                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                when (type) {
+                    "app" -> {
+                        return tryDeserialize(node, jacksonTypeRef<AppFeedbackSource>())?.let {
+                            FeedbackSource(app = it, _json = json)
+                        } ?: FeedbackSource(_json = json)
+                    }
+                    "api" -> {
+                        return tryDeserialize(node, jacksonTypeRef<ApiFeedbackSource>())?.let {
+                            FeedbackSource(api = it, _json = json)
+                        } ?: FeedbackSource(_json = json)
+                    }
+                    "model" -> {
+                        return tryDeserialize(node, jacksonTypeRef<ModelFeedbackSource>())?.let {
+                            FeedbackSource(model = it, _json = json)
+                        } ?: FeedbackSource(_json = json)
+                    }
+                    "auto_eval" -> {
+                        return tryDeserialize(node, jacksonTypeRef<AutoEvalFeedbackSource>())?.let {
+                            FeedbackSource(autoEval = it, _json = json)
+                        } ?: FeedbackSource(_json = json)
+                    }
                 }
+
+                return FeedbackSource(_json = json)
             }
         }
 
