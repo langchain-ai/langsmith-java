@@ -19,15 +19,10 @@ import com.langchain.smith.core.prepare
 import com.langchain.smith.models.feedback.FeedbackCreateParams
 import com.langchain.smith.models.feedback.FeedbackDeleteParams
 import com.langchain.smith.models.feedback.FeedbackDeleteResponse
-import com.langchain.smith.models.feedback.FeedbackEagerParams
-import com.langchain.smith.models.feedback.FeedbackIngestBatchParams
-import com.langchain.smith.models.feedback.FeedbackIngestBatchResponse
 import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
-import com.langchain.smith.services.blocking.feedback.FormulaService
-import com.langchain.smith.services.blocking.feedback.FormulaServiceImpl
 import com.langchain.smith.services.blocking.feedback.TokenService
 import com.langchain.smith.services.blocking.feedback.TokenServiceImpl
 import java.util.function.Consumer
@@ -40,16 +35,12 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
         WithRawResponseImpl(clientOptions)
     }
 
-    private val formulas: FormulaService by lazy { FormulaServiceImpl(clientOptions) }
-
     private val tokens: TokenService by lazy { TokenServiceImpl(clientOptions) }
 
     override fun withRawResponse(): FeedbackService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): FeedbackService =
         FeedbackServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun formulas(): FormulaService = formulas
 
     override fun tokens(): TokenService = tokens
 
@@ -88,29 +79,11 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
         // delete /api/v1/feedback/{feedback_id}
         withRawResponse().delete(params, requestOptions).parse()
 
-    override fun eager(
-        params: FeedbackEagerParams,
-        requestOptions: RequestOptions,
-    ): FeedbackSchema =
-        // post /api/v1/feedback/eager
-        withRawResponse().eager(params, requestOptions).parse()
-
-    override fun ingestBatch(
-        params: FeedbackIngestBatchParams,
-        requestOptions: RequestOptions,
-    ): FeedbackIngestBatchResponse =
-        // post /feedback/batch
-        withRawResponse().ingestBatch(params, requestOptions).parse()
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         FeedbackService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
-
-        private val formulas: FormulaService.WithRawResponse by lazy {
-            FormulaServiceImpl.WithRawResponseImpl(clientOptions)
-        }
 
         private val tokens: TokenService.WithRawResponse by lazy {
             TokenServiceImpl.WithRawResponseImpl(clientOptions)
@@ -122,8 +95,6 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
             FeedbackServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun formulas(): FormulaService.WithRawResponse = formulas
 
         override fun tokens(): TokenService.WithRawResponse = tokens
 
@@ -266,62 +237,6 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
             return errorHandler.handle(response).parseable {
                 response
                     .use { deleteHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val eagerHandler: Handler<FeedbackSchema> =
-            jsonHandler<FeedbackSchema>(clientOptions.jsonMapper)
-
-        override fun eager(
-            params: FeedbackEagerParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<FeedbackSchema> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "feedback", "eager")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { eagerHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val ingestBatchHandler: Handler<FeedbackIngestBatchResponse> =
-            jsonHandler<FeedbackIngestBatchResponse>(clientOptions.jsonMapper)
-
-        override fun ingestBatch(
-            params: FeedbackIngestBatchParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<FeedbackIngestBatchResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("feedback", "batch")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { ingestBatchHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

@@ -10,12 +10,10 @@ import com.langchain.smith.models.repos.GetRepoResponse
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoDeleteResponse
-import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoListResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
-import com.langchain.smith.services.async.repos.TagServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -32,8 +30,6 @@ interface RepoServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync
-
-    fun tags(): TagServiceAsync
 
     /** Create a repo. */
     fun create(params: RepoCreateParams): CompletableFuture<CreateRepoResponse> =
@@ -128,28 +124,6 @@ interface RepoServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<RepoDeleteResponse>
 
-    /** Fork a repo. */
-    fun fork(repo: String, params: RepoForkParams): CompletableFuture<GetRepoResponse> =
-        fork(repo, params, RequestOptions.none())
-
-    /** @see fork */
-    fun fork(
-        repo: String,
-        params: RepoForkParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<GetRepoResponse> =
-        fork(params.toBuilder().repo(repo).build(), requestOptions)
-
-    /** @see fork */
-    fun fork(params: RepoForkParams): CompletableFuture<GetRepoResponse> =
-        fork(params, RequestOptions.none())
-
-    /** @see fork */
-    fun fork(
-        params: RepoForkParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<GetRepoResponse>
-
     /** A view of [RepoServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -159,8 +133,6 @@ interface RepoServiceAsync {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync.WithRawResponse
-
-        fun tags(): TagServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/repos`, but is otherwise the same as
@@ -291,33 +263,5 @@ interface RepoServiceAsync {
             params: RepoDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<RepoDeleteResponse>>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/repos/{owner}/{repo}/fork`, but is
-         * otherwise the same as [RepoServiceAsync.fork].
-         */
-        fun fork(
-            repo: String,
-            params: RepoForkParams,
-        ): CompletableFuture<HttpResponseFor<GetRepoResponse>> =
-            fork(repo, params, RequestOptions.none())
-
-        /** @see fork */
-        fun fork(
-            repo: String,
-            params: RepoForkParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<GetRepoResponse>> =
-            fork(params.toBuilder().repo(repo).build(), requestOptions)
-
-        /** @see fork */
-        fun fork(params: RepoForkParams): CompletableFuture<HttpResponseFor<GetRepoResponse>> =
-            fork(params, RequestOptions.none())
-
-        /** @see fork */
-        fun fork(
-            params: RepoForkParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<GetRepoResponse>>
     }
 }

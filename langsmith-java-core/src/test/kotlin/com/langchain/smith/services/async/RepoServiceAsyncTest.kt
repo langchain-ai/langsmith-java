@@ -6,7 +6,6 @@ import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
-import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
@@ -148,34 +147,5 @@ internal class RepoServiceAsyncTest {
 
         val repo = repoFuture.get()
         repo.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun fork() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val repoServiceAsync = client.repos()
-
-        val getRepoResponseFuture =
-            repoServiceAsync.fork(
-                RepoForkParams.builder()
-                    .owner("owner")
-                    .repo("repo")
-                    .repoHandle("repo_handle")
-                    .description("description")
-                    .isPublic(true)
-                    .readme("readme")
-                    .addTag("string")
-                    .build()
-            )
-
-        val getRepoResponse = getRepoResponseFuture.get()
-        getRepoResponse.validate()
     }
 }
