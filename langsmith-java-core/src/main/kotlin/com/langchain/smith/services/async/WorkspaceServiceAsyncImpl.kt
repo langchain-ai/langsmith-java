@@ -16,13 +16,14 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
-import com.langchain.smith.models.tenants.AppSchemasTenant
-import com.langchain.smith.models.tenants.TenantForUser
 import com.langchain.smith.models.workspaces.WorkspaceCreateParams
+import com.langchain.smith.models.workspaces.WorkspaceCreateResponse
 import com.langchain.smith.models.workspaces.WorkspaceDeleteParams
 import com.langchain.smith.models.workspaces.WorkspaceDeleteResponse
 import com.langchain.smith.models.workspaces.WorkspaceListParams
+import com.langchain.smith.models.workspaces.WorkspaceListResponse
 import com.langchain.smith.models.workspaces.WorkspaceUpdateParams
+import com.langchain.smith.models.workspaces.WorkspaceUpdateResponse
 import com.langchain.smith.services.async.workspaces.CurrentServiceAsync
 import com.langchain.smith.services.async.workspaces.CurrentServiceAsyncImpl
 import com.langchain.smith.services.async.workspaces.PendingServiceAsync
@@ -54,21 +55,21 @@ class WorkspaceServiceAsyncImpl internal constructor(private val clientOptions: 
     override fun create(
         params: WorkspaceCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<AppSchemasTenant> =
+    ): CompletableFuture<WorkspaceCreateResponse> =
         // post /api/v1/workspaces
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: WorkspaceUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<AppSchemasTenant> =
+    ): CompletableFuture<WorkspaceUpdateResponse> =
         // patch /api/v1/workspaces/{workspace_id}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: WorkspaceListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<TenantForUser>> =
+    ): CompletableFuture<List<WorkspaceListResponse>> =
         // get /api/v1/workspaces
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -104,13 +105,13 @@ class WorkspaceServiceAsyncImpl internal constructor(private val clientOptions: 
 
         override fun current(): CurrentServiceAsync.WithRawResponse = current
 
-        private val createHandler: Handler<AppSchemasTenant> =
-            jsonHandler<AppSchemasTenant>(clientOptions.jsonMapper)
+        private val createHandler: Handler<WorkspaceCreateResponse> =
+            jsonHandler<WorkspaceCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: WorkspaceCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<AppSchemasTenant>> {
+        ): CompletableFuture<HttpResponseFor<WorkspaceCreateResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -135,13 +136,13 @@ class WorkspaceServiceAsyncImpl internal constructor(private val clientOptions: 
                 }
         }
 
-        private val updateHandler: Handler<AppSchemasTenant> =
-            jsonHandler<AppSchemasTenant>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<WorkspaceUpdateResponse> =
+            jsonHandler<WorkspaceUpdateResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: WorkspaceUpdateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<AppSchemasTenant>> {
+        ): CompletableFuture<HttpResponseFor<WorkspaceUpdateResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("workspaceId", params.workspaceId().getOrNull())
@@ -169,13 +170,13 @@ class WorkspaceServiceAsyncImpl internal constructor(private val clientOptions: 
                 }
         }
 
-        private val listHandler: Handler<List<TenantForUser>> =
-            jsonHandler<List<TenantForUser>>(clientOptions.jsonMapper)
+        private val listHandler: Handler<List<WorkspaceListResponse>> =
+            jsonHandler<List<WorkspaceListResponse>>(clientOptions.jsonMapper)
 
         override fun list(
             params: WorkspaceListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<TenantForUser>>> {
+        ): CompletableFuture<HttpResponseFor<List<WorkspaceListResponse>>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

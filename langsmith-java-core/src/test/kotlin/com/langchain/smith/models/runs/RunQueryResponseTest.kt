@@ -5,7 +5,6 @@ package com.langchain.smith.models.runs
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -94,7 +93,7 @@ internal class RunQueryResponseTest {
                         .traceFirstReceivedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .traceTier(TraceTier.LONGLIVED)
+                        .traceTier(RunSchema.TraceTier.LONGLIVED)
                         .traceUpgrade(true)
                         .ttlSeconds(0L)
                         .build()
@@ -187,7 +186,7 @@ internal class RunQueryResponseTest {
                     .traceFirstReceivedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .traceTier(TraceTier.LONGLIVED)
+                    .traceTier(RunSchema.TraceTier.LONGLIVED)
                     .traceUpgrade(true)
                     .ttlSeconds(0L)
                     .build()
@@ -284,7 +283,7 @@ internal class RunQueryResponseTest {
                         .traceFirstReceivedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .traceTier(TraceTier.LONGLIVED)
+                        .traceTier(RunSchema.TraceTier.LONGLIVED)
                         .traceUpgrade(true)
                         .ttlSeconds(0L)
                         .build()

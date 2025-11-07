@@ -8,8 +8,6 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.info.InfoListParams
 import com.langchain.smith.models.info.InfoListResponse
-import com.langchain.smith.models.info.InfoRetrieveHealthParams
-import com.langchain.smith.models.info.InfoRetrieveHealthResponse
 import java.util.function.Consumer
 
 interface InfoService {
@@ -42,25 +40,6 @@ interface InfoService {
     /** @see list */
     fun list(requestOptions: RequestOptions): InfoListResponse =
         list(InfoListParams.none(), requestOptions)
-
-    /** Get health information about the current deployment of LangSmith. */
-    fun retrieveHealth(): InfoRetrieveHealthResponse =
-        retrieveHealth(InfoRetrieveHealthParams.none())
-
-    /** @see retrieveHealth */
-    fun retrieveHealth(
-        params: InfoRetrieveHealthParams = InfoRetrieveHealthParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): InfoRetrieveHealthResponse
-
-    /** @see retrieveHealth */
-    fun retrieveHealth(
-        params: InfoRetrieveHealthParams = InfoRetrieveHealthParams.none()
-    ): InfoRetrieveHealthResponse = retrieveHealth(params, RequestOptions.none())
-
-    /** @see retrieveHealth */
-    fun retrieveHealth(requestOptions: RequestOptions): InfoRetrieveHealthResponse =
-        retrieveHealth(InfoRetrieveHealthParams.none(), requestOptions)
 
     /** A view of [InfoService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -95,34 +74,5 @@ interface InfoService {
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<InfoListResponse> =
             list(InfoListParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `get /api/v1/info/health`, but is otherwise the same as
-         * [InfoService.retrieveHealth].
-         */
-        @MustBeClosed
-        fun retrieveHealth(): HttpResponseFor<InfoRetrieveHealthResponse> =
-            retrieveHealth(InfoRetrieveHealthParams.none())
-
-        /** @see retrieveHealth */
-        @MustBeClosed
-        fun retrieveHealth(
-            params: InfoRetrieveHealthParams = InfoRetrieveHealthParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<InfoRetrieveHealthResponse>
-
-        /** @see retrieveHealth */
-        @MustBeClosed
-        fun retrieveHealth(
-            params: InfoRetrieveHealthParams = InfoRetrieveHealthParams.none()
-        ): HttpResponseFor<InfoRetrieveHealthResponse> =
-            retrieveHealth(params, RequestOptions.none())
-
-        /** @see retrieveHealth */
-        @MustBeClosed
-        fun retrieveHealth(
-            requestOptions: RequestOptions
-        ): HttpResponseFor<InfoRetrieveHealthResponse> =
-            retrieveHealth(InfoRetrieveHealthParams.none(), requestOptions)
     }
 }

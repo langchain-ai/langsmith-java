@@ -26,7 +26,7 @@ internal class WorkspaceServiceAsyncTest {
                 .build()
         val workspaceServiceAsync = client.workspaces()
 
-        val appSchemasTenantFuture =
+        val workspaceFuture =
             workspaceServiceAsync.create(
                 WorkspaceCreateParams.builder()
                     .displayName("display_name")
@@ -35,8 +35,8 @@ internal class WorkspaceServiceAsyncTest {
                     .build()
             )
 
-        val appSchemasTenant = appSchemasTenantFuture.get()
-        appSchemasTenant.validate()
+        val workspace = workspaceFuture.get()
+        workspace.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -51,7 +51,7 @@ internal class WorkspaceServiceAsyncTest {
                 .build()
         val workspaceServiceAsync = client.workspaces()
 
-        val appSchemasTenantFuture =
+        val workspaceFuture =
             workspaceServiceAsync.update(
                 WorkspaceUpdateParams.builder()
                     .workspaceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -59,8 +59,8 @@ internal class WorkspaceServiceAsyncTest {
                     .build()
             )
 
-        val appSchemasTenant = appSchemasTenantFuture.get()
-        appSchemasTenant.validate()
+        val workspace = workspaceFuture.get()
+        workspace.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -75,11 +75,11 @@ internal class WorkspaceServiceAsyncTest {
                 .build()
         val workspaceServiceAsync = client.workspaces()
 
-        val tenantForUsersFuture =
+        val workspacesFuture =
             workspaceServiceAsync.list(WorkspaceListParams.builder().includeDeleted(true).build())
 
-        val tenantForUsers = tenantForUsersFuture.get()
-        tenantForUsers.forEach { it.validate() }
+        val workspaces = workspacesFuture.get()
+        workspaces.forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

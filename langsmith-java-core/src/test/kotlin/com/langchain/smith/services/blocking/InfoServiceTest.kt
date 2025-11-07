@@ -27,21 +27,4 @@ internal class InfoServiceTest {
 
         infos.validate()
     }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun retrieveHealth() {
-        val client =
-            LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val infoService = client.info()
-
-        val response = infoService.retrieveHealth()
-
-        response.validate()
-    }
 }

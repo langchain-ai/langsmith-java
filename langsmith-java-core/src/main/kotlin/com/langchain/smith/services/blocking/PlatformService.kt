@@ -3,9 +3,7 @@
 package com.langchain.smith.services.blocking
 
 import com.langchain.smith.core.ClientOptions
-import com.langchain.smith.services.blocking.platform.AlertService
 import com.langchain.smith.services.blocking.platform.DatasetService
-import com.langchain.smith.services.blocking.platform.OrgService
 import java.util.function.Consumer
 
 interface PlatformService {
@@ -22,11 +20,7 @@ interface PlatformService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): PlatformService
 
-    fun alerts(): AlertService
-
     fun datasets(): DatasetService
-
-    fun orgs(): OrgService
 
     /** A view of [PlatformService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -38,10 +32,6 @@ interface PlatformService {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): PlatformService.WithRawResponse
 
-        fun alerts(): AlertService.WithRawResponse
-
         fun datasets(): DatasetService.WithRawResponse
-
-        fun orgs(): OrgService.WithRawResponse
     }
 }

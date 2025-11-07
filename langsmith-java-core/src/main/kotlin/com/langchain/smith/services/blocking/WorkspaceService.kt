@@ -6,13 +6,14 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.tenants.AppSchemasTenant
-import com.langchain.smith.models.tenants.TenantForUser
 import com.langchain.smith.models.workspaces.WorkspaceCreateParams
+import com.langchain.smith.models.workspaces.WorkspaceCreateResponse
 import com.langchain.smith.models.workspaces.WorkspaceDeleteParams
 import com.langchain.smith.models.workspaces.WorkspaceDeleteResponse
 import com.langchain.smith.models.workspaces.WorkspaceListParams
+import com.langchain.smith.models.workspaces.WorkspaceListResponse
 import com.langchain.smith.models.workspaces.WorkspaceUpdateParams
+import com.langchain.smith.models.workspaces.WorkspaceUpdateResponse
 import com.langchain.smith.services.blocking.workspaces.CurrentService
 import com.langchain.smith.services.blocking.workspaces.PendingService
 import java.util.function.Consumer
@@ -36,17 +37,17 @@ interface WorkspaceService {
     fun current(): CurrentService
 
     /** Create a new workspace. */
-    fun create(params: WorkspaceCreateParams): AppSchemasTenant =
+    fun create(params: WorkspaceCreateParams): WorkspaceCreateResponse =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: WorkspaceCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): AppSchemasTenant
+    ): WorkspaceCreateResponse
 
     /** Patch Workspace */
-    fun update(workspaceId: String, params: WorkspaceUpdateParams): AppSchemasTenant =
+    fun update(workspaceId: String, params: WorkspaceUpdateParams): WorkspaceUpdateResponse =
         update(workspaceId, params, RequestOptions.none())
 
     /** @see update */
@@ -54,37 +55,38 @@ interface WorkspaceService {
         workspaceId: String,
         params: WorkspaceUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): AppSchemasTenant =
+    ): WorkspaceUpdateResponse =
         update(params.toBuilder().workspaceId(workspaceId).build(), requestOptions)
 
     /** @see update */
-    fun update(params: WorkspaceUpdateParams): AppSchemasTenant =
+    fun update(params: WorkspaceUpdateParams): WorkspaceUpdateResponse =
         update(params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: WorkspaceUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): AppSchemasTenant
+    ): WorkspaceUpdateResponse
 
     /**
      * Get all workspaces visible to this auth in the current org. Does not create a new
      * workspace/org.
      */
-    fun list(): List<TenantForUser> = list(WorkspaceListParams.none())
+    fun list(): List<WorkspaceListResponse> = list(WorkspaceListParams.none())
 
     /** @see list */
     fun list(
         params: WorkspaceListParams = WorkspaceListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<TenantForUser>
+    ): List<WorkspaceListResponse>
 
     /** @see list */
-    fun list(params: WorkspaceListParams = WorkspaceListParams.none()): List<TenantForUser> =
-        list(params, RequestOptions.none())
+    fun list(
+        params: WorkspaceListParams = WorkspaceListParams.none()
+    ): List<WorkspaceListResponse> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): List<TenantForUser> =
+    fun list(requestOptions: RequestOptions): List<WorkspaceListResponse> =
         list(WorkspaceListParams.none(), requestOptions)
 
     /** Delete Workspace */
@@ -138,7 +140,7 @@ interface WorkspaceService {
          * [WorkspaceService.create].
          */
         @MustBeClosed
-        fun create(params: WorkspaceCreateParams): HttpResponseFor<AppSchemasTenant> =
+        fun create(params: WorkspaceCreateParams): HttpResponseFor<WorkspaceCreateResponse> =
             create(params, RequestOptions.none())
 
         /** @see create */
@@ -146,7 +148,7 @@ interface WorkspaceService {
         fun create(
             params: WorkspaceCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<AppSchemasTenant>
+        ): HttpResponseFor<WorkspaceCreateResponse>
 
         /**
          * Returns a raw HTTP response for `patch /api/v1/workspaces/{workspace_id}`, but is
@@ -156,7 +158,8 @@ interface WorkspaceService {
         fun update(
             workspaceId: String,
             params: WorkspaceUpdateParams,
-        ): HttpResponseFor<AppSchemasTenant> = update(workspaceId, params, RequestOptions.none())
+        ): HttpResponseFor<WorkspaceUpdateResponse> =
+            update(workspaceId, params, RequestOptions.none())
 
         /** @see update */
         @MustBeClosed
@@ -164,12 +167,12 @@ interface WorkspaceService {
             workspaceId: String,
             params: WorkspaceUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<AppSchemasTenant> =
+        ): HttpResponseFor<WorkspaceUpdateResponse> =
             update(params.toBuilder().workspaceId(workspaceId).build(), requestOptions)
 
         /** @see update */
         @MustBeClosed
-        fun update(params: WorkspaceUpdateParams): HttpResponseFor<AppSchemasTenant> =
+        fun update(params: WorkspaceUpdateParams): HttpResponseFor<WorkspaceUpdateResponse> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -177,31 +180,31 @@ interface WorkspaceService {
         fun update(
             params: WorkspaceUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<AppSchemasTenant>
+        ): HttpResponseFor<WorkspaceUpdateResponse>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/workspaces`, but is otherwise the same as
          * [WorkspaceService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<List<TenantForUser>> = list(WorkspaceListParams.none())
+        fun list(): HttpResponseFor<List<WorkspaceListResponse>> = list(WorkspaceListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: WorkspaceListParams = WorkspaceListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<TenantForUser>>
+        ): HttpResponseFor<List<WorkspaceListResponse>>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: WorkspaceListParams = WorkspaceListParams.none()
-        ): HttpResponseFor<List<TenantForUser>> = list(params, RequestOptions.none())
+        ): HttpResponseFor<List<WorkspaceListResponse>> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<List<TenantForUser>> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<List<WorkspaceListResponse>> =
             list(WorkspaceListParams.none(), requestOptions)
 
         /**

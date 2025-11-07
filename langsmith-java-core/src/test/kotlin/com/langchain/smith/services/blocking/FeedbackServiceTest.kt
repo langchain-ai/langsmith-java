@@ -13,7 +13,6 @@ import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
 import com.langchain.smith.models.feedback.SourceType
-import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -45,10 +44,13 @@ internal class FeedbackServiceTest {
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .feedbackConfig(
-                        FeedbackConfig.builder()
-                            .type(FeedbackConfig.Type.CONTINUOUS)
+                        FeedbackCreateSchema.FeedbackConfig.builder()
+                            .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
                             .addCategory(
-                                FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                FeedbackCreateSchema.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
+                                    .build()
                             )
                             .max(0.0)
                             .min(0.0)
@@ -115,10 +117,13 @@ internal class FeedbackServiceTest {
                     .comment("comment")
                     .correction(JsonValue.from(mapOf<String, Any>()))
                     .feedbackConfig(
-                        FeedbackConfig.builder()
-                            .type(FeedbackConfig.Type.CONTINUOUS)
+                        FeedbackUpdateParams.FeedbackConfig.builder()
+                            .type(FeedbackUpdateParams.FeedbackConfig.Type.CONTINUOUS)
                             .addCategory(
-                                FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                FeedbackUpdateParams.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
+                                    .build()
                             )
                             .max(0.0)
                             .min(0.0)
@@ -206,10 +211,13 @@ internal class FeedbackServiceTest {
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .feedbackConfig(
-                        FeedbackConfig.builder()
-                            .type(FeedbackConfig.Type.CONTINUOUS)
+                        FeedbackCreateSchema.FeedbackConfig.builder()
+                            .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
                             .addCategory(
-                                FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                FeedbackCreateSchema.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
+                                    .build()
                             )
                             .max(0.0)
                             .min(0.0)

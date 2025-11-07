@@ -6,12 +6,12 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.tenants.AppSchemasTenant
 import com.langchain.smith.models.workspaces.pending.PendingClaimParams
 import com.langchain.smith.models.workspaces.pending.PendingClaimResponse
 import com.langchain.smith.models.workspaces.pending.PendingDeleteParams
 import com.langchain.smith.models.workspaces.pending.PendingDeleteResponse
 import com.langchain.smith.models.workspaces.pending.PendingListParams
+import com.langchain.smith.models.workspaces.pending.PendingListResponse
 import java.util.function.Consumer
 
 interface PendingService {
@@ -29,20 +29,20 @@ interface PendingService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): PendingService
 
     /** Get all workspaces visible to this auth */
-    fun list(): List<AppSchemasTenant> = list(PendingListParams.none())
+    fun list(): List<PendingListResponse> = list(PendingListParams.none())
 
     /** @see list */
     fun list(
         params: PendingListParams = PendingListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<AppSchemasTenant>
+    ): List<PendingListResponse>
 
     /** @see list */
-    fun list(params: PendingListParams = PendingListParams.none()): List<AppSchemasTenant> =
+    fun list(params: PendingListParams = PendingListParams.none()): List<PendingListResponse> =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): List<AppSchemasTenant> =
+    fun list(requestOptions: RequestOptions): List<PendingListResponse> =
         list(PendingListParams.none(), requestOptions)
 
     /** Delete Pending Workspace Invite */
@@ -128,24 +128,24 @@ interface PendingService {
          * same as [PendingService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<List<AppSchemasTenant>> = list(PendingListParams.none())
+        fun list(): HttpResponseFor<List<PendingListResponse>> = list(PendingListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: PendingListParams = PendingListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<AppSchemasTenant>>
+        ): HttpResponseFor<List<PendingListResponse>>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: PendingListParams = PendingListParams.none()
-        ): HttpResponseFor<List<AppSchemasTenant>> = list(params, RequestOptions.none())
+        ): HttpResponseFor<List<PendingListResponse>> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<List<AppSchemasTenant>> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<List<PendingListResponse>> =
             list(PendingListParams.none(), requestOptions)
 
         /**

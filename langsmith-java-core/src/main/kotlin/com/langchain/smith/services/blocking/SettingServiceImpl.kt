@@ -12,11 +12,9 @@ import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.settings.AppHubCrudTenantsTenant
-import com.langchain.smith.models.settings.SettingHandleParams
 import com.langchain.smith.models.settings.SettingListParams
 import java.util.function.Consumer
 
@@ -38,13 +36,6 @@ class SettingServiceImpl internal constructor(private val clientOptions: ClientO
     ): AppHubCrudTenantsTenant =
         // get /api/v1/settings
         withRawResponse().list(params, requestOptions).parse()
-
-    override fun handle(
-        params: SettingHandleParams,
-        requestOptions: RequestOptions,
-    ): AppHubCrudTenantsTenant =
-        // post /api/v1/settings/handle
-        withRawResponse().handle(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SettingService.WithRawResponse {
@@ -78,34 +69,6 @@ class SettingServiceImpl internal constructor(private val clientOptions: ClientO
             return errorHandler.handle(response).parseable {
                 response
                     .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val handleHandler: Handler<AppHubCrudTenantsTenant> =
-            jsonHandler<AppHubCrudTenantsTenant>(clientOptions.jsonMapper)
-
-        override fun handle(
-            params: SettingHandleParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<AppHubCrudTenantsTenant> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "settings", "handle")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { handleHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

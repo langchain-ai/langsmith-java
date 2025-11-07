@@ -16,8 +16,6 @@ import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.info.InfoListParams
 import com.langchain.smith.models.info.InfoListResponse
-import com.langchain.smith.models.info.InfoRetrieveHealthParams
-import com.langchain.smith.models.info.InfoRetrieveHealthResponse
 import java.util.function.Consumer
 
 class InfoServiceImpl internal constructor(private val clientOptions: ClientOptions) : InfoService {
@@ -34,13 +32,6 @@ class InfoServiceImpl internal constructor(private val clientOptions: ClientOpti
     override fun list(params: InfoListParams, requestOptions: RequestOptions): InfoListResponse =
         // get /api/v1/info
         withRawResponse().list(params, requestOptions).parse()
-
-    override fun retrieveHealth(
-        params: InfoRetrieveHealthParams,
-        requestOptions: RequestOptions,
-    ): InfoRetrieveHealthResponse =
-        // get /api/v1/info/health
-        withRawResponse().retrieveHealth(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         InfoService.WithRawResponse {
@@ -74,33 +65,6 @@ class InfoServiceImpl internal constructor(private val clientOptions: ClientOpti
             return errorHandler.handle(response).parseable {
                 response
                     .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val retrieveHealthHandler: Handler<InfoRetrieveHealthResponse> =
-            jsonHandler<InfoRetrieveHealthResponse>(clientOptions.jsonMapper)
-
-        override fun retrieveHealth(
-            params: InfoRetrieveHealthParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<InfoRetrieveHealthResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "info", "health")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { retrieveHealthHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

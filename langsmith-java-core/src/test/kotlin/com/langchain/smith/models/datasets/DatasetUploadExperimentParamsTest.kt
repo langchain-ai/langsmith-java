@@ -4,7 +4,6 @@ package com.langchain.smith.models.datasets
 
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.feedback.AppFeedbackSource
-import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -35,10 +34,10 @@ internal class DatasetUploadExperimentParamsTest {
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .extra(JsonValue.from(mapOf<String, Any>()))
                             .feedbackConfig(
-                                FeedbackConfig.builder()
-                                    .type(FeedbackConfig.Type.CONTINUOUS)
+                                FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                                    .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
                                     .addCategory(
-                                        FeedbackConfig.Category.builder()
+                                        FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
                                             .value(0.0)
                                             .label("x")
                                             .build()
@@ -80,10 +79,13 @@ internal class DatasetUploadExperimentParamsTest {
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .extra(JsonValue.from(mapOf<String, Any>()))
                     .feedbackConfig(
-                        FeedbackConfig.builder()
-                            .type(FeedbackConfig.Type.CONTINUOUS)
+                        FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                            .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
                             .addCategory(
-                                FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
+                                    .build()
                             )
                             .max(0.0)
                             .min(0.0)
@@ -128,10 +130,13 @@ internal class DatasetUploadExperimentParamsTest {
                                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .extra(JsonValue.from(mapOf<String, Any>()))
                                 .feedbackConfig(
-                                    FeedbackConfig.builder()
-                                        .type(FeedbackConfig.Type.CONTINUOUS)
+                                    FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                                        .type(
+                                            FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS
+                                        )
                                         .addCategory(
-                                            FeedbackConfig.Category.builder()
+                                            FeedbackCreateCoreSchema.FeedbackConfig.Category
+                                                .builder()
                                                 .value(0.0)
                                                 .label("x")
                                                 .build()
@@ -173,10 +178,13 @@ internal class DatasetUploadExperimentParamsTest {
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .extra(JsonValue.from(mapOf<String, Any>()))
                         .feedbackConfig(
-                            FeedbackConfig.builder()
-                                .type(FeedbackConfig.Type.CONTINUOUS)
+                            FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                                .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
                                 .addCategory(
-                                    FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                    FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
+                                        .value(0.0)
+                                        .label("x")
+                                        .build()
                                 )
                                 .max(0.0)
                                 .min(0.0)
@@ -221,10 +229,10 @@ internal class DatasetUploadExperimentParamsTest {
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .extra(JsonValue.from(mapOf<String, Any>()))
                             .feedbackConfig(
-                                FeedbackConfig.builder()
-                                    .type(FeedbackConfig.Type.CONTINUOUS)
+                                FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                                    .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
                                     .addCategory(
-                                        FeedbackConfig.Category.builder()
+                                        FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
                                             .value(0.0)
                                             .label("x")
                                             .build()
@@ -267,10 +275,13 @@ internal class DatasetUploadExperimentParamsTest {
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .extra(JsonValue.from(mapOf<String, Any>()))
                     .feedbackConfig(
-                        FeedbackConfig.builder()
-                            .type(FeedbackConfig.Type.CONTINUOUS)
+                        FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                            .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
                             .addCategory(
-                                FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
+                                    .build()
                             )
                             .max(0.0)
                             .min(0.0)

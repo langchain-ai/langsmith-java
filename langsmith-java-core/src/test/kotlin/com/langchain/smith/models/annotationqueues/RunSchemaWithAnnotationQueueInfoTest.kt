@@ -5,7 +5,6 @@ package com.langchain.smith.models.annotationqueues
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import com.langchain.smith.models.runs.RunTypeEnum
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -93,7 +92,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
                 .traceFirstReceivedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .traceTier(TraceTier.LONGLIVED)
+                .traceTier(RunSchemaWithAnnotationQueueInfo.TraceTier.LONGLIVED)
                 .traceUpgrade(true)
                 .ttlSeconds(0L)
                 .build()
@@ -210,7 +209,8 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(runSchemaWithAnnotationQueueInfo.traceMinStartTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(runSchemaWithAnnotationQueueInfo.traceTier()).contains(TraceTier.LONGLIVED)
+        assertThat(runSchemaWithAnnotationQueueInfo.traceTier())
+            .contains(RunSchemaWithAnnotationQueueInfo.TraceTier.LONGLIVED)
         assertThat(runSchemaWithAnnotationQueueInfo.traceUpgrade()).contains(true)
         assertThat(runSchemaWithAnnotationQueueInfo.ttlSeconds()).contains(0L)
     }
@@ -295,7 +295,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
                 .traceFirstReceivedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .traceTier(TraceTier.LONGLIVED)
+                .traceTier(RunSchemaWithAnnotationQueueInfo.TraceTier.LONGLIVED)
                 .traceUpgrade(true)
                 .ttlSeconds(0L)
                 .build()

@@ -5,7 +5,6 @@ package com.langchain.smith.services.async
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import com.langchain.smith.models.sessions.CustomChartsSectionRequest
 import com.langchain.smith.models.sessions.RunStatsGroupBy
 import com.langchain.smith.models.sessions.SessionCreateParams
@@ -49,7 +48,7 @@ internal class SessionServiceAsyncTest {
                     .name("name")
                     .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .traceTier(TraceTier.LONGLIVED)
+                    .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                     .build()
             )
 
@@ -104,7 +103,7 @@ internal class SessionServiceAsyncTest {
                     .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .extra(JsonValue.from(mapOf<String, Any>()))
                     .name("name")
-                    .traceTier(TraceTier.LONGLIVED)
+                    .traceTier(SessionUpdateParams.TraceTier.LONGLIVED)
                     .build()
             )
 

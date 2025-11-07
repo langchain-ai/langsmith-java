@@ -4,7 +4,6 @@ package com.langchain.smith.models.sessions
 
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.http.QueryParams
-import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,7 +22,7 @@ internal class SessionCreateParamsTest {
             .name("name")
             .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-            .traceTier(TraceTier.LONGLIVED)
+            .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
             .build()
     }
 
@@ -40,7 +39,7 @@ internal class SessionCreateParamsTest {
                 .name("name")
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .traceTier(TraceTier.LONGLIVED)
+                .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                 .build()
 
         val queryParams = params._queryParams()
@@ -70,7 +69,7 @@ internal class SessionCreateParamsTest {
                 .name("name")
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .traceTier(TraceTier.LONGLIVED)
+                .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                 .build()
 
         val body = params._body()
@@ -83,7 +82,7 @@ internal class SessionCreateParamsTest {
         assertThat(body.name()).contains("name")
         assertThat(body.referenceDatasetId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.startTime()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(body.traceTier()).contains(TraceTier.LONGLIVED)
+        assertThat(body.traceTier()).contains(SessionCreateParams.TraceTier.LONGLIVED)
     }
 
     @Test

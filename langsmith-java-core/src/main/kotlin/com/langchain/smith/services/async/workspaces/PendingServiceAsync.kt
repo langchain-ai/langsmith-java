@@ -5,12 +5,12 @@ package com.langchain.smith.services.async.workspaces
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.tenants.AppSchemasTenant
 import com.langchain.smith.models.workspaces.pending.PendingClaimParams
 import com.langchain.smith.models.workspaces.pending.PendingClaimResponse
 import com.langchain.smith.models.workspaces.pending.PendingDeleteParams
 import com.langchain.smith.models.workspaces.pending.PendingDeleteResponse
 import com.langchain.smith.models.workspaces.pending.PendingListParams
+import com.langchain.smith.models.workspaces.pending.PendingListResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -29,21 +29,21 @@ interface PendingServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): PendingServiceAsync
 
     /** Get all workspaces visible to this auth */
-    fun list(): CompletableFuture<List<AppSchemasTenant>> = list(PendingListParams.none())
+    fun list(): CompletableFuture<List<PendingListResponse>> = list(PendingListParams.none())
 
     /** @see list */
     fun list(
         params: PendingListParams = PendingListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<AppSchemasTenant>>
+    ): CompletableFuture<List<PendingListResponse>>
 
     /** @see list */
     fun list(
         params: PendingListParams = PendingListParams.none()
-    ): CompletableFuture<List<AppSchemasTenant>> = list(params, RequestOptions.none())
+    ): CompletableFuture<List<PendingListResponse>> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<List<AppSchemasTenant>> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<List<PendingListResponse>> =
         list(PendingListParams.none(), requestOptions)
 
     /** Delete Pending Workspace Invite */
@@ -140,25 +140,25 @@ interface PendingServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/workspaces/pending`, but is otherwise the
          * same as [PendingServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<List<AppSchemasTenant>>> =
+        fun list(): CompletableFuture<HttpResponseFor<List<PendingListResponse>>> =
             list(PendingListParams.none())
 
         /** @see list */
         fun list(
             params: PendingListParams = PendingListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<AppSchemasTenant>>>
+        ): CompletableFuture<HttpResponseFor<List<PendingListResponse>>>
 
         /** @see list */
         fun list(
             params: PendingListParams = PendingListParams.none()
-        ): CompletableFuture<HttpResponseFor<List<AppSchemasTenant>>> =
+        ): CompletableFuture<HttpResponseFor<List<PendingListResponse>>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<List<AppSchemasTenant>>> =
+        ): CompletableFuture<HttpResponseFor<List<PendingListResponse>>> =
             list(PendingListParams.none(), requestOptions)
 
         /**

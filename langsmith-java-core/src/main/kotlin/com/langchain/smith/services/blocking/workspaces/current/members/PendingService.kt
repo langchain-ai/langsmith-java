@@ -6,10 +6,10 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.orgs.current.members.PendingIdentity
 import com.langchain.smith.models.workspaces.current.members.pending.PendingDeleteAllParams
 import com.langchain.smith.models.workspaces.current.members.pending.PendingDeleteAllResponse
 import com.langchain.smith.models.workspaces.current.members.pending.PendingListParams
+import com.langchain.smith.models.workspaces.current.members.pending.PendingListResponse
 import java.util.function.Consumer
 
 interface PendingService {
@@ -27,20 +27,20 @@ interface PendingService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): PendingService
 
     /** Get Current Pending Workspace Members */
-    fun list(): List<PendingIdentity> = list(PendingListParams.none())
+    fun list(): List<PendingListResponse> = list(PendingListParams.none())
 
     /** @see list */
     fun list(
         params: PendingListParams = PendingListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<PendingIdentity>
+    ): List<PendingListResponse>
 
     /** @see list */
-    fun list(params: PendingListParams = PendingListParams.none()): List<PendingIdentity> =
+    fun list(params: PendingListParams = PendingListParams.none()): List<PendingListResponse> =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): List<PendingIdentity> =
+    fun list(requestOptions: RequestOptions): List<PendingListResponse> =
         list(PendingListParams.none(), requestOptions)
 
     /** Delete Current Workspace Pending Member */
@@ -90,24 +90,24 @@ interface PendingService {
          * otherwise the same as [PendingService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<List<PendingIdentity>> = list(PendingListParams.none())
+        fun list(): HttpResponseFor<List<PendingListResponse>> = list(PendingListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: PendingListParams = PendingListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<PendingIdentity>>
+        ): HttpResponseFor<List<PendingListResponse>>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: PendingListParams = PendingListParams.none()
-        ): HttpResponseFor<List<PendingIdentity>> = list(params, RequestOptions.none())
+        ): HttpResponseFor<List<PendingListResponse>> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<List<PendingIdentity>> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<List<PendingListResponse>> =
             list(PendingListParams.none(), requestOptions)
 
         /**
