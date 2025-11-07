@@ -1,9 +1,10 @@
 package com.langchain.smith.wrappers.openai;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the WrappedOpenAIClient wrapper.
@@ -48,9 +49,8 @@ class WrappedOpenAIClientTest {
     @Test
     void testOpenAIWrappersWrapMethod() {
         // Create a minimal client to wrap
-        OpenAIClient originalClient = OpenAIOkHttpClient.builder()
-            .apiKey("test-key")
-            .build();
+        OpenAIClient originalClient =
+                OpenAIOkHttpClient.builder().apiKey("test-key").build();
 
         WrappedOpenAIClient wrapped = OpenAIWrappers.wrap(originalClient);
         assertNotNull(wrapped);
@@ -64,4 +64,3 @@ class WrappedOpenAIClientTest {
         });
     }
 }
-
