@@ -41,14 +41,19 @@ This library requires Java 8 or later.
 ```java
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
 // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create();
+SessionDashboardParams params = SessionDashboardParams.builder()
+    .sessionId("REPLACE_ME")
+    .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
+    .build();
+CustomChartsSection customChartsSection = client.sessions().dashboard(params);
 ```
 
 ## Examples
@@ -154,7 +159,7 @@ The `withOptions()` method does not affect the original client or service.
 
 To send a request to the LangChain API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
 
-For example, `client.sessions().create(...)` should be called with an instance of `SessionCreateParams`, and it will return an instance of `TracerSessionWithoutVirtualFields`.
+For example, `client.sessions().dashboard(...)` should be called with an instance of `SessionDashboardParams`, and it will return an instance of `CustomChartsSection`.
 
 ## Immutability
 
@@ -171,15 +176,20 @@ The default client is synchronous. To switch to asynchronous execution, call the
 ```java
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
 // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
-CompletableFuture<TracerSessionWithoutVirtualFields> tracerSessionWithoutVirtualFields = client.async().sessions().create();
+SessionDashboardParams params = SessionDashboardParams.builder()
+    .sessionId("REPLACE_ME")
+    .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
+    .build();
+CompletableFuture<CustomChartsSection> customChartsSection = client.async().sessions().dashboard(params);
 ```
 
 Or create an asynchronous client from the beginning:
@@ -187,15 +197,20 @@ Or create an asynchronous client from the beginning:
 ```java
 import com.langchain.smith.client.LangsmithClientAsync;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
 // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClientAsync client = LangsmithOkHttpClientAsync.fromEnv();
 
-CompletableFuture<TracerSessionWithoutVirtualFields> tracerSessionWithoutVirtualFields = client.sessions().create();
+SessionDashboardParams params = SessionDashboardParams.builder()
+    .sessionId("REPLACE_ME")
+    .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
+    .build();
+CompletableFuture<CustomChartsSection> customChartsSection = client.sessions().dashboard(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -273,21 +288,26 @@ To access this data, prefix any HTTP method call on a client or service with `wi
 ```java
 import com.langchain.smith.core.http.Headers;
 import com.langchain.smith.core.http.HttpResponseFor;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
-HttpResponseFor<TracerSessionWithoutVirtualFields> tracerSessionWithoutVirtualFields = client.sessions().withRawResponse().create();
+SessionDashboardParams params = SessionDashboardParams.builder()
+    .sessionId("REPLACE_ME")
+    .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
+    .build();
+HttpResponseFor<CustomChartsSection> customChartsSection = client.sessions().withRawResponse().dashboard(params);
 
-int statusCode = tracerSessionWithoutVirtualFields.statusCode();
-Headers headers = tracerSessionWithoutVirtualFields.headers();
+int statusCode = customChartsSection.statusCode();
+Headers headers = customChartsSection.headers();
 ```
 
 You can still deserialize the response into an instance of a Java class if needed:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.sessions.CustomChartsSection;
 
-TracerSessionWithoutVirtualFields parsedTracerSessionWithoutVirtualFields = tracerSessionWithoutVirtualFields.parse();
+CustomChartsSection parsedCustomChartsSection = customChartsSection.parse();
 ```
 
 ## Error handling
@@ -383,9 +403,11 @@ Requests time out after 1 minute by default.
 To set a custom timeout, configure the method call using the `timeout` method:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.sessions.CustomChartsSection;
 
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
+CustomChartsSection customChartsSection = client.sessions().dashboard(
+  params, RequestOptions.builder().timeout(Duration.ofSeconds(30)).build()
+);
 ```
 
 Or configure the default for all method calls at the client level:
@@ -488,9 +510,9 @@ To set undocumented parameters, call the `putAdditionalHeader`, `putAdditionalQu
 
 ```java
 import com.langchain.smith.core.JsonValue;
-import com.langchain.smith.models.sessions.SessionCreateParams;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
-SessionCreateParams params = SessionCreateParams.builder()
+SessionDashboardParams params = SessionDashboardParams.builder()
     .putAdditionalHeader("Secret-Header", "42")
     .putAdditionalQueryParam("secret_query_param", "42")
     .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))
@@ -502,9 +524,12 @@ These can be accessed on the built object later using the `_additionalHeaders()`
 To set a documented parameter or property to an undocumented or not yet supported _value_, pass a [`JsonValue`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt) object to its setter:
 
 ```java
-import com.langchain.smith.models.sessions.SessionCreateParams;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
-SessionCreateParams params = SessionCreateParams.builder().build();
+SessionDashboardParams params = SessionDashboardParams.builder()
+    .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
+    .build();
 ```
 
 The most straightforward way to create a [`JsonValue`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt) is using its `from(...)` method:
@@ -552,10 +577,11 @@ To forcibly omit a required parameter or property, pass [`JsonMissing`](langsmit
 
 ```java
 import com.langchain.smith.core.JsonMissing;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.SessionRetrieveParams;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
-SessionCreateParams params = SessionRetrieveParams.builder()
+SessionDashboardParams params = SessionDashboardParams.builder()
+    .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .sessionId(JsonMissing.of())
     .build();
 ```
@@ -568,7 +594,7 @@ To access undocumented response properties, call the `_additionalProperties()` m
 import com.langchain.smith.core.JsonValue;
 import java.util.Map;
 
-Map<String, JsonValue> additionalProperties = client.sessions().create(params)._additionalProperties();
+Map<String, JsonValue> additionalProperties = client.sessions().dashboard(params)._additionalProperties();
 JsonValue secretPropertyValue = additionalProperties.get("secretProperty");
 
 String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
@@ -598,19 +624,19 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 import com.langchain.smith.core.JsonField;
 import java.util.Optional;
 
-JsonField<String> id = client.sessions().create(params)._id();
+JsonField<Object> field = client.sessions().dashboard(params)._field();
 
-if (id.isMissing()) {
+if (field.isMissing()) {
   // The property is absent from the JSON response
-} else if (id.isNull()) {
+} else if (field.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = id.asString();
+  Optional<String> jsonString = field.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = id.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = field.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 
@@ -623,17 +649,19 @@ By default, the SDK will not throw an exception in this case. It will throw [`La
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.sessions.CustomChartsSection;
 
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(params).validate();
+CustomChartsSection customChartsSection = client.sessions().dashboard(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.sessions.CustomChartsSection;
 
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(RequestOptions.builder().responseValidation(true).build());
+CustomChartsSection customChartsSection = client.sessions().dashboard(
+  params, RequestOptions.builder().responseValidation(true).build()
+);
 ```
 
 Or configure the default for all method calls at the client level:

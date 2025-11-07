@@ -1,29 +1,34 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sessions.insights
+package com.langchain.smith.models.sessions
 
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get all clusters for a session. */
-class InsightListParams
+/** Get a prebuilt dashboard for a tracing project. */
+class SessionDashboardParams
 private constructor(
     private val sessionId: String?,
-    private val limit: Long?,
-    private val offset: Long?,
+    private val accept: String?,
+    private val customChartsSectionRequest: CustomChartsSectionRequest,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     fun sessionId(): Optional<String> = Optional.ofNullable(sessionId)
 
-    fun limit(): Optional<Long> = Optional.ofNullable(limit)
+    fun accept(): Optional<String> = Optional.ofNullable(accept)
 
-    fun offset(): Optional<Long> = Optional.ofNullable(offset)
+    fun customChartsSectionRequest(): CustomChartsSectionRequest = customChartsSectionRequest
+
+    fun _additionalBodyProperties(): Map<String, JsonValue> =
+        customChartsSectionRequest._additionalProperties()
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -35,28 +40,33 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): InsightListParams = builder().build()
-
-        /** Returns a mutable builder for constructing an instance of [InsightListParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [SessionDashboardParams].
+         *
+         * The following fields are required:
+         * ```java
+         * .customChartsSectionRequest()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [InsightListParams]. */
+    /** A builder for [SessionDashboardParams]. */
     class Builder internal constructor() {
 
         private var sessionId: String? = null
-        private var limit: Long? = null
-        private var offset: Long? = null
+        private var accept: String? = null
+        private var customChartsSectionRequest: CustomChartsSectionRequest? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(insightListParams: InsightListParams) = apply {
-            sessionId = insightListParams.sessionId
-            limit = insightListParams.limit
-            offset = insightListParams.offset
-            additionalHeaders = insightListParams.additionalHeaders.toBuilder()
-            additionalQueryParams = insightListParams.additionalQueryParams.toBuilder()
+        internal fun from(sessionDashboardParams: SessionDashboardParams) = apply {
+            sessionId = sessionDashboardParams.sessionId
+            accept = sessionDashboardParams.accept
+            customChartsSectionRequest = sessionDashboardParams.customChartsSectionRequest
+            additionalHeaders = sessionDashboardParams.additionalHeaders.toBuilder()
+            additionalQueryParams = sessionDashboardParams.additionalQueryParams.toBuilder()
         }
 
         fun sessionId(sessionId: String?) = apply { this.sessionId = sessionId }
@@ -64,29 +74,15 @@ private constructor(
         /** Alias for calling [Builder.sessionId] with `sessionId.orElse(null)`. */
         fun sessionId(sessionId: Optional<String>) = sessionId(sessionId.getOrNull())
 
-        fun limit(limit: Long?) = apply { this.limit = limit }
+        fun accept(accept: String?) = apply { this.accept = accept }
 
-        /**
-         * Alias for [Builder.limit].
-         *
-         * This unboxed primitive overload exists for backwards compatibility.
-         */
-        fun limit(limit: Long) = limit(limit as Long?)
+        /** Alias for calling [Builder.accept] with `accept.orElse(null)`. */
+        fun accept(accept: Optional<String>) = accept(accept.getOrNull())
 
-        /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
-        fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
-
-        fun offset(offset: Long?) = apply { this.offset = offset }
-
-        /**
-         * Alias for [Builder.offset].
-         *
-         * This unboxed primitive overload exists for backwards compatibility.
-         */
-        fun offset(offset: Long) = offset(offset as Long?)
-
-        /** Alias for calling [Builder.offset] with `offset.orElse(null)`. */
-        fun offset(offset: Optional<Long>) = offset(offset.getOrNull())
+        fun customChartsSectionRequest(customChartsSectionRequest: CustomChartsSectionRequest) =
+            apply {
+                this.customChartsSectionRequest = customChartsSectionRequest
+            }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -187,19 +183,28 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [InsightListParams].
+         * Returns an immutable instance of [SessionDashboardParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .customChartsSectionRequest()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): InsightListParams =
-            InsightListParams(
+        fun build(): SessionDashboardParams =
+            SessionDashboardParams(
                 sessionId,
-                limit,
-                offset,
+                accept,
+                checkRequired("customChartsSectionRequest", customChartsSectionRequest),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
+
+    fun _body(): CustomChartsSectionRequest = customChartsSectionRequest
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -207,33 +212,38 @@ private constructor(
             else -> ""
         }
 
-    override fun _headers(): Headers = additionalHeaders
-
-    override fun _queryParams(): QueryParams =
-        QueryParams.builder()
+    override fun _headers(): Headers =
+        Headers.builder()
             .apply {
-                limit?.let { put("limit", it.toString()) }
-                offset?.let { put("offset", it.toString()) }
-                putAll(additionalQueryParams)
+                accept?.let { put("accept", it) }
+                putAll(additionalHeaders)
             }
             .build()
+
+    override fun _queryParams(): QueryParams = additionalQueryParams
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
 
-        return other is InsightListParams &&
+        return other is SessionDashboardParams &&
             sessionId == other.sessionId &&
-            limit == other.limit &&
-            offset == other.offset &&
+            accept == other.accept &&
+            customChartsSectionRequest == other.customChartsSectionRequest &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(sessionId, limit, offset, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            sessionId,
+            accept,
+            customChartsSectionRequest,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "InsightListParams{sessionId=$sessionId, limit=$limit, offset=$offset, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SessionDashboardParams{sessionId=$sessionId, accept=$accept, customChartsSectionRequest=$customChartsSectionRequest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
