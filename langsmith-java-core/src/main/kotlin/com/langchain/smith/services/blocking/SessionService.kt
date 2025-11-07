@@ -6,7 +6,9 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
+import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListParams
@@ -165,6 +167,28 @@ interface SessionService {
     /** @see delete */
     fun delete(sessionId: String, requestOptions: RequestOptions): SessionDeleteResponse =
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
+
+    /** Get a prebuilt dashboard for a tracing project. */
+    fun dashboard(sessionId: String, params: SessionDashboardParams): CustomChartsSection =
+        dashboard(sessionId, params, RequestOptions.none())
+
+    /** @see dashboard */
+    fun dashboard(
+        sessionId: String,
+        params: SessionDashboardParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CustomChartsSection =
+        dashboard(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+    /** @see dashboard */
+    fun dashboard(params: SessionDashboardParams): CustomChartsSection =
+        dashboard(params, RequestOptions.none())
+
+    /** @see dashboard */
+    fun dashboard(
+        params: SessionDashboardParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CustomChartsSection
 
     /** A view of [SessionService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -366,5 +390,37 @@ interface SessionService {
             requestOptions: RequestOptions,
         ): HttpResponseFor<SessionDeleteResponse> =
             delete(sessionId, SessionDeleteParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/dashboard`, but is
+         * otherwise the same as [SessionService.dashboard].
+         */
+        @MustBeClosed
+        fun dashboard(
+            sessionId: String,
+            params: SessionDashboardParams,
+        ): HttpResponseFor<CustomChartsSection> =
+            dashboard(sessionId, params, RequestOptions.none())
+
+        /** @see dashboard */
+        @MustBeClosed
+        fun dashboard(
+            sessionId: String,
+            params: SessionDashboardParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<CustomChartsSection> =
+            dashboard(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+        /** @see dashboard */
+        @MustBeClosed
+        fun dashboard(params: SessionDashboardParams): HttpResponseFor<CustomChartsSection> =
+            dashboard(params, RequestOptions.none())
+
+        /** @see dashboard */
+        @MustBeClosed
+        fun dashboard(
+            params: SessionDashboardParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<CustomChartsSection>
     }
 }

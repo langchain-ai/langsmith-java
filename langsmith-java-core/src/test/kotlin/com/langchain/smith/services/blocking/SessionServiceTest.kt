@@ -5,11 +5,15 @@ package com.langchain.smith.services.blocking
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest
+import com.langchain.smith.models.sessions.RunStatsGroupBy
 import com.langchain.smith.models.sessions.SessionCreateParams
+import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionSortableColumns
 import com.langchain.smith.models.sessions.SessionUpdateParams
+import com.langchain.smith.models.sessions.TimedeltaInput
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -157,5 +161,44 @@ internal class SessionServiceTest {
         val session = sessionService.delete("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         session.validate()
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun dashboard() {
+        val client =
+            LangsmithOkHttpClient.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val sessionService = client.sessions()
+
+        val customChartsSection =
+            sessionService.dashboard(
+                SessionDashboardParams.builder()
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .accept("accept")
+                    .customChartsSectionRequest(
+                        CustomChartsSectionRequest.builder()
+                            .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .groupBy(
+                                RunStatsGroupBy.builder()
+                                    .attribute(RunStatsGroupBy.Attribute.NAME)
+                                    .maxGroups(0L)
+                                    .path("path")
+                                    .build()
+                            )
+                            .omitData(true)
+                            .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .stride(TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build())
+                            .timezone("timezone")
+                            .build()
+                    )
+                    .build()
+            )
+
+        customChartsSection.validate()
     }
 }

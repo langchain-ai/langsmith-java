@@ -16,7 +16,9 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
+import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListParams
@@ -80,6 +82,13 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
     ): CompletableFuture<SessionDeleteResponse> =
         // delete /api/v1/sessions/{session_id}
         withRawResponse().delete(params, requestOptions).thenApply { it.parse() }
+
+    override fun dashboard(
+        params: SessionDashboardParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<CustomChartsSection> =
+        // post /api/v1/sessions/{session_id}/dashboard
+        withRawResponse().dashboard(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SessionServiceAsync.WithRawResponse {
@@ -253,6 +262,40 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
                     errorHandler.handle(response).parseable {
                         response
                             .use { deleteHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val dashboardHandler: Handler<CustomChartsSection> =
+            jsonHandler<CustomChartsSection>(clientOptions.jsonMapper)
+
+        override fun dashboard(
+            params: SessionDashboardParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<CustomChartsSection>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("sessionId", params.sessionId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "sessions", params._pathParam(0), "dashboard")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { dashboardHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

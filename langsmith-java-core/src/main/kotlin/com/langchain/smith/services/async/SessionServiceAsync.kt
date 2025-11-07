@@ -5,7 +5,9 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
+import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListParams
@@ -177,6 +179,30 @@ interface SessionServiceAsync {
         requestOptions: RequestOptions,
     ): CompletableFuture<SessionDeleteResponse> =
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
+
+    /** Get a prebuilt dashboard for a tracing project. */
+    fun dashboard(
+        sessionId: String,
+        params: SessionDashboardParams,
+    ): CompletableFuture<CustomChartsSection> = dashboard(sessionId, params, RequestOptions.none())
+
+    /** @see dashboard */
+    fun dashboard(
+        sessionId: String,
+        params: SessionDashboardParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<CustomChartsSection> =
+        dashboard(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+    /** @see dashboard */
+    fun dashboard(params: SessionDashboardParams): CompletableFuture<CustomChartsSection> =
+        dashboard(params, RequestOptions.none())
+
+    /** @see dashboard */
+    fun dashboard(
+        params: SessionDashboardParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<CustomChartsSection>
 
     /**
      * A view of [SessionServiceAsync] that provides access to raw HTTP responses for each method.
@@ -368,5 +394,35 @@ interface SessionServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<SessionDeleteResponse>> =
             delete(sessionId, SessionDeleteParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/dashboard`, but is
+         * otherwise the same as [SessionServiceAsync.dashboard].
+         */
+        fun dashboard(
+            sessionId: String,
+            params: SessionDashboardParams,
+        ): CompletableFuture<HttpResponseFor<CustomChartsSection>> =
+            dashboard(sessionId, params, RequestOptions.none())
+
+        /** @see dashboard */
+        fun dashboard(
+            sessionId: String,
+            params: SessionDashboardParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<CustomChartsSection>> =
+            dashboard(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+        /** @see dashboard */
+        fun dashboard(
+            params: SessionDashboardParams
+        ): CompletableFuture<HttpResponseFor<CustomChartsSection>> =
+            dashboard(params, RequestOptions.none())
+
+        /** @see dashboard */
+        fun dashboard(
+            params: SessionDashboardParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<CustomChartsSection>>
     }
 }

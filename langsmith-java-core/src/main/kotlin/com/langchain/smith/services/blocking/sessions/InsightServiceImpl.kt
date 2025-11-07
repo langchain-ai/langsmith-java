@@ -20,8 +20,6 @@ import com.langchain.smith.models.sessions.insights.InsightCreateParams
 import com.langchain.smith.models.sessions.insights.InsightCreateResponse
 import com.langchain.smith.models.sessions.insights.InsightDeleteParams
 import com.langchain.smith.models.sessions.insights.InsightDeleteResponse
-import com.langchain.smith.models.sessions.insights.InsightListParams
-import com.langchain.smith.models.sessions.insights.InsightListResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
@@ -56,13 +54,6 @@ class InsightServiceImpl internal constructor(private val clientOptions: ClientO
     ): InsightUpdateResponse =
         // patch /api/v1/sessions/{session_id}/insights/{job_id}
         withRawResponse().update(params, requestOptions).parse()
-
-    override fun list(
-        params: InsightListParams,
-        requestOptions: RequestOptions,
-    ): InsightListResponse =
-        // get /api/v1/sessions/{session_id}/insights
-        withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(
         params: InsightDeleteParams,
@@ -159,36 +150,6 @@ class InsightServiceImpl internal constructor(private val clientOptions: ClientO
             return errorHandler.handle(response).parseable {
                 response
                     .use { updateHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val listHandler: Handler<InsightListResponse> =
-            jsonHandler<InsightListResponse>(clientOptions.jsonMapper)
-
-        override fun list(
-            params: InsightListParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<InsightListResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("sessionId", params.sessionId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "sessions", params._pathParam(0), "insights")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { listHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

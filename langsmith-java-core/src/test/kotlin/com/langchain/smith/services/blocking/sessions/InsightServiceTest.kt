@@ -8,7 +8,6 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sessions.insights.CreateRunClusteringJobRequest
 import com.langchain.smith.models.sessions.insights.InsightCreateParams
 import com.langchain.smith.models.sessions.insights.InsightDeleteParams
-import com.langchain.smith.models.sessions.insights.InsightListParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
@@ -89,30 +88,6 @@ internal class InsightServiceTest {
             )
 
         insight.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun list() {
-        val client =
-            LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val insightService = client.sessions().insights()
-
-        val insights =
-            insightService.list(
-                InsightListParams.builder()
-                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .limit(1L)
-                    .offset(0L)
-                    .build()
-            )
-
-        insights.validate()
     }
 
     @Disabled("Prism tests are disabled")
