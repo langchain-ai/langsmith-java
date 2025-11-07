@@ -24,8 +24,6 @@ import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
-import com.langchain.smith.services.blocking.public_.datasets.RunService
-import com.langchain.smith.services.blocking.public_.datasets.RunServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -36,14 +34,10 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         WithRawResponseImpl(clientOptions)
     }
 
-    private val runs: RunService by lazy { RunServiceImpl(clientOptions) }
-
     override fun withRawResponse(): DatasetService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService =
         DatasetServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun runs(): RunService = runs
 
     override fun list(
         params: DatasetListParams,
@@ -86,18 +80,12 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val runs: RunService.WithRawResponse by lazy {
-            RunServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): DatasetService.WithRawResponse =
             DatasetServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun runs(): RunService.WithRawResponse = runs
 
         private val listHandler: Handler<DatasetListResponse> =
             jsonHandler<DatasetListResponse>(clientOptions.jsonMapper)

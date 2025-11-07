@@ -19,15 +19,10 @@ import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.feedback.FeedbackCreateParams
 import com.langchain.smith.models.feedback.FeedbackDeleteParams
 import com.langchain.smith.models.feedback.FeedbackDeleteResponse
-import com.langchain.smith.models.feedback.FeedbackEagerParams
-import com.langchain.smith.models.feedback.FeedbackIngestBatchParams
-import com.langchain.smith.models.feedback.FeedbackIngestBatchResponse
 import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
-import com.langchain.smith.services.async.feedback.FormulaServiceAsync
-import com.langchain.smith.services.async.feedback.FormulaServiceAsyncImpl
 import com.langchain.smith.services.async.feedback.TokenServiceAsync
 import com.langchain.smith.services.async.feedback.TokenServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
@@ -41,16 +36,12 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
         WithRawResponseImpl(clientOptions)
     }
 
-    private val formulas: FormulaServiceAsync by lazy { FormulaServiceAsyncImpl(clientOptions) }
-
     private val tokens: TokenServiceAsync by lazy { TokenServiceAsyncImpl(clientOptions) }
 
     override fun withRawResponse(): FeedbackServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): FeedbackServiceAsync =
         FeedbackServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun formulas(): FormulaServiceAsync = formulas
 
     override fun tokens(): TokenServiceAsync = tokens
 
@@ -89,29 +80,11 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
         // delete /api/v1/feedback/{feedback_id}
         withRawResponse().delete(params, requestOptions).thenApply { it.parse() }
 
-    override fun eager(
-        params: FeedbackEagerParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<FeedbackSchema> =
-        // post /api/v1/feedback/eager
-        withRawResponse().eager(params, requestOptions).thenApply { it.parse() }
-
-    override fun ingestBatch(
-        params: FeedbackIngestBatchParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<FeedbackIngestBatchResponse> =
-        // post /feedback/batch
-        withRawResponse().ingestBatch(params, requestOptions).thenApply { it.parse() }
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         FeedbackServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
-
-        private val formulas: FormulaServiceAsync.WithRawResponse by lazy {
-            FormulaServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
 
         private val tokens: TokenServiceAsync.WithRawResponse by lazy {
             TokenServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -123,8 +96,6 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
             FeedbackServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun formulas(): FormulaServiceAsync.WithRawResponse = formulas
 
         override fun tokens(): TokenServiceAsync.WithRawResponse = tokens
 
@@ -281,68 +252,6 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
                     errorHandler.handle(response).parseable {
                         response
                             .use { deleteHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val eagerHandler: Handler<FeedbackSchema> =
-            jsonHandler<FeedbackSchema>(clientOptions.jsonMapper)
-
-        override fun eager(
-            params: FeedbackEagerParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FeedbackSchema>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "feedback", "eager")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { eagerHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val ingestBatchHandler: Handler<FeedbackIngestBatchResponse> =
-            jsonHandler<FeedbackIngestBatchResponse>(clientOptions.jsonMapper)
-
-        override fun ingestBatch(
-            params: FeedbackIngestBatchParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<FeedbackIngestBatchResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("feedback", "batch")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { ingestBatchHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

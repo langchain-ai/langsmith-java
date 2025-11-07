@@ -11,12 +11,10 @@ import com.langchain.smith.models.repos.GetRepoResponse
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoDeleteResponse
-import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoListResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
-import com.langchain.smith.services.blocking.repos.TagService
 import java.util.function.Consumer
 
 interface RepoService {
@@ -32,8 +30,6 @@ interface RepoService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService
-
-    fun tags(): TagService
 
     /** Create a repo. */
     fun create(params: RepoCreateParams): CreateRepoResponse = create(params, RequestOptions.none())
@@ -122,26 +118,6 @@ interface RepoService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): RepoDeleteResponse
 
-    /** Fork a repo. */
-    fun fork(repo: String, params: RepoForkParams): GetRepoResponse =
-        fork(repo, params, RequestOptions.none())
-
-    /** @see fork */
-    fun fork(
-        repo: String,
-        params: RepoForkParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): GetRepoResponse = fork(params.toBuilder().repo(repo).build(), requestOptions)
-
-    /** @see fork */
-    fun fork(params: RepoForkParams): GetRepoResponse = fork(params, RequestOptions.none())
-
-    /** @see fork */
-    fun fork(
-        params: RepoForkParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): GetRepoResponse
-
     /** A view of [RepoService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -151,8 +127,6 @@ interface RepoService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService.WithRawResponse
-
-        fun tags(): TagService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/repos`, but is otherwise the same as
@@ -279,34 +253,5 @@ interface RepoService {
             params: RepoDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<RepoDeleteResponse>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/repos/{owner}/{repo}/fork`, but is
-         * otherwise the same as [RepoService.fork].
-         */
-        @MustBeClosed
-        fun fork(repo: String, params: RepoForkParams): HttpResponseFor<GetRepoResponse> =
-            fork(repo, params, RequestOptions.none())
-
-        /** @see fork */
-        @MustBeClosed
-        fun fork(
-            repo: String,
-            params: RepoForkParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<GetRepoResponse> =
-            fork(params.toBuilder().repo(repo).build(), requestOptions)
-
-        /** @see fork */
-        @MustBeClosed
-        fun fork(params: RepoForkParams): HttpResponseFor<GetRepoResponse> =
-            fork(params, RequestOptions.none())
-
-        /** @see fork */
-        @MustBeClosed
-        fun fork(
-            params: RepoForkParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<GetRepoResponse>
     }
 }

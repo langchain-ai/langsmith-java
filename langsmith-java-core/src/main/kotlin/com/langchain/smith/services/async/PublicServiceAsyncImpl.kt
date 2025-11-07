@@ -19,12 +19,6 @@ import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import com.langchain.smith.services.async.public_.DatasetServiceAsync
 import com.langchain.smith.services.async.public_.DatasetServiceAsyncImpl
-import com.langchain.smith.services.async.public_.ExampleServiceAsync
-import com.langchain.smith.services.async.public_.ExampleServiceAsyncImpl
-import com.langchain.smith.services.async.public_.RunServiceAsync
-import com.langchain.smith.services.async.public_.RunServiceAsyncImpl
-import com.langchain.smith.services.async.public_.SchemaServiceAsync
-import com.langchain.smith.services.async.public_.SchemaServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -38,24 +32,12 @@ class PublicServiceAsyncImpl internal constructor(private val clientOptions: Cli
 
     private val datasets: DatasetServiceAsync by lazy { DatasetServiceAsyncImpl(clientOptions) }
 
-    private val examples: ExampleServiceAsync by lazy { ExampleServiceAsyncImpl(clientOptions) }
-
-    private val schemas: SchemaServiceAsync by lazy { SchemaServiceAsyncImpl(clientOptions) }
-
-    private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
-
     override fun withRawResponse(): PublicServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): PublicServiceAsync =
         PublicServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun datasets(): DatasetServiceAsync = datasets
-
-    override fun examples(): ExampleServiceAsync = examples
-
-    override fun schemas(): SchemaServiceAsync = schemas
-
-    override fun runs(): RunServiceAsync = runs
 
     override fun retrieveFeedbacks(
         params: PublicRetrieveFeedbacksParams,
@@ -74,18 +56,6 @@ class PublicServiceAsyncImpl internal constructor(private val clientOptions: Cli
             DatasetServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val examples: ExampleServiceAsync.WithRawResponse by lazy {
-            ExampleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val schemas: SchemaServiceAsync.WithRawResponse by lazy {
-            SchemaServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val runs: RunServiceAsync.WithRawResponse by lazy {
-            RunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): PublicServiceAsync.WithRawResponse =
@@ -94,12 +64,6 @@ class PublicServiceAsyncImpl internal constructor(private val clientOptions: Cli
             )
 
         override fun datasets(): DatasetServiceAsync.WithRawResponse = datasets
-
-        override fun examples(): ExampleServiceAsync.WithRawResponse = examples
-
-        override fun schemas(): SchemaServiceAsync.WithRawResponse = schemas
-
-        override fun runs(): RunServiceAsync.WithRawResponse = runs
 
         private val retrieveFeedbacksHandler: Handler<List<FeedbackSchema>> =
             jsonHandler<List<FeedbackSchema>>(clientOptions.jsonMapper)

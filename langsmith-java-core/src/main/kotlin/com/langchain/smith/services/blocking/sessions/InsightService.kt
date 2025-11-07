@@ -14,13 +14,10 @@ import com.langchain.smith.models.sessions.insights.InsightListParams
 import com.langchain.smith.models.sessions.insights.InsightListResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobResponse
-import com.langchain.smith.models.sessions.insights.InsightRetrieveParams
-import com.langchain.smith.models.sessions.insights.InsightRetrieveResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsResponse
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateResponse
-import com.langchain.smith.services.blocking.sessions.insights.ConfigService
 import java.util.function.Consumer
 
 interface InsightService {
@@ -36,8 +33,6 @@ interface InsightService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightService
-
-    fun configs(): ConfigService
 
     /** Create an insights job. */
     fun create(sessionId: String, params: InsightCreateParams): InsightCreateResponse =
@@ -60,28 +55,6 @@ interface InsightService {
         params: InsightCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): InsightCreateResponse
-
-    /** Get a specific cluster for a session. */
-    fun retrieve(clusterId: String, params: InsightRetrieveParams): InsightRetrieveResponse =
-        retrieve(clusterId, params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        clusterId: String,
-        params: InsightRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): InsightRetrieveResponse =
-        retrieve(params.toBuilder().clusterId(clusterId).build(), requestOptions)
-
-    /** @see retrieve */
-    fun retrieve(params: InsightRetrieveParams): InsightRetrieveResponse =
-        retrieve(params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        params: InsightRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): InsightRetrieveResponse
 
     /** Update a session cluster job. */
     fun update(jobId: String, params: InsightUpdateParams): InsightUpdateResponse =
@@ -210,8 +183,6 @@ interface InsightService {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightService.WithRawResponse
 
-        fun configs(): ConfigService.WithRawResponse
-
         /**
          * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/insights`, but is
          * otherwise the same as [InsightService.create].
@@ -242,39 +213,6 @@ interface InsightService {
             params: InsightCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<InsightCreateResponse>
-
-        /**
-         * Returns a raw HTTP response for `get
-         * /api/v1/sessions/{session_id}/insights/{job_id}/clusters/{cluster_id}`, but is otherwise
-         * the same as [InsightService.retrieve].
-         */
-        @MustBeClosed
-        fun retrieve(
-            clusterId: String,
-            params: InsightRetrieveParams,
-        ): HttpResponseFor<InsightRetrieveResponse> =
-            retrieve(clusterId, params, RequestOptions.none())
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(
-            clusterId: String,
-            params: InsightRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<InsightRetrieveResponse> =
-            retrieve(params.toBuilder().clusterId(clusterId).build(), requestOptions)
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(params: InsightRetrieveParams): HttpResponseFor<InsightRetrieveResponse> =
-            retrieve(params, RequestOptions.none())
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(
-            params: InsightRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<InsightRetrieveResponse>
 
         /**
          * Returns a raw HTTP response for `patch /api/v1/sessions/{session_id}/insights/{job_id}`,

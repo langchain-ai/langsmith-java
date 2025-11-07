@@ -5,22 +5,15 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
-import com.langchain.smith.models.sessions.SessionDashboardParams
-import com.langchain.smith.models.sessions.SessionDeleteAllParams
-import com.langchain.smith.models.sessions.SessionDeleteAllResponse
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListParams
-import com.langchain.smith.models.sessions.SessionRetrieveMetadataParams
-import com.langchain.smith.models.sessions.SessionRetrieveMetadataResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
 import com.langchain.smith.services.async.sessions.InsightServiceAsync
-import com.langchain.smith.services.async.sessions.ViewServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -37,8 +30,6 @@ interface SessionServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SessionServiceAsync
-
-    fun views(): ViewServiceAsync
 
     fun insights(): InsightServiceAsync
 
@@ -187,81 +178,6 @@ interface SessionServiceAsync {
     ): CompletableFuture<SessionDeleteResponse> =
         delete(sessionId, SessionDeleteParams.none(), requestOptions)
 
-    /** Get a prebuilt dashboard for a tracing project. */
-    fun dashboard(
-        sessionId: String,
-        params: SessionDashboardParams,
-    ): CompletableFuture<CustomChartsSection> = dashboard(sessionId, params, RequestOptions.none())
-
-    /** @see dashboard */
-    fun dashboard(
-        sessionId: String,
-        params: SessionDashboardParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CustomChartsSection> =
-        dashboard(params.toBuilder().sessionId(sessionId).build(), requestOptions)
-
-    /** @see dashboard */
-    fun dashboard(params: SessionDashboardParams): CompletableFuture<CustomChartsSection> =
-        dashboard(params, RequestOptions.none())
-
-    /** @see dashboard */
-    fun dashboard(
-        params: SessionDashboardParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CustomChartsSection>
-
-    /** Delete a specific session. */
-    fun deleteAll(params: SessionDeleteAllParams): CompletableFuture<SessionDeleteAllResponse> =
-        deleteAll(params, RequestOptions.none())
-
-    /** @see deleteAll */
-    fun deleteAll(
-        params: SessionDeleteAllParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SessionDeleteAllResponse>
-
-    /**
-     * Given a session, a number K, and (optionally) a list of metadata keys, return the top K
-     * values for each key.
-     */
-    fun retrieveMetadata(sessionId: String): CompletableFuture<SessionRetrieveMetadataResponse> =
-        retrieveMetadata(sessionId, SessionRetrieveMetadataParams.none())
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        sessionId: String,
-        params: SessionRetrieveMetadataParams = SessionRetrieveMetadataParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SessionRetrieveMetadataResponse> =
-        retrieveMetadata(params.toBuilder().sessionId(sessionId).build(), requestOptions)
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        sessionId: String,
-        params: SessionRetrieveMetadataParams = SessionRetrieveMetadataParams.none(),
-    ): CompletableFuture<SessionRetrieveMetadataResponse> =
-        retrieveMetadata(sessionId, params, RequestOptions.none())
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        params: SessionRetrieveMetadataParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SessionRetrieveMetadataResponse>
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        params: SessionRetrieveMetadataParams
-    ): CompletableFuture<SessionRetrieveMetadataResponse> =
-        retrieveMetadata(params, RequestOptions.none())
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        sessionId: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<SessionRetrieveMetadataResponse> =
-        retrieveMetadata(sessionId, SessionRetrieveMetadataParams.none(), requestOptions)
-
     /**
      * A view of [SessionServiceAsync] that provides access to raw HTTP responses for each method.
      */
@@ -275,8 +191,6 @@ interface SessionServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): SessionServiceAsync.WithRawResponse
-
-        fun views(): ViewServiceAsync.WithRawResponse
 
         fun insights(): InsightServiceAsync.WithRawResponse
 
@@ -454,93 +368,5 @@ interface SessionServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<SessionDeleteResponse>> =
             delete(sessionId, SessionDeleteParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/dashboard`, but is
-         * otherwise the same as [SessionServiceAsync.dashboard].
-         */
-        fun dashboard(
-            sessionId: String,
-            params: SessionDashboardParams,
-        ): CompletableFuture<HttpResponseFor<CustomChartsSection>> =
-            dashboard(sessionId, params, RequestOptions.none())
-
-        /** @see dashboard */
-        fun dashboard(
-            sessionId: String,
-            params: SessionDashboardParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CustomChartsSection>> =
-            dashboard(params.toBuilder().sessionId(sessionId).build(), requestOptions)
-
-        /** @see dashboard */
-        fun dashboard(
-            params: SessionDashboardParams
-        ): CompletableFuture<HttpResponseFor<CustomChartsSection>> =
-            dashboard(params, RequestOptions.none())
-
-        /** @see dashboard */
-        fun dashboard(
-            params: SessionDashboardParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CustomChartsSection>>
-
-        /**
-         * Returns a raw HTTP response for `delete /api/v1/sessions`, but is otherwise the same as
-         * [SessionServiceAsync.deleteAll].
-         */
-        fun deleteAll(
-            params: SessionDeleteAllParams
-        ): CompletableFuture<HttpResponseFor<SessionDeleteAllResponse>> =
-            deleteAll(params, RequestOptions.none())
-
-        /** @see deleteAll */
-        fun deleteAll(
-            params: SessionDeleteAllParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SessionDeleteAllResponse>>
-
-        /**
-         * Returns a raw HTTP response for `get /api/v1/sessions/{session_id}/metadata`, but is
-         * otherwise the same as [SessionServiceAsync.retrieveMetadata].
-         */
-        fun retrieveMetadata(
-            sessionId: String
-        ): CompletableFuture<HttpResponseFor<SessionRetrieveMetadataResponse>> =
-            retrieveMetadata(sessionId, SessionRetrieveMetadataParams.none())
-
-        /** @see retrieveMetadata */
-        fun retrieveMetadata(
-            sessionId: String,
-            params: SessionRetrieveMetadataParams = SessionRetrieveMetadataParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SessionRetrieveMetadataResponse>> =
-            retrieveMetadata(params.toBuilder().sessionId(sessionId).build(), requestOptions)
-
-        /** @see retrieveMetadata */
-        fun retrieveMetadata(
-            sessionId: String,
-            params: SessionRetrieveMetadataParams = SessionRetrieveMetadataParams.none(),
-        ): CompletableFuture<HttpResponseFor<SessionRetrieveMetadataResponse>> =
-            retrieveMetadata(sessionId, params, RequestOptions.none())
-
-        /** @see retrieveMetadata */
-        fun retrieveMetadata(
-            params: SessionRetrieveMetadataParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SessionRetrieveMetadataResponse>>
-
-        /** @see retrieveMetadata */
-        fun retrieveMetadata(
-            params: SessionRetrieveMetadataParams
-        ): CompletableFuture<HttpResponseFor<SessionRetrieveMetadataResponse>> =
-            retrieveMetadata(params, RequestOptions.none())
-
-        /** @see retrieveMetadata */
-        fun retrieveMetadata(
-            sessionId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SessionRetrieveMetadataResponse>> =
-            retrieveMetadata(sessionId, SessionRetrieveMetadataParams.none(), requestOptions)
     }
 }

@@ -21,13 +21,10 @@ import com.langchain.smith.models.repos.GetRepoResponse
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoDeleteResponse
-import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoListResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
-import com.langchain.smith.services.blocking.repos.TagService
-import com.langchain.smith.services.blocking.repos.TagServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -37,14 +34,10 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
         WithRawResponseImpl(clientOptions)
     }
 
-    private val tags: TagService by lazy { TagServiceImpl(clientOptions) }
-
     override fun withRawResponse(): RepoService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService =
         RepoServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun tags(): TagService = tags
 
     override fun create(
         params: RepoCreateParams,
@@ -78,19 +71,11 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
         // delete /api/v1/repos/{owner}/{repo}
         withRawResponse().delete(params, requestOptions).parse()
 
-    override fun fork(params: RepoForkParams, requestOptions: RequestOptions): GetRepoResponse =
-        // post /api/v1/repos/{owner}/{repo}/fork
-        withRawResponse().fork(params, requestOptions).parse()
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RepoService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
-
-        private val tags: TagService.WithRawResponse by lazy {
-            TagServiceImpl.WithRawResponseImpl(clientOptions)
-        }
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
@@ -98,8 +83,6 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
             RepoServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun tags(): TagService.WithRawResponse = tags
 
         private val createHandler: Handler<CreateRepoResponse> =
             jsonHandler<CreateRepoResponse>(clientOptions.jsonMapper)
@@ -258,44 +241,6 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
             return errorHandler.handle(response).parseable {
                 response
                     .use { deleteHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val forkHandler: Handler<GetRepoResponse> =
-            jsonHandler<GetRepoResponse>(clientOptions.jsonMapper)
-
-        override fun fork(
-            params: RepoForkParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<GetRepoResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("repo", params.repo().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "api",
-                        "v1",
-                        "repos",
-                        params._pathParam(0),
-                        params._pathParam(1),
-                        "fork",
-                    )
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { forkHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

@@ -24,8 +24,6 @@ import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
-import com.langchain.smith.services.async.public_.datasets.RunServiceAsync
-import com.langchain.smith.services.async.public_.datasets.RunServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -37,14 +35,10 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         WithRawResponseImpl(clientOptions)
     }
 
-    private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
-
     override fun withRawResponse(): DatasetServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetServiceAsync =
         DatasetServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun runs(): RunServiceAsync = runs
 
     override fun list(
         params: DatasetListParams,
@@ -87,18 +81,12 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val runs: RunServiceAsync.WithRawResponse by lazy {
-            RunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): DatasetServiceAsync.WithRawResponse =
             DatasetServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun runs(): RunServiceAsync.WithRawResponse = runs
 
         private val listHandler: Handler<DatasetListResponse> =
             jsonHandler<DatasetListResponse>(clientOptions.jsonMapper)

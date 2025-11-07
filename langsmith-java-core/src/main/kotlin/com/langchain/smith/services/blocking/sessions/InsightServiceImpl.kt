@@ -24,14 +24,10 @@ import com.langchain.smith.models.sessions.insights.InsightListParams
 import com.langchain.smith.models.sessions.insights.InsightListResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobResponse
-import com.langchain.smith.models.sessions.insights.InsightRetrieveParams
-import com.langchain.smith.models.sessions.insights.InsightRetrieveResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsResponse
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateResponse
-import com.langchain.smith.services.blocking.sessions.insights.ConfigService
-import com.langchain.smith.services.blocking.sessions.insights.ConfigServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -42,14 +38,10 @@ class InsightServiceImpl internal constructor(private val clientOptions: ClientO
         WithRawResponseImpl(clientOptions)
     }
 
-    private val configs: ConfigService by lazy { ConfigServiceImpl(clientOptions) }
-
     override fun withRawResponse(): InsightService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightService =
         InsightServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun configs(): ConfigService = configs
 
     override fun create(
         params: InsightCreateParams,
@@ -57,13 +49,6 @@ class InsightServiceImpl internal constructor(private val clientOptions: ClientO
     ): InsightCreateResponse =
         // post /api/v1/sessions/{session_id}/insights
         withRawResponse().create(params, requestOptions).parse()
-
-    override fun retrieve(
-        params: InsightRetrieveParams,
-        requestOptions: RequestOptions,
-    ): InsightRetrieveResponse =
-        // get /api/v1/sessions/{session_id}/insights/{job_id}/clusters/{cluster_id}
-        withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(
         params: InsightUpdateParams,
@@ -106,18 +91,12 @@ class InsightServiceImpl internal constructor(private val clientOptions: ClientO
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val configs: ConfigService.WithRawResponse by lazy {
-            ConfigServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): InsightService.WithRawResponse =
             InsightServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun configs(): ConfigService.WithRawResponse = configs
 
         private val createHandler: Handler<InsightCreateResponse> =
             jsonHandler<InsightCreateResponse>(clientOptions.jsonMapper)
@@ -142,45 +121,6 @@ class InsightServiceImpl internal constructor(private val clientOptions: ClientO
             return errorHandler.handle(response).parseable {
                 response
                     .use { createHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val retrieveHandler: Handler<InsightRetrieveResponse> =
-            jsonHandler<InsightRetrieveResponse>(clientOptions.jsonMapper)
-
-        override fun retrieve(
-            params: InsightRetrieveParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<InsightRetrieveResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("clusterId", params.clusterId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "api",
-                        "v1",
-                        "sessions",
-                        params._pathParam(0),
-                        "insights",
-                        params._pathParam(1),
-                        "clusters",
-                        params._pathParam(2),
-                    )
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { retrieveHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
