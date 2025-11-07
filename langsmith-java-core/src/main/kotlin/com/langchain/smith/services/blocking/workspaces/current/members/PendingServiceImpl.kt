@@ -16,10 +16,10 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
-import com.langchain.smith.models.orgs.current.members.PendingIdentity
 import com.langchain.smith.models.workspaces.current.members.pending.PendingDeleteAllParams
 import com.langchain.smith.models.workspaces.current.members.pending.PendingDeleteAllResponse
 import com.langchain.smith.models.workspaces.current.members.pending.PendingListParams
+import com.langchain.smith.models.workspaces.current.members.pending.PendingListResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -38,7 +38,7 @@ class PendingServiceImpl internal constructor(private val clientOptions: ClientO
     override fun list(
         params: PendingListParams,
         requestOptions: RequestOptions,
-    ): List<PendingIdentity> =
+    ): List<PendingListResponse> =
         // get /api/v1/workspaces/current/members/pending
         withRawResponse().list(params, requestOptions).parse()
 
@@ -62,13 +62,13 @@ class PendingServiceImpl internal constructor(private val clientOptions: ClientO
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val listHandler: Handler<List<PendingIdentity>> =
-            jsonHandler<List<PendingIdentity>>(clientOptions.jsonMapper)
+        private val listHandler: Handler<List<PendingListResponse>> =
+            jsonHandler<List<PendingListResponse>>(clientOptions.jsonMapper)
 
         override fun list(
             params: PendingListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<PendingIdentity>> {
+        ): HttpResponseFor<List<PendingListResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

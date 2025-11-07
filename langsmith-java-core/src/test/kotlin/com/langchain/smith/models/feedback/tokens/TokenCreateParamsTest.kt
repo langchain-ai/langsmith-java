@@ -2,7 +2,6 @@
 
 package com.langchain.smith.models.feedback.tokens
 
-import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import com.langchain.smith.models.sessions.TimedeltaInput
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -20,10 +19,13 @@ internal class TokenCreateParamsTest {
                     .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .expiresIn(TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build())
                     .feedbackConfig(
-                        FeedbackConfig.builder()
-                            .type(FeedbackConfig.Type.CONTINUOUS)
+                        FeedbackIngestTokenCreateSchema.FeedbackConfig.builder()
+                            .type(FeedbackIngestTokenCreateSchema.FeedbackConfig.Type.CONTINUOUS)
                             .addCategory(
-                                FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                FeedbackIngestTokenCreateSchema.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
+                                    .build()
                             )
                             .max(0.0)
                             .min(0.0)
@@ -45,10 +47,16 @@ internal class TokenCreateParamsTest {
                         .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .expiresIn(TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build())
                         .feedbackConfig(
-                            FeedbackConfig.builder()
-                                .type(FeedbackConfig.Type.CONTINUOUS)
+                            FeedbackIngestTokenCreateSchema.FeedbackConfig.builder()
+                                .type(
+                                    FeedbackIngestTokenCreateSchema.FeedbackConfig.Type.CONTINUOUS
+                                )
                                 .addCategory(
-                                    FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                    FeedbackIngestTokenCreateSchema.FeedbackConfig.Category
+                                        .builder()
+                                        .value(0.0)
+                                        .label("x")
+                                        .build()
                                 )
                                 .max(0.0)
                                 .min(0.0)
@@ -69,10 +77,16 @@ internal class TokenCreateParamsTest {
                         .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .expiresIn(TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build())
                         .feedbackConfig(
-                            FeedbackConfig.builder()
-                                .type(FeedbackConfig.Type.CONTINUOUS)
+                            FeedbackIngestTokenCreateSchema.FeedbackConfig.builder()
+                                .type(
+                                    FeedbackIngestTokenCreateSchema.FeedbackConfig.Type.CONTINUOUS
+                                )
                                 .addCategory(
-                                    FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                    FeedbackIngestTokenCreateSchema.FeedbackConfig.Category
+                                        .builder()
+                                        .value(0.0)
+                                        .label("x")
+                                        .build()
                                 )
                                 .max(0.0)
                                 .min(0.0)

@@ -5,13 +5,14 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.tenants.AppSchemasTenant
-import com.langchain.smith.models.tenants.TenantForUser
 import com.langchain.smith.models.workspaces.WorkspaceCreateParams
+import com.langchain.smith.models.workspaces.WorkspaceCreateResponse
 import com.langchain.smith.models.workspaces.WorkspaceDeleteParams
 import com.langchain.smith.models.workspaces.WorkspaceDeleteResponse
 import com.langchain.smith.models.workspaces.WorkspaceListParams
+import com.langchain.smith.models.workspaces.WorkspaceListResponse
 import com.langchain.smith.models.workspaces.WorkspaceUpdateParams
+import com.langchain.smith.models.workspaces.WorkspaceUpdateResponse
 import com.langchain.smith.services.async.workspaces.CurrentServiceAsync
 import com.langchain.smith.services.async.workspaces.PendingServiceAsync
 import java.util.concurrent.CompletableFuture
@@ -36,58 +37,59 @@ interface WorkspaceServiceAsync {
     fun current(): CurrentServiceAsync
 
     /** Create a new workspace. */
-    fun create(params: WorkspaceCreateParams): CompletableFuture<AppSchemasTenant> =
+    fun create(params: WorkspaceCreateParams): CompletableFuture<WorkspaceCreateResponse> =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: WorkspaceCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<AppSchemasTenant>
+    ): CompletableFuture<WorkspaceCreateResponse>
 
     /** Patch Workspace */
     fun update(
         workspaceId: String,
         params: WorkspaceUpdateParams,
-    ): CompletableFuture<AppSchemasTenant> = update(workspaceId, params, RequestOptions.none())
+    ): CompletableFuture<WorkspaceUpdateResponse> =
+        update(workspaceId, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         workspaceId: String,
         params: WorkspaceUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<AppSchemasTenant> =
+    ): CompletableFuture<WorkspaceUpdateResponse> =
         update(params.toBuilder().workspaceId(workspaceId).build(), requestOptions)
 
     /** @see update */
-    fun update(params: WorkspaceUpdateParams): CompletableFuture<AppSchemasTenant> =
+    fun update(params: WorkspaceUpdateParams): CompletableFuture<WorkspaceUpdateResponse> =
         update(params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: WorkspaceUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<AppSchemasTenant>
+    ): CompletableFuture<WorkspaceUpdateResponse>
 
     /**
      * Get all workspaces visible to this auth in the current org. Does not create a new
      * workspace/org.
      */
-    fun list(): CompletableFuture<List<TenantForUser>> = list(WorkspaceListParams.none())
+    fun list(): CompletableFuture<List<WorkspaceListResponse>> = list(WorkspaceListParams.none())
 
     /** @see list */
     fun list(
         params: WorkspaceListParams = WorkspaceListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<TenantForUser>>
+    ): CompletableFuture<List<WorkspaceListResponse>>
 
     /** @see list */
     fun list(
         params: WorkspaceListParams = WorkspaceListParams.none()
-    ): CompletableFuture<List<TenantForUser>> = list(params, RequestOptions.none())
+    ): CompletableFuture<List<WorkspaceListResponse>> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<List<TenantForUser>> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<List<WorkspaceListResponse>> =
         list(WorkspaceListParams.none(), requestOptions)
 
     /** Delete Workspace */
@@ -150,14 +152,14 @@ interface WorkspaceServiceAsync {
          */
         fun create(
             params: WorkspaceCreateParams
-        ): CompletableFuture<HttpResponseFor<AppSchemasTenant>> =
+        ): CompletableFuture<HttpResponseFor<WorkspaceCreateResponse>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
             params: WorkspaceCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<AppSchemasTenant>>
+        ): CompletableFuture<HttpResponseFor<WorkspaceCreateResponse>>
 
         /**
          * Returns a raw HTTP response for `patch /api/v1/workspaces/{workspace_id}`, but is
@@ -166,7 +168,7 @@ interface WorkspaceServiceAsync {
         fun update(
             workspaceId: String,
             params: WorkspaceUpdateParams,
-        ): CompletableFuture<HttpResponseFor<AppSchemasTenant>> =
+        ): CompletableFuture<HttpResponseFor<WorkspaceUpdateResponse>> =
             update(workspaceId, params, RequestOptions.none())
 
         /** @see update */
@@ -174,44 +176,44 @@ interface WorkspaceServiceAsync {
             workspaceId: String,
             params: WorkspaceUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<AppSchemasTenant>> =
+        ): CompletableFuture<HttpResponseFor<WorkspaceUpdateResponse>> =
             update(params.toBuilder().workspaceId(workspaceId).build(), requestOptions)
 
         /** @see update */
         fun update(
             params: WorkspaceUpdateParams
-        ): CompletableFuture<HttpResponseFor<AppSchemasTenant>> =
+        ): CompletableFuture<HttpResponseFor<WorkspaceUpdateResponse>> =
             update(params, RequestOptions.none())
 
         /** @see update */
         fun update(
             params: WorkspaceUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<AppSchemasTenant>>
+        ): CompletableFuture<HttpResponseFor<WorkspaceUpdateResponse>>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/workspaces`, but is otherwise the same as
          * [WorkspaceServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<List<TenantForUser>>> =
+        fun list(): CompletableFuture<HttpResponseFor<List<WorkspaceListResponse>>> =
             list(WorkspaceListParams.none())
 
         /** @see list */
         fun list(
             params: WorkspaceListParams = WorkspaceListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<TenantForUser>>>
+        ): CompletableFuture<HttpResponseFor<List<WorkspaceListResponse>>>
 
         /** @see list */
         fun list(
             params: WorkspaceListParams = WorkspaceListParams.none()
-        ): CompletableFuture<HttpResponseFor<List<TenantForUser>>> =
+        ): CompletableFuture<HttpResponseFor<List<WorkspaceListResponse>>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<List<TenantForUser>>> =
+        ): CompletableFuture<HttpResponseFor<List<WorkspaceListResponse>>> =
             list(WorkspaceListParams.none(), requestOptions)
 
         /**

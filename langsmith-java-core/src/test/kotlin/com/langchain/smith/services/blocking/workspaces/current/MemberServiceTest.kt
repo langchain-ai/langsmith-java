@@ -4,7 +4,6 @@ package com.langchain.smith.services.blocking.workspaces.current
 
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.models.orgs.current.members.PendingIdentityCreate
 import com.langchain.smith.models.workspaces.current.members.MemberBatchParams
 import com.langchain.smith.models.workspaces.current.members.MemberCreateParams
 import com.langchain.smith.models.workspaces.current.members.MemberRetrieveActiveParams
@@ -28,7 +27,7 @@ internal class MemberServiceTest {
                 .build()
         val memberService = client.workspaces().current().members()
 
-        val identity =
+        val member =
             memberService.create(
                 MemberCreateParams.builder()
                     .lsUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -39,7 +38,7 @@ internal class MemberServiceTest {
                     .build()
             )
 
-        identity.validate()
+        member.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -112,11 +111,11 @@ internal class MemberServiceTest {
                 .build()
         val memberService = client.workspaces().current().members()
 
-        val pendingIdentities =
+        val response =
             memberService.batch(
                 MemberBatchParams.builder()
                     .addBody(
-                        PendingIdentityCreate.builder()
+                        MemberBatchParams.Body.builder()
                             .email("email")
                             .fullName("full_name")
                             .password("password")
@@ -129,7 +128,7 @@ internal class MemberServiceTest {
                     .build()
             )
 
-        pendingIdentities.forEach { it.validate() }
+        response.forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

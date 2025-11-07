@@ -3,7 +3,6 @@
 package com.langchain.smith.models.feedback
 
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -16,9 +15,14 @@ internal class FeedbackUpdateParamsTest {
             .comment("comment")
             .correction(JsonValue.from(mapOf<String, Any>()))
             .feedbackConfig(
-                FeedbackConfig.builder()
-                    .type(FeedbackConfig.Type.CONTINUOUS)
-                    .addCategory(FeedbackConfig.Category.builder().value(0.0).label("x").build())
+                FeedbackUpdateParams.FeedbackConfig.builder()
+                    .type(FeedbackUpdateParams.FeedbackConfig.Type.CONTINUOUS)
+                    .addCategory(
+                        FeedbackUpdateParams.FeedbackConfig.Category.builder()
+                            .value(0.0)
+                            .label("x")
+                            .build()
+                    )
                     .max(0.0)
                     .min(0.0)
                     .build()
@@ -48,10 +52,13 @@ internal class FeedbackUpdateParamsTest {
                 .comment("comment")
                 .correction(JsonValue.from(mapOf<String, Any>()))
                 .feedbackConfig(
-                    FeedbackConfig.builder()
-                        .type(FeedbackConfig.Type.CONTINUOUS)
+                    FeedbackUpdateParams.FeedbackConfig.builder()
+                        .type(FeedbackUpdateParams.FeedbackConfig.Type.CONTINUOUS)
                         .addCategory(
-                            FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                            FeedbackUpdateParams.FeedbackConfig.Category.builder()
+                                .value(0.0)
+                                .label("x")
+                                .build()
                         )
                         .max(0.0)
                         .min(0.0)
@@ -70,9 +77,14 @@ internal class FeedbackUpdateParamsTest {
             )
         assertThat(body.feedbackConfig())
             .contains(
-                FeedbackConfig.builder()
-                    .type(FeedbackConfig.Type.CONTINUOUS)
-                    .addCategory(FeedbackConfig.Category.builder().value(0.0).label("x").build())
+                FeedbackUpdateParams.FeedbackConfig.builder()
+                    .type(FeedbackUpdateParams.FeedbackConfig.Type.CONTINUOUS)
+                    .addCategory(
+                        FeedbackUpdateParams.FeedbackConfig.Category.builder()
+                            .value(0.0)
+                            .label("x")
+                            .build()
+                    )
                     .max(0.0)
                     .min(0.0)
                     .build()

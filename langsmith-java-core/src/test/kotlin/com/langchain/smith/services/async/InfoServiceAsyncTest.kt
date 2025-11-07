@@ -28,22 +28,4 @@ internal class InfoServiceAsyncTest {
         val infos = infosFuture.get()
         infos.validate()
     }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun retrieveHealth() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val infoServiceAsync = client.info()
-
-        val responseFuture = infoServiceAsync.retrieveHealth()
-
-        val response = responseFuture.get()
-        response.validate()
-    }
 }

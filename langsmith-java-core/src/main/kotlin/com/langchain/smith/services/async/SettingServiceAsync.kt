@@ -6,7 +6,6 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.settings.AppHubCrudTenantsTenant
-import com.langchain.smith.models.settings.SettingHandleParams
 import com.langchain.smith.models.settings.SettingListParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -42,16 +41,6 @@ interface SettingServiceAsync {
     /** @see list */
     fun list(requestOptions: RequestOptions): CompletableFuture<AppHubCrudTenantsTenant> =
         list(SettingListParams.none(), requestOptions)
-
-    /** Set tenant handle. */
-    fun handle(params: SettingHandleParams): CompletableFuture<AppHubCrudTenantsTenant> =
-        handle(params, RequestOptions.none())
-
-    /** @see handle */
-    fun handle(
-        params: SettingHandleParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<AppHubCrudTenantsTenant>
 
     /**
      * A view of [SettingServiceAsync] that provides access to raw HTTP responses for each method.
@@ -91,20 +80,5 @@ interface SettingServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<AppHubCrudTenantsTenant>> =
             list(SettingListParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/settings/handle`, but is otherwise the same
-         * as [SettingServiceAsync.handle].
-         */
-        fun handle(
-            params: SettingHandleParams
-        ): CompletableFuture<HttpResponseFor<AppHubCrudTenantsTenant>> =
-            handle(params, RequestOptions.none())
-
-        /** @see handle */
-        fun handle(
-            params: SettingHandleParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<AppHubCrudTenantsTenant>>
     }
 }

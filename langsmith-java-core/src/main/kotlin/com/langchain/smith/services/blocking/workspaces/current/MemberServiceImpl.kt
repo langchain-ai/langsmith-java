@@ -16,10 +16,10 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
-import com.langchain.smith.models.orgs.current.members.PendingIdentity
-import com.langchain.smith.models.orgs.pending.Identity
 import com.langchain.smith.models.workspaces.current.members.MemberBatchParams
+import com.langchain.smith.models.workspaces.current.members.MemberBatchResponse
 import com.langchain.smith.models.workspaces.current.members.MemberCreateParams
+import com.langchain.smith.models.workspaces.current.members.MemberCreateResponse
 import com.langchain.smith.models.workspaces.current.members.MemberDeleteParams
 import com.langchain.smith.models.workspaces.current.members.MemberDeleteResponse
 import com.langchain.smith.models.workspaces.current.members.MemberIdentity
@@ -49,7 +49,10 @@ class MemberServiceImpl internal constructor(private val clientOptions: ClientOp
 
     override fun pending(): PendingService = pending
 
-    override fun create(params: MemberCreateParams, requestOptions: RequestOptions): Identity =
+    override fun create(
+        params: MemberCreateParams,
+        requestOptions: RequestOptions,
+    ): MemberCreateResponse =
         // post /api/v1/workspaces/current/members
         withRawResponse().create(params, requestOptions).parse()
 
@@ -77,7 +80,7 @@ class MemberServiceImpl internal constructor(private val clientOptions: ClientOp
     override fun batch(
         params: MemberBatchParams,
         requestOptions: RequestOptions,
-    ): List<PendingIdentity> =
+    ): List<MemberBatchResponse> =
         // post /api/v1/workspaces/current/members/batch
         withRawResponse().batch(params, requestOptions).parse()
 
@@ -107,13 +110,13 @@ class MemberServiceImpl internal constructor(private val clientOptions: ClientOp
 
         override fun pending(): PendingService.WithRawResponse = pending
 
-        private val createHandler: Handler<Identity> =
-            jsonHandler<Identity>(clientOptions.jsonMapper)
+        private val createHandler: Handler<MemberCreateResponse> =
+            jsonHandler<MemberCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: MemberCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<Identity> {
+        ): HttpResponseFor<MemberCreateResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -238,13 +241,13 @@ class MemberServiceImpl internal constructor(private val clientOptions: ClientOp
             }
         }
 
-        private val batchHandler: Handler<List<PendingIdentity>> =
-            jsonHandler<List<PendingIdentity>>(clientOptions.jsonMapper)
+        private val batchHandler: Handler<List<MemberBatchResponse>> =
+            jsonHandler<List<MemberBatchResponse>>(clientOptions.jsonMapper)
 
         override fun batch(
             params: MemberBatchParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<PendingIdentity>> {
+        ): HttpResponseFor<List<MemberBatchResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)

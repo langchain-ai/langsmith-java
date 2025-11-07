@@ -5,7 +5,6 @@ package com.langchain.smith.models.datasets
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import com.langchain.smith.models.sessions.TracerSession
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -74,7 +73,7 @@ internal class DatasetUploadExperimentResponseTest {
                         .testRunNumber(0L)
                         .totalCost("total_cost")
                         .totalTokens(0L)
-                        .traceTier(TraceTier.LONGLIVED)
+                        .traceTier(TracerSession.TraceTier.LONGLIVED)
                         .build()
                 )
                 .build()
@@ -137,7 +136,7 @@ internal class DatasetUploadExperimentResponseTest {
                     .testRunNumber(0L)
                     .totalCost("total_cost")
                     .totalTokens(0L)
-                    .traceTier(TraceTier.LONGLIVED)
+                    .traceTier(TracerSession.TraceTier.LONGLIVED)
                     .build()
             )
     }
@@ -204,7 +203,7 @@ internal class DatasetUploadExperimentResponseTest {
                         .testRunNumber(0L)
                         .totalCost("total_cost")
                         .totalTokens(0L)
-                        .traceTier(TraceTier.LONGLIVED)
+                        .traceTier(TracerSession.TraceTier.LONGLIVED)
                         .build()
                 )
                 .build()

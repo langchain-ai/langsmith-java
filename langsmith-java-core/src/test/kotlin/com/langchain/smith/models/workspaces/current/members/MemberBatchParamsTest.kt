@@ -2,7 +2,6 @@
 
 package com.langchain.smith.models.workspaces.current.members
 
-import com.langchain.smith.models.orgs.current.members.PendingIdentityCreate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -12,7 +11,7 @@ internal class MemberBatchParamsTest {
     fun create() {
         MemberBatchParams.builder()
             .addBody(
-                PendingIdentityCreate.builder()
+                MemberBatchParams.Body.builder()
                     .email("email")
                     .fullName("full_name")
                     .password("password")
@@ -30,7 +29,7 @@ internal class MemberBatchParamsTest {
         val params =
             MemberBatchParams.builder()
                 .addBody(
-                    PendingIdentityCreate.builder()
+                    MemberBatchParams.Body.builder()
                         .email("email")
                         .fullName("full_name")
                         .password("password")
@@ -46,7 +45,7 @@ internal class MemberBatchParamsTest {
 
         assertThat(body)
             .containsExactly(
-                PendingIdentityCreate.builder()
+                MemberBatchParams.Body.builder()
                     .email("email")
                     .fullName("full_name")
                     .password("password")
@@ -62,11 +61,11 @@ internal class MemberBatchParamsTest {
     fun bodyWithoutOptionalFields() {
         val params =
             MemberBatchParams.builder()
-                .addBody(PendingIdentityCreate.builder().email("email").build())
+                .addBody(MemberBatchParams.Body.builder().email("email").build())
                 .build()
 
         val body = params._body()
 
-        assertThat(body).containsExactly(PendingIdentityCreate.builder().email("email").build())
+        assertThat(body).containsExactly(MemberBatchParams.Body.builder().email("email").build())
     }
 }

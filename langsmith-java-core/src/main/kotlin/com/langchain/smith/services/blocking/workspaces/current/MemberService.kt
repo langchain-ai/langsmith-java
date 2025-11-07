@@ -6,10 +6,10 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.orgs.current.members.PendingIdentity
-import com.langchain.smith.models.orgs.pending.Identity
 import com.langchain.smith.models.workspaces.current.members.MemberBatchParams
+import com.langchain.smith.models.workspaces.current.members.MemberBatchResponse
 import com.langchain.smith.models.workspaces.current.members.MemberCreateParams
+import com.langchain.smith.models.workspaces.current.members.MemberCreateResponse
 import com.langchain.smith.models.workspaces.current.members.MemberDeleteParams
 import com.langchain.smith.models.workspaces.current.members.MemberDeleteResponse
 import com.langchain.smith.models.workspaces.current.members.MemberIdentity
@@ -38,20 +38,20 @@ interface MemberService {
     fun pending(): PendingService
 
     /** Add an existing organization member to the current workspace. */
-    fun create(): Identity = create(MemberCreateParams.none())
+    fun create(): MemberCreateResponse = create(MemberCreateParams.none())
 
     /** @see create */
     fun create(
         params: MemberCreateParams = MemberCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Identity
+    ): MemberCreateResponse
 
     /** @see create */
-    fun create(params: MemberCreateParams = MemberCreateParams.none()): Identity =
+    fun create(params: MemberCreateParams = MemberCreateParams.none()): MemberCreateResponse =
         create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): Identity =
+    fun create(requestOptions: RequestOptions): MemberCreateResponse =
         create(MemberCreateParams.none(), requestOptions)
 
     /** Patch Current Workspace Member */
@@ -126,14 +126,14 @@ interface MemberService {
         delete(identityId, MemberDeleteParams.none(), requestOptions)
 
     /** Batch invite up to 500 users to the current workspace and organization. */
-    fun batch(params: MemberBatchParams): List<PendingIdentity> =
+    fun batch(params: MemberBatchParams): List<MemberBatchResponse> =
         batch(params, RequestOptions.none())
 
     /** @see batch */
     fun batch(
         params: MemberBatchParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<PendingIdentity>
+    ): List<MemberBatchResponse>
 
     /** Get Current Active Workspace Members */
     fun retrieveActive(): List<MemberIdentity> = retrieveActive(MemberRetrieveActiveParams.none())
@@ -169,24 +169,25 @@ interface MemberService {
          * Returns a raw HTTP response for `post /api/v1/workspaces/current/members`, but is
          * otherwise the same as [MemberService.create].
          */
-        @MustBeClosed fun create(): HttpResponseFor<Identity> = create(MemberCreateParams.none())
+        @MustBeClosed
+        fun create(): HttpResponseFor<MemberCreateResponse> = create(MemberCreateParams.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: MemberCreateParams = MemberCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Identity>
+        ): HttpResponseFor<MemberCreateResponse>
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: MemberCreateParams = MemberCreateParams.none()
-        ): HttpResponseFor<Identity> = create(params, RequestOptions.none())
+        ): HttpResponseFor<MemberCreateResponse> = create(params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<Identity> =
+        fun create(requestOptions: RequestOptions): HttpResponseFor<MemberCreateResponse> =
             create(MemberCreateParams.none(), requestOptions)
 
         /**
@@ -295,7 +296,7 @@ interface MemberService {
          * otherwise the same as [MemberService.batch].
          */
         @MustBeClosed
-        fun batch(params: MemberBatchParams): HttpResponseFor<List<PendingIdentity>> =
+        fun batch(params: MemberBatchParams): HttpResponseFor<List<MemberBatchResponse>> =
             batch(params, RequestOptions.none())
 
         /** @see batch */
@@ -303,7 +304,7 @@ interface MemberService {
         fun batch(
             params: MemberBatchParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<PendingIdentity>>
+        ): HttpResponseFor<List<MemberBatchResponse>>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/workspaces/current/members/active`, but is

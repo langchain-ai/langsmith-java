@@ -3,7 +3,6 @@
 package com.langchain.smith.models.sessions
 
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -19,7 +18,7 @@ internal class SessionUpdateParamsTest {
             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .extra(JsonValue.from(mapOf<String, Any>()))
             .name("name")
-            .traceTier(TraceTier.LONGLIVED)
+            .traceTier(SessionUpdateParams.TraceTier.LONGLIVED)
             .build()
     }
 
@@ -43,7 +42,7 @@ internal class SessionUpdateParamsTest {
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .extra(JsonValue.from(mapOf<String, Any>()))
                 .name("name")
-                .traceTier(TraceTier.LONGLIVED)
+                .traceTier(SessionUpdateParams.TraceTier.LONGLIVED)
                 .build()
 
         val body = params._body()
@@ -53,7 +52,7 @@ internal class SessionUpdateParamsTest {
         assertThat(body.endTime()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(body._extra()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(body.name()).contains("name")
-        assertThat(body.traceTier()).contains(TraceTier.LONGLIVED)
+        assertThat(body.traceTier()).contains(SessionUpdateParams.TraceTier.LONGLIVED)
     }
 
     @Test

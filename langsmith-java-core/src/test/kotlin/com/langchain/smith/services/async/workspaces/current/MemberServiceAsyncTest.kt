@@ -4,7 +4,6 @@ package com.langchain.smith.services.async.workspaces.current
 
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
-import com.langchain.smith.models.orgs.current.members.PendingIdentityCreate
 import com.langchain.smith.models.workspaces.current.members.MemberBatchParams
 import com.langchain.smith.models.workspaces.current.members.MemberCreateParams
 import com.langchain.smith.models.workspaces.current.members.MemberRetrieveActiveParams
@@ -28,7 +27,7 @@ internal class MemberServiceAsyncTest {
                 .build()
         val memberServiceAsync = client.workspaces().current().members()
 
-        val identityFuture =
+        val memberFuture =
             memberServiceAsync.create(
                 MemberCreateParams.builder()
                     .lsUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -39,8 +38,8 @@ internal class MemberServiceAsyncTest {
                     .build()
             )
 
-        val identity = identityFuture.get()
-        identity.validate()
+        val member = memberFuture.get()
+        member.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -116,11 +115,11 @@ internal class MemberServiceAsyncTest {
                 .build()
         val memberServiceAsync = client.workspaces().current().members()
 
-        val pendingIdentitiesFuture =
+        val responseFuture =
             memberServiceAsync.batch(
                 MemberBatchParams.builder()
                     .addBody(
-                        PendingIdentityCreate.builder()
+                        MemberBatchParams.Body.builder()
                             .email("email")
                             .fullName("full_name")
                             .password("password")
@@ -133,8 +132,8 @@ internal class MemberServiceAsyncTest {
                     .build()
             )
 
-        val pendingIdentities = pendingIdentitiesFuture.get()
-        pendingIdentities.forEach { it.validate() }
+        val response = responseFuture.get()
+        response.forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

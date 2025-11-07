@@ -26,7 +26,7 @@ internal class WorkspaceServiceTest {
                 .build()
         val workspaceService = client.workspaces()
 
-        val appSchemasTenant =
+        val workspace =
             workspaceService.create(
                 WorkspaceCreateParams.builder()
                     .displayName("display_name")
@@ -35,7 +35,7 @@ internal class WorkspaceServiceTest {
                     .build()
             )
 
-        appSchemasTenant.validate()
+        workspace.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -50,7 +50,7 @@ internal class WorkspaceServiceTest {
                 .build()
         val workspaceService = client.workspaces()
 
-        val appSchemasTenant =
+        val workspace =
             workspaceService.update(
                 WorkspaceUpdateParams.builder()
                     .workspaceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -58,7 +58,7 @@ internal class WorkspaceServiceTest {
                     .build()
             )
 
-        appSchemasTenant.validate()
+        workspace.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -73,10 +73,10 @@ internal class WorkspaceServiceTest {
                 .build()
         val workspaceService = client.workspaces()
 
-        val tenantForUsers =
+        val workspaces =
             workspaceService.list(WorkspaceListParams.builder().includeDeleted(true).build())
 
-        tenantForUsers.forEach { it.validate() }
+        workspaces.forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

@@ -10,7 +10,6 @@ import com.langchain.smith.models.feedback.tokens.TokenCreateParams
 import com.langchain.smith.models.feedback.tokens.TokenListParams
 import com.langchain.smith.models.feedback.tokens.TokenRetrieveParams
 import com.langchain.smith.models.feedback.tokens.TokenUpdateParams
-import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import com.langchain.smith.models.sessions.TimedeltaInput
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
@@ -44,10 +43,14 @@ internal class TokenServiceTest {
                                 TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
                             )
                             .feedbackConfig(
-                                FeedbackConfig.builder()
-                                    .type(FeedbackConfig.Type.CONTINUOUS)
+                                FeedbackIngestTokenCreateSchema.FeedbackConfig.builder()
+                                    .type(
+                                        FeedbackIngestTokenCreateSchema.FeedbackConfig.Type
+                                            .CONTINUOUS
+                                    )
                                     .addCategory(
-                                        FeedbackConfig.Category.builder()
+                                        FeedbackIngestTokenCreateSchema.FeedbackConfig.Category
+                                            .builder()
                                             .value(0.0)
                                             .label("x")
                                             .build()
