@@ -60,7 +60,7 @@ internal class FeedbackServiceTest {
                     .feedbackSource(
                         AppFeedbackSource.builder()
                             .metadata(JsonValue.from(mapOf<String, Any>()))
-                            .type("type")
+                            .type(AppFeedbackSource.Type.APP)
                             .build()
                     )
                     .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -227,7 +227,7 @@ internal class FeedbackServiceTest {
                     .feedbackSource(
                         AppFeedbackSource.builder()
                             .metadata(JsonValue.from(mapOf<String, Any>()))
-                            .type("type")
+                            .type(AppFeedbackSource.Type.APP)
                             .build()
                     )
                     .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

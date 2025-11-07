@@ -15,11 +15,11 @@ internal class AppFeedbackSourceTest {
         val appFeedbackSource =
             AppFeedbackSource.builder()
                 .metadata(JsonValue.from(mapOf<String, Any>()))
-                .type("type")
+                .type(AppFeedbackSource.Type.APP)
                 .build()
 
         assertThat(appFeedbackSource._metadata()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(appFeedbackSource.type()).contains("type")
+        assertThat(appFeedbackSource.type()).contains(AppFeedbackSource.Type.APP)
     }
 
     @Test
@@ -28,7 +28,7 @@ internal class AppFeedbackSourceTest {
         val appFeedbackSource =
             AppFeedbackSource.builder()
                 .metadata(JsonValue.from(mapOf<String, Any>()))
-                .type("type")
+                .type(AppFeedbackSource.Type.APP)
                 .build()
 
         val roundtrippedAppFeedbackSource =
