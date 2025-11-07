@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0-alpha.6 (2025-11-07)
+
+Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)
+
+### Features
+
+* **api:** api update ([3e0c4b8](https://github.com/langchain-ai/langsmith-java/commit/3e0c4b89d919ab48138fe8cc6dd3186fc543b1a1))
+* **api:** manual updates ([3da5f28](https://github.com/langchain-ai/langsmith-java/commit/3da5f2870ce7a0aaab2bd8cd2363cdcbd3604fec))
+* **api:** remove some endpoints ([b4e170d](https://github.com/langchain-ai/langsmith-java/commit/b4e170da648e42bcd936f315c21b7ca0739277a1))
+* **api:** removing methods ([a5dc27e](https://github.com/langchain-ai/langsmith-java/commit/a5dc27ed22ec46dcfaa708318ba41bedb70742b2))
+
+
+### Chores
+
+* revert from SH to public GH runner ([0d00830](https://github.com/langchain-ai/langsmith-java/commit/0d00830db9c921154d9613b1a09e4324fe2a3795))
+
 ## 0.1.0-alpha.5 (2025-11-07)
 
 Full Changelog: [v0.1.0-alpha.4...v0.1.0-alpha.5](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.4...v0.1.0-alpha.5)
