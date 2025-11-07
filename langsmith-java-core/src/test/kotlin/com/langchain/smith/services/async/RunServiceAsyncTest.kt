@@ -13,11 +13,9 @@ import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestMultipartParams
 import com.langchain.smith.models.runs.RunRetrieveParams
 import com.langchain.smith.models.runs.RunRetrieveThreadPreviewParams
-import com.langchain.smith.models.runs.RunStatsQueryParams
 import com.langchain.smith.models.runs.RunTypeEnum
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunsFilterDataSourceTypeEnum
-import com.langchain.smith.models.sessions.RunStatsGroupBy
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -473,56 +471,6 @@ internal class RunServiceAsyncTest {
                     .threadId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addSelect(RunRetrieveThreadPreviewParams.Select.ALL_MESSAGES)
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun stats() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val runServiceAsync = client.runs()
-
-        val responseFuture =
-            runServiceAsync.stats(
-                RunStatsQueryParams.builder()
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
-                    .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .error(true)
-                    .executionOrder(1L)
-                    .filter("filter")
-                    .groupBy(
-                        RunStatsGroupBy.builder()
-                            .attribute(RunStatsGroupBy.Attribute.NAME)
-                            .maxGroups(0L)
-                            .path("path")
-                            .build()
-                    )
-                    .addGroup("string")
-                    .isRoot(true)
-                    .parentRun("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .query("query")
-                    .addReferenceExample("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .runType(RunTypeEnum.TOOL)
-                    .searchFilter("search_filter")
-                    .addSelect(RunStatsQueryParams.Select.RUN_COUNT)
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .skipPagination(true)
-                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .traceFilter("trace_filter")
-                    .treeFilter("tree_filter")
-                    .useExperimentalSearch(true)
                     .build()
             )
 
