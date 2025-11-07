@@ -4,8 +4,6 @@ package com.langchain.smith.models.workspaces.current.members
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.orgs.current.members.AccessScope
-import com.langchain.smith.models.orgs.current.user.ProviderUserSlim
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -23,14 +21,14 @@ internal class MemberIdentityTest {
                 .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .readOnly(true)
                 .userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .accessScope(AccessScope.ORGANIZATION)
+                .accessScope(MemberIdentity.AccessScope.ORGANIZATION)
                 .avatarUrl("avatar_url")
                 .displayName("display_name")
                 .email("email")
                 .fullName("full_name")
                 .isDisabled(true)
                 .addLinkedLoginMethod(
-                    ProviderUserSlim.builder()
+                    MemberIdentity.LinkedLoginMethod.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .lsUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -41,9 +39,11 @@ internal class MemberIdentityTest {
                         .fullName("full_name")
                         .isDisabled(true)
                         .lastName("last_name")
-                        .provider(ProviderUserSlim.Provider.EMAIL)
+                        .provider(MemberIdentity.LinkedLoginMethod.Provider.EMAIL)
                         .providerUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .provisioningMethod(ProviderUserSlim.ProvisioningMethod.SCIM)
+                        .provisioningMethod(
+                            MemberIdentity.LinkedLoginMethod.ProvisioningMethod.SCIM
+                        )
                         .samlProviderId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .username("username")
                         .build()
@@ -63,7 +63,7 @@ internal class MemberIdentityTest {
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(memberIdentity.readOnly()).isEqualTo(true)
         assertThat(memberIdentity.userId()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-        assertThat(memberIdentity.accessScope()).contains(AccessScope.ORGANIZATION)
+        assertThat(memberIdentity.accessScope()).contains(MemberIdentity.AccessScope.ORGANIZATION)
         assertThat(memberIdentity.avatarUrl()).contains("avatar_url")
         assertThat(memberIdentity.displayName()).contains("display_name")
         assertThat(memberIdentity.email()).contains("email")
@@ -71,7 +71,7 @@ internal class MemberIdentityTest {
         assertThat(memberIdentity.isDisabled()).contains(true)
         assertThat(memberIdentity.linkedLoginMethods().getOrNull())
             .containsExactly(
-                ProviderUserSlim.builder()
+                MemberIdentity.LinkedLoginMethod.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .lsUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -82,9 +82,9 @@ internal class MemberIdentityTest {
                     .fullName("full_name")
                     .isDisabled(true)
                     .lastName("last_name")
-                    .provider(ProviderUserSlim.Provider.EMAIL)
+                    .provider(MemberIdentity.LinkedLoginMethod.Provider.EMAIL)
                     .providerUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .provisioningMethod(ProviderUserSlim.ProvisioningMethod.SCIM)
+                    .provisioningMethod(MemberIdentity.LinkedLoginMethod.ProvisioningMethod.SCIM)
                     .samlProviderId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .username("username")
                     .build()
@@ -107,14 +107,14 @@ internal class MemberIdentityTest {
                 .organizationId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .readOnly(true)
                 .userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .accessScope(AccessScope.ORGANIZATION)
+                .accessScope(MemberIdentity.AccessScope.ORGANIZATION)
                 .avatarUrl("avatar_url")
                 .displayName("display_name")
                 .email("email")
                 .fullName("full_name")
                 .isDisabled(true)
                 .addLinkedLoginMethod(
-                    ProviderUserSlim.builder()
+                    MemberIdentity.LinkedLoginMethod.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .lsUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -125,9 +125,11 @@ internal class MemberIdentityTest {
                         .fullName("full_name")
                         .isDisabled(true)
                         .lastName("last_name")
-                        .provider(ProviderUserSlim.Provider.EMAIL)
+                        .provider(MemberIdentity.LinkedLoginMethod.Provider.EMAIL)
                         .providerUserId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .provisioningMethod(ProviderUserSlim.ProvisioningMethod.SCIM)
+                        .provisioningMethod(
+                            MemberIdentity.LinkedLoginMethod.ProvisioningMethod.SCIM
+                        )
                         .samlProviderId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .username("username")
                         .build()

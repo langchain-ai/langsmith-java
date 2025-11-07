@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.models.feedback.AppFeedbackSource
-import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -25,10 +24,13 @@ internal class FeedbackCreateCoreSchemaTest {
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .extra(JsonValue.from(mapOf<String, Any>()))
                 .feedbackConfig(
-                    FeedbackConfig.builder()
-                        .type(FeedbackConfig.Type.CONTINUOUS)
+                    FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                        .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
                         .addCategory(
-                            FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                            FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
+                                .value(0.0)
+                                .label("x")
+                                .build()
                         )
                         .max(0.0)
                         .min(0.0)
@@ -38,7 +40,7 @@ internal class FeedbackCreateCoreSchemaTest {
                 .feedbackSource(
                     AppFeedbackSource.builder()
                         .metadata(JsonValue.from(mapOf<String, Any>()))
-                        .type("type")
+                        .type(AppFeedbackSource.Type.APP)
                         .build()
                 )
                 .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -63,9 +65,14 @@ internal class FeedbackCreateCoreSchemaTest {
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(feedbackCreateCoreSchema.feedbackConfig())
             .contains(
-                FeedbackConfig.builder()
-                    .type(FeedbackConfig.Type.CONTINUOUS)
-                    .addCategory(FeedbackConfig.Category.builder().value(0.0).label("x").build())
+                FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                    .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
+                    .addCategory(
+                        FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
+                            .value(0.0)
+                            .label("x")
+                            .build()
+                    )
                     .max(0.0)
                     .min(0.0)
                     .build()
@@ -77,7 +84,7 @@ internal class FeedbackCreateCoreSchemaTest {
                 FeedbackCreateCoreSchema.FeedbackSource.ofApp(
                     AppFeedbackSource.builder()
                         .metadata(JsonValue.from(mapOf<String, Any>()))
-                        .type("type")
+                        .type(AppFeedbackSource.Type.APP)
                         .build()
                 )
             )
@@ -102,10 +109,13 @@ internal class FeedbackCreateCoreSchemaTest {
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .extra(JsonValue.from(mapOf<String, Any>()))
                 .feedbackConfig(
-                    FeedbackConfig.builder()
-                        .type(FeedbackConfig.Type.CONTINUOUS)
+                    FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                        .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
                         .addCategory(
-                            FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                            FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
+                                .value(0.0)
+                                .label("x")
+                                .build()
                         )
                         .max(0.0)
                         .min(0.0)
@@ -115,7 +125,7 @@ internal class FeedbackCreateCoreSchemaTest {
                 .feedbackSource(
                     AppFeedbackSource.builder()
                         .metadata(JsonValue.from(mapOf<String, Any>()))
-                        .type("type")
+                        .type(AppFeedbackSource.Type.APP)
                         .build()
                 )
                 .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

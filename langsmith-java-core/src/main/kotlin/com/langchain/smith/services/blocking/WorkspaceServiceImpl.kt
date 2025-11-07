@@ -16,13 +16,14 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
-import com.langchain.smith.models.tenants.AppSchemasTenant
-import com.langchain.smith.models.tenants.TenantForUser
 import com.langchain.smith.models.workspaces.WorkspaceCreateParams
+import com.langchain.smith.models.workspaces.WorkspaceCreateResponse
 import com.langchain.smith.models.workspaces.WorkspaceDeleteParams
 import com.langchain.smith.models.workspaces.WorkspaceDeleteResponse
 import com.langchain.smith.models.workspaces.WorkspaceListParams
+import com.langchain.smith.models.workspaces.WorkspaceListResponse
 import com.langchain.smith.models.workspaces.WorkspaceUpdateParams
+import com.langchain.smith.models.workspaces.WorkspaceUpdateResponse
 import com.langchain.smith.services.blocking.workspaces.CurrentService
 import com.langchain.smith.services.blocking.workspaces.CurrentServiceImpl
 import com.langchain.smith.services.blocking.workspaces.PendingService
@@ -53,21 +54,21 @@ class WorkspaceServiceImpl internal constructor(private val clientOptions: Clien
     override fun create(
         params: WorkspaceCreateParams,
         requestOptions: RequestOptions,
-    ): AppSchemasTenant =
+    ): WorkspaceCreateResponse =
         // post /api/v1/workspaces
         withRawResponse().create(params, requestOptions).parse()
 
     override fun update(
         params: WorkspaceUpdateParams,
         requestOptions: RequestOptions,
-    ): AppSchemasTenant =
+    ): WorkspaceUpdateResponse =
         // patch /api/v1/workspaces/{workspace_id}
         withRawResponse().update(params, requestOptions).parse()
 
     override fun list(
         params: WorkspaceListParams,
         requestOptions: RequestOptions,
-    ): List<TenantForUser> =
+    ): List<WorkspaceListResponse> =
         // get /api/v1/workspaces
         withRawResponse().list(params, requestOptions).parse()
 
@@ -103,13 +104,13 @@ class WorkspaceServiceImpl internal constructor(private val clientOptions: Clien
 
         override fun current(): CurrentService.WithRawResponse = current
 
-        private val createHandler: Handler<AppSchemasTenant> =
-            jsonHandler<AppSchemasTenant>(clientOptions.jsonMapper)
+        private val createHandler: Handler<WorkspaceCreateResponse> =
+            jsonHandler<WorkspaceCreateResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: WorkspaceCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<AppSchemasTenant> {
+        ): HttpResponseFor<WorkspaceCreateResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -131,13 +132,13 @@ class WorkspaceServiceImpl internal constructor(private val clientOptions: Clien
             }
         }
 
-        private val updateHandler: Handler<AppSchemasTenant> =
-            jsonHandler<AppSchemasTenant>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<WorkspaceUpdateResponse> =
+            jsonHandler<WorkspaceUpdateResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: WorkspaceUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<AppSchemasTenant> {
+        ): HttpResponseFor<WorkspaceUpdateResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("workspaceId", params.workspaceId().getOrNull())
@@ -162,13 +163,13 @@ class WorkspaceServiceImpl internal constructor(private val clientOptions: Clien
             }
         }
 
-        private val listHandler: Handler<List<TenantForUser>> =
-            jsonHandler<List<TenantForUser>>(clientOptions.jsonMapper)
+        private val listHandler: Handler<List<WorkspaceListResponse>> =
+            jsonHandler<List<WorkspaceListResponse>>(clientOptions.jsonMapper)
 
         override fun list(
             params: WorkspaceListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<TenantForUser>> {
+        ): HttpResponseFor<List<WorkspaceListResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

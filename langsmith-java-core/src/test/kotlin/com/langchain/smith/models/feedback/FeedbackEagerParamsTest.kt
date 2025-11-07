@@ -3,7 +3,6 @@
 package com.langchain.smith.models.feedback
 
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,10 +22,13 @@ internal class FeedbackEagerParamsTest {
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .feedbackConfig(
-                        FeedbackConfig.builder()
-                            .type(FeedbackConfig.Type.CONTINUOUS)
+                        FeedbackCreateSchema.FeedbackConfig.builder()
+                            .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
                             .addCategory(
-                                FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                FeedbackCreateSchema.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
+                                    .build()
                             )
                             .max(0.0)
                             .min(0.0)
@@ -36,7 +38,7 @@ internal class FeedbackEagerParamsTest {
                     .feedbackSource(
                         AppFeedbackSource.builder()
                             .metadata(JsonValue.from(mapOf<String, Any>()))
-                            .type("type")
+                            .type(AppFeedbackSource.Type.APP)
                             .build()
                     )
                     .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -64,10 +66,13 @@ internal class FeedbackEagerParamsTest {
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .error(true)
                         .feedbackConfig(
-                            FeedbackConfig.builder()
-                                .type(FeedbackConfig.Type.CONTINUOUS)
+                            FeedbackCreateSchema.FeedbackConfig.builder()
+                                .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
                                 .addCategory(
-                                    FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                    FeedbackCreateSchema.FeedbackConfig.Category.builder()
+                                        .value(0.0)
+                                        .label("x")
+                                        .build()
                                 )
                                 .max(0.0)
                                 .min(0.0)
@@ -77,7 +82,7 @@ internal class FeedbackEagerParamsTest {
                         .feedbackSource(
                             AppFeedbackSource.builder()
                                 .metadata(JsonValue.from(mapOf<String, Any>()))
-                                .type("type")
+                                .type(AppFeedbackSource.Type.APP)
                                 .build()
                         )
                         .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -103,10 +108,13 @@ internal class FeedbackEagerParamsTest {
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .feedbackConfig(
-                        FeedbackConfig.builder()
-                            .type(FeedbackConfig.Type.CONTINUOUS)
+                        FeedbackCreateSchema.FeedbackConfig.builder()
+                            .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
                             .addCategory(
-                                FeedbackConfig.Category.builder().value(0.0).label("x").build()
+                                FeedbackCreateSchema.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
+                                    .build()
                             )
                             .max(0.0)
                             .min(0.0)
@@ -116,7 +124,7 @@ internal class FeedbackEagerParamsTest {
                     .feedbackSource(
                         AppFeedbackSource.builder()
                             .metadata(JsonValue.from(mapOf<String, Any>()))
-                            .type("type")
+                            .type(AppFeedbackSource.Type.APP)
                             .build()
                     )
                     .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

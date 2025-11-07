@@ -7,7 +7,6 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.settings.AppHubCrudTenantsTenant
-import com.langchain.smith.models.settings.SettingHandleParams
 import com.langchain.smith.models.settings.SettingListParams
 import java.util.function.Consumer
 
@@ -41,16 +40,6 @@ interface SettingService {
     /** @see list */
     fun list(requestOptions: RequestOptions): AppHubCrudTenantsTenant =
         list(SettingListParams.none(), requestOptions)
-
-    /** Set tenant handle. */
-    fun handle(params: SettingHandleParams): AppHubCrudTenantsTenant =
-        handle(params, RequestOptions.none())
-
-    /** @see handle */
-    fun handle(
-        params: SettingHandleParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): AppHubCrudTenantsTenant
 
     /** A view of [SettingService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -86,20 +75,5 @@ interface SettingService {
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<AppHubCrudTenantsTenant> =
             list(SettingListParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/settings/handle`, but is otherwise the same
-         * as [SettingService.handle].
-         */
-        @MustBeClosed
-        fun handle(params: SettingHandleParams): HttpResponseFor<AppHubCrudTenantsTenant> =
-            handle(params, RequestOptions.none())
-
-        /** @see handle */
-        @MustBeClosed
-        fun handle(
-            params: SettingHandleParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<AppHubCrudTenantsTenant>
     }
 }

@@ -5,7 +5,6 @@ package com.langchain.smith.models.sessions
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -45,7 +44,7 @@ internal class TracerSessionTest {
                 .testRunNumber(0L)
                 .totalCost("total_cost")
                 .totalTokens(0L)
-                .traceTier(TraceTier.LONGLIVED)
+                .traceTier(TracerSession.TraceTier.LONGLIVED)
                 .build()
 
         assertThat(tracerSession.id()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -84,7 +83,7 @@ internal class TracerSessionTest {
         assertThat(tracerSession.testRunNumber()).contains(0L)
         assertThat(tracerSession.totalCost()).contains("total_cost")
         assertThat(tracerSession.totalTokens()).contains(0L)
-        assertThat(tracerSession.traceTier()).contains(TraceTier.LONGLIVED)
+        assertThat(tracerSession.traceTier()).contains(TracerSession.TraceTier.LONGLIVED)
     }
 
     @Test
@@ -120,7 +119,7 @@ internal class TracerSessionTest {
                 .testRunNumber(0L)
                 .totalCost("total_cost")
                 .totalTokens(0L)
-                .traceTier(TraceTier.LONGLIVED)
+                .traceTier(TracerSession.TraceTier.LONGLIVED)
                 .build()
 
         val roundtrippedTracerSession =

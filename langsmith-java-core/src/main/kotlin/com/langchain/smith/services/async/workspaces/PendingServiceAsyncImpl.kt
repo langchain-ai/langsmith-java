@@ -16,12 +16,12 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
-import com.langchain.smith.models.tenants.AppSchemasTenant
 import com.langchain.smith.models.workspaces.pending.PendingClaimParams
 import com.langchain.smith.models.workspaces.pending.PendingClaimResponse
 import com.langchain.smith.models.workspaces.pending.PendingDeleteParams
 import com.langchain.smith.models.workspaces.pending.PendingDeleteResponse
 import com.langchain.smith.models.workspaces.pending.PendingListParams
+import com.langchain.smith.models.workspaces.pending.PendingListResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -41,7 +41,7 @@ class PendingServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: PendingListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<AppSchemasTenant>> =
+    ): CompletableFuture<List<PendingListResponse>> =
         // get /api/v1/workspaces/pending
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -73,13 +73,13 @@ class PendingServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val listHandler: Handler<List<AppSchemasTenant>> =
-            jsonHandler<List<AppSchemasTenant>>(clientOptions.jsonMapper)
+        private val listHandler: Handler<List<PendingListResponse>> =
+            jsonHandler<List<PendingListResponse>>(clientOptions.jsonMapper)
 
         override fun list(
             params: PendingListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<AppSchemasTenant>>> {
+        ): CompletableFuture<HttpResponseFor<List<PendingListResponse>>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)

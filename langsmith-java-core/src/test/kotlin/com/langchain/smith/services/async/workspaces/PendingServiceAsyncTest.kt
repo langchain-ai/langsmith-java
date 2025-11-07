@@ -23,10 +23,10 @@ internal class PendingServiceAsyncTest {
                 .build()
         val pendingServiceAsync = client.workspaces().pending()
 
-        val appSchemasTenantsFuture = pendingServiceAsync.list()
+        val pendingsFuture = pendingServiceAsync.list()
 
-        val appSchemasTenants = appSchemasTenantsFuture.get()
-        appSchemasTenants.forEach { it.validate() }
+        val pendings = pendingsFuture.get()
+        pendings.forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

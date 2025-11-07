@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.errors.LangChainInvalidDataException
-import com.langchain.smith.models.orgs.ttlsettings.TraceTier
 import com.langchain.smith.models.runs.RunSchema
 import com.langchain.smith.models.runs.RunTypeEnum
 import java.time.OffsetDateTime
@@ -103,7 +102,7 @@ internal class RunCreateResponseTest {
                             .traceFirstReceivedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .traceTier(TraceTier.LONGLIVED)
+                            .traceTier(RunSchema.TraceTier.LONGLIVED)
                             .traceUpgrade(true)
                             .ttlSeconds(0L)
                             .build()
@@ -212,7 +211,7 @@ internal class RunCreateResponseTest {
                                 )
                                 .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .traceTier(TraceTier.LONGLIVED)
+                                .traceTier(RunSchema.TraceTier.LONGLIVED)
                                 .traceUpgrade(true)
                                 .ttlSeconds(0L)
                                 .build()

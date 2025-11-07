@@ -16,8 +16,6 @@ import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.info.InfoListParams
 import com.langchain.smith.models.info.InfoListResponse
-import com.langchain.smith.models.info.InfoRetrieveHealthParams
-import com.langchain.smith.models.info.InfoRetrieveHealthResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -39,13 +37,6 @@ class InfoServiceAsyncImpl internal constructor(private val clientOptions: Clien
     ): CompletableFuture<InfoListResponse> =
         // get /api/v1/info
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
-
-    override fun retrieveHealth(
-        params: InfoRetrieveHealthParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<InfoRetrieveHealthResponse> =
-        // get /api/v1/info/health
-        withRawResponse().retrieveHealth(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         InfoServiceAsync.WithRawResponse {
@@ -81,36 +72,6 @@ class InfoServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     errorHandler.handle(response).parseable {
                         response
                             .use { listHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val retrieveHealthHandler: Handler<InfoRetrieveHealthResponse> =
-            jsonHandler<InfoRetrieveHealthResponse>(clientOptions.jsonMapper)
-
-        override fun retrieveHealth(
-            params: InfoRetrieveHealthParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<InfoRetrieveHealthResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "info", "health")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { retrieveHealthHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

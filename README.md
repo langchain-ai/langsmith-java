@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.5)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.6)
 
 <!-- x-release-please-end -->
 
@@ -17,7 +17,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 ### Gradle
 
 ```kotlin
-implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.5")
+implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.6")
 ```
 
 ### Maven
@@ -26,7 +26,7 @@ implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.5")
 <dependency>
   <groupId>com.langchain.smith</groupId>
   <artifactId>langsmith-java</artifactId>
-  <version>0.1.0-alpha.5</version>
+  <version>0.1.0-alpha.6</version>
 </dependency>
 ```
 
@@ -126,13 +126,13 @@ LangsmithClient client = LangsmithOkHttpClient.builder()
 
 See this table for the available options:
 
-| Setter           | System property                     | Environment variable        | Required | Default value               |
-| ---------------- | ----------------------------------- | --------------------------- | -------- | --------------------------- |
-| `apiKey`         | `langchain.langsmithApiKey`         | `LANGSMITH_API_KEY`         | false    | -                           |
-| `tenantId`       | `langchain.langsmithTenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                           |
-| `bearerToken`    | `langchain.langsmithBearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                           |
-| `organizationId` | `langchain.langsmithOrganizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                           |
-| `baseUrl`        | `langchain.baseUrl`                 | `LANGCHAIN_BASE_URL`        | true     | `"https://api.example.com"` |
+| Setter           | System property                     | Environment variable        | Required | Default value                       |
+| ---------------- | ----------------------------------- | --------------------------- | -------- | ----------------------------------- |
+| `apiKey`         | `langchain.langsmithApiKey`         | `LANGSMITH_API_KEY`         | false    | -                                   |
+| `tenantId`       | `langchain.langsmithTenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                                   |
+| `bearerToken`    | `langchain.langsmithBearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                                   |
+| `organizationId` | `langchain.langsmithOrganizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                                   |
+| `baseUrl`        | `langchain.baseUrl`                 | `LANGCHAIN_BASE_URL`        | true     | `"https://api.smith.langchain.com"` |
 
 System properties take precedence over environment variables.
 

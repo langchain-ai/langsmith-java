@@ -3,9 +3,7 @@
 package com.langchain.smith.services.async
 
 import com.langchain.smith.core.ClientOptions
-import com.langchain.smith.services.async.platform.AlertServiceAsync
 import com.langchain.smith.services.async.platform.DatasetServiceAsync
-import com.langchain.smith.services.async.platform.OrgServiceAsync
 import java.util.function.Consumer
 
 interface PlatformServiceAsync {
@@ -22,11 +20,7 @@ interface PlatformServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): PlatformServiceAsync
 
-    fun alerts(): AlertServiceAsync
-
     fun datasets(): DatasetServiceAsync
-
-    fun orgs(): OrgServiceAsync
 
     /**
      * A view of [PlatformServiceAsync] that provides access to raw HTTP responses for each method.
@@ -42,10 +36,6 @@ interface PlatformServiceAsync {
             modifier: Consumer<ClientOptions.Builder>
         ): PlatformServiceAsync.WithRawResponse
 
-        fun alerts(): AlertServiceAsync.WithRawResponse
-
         fun datasets(): DatasetServiceAsync.WithRawResponse
-
-        fun orgs(): OrgServiceAsync.WithRawResponse
     }
 }

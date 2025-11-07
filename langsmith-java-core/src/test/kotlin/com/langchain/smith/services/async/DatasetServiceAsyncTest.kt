@@ -23,7 +23,6 @@ import com.langchain.smith.models.datasets.DatasetUploadExperimentParams
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.FeedbackCreateCoreSchema
 import com.langchain.smith.models.feedback.AppFeedbackSource
-import com.langchain.smith.models.feedbackconfigs.FeedbackConfig
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -487,10 +486,14 @@ internal class DatasetServiceAsyncTest {
                                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                     .extra(JsonValue.from(mapOf<String, Any>()))
                                     .feedbackConfig(
-                                        FeedbackConfig.builder()
-                                            .type(FeedbackConfig.Type.CONTINUOUS)
+                                        FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                                            .type(
+                                                FeedbackCreateCoreSchema.FeedbackConfig.Type
+                                                    .CONTINUOUS
+                                            )
                                             .addCategory(
-                                                FeedbackConfig.Category.builder()
+                                                FeedbackCreateCoreSchema.FeedbackConfig.Category
+                                                    .builder()
                                                     .value(0.0)
                                                     .label("x")
                                                     .build()
@@ -503,7 +506,7 @@ internal class DatasetServiceAsyncTest {
                                     .feedbackSource(
                                         AppFeedbackSource.builder()
                                             .metadata(JsonValue.from(mapOf<String, Any>()))
-                                            .type("type")
+                                            .type(AppFeedbackSource.Type.APP)
                                             .build()
                                     )
                                     .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -532,10 +535,10 @@ internal class DatasetServiceAsyncTest {
                             .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .extra(JsonValue.from(mapOf<String, Any>()))
                             .feedbackConfig(
-                                FeedbackConfig.builder()
-                                    .type(FeedbackConfig.Type.CONTINUOUS)
+                                FeedbackCreateCoreSchema.FeedbackConfig.builder()
+                                    .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
                                     .addCategory(
-                                        FeedbackConfig.Category.builder()
+                                        FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
                                             .value(0.0)
                                             .label("x")
                                             .build()
@@ -548,7 +551,7 @@ internal class DatasetServiceAsyncTest {
                             .feedbackSource(
                                 AppFeedbackSource.builder()
                                     .metadata(JsonValue.from(mapOf<String, Any>()))
-                                    .type("type")
+                                    .type(AppFeedbackSource.Type.APP)
                                     .build()
                             )
                             .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

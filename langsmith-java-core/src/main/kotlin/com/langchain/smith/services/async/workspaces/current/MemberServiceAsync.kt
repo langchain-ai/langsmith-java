@@ -5,10 +5,10 @@ package com.langchain.smith.services.async.workspaces.current
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.orgs.current.members.PendingIdentity
-import com.langchain.smith.models.orgs.pending.Identity
 import com.langchain.smith.models.workspaces.current.members.MemberBatchParams
+import com.langchain.smith.models.workspaces.current.members.MemberBatchResponse
 import com.langchain.smith.models.workspaces.current.members.MemberCreateParams
+import com.langchain.smith.models.workspaces.current.members.MemberCreateResponse
 import com.langchain.smith.models.workspaces.current.members.MemberDeleteParams
 import com.langchain.smith.models.workspaces.current.members.MemberDeleteResponse
 import com.langchain.smith.models.workspaces.current.members.MemberIdentity
@@ -38,21 +38,21 @@ interface MemberServiceAsync {
     fun pending(): PendingServiceAsync
 
     /** Add an existing organization member to the current workspace. */
-    fun create(): CompletableFuture<Identity> = create(MemberCreateParams.none())
+    fun create(): CompletableFuture<MemberCreateResponse> = create(MemberCreateParams.none())
 
     /** @see create */
     fun create(
         params: MemberCreateParams = MemberCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Identity>
+    ): CompletableFuture<MemberCreateResponse>
 
     /** @see create */
     fun create(
         params: MemberCreateParams = MemberCreateParams.none()
-    ): CompletableFuture<Identity> = create(params, RequestOptions.none())
+    ): CompletableFuture<MemberCreateResponse> = create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): CompletableFuture<Identity> =
+    fun create(requestOptions: RequestOptions): CompletableFuture<MemberCreateResponse> =
         create(MemberCreateParams.none(), requestOptions)
 
     /** Patch Current Workspace Member */
@@ -133,14 +133,14 @@ interface MemberServiceAsync {
         delete(identityId, MemberDeleteParams.none(), requestOptions)
 
     /** Batch invite up to 500 users to the current workspace and organization. */
-    fun batch(params: MemberBatchParams): CompletableFuture<List<PendingIdentity>> =
+    fun batch(params: MemberBatchParams): CompletableFuture<List<MemberBatchResponse>> =
         batch(params, RequestOptions.none())
 
     /** @see batch */
     fun batch(
         params: MemberBatchParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<PendingIdentity>>
+    ): CompletableFuture<List<MemberBatchResponse>>
 
     /** Get Current Active Workspace Members */
     fun retrieveActive(): CompletableFuture<List<MemberIdentity>> =
@@ -181,22 +181,25 @@ interface MemberServiceAsync {
          * Returns a raw HTTP response for `post /api/v1/workspaces/current/members`, but is
          * otherwise the same as [MemberServiceAsync.create].
          */
-        fun create(): CompletableFuture<HttpResponseFor<Identity>> =
+        fun create(): CompletableFuture<HttpResponseFor<MemberCreateResponse>> =
             create(MemberCreateParams.none())
 
         /** @see create */
         fun create(
             params: MemberCreateParams = MemberCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<Identity>>
+        ): CompletableFuture<HttpResponseFor<MemberCreateResponse>>
 
         /** @see create */
         fun create(
             params: MemberCreateParams = MemberCreateParams.none()
-        ): CompletableFuture<HttpResponseFor<Identity>> = create(params, RequestOptions.none())
+        ): CompletableFuture<HttpResponseFor<MemberCreateResponse>> =
+            create(params, RequestOptions.none())
 
         /** @see create */
-        fun create(requestOptions: RequestOptions): CompletableFuture<HttpResponseFor<Identity>> =
+        fun create(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<MemberCreateResponse>> =
             create(MemberCreateParams.none(), requestOptions)
 
         /**
@@ -302,14 +305,14 @@ interface MemberServiceAsync {
          */
         fun batch(
             params: MemberBatchParams
-        ): CompletableFuture<HttpResponseFor<List<PendingIdentity>>> =
+        ): CompletableFuture<HttpResponseFor<List<MemberBatchResponse>>> =
             batch(params, RequestOptions.none())
 
         /** @see batch */
         fun batch(
             params: MemberBatchParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<PendingIdentity>>>
+        ): CompletableFuture<HttpResponseFor<List<MemberBatchResponse>>>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/workspaces/current/members/active`, but is
