@@ -82,6 +82,8 @@ private constructor(
      */
     fun evaluatorRules(): Optional<List<String>> = body.evaluatorRules()
 
+    fun _metadata(): JsonValue = body._metadata()
+
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -475,6 +477,8 @@ private constructor(
          */
         fun addEvaluatorRule(evaluatorRule: String) = apply { body.addEvaluatorRule(evaluatorRule) }
 
+        fun metadata(metadata: JsonValue) = apply { body.metadata(metadata) }
+
         fun owner(owner: String?) = apply { body.owner(owner) }
 
         /** Alias for calling [Builder.owner] with `owner.orElse(null)`. */
@@ -822,6 +826,7 @@ private constructor(
         private val commit: JsonField<String>,
         private val datasetSplits: JsonField<List<String>>,
         private val evaluatorRules: JsonField<List<String>>,
+        private val metadata: JsonValue,
         private val owner: JsonField<String>,
         private val parallelToolCalls: JsonField<Boolean>,
         private val repetitions: JsonField<Long>,
@@ -859,6 +864,7 @@ private constructor(
             @JsonProperty("evaluator_rules")
             @ExcludeMissing
             evaluatorRules: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
             @JsonProperty("owner") @ExcludeMissing owner: JsonField<String> = JsonMissing.of(),
             @JsonProperty("parallel_tool_calls")
             @ExcludeMissing
@@ -896,6 +902,7 @@ private constructor(
             commit,
             datasetSplits,
             evaluatorRules,
+            metadata,
             owner,
             parallelToolCalls,
             repetitions,
@@ -961,6 +968,8 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun evaluatorRules(): Optional<List<String>> = evaluatorRules.getOptional("evaluator_rules")
+
+        @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1232,6 +1241,7 @@ private constructor(
             private var commit: JsonField<String> = JsonMissing.of()
             private var datasetSplits: JsonField<MutableList<String>>? = null
             private var evaluatorRules: JsonField<MutableList<String>>? = null
+            private var metadata: JsonValue = JsonMissing.of()
             private var owner: JsonField<String> = JsonMissing.of()
             private var parallelToolCalls: JsonField<Boolean> = JsonMissing.of()
             private var repetitions: JsonField<Long> = JsonMissing.of()
@@ -1256,6 +1266,7 @@ private constructor(
                 commit = body.commit
                 datasetSplits = body.datasetSplits.map { it.toMutableList() }
                 evaluatorRules = body.evaluatorRules.map { it.toMutableList() }
+                metadata = body.metadata
                 owner = body.owner
                 parallelToolCalls = body.parallelToolCalls
                 repetitions = body.repetitions
@@ -1413,6 +1424,8 @@ private constructor(
                         checkKnown("evaluatorRules", it).add(evaluatorRule)
                     }
             }
+
+            fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
 
             fun owner(owner: String?) = owner(JsonField.ofNullable(owner))
 
@@ -1657,6 +1670,7 @@ private constructor(
                     commit,
                     (datasetSplits ?: JsonMissing.of()).map { it.toImmutable() },
                     (evaluatorRules ?: JsonMissing.of()).map { it.toImmutable() },
+                    metadata,
                     owner,
                     parallelToolCalls,
                     repetitions,
@@ -1752,6 +1766,7 @@ private constructor(
                 commit == other.commit &&
                 datasetSplits == other.datasetSplits &&
                 evaluatorRules == other.evaluatorRules &&
+                metadata == other.metadata &&
                 owner == other.owner &&
                 parallelToolCalls == other.parallelToolCalls &&
                 repetitions == other.repetitions &&
@@ -1777,6 +1792,7 @@ private constructor(
                 commit,
                 datasetSplits,
                 evaluatorRules,
+                metadata,
                 owner,
                 parallelToolCalls,
                 repetitions,
@@ -1795,7 +1811,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{datasetId=$datasetId, manifest=$manifest, options=$options, projectName=$projectName, secrets=$secrets, batchSize=$batchSize, commit=$commit, datasetSplits=$datasetSplits, evaluatorRules=$evaluatorRules, owner=$owner, parallelToolCalls=$parallelToolCalls, repetitions=$repetitions, repoHandle=$repoHandle, repoId=$repoId, requestsPerSecond=$requestsPerSecond, runId=$runId, runnerContext=$runnerContext, toolChoice=$toolChoice, tools=$tools, useOrFallbackToWorkspaceSecrets=$useOrFallbackToWorkspaceSecrets, additionalProperties=$additionalProperties}"
+            "Body{datasetId=$datasetId, manifest=$manifest, options=$options, projectName=$projectName, secrets=$secrets, batchSize=$batchSize, commit=$commit, datasetSplits=$datasetSplits, evaluatorRules=$evaluatorRules, metadata=$metadata, owner=$owner, parallelToolCalls=$parallelToolCalls, repetitions=$repetitions, repoHandle=$repoHandle, repoId=$repoId, requestsPerSecond=$requestsPerSecond, runId=$runId, runnerContext=$runnerContext, toolChoice=$toolChoice, tools=$tools, useOrFallbackToWorkspaceSecrets=$useOrFallbackToWorkspaceSecrets, additionalProperties=$additionalProperties}"
     }
 
     class Secrets

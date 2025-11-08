@@ -21,7 +21,13 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Example schema with list of runs. */
+/**
+ * Example schema with list of runs from ClickHouse.
+ *
+ * For non-grouped endpoint (/datasets/{dataset_id}/runs): runs from single session. For grouped
+ * endpoint (/datasets/{dataset_id}/group/runs): flat array of runs from all sessions, where each
+ * run has a session_id field for frontend to determine column placement.
+ */
 class ExampleWithRunsCh
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(

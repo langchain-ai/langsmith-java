@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.datasets.group
 
+import com.langchain.smith.core.JsonValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,6 +15,11 @@ internal class GroupRunsParamsTest {
             .groupBy(GroupRunsParams.GroupBy.RUN_METADATA)
             .metadataKey("metadata_key")
             .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .filters(
+                GroupRunsParams.Filters.builder()
+                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                    .build()
+            )
             .limit(1L)
             .offset(0L)
             .perGroupLimit(1L)
@@ -44,6 +50,11 @@ internal class GroupRunsParamsTest {
                 .groupBy(GroupRunsParams.GroupBy.RUN_METADATA)
                 .metadataKey("metadata_key")
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .filters(
+                    GroupRunsParams.Filters.builder()
+                        .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                        .build()
+                )
                 .limit(1L)
                 .offset(0L)
                 .perGroupLimit(1L)
@@ -55,6 +66,12 @@ internal class GroupRunsParamsTest {
         assertThat(body.groupBy()).isEqualTo(GroupRunsParams.GroupBy.RUN_METADATA)
         assertThat(body.metadataKey()).isEqualTo("metadata_key")
         assertThat(body.sessionIds()).containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(body.filters())
+            .contains(
+                GroupRunsParams.Filters.builder()
+                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
+                    .build()
+            )
         assertThat(body.limit()).contains(1L)
         assertThat(body.offset()).contains(0L)
         assertThat(body.perGroupLimit()).contains(1L)
