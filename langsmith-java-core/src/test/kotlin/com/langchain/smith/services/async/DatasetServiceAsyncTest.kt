@@ -5,7 +5,6 @@ package com.langchain.smith.services.async
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.datasets.DataType
 import com.langchain.smith.models.datasets.DatasetCloneParams
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetGenerateParams
@@ -51,7 +50,7 @@ internal class DatasetServiceAsyncTest {
                     .name("name")
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .dataType(DataType.KV)
+                    .dataType(DatasetCreateParams.DataType.KV)
                     .description("description")
                     .externallyManaged(true)
                     .extra(JsonValue.from(mapOf<String, Any>()))
@@ -167,7 +166,9 @@ internal class DatasetServiceAsyncTest {
             datasetServiceAsync.list(
                 DatasetListParams.builder()
                     .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .dataTypeOfTypes(listOf(DataType.KV))
+                    .dataTypeOfDatasetDataTypes(
+                        listOf(DatasetListParams.DataType.DatasetDataType.KV)
+                    )
                     .excludeCorrectionsDatasets(true)
                     .limit(1L)
                     .metadata("metadata")
@@ -468,7 +469,7 @@ internal class DatasetServiceAsyncTest {
                 DatasetUploadParams.builder()
                     .file("some content".byteInputStream())
                     .addInputKey("string")
-                    .dataType(DataType.KV)
+                    .dataType(DatasetUploadParams.DataType.KV)
                     .description("description")
                     .inputKeyMappings("input_key_mappings")
                     .inputsSchemaDefinition("inputs_schema_definition")

@@ -5,7 +5,6 @@ package com.langchain.smith.models.public_.datasets
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.datasets.DataType
 import com.langchain.smith.models.datasets.DatasetTransformation
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -22,7 +21,7 @@ internal class DatasetListResponseTest {
                 .exampleCount(0L)
                 .name("name")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .dataType(DataType.KV)
+                .dataType(DatasetListResponse.DataType.KV)
                 .description("description")
                 .externallyManaged(true)
                 .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
@@ -42,7 +41,7 @@ internal class DatasetListResponseTest {
         assertThat(datasetListResponse.name()).isEqualTo("name")
         assertThat(datasetListResponse.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(datasetListResponse.dataType()).contains(DataType.KV)
+        assertThat(datasetListResponse.dataType()).contains(DatasetListResponse.DataType.KV)
         assertThat(datasetListResponse.description()).contains("description")
         assertThat(datasetListResponse.externallyManaged()).contains(true)
         assertThat(datasetListResponse._inputsSchemaDefinition())
@@ -69,7 +68,7 @@ internal class DatasetListResponseTest {
                 .exampleCount(0L)
                 .name("name")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .dataType(DataType.KV)
+                .dataType(DatasetListResponse.DataType.KV)
                 .description("description")
                 .externallyManaged(true)
                 .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
