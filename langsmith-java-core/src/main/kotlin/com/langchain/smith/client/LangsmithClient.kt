@@ -6,6 +6,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.blocking.AnnotationQueueService
 import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.DatasetService
+import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
@@ -51,6 +52,8 @@ interface LangsmithClient {
 
     fun sessions(): SessionService
 
+    fun examples(): ExampleService
+
     fun datasets(): DatasetService
 
     fun feedback(): FeedbackService
@@ -89,6 +92,8 @@ interface LangsmithClient {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient.WithRawResponse
 
         fun sessions(): SessionService.WithRawResponse
+
+        fun examples(): ExampleService.WithRawResponse
 
         fun datasets(): DatasetService.WithRawResponse
 

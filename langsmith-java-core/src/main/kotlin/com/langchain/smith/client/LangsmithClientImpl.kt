@@ -10,6 +10,8 @@ import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.CommitServiceImpl
 import com.langchain.smith.services.blocking.DatasetService
 import com.langchain.smith.services.blocking.DatasetServiceImpl
+import com.langchain.smith.services.blocking.ExampleService
+import com.langchain.smith.services.blocking.ExampleServiceImpl
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.FeedbackServiceImpl
 import com.langchain.smith.services.blocking.PublicService
@@ -41,6 +43,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val sessions: SessionService by lazy { SessionServiceImpl(clientOptionsWithUserAgent) }
 
+    private val examples: ExampleService by lazy { ExampleServiceImpl(clientOptionsWithUserAgent) }
+
     private val datasets: DatasetService by lazy { DatasetServiceImpl(clientOptionsWithUserAgent) }
 
     private val feedback: FeedbackService by lazy {
@@ -68,6 +72,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     override fun sessions(): SessionService = sessions
 
+    override fun examples(): ExampleService = examples
+
     override fun datasets(): DatasetService = datasets
 
     override fun feedback(): FeedbackService = feedback
@@ -89,6 +95,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
         private val sessions: SessionService.WithRawResponse by lazy {
             SessionServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val examples: ExampleService.WithRawResponse by lazy {
+            ExampleServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val datasets: DatasetService.WithRawResponse by lazy {
@@ -127,6 +137,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             )
 
         override fun sessions(): SessionService.WithRawResponse = sessions
+
+        override fun examples(): ExampleService.WithRawResponse = examples
 
         override fun datasets(): DatasetService.WithRawResponse = datasets
 

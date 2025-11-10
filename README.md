@@ -222,61 +222,65 @@ The SDK defines methods that accept files.
 To upload a file, pass a [`Path`](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html):
 
 ```java
-import com.langchain.smith.models.datasets.Dataset;
-import com.langchain.smith.models.datasets.DatasetUploadParams;
+import com.langchain.smith.models.examples.Example;
+import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
 import java.nio.file.Paths;
 
-DatasetUploadParams params = DatasetUploadParams.builder()
+ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
+    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     .addInputKey("string")
     .file(Paths.get("/path/to/file"))
     .build();
-Dataset dataset = client.datasets().upload(params);
+List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
 Or an arbitrary [`InputStream`](https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html):
 
 ```java
-import com.langchain.smith.models.datasets.Dataset;
-import com.langchain.smith.models.datasets.DatasetUploadParams;
+import com.langchain.smith.models.examples.Example;
+import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
 import java.net.URL;
 
-DatasetUploadParams params = DatasetUploadParams.builder()
+ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
+    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     .addInputKey("string")
     .file(new URL("https://example.com//path/to/file").openStream())
     .build();
-Dataset dataset = client.datasets().upload(params);
+List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
 Or a `byte[]` array:
 
 ```java
-import com.langchain.smith.models.datasets.Dataset;
-import com.langchain.smith.models.datasets.DatasetUploadParams;
+import com.langchain.smith.models.examples.Example;
+import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
 
-DatasetUploadParams params = DatasetUploadParams.builder()
+ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
+    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     .addInputKey("string")
     .file("content".getBytes())
     .build();
-Dataset dataset = client.datasets().upload(params);
+List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
 Note that when passing a non-`Path` its filename is unknown so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
 
 ```java
 import com.langchain.smith.core.MultipartField;
-import com.langchain.smith.models.datasets.Dataset;
-import com.langchain.smith.models.datasets.DatasetUploadParams;
+import com.langchain.smith.models.examples.Example;
+import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
 import java.io.InputStream;
 import java.net.URL;
 
-DatasetUploadParams params = DatasetUploadParams.builder()
+ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
+    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     .addInputKey("string")
     .file(MultipartField.<InputStream>builder()
         .value(new URL("https://example.com//path/to/file").openStream())
         .filename("/path/to/file")
         .build())
     .build();
-Dataset dataset = client.datasets().upload(params);
+List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
 ## Raw responses

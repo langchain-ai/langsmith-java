@@ -6,6 +6,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.async.AnnotationQueueServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsync
+import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
@@ -51,6 +52,8 @@ interface LangsmithClientAsync {
 
     fun sessions(): SessionServiceAsync
 
+    fun examples(): ExampleServiceAsync
+
     fun datasets(): DatasetServiceAsync
 
     fun feedback(): FeedbackServiceAsync
@@ -93,6 +96,8 @@ interface LangsmithClientAsync {
         ): LangsmithClientAsync.WithRawResponse
 
         fun sessions(): SessionServiceAsync.WithRawResponse
+
+        fun examples(): ExampleServiceAsync.WithRawResponse
 
         fun datasets(): DatasetServiceAsync.WithRawResponse
 
