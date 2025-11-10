@@ -10,6 +10,7 @@ import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
+import com.langchain.smith.services.blocking.RunService
 import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SettingService
 import java.util.function.Consumer
@@ -56,6 +57,8 @@ interface LangsmithClient {
 
     fun datasets(): DatasetService
 
+    fun runs(): RunService
+
     fun feedback(): FeedbackService
 
     fun public_(): PublicService
@@ -96,6 +99,8 @@ interface LangsmithClient {
         fun examples(): ExampleService.WithRawResponse
 
         fun datasets(): DatasetService.WithRawResponse
+
+        fun runs(): RunService.WithRawResponse
 
         fun feedback(): FeedbackService.WithRawResponse
 

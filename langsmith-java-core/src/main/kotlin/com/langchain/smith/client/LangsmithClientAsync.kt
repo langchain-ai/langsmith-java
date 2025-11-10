@@ -10,6 +10,7 @@ import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
+import com.langchain.smith.services.async.RunServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsync
 import java.util.function.Consumer
@@ -56,6 +57,8 @@ interface LangsmithClientAsync {
 
     fun datasets(): DatasetServiceAsync
 
+    fun runs(): RunServiceAsync
+
     fun feedback(): FeedbackServiceAsync
 
     fun public_(): PublicServiceAsync
@@ -100,6 +103,8 @@ interface LangsmithClientAsync {
         fun examples(): ExampleServiceAsync.WithRawResponse
 
         fun datasets(): DatasetServiceAsync.WithRawResponse
+
+        fun runs(): RunServiceAsync.WithRawResponse
 
         fun feedback(): FeedbackServiceAsync.WithRawResponse
 
