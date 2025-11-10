@@ -51,8 +51,6 @@ import com.langchain.smith.services.blocking.datasets.ComparativeService
 import com.langchain.smith.services.blocking.datasets.ComparativeServiceImpl
 import com.langchain.smith.services.blocking.datasets.ExperimentService
 import com.langchain.smith.services.blocking.datasets.ExperimentServiceImpl
-import com.langchain.smith.services.blocking.datasets.ExperimentViewOverrideService
-import com.langchain.smith.services.blocking.datasets.ExperimentViewOverrideServiceImpl
 import com.langchain.smith.services.blocking.datasets.GroupService
 import com.langchain.smith.services.blocking.datasets.GroupServiceImpl
 import com.langchain.smith.services.blocking.datasets.IndexService
@@ -75,10 +73,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     private val withRawResponse: DatasetService.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
-    }
-
-    private val experimentViewOverrides: ExperimentViewOverrideService by lazy {
-        ExperimentViewOverrideServiceImpl(clientOptions)
     }
 
     private val versions: VersionService by lazy { VersionServiceImpl(clientOptions) }
@@ -105,8 +99,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService =
         DatasetServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun experimentViewOverrides(): ExperimentViewOverrideService = experimentViewOverrides
 
     override fun versions(): VersionService = versions
 
@@ -239,10 +231,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val experimentViewOverrides: ExperimentViewOverrideService.WithRawResponse by lazy {
-            ExperimentViewOverrideServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val versions: VersionService.WithRawResponse by lazy {
             VersionServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -285,9 +273,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             DatasetServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun experimentViewOverrides(): ExperimentViewOverrideService.WithRawResponse =
-            experimentViewOverrides
 
         override fun versions(): VersionService.WithRawResponse = versions
 

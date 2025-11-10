@@ -38,7 +38,6 @@ import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
 import com.langchain.smith.services.blocking.datasets.ExperimentService
-import com.langchain.smith.services.blocking.datasets.ExperimentViewOverrideService
 import com.langchain.smith.services.blocking.datasets.GroupService
 import com.langchain.smith.services.blocking.datasets.IndexService
 import com.langchain.smith.services.blocking.datasets.PlaygroundExperimentService
@@ -61,8 +60,6 @@ interface DatasetService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService
-
-    fun experimentViewOverrides(): ExperimentViewOverrideService
 
     fun versions(): VersionService
 
@@ -483,8 +480,6 @@ interface DatasetService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService.WithRawResponse
-
-        fun experimentViewOverrides(): ExperimentViewOverrideService.WithRawResponse
 
         fun versions(): VersionService.WithRawResponse
 

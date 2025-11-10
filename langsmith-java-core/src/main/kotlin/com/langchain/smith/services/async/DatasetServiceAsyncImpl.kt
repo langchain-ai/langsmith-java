@@ -51,8 +51,6 @@ import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.ExperimentServiceAsync
 import com.langchain.smith.services.async.datasets.ExperimentServiceAsyncImpl
-import com.langchain.smith.services.async.datasets.ExperimentViewOverrideServiceAsync
-import com.langchain.smith.services.async.datasets.ExperimentViewOverrideServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.GroupServiceAsync
 import com.langchain.smith.services.async.datasets.GroupServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.IndexServiceAsync
@@ -76,10 +74,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     private val withRawResponse: DatasetServiceAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
-    }
-
-    private val experimentViewOverrides: ExperimentViewOverrideServiceAsync by lazy {
-        ExperimentViewOverrideServiceAsyncImpl(clientOptions)
     }
 
     private val versions: VersionServiceAsync by lazy { VersionServiceAsyncImpl(clientOptions) }
@@ -110,9 +104,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetServiceAsync =
         DatasetServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun experimentViewOverrides(): ExperimentViewOverrideServiceAsync =
-        experimentViewOverrides
 
     override fun versions(): VersionServiceAsync = versions
 
@@ -257,11 +248,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val experimentViewOverrides:
-            ExperimentViewOverrideServiceAsync.WithRawResponse by lazy {
-            ExperimentViewOverrideServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val versions: VersionServiceAsync.WithRawResponse by lazy {
             VersionServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -304,9 +290,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
             DatasetServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun experimentViewOverrides(): ExperimentViewOverrideServiceAsync.WithRawResponse =
-            experimentViewOverrides
 
         override fun versions(): VersionServiceAsync.WithRawResponse = versions
 
