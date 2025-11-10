@@ -10,14 +10,10 @@ import com.langchain.smith.models.feedback.FeedbackCreateParams
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import com.langchain.smith.models.feedback.FeedbackDeleteParams
 import com.langchain.smith.models.feedback.FeedbackDeleteResponse
-import com.langchain.smith.models.feedback.FeedbackEagerParams
-import com.langchain.smith.models.feedback.FeedbackIngestBatchParams
-import com.langchain.smith.models.feedback.FeedbackIngestBatchResponse
 import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
-import com.langchain.smith.services.blocking.feedback.FormulaService
 import com.langchain.smith.services.blocking.feedback.TokenService
 import java.util.function.Consumer
 
@@ -34,8 +30,6 @@ interface FeedbackService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FeedbackService
-
-    fun formulas(): FormulaService
 
     fun tokens(): TokenService
 
@@ -171,44 +165,6 @@ interface FeedbackService {
     fun delete(feedbackId: String, requestOptions: RequestOptions): FeedbackDeleteResponse =
         delete(feedbackId, FeedbackDeleteParams.none(), requestOptions)
 
-    /**
-     * Create a new feedback.
-     *
-     * This method is invoked under the assumption that the run is already visible in the app, thus
-     * already present in DB
-     */
-    fun eager(params: FeedbackEagerParams): FeedbackSchema = eager(params, RequestOptions.none())
-
-    /** @see eager */
-    fun eager(
-        params: FeedbackEagerParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): FeedbackSchema
-
-    /** @see eager */
-    fun eager(
-        feedbackCreateSchema: FeedbackCreateSchema,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): FeedbackSchema =
-        eager(
-            FeedbackEagerParams.builder().feedbackCreateSchema(feedbackCreateSchema).build(),
-            requestOptions,
-        )
-
-    /** @see eager */
-    fun eager(feedbackCreateSchema: FeedbackCreateSchema): FeedbackSchema =
-        eager(feedbackCreateSchema, RequestOptions.none())
-
-    /** Ingests a batch of feedback objects in a single JSON array payload. */
-    fun ingestBatch(params: FeedbackIngestBatchParams): FeedbackIngestBatchResponse =
-        ingestBatch(params, RequestOptions.none())
-
-    /** @see ingestBatch */
-    fun ingestBatch(
-        params: FeedbackIngestBatchParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): FeedbackIngestBatchResponse
-
     /** A view of [FeedbackService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -218,8 +174,6 @@ interface FeedbackService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): FeedbackService.WithRawResponse
-
-        fun formulas(): FormulaService.WithRawResponse
 
         fun tokens(): TokenService.WithRawResponse
 
@@ -411,52 +365,5 @@ interface FeedbackService {
             requestOptions: RequestOptions,
         ): HttpResponseFor<FeedbackDeleteResponse> =
             delete(feedbackId, FeedbackDeleteParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/feedback/eager`, but is otherwise the same
-         * as [FeedbackService.eager].
-         */
-        @MustBeClosed
-        fun eager(params: FeedbackEagerParams): HttpResponseFor<FeedbackSchema> =
-            eager(params, RequestOptions.none())
-
-        /** @see eager */
-        @MustBeClosed
-        fun eager(
-            params: FeedbackEagerParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FeedbackSchema>
-
-        /** @see eager */
-        @MustBeClosed
-        fun eager(
-            feedbackCreateSchema: FeedbackCreateSchema,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FeedbackSchema> =
-            eager(
-                FeedbackEagerParams.builder().feedbackCreateSchema(feedbackCreateSchema).build(),
-                requestOptions,
-            )
-
-        /** @see eager */
-        @MustBeClosed
-        fun eager(feedbackCreateSchema: FeedbackCreateSchema): HttpResponseFor<FeedbackSchema> =
-            eager(feedbackCreateSchema, RequestOptions.none())
-
-        /**
-         * Returns a raw HTTP response for `post /feedback/batch`, but is otherwise the same as
-         * [FeedbackService.ingestBatch].
-         */
-        @MustBeClosed
-        fun ingestBatch(
-            params: FeedbackIngestBatchParams
-        ): HttpResponseFor<FeedbackIngestBatchResponse> = ingestBatch(params, RequestOptions.none())
-
-        /** @see ingestBatch */
-        @MustBeClosed
-        fun ingestBatch(
-            params: FeedbackIngestBatchParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<FeedbackIngestBatchResponse>
     }
 }

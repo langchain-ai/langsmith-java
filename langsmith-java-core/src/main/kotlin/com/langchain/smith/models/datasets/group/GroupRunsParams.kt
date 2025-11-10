@@ -59,6 +59,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun filters(): Optional<Filters> = body.filters()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun limit(): Optional<Long> = body.limit()
 
     /**
@@ -99,6 +105,13 @@ private constructor(
      * Unlike [sessionIds], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sessionIds(): JsonField<List<String>> = body._sessionIds()
+
+    /**
+     * Returns the raw JSON value of [filters].
+     *
+     * Unlike [filters], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _filters(): JsonField<Filters> = body._filters()
 
     /**
      * Returns the raw JSON value of [limit].
@@ -182,8 +195,8 @@ private constructor(
          * - [groupBy]
          * - [metadataKey]
          * - [sessionIds]
+         * - [filters]
          * - [limit]
-         * - [offset]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -226,6 +239,19 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addSessionId(sessionId: String) = apply { body.addSessionId(sessionId) }
+
+        fun filters(filters: Filters?) = apply { body.filters(filters) }
+
+        /** Alias for calling [Builder.filters] with `filters.orElse(null)`. */
+        fun filters(filters: Optional<Filters>) = filters(filters.getOrNull())
+
+        /**
+         * Sets [Builder.filters] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.filters] with a well-typed [Filters] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun filters(filters: JsonField<Filters>) = apply { body.filters(filters) }
 
         fun limit(limit: Long) = apply { body.limit(limit) }
 
@@ -428,6 +454,7 @@ private constructor(
         private val groupBy: JsonField<GroupBy>,
         private val metadataKey: JsonField<String>,
         private val sessionIds: JsonField<List<String>>,
+        private val filters: JsonField<Filters>,
         private val limit: JsonField<Long>,
         private val offset: JsonField<Long>,
         private val perGroupLimit: JsonField<Long>,
@@ -446,6 +473,7 @@ private constructor(
             @JsonProperty("session_ids")
             @ExcludeMissing
             sessionIds: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("filters") @ExcludeMissing filters: JsonField<Filters> = JsonMissing.of(),
             @JsonProperty("limit") @ExcludeMissing limit: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("offset") @ExcludeMissing offset: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("per_group_limit")
@@ -456,6 +484,7 @@ private constructor(
             groupBy,
             metadataKey,
             sessionIds,
+            filters,
             limit,
             offset,
             perGroupLimit,
@@ -480,6 +509,12 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun sessionIds(): List<String> = sessionIds.getRequired("session_ids")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun filters(): Optional<Filters> = filters.getOptional("filters")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -529,6 +564,13 @@ private constructor(
         @JsonProperty("session_ids")
         @ExcludeMissing
         fun _sessionIds(): JsonField<List<String>> = sessionIds
+
+        /**
+         * Returns the raw JSON value of [filters].
+         *
+         * Unlike [filters], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("filters") @ExcludeMissing fun _filters(): JsonField<Filters> = filters
 
         /**
          * Returns the raw JSON value of [limit].
@@ -594,6 +636,7 @@ private constructor(
             private var groupBy: JsonField<GroupBy>? = null
             private var metadataKey: JsonField<String>? = null
             private var sessionIds: JsonField<MutableList<String>>? = null
+            private var filters: JsonField<Filters> = JsonMissing.of()
             private var limit: JsonField<Long> = JsonMissing.of()
             private var offset: JsonField<Long> = JsonMissing.of()
             private var perGroupLimit: JsonField<Long> = JsonMissing.of()
@@ -605,6 +648,7 @@ private constructor(
                 groupBy = body.groupBy
                 metadataKey = body.metadataKey
                 sessionIds = body.sessionIds.map { it.toMutableList() }
+                filters = body.filters
                 limit = body.limit
                 offset = body.offset
                 perGroupLimit = body.perGroupLimit
@@ -660,6 +704,20 @@ private constructor(
                         checkKnown("sessionIds", it).add(sessionId)
                     }
             }
+
+            fun filters(filters: Filters?) = filters(JsonField.ofNullable(filters))
+
+            /** Alias for calling [Builder.filters] with `filters.orElse(null)`. */
+            fun filters(filters: Optional<Filters>) = filters(filters.getOrNull())
+
+            /**
+             * Sets [Builder.filters] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.filters] with a well-typed [Filters] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun filters(filters: JsonField<Filters>) = apply { this.filters = filters }
 
             fun limit(limit: Long) = limit(JsonField.of(limit))
 
@@ -745,6 +803,7 @@ private constructor(
                     checkRequired("groupBy", groupBy),
                     checkRequired("metadataKey", metadataKey),
                     checkRequired("sessionIds", sessionIds).map { it.toImmutable() },
+                    filters,
                     limit,
                     offset,
                     perGroupLimit,
@@ -763,6 +822,7 @@ private constructor(
             groupBy().validate()
             metadataKey()
             sessionIds()
+            filters().ifPresent { it.validate() }
             limit()
             offset()
             perGroupLimit()
@@ -789,6 +849,7 @@ private constructor(
             (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (metadataKey.asKnown().isPresent) 1 else 0) +
                 (sessionIds.asKnown().getOrNull()?.size ?: 0) +
+                (filters.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (limit.asKnown().isPresent) 1 else 0) +
                 (if (offset.asKnown().isPresent) 1 else 0) +
                 (if (perGroupLimit.asKnown().isPresent) 1 else 0) +
@@ -803,6 +864,7 @@ private constructor(
                 groupBy == other.groupBy &&
                 metadataKey == other.metadataKey &&
                 sessionIds == other.sessionIds &&
+                filters == other.filters &&
                 limit == other.limit &&
                 offset == other.offset &&
                 perGroupLimit == other.perGroupLimit &&
@@ -815,6 +877,7 @@ private constructor(
                 groupBy,
                 metadataKey,
                 sessionIds,
+                filters,
                 limit,
                 offset,
                 perGroupLimit,
@@ -826,7 +889,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{groupBy=$groupBy, metadataKey=$metadataKey, sessionIds=$sessionIds, limit=$limit, offset=$offset, perGroupLimit=$perGroupLimit, preview=$preview, additionalProperties=$additionalProperties}"
+            "Body{groupBy=$groupBy, metadataKey=$metadataKey, sessionIds=$sessionIds, filters=$filters, limit=$limit, offset=$offset, perGroupLimit=$perGroupLimit, preview=$preview, additionalProperties=$additionalProperties}"
     }
 
     class GroupBy @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
@@ -954,6 +1017,105 @@ private constructor(
         override fun hashCode() = value.hashCode()
 
         override fun toString() = value.toString()
+    }
+
+    class Filters
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Filters]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Filters]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(filters: Filters) = apply {
+                additionalProperties = filters.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Filters].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Filters = Filters(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Filters = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Filters && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Filters{additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -8,9 +8,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sessions.insights.CreateRunClusteringJobRequest
 import com.langchain.smith.models.sessions.insights.InsightCreateParams
 import com.langchain.smith.models.sessions.insights.InsightDeleteParams
-import com.langchain.smith.models.sessions.insights.InsightListParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobParams
-import com.langchain.smith.models.sessions.insights.InsightRetrieveParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import java.time.OffsetDateTime
@@ -71,31 +69,6 @@ internal class InsightServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieve() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val insightServiceAsync = client.sessions().insights()
-
-        val insightFuture =
-            insightServiceAsync.retrieve(
-                InsightRetrieveParams.builder()
-                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .jobId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .clusterId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
-
-        val insight = insightFuture.get()
-        insight.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
     fun update() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -117,31 +90,6 @@ internal class InsightServiceAsyncTest {
 
         val insight = insightFuture.get()
         insight.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun list() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val insightServiceAsync = client.sessions().insights()
-
-        val insightsFuture =
-            insightServiceAsync.list(
-                InsightListParams.builder()
-                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .limit(1L)
-                    .offset(0L)
-                    .build()
-            )
-
-        val insights = insightsFuture.get()
-        insights.validate()
     }
 
     @Disabled("Prism tests are disabled")

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
@@ -14,14 +15,19 @@ import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
-import com.langchain.smith.models.runs.RunTypeEnum
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Example schema with list of runs. */
+/**
+ * Example schema with list of runs from ClickHouse.
+ *
+ * For non-grouped endpoint (/datasets/{dataset_id}/runs): runs from single session. For grouped
+ * endpoint (/datasets/{dataset_id}/group/runs): flat array of runs from all sessions, where each
+ * run has a session_id field for frontend to determine column placement.
+ */
 class ExampleWithRunsCh
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
@@ -442,7 +448,7 @@ private constructor(
     private constructor(
         private val id: JsonField<String>,
         private val name: JsonField<String>,
-        private val runType: JsonField<RunTypeEnum>,
+        private val runType: JsonField<RunType>,
         private val sessionId: JsonField<String>,
         private val status: JsonField<String>,
         private val traceId: JsonField<String>,
@@ -485,7 +491,7 @@ private constructor(
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("run_type")
             @ExcludeMissing
-            runType: JsonField<RunTypeEnum> = JsonMissing.of(),
+            runType: JsonField<RunType> = JsonMissing.of(),
             @JsonProperty("session_id")
             @ExcludeMissing
             sessionId: JsonField<String> = JsonMissing.of(),
@@ -623,7 +629,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
-        fun runType(): RunTypeEnum = runType.getRequired("run_type")
+        fun runType(): RunType = runType.getRequired("run_type")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -821,7 +827,7 @@ private constructor(
          *
          * Unlike [runType], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("run_type") @ExcludeMissing fun _runType(): JsonField<RunTypeEnum> = runType
+        @JsonProperty("run_type") @ExcludeMissing fun _runType(): JsonField<RunType> = runType
 
         /**
          * Returns the raw JSON value of [sessionId].
@@ -1087,7 +1093,7 @@ private constructor(
 
             private var id: JsonField<String>? = null
             private var name: JsonField<String>? = null
-            private var runType: JsonField<RunTypeEnum>? = null
+            private var runType: JsonField<RunType>? = null
             private var sessionId: JsonField<String>? = null
             private var status: JsonField<String>? = null
             private var traceId: JsonField<String>? = null
@@ -1187,16 +1193,16 @@ private constructor(
             fun name(name: JsonField<String>) = apply { this.name = name }
 
             /** Enum for run types. */
-            fun runType(runType: RunTypeEnum) = runType(JsonField.of(runType))
+            fun runType(runType: RunType) = runType(JsonField.of(runType))
 
             /**
              * Sets [Builder.runType] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.runType] with a well-typed [RunTypeEnum] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.runType] with a well-typed [RunType] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun runType(runType: JsonField<RunTypeEnum>) = apply { this.runType = runType }
+            fun runType(runType: JsonField<RunType>) = apply { this.runType = runType }
 
             fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
 
@@ -1828,6 +1834,167 @@ private constructor(
                 (if (totalTokens.asKnown().isPresent) 1 else 0) +
                 (if (traceMaxStartTime.asKnown().isPresent) 1 else 0) +
                 (if (traceMinStartTime.asKnown().isPresent) 1 else 0)
+
+        /** Enum for run types. */
+        class RunType @JsonCreator private constructor(private val value: JsonField<String>) :
+            Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val TOOL = of("tool")
+
+                @JvmField val CHAIN = of("chain")
+
+                @JvmField val LLM = of("llm")
+
+                @JvmField val RETRIEVER = of("retriever")
+
+                @JvmField val EMBEDDING = of("embedding")
+
+                @JvmField val PROMPT = of("prompt")
+
+                @JvmField val PARSER = of("parser")
+
+                @JvmStatic fun of(value: String) = RunType(JsonField.of(value))
+            }
+
+            /** An enum containing [RunType]'s known values. */
+            enum class Known {
+                TOOL,
+                CHAIN,
+                LLM,
+                RETRIEVER,
+                EMBEDDING,
+                PROMPT,
+                PARSER,
+            }
+
+            /**
+             * An enum containing [RunType]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [RunType] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                TOOL,
+                CHAIN,
+                LLM,
+                RETRIEVER,
+                EMBEDDING,
+                PROMPT,
+                PARSER,
+                /**
+                 * An enum member indicating that [RunType] was instantiated with an unknown value.
+                 */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    TOOL -> Value.TOOL
+                    CHAIN -> Value.CHAIN
+                    LLM -> Value.LLM
+                    RETRIEVER -> Value.RETRIEVER
+                    EMBEDDING -> Value.EMBEDDING
+                    PROMPT -> Value.PROMPT
+                    PARSER -> Value.PARSER
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    TOOL -> Known.TOOL
+                    CHAIN -> Known.CHAIN
+                    LLM -> Known.LLM
+                    RETRIEVER -> Known.RETRIEVER
+                    EMBEDDING -> Known.EMBEDDING
+                    PROMPT -> Known.PROMPT
+                    PARSER -> Known.PARSER
+                    else -> throw LangChainInvalidDataException("Unknown RunType: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            fun validate(): RunType = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is RunType && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
 
         class FeedbackStats
         @JsonCreator

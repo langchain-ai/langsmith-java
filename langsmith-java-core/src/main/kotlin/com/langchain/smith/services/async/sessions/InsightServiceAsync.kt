@@ -9,17 +9,12 @@ import com.langchain.smith.models.sessions.insights.InsightCreateParams
 import com.langchain.smith.models.sessions.insights.InsightCreateResponse
 import com.langchain.smith.models.sessions.insights.InsightDeleteParams
 import com.langchain.smith.models.sessions.insights.InsightDeleteResponse
-import com.langchain.smith.models.sessions.insights.InsightListParams
-import com.langchain.smith.models.sessions.insights.InsightListResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobResponse
-import com.langchain.smith.models.sessions.insights.InsightRetrieveParams
-import com.langchain.smith.models.sessions.insights.InsightRetrieveResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsResponse
 import com.langchain.smith.models.sessions.insights.InsightUpdateParams
 import com.langchain.smith.models.sessions.insights.InsightUpdateResponse
-import com.langchain.smith.services.async.sessions.insights.ConfigServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -36,8 +31,6 @@ interface InsightServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): InsightServiceAsync
-
-    fun configs(): ConfigServiceAsync
 
     /** Create an insights job. */
     fun create(
@@ -63,31 +56,6 @@ interface InsightServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<InsightCreateResponse>
 
-    /** Get a specific cluster for a session. */
-    fun retrieve(
-        clusterId: String,
-        params: InsightRetrieveParams,
-    ): CompletableFuture<InsightRetrieveResponse> =
-        retrieve(clusterId, params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        clusterId: String,
-        params: InsightRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<InsightRetrieveResponse> =
-        retrieve(params.toBuilder().clusterId(clusterId).build(), requestOptions)
-
-    /** @see retrieve */
-    fun retrieve(params: InsightRetrieveParams): CompletableFuture<InsightRetrieveResponse> =
-        retrieve(params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        params: InsightRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<InsightRetrieveResponse>
-
     /** Update a session cluster job. */
     fun update(
         jobId: String,
@@ -111,41 +79,6 @@ interface InsightServiceAsync {
         params: InsightUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<InsightUpdateResponse>
-
-    /** Get all clusters for a session. */
-    fun list(sessionId: String): CompletableFuture<InsightListResponse> =
-        list(sessionId, InsightListParams.none())
-
-    /** @see list */
-    fun list(
-        sessionId: String,
-        params: InsightListParams = InsightListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<InsightListResponse> =
-        list(params.toBuilder().sessionId(sessionId).build(), requestOptions)
-
-    /** @see list */
-    fun list(
-        sessionId: String,
-        params: InsightListParams = InsightListParams.none(),
-    ): CompletableFuture<InsightListResponse> = list(sessionId, params, RequestOptions.none())
-
-    /** @see list */
-    fun list(
-        params: InsightListParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<InsightListResponse>
-
-    /** @see list */
-    fun list(params: InsightListParams): CompletableFuture<InsightListResponse> =
-        list(params, RequestOptions.none())
-
-    /** @see list */
-    fun list(
-        sessionId: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<InsightListResponse> =
-        list(sessionId, InsightListParams.none(), requestOptions)
 
     /** Delete a session cluster job. */
     fun delete(
@@ -237,8 +170,6 @@ interface InsightServiceAsync {
             modifier: Consumer<ClientOptions.Builder>
         ): InsightServiceAsync.WithRawResponse
 
-        fun configs(): ConfigServiceAsync.WithRawResponse
-
         /**
          * Returns a raw HTTP response for `post /api/v1/sessions/{session_id}/insights`, but is
          * otherwise the same as [InsightServiceAsync.create].
@@ -270,37 +201,6 @@ interface InsightServiceAsync {
         ): CompletableFuture<HttpResponseFor<InsightCreateResponse>>
 
         /**
-         * Returns a raw HTTP response for `get
-         * /api/v1/sessions/{session_id}/insights/{job_id}/clusters/{cluster_id}`, but is otherwise
-         * the same as [InsightServiceAsync.retrieve].
-         */
-        fun retrieve(
-            clusterId: String,
-            params: InsightRetrieveParams,
-        ): CompletableFuture<HttpResponseFor<InsightRetrieveResponse>> =
-            retrieve(clusterId, params, RequestOptions.none())
-
-        /** @see retrieve */
-        fun retrieve(
-            clusterId: String,
-            params: InsightRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<InsightRetrieveResponse>> =
-            retrieve(params.toBuilder().clusterId(clusterId).build(), requestOptions)
-
-        /** @see retrieve */
-        fun retrieve(
-            params: InsightRetrieveParams
-        ): CompletableFuture<HttpResponseFor<InsightRetrieveResponse>> =
-            retrieve(params, RequestOptions.none())
-
-        /** @see retrieve */
-        fun retrieve(
-            params: InsightRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<InsightRetrieveResponse>>
-
-        /**
          * Returns a raw HTTP response for `patch /api/v1/sessions/{session_id}/insights/{job_id}`,
          * but is otherwise the same as [InsightServiceAsync.update].
          */
@@ -329,47 +229,6 @@ interface InsightServiceAsync {
             params: InsightUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<InsightUpdateResponse>>
-
-        /**
-         * Returns a raw HTTP response for `get /api/v1/sessions/{session_id}/insights`, but is
-         * otherwise the same as [InsightServiceAsync.list].
-         */
-        fun list(sessionId: String): CompletableFuture<HttpResponseFor<InsightListResponse>> =
-            list(sessionId, InsightListParams.none())
-
-        /** @see list */
-        fun list(
-            sessionId: String,
-            params: InsightListParams = InsightListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<InsightListResponse>> =
-            list(params.toBuilder().sessionId(sessionId).build(), requestOptions)
-
-        /** @see list */
-        fun list(
-            sessionId: String,
-            params: InsightListParams = InsightListParams.none(),
-        ): CompletableFuture<HttpResponseFor<InsightListResponse>> =
-            list(sessionId, params, RequestOptions.none())
-
-        /** @see list */
-        fun list(
-            params: InsightListParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<InsightListResponse>>
-
-        /** @see list */
-        fun list(
-            params: InsightListParams
-        ): CompletableFuture<HttpResponseFor<InsightListResponse>> =
-            list(params, RequestOptions.none())
-
-        /** @see list */
-        fun list(
-            sessionId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<InsightListResponse>> =
-            list(sessionId, InsightListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/sessions/{session_id}/insights/{job_id}`,

@@ -14,6 +14,7 @@ import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
 import com.langchain.smith.models.datasets.DatasetGenerateParams
 import com.langchain.smith.models.datasets.DatasetGenerateResponse
+import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -150,6 +151,23 @@ interface DatasetService {
     /** @see update */
     fun update(datasetId: String, requestOptions: RequestOptions): DatasetUpdateResponse =
         update(datasetId, DatasetUpdateParams.none(), requestOptions)
+
+    /** Get all datasets by query params and owner. */
+    fun list(): List<Dataset> = list(DatasetListParams.none())
+
+    /** @see list */
+    fun list(
+        params: DatasetListParams = DatasetListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): List<Dataset>
+
+    /** @see list */
+    fun list(params: DatasetListParams = DatasetListParams.none()): List<Dataset> =
+        list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): List<Dataset> =
+        list(DatasetListParams.none(), requestOptions)
 
     /** Delete a specific dataset. */
     fun delete(datasetId: String): DatasetDeleteResponse =
@@ -585,6 +603,30 @@ interface DatasetService {
             requestOptions: RequestOptions,
         ): HttpResponseFor<DatasetUpdateResponse> =
             update(datasetId, DatasetUpdateParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
+         * [DatasetService.list].
+         */
+        @MustBeClosed fun list(): HttpResponseFor<List<Dataset>> = list(DatasetListParams.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: DatasetListParams = DatasetListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<List<Dataset>>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: DatasetListParams = DatasetListParams.none()
+        ): HttpResponseFor<List<Dataset>> = list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(requestOptions: RequestOptions): HttpResponseFor<List<Dataset>> =
+            list(DatasetListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/datasets/{dataset_id}`, but is otherwise

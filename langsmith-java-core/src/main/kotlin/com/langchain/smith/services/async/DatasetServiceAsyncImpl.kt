@@ -25,6 +25,7 @@ import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
 import com.langchain.smith.models.datasets.DatasetGenerateParams
 import com.langchain.smith.models.datasets.DatasetGenerateResponse
+import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -151,6 +152,13 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
     ): CompletableFuture<DatasetUpdateResponse> =
         // patch /api/v1/datasets/{dataset_id}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
+
+    override fun list(
+        params: DatasetListParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<List<Dataset>> =
+        // get /api/v1/datasets
+        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
         params: DatasetDeleteParams,
@@ -410,6 +418,36 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val listHandler: Handler<List<Dataset>> =
+            jsonHandler<List<Dataset>>(clientOptions.jsonMapper)
+
+        override fun list(
+            params: DatasetListParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<List<Dataset>>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "datasets")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { listHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.forEach { it.validate() }
                                 }
                             }
                     }

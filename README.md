@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.6)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.7)
 
 <!-- x-release-please-end -->
 
@@ -17,7 +17,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 ### Gradle
 
 ```kotlin
-implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.6")
+implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.7")
 ```
 
 ### Maven
@@ -26,7 +26,7 @@ implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.6")
 <dependency>
   <groupId>com.langchain.smith</groupId>
   <artifactId>langsmith-java</artifactId>
-  <version>0.1.0-alpha.6</version>
+  <version>0.1.0-alpha.7</version>
 </dependency>
 ```
 
@@ -126,13 +126,13 @@ LangsmithClient client = LangsmithOkHttpClient.builder()
 
 See this table for the available options:
 
-| Setter           | System property                     | Environment variable        | Required | Default value                       |
-| ---------------- | ----------------------------------- | --------------------------- | -------- | ----------------------------------- |
-| `apiKey`         | `langchain.langsmithApiKey`         | `LANGSMITH_API_KEY`         | false    | -                                   |
-| `tenantId`       | `langchain.langsmithTenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                                   |
-| `bearerToken`    | `langchain.langsmithBearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                                   |
-| `organizationId` | `langchain.langsmithOrganizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                                   |
-| `baseUrl`        | `langchain.baseUrl`                 | `LANGCHAIN_BASE_URL`        | true     | `"https://api.smith.langchain.com"` |
+| Setter           | System property                     | Environment variable        | Required | Default value               |
+| ---------------- | ----------------------------------- | --------------------------- | -------- | --------------------------- |
+| `apiKey`         | `langchain.langsmithApiKey`         | `LANGSMITH_API_KEY`         | false    | -                           |
+| `tenantId`       | `langchain.langsmithTenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                           |
+| `bearerToken`    | `langchain.langsmithBearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                           |
+| `organizationId` | `langchain.langsmithOrganizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                           |
+| `baseUrl`        | `langchain.baseUrl`                 | `LANGCHAIN_BASE_URL`        | true     | `"https://api.example.com"` |
 
 System properties take precedence over environment variables.
 
@@ -222,65 +222,61 @@ The SDK defines methods that accept files.
 To upload a file, pass a [`Path`](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html):
 
 ```java
-import com.langchain.smith.models.examples.Example;
-import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
+import com.langchain.smith.models.datasets.Dataset;
+import com.langchain.smith.models.datasets.DatasetUploadParams;
 import java.nio.file.Paths;
 
-ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
-    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+DatasetUploadParams params = DatasetUploadParams.builder()
     .addInputKey("string")
     .file(Paths.get("/path/to/file"))
     .build();
-List<Example> examples = client.examples().uploadFromCsv(params);
+Dataset dataset = client.datasets().upload(params);
 ```
 
 Or an arbitrary [`InputStream`](https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html):
 
 ```java
-import com.langchain.smith.models.examples.Example;
-import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
+import com.langchain.smith.models.datasets.Dataset;
+import com.langchain.smith.models.datasets.DatasetUploadParams;
 import java.net.URL;
 
-ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
-    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+DatasetUploadParams params = DatasetUploadParams.builder()
     .addInputKey("string")
     .file(new URL("https://example.com//path/to/file").openStream())
     .build();
-List<Example> examples = client.examples().uploadFromCsv(params);
+Dataset dataset = client.datasets().upload(params);
 ```
 
 Or a `byte[]` array:
 
 ```java
-import com.langchain.smith.models.examples.Example;
-import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
+import com.langchain.smith.models.datasets.Dataset;
+import com.langchain.smith.models.datasets.DatasetUploadParams;
 
-ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
-    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+DatasetUploadParams params = DatasetUploadParams.builder()
     .addInputKey("string")
     .file("content".getBytes())
     .build();
-List<Example> examples = client.examples().uploadFromCsv(params);
+Dataset dataset = client.datasets().upload(params);
 ```
 
 Note that when passing a non-`Path` its filename is unknown so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
 
 ```java
 import com.langchain.smith.core.MultipartField;
-import com.langchain.smith.models.examples.Example;
-import com.langchain.smith.models.examples.ExampleUploadFromCsvParams;
+import com.langchain.smith.models.datasets.Dataset;
+import com.langchain.smith.models.datasets.DatasetUploadParams;
 import java.io.InputStream;
 import java.net.URL;
 
-ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
-    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+DatasetUploadParams params = DatasetUploadParams.builder()
     .addInputKey("string")
     .file(MultipartField.<InputStream>builder()
         .value(new URL("https://example.com//path/to/file").openStream())
         .filename("/path/to/file")
         .build())
     .build();
-List<Example> examples = client.examples().uploadFromCsv(params);
+Dataset dataset = client.datasets().upload(params);
 ```
 
 ## Raw responses

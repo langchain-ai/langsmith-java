@@ -19,21 +19,15 @@ import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
-import com.langchain.smith.models.sessions.SessionDeleteAllParams
-import com.langchain.smith.models.sessions.SessionDeleteAllResponse
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListParams
-import com.langchain.smith.models.sessions.SessionRetrieveMetadataParams
-import com.langchain.smith.models.sessions.SessionRetrieveMetadataResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
 import com.langchain.smith.services.async.sessions.InsightServiceAsync
 import com.langchain.smith.services.async.sessions.InsightServiceAsyncImpl
-import com.langchain.smith.services.async.sessions.ViewServiceAsync
-import com.langchain.smith.services.async.sessions.ViewServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -45,16 +39,12 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
         WithRawResponseImpl(clientOptions)
     }
 
-    private val views: ViewServiceAsync by lazy { ViewServiceAsyncImpl(clientOptions) }
-
     private val insights: InsightServiceAsync by lazy { InsightServiceAsyncImpl(clientOptions) }
 
     override fun withRawResponse(): SessionServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): SessionServiceAsync =
         SessionServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun views(): ViewServiceAsync = views
 
     override fun insights(): InsightServiceAsync = insights
 
@@ -100,29 +90,11 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // post /api/v1/sessions/{session_id}/dashboard
         withRawResponse().dashboard(params, requestOptions).thenApply { it.parse() }
 
-    override fun deleteAll(
-        params: SessionDeleteAllParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<SessionDeleteAllResponse> =
-        // delete /api/v1/sessions
-        withRawResponse().deleteAll(params, requestOptions).thenApply { it.parse() }
-
-    override fun retrieveMetadata(
-        params: SessionRetrieveMetadataParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<SessionRetrieveMetadataResponse> =
-        // get /api/v1/sessions/{session_id}/metadata
-        withRawResponse().retrieveMetadata(params, requestOptions).thenApply { it.parse() }
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SessionServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
-
-        private val views: ViewServiceAsync.WithRawResponse by lazy {
-            ViewServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
 
         private val insights: InsightServiceAsync.WithRawResponse by lazy {
             InsightServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -134,8 +106,6 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
             SessionServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun views(): ViewServiceAsync.WithRawResponse = views
 
         override fun insights(): InsightServiceAsync.WithRawResponse = insights
 
@@ -326,70 +296,6 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
                     errorHandler.handle(response).parseable {
                         response
                             .use { dashboardHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val deleteAllHandler: Handler<SessionDeleteAllResponse> =
-            jsonHandler<SessionDeleteAllResponse>(clientOptions.jsonMapper)
-
-        override fun deleteAll(
-            params: SessionDeleteAllParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SessionDeleteAllResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.DELETE)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "sessions")
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { deleteAllHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val retrieveMetadataHandler: Handler<SessionRetrieveMetadataResponse> =
-            jsonHandler<SessionRetrieveMetadataResponse>(clientOptions.jsonMapper)
-
-        override fun retrieveMetadata(
-            params: SessionRetrieveMetadataParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SessionRetrieveMetadataResponse>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("sessionId", params.sessionId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "sessions", params._pathParam(0), "metadata")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { retrieveMetadataHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

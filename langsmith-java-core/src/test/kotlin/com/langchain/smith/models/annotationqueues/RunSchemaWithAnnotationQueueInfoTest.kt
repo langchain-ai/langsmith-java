@@ -5,7 +5,6 @@ package com.langchain.smith.models.annotationqueues
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.runs.RunTypeEnum
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -22,7 +21,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
                 .dottedOrder("dotted_order")
                 .name("name")
                 .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .runType(RunTypeEnum.TOOL)
+                .runType(RunSchemaWithAnnotationQueueInfo.RunType.TOOL)
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .status("status")
                 .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -104,7 +103,8 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
         assertThat(runSchemaWithAnnotationQueueInfo.name()).isEqualTo("name")
         assertThat(runSchemaWithAnnotationQueueInfo.queueRunId())
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-        assertThat(runSchemaWithAnnotationQueueInfo.runType()).isEqualTo(RunTypeEnum.TOOL)
+        assertThat(runSchemaWithAnnotationQueueInfo.runType())
+            .isEqualTo(RunSchemaWithAnnotationQueueInfo.RunType.TOOL)
         assertThat(runSchemaWithAnnotationQueueInfo.sessionId())
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(runSchemaWithAnnotationQueueInfo.status()).isEqualTo("status")
@@ -225,7 +225,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
                 .dottedOrder("dotted_order")
                 .name("name")
                 .queueRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .runType(RunTypeEnum.TOOL)
+                .runType(RunSchemaWithAnnotationQueueInfo.RunType.TOOL)
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .status("status")
                 .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

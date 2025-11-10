@@ -6,7 +6,6 @@ import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
-import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
@@ -141,33 +140,5 @@ internal class RepoServiceTest {
             repoService.delete(RepoDeleteParams.builder().owner("owner").repo("repo").build())
 
         repo.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun fork() {
-        val client =
-            LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val repoService = client.repos()
-
-        val getRepoResponse =
-            repoService.fork(
-                RepoForkParams.builder()
-                    .owner("owner")
-                    .repo("repo")
-                    .repoHandle("repo_handle")
-                    .description("description")
-                    .isPublic(true)
-                    .readme("readme")
-                    .addTag("string")
-                    .build()
-            )
-
-        getRepoResponse.validate()
     }
 }
