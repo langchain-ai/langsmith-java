@@ -13,6 +13,7 @@ import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
 import com.langchain.smith.models.datasets.DatasetGenerateParams
 import com.langchain.smith.models.datasets.DatasetGenerateResponse
+import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -157,6 +158,24 @@ interface DatasetServiceAsync {
         requestOptions: RequestOptions,
     ): CompletableFuture<DatasetUpdateResponse> =
         update(datasetId, DatasetUpdateParams.none(), requestOptions)
+
+    /** Get all datasets by query params and owner. */
+    fun list(): CompletableFuture<List<Dataset>> = list(DatasetListParams.none())
+
+    /** @see list */
+    fun list(
+        params: DatasetListParams = DatasetListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<List<Dataset>>
+
+    /** @see list */
+    fun list(
+        params: DatasetListParams = DatasetListParams.none()
+    ): CompletableFuture<List<Dataset>> = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CompletableFuture<List<Dataset>> =
+        list(DatasetListParams.none(), requestOptions)
 
     /** Delete a specific dataset. */
     fun delete(datasetId: String): CompletableFuture<DatasetDeleteResponse> =
@@ -622,6 +641,30 @@ interface DatasetServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<DatasetUpdateResponse>> =
             update(datasetId, DatasetUpdateParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
+         * [DatasetServiceAsync.list].
+         */
+        fun list(): CompletableFuture<HttpResponseFor<List<Dataset>>> =
+            list(DatasetListParams.none())
+
+        /** @see list */
+        fun list(
+            params: DatasetListParams = DatasetListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<List<Dataset>>>
+
+        /** @see list */
+        fun list(
+            params: DatasetListParams = DatasetListParams.none()
+        ): CompletableFuture<HttpResponseFor<List<Dataset>>> = list(params, RequestOptions.none())
+
+        /** @see list */
+        fun list(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<List<Dataset>>> =
+            list(DatasetListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/datasets/{dataset_id}`, but is otherwise
