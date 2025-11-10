@@ -23,8 +23,7 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
-import com.langchain.smith.models.datasets.DatasetGenerateParams
-import com.langchain.smith.models.datasets.DatasetGenerateResponse
+import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -35,23 +34,15 @@ import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
-import com.langchain.smith.models.datasets.DatasetSearchParams
-import com.langchain.smith.models.datasets.DatasetSearchResponse
-import com.langchain.smith.models.datasets.DatasetStudioExperimentParams
-import com.langchain.smith.models.datasets.DatasetStudioExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateResponse
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
 import com.langchain.smith.services.blocking.datasets.ComparativeServiceImpl
 import com.langchain.smith.services.blocking.datasets.ExperimentService
 import com.langchain.smith.services.blocking.datasets.ExperimentServiceImpl
-import com.langchain.smith.services.blocking.datasets.ExperimentViewOverrideService
-import com.langchain.smith.services.blocking.datasets.ExperimentViewOverrideServiceImpl
 import com.langchain.smith.services.blocking.datasets.GroupService
 import com.langchain.smith.services.blocking.datasets.GroupServiceImpl
 import com.langchain.smith.services.blocking.datasets.IndexService
@@ -74,10 +65,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     private val withRawResponse: DatasetService.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
-    }
-
-    private val experimentViewOverrides: ExperimentViewOverrideService by lazy {
-        ExperimentViewOverrideServiceImpl(clientOptions)
     }
 
     private val versions: VersionService by lazy { VersionServiceImpl(clientOptions) }
@@ -104,8 +91,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService =
         DatasetServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun experimentViewOverrides(): ExperimentViewOverrideService = experimentViewOverrides
 
     override fun versions(): VersionService = versions
 
@@ -140,6 +125,10 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         // patch /api/v1/datasets/{dataset_id}
         withRawResponse().update(params, requestOptions).parse()
 
+    override fun list(params: DatasetListParams, requestOptions: RequestOptions): List<Dataset> =
+        // get /api/v1/datasets
+        withRawResponse().list(params, requestOptions).parse()
+
     override fun delete(
         params: DatasetDeleteParams,
         requestOptions: RequestOptions,
@@ -153,13 +142,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
     ): List<DatasetCloneResponse> =
         // post /api/v1/datasets/clone
         withRawResponse().clone(params, requestOptions).parse()
-
-    override fun generate(
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions,
-    ): DatasetGenerateResponse =
-        // post /api/v1/datasets/{dataset_id}/generate
-        withRawResponse().generate(params, requestOptions).parse()
 
     override fun retrieveCsv(
         params: DatasetRetrieveCsvParams,
@@ -196,20 +178,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         // get /api/v1/datasets/{dataset_id}/version
         withRawResponse().retrieveVersion(params, requestOptions).parse()
 
-    override fun search(
-        params: DatasetSearchParams,
-        requestOptions: RequestOptions,
-    ): DatasetSearchResponse =
-        // post /api/v1/datasets/{dataset_id}/search
-        withRawResponse().search(params, requestOptions).parse()
-
-    override fun studioExperiment(
-        params: DatasetStudioExperimentParams,
-        requestOptions: RequestOptions,
-    ): DatasetStudioExperimentResponse =
-        // post /api/v1/datasets/studio_experiment
-        withRawResponse().studioExperiment(params, requestOptions).parse()
-
     override fun updateTags(
         params: DatasetUpdateTagsParams,
         requestOptions: RequestOptions,
@@ -221,22 +189,11 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         // post /api/v1/datasets/upload
         withRawResponse().upload(params, requestOptions).parse()
 
-    override fun uploadExperiment(
-        params: DatasetUploadExperimentParams,
-        requestOptions: RequestOptions,
-    ): DatasetUploadExperimentResponse =
-        // post /api/v1/datasets/upload-experiment
-        withRawResponse().uploadExperiment(params, requestOptions).parse()
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         DatasetService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
-
-        private val experimentViewOverrides: ExperimentViewOverrideService.WithRawResponse by lazy {
-            ExperimentViewOverrideServiceImpl.WithRawResponseImpl(clientOptions)
-        }
 
         private val versions: VersionService.WithRawResponse by lazy {
             VersionServiceImpl.WithRawResponseImpl(clientOptions)
@@ -280,9 +237,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             DatasetServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun experimentViewOverrides(): ExperimentViewOverrideService.WithRawResponse =
-            experimentViewOverrides
 
         override fun versions(): VersionService.WithRawResponse = versions
 
@@ -391,6 +345,33 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
+        private val listHandler: Handler<List<Dataset>> =
+            jsonHandler<List<Dataset>>(clientOptions.jsonMapper)
+
+        override fun list(
+            params: DatasetListParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<List<Dataset>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "datasets")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { listHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.forEach { it.validate() }
+                        }
+                    }
+            }
+        }
+
         private val deleteHandler: Handler<DatasetDeleteResponse> =
             jsonHandler<DatasetDeleteResponse>(clientOptions.jsonMapper)
 
@@ -445,37 +426,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
-                        }
-                    }
-            }
-        }
-
-        private val generateHandler: Handler<DatasetGenerateResponse> =
-            jsonHandler<DatasetGenerateResponse>(clientOptions.jsonMapper)
-
-        override fun generate(
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<DatasetGenerateResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "generate")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { generateHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
                         }
                     }
             }
@@ -631,65 +581,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val searchHandler: Handler<DatasetSearchResponse> =
-            jsonHandler<DatasetSearchResponse>(clientOptions.jsonMapper)
-
-        override fun search(
-            params: DatasetSearchParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<DatasetSearchResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "search")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { searchHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val studioExperimentHandler: Handler<DatasetStudioExperimentResponse> =
-            jsonHandler<DatasetStudioExperimentResponse>(clientOptions.jsonMapper)
-
-        override fun studioExperiment(
-            params: DatasetStudioExperimentParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<DatasetStudioExperimentResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", "studio_experiment")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { studioExperimentHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
         private val updateTagsHandler: Handler<DatasetVersion> =
             jsonHandler<DatasetVersion>(clientOptions.jsonMapper)
 
@@ -740,34 +631,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             return errorHandler.handle(response).parseable {
                 response
                     .use { uploadHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val uploadExperimentHandler: Handler<DatasetUploadExperimentResponse> =
-            jsonHandler<DatasetUploadExperimentResponse>(clientOptions.jsonMapper)
-
-        override fun uploadExperiment(
-            params: DatasetUploadExperimentParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<DatasetUploadExperimentResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", "upload-experiment")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { uploadExperimentHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

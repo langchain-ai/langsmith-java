@@ -9,19 +9,14 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
-import com.langchain.smith.models.sessions.SessionDeleteAllParams
-import com.langchain.smith.models.sessions.SessionDeleteAllResponse
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
 import com.langchain.smith.models.sessions.SessionListParams
-import com.langchain.smith.models.sessions.SessionRetrieveMetadataParams
-import com.langchain.smith.models.sessions.SessionRetrieveMetadataResponse
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
 import com.langchain.smith.services.blocking.sessions.InsightService
-import com.langchain.smith.services.blocking.sessions.ViewService
 import java.util.function.Consumer
 
 interface SessionService {
@@ -37,8 +32,6 @@ interface SessionService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SessionService
-
-    fun views(): ViewService
 
     fun insights(): InsightService
 
@@ -197,54 +190,6 @@ interface SessionService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CustomChartsSection
 
-    /** Delete a specific session. */
-    fun deleteAll(params: SessionDeleteAllParams): SessionDeleteAllResponse =
-        deleteAll(params, RequestOptions.none())
-
-    /** @see deleteAll */
-    fun deleteAll(
-        params: SessionDeleteAllParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): SessionDeleteAllResponse
-
-    /**
-     * Given a session, a number K, and (optionally) a list of metadata keys, return the top K
-     * values for each key.
-     */
-    fun retrieveMetadata(sessionId: String): SessionRetrieveMetadataResponse =
-        retrieveMetadata(sessionId, SessionRetrieveMetadataParams.none())
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        sessionId: String,
-        params: SessionRetrieveMetadataParams = SessionRetrieveMetadataParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): SessionRetrieveMetadataResponse =
-        retrieveMetadata(params.toBuilder().sessionId(sessionId).build(), requestOptions)
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        sessionId: String,
-        params: SessionRetrieveMetadataParams = SessionRetrieveMetadataParams.none(),
-    ): SessionRetrieveMetadataResponse = retrieveMetadata(sessionId, params, RequestOptions.none())
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        params: SessionRetrieveMetadataParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): SessionRetrieveMetadataResponse
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(params: SessionRetrieveMetadataParams): SessionRetrieveMetadataResponse =
-        retrieveMetadata(params, RequestOptions.none())
-
-    /** @see retrieveMetadata */
-    fun retrieveMetadata(
-        sessionId: String,
-        requestOptions: RequestOptions,
-    ): SessionRetrieveMetadataResponse =
-        retrieveMetadata(sessionId, SessionRetrieveMetadataParams.none(), requestOptions)
-
     /** A view of [SessionService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -254,8 +199,6 @@ interface SessionService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): SessionService.WithRawResponse
-
-        fun views(): ViewService.WithRawResponse
 
         fun insights(): InsightService.WithRawResponse
 
@@ -479,67 +422,5 @@ interface SessionService {
             params: SessionDashboardParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<CustomChartsSection>
-
-        /**
-         * Returns a raw HTTP response for `delete /api/v1/sessions`, but is otherwise the same as
-         * [SessionService.deleteAll].
-         */
-        @MustBeClosed
-        fun deleteAll(params: SessionDeleteAllParams): HttpResponseFor<SessionDeleteAllResponse> =
-            deleteAll(params, RequestOptions.none())
-
-        /** @see deleteAll */
-        @MustBeClosed
-        fun deleteAll(
-            params: SessionDeleteAllParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SessionDeleteAllResponse>
-
-        /**
-         * Returns a raw HTTP response for `get /api/v1/sessions/{session_id}/metadata`, but is
-         * otherwise the same as [SessionService.retrieveMetadata].
-         */
-        @MustBeClosed
-        fun retrieveMetadata(sessionId: String): HttpResponseFor<SessionRetrieveMetadataResponse> =
-            retrieveMetadata(sessionId, SessionRetrieveMetadataParams.none())
-
-        /** @see retrieveMetadata */
-        @MustBeClosed
-        fun retrieveMetadata(
-            sessionId: String,
-            params: SessionRetrieveMetadataParams = SessionRetrieveMetadataParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SessionRetrieveMetadataResponse> =
-            retrieveMetadata(params.toBuilder().sessionId(sessionId).build(), requestOptions)
-
-        /** @see retrieveMetadata */
-        @MustBeClosed
-        fun retrieveMetadata(
-            sessionId: String,
-            params: SessionRetrieveMetadataParams = SessionRetrieveMetadataParams.none(),
-        ): HttpResponseFor<SessionRetrieveMetadataResponse> =
-            retrieveMetadata(sessionId, params, RequestOptions.none())
-
-        /** @see retrieveMetadata */
-        @MustBeClosed
-        fun retrieveMetadata(
-            params: SessionRetrieveMetadataParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SessionRetrieveMetadataResponse>
-
-        /** @see retrieveMetadata */
-        @MustBeClosed
-        fun retrieveMetadata(
-            params: SessionRetrieveMetadataParams
-        ): HttpResponseFor<SessionRetrieveMetadataResponse> =
-            retrieveMetadata(params, RequestOptions.none())
-
-        /** @see retrieveMetadata */
-        @MustBeClosed
-        fun retrieveMetadata(
-            sessionId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<SessionRetrieveMetadataResponse> =
-            retrieveMetadata(sessionId, SessionRetrieveMetadataParams.none(), requestOptions)
     }
 }

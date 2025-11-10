@@ -9,9 +9,7 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest
 import com.langchain.smith.models.sessions.RunStatsGroupBy
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
-import com.langchain.smith.models.sessions.SessionDeleteAllParams
 import com.langchain.smith.models.sessions.SessionListParams
-import com.langchain.smith.models.sessions.SessionRetrieveMetadataParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionSortableColumns
 import com.langchain.smith.models.sessions.SessionUpdateParams
@@ -202,53 +200,5 @@ internal class SessionServiceTest {
             )
 
         customChartsSection.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun deleteAll() {
-        val client =
-            LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val sessionService = client.sessions()
-
-        val response =
-            sessionService.deleteAll(
-                SessionDeleteAllParams.builder()
-                    .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
-
-        response.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun retrieveMetadata() {
-        val client =
-            LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val sessionService = client.sessions()
-
-        val response =
-            sessionService.retrieveMetadata(
-                SessionRetrieveMetadataParams.builder()
-                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .k(1L)
-                    .addMetadataKey("string")
-                    .rootRunsOnly(true)
-                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .build()
-            )
-
-        response.validate()
     }
 }

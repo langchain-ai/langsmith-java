@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.1.0-alpha.8 (2025-11-10)
+
+Full Changelog: [v0.1.0-alpha.7...v0.1.0-alpha.8](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.7...v0.1.0-alpha.8)
+
+### Features
+
+* **api:** enable /api/v1/runs/query ([1967627](https://github.com/langchain-ai/langsmith-java/commit/1967627dd49bf1e4855c9b25a50ff8a40de65b61))
+* **api:** enable /examples ([02d5b72](https://github.com/langchain-ai/langsmith-java/commit/02d5b724decd2cbbcc3e808f45b3fddbe3c6cce6))
+* **api:** manual updates ([ff1d89a](https://github.com/langchain-ai/langsmith-java/commit/ff1d89a0bb9bbbf0096c8e75ca905a30a3e4324f))
+* **api:** manual updates ([1c57a55](https://github.com/langchain-ai/langsmith-java/commit/1c57a55b2e0d0ead4bc48366478a933fb5e4c42c))
+
+
+### Bug Fixes
+
+* **api:** rename DataType to DatasetDataType ([494e91b](https://github.com/langchain-ai/langsmith-java/commit/494e91bba27677d2e19c70a96ee2cc69edf66539))
+* DatasetDataType name ([1160c21](https://github.com/langchain-ai/langsmith-java/commit/1160c21dba6620792e25a83e6279583f5c1aed50))
+* remove experiment_view_overrides ([43ffea3](https://github.com/langchain-ai/langsmith-java/commit/43ffea37a2b9051f136603dd8779d179439884e8))
+* rename query param dataType to datatype ([9b596ec](https://github.com/langchain-ai/langsmith-java/commit/9b596ec763d1b3e93802a5579190a27c150944cd))
+
+## 0.1.0-alpha.7 (2025-11-10)
+
+Full Changelog: [v0.1.0-alpha.6...v0.1.0-alpha.7](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.6...v0.1.0-alpha.7)
+
+### Features
+
+* **api:** api update ([524a19f](https://github.com/langchain-ai/langsmith-java/commit/524a19f4de68c8936cd5995a90491061710f2a5e))
+* **api:** manual updates ([9d61b1d](https://github.com/langchain-ai/langsmith-java/commit/9d61b1d041a599d547bb734f63cd8021ed3f6154))
+* **api:** manual updates ([91e9267](https://github.com/langchain-ai/langsmith-java/commit/91e9267c8dc7291ab5263b98c86df6467ca08b07))
+* **api:** manual updates ([5f71223](https://github.com/langchain-ai/langsmith-java/commit/5f71223bac2a797dd1da9d3aaa8d6e94f3f6c685))
+
+
+### Chores
+
+* Move LangSmith OTel Java wrappers PoC into SDK ([24680be](https://github.com/langchain-ai/langsmith-java/commit/24680beb2f50ab99332fb8fcd55ca6e50890e8d1))
+
 ## 0.1.0-alpha.6 (2025-11-07)
 
 Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)

@@ -15,7 +15,6 @@ import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
-import com.langchain.smith.services.blocking.public_.datasets.RunService
 import java.util.function.Consumer
 
 interface DatasetService {
@@ -31,8 +30,6 @@ interface DatasetService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService
-
-    fun runs(): RunService
 
     /** Get dataset by ids or the shared dataset if not specifed. */
     fun list(shareToken: String): DatasetListResponse = list(shareToken, DatasetListParams.none())
@@ -183,8 +180,6 @@ interface DatasetService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService.WithRawResponse
-
-        fun runs(): RunService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/datasets`, but is

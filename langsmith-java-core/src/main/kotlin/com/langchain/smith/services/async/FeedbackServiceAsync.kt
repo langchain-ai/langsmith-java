@@ -9,14 +9,10 @@ import com.langchain.smith.models.feedback.FeedbackCreateParams
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import com.langchain.smith.models.feedback.FeedbackDeleteParams
 import com.langchain.smith.models.feedback.FeedbackDeleteResponse
-import com.langchain.smith.models.feedback.FeedbackEagerParams
-import com.langchain.smith.models.feedback.FeedbackIngestBatchParams
-import com.langchain.smith.models.feedback.FeedbackIngestBatchResponse
 import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
-import com.langchain.smith.services.async.feedback.FormulaServiceAsync
 import com.langchain.smith.services.async.feedback.TokenServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -34,8 +30,6 @@ interface FeedbackServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FeedbackServiceAsync
-
-    fun formulas(): FormulaServiceAsync
 
     fun tokens(): TokenServiceAsync
 
@@ -187,46 +181,6 @@ interface FeedbackServiceAsync {
         delete(feedbackId, FeedbackDeleteParams.none(), requestOptions)
 
     /**
-     * Create a new feedback.
-     *
-     * This method is invoked under the assumption that the run is already visible in the app, thus
-     * already present in DB
-     */
-    fun eager(params: FeedbackEagerParams): CompletableFuture<FeedbackSchema> =
-        eager(params, RequestOptions.none())
-
-    /** @see eager */
-    fun eager(
-        params: FeedbackEagerParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FeedbackSchema>
-
-    /** @see eager */
-    fun eager(
-        feedbackCreateSchema: FeedbackCreateSchema,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FeedbackSchema> =
-        eager(
-            FeedbackEagerParams.builder().feedbackCreateSchema(feedbackCreateSchema).build(),
-            requestOptions,
-        )
-
-    /** @see eager */
-    fun eager(feedbackCreateSchema: FeedbackCreateSchema): CompletableFuture<FeedbackSchema> =
-        eager(feedbackCreateSchema, RequestOptions.none())
-
-    /** Ingests a batch of feedback objects in a single JSON array payload. */
-    fun ingestBatch(
-        params: FeedbackIngestBatchParams
-    ): CompletableFuture<FeedbackIngestBatchResponse> = ingestBatch(params, RequestOptions.none())
-
-    /** @see ingestBatch */
-    fun ingestBatch(
-        params: FeedbackIngestBatchParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<FeedbackIngestBatchResponse>
-
-    /**
      * A view of [FeedbackServiceAsync] that provides access to raw HTTP responses for each method.
      */
     interface WithRawResponse {
@@ -239,8 +193,6 @@ interface FeedbackServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): FeedbackServiceAsync.WithRawResponse
-
-        fun formulas(): FormulaServiceAsync.WithRawResponse
 
         fun tokens(): TokenServiceAsync.WithRawResponse
 
@@ -422,49 +374,5 @@ interface FeedbackServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<FeedbackDeleteResponse>> =
             delete(feedbackId, FeedbackDeleteParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/feedback/eager`, but is otherwise the same
-         * as [FeedbackServiceAsync.eager].
-         */
-        fun eager(params: FeedbackEagerParams): CompletableFuture<HttpResponseFor<FeedbackSchema>> =
-            eager(params, RequestOptions.none())
-
-        /** @see eager */
-        fun eager(
-            params: FeedbackEagerParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FeedbackSchema>>
-
-        /** @see eager */
-        fun eager(
-            feedbackCreateSchema: FeedbackCreateSchema,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FeedbackSchema>> =
-            eager(
-                FeedbackEagerParams.builder().feedbackCreateSchema(feedbackCreateSchema).build(),
-                requestOptions,
-            )
-
-        /** @see eager */
-        fun eager(
-            feedbackCreateSchema: FeedbackCreateSchema
-        ): CompletableFuture<HttpResponseFor<FeedbackSchema>> =
-            eager(feedbackCreateSchema, RequestOptions.none())
-
-        /**
-         * Returns a raw HTTP response for `post /feedback/batch`, but is otherwise the same as
-         * [FeedbackServiceAsync.ingestBatch].
-         */
-        fun ingestBatch(
-            params: FeedbackIngestBatchParams
-        ): CompletableFuture<HttpResponseFor<FeedbackIngestBatchResponse>> =
-            ingestBatch(params, RequestOptions.none())
-
-        /** @see ingestBatch */
-        fun ingestBatch(
-            params: FeedbackIngestBatchParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<FeedbackIngestBatchResponse>>
     }
 }

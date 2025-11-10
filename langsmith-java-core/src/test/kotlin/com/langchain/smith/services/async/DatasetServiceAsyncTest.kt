@@ -8,21 +8,17 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.datasets.DataType
 import com.langchain.smith.models.datasets.DatasetCloneParams
 import com.langchain.smith.models.datasets.DatasetCreateParams
-import com.langchain.smith.models.datasets.DatasetGenerateParams
+import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIFtParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
-import com.langchain.smith.models.datasets.DatasetSearchParams
-import com.langchain.smith.models.datasets.DatasetStudioExperimentParams
 import com.langchain.smith.models.datasets.DatasetTransformation
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentParams
 import com.langchain.smith.models.datasets.DatasetUploadParams
-import com.langchain.smith.models.datasets.FeedbackCreateCoreSchema
-import com.langchain.smith.models.feedback.AppFeedbackSource
+import com.langchain.smith.models.datasets.SortByDatasetColumn
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -151,6 +147,39 @@ internal class DatasetServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
+    fun list() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val datasetServiceAsync = client.datasets()
+
+        val datasetsFuture =
+            datasetServiceAsync.list(
+                DatasetListParams.builder()
+                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .datatypeOfDataTypes(listOf(DataType.KV))
+                    .excludeCorrectionsDatasets(true)
+                    .limit(1L)
+                    .metadata("metadata")
+                    .name("name")
+                    .nameContains("name_contains")
+                    .offset(0L)
+                    .sortBy(SortByDatasetColumn.NAME)
+                    .sortByDesc(true)
+                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
+
+        val datasets = datasetsFuture.get()
+        datasets.forEach { it.validate() }
+    }
+
+    @Disabled("Prism tests are disabled")
+    @Test
     fun delete() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -191,31 +220,6 @@ internal class DatasetServiceAsyncTest {
 
         val response = responseFuture.get()
         response.forEach { it.validate() }
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun generate() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val datasetServiceAsync = client.datasets()
-
-        val responseFuture =
-            datasetServiceAsync.generate(
-                DatasetGenerateParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .numExamples(0L)
-                    .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
     }
 
     @Disabled("Prism tests are disabled")
@@ -341,58 +345,6 @@ internal class DatasetServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun search() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val datasetServiceAsync = client.datasets()
-
-        val responseFuture =
-            datasetServiceAsync.search(
-                DatasetSearchParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .inputs(JsonValue.from(mapOf<String, Any>()))
-                    .debug(true)
-                    .filter("filter")
-                    .limit(1L)
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun studioExperiment() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val datasetServiceAsync = client.datasets()
-
-        val responseFuture =
-            datasetServiceAsync.studioExperiment(
-                DatasetStudioExperimentParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .projectName("project_name")
-                    .addEvaluatorRule("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
     fun updateTags() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -449,120 +401,5 @@ internal class DatasetServiceAsyncTest {
 
         val dataset = datasetFuture.get()
         dataset.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun uploadExperiment() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val datasetServiceAsync = client.datasets()
-
-        val responseFuture =
-            datasetServiceAsync.uploadExperiment(
-                DatasetUploadExperimentParams.builder()
-                    .experimentEndTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .experimentName("experiment_name")
-                    .experimentStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .addResult(
-                        DatasetUploadExperimentParams.Result.builder()
-                            .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .inputs(JsonValue.from(mapOf<String, Any>()))
-                            .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .actualOutputs(JsonValue.from(mapOf<String, Any>()))
-                            .error("error")
-                            .addEvaluationScore(
-                                FeedbackCreateCoreSchema.builder()
-                                    .key("key")
-                                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                    .comment("comment")
-                                    .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                    .correction(JsonValue.from(mapOf<String, Any>()))
-                                    .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                    .extra(JsonValue.from(mapOf<String, Any>()))
-                                    .feedbackConfig(
-                                        FeedbackCreateCoreSchema.FeedbackConfig.builder()
-                                            .type(
-                                                FeedbackCreateCoreSchema.FeedbackConfig.Type
-                                                    .CONTINUOUS
-                                            )
-                                            .addCategory(
-                                                FeedbackCreateCoreSchema.FeedbackConfig.Category
-                                                    .builder()
-                                                    .value(0.0)
-                                                    .label("x")
-                                                    .build()
-                                            )
-                                            .max(0.0)
-                                            .min(0.0)
-                                            .build()
-                                    )
-                                    .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                    .feedbackSource(
-                                        AppFeedbackSource.builder()
-                                            .metadata(JsonValue.from(mapOf<String, Any>()))
-                                            .type(AppFeedbackSource.Type.APP)
-                                            .build()
-                                    )
-                                    .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                    .score(0.0)
-                                    .value(0.0)
-                                    .build()
-                            )
-                            .expectedOutputs(JsonValue.from(mapOf<String, Any>()))
-                            .rowId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .runMetadata(JsonValue.from(mapOf<String, Any>()))
-                            .runName("run_name")
-                            .build()
-                    )
-                    .datasetDescription("dataset_description")
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .datasetName("dataset_name")
-                    .experimentDescription("experiment_description")
-                    .experimentMetadata(JsonValue.from(mapOf<String, Any>()))
-                    .addSummaryExperimentScore(
-                        FeedbackCreateCoreSchema.builder()
-                            .key("key")
-                            .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .comment("comment")
-                            .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .correction(JsonValue.from(mapOf<String, Any>()))
-                            .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .extra(JsonValue.from(mapOf<String, Any>()))
-                            .feedbackConfig(
-                                FeedbackCreateCoreSchema.FeedbackConfig.builder()
-                                    .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
-                                    .addCategory(
-                                        FeedbackCreateCoreSchema.FeedbackConfig.Category.builder()
-                                            .value(0.0)
-                                            .label("x")
-                                            .build()
-                                    )
-                                    .max(0.0)
-                                    .min(0.0)
-                                    .build()
-                            )
-                            .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .feedbackSource(
-                                AppFeedbackSource.builder()
-                                    .metadata(JsonValue.from(mapOf<String, Any>()))
-                                    .type(AppFeedbackSource.Type.APP)
-                                    .build()
-                            )
-                            .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .score(0.0)
-                            .value(0.0)
-                            .build()
-                    )
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
     }
 }

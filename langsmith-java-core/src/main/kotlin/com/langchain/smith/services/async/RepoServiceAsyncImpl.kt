@@ -21,13 +21,10 @@ import com.langchain.smith.models.repos.GetRepoResponse
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoDeleteResponse
-import com.langchain.smith.models.repos.RepoForkParams
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoListResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
-import com.langchain.smith.services.async.repos.TagServiceAsync
-import com.langchain.smith.services.async.repos.TagServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -39,14 +36,10 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
         WithRawResponseImpl(clientOptions)
     }
 
-    private val tags: TagServiceAsync by lazy { TagServiceAsyncImpl(clientOptions) }
-
     override fun withRawResponse(): RepoServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync =
         RepoServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun tags(): TagServiceAsync = tags
 
     override fun create(
         params: RepoCreateParams,
@@ -83,22 +76,11 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
         // delete /api/v1/repos/{owner}/{repo}
         withRawResponse().delete(params, requestOptions).thenApply { it.parse() }
 
-    override fun fork(
-        params: RepoForkParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<GetRepoResponse> =
-        // post /api/v1/repos/{owner}/{repo}/fork
-        withRawResponse().fork(params, requestOptions).thenApply { it.parse() }
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RepoServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
-
-        private val tags: TagServiceAsync.WithRawResponse by lazy {
-            TagServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
@@ -106,8 +88,6 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
             RepoServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun tags(): TagServiceAsync.WithRawResponse = tags
 
         private val createHandler: Handler<CreateRepoResponse> =
             jsonHandler<CreateRepoResponse>(clientOptions.jsonMapper)
@@ -280,47 +260,6 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     errorHandler.handle(response).parseable {
                         response
                             .use { deleteHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val forkHandler: Handler<GetRepoResponse> =
-            jsonHandler<GetRepoResponse>(clientOptions.jsonMapper)
-
-        override fun fork(
-            params: RepoForkParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<GetRepoResponse>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("repo", params.repo().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "api",
-                        "v1",
-                        "repos",
-                        params._pathParam(0),
-                        params._pathParam(1),
-                        "fork",
-                    )
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { forkHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

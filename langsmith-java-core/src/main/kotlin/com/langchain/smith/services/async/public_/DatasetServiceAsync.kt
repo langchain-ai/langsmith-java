@@ -14,7 +14,6 @@ import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
-import com.langchain.smith.services.async.public_.datasets.RunServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -31,8 +30,6 @@ interface DatasetServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetServiceAsync
-
-    fun runs(): RunServiceAsync
 
     /** Get dataset by ids or the shared dataset if not specifed. */
     fun list(shareToken: String): CompletableFuture<DatasetListResponse> =
@@ -207,8 +204,6 @@ interface DatasetServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): DatasetServiceAsync.WithRawResponse
-
-        fun runs(): RunServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/datasets`, but is

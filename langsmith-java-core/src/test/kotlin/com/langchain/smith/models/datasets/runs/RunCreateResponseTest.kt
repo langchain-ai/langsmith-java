@@ -6,8 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.errors.LangChainInvalidDataException
-import com.langchain.smith.models.runs.RunSchema
-import com.langchain.smith.models.runs.RunTypeEnum
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -27,24 +25,24 @@ internal class RunCreateResponseTest {
                     .inputs(JsonValue.from(mapOf<String, Any>()))
                     .name("name")
                     .addRun(
-                        RunSchema.builder()
+                        ExampleWithRuns.Run.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .appPath("app_path")
                             .dottedOrder("dotted_order")
                             .name("name")
-                            .runType(RunTypeEnum.TOOL)
+                            .runType(ExampleWithRuns.Run.RunType.TOOL)
                             .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .status("status")
                             .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .addChildRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .completionCost("completion_cost")
                             .completionCostDetails(
-                                RunSchema.CompletionCostDetails.builder()
+                                ExampleWithRuns.Run.CompletionCostDetails.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
                                     .build()
                             )
                             .completionTokenDetails(
-                                RunSchema.CompletionTokenDetails.builder()
+                                ExampleWithRuns.Run.CompletionTokenDetails.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(0))
                                     .build()
                             )
@@ -56,7 +54,7 @@ internal class RunCreateResponseTest {
                             .executionOrder(1L)
                             .extra(JsonValue.from(mapOf<String, Any>()))
                             .feedbackStats(
-                                RunSchema.FeedbackStats.builder()
+                                ExampleWithRuns.Run.FeedbackStats.builder()
                                     .putAdditionalProperty(
                                         "foo",
                                         JsonValue.from(mapOf<String, Any>()),
@@ -79,12 +77,12 @@ internal class RunCreateResponseTest {
                             .priceModelId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .promptCost("prompt_cost")
                             .promptCostDetails(
-                                RunSchema.PromptCostDetails.builder()
+                                ExampleWithRuns.Run.PromptCostDetails.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
                                     .build()
                             )
                             .promptTokenDetails(
-                                RunSchema.PromptTokenDetails.builder()
+                                ExampleWithRuns.Run.PromptTokenDetails.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(0))
                                     .build()
                             )
@@ -102,7 +100,7 @@ internal class RunCreateResponseTest {
                             .traceFirstReceivedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .traceTier(RunSchema.TraceTier.LONGLIVED)
+                            .traceTier(ExampleWithRuns.Run.TraceTier.LONGLIVED)
                             .traceUpgrade(true)
                             .ttlSeconds(0L)
                             .build()
@@ -134,24 +132,24 @@ internal class RunCreateResponseTest {
                         .inputs(JsonValue.from(mapOf<String, Any>()))
                         .name("name")
                         .addRun(
-                            RunSchema.builder()
+                            ExampleWithRuns.Run.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .appPath("app_path")
                                 .dottedOrder("dotted_order")
                                 .name("name")
-                                .runType(RunTypeEnum.TOOL)
+                                .runType(ExampleWithRuns.Run.RunType.TOOL)
                                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .status("status")
                                 .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .addChildRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .completionCost("completion_cost")
                                 .completionCostDetails(
-                                    RunSchema.CompletionCostDetails.builder()
+                                    ExampleWithRuns.Run.CompletionCostDetails.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("string"))
                                         .build()
                                 )
                                 .completionTokenDetails(
-                                    RunSchema.CompletionTokenDetails.builder()
+                                    ExampleWithRuns.Run.CompletionTokenDetails.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
@@ -163,7 +161,7 @@ internal class RunCreateResponseTest {
                                 .executionOrder(1L)
                                 .extra(JsonValue.from(mapOf<String, Any>()))
                                 .feedbackStats(
-                                    RunSchema.FeedbackStats.builder()
+                                    ExampleWithRuns.Run.FeedbackStats.builder()
                                         .putAdditionalProperty(
                                             "foo",
                                             JsonValue.from(mapOf<String, Any>()),
@@ -186,12 +184,12 @@ internal class RunCreateResponseTest {
                                 .priceModelId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .promptCost("prompt_cost")
                                 .promptCostDetails(
-                                    RunSchema.PromptCostDetails.builder()
+                                    ExampleWithRuns.Run.PromptCostDetails.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("string"))
                                         .build()
                                 )
                                 .promptTokenDetails(
-                                    RunSchema.PromptTokenDetails.builder()
+                                    ExampleWithRuns.Run.PromptTokenDetails.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
@@ -211,7 +209,7 @@ internal class RunCreateResponseTest {
                                 )
                                 .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .traceTier(RunSchema.TraceTier.LONGLIVED)
+                                .traceTier(ExampleWithRuns.Run.TraceTier.LONGLIVED)
                                 .traceUpgrade(true)
                                 .ttlSeconds(0L)
                                 .build()
@@ -248,7 +246,7 @@ internal class RunCreateResponseTest {
                         ExampleWithRunsCh.Run.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .name("name")
-                            .runType(RunTypeEnum.TOOL)
+                            .runType(ExampleWithRunsCh.Run.RunType.TOOL)
                             .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .status("status")
                             .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -321,7 +319,7 @@ internal class RunCreateResponseTest {
                             ExampleWithRunsCh.Run.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .name("name")
-                                .runType(RunTypeEnum.TOOL)
+                                .runType(ExampleWithRunsCh.Run.RunType.TOOL)
                                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .status("status")
                                 .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

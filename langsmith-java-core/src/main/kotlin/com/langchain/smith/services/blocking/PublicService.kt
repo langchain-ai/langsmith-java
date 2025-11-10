@@ -9,9 +9,6 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import com.langchain.smith.services.blocking.public_.DatasetService
-import com.langchain.smith.services.blocking.public_.ExampleService
-import com.langchain.smith.services.blocking.public_.RunService
-import com.langchain.smith.services.blocking.public_.SchemaService
 import java.util.function.Consumer
 
 interface PublicService {
@@ -29,12 +26,6 @@ interface PublicService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): PublicService
 
     fun datasets(): DatasetService
-
-    fun examples(): ExampleService
-
-    fun schemas(): SchemaService
-
-    fun runs(): RunService
 
     /** Read Shared Feedbacks */
     fun retrieveFeedbacks(shareToken: String): List<FeedbackSchema> =
@@ -82,12 +73,6 @@ interface PublicService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): PublicService.WithRawResponse
 
         fun datasets(): DatasetService.WithRawResponse
-
-        fun examples(): ExampleService.WithRawResponse
-
-        fun schemas(): SchemaService.WithRawResponse
-
-        fun runs(): RunService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/feedbacks`, but is
