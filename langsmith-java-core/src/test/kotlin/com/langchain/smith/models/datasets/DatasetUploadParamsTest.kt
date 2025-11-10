@@ -14,7 +14,7 @@ internal class DatasetUploadParamsTest {
         DatasetUploadParams.builder()
             .file("some content".byteInputStream())
             .addInputKey("string")
-            .dataType(DataType.KV)
+            .dataType(DatasetUploadParams.DataType.KV)
             .description("description")
             .inputKeyMappings("input_key_mappings")
             .inputsSchemaDefinition("inputs_schema_definition")
@@ -34,7 +34,7 @@ internal class DatasetUploadParamsTest {
             DatasetUploadParams.builder()
                 .file("some content".byteInputStream())
                 .addInputKey("string")
-                .dataType(DataType.KV)
+                .dataType(DatasetUploadParams.DataType.KV)
                 .description("description")
                 .inputKeyMappings("input_key_mappings")
                 .inputsSchemaDefinition("inputs_schema_definition")
@@ -61,7 +61,7 @@ internal class DatasetUploadParamsTest {
                 mapOf(
                         "file" to MultipartField.of("some content".byteInputStream()),
                         "input_keys" to MultipartField.of(listOf("string")),
-                        "data_type" to MultipartField.of(DataType.KV),
+                        "data_type" to MultipartField.of(DatasetUploadParams.DataType.KV),
                         "description" to MultipartField.of("description"),
                         "input_key_mappings" to MultipartField.of("input_key_mappings"),
                         "inputs_schema_definition" to MultipartField.of("inputs_schema_definition"),
