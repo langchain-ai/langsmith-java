@@ -18,6 +18,8 @@ import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsyncImpl
 import com.langchain.smith.services.async.RepoServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsyncImpl
+import com.langchain.smith.services.async.RunServiceAsync
+import com.langchain.smith.services.async.RunServiceAsyncImpl
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsyncImpl
 import com.langchain.smith.services.async.SettingServiceAsync
@@ -52,6 +54,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     private val datasets: DatasetServiceAsync by lazy {
         DatasetServiceAsyncImpl(clientOptionsWithUserAgent)
     }
+
+    private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val feedback: FeedbackServiceAsync by lazy {
         FeedbackServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -88,6 +92,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun datasets(): DatasetServiceAsync = datasets
 
+    override fun runs(): RunServiceAsync = runs
+
     override fun feedback(): FeedbackServiceAsync = feedback
 
     override fun public_(): PublicServiceAsync = public_
@@ -115,6 +121,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         private val datasets: DatasetServiceAsync.WithRawResponse by lazy {
             DatasetServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val runs: RunServiceAsync.WithRawResponse by lazy {
+            RunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val feedback: FeedbackServiceAsync.WithRawResponse by lazy {
@@ -153,6 +163,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun examples(): ExampleServiceAsync.WithRawResponse = examples
 
         override fun datasets(): DatasetServiceAsync.WithRawResponse = datasets
+
+        override fun runs(): RunServiceAsync.WithRawResponse = runs
 
         override fun feedback(): FeedbackServiceAsync.WithRawResponse = feedback
 
