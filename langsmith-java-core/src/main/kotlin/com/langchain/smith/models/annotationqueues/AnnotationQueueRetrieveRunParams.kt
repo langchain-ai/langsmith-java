@@ -217,7 +217,7 @@ private constructor(
     fun _pathParam(index: Int): String =
         when (index) {
             0 -> queueId
-            1 -> index?.toString() ?: ""
+            1 -> this.index?.toString() ?: ""
             else -> ""
         }
 
