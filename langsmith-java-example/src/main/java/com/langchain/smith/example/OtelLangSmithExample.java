@@ -76,7 +76,7 @@ public class OtelLangSmithExample {
         System.out.println("        └─ 5. database.retriever (200ms)\n");
 
         // ROOT SPAN: Main agent chain
-        Span rootSpan = OtelSpanCreator.createChainSpan(tracer, "langsmith.java.exmaple", projectName, sessionId);
+        Span rootSpan = OtelSpanCreator.createChainSpan(tracer, "langsmith.java.example", projectName, sessionId);
 
         try (Scope rootScope = rootSpan.makeCurrent()) {
             // CHILD 1: First LLM call
