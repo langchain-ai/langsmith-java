@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0-alpha.7 (2025-11-10)
+
+Full Changelog: [v0.1.0-alpha.6...v0.1.0-alpha.7](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.6...v0.1.0-alpha.7)
+
+### Features
+
+* **api:** api update ([524a19f](https://github.com/langchain-ai/langsmith-java/commit/524a19f4de68c8936cd5995a90491061710f2a5e))
+* **api:** manual updates ([9d61b1d](https://github.com/langchain-ai/langsmith-java/commit/9d61b1d041a599d547bb734f63cd8021ed3f6154))
+* **api:** manual updates ([91e9267](https://github.com/langchain-ai/langsmith-java/commit/91e9267c8dc7291ab5263b98c86df6467ca08b07))
+* **api:** manual updates ([5f71223](https://github.com/langchain-ai/langsmith-java/commit/5f71223bac2a797dd1da9d3aaa8d6e94f3f6c685))
+
+
+### Chores
+
+* Move LangSmith OTel Java wrappers PoC into SDK ([24680be](https://github.com/langchain-ai/langsmith-java/commit/24680beb2f50ab99332fb8fcd55ca6e50890e8d1))
+
 ## 0.1.0-alpha.6 (2025-11-07)
 
 Full Changelog: [v0.1.0-alpha.5...v0.1.0-alpha.6](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.5...v0.1.0-alpha.6)
