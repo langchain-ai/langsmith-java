@@ -5,12 +5,15 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 import com.langchain.smith.core.JsonValue;
 import com.langchain.smith.models.datasets.Dataset;
 import com.langchain.smith.models.datasets.DatasetCreateParams;
+import com.langchain.smith.models.datasets.DatasetListParams;
 import com.langchain.smith.models.examples.Example;
 import com.langchain.smith.models.examples.ExampleCreateParams;
 
 import java.io.IOException;
 import java.net.URI;
-import java.time.Instant;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -49,16 +52,28 @@ public class CreateExamplesExample {
         // Requires: LANGSMITH_API_KEY and LANGSMITH_BASE_URL
         LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
-        // Create a dataset programmatically
-        // TODO: get or create
-        String datasetName = "Quentin's dataset " + Instant.now().getEpochSecond();
-        DatasetCreateParams datasetParams = DatasetCreateParams.builder()
-                .name(datasetName)
-                .description("A sample dataset in LangSmith.")
-                .build();
+        // Get or create a dataset
+        String datasetName = "Sample Dataset created in Java";
+        Dataset dataset;
 
-        Dataset dataset = client.datasets().create(datasetParams);
-        System.out.println("Created dataset: " + dataset.name() + " (ID: " + dataset.id() + ")");
+        // Try to find existing dataset by name
+        DatasetListParams listParams = DatasetListParams.builder()
+                .name(datasetName)
+                .build();
+        List<Dataset> existingDatasets = client.datasets().list(listParams);
+
+        if (!existingDatasets.isEmpty()) {
+            dataset = existingDatasets.get(0);
+            System.out.println("Found existing dataset: " + dataset.name() + " (ID: " + dataset.id() + ")");
+        } else {
+            // Create a new dataset if it doesn't exist
+            DatasetCreateParams datasetParams = DatasetCreateParams.builder()
+                    .name(datasetName)
+                    .description("A sample dataset in LangSmith.")
+                    .build();
+            dataset = client.datasets().create(datasetParams);
+            System.out.println("Created dataset: " + dataset.name() + " (ID: " + dataset.id() + ")");
+        }
 
         // Create examples
 
