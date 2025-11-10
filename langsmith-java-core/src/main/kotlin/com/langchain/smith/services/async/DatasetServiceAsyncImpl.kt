@@ -34,13 +34,9 @@ import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
-import com.langchain.smith.models.datasets.DatasetSearchParams
-import com.langchain.smith.models.datasets.DatasetSearchResponse
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateResponse
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
@@ -196,13 +192,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // get /api/v1/datasets/{dataset_id}/version
         withRawResponse().retrieveVersion(params, requestOptions).thenApply { it.parse() }
 
-    override fun search(
-        params: DatasetSearchParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetSearchResponse> =
-        // post /api/v1/datasets/{dataset_id}/search
-        withRawResponse().search(params, requestOptions).thenApply { it.parse() }
-
     override fun updateTags(
         params: DatasetUpdateTagsParams,
         requestOptions: RequestOptions,
@@ -216,13 +205,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
     ): CompletableFuture<Dataset> =
         // post /api/v1/datasets/upload
         withRawResponse().upload(params, requestOptions).thenApply { it.parse() }
-
-    override fun uploadExperiment(
-        params: DatasetUploadExperimentParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetUploadExperimentResponse> =
-        // post /api/v1/datasets/upload-experiment
-        withRawResponse().uploadExperiment(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         DatasetServiceAsync.WithRawResponse {
@@ -649,40 +631,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val searchHandler: Handler<DatasetSearchResponse> =
-            jsonHandler<DatasetSearchResponse>(clientOptions.jsonMapper)
-
-        override fun search(
-            params: DatasetSearchParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetSearchResponse>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "search")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { searchHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
         private val updateTagsHandler: Handler<DatasetVersion> =
             jsonHandler<DatasetVersion>(clientOptions.jsonMapper)
 
@@ -738,37 +686,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                     errorHandler.handle(response).parseable {
                         response
                             .use { uploadHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val uploadExperimentHandler: Handler<DatasetUploadExperimentResponse> =
-            jsonHandler<DatasetUploadExperimentResponse>(clientOptions.jsonMapper)
-
-        override fun uploadExperiment(
-            params: DatasetUploadExperimentParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetUploadExperimentResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", "upload-experiment")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { uploadExperimentHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

@@ -23,13 +23,9 @@ import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
-import com.langchain.smith.models.datasets.DatasetSearchParams
-import com.langchain.smith.models.datasets.DatasetSearchResponse
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateResponse
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
@@ -373,28 +369,6 @@ interface DatasetService {
     fun retrieveVersion(datasetId: String, requestOptions: RequestOptions): DatasetVersion =
         retrieveVersion(datasetId, DatasetRetrieveVersionParams.none(), requestOptions)
 
-    /** Search a dataset. */
-    fun search(datasetId: String, params: DatasetSearchParams): DatasetSearchResponse =
-        search(datasetId, params, RequestOptions.none())
-
-    /** @see search */
-    fun search(
-        datasetId: String,
-        params: DatasetSearchParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetSearchResponse =
-        search(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-    /** @see search */
-    fun search(params: DatasetSearchParams): DatasetSearchResponse =
-        search(params, RequestOptions.none())
-
-    /** @see search */
-    fun search(
-        params: DatasetSearchParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetSearchResponse
-
     /** Set a tag on a dataset version. */
     fun updateTags(datasetId: String, params: DatasetUpdateTagsParams): DatasetVersion =
         updateTags(datasetId, params, RequestOptions.none())
@@ -424,16 +398,6 @@ interface DatasetService {
         params: DatasetUploadParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Dataset
-
-    /** Upload an experiment that has already been run. */
-    fun uploadExperiment(params: DatasetUploadExperimentParams): DatasetUploadExperimentResponse =
-        uploadExperiment(params, RequestOptions.none())
-
-    /** @see uploadExperiment */
-    fun uploadExperiment(
-        params: DatasetUploadExperimentParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetUploadExperimentResponse
 
     /** A view of [DatasetService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -879,37 +843,6 @@ interface DatasetService {
             retrieveVersion(datasetId, DatasetRetrieveVersionParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/search`, but is
-         * otherwise the same as [DatasetService.search].
-         */
-        @MustBeClosed
-        fun search(
-            datasetId: String,
-            params: DatasetSearchParams,
-        ): HttpResponseFor<DatasetSearchResponse> = search(datasetId, params, RequestOptions.none())
-
-        /** @see search */
-        @MustBeClosed
-        fun search(
-            datasetId: String,
-            params: DatasetSearchParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetSearchResponse> =
-            search(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-        /** @see search */
-        @MustBeClosed
-        fun search(params: DatasetSearchParams): HttpResponseFor<DatasetSearchResponse> =
-            search(params, RequestOptions.none())
-
-        /** @see search */
-        @MustBeClosed
-        fun search(
-            params: DatasetSearchParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetSearchResponse>
-
-        /**
          * Returns a raw HTTP response for `put /api/v1/datasets/{dataset_id}/tags`, but is
          * otherwise the same as [DatasetService.updateTags].
          */
@@ -954,22 +887,5 @@ interface DatasetService {
             params: DatasetUploadParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Dataset>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/upload-experiment`, but is
-         * otherwise the same as [DatasetService.uploadExperiment].
-         */
-        @MustBeClosed
-        fun uploadExperiment(
-            params: DatasetUploadExperimentParams
-        ): HttpResponseFor<DatasetUploadExperimentResponse> =
-            uploadExperiment(params, RequestOptions.none())
-
-        /** @see uploadExperiment */
-        @MustBeClosed
-        fun uploadExperiment(
-            params: DatasetUploadExperimentParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetUploadExperimentResponse>
     }
 }
