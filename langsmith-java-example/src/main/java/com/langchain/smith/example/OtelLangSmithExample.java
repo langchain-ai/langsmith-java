@@ -8,7 +8,6 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,10 +15,10 @@ import java.util.UUID;
 
 /**
  * Example: Send OpenTelemetry traces to LangSmith UI.
- * 
+ *
  * This is a mock/demo example that simulates LLM calls without requiring API keys.
  * It demonstrates the tracing structure and waterfall visualization.
- * 
+ *
  * Usage:
  *   export LANGSMITH_API_KEY=your_api_key
  *   ./gradlew :langsmith-java-example:run -Pexample=OtelLangSmith
@@ -81,8 +80,8 @@ public class OtelLangSmithExample {
 
         try (Scope rootScope = rootSpan.makeCurrent()) {
             // CHILD 1: First LLM call
-            Span llmSpan1 = OtelSpanCreator.createLlmSpan(tracer, "openai.llm.call",
-                    "openai", "gpt-4", projectName, sessionId);
+            Span llmSpan1 =
+                    OtelSpanCreator.createLlmSpan(tracer, "openai.llm.call", "openai", "gpt-4", projectName, sessionId);
             try (Scope llmScope1 = llmSpan1.makeCurrent()) {
                 OtelSpanCreator.setInput(llmSpan1, "What's the weather in San Francisco?");
                 Thread.sleep(500);
@@ -94,8 +93,8 @@ public class OtelLangSmithExample {
             }
 
             // CHILD 2: Tool call
-            Span toolSpan = OtelSpanCreator.createToolSpan(tracer, "weather.tool",
-                    "get_weather", projectName, sessionId);
+            Span toolSpan =
+                    OtelSpanCreator.createToolSpan(tracer, "weather.tool", "get_weather", projectName, sessionId);
             try (Scope toolScope = toolSpan.makeCurrent()) {
                 toolSpan.setAttribute(AttributeKey.stringKey("tool.input"), "{\"location\":\"San Francisco\"}");
                 Thread.sleep(300);
@@ -105,14 +104,14 @@ public class OtelLangSmithExample {
             }
 
             // CHILD 3: Second LLM call with nested retriever
-            Span llmSpan2 = OtelSpanCreator.createLlmSpan(tracer, "openai.llm.final",
-                    "openai", "gpt-4", projectName, sessionId);
+            Span llmSpan2 = OtelSpanCreator.createLlmSpan(
+                    tracer, "openai.llm.final", "openai", "gpt-4", projectName, sessionId);
             try (Scope llmScope2 = llmSpan2.makeCurrent()) {
                 OtelSpanCreator.setInput(llmSpan2, "Based on the weather data, provide a summary.");
 
                 // NESTED CHILD: Retriever call inside LLM
-                Span retrieverSpan = OtelSpanCreator.createRetrievalSpan(tracer, "database.retriever",
-                        projectName, sessionId);
+                Span retrieverSpan =
+                        OtelSpanCreator.createRetrievalSpan(tracer, "database.retriever", projectName, sessionId);
                 try (Scope retrieverScope = retrieverSpan.makeCurrent()) {
                     OtelSpanCreator.setInput(retrieverSpan, "weather forecast data");
                     Thread.sleep(200);
@@ -123,8 +122,8 @@ public class OtelLangSmithExample {
                 }
 
                 Thread.sleep(400);
-                OtelSpanCreator.setOutput(llmSpan2,
-                        "The weather in San Francisco is sunny with a temperature of 72°F.");
+                OtelSpanCreator.setOutput(
+                        llmSpan2, "The weather in San Francisco is sunny with a temperature of 72°F.");
                 OtelSpanCreator.setTokenUsage(llmSpan2, 25, 18);
                 llmSpan2.setStatus(StatusCode.OK);
             } finally {

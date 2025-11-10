@@ -11,7 +11,7 @@ import java.time.Duration;
 
 /**
  * Example: Send live OpenTelemetry traces to Jaeger.
- * 
+ *
  * Start Jaeger: docker run -d --name jaeger -p 16686:16686 -p 4318:4318 jaegertracing/all-in-one:latest
  * Run: ./gradlew :langsmith-java-example:run -Pexample=OtelJaegerExample
  * View: http://localhost:16686
@@ -38,14 +38,13 @@ public class OtelJaegerExample {
             System.out.println("→ Root span: langchain.chain started");
 
             // CHILD 1: First LLM call
-            Span llmSpan1 = OtelSpanCreator.createLlmSpan(tracer, "openai.chat", 
-                    "openai", "gpt-4", projectName, null);
+            Span llmSpan1 = OtelSpanCreator.createLlmSpan(tracer, "openai.chat", "openai", "gpt-4", projectName, null);
             try (Scope scope = llmSpan1.makeCurrent()) {
                 OtelSpanCreator.setInput(llmSpan1, "What's the weather?");
-                
+
                 System.out.println("  → Child span 1: openai.chat started");
                 Thread.sleep(500);
-                
+
                 OtelSpanCreator.setOutput(llmSpan1, "I'll check the weather for you.");
                 OtelSpanCreator.setTokenUsage(llmSpan1, 10, 8);
                 llmSpan1.setStatus(StatusCode.OK);
@@ -55,10 +54,9 @@ public class OtelJaegerExample {
             }
 
             // CHILD 2: Tool call
-            Span toolSpan = OtelSpanCreator.createToolSpan(tracer, "weather.tool", 
-                    "get_weather", projectName, null);
+            Span toolSpan = OtelSpanCreator.createToolSpan(tracer, "weather.tool", "get_weather", projectName, null);
             try (Scope scope = toolSpan.makeCurrent()) {
-                
+
                 System.out.println("  → Child span 2: weather.tool started");
                 Thread.sleep(300);
                 toolSpan.setStatus(StatusCode.OK);
@@ -68,33 +66,32 @@ public class OtelJaegerExample {
             }
 
             // CHILD 3: Second LLM call with nested database query
-            Span llmSpan2 = OtelSpanCreator.createLlmSpan(tracer, "openai.chat",
-                    "openai", "gpt-4", projectName, null);
+            Span llmSpan2 = OtelSpanCreator.createLlmSpan(tracer, "openai.chat", "openai", "gpt-4", projectName, null);
             try (Scope scope2 = llmSpan2.makeCurrent()) {
                 OtelSpanCreator.setInput(llmSpan2, "Provide a detailed weather summary.");
-                
+
                 System.out.println("  → Child span 3: openai.chat started");
-                
+
                 // NESTED CHILD: Database query
-                Span dbSpan = OtelSpanCreator.createToolSpan(tracer, "database.query",
-                        "postgresql_query", projectName, null);
+                Span dbSpan =
+                        OtelSpanCreator.createToolSpan(tracer, "database.query", "postgresql_query", projectName, null);
                 try (Scope dbScope = dbSpan.makeCurrent()) {
                     dbSpan.setAttribute(AttributeKey.stringKey("db.system"), "postgresql");
                     OtelSpanCreator.setInput(dbSpan, "SELECT * FROM weather_data WHERE city='SF'");
-                    
+
                     System.out.println("    → Nested span: database.query started");
                     Thread.sleep(200);
-                    
+
                     // Simulate error
                     dbSpan.setStatus(StatusCode.ERROR, "Connection timeout");
                     dbSpan.setAttribute(AttributeKey.booleanKey("error"), true);
                     dbSpan.setAttribute(AttributeKey.stringKey("error.type"), "timeout");
-                    
+
                     System.out.println("    ← Nested span: database.query failed");
                 } finally {
                     dbSpan.end();
                 }
-                
+
                 Thread.sleep(400);
                 OtelSpanCreator.setOutput(llmSpan2, "Unable to retrieve detailed data due to database error.");
                 OtelSpanCreator.setTokenUsage(llmSpan2, 20, 15);

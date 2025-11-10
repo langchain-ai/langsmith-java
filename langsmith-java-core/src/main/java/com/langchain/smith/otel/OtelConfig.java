@@ -103,27 +103,24 @@ public final class OtelConfig {
      * @return a configuration loaded from environment/system properties
      */
     public static OtelConfig fromEnv() {
-        String endpoint =
-                System.getProperty("langchain.otel.endpoint") != null
-                        ? System.getProperty("langchain.otel.endpoint")
-                        : System.getenv("OTEL_EXPORTER_OTLP_ENDPOINT") != null
-                                ? System.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-                                : "http://localhost:4318/v1/traces";
+        String endpoint = System.getProperty("langchain.otel.endpoint") != null
+                ? System.getProperty("langchain.otel.endpoint")
+                : System.getenv("OTEL_EXPORTER_OTLP_ENDPOINT") != null
+                        ? System.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+                        : "http://localhost:4318/v1/traces";
 
-        String enabledStr =
-                System.getProperty("langchain.otel.enabled") != null
-                        ? System.getProperty("langchain.otel.enabled")
-                        : System.getenv("OTEL_EXPORTER_OTLP_ENABLED") != null
-                                ? System.getenv("OTEL_EXPORTER_OTLP_ENABLED")
-                                : "false";
+        String enabledStr = System.getProperty("langchain.otel.enabled") != null
+                ? System.getProperty("langchain.otel.enabled")
+                : System.getenv("OTEL_EXPORTER_OTLP_ENABLED") != null
+                        ? System.getenv("OTEL_EXPORTER_OTLP_ENABLED")
+                        : "false";
         boolean enabled = "true".equalsIgnoreCase(enabledStr);
 
-        String timeoutStr =
-                System.getProperty("langchain.otel.timeout") != null
-                        ? System.getProperty("langchain.otel.timeout")
-                        : System.getenv("OTEL_EXPORTER_OTLP_TIMEOUT") != null
-                                ? System.getenv("OTEL_EXPORTER_OTLP_TIMEOUT")
-                                : "10";
+        String timeoutStr = System.getProperty("langchain.otel.timeout") != null
+                ? System.getProperty("langchain.otel.timeout")
+                : System.getenv("OTEL_EXPORTER_OTLP_TIMEOUT") != null
+                        ? System.getenv("OTEL_EXPORTER_OTLP_TIMEOUT")
+                        : "10";
         long timeoutSeconds = 10L;
         try {
             timeoutSeconds = Long.parseLong(timeoutStr);
@@ -132,12 +129,9 @@ public final class OtelConfig {
         }
         Duration timeout = Duration.ofSeconds(timeoutSeconds);
 
-        String serviceName =
-                System.getProperty("langchain.otel.service.name") != null
-                        ? System.getProperty("langchain.otel.service.name")
-                        : System.getenv("OTEL_SERVICE_NAME") != null
-                                ? System.getenv("OTEL_SERVICE_NAME")
-                                : null;
+        String serviceName = System.getProperty("langchain.otel.service.name") != null
+                ? System.getProperty("langchain.otel.service.name")
+                : System.getenv("OTEL_SERVICE_NAME") != null ? System.getenv("OTEL_SERVICE_NAME") : null;
 
         Builder configBuilder = builder().endpoint(endpoint).enabled(enabled).timeout(timeout);
         if (serviceName != null) {
@@ -234,4 +228,3 @@ public final class OtelConfig {
         }
     }
 }
-

@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OtelShutdownHook {
-    
+
     private final OtelTraceExporter exporter;
-    
+
     @Autowired
     public OtelShutdownHook(OtelTraceExporter exporter) {
         this.exporter = exporter;
     }
-    
+
     @PreDestroy
     public void onShutdown() {
         System.out.println("\n→ Flushing OpenTelemetry traces...");
@@ -29,4 +29,3 @@ public class OtelShutdownHook {
         }
     }
 }
-
