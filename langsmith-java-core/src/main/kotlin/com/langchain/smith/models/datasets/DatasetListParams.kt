@@ -15,7 +15,7 @@ import kotlin.jvm.optionals.getOrNull
 class DatasetListParams
 private constructor(
     private val id: List<String>?,
-    private val dataType: DataType?,
+    private val datatype: Datatype?,
     private val excludeCorrectionsDatasets: Boolean?,
     private val limit: Long?,
     private val metadata: String?,
@@ -32,7 +32,7 @@ private constructor(
     fun id(): Optional<List<String>> = Optional.ofNullable(id)
 
     /** Enum for dataset data types. */
-    fun dataType(): Optional<DataType> = Optional.ofNullable(dataType)
+    fun datatype(): Optional<Datatype> = Optional.ofNullable(datatype)
 
     fun excludeCorrectionsDatasets(): Optional<Boolean> =
         Optional.ofNullable(excludeCorrectionsDatasets)
@@ -74,7 +74,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: MutableList<String>? = null
-        private var dataType: DataType? = null
+        private var datatype: Datatype? = null
         private var excludeCorrectionsDatasets: Boolean? = null
         private var limit: Long? = null
         private var metadata: String? = null
@@ -90,7 +90,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(datasetListParams: DatasetListParams) = apply {
             id = datasetListParams.id?.toMutableList()
-            dataType = datasetListParams.dataType
+            datatype = datasetListParams.datatype
             excludeCorrectionsDatasets = datasetListParams.excludeCorrectionsDatasets
             limit = datasetListParams.limit
             metadata = datasetListParams.metadata
@@ -117,16 +117,17 @@ private constructor(
         fun addId(id: String) = apply { this.id = (this.id ?: mutableListOf()).apply { add(id) } }
 
         /** Enum for dataset data types. */
-        fun dataType(dataType: DataType?) = apply { this.dataType = dataType }
+        fun datatype(datatype: Datatype?) = apply { this.datatype = datatype }
 
-        /** Alias for calling [Builder.dataType] with `dataType.orElse(null)`. */
-        fun dataType(dataType: Optional<DataType>) = dataType(dataType.getOrNull())
+        /** Alias for calling [Builder.datatype] with `datatype.orElse(null)`. */
+        fun datatype(datatype: Optional<Datatype>) = datatype(datatype.getOrNull())
 
-        /** Alias for calling [dataType] with `DataType.ofTypes(types)`. */
-        fun dataTypeOfTypes(types: List<DataType>) = dataType(DataType.ofTypes(types))
+        /** Alias for calling [datatype] with `Datatype.ofDataTypes(dataTypes)`. */
+        fun datatypeOfDataTypes(dataTypes: List<DataType>) =
+            datatype(Datatype.ofDataTypes(dataTypes))
 
-        /** Alias for calling [Builder.dataType] with `DataType.ofDataType(dataType)`. */
-        fun dataType(dataType: DataType) = dataType(DataType.ofDataType(dataType))
+        /** Alias for calling [datatype] with `Datatype.ofDataType(dataType)`. */
+        fun datatype(dataType: DataType) = datatype(Datatype.ofDataType(dataType))
 
         fun excludeCorrectionsDatasets(excludeCorrectionsDatasets: Boolean?) = apply {
             this.excludeCorrectionsDatasets = excludeCorrectionsDatasets
@@ -326,7 +327,7 @@ private constructor(
         fun build(): DatasetListParams =
             DatasetListParams(
                 id?.toImmutable(),
-                dataType,
+                datatype,
                 excludeCorrectionsDatasets,
                 limit,
                 metadata,
@@ -347,10 +348,10 @@ private constructor(
         QueryParams.builder()
             .apply {
                 id?.let { put("id", it.joinToString(",")) }
-                dataType?.accept(
-                    object : DataType.Visitor<Unit> {
-                        override fun visitTypes(types: List<DataType>) {
-                            put("data_type", types.joinToString(",") { it.toString() })
+                datatype?.accept(
+                    object : Datatype.Visitor<Unit> {
+                        override fun visitDataTypes(dataTypes: List<DataType>) {
+                            put("data_type", dataTypes.joinToString(",") { it.toString() })
                         }
 
                         override fun visitDataType(dataType: DataType) {
@@ -374,31 +375,31 @@ private constructor(
             .build()
 
     /** Enum for dataset data types. */
-    class DataType
+    class Datatype
     private constructor(
-        private val types: List<DataType>? = null,
+        private val dataTypes: List<DataType>? = null,
         private val dataType: DataType? = null,
     ) {
 
-        fun types(): Optional<List<DataType>> = Optional.ofNullable(types)
+        fun dataTypes(): Optional<List<DataType>> = Optional.ofNullable(dataTypes)
 
         /** Enum for dataset data types. */
         fun dataType(): Optional<DataType> = Optional.ofNullable(dataType)
 
-        fun isTypes(): Boolean = types != null
+        fun isDataTypes(): Boolean = dataTypes != null
 
         fun isDataType(): Boolean = dataType != null
 
-        fun asTypes(): List<DataType> = types.getOrThrow("types")
+        fun asDataTypes(): List<DataType> = dataTypes.getOrThrow("dataTypes")
 
         /** Enum for dataset data types. */
         fun asDataType(): DataType = dataType.getOrThrow("dataType")
 
         fun <T> accept(visitor: Visitor<T>): T =
             when {
-                types != null -> visitor.visitTypes(types)
+                dataTypes != null -> visitor.visitDataTypes(dataTypes)
                 dataType != null -> visitor.visitDataType(dataType)
-                else -> throw IllegalStateException("Invalid DataType")
+                else -> throw IllegalStateException("Invalid Datatype")
             }
 
         override fun equals(other: Any?): Boolean {
@@ -406,32 +407,34 @@ private constructor(
                 return true
             }
 
-            return other is DataType && types == other.types && dataType == other.dataType
+            return other is Datatype && dataTypes == other.dataTypes && dataType == other.dataType
         }
 
-        override fun hashCode(): Int = Objects.hash(types, dataType)
+        override fun hashCode(): Int = Objects.hash(dataTypes, dataType)
 
         override fun toString(): String =
             when {
-                types != null -> "DataType{types=$types}"
-                dataType != null -> "DataType{dataType=$dataType}"
-                else -> throw IllegalStateException("Invalid DataType")
+                dataTypes != null -> "Datatype{dataTypes=$dataTypes}"
+                dataType != null -> "Datatype{dataType=$dataType}"
+                else -> throw IllegalStateException("Invalid Datatype")
             }
 
         companion object {
 
-            @JvmStatic fun ofTypes(types: List<DataType>) = DataType(types = types.toImmutable())
+            @JvmStatic
+            fun ofDataTypes(dataTypes: List<DataType>) =
+                Datatype(dataTypes = dataTypes.toImmutable())
 
             /** Enum for dataset data types. */
-            @JvmStatic fun ofDataType(dataType: DataType) = DataType(dataType = dataType)
+            @JvmStatic fun ofDataType(dataType: DataType) = Datatype(dataType = dataType)
         }
 
         /**
-         * An interface that defines how to map each variant of [DataType] to a value of type [T].
+         * An interface that defines how to map each variant of [Datatype] to a value of type [T].
          */
         interface Visitor<out T> {
 
-            fun visitTypes(types: List<DataType>): T
+            fun visitDataTypes(dataTypes: List<DataType>): T
 
             /** Enum for dataset data types. */
             fun visitDataType(dataType: DataType): T
@@ -445,7 +448,7 @@ private constructor(
 
         return other is DatasetListParams &&
             id == other.id &&
-            dataType == other.dataType &&
+            datatype == other.datatype &&
             excludeCorrectionsDatasets == other.excludeCorrectionsDatasets &&
             limit == other.limit &&
             metadata == other.metadata &&
@@ -462,7 +465,7 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             id,
-            dataType,
+            datatype,
             excludeCorrectionsDatasets,
             limit,
             metadata,
@@ -477,5 +480,5 @@ private constructor(
         )
 
     override fun toString() =
-        "DatasetListParams{id=$id, dataType=$dataType, excludeCorrectionsDatasets=$excludeCorrectionsDatasets, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "DatasetListParams{id=$id, datatype=$datatype, excludeCorrectionsDatasets=$excludeCorrectionsDatasets, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
