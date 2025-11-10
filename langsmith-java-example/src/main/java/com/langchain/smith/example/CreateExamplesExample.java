@@ -9,11 +9,6 @@ import com.langchain.smith.models.datasets.DatasetListParams;
 import com.langchain.smith.models.examples.Example;
 import com.langchain.smith.models.examples.ExampleCreateParams;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +42,7 @@ import java.util.Map;
  * }</pre>
  */
 public class CreateExamplesExample {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) {
         // Configure client from environment variables
         // Requires: LANGSMITH_API_KEY and LANGSMITH_BASE_URL
         LangsmithClient client = LangsmithOkHttpClient.fromEnv();

@@ -2,10 +2,8 @@ package com.langchain.smith.example;
 
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
-import com.langchain.smith.models.runs.BodyParamsForRunSchema;
 import com.langchain.smith.models.runs.RunQueryParams;
 import com.langchain.smith.models.runs.RunQueryResponse;
-import com.langchain.smith.models.runs.RunSchema;
 
 public class ListRunsExample {
     public static void main(String[] args) {
@@ -26,19 +24,17 @@ public class ListRunsExample {
         // Create query parameters
         // The API requires at least one filter (session, id, parent_run, trace, or reference_example)
         // This example queries runs for a specific project/session
-        BodyParamsForRunSchema body = BodyParamsForRunSchema.builder()
+        RunQueryParams params = RunQueryParams.builder()
                 .addSession(projectId) // Filter by project/session ID
                 .limit(10L) // Limit to 10 runs
                 .build();
-        RunQueryParams params =
-                RunQueryParams.builder().bodyParamsForRunSchema(body).build();
 
         // Query runs
         RunQueryResponse response = client.runs().query(params);
 
         // Print runs
         System.out.println("Found " + response.runs().size() + " runs:");
-        for (RunSchema run : response.runs()) {
+        for (RunQueryResponse.Run run : response.runs()) {
             System.out.println("Run ID: " + run.id());
             System.out.println("Run Name: " + run.name());
             System.out.println("---");
