@@ -2,15 +2,11 @@
 
 package com.langchain.smith.models.datasets
 
-import com.fasterxml.jackson.annotation.JsonCreator
-import com.langchain.smith.core.Enum
-import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
-import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -126,12 +122,11 @@ private constructor(
         /** Alias for calling [Builder.dataType] with `dataType.orElse(null)`. */
         fun dataType(dataType: Optional<DataType>) = dataType(dataType.getOrNull())
 
-        /** Alias for calling [dataType] with `DataType.ofDatasetDataTypes(datasetDataTypes)`. */
-        fun dataTypeOfDatasetDataTypes(datasetDataTypes: List<DataType.DatasetDataType>) =
-            dataType(DataType.ofDatasetDataTypes(datasetDataTypes))
+        /** Alias for calling [dataType] with `DataType.ofTypes(types)`. */
+        fun dataTypeOfTypes(types: List<DataType>) = dataType(DataType.ofTypes(types))
 
-        /** Alias for calling [dataType] with `DataType.ofDataset(dataset)`. */
-        fun dataType(dataset: DataType.DatasetDataType) = dataType(DataType.ofDataset(dataset))
+        /** Alias for calling [Builder.dataType] with `DataType.ofDataType(dataType)`. */
+        fun dataType(dataType: DataType) = dataType(DataType.ofDataType(dataType))
 
         fun excludeCorrectionsDatasets(excludeCorrectionsDatasets: Boolean?) = apply {
             this.excludeCorrectionsDatasets = excludeCorrectionsDatasets
@@ -354,14 +349,12 @@ private constructor(
                 id?.let { put("id", it.joinToString(",")) }
                 dataType?.accept(
                     object : DataType.Visitor<Unit> {
-                        override fun visitDatasetDataTypes(
-                            datasetDataTypes: List<DataType.DatasetDataType>
-                        ) {
-                            put("data_type", datasetDataTypes.joinToString(",") { it.toString() })
+                        override fun visitTypes(types: List<DataType>) {
+                            put("data_type", types.joinToString(",") { it.toString() })
                         }
 
-                        override fun visitDataset(dataset: DataType.DatasetDataType) {
-                            put("data_type", dataset.toString())
+                        override fun visitDataType(dataType: DataType) {
+                            put("data_type", dataType.toString())
                         }
                     }
                 )
@@ -383,30 +376,28 @@ private constructor(
     /** Enum for dataset data types. */
     class DataType
     private constructor(
-        private val datasetDataTypes: List<DatasetDataType>? = null,
-        private val dataset: DatasetDataType? = null,
+        private val types: List<DataType>? = null,
+        private val dataType: DataType? = null,
     ) {
 
-        fun datasetDataTypes(): Optional<List<DatasetDataType>> =
-            Optional.ofNullable(datasetDataTypes)
+        fun types(): Optional<List<DataType>> = Optional.ofNullable(types)
 
         /** Enum for dataset data types. */
-        fun dataset(): Optional<DatasetDataType> = Optional.ofNullable(dataset)
+        fun dataType(): Optional<DataType> = Optional.ofNullable(dataType)
 
-        fun isDatasetDataTypes(): Boolean = datasetDataTypes != null
+        fun isTypes(): Boolean = types != null
 
-        fun isDataset(): Boolean = dataset != null
+        fun isDataType(): Boolean = dataType != null
 
-        fun asDatasetDataTypes(): List<DatasetDataType> =
-            datasetDataTypes.getOrThrow("datasetDataTypes")
+        fun asTypes(): List<DataType> = types.getOrThrow("types")
 
         /** Enum for dataset data types. */
-        fun asDataset(): DatasetDataType = dataset.getOrThrow("dataset")
+        fun asDataType(): DataType = dataType.getOrThrow("dataType")
 
         fun <T> accept(visitor: Visitor<T>): T =
             when {
-                datasetDataTypes != null -> visitor.visitDatasetDataTypes(datasetDataTypes)
-                dataset != null -> visitor.visitDataset(dataset)
+                types != null -> visitor.visitTypes(types)
+                dataType != null -> visitor.visitDataType(dataType)
                 else -> throw IllegalStateException("Invalid DataType")
             }
 
@@ -415,28 +406,24 @@ private constructor(
                 return true
             }
 
-            return other is DataType &&
-                datasetDataTypes == other.datasetDataTypes &&
-                dataset == other.dataset
+            return other is DataType && types == other.types && dataType == other.dataType
         }
 
-        override fun hashCode(): Int = Objects.hash(datasetDataTypes, dataset)
+        override fun hashCode(): Int = Objects.hash(types, dataType)
 
         override fun toString(): String =
             when {
-                datasetDataTypes != null -> "DataType{datasetDataTypes=$datasetDataTypes}"
-                dataset != null -> "DataType{dataset=$dataset}"
+                types != null -> "DataType{types=$types}"
+                dataType != null -> "DataType{dataType=$dataType}"
                 else -> throw IllegalStateException("Invalid DataType")
             }
 
         companion object {
 
-            @JvmStatic
-            fun ofDatasetDataTypes(datasetDataTypes: List<DatasetDataType>) =
-                DataType(datasetDataTypes = datasetDataTypes.toImmutable())
+            @JvmStatic fun ofTypes(types: List<DataType>) = DataType(types = types.toImmutable())
 
             /** Enum for dataset data types. */
-            @JvmStatic fun ofDataset(dataset: DatasetDataType) = DataType(dataset = dataset)
+            @JvmStatic fun ofDataType(dataType: DataType) = DataType(dataType = dataType)
         }
 
         /**
@@ -444,288 +431,10 @@ private constructor(
          */
         interface Visitor<out T> {
 
-            fun visitDatasetDataTypes(datasetDataTypes: List<DatasetDataType>): T
+            fun visitTypes(types: List<DataType>): T
 
             /** Enum for dataset data types. */
-            fun visitDataset(dataset: DatasetDataType): T
-        }
-
-        /** Enum for dataset data types. */
-        class DatasetDataType
-        @JsonCreator
-        private constructor(private val value: JsonField<String>) : Enum {
-
-            /**
-             * Returns this class instance's raw value.
-             *
-             * This is usually only useful if this instance was deserialized from data that doesn't
-             * match any known member, and you want to know that value. For example, if the SDK is
-             * on an older version than the API, then the API may respond with new members that the
-             * SDK is unaware of.
-             */
-            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-            companion object {
-
-                @JvmField val KV = of("kv")
-
-                @JvmField val LLM = of("llm")
-
-                @JvmField val CHAT = of("chat")
-
-                @JvmStatic fun of(value: String) = DatasetDataType(JsonField.of(value))
-            }
-
-            /** An enum containing [DatasetDataType]'s known values. */
-            enum class Known {
-                KV,
-                LLM,
-                CHAT,
-            }
-
-            /**
-             * An enum containing [DatasetDataType]'s known values, as well as an [_UNKNOWN] member.
-             *
-             * An instance of [DatasetDataType] can contain an unknown value in a couple of cases:
-             * - It was deserialized from data that doesn't match any known member. For example, if
-             *   the SDK is on an older version than the API, then the API may respond with new
-             *   members that the SDK is unaware of.
-             * - It was constructed with an arbitrary value using the [of] method.
-             */
-            enum class Value {
-                KV,
-                LLM,
-                CHAT,
-                /**
-                 * An enum member indicating that [DatasetDataType] was instantiated with an unknown
-                 * value.
-                 */
-                _UNKNOWN,
-            }
-
-            /**
-             * Returns an enum member corresponding to this class instance's value, or
-             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
-             *
-             * Use the [known] method instead if you're certain the value is always known or if you
-             * want to throw for the unknown case.
-             */
-            fun value(): Value =
-                when (this) {
-                    KV -> Value.KV
-                    LLM -> Value.LLM
-                    CHAT -> Value.CHAT
-                    else -> Value._UNKNOWN
-                }
-
-            /**
-             * Returns an enum member corresponding to this class instance's value.
-             *
-             * Use the [value] method instead if you're uncertain the value is always known and
-             * don't want to throw for the unknown case.
-             *
-             * @throws LangChainInvalidDataException if this class instance's value is a not a known
-             *   member.
-             */
-            fun known(): Known =
-                when (this) {
-                    KV -> Known.KV
-                    LLM -> Known.LLM
-                    CHAT -> Known.CHAT
-                    else -> throw LangChainInvalidDataException("Unknown DatasetDataType: $value")
-                }
-
-            /**
-             * Returns this class instance's primitive wire representation.
-             *
-             * This differs from the [toString] method because that method is primarily for
-             * debugging and generally doesn't throw.
-             *
-             * @throws LangChainInvalidDataException if this class instance's value does not have
-             *   the expected primitive type.
-             */
-            fun asString(): String =
-                _value().asString().orElseThrow {
-                    LangChainInvalidDataException("Value is not a String")
-                }
-
-            private var validated: Boolean = false
-
-            fun validate(): DatasetDataType = apply {
-                if (validated) {
-                    return@apply
-                }
-
-                known()
-                validated = true
-            }
-
-            fun isValid(): Boolean =
-                try {
-                    validate()
-                    true
-                } catch (e: LangChainInvalidDataException) {
-                    false
-                }
-
-            /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
-             *
-             * Used for best match union deserialization.
-             */
-            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
-
-                return other is DatasetDataType && value == other.value
-            }
-
-            override fun hashCode() = value.hashCode()
-
-            override fun toString() = value.toString()
-        }
-
-        /** Enum for dataset data types. */
-        class DatasetDataType
-        @JsonCreator
-        private constructor(private val value: JsonField<String>) : Enum {
-
-            /**
-             * Returns this class instance's raw value.
-             *
-             * This is usually only useful if this instance was deserialized from data that doesn't
-             * match any known member, and you want to know that value. For example, if the SDK is
-             * on an older version than the API, then the API may respond with new members that the
-             * SDK is unaware of.
-             */
-            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-            companion object {
-
-                @JvmField val KV = of("kv")
-
-                @JvmField val LLM = of("llm")
-
-                @JvmField val CHAT = of("chat")
-
-                @JvmStatic fun of(value: String) = DatasetDataType(JsonField.of(value))
-            }
-
-            /** An enum containing [DatasetDataType]'s known values. */
-            enum class Known {
-                KV,
-                LLM,
-                CHAT,
-            }
-
-            /**
-             * An enum containing [DatasetDataType]'s known values, as well as an [_UNKNOWN] member.
-             *
-             * An instance of [DatasetDataType] can contain an unknown value in a couple of cases:
-             * - It was deserialized from data that doesn't match any known member. For example, if
-             *   the SDK is on an older version than the API, then the API may respond with new
-             *   members that the SDK is unaware of.
-             * - It was constructed with an arbitrary value using the [of] method.
-             */
-            enum class Value {
-                KV,
-                LLM,
-                CHAT,
-                /**
-                 * An enum member indicating that [DatasetDataType] was instantiated with an unknown
-                 * value.
-                 */
-                _UNKNOWN,
-            }
-
-            /**
-             * Returns an enum member corresponding to this class instance's value, or
-             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
-             *
-             * Use the [known] method instead if you're certain the value is always known or if you
-             * want to throw for the unknown case.
-             */
-            fun value(): Value =
-                when (this) {
-                    KV -> Value.KV
-                    LLM -> Value.LLM
-                    CHAT -> Value.CHAT
-                    else -> Value._UNKNOWN
-                }
-
-            /**
-             * Returns an enum member corresponding to this class instance's value.
-             *
-             * Use the [value] method instead if you're uncertain the value is always known and
-             * don't want to throw for the unknown case.
-             *
-             * @throws LangChainInvalidDataException if this class instance's value is a not a known
-             *   member.
-             */
-            fun known(): Known =
-                when (this) {
-                    KV -> Known.KV
-                    LLM -> Known.LLM
-                    CHAT -> Known.CHAT
-                    else -> throw LangChainInvalidDataException("Unknown DatasetDataType: $value")
-                }
-
-            /**
-             * Returns this class instance's primitive wire representation.
-             *
-             * This differs from the [toString] method because that method is primarily for
-             * debugging and generally doesn't throw.
-             *
-             * @throws LangChainInvalidDataException if this class instance's value does not have
-             *   the expected primitive type.
-             */
-            fun asString(): String =
-                _value().asString().orElseThrow {
-                    LangChainInvalidDataException("Value is not a String")
-                }
-
-            private var validated: Boolean = false
-
-            fun validate(): DatasetDataType = apply {
-                if (validated) {
-                    return@apply
-                }
-
-                known()
-                validated = true
-            }
-
-            fun isValid(): Boolean =
-                try {
-                    validate()
-                    true
-                } catch (e: LangChainInvalidDataException) {
-                    false
-                }
-
-            /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
-             *
-             * Used for best match union deserialization.
-             */
-            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
-
-                return other is DatasetDataType && value == other.value
-            }
-
-            override fun hashCode() = value.hashCode()
-
-            override fun toString() = value.toString()
+            fun visitDataType(dataType: DataType): T
         }
     }
 
