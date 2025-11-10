@@ -13,7 +13,7 @@ Set the required environment variables:
 
 ```bash
 export LANGSMITH_API_KEY="your-api-key"  # https://smith.langchain.com/settings/apikeys
-export LANGSMITH_BASE_URL="https://api.smith.langchain.com"  # or your instance URL if self-hosted
+export LANGCHAIN_BASE_URL="https://api.smith.langchain.com"  # or your instance URL if self-hosted
 ```
 
 Some examples may require additional environment variables. Check the example's documentation for details.

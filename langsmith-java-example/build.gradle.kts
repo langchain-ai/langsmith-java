@@ -17,3 +17,8 @@ application {
             "Main"
     }"
 }
+
+// Export stdin to examples for readln()
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
