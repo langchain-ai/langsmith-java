@@ -1,19 +1,10 @@
 plugins {
-    id("langchain.java")
+    id("langchain.kotlin")
     application
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
     implementation(project(":langsmith-java"))
-}
-
-tasks.withType<JavaCompile>().configureEach {
-    // Allow using more modern APIs, like `List.of` and `Map.of`, in examples.
-    options.release.set(9)
 }
 
 application {
@@ -21,7 +12,7 @@ application {
     // Use `./gradlew :langsmith-java-example:run -Pexample=Something` to run `SomethingExample`
     mainClass = "com.langchain.smith.example.${
         if (project.hasProperty("example"))
-            "${project.property("example")}Example"
+            "${project.property("example")}ExampleKt"
         else
             "Main"
     }"
