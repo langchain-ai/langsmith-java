@@ -10,6 +10,8 @@ import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsyncImpl
 import com.langchain.smith.services.async.DatasetServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsyncImpl
+import com.langchain.smith.services.async.ExampleServiceAsync
+import com.langchain.smith.services.async.ExampleServiceAsyncImpl
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
@@ -41,6 +43,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     private val sessions: SessionServiceAsync by lazy {
         SessionServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
+    private val examples: ExampleServiceAsync by lazy {
+        ExampleServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
     private val datasets: DatasetServiceAsync by lazy {
@@ -78,6 +84,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun sessions(): SessionServiceAsync = sessions
 
+    override fun examples(): ExampleServiceAsync = examples
+
     override fun datasets(): DatasetServiceAsync = datasets
 
     override fun feedback(): FeedbackServiceAsync = feedback
@@ -99,6 +107,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         private val sessions: SessionServiceAsync.WithRawResponse by lazy {
             SessionServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val examples: ExampleServiceAsync.WithRawResponse by lazy {
+            ExampleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val datasets: DatasetServiceAsync.WithRawResponse by lazy {
@@ -137,6 +149,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             )
 
         override fun sessions(): SessionServiceAsync.WithRawResponse = sessions
+
+        override fun examples(): ExampleServiceAsync.WithRawResponse = examples
 
         override fun datasets(): DatasetServiceAsync.WithRawResponse = datasets
 
