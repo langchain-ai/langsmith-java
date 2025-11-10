@@ -1,18 +1,14 @@
 package com.langchain.smith.otel;
 
-import com.langchain.smith.models.runs.Run;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.SpanBuilder;
-import io.opentelemetry.api.trace.SpanContext;
-import io.opentelemetry.api.trace.SpanKind;
-import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.api.trace.TraceFlags;
-import io.opentelemetry.api.trace.TraceState;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
-import java.time.Instant;
 
+/**
+ * Utility class for creating OpenTelemetry spans with Gen AI semantic conventions.
+ * Provides helper methods to create spans for LLM, tool, retrieval, and chain operations.
+ */
 public final class OtelSpanCreator {
 
     private OtelSpanCreator() {}
@@ -143,167 +139,5 @@ public final class OtelSpanCreator {
             span.setAttribute(AttributeKey.stringKey("session.id"), sessionId);
         }
         return span;
-    }
-
-    /**
-     * Creates and exports a span from a LangSmith Run using the native OTEL API.
-     *
-     * @param tracer the OpenTelemetry tracer
-     * @param run the LangSmith Run to convert
-     * @param projectName the project name for langsmith.project.name attribute
-     */
-    public static void createSpanFromRun(Tracer tracer, Run run, String projectName) {
-        // Parse timestamps
-        Instant startTime = parseTime(run.startTime().orElse(null));
-        Instant endTime = parseTime(run.endTime().orElse(null));
-
-        if (startTime == null) {
-            startTime = Instant.now().minusSeconds(1);
-        }
-        if (endTime == null) {
-            endTime = Instant.now();
-        }
-
-        String traceIdHex = normalizeTraceId(run.traceId()
-                .orElseGet(() -> java.util.UUID.randomUUID().toString().replace("-", "")));
-        String spanIdHex = normalizeSpanId(run.id()
-                .orElseGet(() ->
-                        java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16)));
-        String parentSpanIdHex =
-                run.parentRunId().map(OtelSpanCreator::normalizeSpanId).orElse(null);
-
-        // Create SpanContext for this span
-        SpanContext spanContext =
-                SpanContext.create(traceIdHex, spanIdHex, TraceFlags.getSampled(), TraceState.getDefault());
-
-        // Create parent context if we have a parent span ID
-        Context parentContext = Context.root();
-        if (parentSpanIdHex != null) {
-            SpanContext parentSpanContext =
-                    SpanContext.create(traceIdHex, parentSpanIdHex, TraceFlags.getSampled(), TraceState.getDefault());
-            parentContext = Context.root().with(Span.wrap(parentSpanContext));
-        }
-
-        SpanKind spanKind = determineSpanKind(run);
-
-        String spanName = run.name().orElse("langsmith.run");
-        SpanBuilder spanBuilder = tracer.spanBuilder(spanName)
-                .setSpanKind(spanKind)
-                .setParent(parentContext)
-                .setStartTimestamp(startTime);
-
-        Span span = spanBuilder.startSpan();
-
-        try {
-            // Set OpenTelemetry GenAI semantic convention attributes
-
-            span.setAttribute(
-                    AttributeKey.stringKey("gen_ai.operation.name"),
-                    mapRunTypeToOperation(run.runType().orElse(null)));
-
-            run.name().ifPresent(name -> {
-                if (name.contains("openai") || name.contains("gpt")) {
-                    span.setAttribute(AttributeKey.stringKey("gen_ai.system"), "openai");
-                } else if (name.contains("anthropic") || name.contains("claude")) {
-                    span.setAttribute(AttributeKey.stringKey("gen_ai.system"), "anthropic");
-                }
-            });
-
-            if (projectName != null) {
-                span.setAttribute(AttributeKey.stringKey("service.name"), projectName);
-            }
-            run.sessionId().ifPresent(id -> span.setAttribute(AttributeKey.stringKey("session.id"), id));
-
-            if (run.error().isPresent()) {
-                span.setStatus(StatusCode.ERROR, run.error().get());
-                span.setAttribute(AttributeKey.booleanKey("error"), true);
-                span.setAttribute(AttributeKey.stringKey("error.type"), "runtime_error");
-            } else {
-                span.setStatus(StatusCode.OK);
-            }
-
-            run.tags().ifPresent(tags -> {
-                for (int i = 0; i < tags.size(); i++) {
-                    span.setAttribute(AttributeKey.stringKey("tag." + i), tags.get(i));
-                }
-            });
-
-        } finally {
-            span.end(endTime);
-        }
-    }
-
-    private static Instant parseTime(String timeString) {
-        if (timeString == null || timeString.isEmpty()) {
-            return null;
-        }
-        try {
-            return Instant.parse(timeString);
-        } catch (Exception e) {
-            try {
-                long epochMilli = Long.parseLong(timeString);
-                return Instant.ofEpochMilli(epochMilli);
-            } catch (Exception e2) {
-                return null;
-            }
-        }
-    }
-
-    private static SpanKind determineSpanKind(Run run) {
-        return run.runType()
-                .map(rt -> {
-                    if (rt == Run.RunType.LLM) return SpanKind.CLIENT;
-                    if (rt == Run.RunType.CHAIN) return SpanKind.INTERNAL;
-                    if (rt == Run.RunType.TOOL) return SpanKind.CLIENT;
-                    return SpanKind.INTERNAL;
-                })
-                .orElse(SpanKind.INTERNAL);
-    }
-
-    private static String mapRunTypeToOperation(Run.RunType runType) {
-        if (runType == null) {
-            return "chat";
-        }
-        if (runType == Run.RunType.LLM) {
-            return "chat";
-        } else if (runType == Run.RunType.CHAIN) {
-            return "chat";
-        } else if (runType == Run.RunType.TOOL) {
-            return "tool";
-        } else if (runType == Run.RunType.RETRIEVER) {
-            return "retrieval";
-        } else if (runType == Run.RunType.PARSER) {
-            return "parse";
-        } else if (runType == Run.RunType.PROMPT) {
-            return "prompt";
-        } else {
-            return "chat";
-        }
-    }
-
-    private static String normalizeTraceId(String traceId) {
-        if (traceId == null) {
-            traceId = java.util.UUID.randomUUID().toString().replace("-", "");
-        }
-        traceId = traceId.toLowerCase();
-        if (traceId.length() < 32) {
-            traceId = String.format("%32s", traceId).replace(' ', '0');
-        } else if (traceId.length() > 32) {
-            traceId = traceId.substring(0, 32);
-        }
-        return traceId;
-    }
-
-    private static String normalizeSpanId(String spanId) {
-        if (spanId == null) {
-            spanId = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16);
-        }
-        spanId = spanId.toLowerCase();
-        if (spanId.length() < 16) {
-            spanId = String.format("%16s", spanId).replace(' ', '0');
-        } else if (spanId.length() > 16) {
-            spanId = spanId.substring(0, 16);
-        }
-        return spanId;
     }
 }

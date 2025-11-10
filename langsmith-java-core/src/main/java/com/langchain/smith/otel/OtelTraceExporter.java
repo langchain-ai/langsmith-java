@@ -1,6 +1,5 @@
 package com.langchain.smith.otel;
 
-import com.langchain.smith.models.runs.Run;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
@@ -20,10 +19,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Exports LangSmith runs as OpenTelemetry traces to an OTEL endpoint.
+ * Manages OpenTelemetry SDK for exporting traces to OTLP endpoints.
  *
- * <p>This exporter converts LangSmith Run objects to OpenTelemetry spans and sends them to a
- * configured OTEL endpoint using the OTLP HTTP protocol.
+ * <p>This class initializes the OpenTelemetry SDK with OTLP HTTP export capabilities,
+ * providing a Tracer for creating spans with Gen AI semantic conventions.
  */
 public final class OtelTraceExporter {
     private static final Logger logger = Logger.getLogger(OtelTraceExporter.class.getName());
@@ -70,55 +69,6 @@ public final class OtelTraceExporter {
      */
     public String getProjectName() {
         return projectName;
-    }
-
-    /**
-     * Exports a single run as a span.
-     *
-     * @param run the run to export
-     * @return a CompletableResultCode indicating success or failure
-     */
-    public CompletableResultCode export(Run run) {
-        return export(Collections.singletonList(run));
-    }
-
-    /**
-     * Exports multiple runs as spans.
-     *
-     * @param runs the runs to export
-     * @return a CompletableResultCode indicating success or failure
-     */
-    public CompletableResultCode export(List<Run> runs) {
-        if (!config.isEnabled() || runs == null || runs.isEmpty()) {
-            return CompletableResultCode.ofSuccess();
-        }
-
-        try {
-            logger.log(Level.FINE, "Creating {0} spans using native OTEL API", runs.size());
-
-            for (Run run : runs) {
-                OtelSpanCreator.createSpanFromRun(tracer, run, projectName);
-            }
-
-            // Force flush to ensure spans are exported immediately
-            CompletableResultCode result = tracerProvider.forceFlush();
-
-            result.whenComplete(() -> {
-                if (!result.isSuccess()) {
-                    logger.log(
-                            Level.SEVERE, "Export failed! Check OpenTelemetry logs above for HTTP response details.");
-                    logger.log(Level.SEVERE, "Failed to export {0} spans to {1}", new Object[] {
-                        runs.size(), config.getEndpoint()
-                    });
-                }
-            });
-
-            return result;
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception while exporting runs to OTEL", e);
-            e.printStackTrace();
-            return CompletableResultCode.ofFailure();
-        }
     }
 
     /**
