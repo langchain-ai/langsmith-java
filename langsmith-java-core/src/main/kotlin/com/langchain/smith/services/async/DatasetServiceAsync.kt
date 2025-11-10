@@ -11,8 +11,6 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
-import com.langchain.smith.models.datasets.DatasetGenerateParams
-import com.langchain.smith.models.datasets.DatasetGenerateResponse
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
@@ -26,8 +24,6 @@ import com.langchain.smith.models.datasets.DatasetRetrieveParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
 import com.langchain.smith.models.datasets.DatasetSearchParams
 import com.langchain.smith.models.datasets.DatasetSearchResponse
-import com.langchain.smith.models.datasets.DatasetStudioExperimentParams
-import com.langchain.smith.models.datasets.DatasetStudioExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateResponse
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
@@ -218,31 +214,6 @@ interface DatasetServiceAsync {
         params: DatasetCloneParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<List<DatasetCloneResponse>>
-
-    /** Generate synthetic examples for a dataset. */
-    fun generate(
-        datasetId: String,
-        params: DatasetGenerateParams,
-    ): CompletableFuture<DatasetGenerateResponse> =
-        generate(datasetId, params, RequestOptions.none())
-
-    /** @see generate */
-    fun generate(
-        datasetId: String,
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetGenerateResponse> =
-        generate(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-    /** @see generate */
-    fun generate(params: DatasetGenerateParams): CompletableFuture<DatasetGenerateResponse> =
-        generate(params, RequestOptions.none())
-
-    /** @see generate */
-    fun generate(
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetGenerateResponse>
 
     /** Download a dataset as CSV format. */
     fun retrieveCsv(datasetId: String): CompletableFuture<DatasetRetrieveCsvResponse> =
@@ -453,18 +424,6 @@ interface DatasetServiceAsync {
         params: DatasetSearchParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<DatasetSearchResponse>
-
-    /** Studio Experiment */
-    fun studioExperiment(
-        params: DatasetStudioExperimentParams
-    ): CompletableFuture<DatasetStudioExperimentResponse> =
-        studioExperiment(params, RequestOptions.none())
-
-    /** @see studioExperiment */
-    fun studioExperiment(
-        params: DatasetStudioExperimentParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetStudioExperimentResponse>
 
     /** Set a tag on a dataset version. */
     fun updateTags(
@@ -718,36 +677,6 @@ interface DatasetServiceAsync {
         ): CompletableFuture<HttpResponseFor<List<DatasetCloneResponse>>>
 
         /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/generate`, but is
-         * otherwise the same as [DatasetServiceAsync.generate].
-         */
-        fun generate(
-            datasetId: String,
-            params: DatasetGenerateParams,
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>> =
-            generate(datasetId, params, RequestOptions.none())
-
-        /** @see generate */
-        fun generate(
-            datasetId: String,
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>> =
-            generate(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-        /** @see generate */
-        fun generate(
-            params: DatasetGenerateParams
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>> =
-            generate(params, RequestOptions.none())
-
-        /** @see generate */
-        fun generate(
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>>
-
-        /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/csv`, but is otherwise
          * the same as [DatasetServiceAsync.retrieveCsv].
          */
@@ -989,21 +918,6 @@ interface DatasetServiceAsync {
             params: DatasetSearchParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<DatasetSearchResponse>>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/studio_experiment`, but is
-         * otherwise the same as [DatasetServiceAsync.studioExperiment].
-         */
-        fun studioExperiment(
-            params: DatasetStudioExperimentParams
-        ): CompletableFuture<HttpResponseFor<DatasetStudioExperimentResponse>> =
-            studioExperiment(params, RequestOptions.none())
-
-        /** @see studioExperiment */
-        fun studioExperiment(
-            params: DatasetStudioExperimentParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetStudioExperimentResponse>>
 
         /**
          * Returns a raw HTTP response for `put /api/v1/datasets/{dataset_id}/tags`, but is

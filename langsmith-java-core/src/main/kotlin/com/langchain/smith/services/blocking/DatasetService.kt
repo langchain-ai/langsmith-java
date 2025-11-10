@@ -12,8 +12,6 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
-import com.langchain.smith.models.datasets.DatasetGenerateParams
-import com.langchain.smith.models.datasets.DatasetGenerateResponse
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
@@ -27,8 +25,6 @@ import com.langchain.smith.models.datasets.DatasetRetrieveParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
 import com.langchain.smith.models.datasets.DatasetSearchParams
 import com.langchain.smith.models.datasets.DatasetSearchResponse
-import com.langchain.smith.models.datasets.DatasetStudioExperimentParams
-import com.langchain.smith.models.datasets.DatasetStudioExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateResponse
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
@@ -207,28 +203,6 @@ interface DatasetService {
         params: DatasetCloneParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<DatasetCloneResponse>
-
-    /** Generate synthetic examples for a dataset. */
-    fun generate(datasetId: String, params: DatasetGenerateParams): DatasetGenerateResponse =
-        generate(datasetId, params, RequestOptions.none())
-
-    /** @see generate */
-    fun generate(
-        datasetId: String,
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetGenerateResponse =
-        generate(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-    /** @see generate */
-    fun generate(params: DatasetGenerateParams): DatasetGenerateResponse =
-        generate(params, RequestOptions.none())
-
-    /** @see generate */
-    fun generate(
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetGenerateResponse
 
     /** Download a dataset as CSV format. */
     fun retrieveCsv(datasetId: String): DatasetRetrieveCsvResponse =
@@ -420,16 +394,6 @@ interface DatasetService {
         params: DatasetSearchParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): DatasetSearchResponse
-
-    /** Studio Experiment */
-    fun studioExperiment(params: DatasetStudioExperimentParams): DatasetStudioExperimentResponse =
-        studioExperiment(params, RequestOptions.none())
-
-    /** @see studioExperiment */
-    fun studioExperiment(
-        params: DatasetStudioExperimentParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetStudioExperimentResponse
 
     /** Set a tag on a dataset version. */
     fun updateTags(datasetId: String, params: DatasetUpdateTagsParams): DatasetVersion =
@@ -681,38 +645,6 @@ interface DatasetService {
             params: DatasetCloneParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<List<DatasetCloneResponse>>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/generate`, but is
-         * otherwise the same as [DatasetService.generate].
-         */
-        @MustBeClosed
-        fun generate(
-            datasetId: String,
-            params: DatasetGenerateParams,
-        ): HttpResponseFor<DatasetGenerateResponse> =
-            generate(datasetId, params, RequestOptions.none())
-
-        /** @see generate */
-        @MustBeClosed
-        fun generate(
-            datasetId: String,
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetGenerateResponse> =
-            generate(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-        /** @see generate */
-        @MustBeClosed
-        fun generate(params: DatasetGenerateParams): HttpResponseFor<DatasetGenerateResponse> =
-            generate(params, RequestOptions.none())
-
-        /** @see generate */
-        @MustBeClosed
-        fun generate(
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetGenerateResponse>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/csv`, but is otherwise
@@ -976,23 +908,6 @@ interface DatasetService {
             params: DatasetSearchParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<DatasetSearchResponse>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/studio_experiment`, but is
-         * otherwise the same as [DatasetService.studioExperiment].
-         */
-        @MustBeClosed
-        fun studioExperiment(
-            params: DatasetStudioExperimentParams
-        ): HttpResponseFor<DatasetStudioExperimentResponse> =
-            studioExperiment(params, RequestOptions.none())
-
-        /** @see studioExperiment */
-        @MustBeClosed
-        fun studioExperiment(
-            params: DatasetStudioExperimentParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetStudioExperimentResponse>
 
         /**
          * Returns a raw HTTP response for `put /api/v1/datasets/{dataset_id}/tags`, but is

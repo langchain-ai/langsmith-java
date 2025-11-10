@@ -8,7 +8,6 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.datasets.DataType
 import com.langchain.smith.models.datasets.DatasetCloneParams
 import com.langchain.smith.models.datasets.DatasetCreateParams
-import com.langchain.smith.models.datasets.DatasetGenerateParams
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
@@ -16,7 +15,6 @@ import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIFtParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
 import com.langchain.smith.models.datasets.DatasetSearchParams
-import com.langchain.smith.models.datasets.DatasetStudioExperimentParams
 import com.langchain.smith.models.datasets.DatasetTransformation
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
@@ -230,31 +228,6 @@ internal class DatasetServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun generate() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val datasetServiceAsync = client.datasets()
-
-        val responseFuture =
-            datasetServiceAsync.generate(
-                DatasetGenerateParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .numExamples(0L)
-                    .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
     fun retrieveCsv() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -394,31 +367,6 @@ internal class DatasetServiceAsyncTest {
                     .debug(true)
                     .filter("filter")
                     .limit(1L)
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun studioExperiment() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val datasetServiceAsync = client.datasets()
-
-        val responseFuture =
-            datasetServiceAsync.studioExperiment(
-                DatasetStudioExperimentParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .projectName("project_name")
-                    .addEvaluatorRule("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 

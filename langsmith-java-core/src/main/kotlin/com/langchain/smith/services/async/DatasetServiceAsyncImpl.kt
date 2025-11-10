@@ -23,8 +23,6 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
-import com.langchain.smith.models.datasets.DatasetGenerateParams
-import com.langchain.smith.models.datasets.DatasetGenerateResponse
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
@@ -38,8 +36,6 @@ import com.langchain.smith.models.datasets.DatasetRetrieveParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
 import com.langchain.smith.models.datasets.DatasetSearchParams
 import com.langchain.smith.models.datasets.DatasetSearchResponse
-import com.langchain.smith.models.datasets.DatasetStudioExperimentParams
-import com.langchain.smith.models.datasets.DatasetStudioExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateResponse
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
@@ -165,13 +161,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // post /api/v1/datasets/clone
         withRawResponse().clone(params, requestOptions).thenApply { it.parse() }
 
-    override fun generate(
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetGenerateResponse> =
-        // post /api/v1/datasets/{dataset_id}/generate
-        withRawResponse().generate(params, requestOptions).thenApply { it.parse() }
-
     override fun retrieveCsv(
         params: DatasetRetrieveCsvParams,
         requestOptions: RequestOptions,
@@ -213,13 +202,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
     ): CompletableFuture<DatasetSearchResponse> =
         // post /api/v1/datasets/{dataset_id}/search
         withRawResponse().search(params, requestOptions).thenApply { it.parse() }
-
-    override fun studioExperiment(
-        params: DatasetStudioExperimentParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetStudioExperimentResponse> =
-        // post /api/v1/datasets/studio_experiment
-        withRawResponse().studioExperiment(params, requestOptions).thenApply { it.parse() }
 
     override fun updateTags(
         params: DatasetUpdateTagsParams,
@@ -502,40 +484,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val generateHandler: Handler<DatasetGenerateResponse> =
-            jsonHandler<DatasetGenerateResponse>(clientOptions.jsonMapper)
-
-        override fun generate(
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "generate")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { generateHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
         private val retrieveCsvHandler: Handler<DatasetRetrieveCsvResponse> =
             jsonHandler<DatasetRetrieveCsvResponse>(clientOptions.jsonMapper)
 
@@ -726,37 +674,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                     errorHandler.handle(response).parseable {
                         response
                             .use { searchHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val studioExperimentHandler: Handler<DatasetStudioExperimentResponse> =
-            jsonHandler<DatasetStudioExperimentResponse>(clientOptions.jsonMapper)
-
-        override fun studioExperiment(
-            params: DatasetStudioExperimentParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetStudioExperimentResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", "studio_experiment")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { studioExperimentHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
