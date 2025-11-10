@@ -10,12 +10,16 @@ import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsyncImpl
 import com.langchain.smith.services.async.DatasetServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsyncImpl
+import com.langchain.smith.services.async.ExampleServiceAsync
+import com.langchain.smith.services.async.ExampleServiceAsyncImpl
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsyncImpl
 import com.langchain.smith.services.async.RepoServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsyncImpl
+import com.langchain.smith.services.async.RunServiceAsync
+import com.langchain.smith.services.async.RunServiceAsyncImpl
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsyncImpl
 import com.langchain.smith.services.async.SettingServiceAsync
@@ -43,9 +47,15 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         SessionServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val examples: ExampleServiceAsync by lazy {
+        ExampleServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val datasets: DatasetServiceAsync by lazy {
         DatasetServiceAsyncImpl(clientOptionsWithUserAgent)
     }
+
+    private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val feedback: FeedbackServiceAsync by lazy {
         FeedbackServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -78,7 +88,11 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun sessions(): SessionServiceAsync = sessions
 
+    override fun examples(): ExampleServiceAsync = examples
+
     override fun datasets(): DatasetServiceAsync = datasets
+
+    override fun runs(): RunServiceAsync = runs
 
     override fun feedback(): FeedbackServiceAsync = feedback
 
@@ -101,8 +115,16 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             SessionServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val examples: ExampleServiceAsync.WithRawResponse by lazy {
+            ExampleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val datasets: DatasetServiceAsync.WithRawResponse by lazy {
             DatasetServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val runs: RunServiceAsync.WithRawResponse by lazy {
+            RunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val feedback: FeedbackServiceAsync.WithRawResponse by lazy {
@@ -138,7 +160,11 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         override fun sessions(): SessionServiceAsync.WithRawResponse = sessions
 
+        override fun examples(): ExampleServiceAsync.WithRawResponse = examples
+
         override fun datasets(): DatasetServiceAsync.WithRawResponse = datasets
+
+        override fun runs(): RunServiceAsync.WithRawResponse = runs
 
         override fun feedback(): FeedbackServiceAsync.WithRawResponse = feedback
 

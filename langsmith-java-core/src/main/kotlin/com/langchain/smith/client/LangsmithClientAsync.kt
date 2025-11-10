@@ -6,9 +6,11 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.async.AnnotationQueueServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsync
+import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
+import com.langchain.smith.services.async.RunServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsync
 import java.util.function.Consumer
@@ -51,7 +53,11 @@ interface LangsmithClientAsync {
 
     fun sessions(): SessionServiceAsync
 
+    fun examples(): ExampleServiceAsync
+
     fun datasets(): DatasetServiceAsync
+
+    fun runs(): RunServiceAsync
 
     fun feedback(): FeedbackServiceAsync
 
@@ -94,7 +100,11 @@ interface LangsmithClientAsync {
 
         fun sessions(): SessionServiceAsync.WithRawResponse
 
+        fun examples(): ExampleServiceAsync.WithRawResponse
+
         fun datasets(): DatasetServiceAsync.WithRawResponse
+
+        fun runs(): RunServiceAsync.WithRawResponse
 
         fun feedback(): FeedbackServiceAsync.WithRawResponse
 

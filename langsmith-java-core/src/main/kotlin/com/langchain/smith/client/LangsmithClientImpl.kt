@@ -10,12 +10,16 @@ import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.CommitServiceImpl
 import com.langchain.smith.services.blocking.DatasetService
 import com.langchain.smith.services.blocking.DatasetServiceImpl
+import com.langchain.smith.services.blocking.ExampleService
+import com.langchain.smith.services.blocking.ExampleServiceImpl
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.FeedbackServiceImpl
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.PublicServiceImpl
 import com.langchain.smith.services.blocking.RepoService
 import com.langchain.smith.services.blocking.RepoServiceImpl
+import com.langchain.smith.services.blocking.RunService
+import com.langchain.smith.services.blocking.RunServiceImpl
 import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SessionServiceImpl
 import com.langchain.smith.services.blocking.SettingService
@@ -41,7 +45,11 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val sessions: SessionService by lazy { SessionServiceImpl(clientOptionsWithUserAgent) }
 
+    private val examples: ExampleService by lazy { ExampleServiceImpl(clientOptionsWithUserAgent) }
+
     private val datasets: DatasetService by lazy { DatasetServiceImpl(clientOptionsWithUserAgent) }
+
+    private val runs: RunService by lazy { RunServiceImpl(clientOptionsWithUserAgent) }
 
     private val feedback: FeedbackService by lazy {
         FeedbackServiceImpl(clientOptionsWithUserAgent)
@@ -68,7 +76,11 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     override fun sessions(): SessionService = sessions
 
+    override fun examples(): ExampleService = examples
+
     override fun datasets(): DatasetService = datasets
+
+    override fun runs(): RunService = runs
 
     override fun feedback(): FeedbackService = feedback
 
@@ -91,8 +103,16 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             SessionServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val examples: ExampleService.WithRawResponse by lazy {
+            ExampleServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val datasets: DatasetService.WithRawResponse by lazy {
             DatasetServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val runs: RunService.WithRawResponse by lazy {
+            RunServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val feedback: FeedbackService.WithRawResponse by lazy {
@@ -128,7 +148,11 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
         override fun sessions(): SessionService.WithRawResponse = sessions
 
+        override fun examples(): ExampleService.WithRawResponse = examples
+
         override fun datasets(): DatasetService.WithRawResponse = datasets
+
+        override fun runs(): RunService.WithRawResponse = runs
 
         override fun feedback(): FeedbackService.WithRawResponse = feedback
 

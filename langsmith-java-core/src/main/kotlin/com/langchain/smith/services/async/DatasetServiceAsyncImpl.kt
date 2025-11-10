@@ -23,8 +23,6 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
-import com.langchain.smith.models.datasets.DatasetGenerateParams
-import com.langchain.smith.models.datasets.DatasetGenerateResponse
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
@@ -36,23 +34,15 @@ import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
-import com.langchain.smith.models.datasets.DatasetSearchParams
-import com.langchain.smith.models.datasets.DatasetSearchResponse
-import com.langchain.smith.models.datasets.DatasetStudioExperimentParams
-import com.langchain.smith.models.datasets.DatasetStudioExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateResponse
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.ExperimentServiceAsync
 import com.langchain.smith.services.async.datasets.ExperimentServiceAsyncImpl
-import com.langchain.smith.services.async.datasets.ExperimentViewOverrideServiceAsync
-import com.langchain.smith.services.async.datasets.ExperimentViewOverrideServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.GroupServiceAsync
 import com.langchain.smith.services.async.datasets.GroupServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.IndexServiceAsync
@@ -76,10 +66,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     private val withRawResponse: DatasetServiceAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
-    }
-
-    private val experimentViewOverrides: ExperimentViewOverrideServiceAsync by lazy {
-        ExperimentViewOverrideServiceAsyncImpl(clientOptions)
     }
 
     private val versions: VersionServiceAsync by lazy { VersionServiceAsyncImpl(clientOptions) }
@@ -110,9 +96,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetServiceAsync =
         DatasetServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun experimentViewOverrides(): ExperimentViewOverrideServiceAsync =
-        experimentViewOverrides
 
     override fun versions(): VersionServiceAsync = versions
 
@@ -174,13 +157,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // post /api/v1/datasets/clone
         withRawResponse().clone(params, requestOptions).thenApply { it.parse() }
 
-    override fun generate(
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetGenerateResponse> =
-        // post /api/v1/datasets/{dataset_id}/generate
-        withRawResponse().generate(params, requestOptions).thenApply { it.parse() }
-
     override fun retrieveCsv(
         params: DatasetRetrieveCsvParams,
         requestOptions: RequestOptions,
@@ -216,20 +192,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // get /api/v1/datasets/{dataset_id}/version
         withRawResponse().retrieveVersion(params, requestOptions).thenApply { it.parse() }
 
-    override fun search(
-        params: DatasetSearchParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetSearchResponse> =
-        // post /api/v1/datasets/{dataset_id}/search
-        withRawResponse().search(params, requestOptions).thenApply { it.parse() }
-
-    override fun studioExperiment(
-        params: DatasetStudioExperimentParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetStudioExperimentResponse> =
-        // post /api/v1/datasets/studio_experiment
-        withRawResponse().studioExperiment(params, requestOptions).thenApply { it.parse() }
-
     override fun updateTags(
         params: DatasetUpdateTagsParams,
         requestOptions: RequestOptions,
@@ -244,23 +206,11 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // post /api/v1/datasets/upload
         withRawResponse().upload(params, requestOptions).thenApply { it.parse() }
 
-    override fun uploadExperiment(
-        params: DatasetUploadExperimentParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetUploadExperimentResponse> =
-        // post /api/v1/datasets/upload-experiment
-        withRawResponse().uploadExperiment(params, requestOptions).thenApply { it.parse() }
-
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         DatasetServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
-
-        private val experimentViewOverrides:
-            ExperimentViewOverrideServiceAsync.WithRawResponse by lazy {
-            ExperimentViewOverrideServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
 
         private val versions: VersionServiceAsync.WithRawResponse by lazy {
             VersionServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -304,9 +254,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
             DatasetServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun experimentViewOverrides(): ExperimentViewOverrideServiceAsync.WithRawResponse =
-            experimentViewOverrides
 
         override fun versions(): VersionServiceAsync.WithRawResponse = versions
 
@@ -519,40 +466,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val generateHandler: Handler<DatasetGenerateResponse> =
-            jsonHandler<DatasetGenerateResponse>(clientOptions.jsonMapper)
-
-        override fun generate(
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "generate")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { generateHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
         private val retrieveCsvHandler: Handler<DatasetRetrieveCsvResponse> =
             jsonHandler<DatasetRetrieveCsvResponse>(clientOptions.jsonMapper)
 
@@ -718,71 +631,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val searchHandler: Handler<DatasetSearchResponse> =
-            jsonHandler<DatasetSearchResponse>(clientOptions.jsonMapper)
-
-        override fun search(
-            params: DatasetSearchParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetSearchResponse>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "search")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { searchHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val studioExperimentHandler: Handler<DatasetStudioExperimentResponse> =
-            jsonHandler<DatasetStudioExperimentResponse>(clientOptions.jsonMapper)
-
-        override fun studioExperiment(
-            params: DatasetStudioExperimentParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetStudioExperimentResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", "studio_experiment")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { studioExperimentHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
         private val updateTagsHandler: Handler<DatasetVersion> =
             jsonHandler<DatasetVersion>(clientOptions.jsonMapper)
 
@@ -838,37 +686,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                     errorHandler.handle(response).parseable {
                         response
                             .use { uploadHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val uploadExperimentHandler: Handler<DatasetUploadExperimentResponse> =
-            jsonHandler<DatasetUploadExperimentResponse>(clientOptions.jsonMapper)
-
-        override fun uploadExperiment(
-            params: DatasetUploadExperimentParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetUploadExperimentResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", "upload-experiment")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { uploadExperimentHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

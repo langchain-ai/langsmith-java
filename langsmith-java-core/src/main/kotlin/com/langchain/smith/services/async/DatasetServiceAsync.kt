@@ -11,8 +11,6 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
-import com.langchain.smith.models.datasets.DatasetGenerateParams
-import com.langchain.smith.models.datasets.DatasetGenerateResponse
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
@@ -24,20 +22,13 @@ import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIResponse
 import com.langchain.smith.models.datasets.DatasetRetrieveParams
 import com.langchain.smith.models.datasets.DatasetRetrieveVersionParams
-import com.langchain.smith.models.datasets.DatasetSearchParams
-import com.langchain.smith.models.datasets.DatasetSearchResponse
-import com.langchain.smith.models.datasets.DatasetStudioExperimentParams
-import com.langchain.smith.models.datasets.DatasetStudioExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateResponse
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentParams
-import com.langchain.smith.models.datasets.DatasetUploadExperimentResponse
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
 import com.langchain.smith.services.async.datasets.ExperimentServiceAsync
-import com.langchain.smith.services.async.datasets.ExperimentViewOverrideServiceAsync
 import com.langchain.smith.services.async.datasets.GroupServiceAsync
 import com.langchain.smith.services.async.datasets.IndexServiceAsync
 import com.langchain.smith.services.async.datasets.PlaygroundExperimentServiceAsync
@@ -61,8 +52,6 @@ interface DatasetServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetServiceAsync
-
-    fun experimentViewOverrides(): ExperimentViewOverrideServiceAsync
 
     fun versions(): VersionServiceAsync
 
@@ -221,31 +210,6 @@ interface DatasetServiceAsync {
         params: DatasetCloneParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<List<DatasetCloneResponse>>
-
-    /** Generate synthetic examples for a dataset. */
-    fun generate(
-        datasetId: String,
-        params: DatasetGenerateParams,
-    ): CompletableFuture<DatasetGenerateResponse> =
-        generate(datasetId, params, RequestOptions.none())
-
-    /** @see generate */
-    fun generate(
-        datasetId: String,
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetGenerateResponse> =
-        generate(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-    /** @see generate */
-    fun generate(params: DatasetGenerateParams): CompletableFuture<DatasetGenerateResponse> =
-        generate(params, RequestOptions.none())
-
-    /** @see generate */
-    fun generate(
-        params: DatasetGenerateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetGenerateResponse>
 
     /** Download a dataset as CSV format. */
     fun retrieveCsv(datasetId: String): CompletableFuture<DatasetRetrieveCsvResponse> =
@@ -433,42 +397,6 @@ interface DatasetServiceAsync {
     ): CompletableFuture<DatasetVersion> =
         retrieveVersion(datasetId, DatasetRetrieveVersionParams.none(), requestOptions)
 
-    /** Search a dataset. */
-    fun search(
-        datasetId: String,
-        params: DatasetSearchParams,
-    ): CompletableFuture<DatasetSearchResponse> = search(datasetId, params, RequestOptions.none())
-
-    /** @see search */
-    fun search(
-        datasetId: String,
-        params: DatasetSearchParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetSearchResponse> =
-        search(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-    /** @see search */
-    fun search(params: DatasetSearchParams): CompletableFuture<DatasetSearchResponse> =
-        search(params, RequestOptions.none())
-
-    /** @see search */
-    fun search(
-        params: DatasetSearchParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetSearchResponse>
-
-    /** Studio Experiment */
-    fun studioExperiment(
-        params: DatasetStudioExperimentParams
-    ): CompletableFuture<DatasetStudioExperimentResponse> =
-        studioExperiment(params, RequestOptions.none())
-
-    /** @see studioExperiment */
-    fun studioExperiment(
-        params: DatasetStudioExperimentParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetStudioExperimentResponse>
-
     /** Set a tag on a dataset version. */
     fun updateTags(
         datasetId: String,
@@ -503,18 +431,6 @@ interface DatasetServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Dataset>
 
-    /** Upload an experiment that has already been run. */
-    fun uploadExperiment(
-        params: DatasetUploadExperimentParams
-    ): CompletableFuture<DatasetUploadExperimentResponse> =
-        uploadExperiment(params, RequestOptions.none())
-
-    /** @see uploadExperiment */
-    fun uploadExperiment(
-        params: DatasetUploadExperimentParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<DatasetUploadExperimentResponse>
-
     /**
      * A view of [DatasetServiceAsync] that provides access to raw HTTP responses for each method.
      */
@@ -528,8 +444,6 @@ interface DatasetServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): DatasetServiceAsync.WithRawResponse
-
-        fun experimentViewOverrides(): ExperimentViewOverrideServiceAsync.WithRawResponse
 
         fun versions(): VersionServiceAsync.WithRawResponse
 
@@ -721,36 +635,6 @@ interface DatasetServiceAsync {
             params: DatasetCloneParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<List<DatasetCloneResponse>>>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/generate`, but is
-         * otherwise the same as [DatasetServiceAsync.generate].
-         */
-        fun generate(
-            datasetId: String,
-            params: DatasetGenerateParams,
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>> =
-            generate(datasetId, params, RequestOptions.none())
-
-        /** @see generate */
-        fun generate(
-            datasetId: String,
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>> =
-            generate(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-        /** @see generate */
-        fun generate(
-            params: DatasetGenerateParams
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>> =
-            generate(params, RequestOptions.none())
-
-        /** @see generate */
-        fun generate(
-            params: DatasetGenerateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetGenerateResponse>>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/csv`, but is otherwise
@@ -966,51 +850,6 @@ interface DatasetServiceAsync {
             retrieveVersion(datasetId, DatasetRetrieveVersionParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/search`, but is
-         * otherwise the same as [DatasetServiceAsync.search].
-         */
-        fun search(
-            datasetId: String,
-            params: DatasetSearchParams,
-        ): CompletableFuture<HttpResponseFor<DatasetSearchResponse>> =
-            search(datasetId, params, RequestOptions.none())
-
-        /** @see search */
-        fun search(
-            datasetId: String,
-            params: DatasetSearchParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetSearchResponse>> =
-            search(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-        /** @see search */
-        fun search(
-            params: DatasetSearchParams
-        ): CompletableFuture<HttpResponseFor<DatasetSearchResponse>> =
-            search(params, RequestOptions.none())
-
-        /** @see search */
-        fun search(
-            params: DatasetSearchParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetSearchResponse>>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/studio_experiment`, but is
-         * otherwise the same as [DatasetServiceAsync.studioExperiment].
-         */
-        fun studioExperiment(
-            params: DatasetStudioExperimentParams
-        ): CompletableFuture<HttpResponseFor<DatasetStudioExperimentResponse>> =
-            studioExperiment(params, RequestOptions.none())
-
-        /** @see studioExperiment */
-        fun studioExperiment(
-            params: DatasetStudioExperimentParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetStudioExperimentResponse>>
-
-        /**
          * Returns a raw HTTP response for `put /api/v1/datasets/{dataset_id}/tags`, but is
          * otherwise the same as [DatasetServiceAsync.updateTags].
          */
@@ -1052,20 +891,5 @@ interface DatasetServiceAsync {
             params: DatasetUploadParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Dataset>>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/upload-experiment`, but is
-         * otherwise the same as [DatasetServiceAsync.uploadExperiment].
-         */
-        fun uploadExperiment(
-            params: DatasetUploadExperimentParams
-        ): CompletableFuture<HttpResponseFor<DatasetUploadExperimentResponse>> =
-            uploadExperiment(params, RequestOptions.none())
-
-        /** @see uploadExperiment */
-        fun uploadExperiment(
-            params: DatasetUploadExperimentParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<DatasetUploadExperimentResponse>>
     }
 }
