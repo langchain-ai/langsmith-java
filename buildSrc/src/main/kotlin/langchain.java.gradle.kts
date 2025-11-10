@@ -19,6 +19,7 @@ java {
 
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-Werror")
+    options.compilerArgs.add("-Xlint:-options") // Suppress obsolete Java 8 warnings
     options.release.set(8)
 }
 
