@@ -26,14 +26,8 @@ To run an example, use the Gradle application plugin with the `-Pexample` parame
 ./gradlew :langsmith-java-example:run -Pexample=<ExampleName>
 ```
 
-For example, to run `CreateExamplesExample.kt`:
+For example, to run `DatasetExample.kt`:
 
 ```bash
-./gradlew :langsmith-java-example:run -Pexample=CreateExamples
+./gradlew :langsmith-java-example:run -Pexample=Dataset
 ```
-
-## Finding Examples
-
-All examples are located in `src/main/kotlin/com/langchain/smith/example/`. Each file ending in `Example.kt` is a runnable example with documentation explaining its purpose and usage.
-
-Browse the source files to discover available examples and see detailed usage instructions in each file's KDoc comments.
