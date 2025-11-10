@@ -164,7 +164,7 @@ internal class DatasetServiceTest {
             datasetService.list(
                 DatasetListParams.builder()
                     .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .dataTypeOfTypes(listOf(DataType.KV))
+                    .datatypeOfDataTypes(listOf(DataType.KV))
                     .excludeCorrectionsDatasets(true)
                     .limit(1L)
                     .metadata("metadata")
