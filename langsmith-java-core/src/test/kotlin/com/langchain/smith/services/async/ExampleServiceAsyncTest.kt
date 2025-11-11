@@ -6,7 +6,6 @@ import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.AttachmentsOperations
-import com.langchain.smith.models.examples.ExampleCreateParams
 import com.langchain.smith.models.examples.ExampleDeleteAllParams
 import com.langchain.smith.models.examples.ExampleListParams
 import com.langchain.smith.models.examples.ExampleRetrieveCountParams
@@ -34,22 +33,7 @@ internal class ExampleServiceAsyncTest {
                 .build()
         val exampleServiceAsync = client.examples()
 
-        val exampleFuture =
-            exampleServiceAsync.create(
-                ExampleCreateParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .createdAt("created_at")
-                    .inputs(JsonValue.from(mapOf<String, Any>()))
-                    .metadata(JsonValue.from(mapOf<String, Any>()))
-                    .outputs(JsonValue.from(mapOf<String, Any>()))
-                    .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .splitOfStrings(listOf("string"))
-                    .useLegacyMessageFormat(true)
-                    .addUseSourceRunAttachment("string")
-                    .useSourceRunIo(true)
-                    .build()
-            )
+        val exampleFuture = exampleServiceAsync.create()
 
         val example = exampleFuture.get()
         example.validate()
