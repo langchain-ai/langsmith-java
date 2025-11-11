@@ -6,9 +6,7 @@
 
 <!-- x-release-please-end -->
 
-The LangChain Java SDK provides convenient access to the LangChain REST API from applications written in Java.
-
-It is generated with [Stainless](https://www.stainless.com/).
+The [LangSmith](https://www.langchain.com/langsmith/observability) Java SDK provides convenient access to the LangSmith [REST API](https://api.smith.langchain.com/docs) from applications written in Java.
 
 ## Installation
 
@@ -75,14 +73,12 @@ export LANGSMITH_BASE_URL="https://api.smith.langchain.com"
 
 ### Available Examples
 
-- **ListRuns** - Query and list runs from a project
-  
 ```bash
 export LANGSMITH_PROJECT_ID="your-project-id"
 ./gradlew :langsmith-java-example:run -Pexample=ListRuns
 ```
 
-All example source code is available in [`langsmith-java-example/src/main/java/com/langchain/smith/example/`](langsmith-java-example/src/main/java/com/langchain/smith/example/).
+All examples are available in [`langsmith-java-example`](langsmith-java-example).
 
 ## Client configuration
 
