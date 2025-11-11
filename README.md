@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.8)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.9)
 
 <!-- x-release-please-end -->
 
@@ -17,7 +17,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 ### Gradle
 
 ```kotlin
-implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.8")
+implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.9")
 ```
 
 ### Maven
@@ -26,7 +26,7 @@ implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.8")
 <dependency>
   <groupId>com.langchain.smith</groupId>
   <artifactId>langsmith-java</artifactId>
-  <version>0.1.0-alpha.8</version>
+  <version>0.1.0-alpha.9</version>
 </dependency>
 ```
 

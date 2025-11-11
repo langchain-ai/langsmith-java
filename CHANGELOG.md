@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.0-alpha.9 (2025-11-11)
+
+Full Changelog: [v0.1.0-alpha.8...v0.1.0-alpha.9](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.8...v0.1.0-alpha.9)
+
+### Features
+
+* added otel ingestion examples and code ([19c2cf5](https://github.com/langchain-ai/langsmith-java/commit/19c2cf595acfa19196b3ecf8726b1e888d5f6a17))
+* **api:** api update ([284d184](https://github.com/langchain-ai/langsmith-java/commit/284d1843164d9803354e56220f436264743ea76d))
+
+
+### Bug Fixes
+
+* added back the stdin build config ([866970e](https://github.com/langchain-ai/langsmith-java/commit/866970e8e06c575564bfb0f33bd2ab9197ff16f0))
+* lint fix ([16f01c8](https://github.com/langchain-ai/langsmith-java/commit/16f01c8edb0fcac9ab71882842daee252ae4198d))
+* lint fix ([cd244b3](https://github.com/langchain-ai/langsmith-java/commit/cd244b3fe9fcc55ec53b4a66e8113cba77932212))
+* lint, build, test ([21969a6](https://github.com/langchain-ai/langsmith-java/commit/21969a61f9e31dbd3b75e372795bc5960139486c))
+
 ## 0.1.0-alpha.8 (2025-11-10)
 
 Full Changelog: [v0.1.0-alpha.7...v0.1.0-alpha.8](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.7...v0.1.0-alpha.8)
