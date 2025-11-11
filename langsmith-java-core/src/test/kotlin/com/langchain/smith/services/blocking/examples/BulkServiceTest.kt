@@ -6,7 +6,6 @@ import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.AttachmentsOperations
-import com.langchain.smith.models.examples.bulk.BulkCreateParams
 import com.langchain.smith.models.examples.bulk.BulkPatchAllParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -27,28 +26,9 @@ internal class BulkServiceTest {
                 .build()
         val bulkService = client.examples().bulk()
 
-        val examples =
-            bulkService.create(
-                BulkCreateParams.builder()
-                    .addBody(
-                        BulkCreateParams.Body.builder()
-                            .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .createdAt("created_at")
-                            .inputs(JsonValue.from(mapOf<String, Any>()))
-                            .metadata(JsonValue.from(mapOf<String, Any>()))
-                            .outputs(JsonValue.from(mapOf<String, Any>()))
-                            .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .splitOfStrings(listOf("string"))
-                            .useLegacyMessageFormat(true)
-                            .addUseSourceRunAttachment("string")
-                            .useSourceRunIo(true)
-                            .build()
-                    )
-                    .build()
-            )
+        val bulk = bulkService.create()
 
-        examples.forEach { it.validate() }
+        bulk.validate()
     }
 
     @Disabled("Prism tests are disabled")
