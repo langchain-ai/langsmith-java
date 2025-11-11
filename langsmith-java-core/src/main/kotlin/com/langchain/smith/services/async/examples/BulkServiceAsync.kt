@@ -5,8 +5,8 @@ package com.langchain.smith.services.async.examples
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.examples.bulk.BulkCreateParams
+import com.langchain.smith.models.examples.bulk.BulkCreateResponse
 import com.langchain.smith.models.examples.bulk.BulkPatchAllParams
 import com.langchain.smith.models.examples.bulk.BulkPatchAllResponse
 import java.util.concurrent.CompletableFuture
@@ -26,15 +26,23 @@ interface BulkServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BulkServiceAsync
 
-    /** Create bulk examples. */
-    fun create(params: BulkCreateParams): CompletableFuture<List<Example>> =
-        create(params, RequestOptions.none())
+    /** Create a new example. */
+    fun create(): CompletableFuture<BulkCreateResponse> = create(BulkCreateParams.none())
 
     /** @see create */
     fun create(
-        params: BulkCreateParams,
+        params: BulkCreateParams = BulkCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<Example>>
+    ): CompletableFuture<BulkCreateResponse>
+
+    /** @see create */
+    fun create(
+        params: BulkCreateParams = BulkCreateParams.none()
+    ): CompletableFuture<BulkCreateResponse> = create(params, RequestOptions.none())
+
+    /** @see create */
+    fun create(requestOptions: RequestOptions): CompletableFuture<BulkCreateResponse> =
+        create(BulkCreateParams.none(), requestOptions)
 
     /**
      * Legacy update examples in bulk. For update involving attachments, use PATCH
@@ -63,14 +71,26 @@ interface BulkServiceAsync {
          * Returns a raw HTTP response for `post /api/v1/examples/bulk`, but is otherwise the same
          * as [BulkServiceAsync.create].
          */
-        fun create(params: BulkCreateParams): CompletableFuture<HttpResponseFor<List<Example>>> =
+        fun create(): CompletableFuture<HttpResponseFor<BulkCreateResponse>> =
+            create(BulkCreateParams.none())
+
+        /** @see create */
+        fun create(
+            params: BulkCreateParams = BulkCreateParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<BulkCreateResponse>>
+
+        /** @see create */
+        fun create(
+            params: BulkCreateParams = BulkCreateParams.none()
+        ): CompletableFuture<HttpResponseFor<BulkCreateResponse>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
-            params: BulkCreateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<Example>>>
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<BulkCreateResponse>> =
+            create(BulkCreateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch /api/v1/examples/bulk`, but is otherwise the same
