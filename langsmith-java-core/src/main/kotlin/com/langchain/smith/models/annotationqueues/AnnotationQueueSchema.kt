@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
@@ -24,6 +25,7 @@ class AnnotationQueueSchema
 private constructor(
     private val id: JsonField<String>,
     private val name: JsonField<String>,
+    private val queueType: JsonField<QueueType>,
     private val tenantId: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val defaultDataset: JsonField<String>,
@@ -42,6 +44,9 @@ private constructor(
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("queue_type")
+        @ExcludeMissing
+        queueType: JsonField<QueueType> = JsonMissing.of(),
         @JsonProperty("tenant_id") @ExcludeMissing tenantId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_at")
         @ExcludeMissing
@@ -74,6 +79,7 @@ private constructor(
     ) : this(
         id,
         name,
+        queueType,
         tenantId,
         createdAt,
         defaultDataset,
@@ -99,6 +105,12 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun name(): String = name.getRequired("name")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun queueType(): QueueType = queueType.getRequired("queue_type")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -177,6 +189,13 @@ private constructor(
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+    /**
+     * Returns the raw JSON value of [queueType].
+     *
+     * Unlike [queueType], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("queue_type") @ExcludeMissing fun _queueType(): JsonField<QueueType> = queueType
 
     /**
      * Returns the raw JSON value of [tenantId].
@@ -286,6 +305,7 @@ private constructor(
          * ```java
          * .id()
          * .name()
+         * .queueType()
          * .tenantId()
          * ```
          */
@@ -297,6 +317,7 @@ private constructor(
 
         private var id: JsonField<String>? = null
         private var name: JsonField<String>? = null
+        private var queueType: JsonField<QueueType>? = null
         private var tenantId: JsonField<String>? = null
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var defaultDataset: JsonField<String> = JsonMissing.of()
@@ -314,6 +335,7 @@ private constructor(
         internal fun from(annotationQueueSchema: AnnotationQueueSchema) = apply {
             id = annotationQueueSchema.id
             name = annotationQueueSchema.name
+            queueType = annotationQueueSchema.queueType
             tenantId = annotationQueueSchema.tenantId
             createdAt = annotationQueueSchema.createdAt
             defaultDataset = annotationQueueSchema.defaultDataset
@@ -347,6 +369,17 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
+
+        fun queueType(queueType: QueueType) = queueType(JsonField.of(queueType))
+
+        /**
+         * Sets [Builder.queueType] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.queueType] with a well-typed [QueueType] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun queueType(queueType: JsonField<QueueType>) = apply { this.queueType = queueType }
 
         fun tenantId(tenantId: String) = tenantId(JsonField.of(tenantId))
 
@@ -556,6 +589,7 @@ private constructor(
          * ```java
          * .id()
          * .name()
+         * .queueType()
          * .tenantId()
          * ```
          *
@@ -565,6 +599,7 @@ private constructor(
             AnnotationQueueSchema(
                 checkRequired("id", id),
                 checkRequired("name", name),
+                checkRequired("queueType", queueType),
                 checkRequired("tenantId", tenantId),
                 createdAt,
                 defaultDataset,
@@ -589,6 +624,7 @@ private constructor(
 
         id()
         name()
+        queueType().validate()
         tenantId()
         createdAt()
         defaultDataset()
@@ -619,6 +655,7 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
+            (queueType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (tenantId.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (defaultDataset.asKnown().isPresent) 1 else 0) +
@@ -630,6 +667,135 @@ private constructor(
             (if (sourceRuleId.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
 
+    class QueueType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val SINGLE = of("single")
+
+            @JvmField val PAIRWISE = of("pairwise")
+
+            @JvmStatic fun of(value: String) = QueueType(JsonField.of(value))
+        }
+
+        /** An enum containing [QueueType]'s known values. */
+        enum class Known {
+            SINGLE,
+            PAIRWISE,
+        }
+
+        /**
+         * An enum containing [QueueType]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [QueueType] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            SINGLE,
+            PAIRWISE,
+            /**
+             * An enum member indicating that [QueueType] was instantiated with an unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                SINGLE -> Value.SINGLE
+                PAIRWISE -> Value.PAIRWISE
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                SINGLE -> Known.SINGLE
+                PAIRWISE -> Known.PAIRWISE
+                else -> throw LangChainInvalidDataException("Unknown QueueType: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): QueueType = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is QueueType && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -638,6 +804,7 @@ private constructor(
         return other is AnnotationQueueSchema &&
             id == other.id &&
             name == other.name &&
+            queueType == other.queueType &&
             tenantId == other.tenantId &&
             createdAt == other.createdAt &&
             defaultDataset == other.defaultDataset &&
@@ -656,6 +823,7 @@ private constructor(
         Objects.hash(
             id,
             name,
+            queueType,
             tenantId,
             createdAt,
             defaultDataset,
@@ -674,5 +842,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AnnotationQueueSchema{id=$id, name=$name, tenantId=$tenantId, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, runRuleId=$runRuleId, sourceRuleId=$sourceRuleId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "AnnotationQueueSchema{id=$id, name=$name, queueType=$queueType, tenantId=$tenantId, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, runRuleId=$runRuleId, sourceRuleId=$sourceRuleId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

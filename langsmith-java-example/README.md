@@ -1,33 +1,48 @@
-# LangSmith Java SDK Examples
+# LangSmith Java Examples
 
-This directory contains runnable examples demonstrating how to use the LangSmith Java SDK.
+## 1. Jaeger (Local)
 
-## Prerequisites
-
-- Java 11 or higher
-- LangSmith API credentials
-
-## Setup
-
-Set the required environment variables:
+Send traces to local Jaeger instance.
 
 ```bash
-export LANGSMITH_API_KEY="your-api-key"  # https://smith.langchain.com/settings/apikeys
-export LANGCHAIN_BASE_URL="https://api.smith.langchain.com"  # or your instance URL if self-hosted
+# Start Jaeger
+docker run -d --name jaeger -p 4318:4318 -p 16686:16686 jaegertracing/all-in-one:latest
+
+# Run example
+./gradlew :langsmith-java-example:run -Pexample=OtelJaeger
+
+# View traces
+open http://localhost:16686
 ```
 
-Some examples may require additional environment variables. Check the example's documentation for details.
+## 2. LangSmith (Standalone)
 
-## Running Examples
-
-To run an example, use the Gradle application plugin with the `-Pexample` parameter:
+Send traces to LangSmith.
 
 ```bash
-./gradlew :langsmith-java-example:run -Pexample=<ExampleName>
+export LANGSMITH_API_KEY=your_api_key
+export LANGSMITH_PROJECT=my-project  # optional, defaults to "default"
+
+./gradlew :langsmith-java-example:run -Pexample=OtelLangSmith
 ```
 
-For example, to run `DatasetExample.kt`:
+View traces at https://smith.langchain.com
+
+## 3. Spring Boot API to Langsmith
+
+REST API with OpenTelemetry traces sent to LangSmith.
 
 ```bash
-./gradlew :langsmith-java-example:run -Pexample=Dataset
+export LANGSMITH_API_KEY=your_api_key
+export LANGSMITH_PROJECT=my-project  # optional
+
+# Start server
+./gradlew :langsmith-java-example:run -Pexample=SpringBootLangSmith
+
+# In another terminal, test endpoints:
+curl -X POST http://localhost:8080/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Hello!"}'
+
+curl "http://localhost:8080/api/analyze?text=This%20is%20great"
 ```
