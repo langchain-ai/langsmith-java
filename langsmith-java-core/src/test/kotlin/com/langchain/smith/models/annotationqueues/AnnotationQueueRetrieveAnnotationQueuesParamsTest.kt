@@ -17,6 +17,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
             .name("name")
             .nameContains("name_contains")
             .offset(0L)
+            .queueType(AnnotationQueueRetrieveAnnotationQueuesParams.QueueType.SINGLE)
             .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
@@ -31,6 +32,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
                 .name("name")
                 .nameContains("name_contains")
                 .offset(0L)
+                .queueType(AnnotationQueueRetrieveAnnotationQueuesParams.QueueType.SINGLE)
                 .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -45,6 +47,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
                     .put("name", "name")
                     .put("name_contains", "name_contains")
                     .put("offset", "0")
+                    .put("queue_type", "single")
                     .put(
                         "tag_value_id",
                         listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","),

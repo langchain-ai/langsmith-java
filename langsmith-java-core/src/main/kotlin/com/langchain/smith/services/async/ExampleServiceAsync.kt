@@ -41,22 +41,14 @@ interface ExampleServiceAsync {
     fun validate(): ValidateServiceAsync
 
     /** Create a new example. */
-    fun create(): CompletableFuture<Example> = create(ExampleCreateParams.none())
+    fun create(params: ExampleCreateParams): CompletableFuture<Example> =
+        create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
-        params: ExampleCreateParams = ExampleCreateParams.none(),
+        params: ExampleCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Example>
-
-    /** @see create */
-    fun create(
-        params: ExampleCreateParams = ExampleCreateParams.none()
-    ): CompletableFuture<Example> = create(params, RequestOptions.none())
-
-    /** @see create */
-    fun create(requestOptions: RequestOptions): CompletableFuture<Example> =
-        create(ExampleCreateParams.none(), requestOptions)
 
     /** Get a specific example. */
     fun retrieve(exampleId: String): CompletableFuture<Example> =
@@ -257,23 +249,14 @@ interface ExampleServiceAsync {
          * Returns a raw HTTP response for `post /api/v1/examples`, but is otherwise the same as
          * [ExampleServiceAsync.create].
          */
-        fun create(): CompletableFuture<HttpResponseFor<Example>> =
-            create(ExampleCreateParams.none())
+        fun create(params: ExampleCreateParams): CompletableFuture<HttpResponseFor<Example>> =
+            create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
-            params: ExampleCreateParams = ExampleCreateParams.none(),
+            params: ExampleCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Example>>
-
-        /** @see create */
-        fun create(
-            params: ExampleCreateParams = ExampleCreateParams.none()
-        ): CompletableFuture<HttpResponseFor<Example>> = create(params, RequestOptions.none())
-
-        /** @see create */
-        fun create(requestOptions: RequestOptions): CompletableFuture<HttpResponseFor<Example>> =
-            create(ExampleCreateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/examples/{example_id}`, but is otherwise the

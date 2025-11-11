@@ -38,12 +38,6 @@ private constructor(
     fun experimentIds(): List<String> = body.experimentIds()
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun referenceDatasetId(): String = body.referenceDatasetId()
-
-    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -76,19 +70,17 @@ private constructor(
     fun name(): Optional<String> = body.name()
 
     /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun referenceDatasetId(): Optional<String> = body.referenceDatasetId()
+
+    /**
      * Returns the raw JSON value of [experimentIds].
      *
      * Unlike [experimentIds], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _experimentIds(): JsonField<List<String>> = body._experimentIds()
-
-    /**
-     * Returns the raw JSON value of [referenceDatasetId].
-     *
-     * Unlike [referenceDatasetId], this method doesn't throw if the JSON field has an unexpected
-     * type.
-     */
-    fun _referenceDatasetId(): JsonField<String> = body._referenceDatasetId()
 
     /**
      * Returns the raw JSON value of [id].
@@ -125,6 +117,14 @@ private constructor(
      */
     fun _name(): JsonField<String> = body._name()
 
+    /**
+     * Returns the raw JSON value of [referenceDatasetId].
+     *
+     * Unlike [referenceDatasetId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _referenceDatasetId(): JsonField<String> = body._referenceDatasetId()
+
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
     /** Additional headers to send with the request. */
@@ -143,7 +143,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .experimentIds()
-         * .referenceDatasetId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -169,10 +168,10 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [experimentIds]
-         * - [referenceDatasetId]
          * - [id]
          * - [createdAt]
          * - [description]
+         * - [extra]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -196,21 +195,6 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addExperimentId(experimentId: String) = apply { body.addExperimentId(experimentId) }
-
-        fun referenceDatasetId(referenceDatasetId: String) = apply {
-            body.referenceDatasetId(referenceDatasetId)
-        }
-
-        /**
-         * Sets [Builder.referenceDatasetId] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.referenceDatasetId] with a well-typed [String] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun referenceDatasetId(referenceDatasetId: JsonField<String>) = apply {
-            body.referenceDatasetId(referenceDatasetId)
-        }
 
         fun id(id: String) = apply { body.id(id) }
 
@@ -274,6 +258,27 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        fun referenceDatasetId(referenceDatasetId: String?) = apply {
+            body.referenceDatasetId(referenceDatasetId)
+        }
+
+        /**
+         * Alias for calling [Builder.referenceDatasetId] with `referenceDatasetId.orElse(null)`.
+         */
+        fun referenceDatasetId(referenceDatasetId: Optional<String>) =
+            referenceDatasetId(referenceDatasetId.getOrNull())
+
+        /**
+         * Sets [Builder.referenceDatasetId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.referenceDatasetId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun referenceDatasetId(referenceDatasetId: JsonField<String>) = apply {
+            body.referenceDatasetId(referenceDatasetId)
+        }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -400,7 +405,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .experimentIds()
-         * .referenceDatasetId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -424,13 +428,13 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val experimentIds: JsonField<List<String>>,
-        private val referenceDatasetId: JsonField<String>,
         private val id: JsonField<String>,
         private val createdAt: JsonField<OffsetDateTime>,
         private val description: JsonField<String>,
         private val extra: JsonValue,
         private val modifiedAt: JsonField<OffsetDateTime>,
         private val name: JsonField<String>,
+        private val referenceDatasetId: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -439,9 +443,6 @@ private constructor(
             @JsonProperty("experiment_ids")
             @ExcludeMissing
             experimentIds: JsonField<List<String>> = JsonMissing.of(),
-            @JsonProperty("reference_dataset_id")
-            @ExcludeMissing
-            referenceDatasetId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
             @JsonProperty("created_at")
             @ExcludeMissing
@@ -454,15 +455,18 @@ private constructor(
             @ExcludeMissing
             modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("reference_dataset_id")
+            @ExcludeMissing
+            referenceDatasetId: JsonField<String> = JsonMissing.of(),
         ) : this(
             experimentIds,
-            referenceDatasetId,
             id,
             createdAt,
             description,
             extra,
             modifiedAt,
             name,
+            referenceDatasetId,
             mutableMapOf(),
         )
 
@@ -471,12 +475,6 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun experimentIds(): List<String> = experimentIds.getRequired("experiment_ids")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun referenceDatasetId(): String = referenceDatasetId.getRequired("reference_dataset_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -511,6 +509,13 @@ private constructor(
         fun name(): Optional<String> = name.getOptional("name")
 
         /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun referenceDatasetId(): Optional<String> =
+            referenceDatasetId.getOptional("reference_dataset_id")
+
+        /**
          * Returns the raw JSON value of [experimentIds].
          *
          * Unlike [experimentIds], this method doesn't throw if the JSON field has an unexpected
@@ -519,16 +524,6 @@ private constructor(
         @JsonProperty("experiment_ids")
         @ExcludeMissing
         fun _experimentIds(): JsonField<List<String>> = experimentIds
-
-        /**
-         * Returns the raw JSON value of [referenceDatasetId].
-         *
-         * Unlike [referenceDatasetId], this method doesn't throw if the JSON field has an
-         * unexpected type.
-         */
-        @JsonProperty("reference_dataset_id")
-        @ExcludeMissing
-        fun _referenceDatasetId(): JsonField<String> = referenceDatasetId
 
         /**
          * Returns the raw JSON value of [id].
@@ -571,6 +566,16 @@ private constructor(
          */
         @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
+        /**
+         * Returns the raw JSON value of [referenceDatasetId].
+         *
+         * Unlike [referenceDatasetId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("reference_dataset_id")
+        @ExcludeMissing
+        fun _referenceDatasetId(): JsonField<String> = referenceDatasetId
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -591,7 +596,6 @@ private constructor(
              * The following fields are required:
              * ```java
              * .experimentIds()
-             * .referenceDatasetId()
              * ```
              */
             @JvmStatic fun builder() = Builder()
@@ -601,25 +605,25 @@ private constructor(
         class Builder internal constructor() {
 
             private var experimentIds: JsonField<MutableList<String>>? = null
-            private var referenceDatasetId: JsonField<String>? = null
             private var id: JsonField<String> = JsonMissing.of()
             private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
             private var extra: JsonValue = JsonMissing.of()
             private var modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
+            private var referenceDatasetId: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 experimentIds = body.experimentIds.map { it.toMutableList() }
-                referenceDatasetId = body.referenceDatasetId
                 id = body.id
                 createdAt = body.createdAt
                 description = body.description
                 extra = body.extra
                 modifiedAt = body.modifiedAt
                 name = body.name
+                referenceDatasetId = body.referenceDatasetId
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -647,20 +651,6 @@ private constructor(
                     (experimentIds ?: JsonField.of(mutableListOf())).also {
                         checkKnown("experimentIds", it).add(experimentId)
                     }
-            }
-
-            fun referenceDatasetId(referenceDatasetId: String) =
-                referenceDatasetId(JsonField.of(referenceDatasetId))
-
-            /**
-             * Sets [Builder.referenceDatasetId] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.referenceDatasetId] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun referenceDatasetId(referenceDatasetId: JsonField<String>) = apply {
-                this.referenceDatasetId = referenceDatasetId
             }
 
             fun id(id: String) = id(JsonField.of(id))
@@ -732,6 +722,27 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
+            fun referenceDatasetId(referenceDatasetId: String?) =
+                referenceDatasetId(JsonField.ofNullable(referenceDatasetId))
+
+            /**
+             * Alias for calling [Builder.referenceDatasetId] with
+             * `referenceDatasetId.orElse(null)`.
+             */
+            fun referenceDatasetId(referenceDatasetId: Optional<String>) =
+                referenceDatasetId(referenceDatasetId.getOrNull())
+
+            /**
+             * Sets [Builder.referenceDatasetId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.referenceDatasetId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun referenceDatasetId(referenceDatasetId: JsonField<String>) = apply {
+                this.referenceDatasetId = referenceDatasetId
+            }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -759,7 +770,6 @@ private constructor(
              * The following fields are required:
              * ```java
              * .experimentIds()
-             * .referenceDatasetId()
              * ```
              *
              * @throws IllegalStateException if any required field is unset.
@@ -767,13 +777,13 @@ private constructor(
             fun build(): Body =
                 Body(
                     checkRequired("experimentIds", experimentIds).map { it.toImmutable() },
-                    checkRequired("referenceDatasetId", referenceDatasetId),
                     id,
                     createdAt,
                     description,
                     extra,
                     modifiedAt,
                     name,
+                    referenceDatasetId,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -786,12 +796,12 @@ private constructor(
             }
 
             experimentIds()
-            referenceDatasetId()
             id()
             createdAt()
             description()
             modifiedAt()
             name()
+            referenceDatasetId()
             validated = true
         }
 
@@ -812,12 +822,12 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (experimentIds.asKnown().getOrNull()?.size ?: 0) +
-                (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
                 (if (id.asKnown().isPresent) 1 else 0) +
                 (if (createdAt.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (modifiedAt.asKnown().isPresent) 1 else 0) +
-                (if (name.asKnown().isPresent) 1 else 0)
+                (if (name.asKnown().isPresent) 1 else 0) +
+                (if (referenceDatasetId.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -826,26 +836,26 @@ private constructor(
 
             return other is Body &&
                 experimentIds == other.experimentIds &&
-                referenceDatasetId == other.referenceDatasetId &&
                 id == other.id &&
                 createdAt == other.createdAt &&
                 description == other.description &&
                 extra == other.extra &&
                 modifiedAt == other.modifiedAt &&
                 name == other.name &&
+                referenceDatasetId == other.referenceDatasetId &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
             Objects.hash(
                 experimentIds,
-                referenceDatasetId,
                 id,
                 createdAt,
                 description,
                 extra,
                 modifiedAt,
                 name,
+                referenceDatasetId,
                 additionalProperties,
             )
         }
@@ -853,7 +863,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{experimentIds=$experimentIds, referenceDatasetId=$referenceDatasetId, id=$id, createdAt=$createdAt, description=$description, extra=$extra, modifiedAt=$modifiedAt, name=$name, additionalProperties=$additionalProperties}"
+            "Body{experimentIds=$experimentIds, id=$id, createdAt=$createdAt, description=$description, extra=$extra, modifiedAt=$modifiedAt, name=$name, referenceDatasetId=$referenceDatasetId, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
