@@ -252,6 +252,7 @@ internal class AnnotationQueueServiceAsyncTest {
                     .name("name")
                     .nameContains("name_contains")
                     .offset(0L)
+                    .queueType(AnnotationQueueRetrieveAnnotationQueuesParams.QueueType.SINGLE)
                     .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
