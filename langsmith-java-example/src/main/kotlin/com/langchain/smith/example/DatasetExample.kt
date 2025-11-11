@@ -43,7 +43,7 @@ fun getDatasetUrl(dataset: Dataset): String {
  * Deletes a dataset after user confirmation.
  */
 fun deleteDatasetWithConfirmation(client: LangsmithClient, dataset: Dataset) {
-    println("\nPress Enter to delete the dataset using client.datasets().delete()...")
+    println("Press Enter to delete the dataset using client.datasets().delete()...")
     try {
         readln()
     } catch (e: Exception) {
