@@ -13,6 +13,9 @@ dependencies {
     implementation(project(":langsmith-java"))
     implementation(kotlin("stdlib"))
 
+    // Jackson for JSON handling in examples
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
+
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -37,8 +40,21 @@ application {
         if (project.hasProperty("example")) {
             val exampleName = project.property("example") as String
             val baseName = if (exampleName.endsWith("Example")) exampleName else "${exampleName}Example"
-            // Kotlin files need "Kt" suffix for their main function
-            "${baseName}Kt"
+            
+            // Check if it's a Java or Kotlin file
+            val javaFile = file("src/main/java/com/langchain/smith/example/${baseName}.java")
+            val kotlinFile = file("src/main/kotlin/com/langchain/smith/example/${baseName}.kt")
+            
+            if (javaFile.exists()) {
+                // Java file - no Kt suffix
+                baseName
+            } else if (kotlinFile.exists()) {
+                // Kotlin file - add Kt suffix for main function
+                "${baseName}Kt"
+            } else {
+                // Default: assume Kotlin for backwards compatibility
+                "${baseName}Kt"
+            }
         } else {
             "Main"
         }

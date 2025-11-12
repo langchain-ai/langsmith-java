@@ -15,9 +15,23 @@ docker run -d --name jaeger -p 4318:4318 -p 16686:16686 jaegertracing/all-in-one
 open http://localhost:16686
 ```
 
-## 2. LangSmith (Standalone)
+## 2. OpenAI + LangSmith (Real API Calls)
 
-Send traces to LangSmith.
+Make actual OpenAI API calls with automatic tracing to LangSmith.
+
+```bash
+export OPENAI_API_KEY=your_openai_key
+export LANGSMITH_API_KEY=your_langsmith_key
+export LANGSMITH_PROJECT=my-project  # optional, defaults to "default"
+
+./gradlew :langsmith-java-example:run -Pexample=OtelOpenAI
+```
+
+View traces at https://smith.langchain.com
+
+## 3. LangSmith (Standalone)
+
+Send mock traces to LangSmith without external API calls.
 
 ```bash
 export LANGSMITH_API_KEY=your_api_key
@@ -28,7 +42,7 @@ export LANGSMITH_PROJECT=my-project  # optional, defaults to "default"
 
 View traces at https://smith.langchain.com
 
-## 3. Spring Boot API to Langsmith
+## 4. Spring Boot API to Langsmith
 
 REST API with OpenTelemetry traces sent to LangSmith.
 
