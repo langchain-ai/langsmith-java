@@ -6,8 +6,8 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.examples.bulk.BulkCreateParams
-import com.langchain.smith.models.examples.bulk.BulkCreateResponse
 import com.langchain.smith.models.examples.bulk.BulkPatchAllParams
 import com.langchain.smith.models.examples.bulk.BulkPatchAllResponse
 import java.util.function.Consumer
@@ -26,22 +26,14 @@ interface BulkService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BulkService
 
-    /** Create a new example. */
-    fun create(): BulkCreateResponse = create(BulkCreateParams.none())
+    /** Create bulk examples. */
+    fun create(params: BulkCreateParams): List<Example> = create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
-        params: BulkCreateParams = BulkCreateParams.none(),
+        params: BulkCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BulkCreateResponse
-
-    /** @see create */
-    fun create(params: BulkCreateParams = BulkCreateParams.none()): BulkCreateResponse =
-        create(params, RequestOptions.none())
-
-    /** @see create */
-    fun create(requestOptions: RequestOptions): BulkCreateResponse =
-        create(BulkCreateParams.none(), requestOptions)
+    ): List<Example>
 
     /**
      * Legacy update examples in bulk. For update involving attachments, use PATCH
@@ -71,25 +63,15 @@ interface BulkService {
          * as [BulkService.create].
          */
         @MustBeClosed
-        fun create(): HttpResponseFor<BulkCreateResponse> = create(BulkCreateParams.none())
+        fun create(params: BulkCreateParams): HttpResponseFor<List<Example>> =
+            create(params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
-            params: BulkCreateParams = BulkCreateParams.none(),
+            params: BulkCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BulkCreateResponse>
-
-        /** @see create */
-        @MustBeClosed
-        fun create(
-            params: BulkCreateParams = BulkCreateParams.none()
-        ): HttpResponseFor<BulkCreateResponse> = create(params, RequestOptions.none())
-
-        /** @see create */
-        @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<BulkCreateResponse> =
-            create(BulkCreateParams.none(), requestOptions)
+        ): HttpResponseFor<List<Example>>
 
         /**
          * Returns a raw HTTP response for `patch /api/v1/examples/bulk`, but is otherwise the same

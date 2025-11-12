@@ -41,21 +41,13 @@ interface ExampleService {
     fun validate(): ValidateService
 
     /** Create a new example. */
-    fun create(): Example = create(ExampleCreateParams.none())
+    fun create(params: ExampleCreateParams): Example = create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
-        params: ExampleCreateParams = ExampleCreateParams.none(),
+        params: ExampleCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Example
-
-    /** @see create */
-    fun create(params: ExampleCreateParams = ExampleCreateParams.none()): Example =
-        create(params, RequestOptions.none())
-
-    /** @see create */
-    fun create(requestOptions: RequestOptions): Example =
-        create(ExampleCreateParams.none(), requestOptions)
 
     /** Get a specific example. */
     fun retrieve(exampleId: String): Example = retrieve(exampleId, ExampleRetrieveParams.none())
@@ -240,25 +232,16 @@ interface ExampleService {
          * Returns a raw HTTP response for `post /api/v1/examples`, but is otherwise the same as
          * [ExampleService.create].
          */
-        @MustBeClosed fun create(): HttpResponseFor<Example> = create(ExampleCreateParams.none())
+        @MustBeClosed
+        fun create(params: ExampleCreateParams): HttpResponseFor<Example> =
+            create(params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
-            params: ExampleCreateParams = ExampleCreateParams.none(),
+            params: ExampleCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Example>
-
-        /** @see create */
-        @MustBeClosed
-        fun create(
-            params: ExampleCreateParams = ExampleCreateParams.none()
-        ): HttpResponseFor<Example> = create(params, RequestOptions.none())
-
-        /** @see create */
-        @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<Example> =
-            create(ExampleCreateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/examples/{example_id}`, but is otherwise the
