@@ -11,10 +11,13 @@ repositories {
 
 dependencies {
     implementation(project(":langsmith-java"))
+    implementation(project(":langsmith-java-wrappers"))
     implementation(kotlin("stdlib"))
 
     // Jackson for JSON handling in examples
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
+    // OpenAI SDK for RunExperimentExample
+    implementation("com.openai:openai-java:4.6.1")
 
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))

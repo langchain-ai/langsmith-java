@@ -161,8 +161,8 @@ public final class OpenTelemetryConfig {
             throw new IllegalArgumentException("LangSmith API key cannot be null or empty");
         }
 
-        // Use provided endpoint or default to LANGSMITH_OTLP_ENDPOINT
-        String endpointUrl = endpoint != null && !endpoint.isEmpty() ? endpoint : LANGSMITH_OTLP_ENDPOINT;
+        // Use provided endpoint or build default from LANGCHAIN_BASE_URL or LANGSMITH_OTLP_ENDPOINT
+        String endpointUrl = endpoint != null && !endpoint.isEmpty() ? endpoint : buildDefaultOtlpEndpoint();
 
         // Create OTLP HTTP exporter configured for LangSmith
         // Build the exporter with conditional headers
@@ -238,9 +238,18 @@ public final class OpenTelemetryConfig {
      * <li>LANGSMITH_PROJECT - Optional: Your LangSmith project name</li>
      * <li>OTEL_SERVICE_NAME - Optional: Service name (defaults to
      * "langsmith-java-otel-wrappers")</li>
-     * <li>LANGSMITH_OTLP_ENDPOINT - Optional: Custom OTLP endpoint URL (defaults to
-     * LANGSMITH_OTLP_ENDPOINT constant)</li>
+     * <li>LANGSMITH_OTLP_ENDPOINT - Optional: Custom OTLP endpoint URL</li>
+     * <li>LANGCHAIN_BASE_URL - Optional: Base URL for LangSmith API (if set, OTLP endpoint
+     * will be automatically constructed as base_url/otel/v1/traces)</li>
      * </ul>
+     *
+     * <p>
+     * Endpoint resolution priority:
+     * <ol>
+     * <li>LANGSMITH_OTLP_ENDPOINT (if set)</li>
+     * <li>LANGCHAIN_BASE_URL + /otel/v1/traces (if set)</li>
+     * <li>Production default: https://api.smith.langchain.com/otel/v1/traces</li>
+     * </ol>
      *
      * @return the configured OpenTelemetry instance
      * @throws IllegalStateException if LANGSMITH_API_KEY is not set
@@ -303,6 +312,36 @@ public final class OpenTelemetryConfig {
             }
         }
         return true;
+    }
+
+    /**
+     * Builds the default OTLP endpoint URL.
+     * Priority order:
+     * 1. LANGSMITH_OTLP_ENDPOINT environment variable
+     * 2. LANGCHAIN_BASE_URL environment variable + /otel/v1/traces
+     * 3. Default production endpoint
+     *
+     * @return the OTLP endpoint URL
+     */
+    private static String buildDefaultOtlpEndpoint() {
+        // First, check for explicit OTLP endpoint
+        String otlpEndpoint = System.getenv("LANGSMITH_OTLP_ENDPOINT");
+        if (otlpEndpoint != null && !otlpEndpoint.isEmpty()) {
+            return otlpEndpoint;
+        }
+
+        // Second, check for LANGCHAIN_BASE_URL and append OTLP path
+        String baseUrl = System.getenv("LANGCHAIN_BASE_URL");
+        if (baseUrl != null && !baseUrl.isEmpty()) {
+            // Remove trailing slash if present
+            if (baseUrl.endsWith("/")) {
+                baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+            }
+            return baseUrl + "/otel/v1/traces";
+        }
+
+        // Fall back to production default
+        return LANGSMITH_OTLP_ENDPOINT;
     }
 
     /**
