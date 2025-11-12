@@ -33,6 +33,9 @@ dependencies {
     api("io.opentelemetry:opentelemetry-sdk:1.32.0")
     api("io.opentelemetry:opentelemetry-exporter-otlp:1.32.0")
     api("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
+    
+    // OpenAI SDK (for OpenTelemetry wrappers)
+    api("com.openai:openai-java:4.6.1")
 
     testImplementation(kotlin("test"))
     testImplementation(project(":langsmith-java-client-okhttp"))

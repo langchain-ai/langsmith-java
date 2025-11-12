@@ -267,6 +267,19 @@ public class WrappedOpenAIClient implements OpenAIClient {
     }
 
     /**
+     * Wraps an existing OpenAI client to add LangSmith tracing capabilities.
+     *
+     * <p>This is a convenience method equivalent to using the constructor directly.
+     *
+     * @param client the OpenAI client to wrap
+     * @return a wrapped client that delegates to the original client
+     * @throws IllegalArgumentException if client is null
+     */
+    public static WrappedOpenAIClient wrap(OpenAIClient client) {
+        return new WrappedOpenAIClient(client);
+    }
+
+    /**
      * Creates a wrapped OpenAI client from environment variables.
      *
      * @return a new wrapped OpenAI client configured from environment variables
