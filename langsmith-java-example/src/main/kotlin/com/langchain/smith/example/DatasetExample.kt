@@ -7,6 +7,7 @@ import com.langchain.smith.models.datasets.Dataset
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.examples.ExampleCreateParams
+import com.langchain.smith.models.examples.bulk.BulkCreateParams
 
 /**
  * Demonstrates how to create a dataset and add examples to it programmatically.
@@ -38,6 +39,21 @@ fun getDatasetUrl(dataset: Dataset): String {
     return "$hostUrl/o/${dataset.tenantId()}/datasets/${dataset.id()}"
 }
 
+/**
+ * Deletes a dataset after user confirmation.
+ */
+fun deleteDatasetWithConfirmation(client: LangsmithClient, dataset: Dataset) {
+    println("Press Enter to delete the dataset using client.datasets().delete()...")
+    try {
+        readln()
+    } catch (e: Exception) {
+        // If stdin is not available (e.g., running in CI), skip confirmation
+        println("   (Skipping confirmation - stdin not available)")
+    }
+    client.datasets().delete(dataset.id())
+    println("   ✓ Deleted dataset: ${dataset.name()} (ID: ${dataset.id()})")
+}
+
 fun main() {
     // Configure client from environment variables
     // Requires: LANGSMITH_API_KEY and LANGCHAIN_BASE_URL
@@ -56,9 +72,10 @@ fun main() {
         val existing = existingDatasets[0]
         System.err.println("Error: Dataset with name '$datasetName' already exists")
         System.err.println("View existing dataset: ${getDatasetUrl(existing)}")
-        return
+        deleteDatasetWithConfirmation(client, existing)
+    } else {
+        println("   ✓ No existing dataset found with name '$datasetName'\n")
     }
-    println("   ✓ No existing dataset found with name '$datasetName'\n")
 
     // 2. Create a new dataset
     println("2. Creating dataset using client.datasets().create()...")
@@ -74,36 +91,52 @@ fun main() {
 
     // Example 1: Mount Kilimanjaro
     val example1Params = ExampleCreateParams.builder()
-        .putAdditionalBodyProperty("dataset_id", JsonValue.from(dataset.id()))
-        .putAdditionalBodyProperty("inputs", JsonValue.from(
-            mapOf("question" to "Which country is Mount Kilimanjaro located in?")))
-        .putAdditionalBodyProperty("outputs", JsonValue.from(
-            mapOf("answer" to "Mount Kilimanjaro is located in Tanzania.")))
+        .datasetId(dataset.id())
+        .inputs(JsonValue.from(mapOf("question" to "Which country is Mount Kilimanjaro located in?")))
+        .outputs(JsonValue.from(mapOf("answer" to "Mount Kilimanjaro is located in Tanzania.")))
         .build()
     val example1 = client.examples().create(example1Params)
     println("   ✓ Created example 1: ${example1.id()}")
 
     // Example 2: Earth's lowest point
     val example2Params = ExampleCreateParams.builder()
-        .putAdditionalBodyProperty("dataset_id", JsonValue.from(dataset.id()))
-        .putAdditionalBodyProperty("inputs", JsonValue.from(
-            mapOf("question" to "What is Earth's lowest point?")))
-        .putAdditionalBodyProperty("outputs", JsonValue.from(
-            mapOf("answer" to "Earth's lowest point is The Dead Sea.")))
+        .datasetId(dataset.id())
+        .inputs(JsonValue.from(mapOf("question" to "What is Earth's lowest point?")))
+        .outputs(JsonValue.from(mapOf("answer" to "Earth's lowest point is The Dead Sea.")))
         .build()
     val example2 = client.examples().create(example2Params)
     println("   ✓ Created example 2: ${example2.id()}\n")
 
-    // 4. Retrieve the dataset and show the number of examples
-    println("4. Retrieving dataset using client.datasets().retrieve()...")
+    // 4. Add more examples using bulk create
+    println("4. Adding examples using client.examples().bulk().create()...")
+    val bulkExamples = client.examples().bulk().create(
+        BulkCreateParams.builder()
+            .addBody(
+                BulkCreateParams.Body.builder()
+                    .datasetId(dataset.id())
+                    .inputs(JsonValue.from(mapOf("question" to "What is the capital of France?")))
+                    .outputs(JsonValue.from(mapOf("answer" to "The capital of France is Paris.")))
+                    .build()
+            )
+            .addBody(
+                BulkCreateParams.Body.builder()
+                    .datasetId(dataset.id())
+                    .inputs(JsonValue.from(mapOf("question" to "Which ocean is the largest?")))
+                    .outputs(JsonValue.from(mapOf("answer" to "The Pacific Ocean is the largest.")))
+                    .build()
+            )
+            .build()
+    )
+    println("   ✓ Created ${bulkExamples.size} examples in bulk\n")
+
+    // 5. Retrieve the dataset and show the number of examples
+    println("5. Retrieving dataset using client.datasets().retrieve()...")
     val retrievedDataset = client.datasets().retrieve(dataset.id())
     println("   ✓ Retrieved dataset: ${retrievedDataset.name()}")
     println("   ✓ Number of examples: ${retrievedDataset.exampleCount()}")
     println("   ✓ View dataset: ${getDatasetUrl(retrievedDataset)}")
 
-    // 5. Delete the dataset
-    println("\n5. Press Enter to delete the dataset using client.datasets().delete()...")
-    readln()
-    client.datasets().delete(dataset.id())
-    println("   ✓ Deleted dataset: ${dataset.name()} (ID: ${dataset.id()})")
+    // 6. Delete the dataset
+    println("\n6. Deleting the dataset...")
+    deleteDatasetWithConfirmation(client, dataset)
 }
