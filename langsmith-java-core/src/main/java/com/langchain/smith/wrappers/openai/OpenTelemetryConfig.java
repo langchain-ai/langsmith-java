@@ -176,7 +176,7 @@ public final class OpenTelemetryConfig {
             try {
                 java.lang.reflect.Method addHeaderMethod =
                         builder.getClass().getMethod("addHeader", String.class, String.class);
-                builder = addHeaderMethod.invoke(builder, "langsmith-project", projectName);
+                builder = addHeaderMethod.invoke(builder, "Langsmith-Project", projectName);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to add project header", e);
             }
