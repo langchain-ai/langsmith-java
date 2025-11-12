@@ -4,6 +4,9 @@ package com.langchain.smith.services.async
 
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
+import com.langchain.smith.core.JsonValue
+import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunQueryParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
@@ -12,6 +15,134 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(TestServerExtension::class)
 internal class RunServiceAsyncTest {
+
+    @Disabled("Prism tests are disabled")
+    @Test
+    fun ingestBatch() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .baseUrl(TestServerExtension.BASE_URL)
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val runServiceAsync = client.runs()
+
+        val responseFuture =
+            runServiceAsync.ingestBatch(
+                RunIngestBatchParams.builder()
+                    .addPatch(
+                        Run.builder()
+                            .id("id")
+                            .dottedOrder("dotted_order")
+                            .endTime("end_time")
+                            .error("error")
+                            .addEvent(
+                                Run.Event.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .extra(
+                                Run.Extra.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .inputAttachments(
+                                Run.InputAttachments.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .inputs(
+                                Run.Inputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .name("name")
+                            .outputAttachments(
+                                Run.OutputAttachments.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .outputs(
+                                Run.Outputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .parentRunId("parent_run_id")
+                            .referenceExampleId("reference_example_id")
+                            .runType(Run.RunType.TOOL)
+                            .serialized(
+                                Run.Serialized.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .sessionId("session_id")
+                            .sessionName("session_name")
+                            .startTime("start_time")
+                            .status("status")
+                            .addTag("string")
+                            .traceId("trace_id")
+                            .build()
+                    )
+                    .addPost(
+                        Run.builder()
+                            .id("id")
+                            .dottedOrder("dotted_order")
+                            .endTime("end_time")
+                            .error("error")
+                            .addEvent(
+                                Run.Event.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .extra(
+                                Run.Extra.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .inputAttachments(
+                                Run.InputAttachments.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .inputs(
+                                Run.Inputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .name("name")
+                            .outputAttachments(
+                                Run.OutputAttachments.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .outputs(
+                                Run.Outputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .parentRunId("parent_run_id")
+                            .referenceExampleId("reference_example_id")
+                            .runType(Run.RunType.TOOL)
+                            .serialized(
+                                Run.Serialized.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .sessionId("session_id")
+                            .sessionName("session_name")
+                            .startTime("start_time")
+                            .status("status")
+                            .addTag("string")
+                            .traceId("trace_id")
+                            .build()
+                    )
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
 
     @Disabled("Prism tests are disabled")
     @Test

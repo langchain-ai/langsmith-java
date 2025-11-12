@@ -5,6 +5,8 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.runs.RunIngestBatchParams
+import com.langchain.smith.models.runs.RunIngestBatchResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
 import java.util.concurrent.CompletableFuture
@@ -23,6 +25,30 @@ interface RunServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync
+
+    /**
+     * Ingests a batch of runs in a single JSON payload. The payload must have `post` and/or `patch`
+     * arrays containing run objects. Prefer this endpoint over single‑run ingestion when submitting
+     * hundreds of runs, but `/runs/multipart` offers better handling for very large fields and
+     * attachments.
+     */
+    fun ingestBatch(): CompletableFuture<RunIngestBatchResponse> =
+        ingestBatch(RunIngestBatchParams.none())
+
+    /** @see ingestBatch */
+    fun ingestBatch(
+        params: RunIngestBatchParams = RunIngestBatchParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunIngestBatchResponse>
+
+    /** @see ingestBatch */
+    fun ingestBatch(
+        params: RunIngestBatchParams = RunIngestBatchParams.none()
+    ): CompletableFuture<RunIngestBatchResponse> = ingestBatch(params, RequestOptions.none())
+
+    /** @see ingestBatch */
+    fun ingestBatch(requestOptions: RequestOptions): CompletableFuture<RunIngestBatchResponse> =
+        ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
     /** Query Runs */
     fun query(): CompletableFuture<RunQueryResponse> = query(RunQueryParams.none())
@@ -50,6 +76,31 @@ interface RunServiceAsync {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync.WithRawResponse
+
+        /**
+         * Returns a raw HTTP response for `post /runs/batch`, but is otherwise the same as
+         * [RunServiceAsync.ingestBatch].
+         */
+        fun ingestBatch(): CompletableFuture<HttpResponseFor<RunIngestBatchResponse>> =
+            ingestBatch(RunIngestBatchParams.none())
+
+        /** @see ingestBatch */
+        fun ingestBatch(
+            params: RunIngestBatchParams = RunIngestBatchParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunIngestBatchResponse>>
+
+        /** @see ingestBatch */
+        fun ingestBatch(
+            params: RunIngestBatchParams = RunIngestBatchParams.none()
+        ): CompletableFuture<HttpResponseFor<RunIngestBatchResponse>> =
+            ingestBatch(params, RequestOptions.none())
+
+        /** @see ingestBatch */
+        fun ingestBatch(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<RunIngestBatchResponse>> =
+            ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as
