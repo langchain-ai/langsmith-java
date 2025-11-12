@@ -15,8 +15,8 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.examples.bulk.BulkCreateParams
-import com.langchain.smith.models.examples.bulk.BulkCreateResponse
 import com.langchain.smith.models.examples.bulk.BulkPatchAllParams
 import com.langchain.smith.models.examples.bulk.BulkPatchAllResponse
 import java.util.concurrent.CompletableFuture
@@ -37,7 +37,7 @@ class BulkServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun create(
         params: BulkCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BulkCreateResponse> =
+    ): CompletableFuture<List<Example>> =
         // post /api/v1/examples/bulk
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
@@ -61,19 +61,19 @@ class BulkServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<BulkCreateResponse> =
-            jsonHandler<BulkCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<List<Example>> =
+            jsonHandler<List<Example>>(clientOptions.jsonMapper)
 
         override fun create(
             params: BulkCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BulkCreateResponse>> {
+        ): CompletableFuture<HttpResponseFor<List<Example>>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("api", "v1", "examples", "bulk")
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -85,7 +85,7 @@ class BulkServiceAsyncImpl internal constructor(private val clientOptions: Clien
                             .use { createHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
-                                    it.validate()
+                                    it.forEach { it.validate() }
                                 }
                             }
                     }

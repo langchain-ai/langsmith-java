@@ -15,8 +15,8 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.examples.bulk.BulkCreateParams
-import com.langchain.smith.models.examples.bulk.BulkCreateResponse
 import com.langchain.smith.models.examples.bulk.BulkPatchAllParams
 import com.langchain.smith.models.examples.bulk.BulkPatchAllResponse
 import java.util.function.Consumer
@@ -32,10 +32,7 @@ class BulkServiceImpl internal constructor(private val clientOptions: ClientOpti
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): BulkService =
         BulkServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun create(
-        params: BulkCreateParams,
-        requestOptions: RequestOptions,
-    ): BulkCreateResponse =
+    override fun create(params: BulkCreateParams, requestOptions: RequestOptions): List<Example> =
         // post /api/v1/examples/bulk
         withRawResponse().create(params, requestOptions).parse()
 
@@ -59,19 +56,19 @@ class BulkServiceImpl internal constructor(private val clientOptions: ClientOpti
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<BulkCreateResponse> =
-            jsonHandler<BulkCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<List<Example>> =
+            jsonHandler<List<Example>>(clientOptions.jsonMapper)
 
         override fun create(
             params: BulkCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BulkCreateResponse> {
+        ): HttpResponseFor<List<Example>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("api", "v1", "examples", "bulk")
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -81,7 +78,7 @@ class BulkServiceImpl internal constructor(private val clientOptions: ClientOpti
                     .use { createHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
-                            it.validate()
+                            it.forEach { it.validate() }
                         }
                     }
             }
