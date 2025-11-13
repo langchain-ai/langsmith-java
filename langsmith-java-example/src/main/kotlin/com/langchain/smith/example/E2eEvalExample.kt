@@ -3,13 +3,10 @@ package com.langchain.smith.example
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.datasets.Dataset
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetListParams
-import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.examples.bulk.BulkCreateParams
 import com.langchain.smith.wrappers.openai.ExperimentContext
-import com.langchain.smith.wrappers.openai.OpenAIWrappers
 import com.langchain.smith.wrappers.openai.OpenTelemetryConfig
 import com.langchain.smith.wrappers.openai.WrappedOpenAIClient
 import com.openai.models.ChatModel
@@ -59,7 +56,6 @@ class SimpleQAAgent(private val client: WrappedOpenAIClient, private val model: 
         val params = ChatCompletionCreateParams.builder()
             .model(model)
             .addUserMessage(question)
-            .temperature(0.0)  // Use 0 for more deterministic outputs
             .build()
 
         val completion: ChatCompletion = client.chat().completions().create(params)
@@ -181,6 +177,7 @@ fun main() {
     println()
 
     // 4. Configure OpenTelemetry to send traces to LangSmith
+    // Initializes global OpenTelemetry SDK for automatic trace collection (return value not needed)
     println("4. Configuring OpenTelemetry for LangSmith...")
     OpenTelemetryConfig.builder()
         .processorType(OpenTelemetryConfig.SpanProcessorType.SIMPLE)
@@ -189,7 +186,8 @@ fun main() {
     println()
 
     // 5. Create wrapped OpenAI client
-    val openaiClient: WrappedOpenAIClient = OpenAIWrappers.wrapFromEnv()
+    // The wrapped client automatically creates OpenTelemetry spans for each LLM call
+    val openaiClient: WrappedOpenAIClient = WrappedOpenAIClient.fromEnv()
 
     // 6. Run experiments: Execute agent against each test case
     println("5. Running experiments with OpenAI agent...")
@@ -208,8 +206,7 @@ fun main() {
         println("      Expected: $expectedAnswer")
 
         try {
-            // Use try-with-resources to automatically manage context lifecycle
-            // This is the recommended pattern - context is automatically cleared when done
+            // Attach example, dataset and session id to experiment run.
             ExperimentContext.withExperiment(example.id(), dataset.id(), sessionId).use {
                 // Run the agent - the wrapped OpenAI client will automatically:
                 // 1. Create OpenTelemetry spans for the LLM call
@@ -220,7 +217,7 @@ fun main() {
 
                 println("      Actual:   $actualAnswer")
                 println("      → Trace sent to LangSmith and linked to experiment")
-            } // Context automatically cleared here
+            }
 
         } catch (e: Exception) {
             println("      ✗ Error: ${e.message}")

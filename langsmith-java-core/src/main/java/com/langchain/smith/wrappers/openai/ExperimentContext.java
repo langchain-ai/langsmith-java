@@ -88,7 +88,6 @@ public final class ExperimentContext {
     public static Scope withExperiment(String exampleId, String datasetId, String sessionId) {
         Context previous = CONTEXT.get().copy();
         setReferenceExampleId(exampleId);
-        setDatasetId(datasetId);
         setSessionId(sessionId);
         return new Scope(previous);
     }
