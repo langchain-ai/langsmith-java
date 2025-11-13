@@ -18,7 +18,7 @@ import java.util.Map;
  *
  * <pre>{@code
  * // Automatically clears context when done
- * try (var ctx = ExperimentContext.withExperiment("example-123", "dataset-456", "session-789")) {
+ * try (var ctx = ExperimentContext.withExperiment("example-123", "session-789")) {
  *     ChatCompletion completion = client.chat().completions().create(params);
  * } // Context automatically cleared here
  * }</pre>
@@ -75,17 +75,16 @@ public final class ExperimentContext {
      * the experiment session and automatically clears context when done.
      *
      * <pre>{@code
-     * try (var ctx = ExperimentContext.withExperiment(example.id(), dataset.id(), session.id())) {
+     * try (var ctx = ExperimentContext.withExperiment(example.id(), session.id())) {
      *     ChatCompletion completion = client.chat().completions().create(params);
      * } // Context automatically cleared here
      * }</pre>
      *
      * @param exampleId the reference example ID from your LangSmith dataset
-     * @param datasetId the dataset ID
      * @param sessionId the session/experiment UUID
      * @return a Scope that will clear the context when closed
      */
-    public static Scope withExperiment(String exampleId, String datasetId, String sessionId) {
+    public static Scope withExperiment(String exampleId, String sessionId) {
         Context previous = CONTEXT.get().copy();
         setReferenceExampleId(exampleId);
         setSessionId(sessionId);
