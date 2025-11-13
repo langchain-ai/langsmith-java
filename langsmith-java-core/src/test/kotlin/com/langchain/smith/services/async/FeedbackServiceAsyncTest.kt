@@ -154,6 +154,7 @@ internal class FeedbackServiceAsyncTest {
         val feedbackSchemataFuture =
             feedbackServiceAsync.list(
                 FeedbackListParams.builder()
+                    .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .hasComment(true)
                     .hasScore(true)
                     .includeUserNames(true)
