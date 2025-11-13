@@ -11,7 +11,6 @@ repositories {
 
 dependencies {
     implementation(project(":langsmith-java"))
-    implementation(project(":langsmith-java-wrappers"))
     implementation(kotlin("stdlib"))
 
     // Jackson for JSON handling in examples
