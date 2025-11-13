@@ -14,23 +14,25 @@ import java.util.Map;
  * will automatically attach it to the spans it creates.
  *
  * <p>
- * Example usage (simple):
- *
- * <pre>{@code
- * // Set reference example ID before making LLM call
- * ExperimentContext.setReferenceExampleId("example-123");
- * ChatCompletion completion = client.chat().completions().create(params);
- * ExperimentContext.clear();
- * }</pre>
- *
- * <p>
  * Example usage (recommended - try-with-resources):
  *
  * <pre>{@code
  * // Automatically clears context when done
- * try (var ctx = ExperimentContext.withReferenceExampleId("example-123")) {
+ * try (var ctx = ExperimentContext.withExperiment("example-123", "dataset-456", "session-789")) {
  *     ChatCompletion completion = client.chat().completions().create(params);
  * } // Context automatically cleared here
+ * }</pre>
+ *
+ * <p>
+ * Example usage (manual):
+ *
+ * <pre>{@code
+ * // Set experiment context before making LLM call
+ * ExperimentContext.setReferenceExampleId("example-123");
+ * ExperimentContext.setDatasetId("dataset-456");
+ * ExperimentContext.setSessionId("session-789");
+ * ChatCompletion completion = client.chat().completions().create(params);
+ * ExperimentContext.clear();
  * }</pre>
  *
  * <p>
@@ -68,44 +70,17 @@ public final class ExperimentContext {
     }
 
     /**
-     * Sets the reference example ID and returns a Scope for try-with-resources.
-     * This is the recommended way to set context as it automatically clears when done.
+     * Sets all experiment context values and returns a Scope for try-with-resources.
+     * This is the recommended method for running experiments as it properly links runs to
+     * the experiment session and automatically clears context when done.
      *
      * <pre>{@code
-     * try (var ctx = ExperimentContext.withReferenceExampleId(example.id())) {
+     * try (var ctx = ExperimentContext.withExperiment(example.id(), dataset.id(), session.id())) {
      *     ChatCompletion completion = client.chat().completions().create(params);
      * } // Context automatically cleared here
      * }</pre>
      *
      * @param exampleId the reference example ID from your LangSmith dataset
-     * @return a Scope that will clear the context when closed
-     */
-    public static Scope withReferenceExampleId(String exampleId) {
-        Context previous = CONTEXT.get().copy();
-        setReferenceExampleId(exampleId);
-        return new Scope(previous);
-    }
-
-    /**
-     * Sets multiple context values and returns a Scope for try-with-resources.
-     *
-     * @param exampleId the reference example ID
-     * @param datasetId the dataset ID
-     * @return a Scope that will clear the context when closed
-     */
-    public static Scope withContext(String exampleId, String datasetId) {
-        Context previous = CONTEXT.get().copy();
-        setReferenceExampleId(exampleId);
-        setDatasetId(datasetId);
-        return new Scope(previous);
-    }
-
-    /**
-     * Sets multiple context values including session ID and returns a Scope for try-with-resources.
-     * This is the recommended method for running experiments as it properly links runs to
-     * the experiment session.
-     *
-     * @param exampleId the reference example ID
      * @param datasetId the dataset ID
      * @param sessionId the session/experiment UUID
      * @return a Scope that will clear the context when closed
