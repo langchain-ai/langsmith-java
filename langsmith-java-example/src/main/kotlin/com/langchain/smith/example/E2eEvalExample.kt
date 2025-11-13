@@ -206,11 +206,11 @@ fun main() {
         println("      Expected: $expectedAnswer")
 
         try {
-            // Attach example, dataset and session id to experiment run.
-            ExperimentContext.withExperiment(example.id(), dataset.id(), sessionId).use {
+            // Attach example and session id to experiment run.
+            ExperimentContext.withExperiment(example.id(), sessionId).use {
                 // Run the agent - the wrapped OpenAI client will automatically:
                 // 1. Create OpenTelemetry spans for the LLM call
-                // 2. Include reference_example_id, dataset_id, and session_id from ExperimentContext
+                // 2. Include reference_example_id and session_id from ExperimentContext
                 // 3. Send the spans to LangSmith via the configured OTLP exporter
                 // 4. Link the run to the experiment session (appears in Experiments tab!)
                 val actualAnswer = agent.answer(question)
@@ -249,39 +249,35 @@ fun main() {
     println()
     println("What happened:")
     println("  • Dataset: $datasetName with ${createdExamples.size} examples")
-    println("  • Session: $experimentName linked to dataset")
-    println("  • Experiment: ${testCases.size} runs with real OpenAI calls")
+    println("  • Session: $experimentName linked to dataset (aka. experiement)")
     println("  • Each run includes:")
     println("    - Input question from the dataset")
     println("    - Reference/expected answer")
-    println("    - Actual answer from OpenAI (gpt-4o-mini)")
-    println("    - Complete OpenTelemetry trace automatically sent to LangSmith")
-    println("    - Link to the dataset example via reference_example_id")
+    println("    - Actual answer from OpenAI")
+    println("    - Complete OpenTelemetry trace automatically sent to LangSmith and linked to dataset")
     println()
     println("How it works:")
     println("  1. Create/find a session linked to the dataset (via reference_dataset_id)")
-    println("  2. Configure OpenTelemetry WITHOUT passing project name (avoids overwriting session)")
-    println("  3. Use ExperimentContext.withExperiment() to set session_id + example_id on spans")
+    println("  2. Configure OpenTelemetry")
+    println("  3. Use ExperimentContext.withExperiment() to link the experiment run to the dataset/example")
     println("  4. WrappedOpenAIClient automatically creates and exports traces with proper linkage")
     println("  5. Experiment appears in dataset's 'Experiments' tab!")
     println()
     println("Next steps:")
-    println("  1. View your experiment in LangSmith:")
-    println("     ${buildSessionUrl(sessionTenantId, sessionId)}")
-    println()
-    println("  2. View the dataset and experiments tab:")
+    println("  1. View the dataset and experiments tab:")
     println("     ${buildDatasetUrl(dataset)}")
     println()
-    println("  3. In the LangSmith UI, you can:")
+    println("  2. In the LangSmith UI, you can:")
     println("     - Compare actual answers vs expected answers side-by-side")
-    println("     - Add LLM-as-judge evaluators to automatically score quality")
+    println("     - Add LLM-as-judge evaluators to automatically evaluate your experiments")
     println("     - View detailed traces of each OpenAI call")
     println("     - Analyze token usage and latency metrics")
+    println("     - Much more...")
     println()
-    println("  4. Run this example again:")
+    println("  3. Run this example again:")
     println("     - A new experiment session will be created with a unique timestamp")
     println("     - Dataset and examples are reused (idempotent)")
-    println("     - Each run appears as a separate experiment in the Experiments tab")
+    println("     - Each run appears as a separate experiment in the Experiments tab of the dataset")
     println("     - You can compare results across multiple experiment runs")
     println()
 }
