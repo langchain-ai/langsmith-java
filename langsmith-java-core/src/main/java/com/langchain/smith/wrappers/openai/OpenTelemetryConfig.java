@@ -41,11 +41,17 @@ public final class OpenTelemetryConfig {
     }
 
     /**
-     * LangSmith OTLP endpoint for traces.
-     * Can be overridden via LANGSMITH_OTLP_ENDPOINT environment variable or
-     * by passing a custom endpoint to the configuration methods.
+     * Default LangSmith base URL.
+     * Can be overridden by setting LANGCHAIN_BASE_URL environment variable or
+     * by passing a custom base URL to the configuration methods.
      */
-    public static final String LANGSMITH_OTLP_ENDPOINT = "https://api.smith.langchain.com/otel/v1/traces";
+    public static final String DEFAULT_BASE_URL = "https://api.smith.langchain.com";
+
+    /**
+     * OTLP traces endpoint path.
+     * This path is appended to the base URL to construct the full OTLP endpoint.
+     */
+    public static final String OTLP_TRACES_PATH = "/otel/v1/traces";
 
     /**
      * Span processor type for configuring how spans are exported.
@@ -66,6 +72,234 @@ public final class OpenTelemetryConfig {
     }
 
     /**
+     * Builder for configuring OpenTelemetry for LangSmith.
+     * Provides a fluent API for setting only the parameters you need.
+     *
+     * <p>
+     * Example usage:
+     * <pre>{@code
+     * OpenTelemetry otel = OpenTelemetryConfig.builder()
+     *     .apiKey("your-api-key")
+     *     .projectName("MyProject")
+     *     .processorType(SpanProcessorType.SIMPLE)
+     *     .maxBatchSize(1)
+     *     .build();
+     * }</pre>
+     */
+    public static class Builder {
+        private String apiKey;
+        private String projectName;
+        private String serviceName;
+        private String baseUrl;
+        private SpanProcessorType processorType = SpanProcessorType.BATCH;
+        private int maxBatchSize = 512;
+
+        private Builder() {
+            // Initialize from environment variables as defaults
+            this.apiKey = System.getenv("LANGSMITH_API_KEY");
+            this.projectName = System.getenv("LANGSMITH_PROJECT");
+            this.serviceName = System.getenv("OTEL_SERVICE_NAME");
+            this.baseUrl = System.getenv("LANGCHAIN_BASE_URL");
+        }
+
+        /**
+         * Sets the LangSmith API key (optional, defaults to LANGSMITH_API_KEY env var).
+         *
+         * <p>
+         * This is your authentication key for LangSmith. You can find it in your
+         * LangSmith account settings.
+         *
+         * <p>
+         * If not set explicitly, the builder will use the value from the
+         * LANGSMITH_API_KEY environment variable.
+         *
+         * @param apiKey your LangSmith API key
+         * @return this Builder for method chaining
+         * @throws IllegalArgumentException if apiKey is null or empty when build() is called
+         */
+        public Builder apiKey(String apiKey) {
+            this.apiKey = apiKey;
+            return this;
+        }
+
+        /**
+         * Sets the LangSmith project name (optional, defaults to LANGSMITH_PROJECT env var).
+         *
+         * <p>
+         * If set, all traces will be sent to this project in LangSmith. The project
+         * will be created automatically if it doesn't exist.
+         *
+         * <p>
+         * If not set explicitly, the builder will use the value from the
+         * LANGSMITH_PROJECT environment variable.
+         *
+         * <p>
+         * <b>Note:</b> For experiments, you may want to leave this unset and instead
+         * use {@link ExperimentContext#withExperiment(String, String, String)} to set
+         * the session ID via span attributes. This prevents the project name from
+         * overwriting the session's reference_dataset_id.
+         *
+         * @param projectName your LangSmith project name
+         * @return this Builder for method chaining
+         */
+        public Builder projectName(String projectName) {
+            this.projectName = projectName;
+            return this;
+        }
+
+        /**
+         * Sets the service name for OpenTelemetry (optional, defaults to OTEL_SERVICE_NAME env var).
+         *
+         * <p>
+         * This identifies your application in the traces. If not set explicitly,
+         * the builder will use the value from the OTEL_SERVICE_NAME environment variable,
+         * or fall back to "langsmith-java-otel-wrappers" if not set.
+         *
+         * <p>
+         * The service name appears in the trace metadata and can be used to filter
+         * traces from different services.
+         *
+         * @param serviceName the service name to identify your application
+         * @return this Builder for method chaining
+         */
+        public Builder serviceName(String serviceName) {
+            this.serviceName = serviceName;
+            return this;
+        }
+
+        /**
+         * Sets the LangSmith base URL (optional, defaults to LANGCHAIN_BASE_URL env var).
+         *
+         * <p>
+         * The base URL is used to construct the OTLP endpoint by appending "/otel/v1/traces".
+         * If not set explicitly, the builder will use the value from the LANGCHAIN_BASE_URL
+         * environment variable, or default to "https://api.smith.langchain.com".
+         *
+         * <p>
+         * This is useful for:
+         * <ul>
+         * <li>Self-hosted LangSmith instances</li>
+         * <li>Internal/development environments</li>
+         * <li>Testing against different LangSmith deployments</li>
+         * </ul>
+         *
+         * @param baseUrl the LangSmith base URL (e.g., "https://dev.api.smith.langchain.com")
+         * @return this Builder for method chaining
+         */
+        public Builder baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        /**
+         * Sets the span processor type (optional).
+         *
+         * <p>
+         * Determines how spans are processed and exported:
+         *
+         * <ul>
+         * <li><b>BATCH</b> (default, recommended for production):
+         *     <ul>
+         *     <li>Queues spans and exports them in batches</li>
+         *     <li>Non-blocking - doesn't slow down your application</li>
+         *     <li>Efficient - reduces network overhead</li>
+         *     <li>May have a slight delay before spans appear in LangSmith</li>
+         *     </ul>
+         * </li>
+         * <li><b>SIMPLE</b> (recommended for testing/examples):
+         *     <ul>
+         *     <li>Exports spans immediately when span.end() is called</li>
+         *     <li>Blocking - waits for export to complete</li>
+         *     <li>Predictable - spans appear in LangSmith right away</li>
+         *     <li><b>Warning:</b> Can impact performance, not recommended for production</li>
+         *     </ul>
+         * </li>
+         * </ul>
+         *
+         * <p>
+         * <b>When to use SIMPLE:</b>
+         * <ul>
+         * <li>Short-lived applications or scripts</li>
+         * <li>Testing and debugging</li>
+         * <li>When you need immediate visibility of traces</li>
+         * </ul>
+         *
+         * <p>
+         * <b>When to use BATCH:</b>
+         * <ul>
+         * <li>Production applications</li>
+         * <li>High-throughput services</li>
+         * <li>Long-running applications</li>
+         * <li>When performance is critical</li>
+         * </ul>
+         *
+         * @param processorType the span processor type (BATCH or SIMPLE)
+         * @return this Builder for method chaining
+         * @see SpanProcessorType
+         */
+        public Builder processorType(SpanProcessorType processorType) {
+            this.processorType = processorType;
+            return this;
+        }
+
+        /**
+         * Sets the maximum batch size for span export (optional).
+         *
+         * <p>
+         * <b>Only applies to BATCH processor type.</b> Ignored when using SIMPLE processor.
+         *
+         * <p>
+         * Controls how many spans are batched together before triggering an export:
+         * <ul>
+         * <li><b>Default: 512</b> - Good balance between efficiency and latency</li>
+         * <li><b>1</b> - Exports immediately (still non-blocking unlike SIMPLE)</li>
+         * <li><b>Higher values</b> - More efficient but increased latency</li>
+         * </ul>
+         *
+         * <p>
+         * <b>Setting to 1:</b> If you want immediate export but don't want to block
+         * your application thread, use BATCH processor with maxBatchSize=1 instead of
+         * SIMPLE processor. This gives you non-blocking immediate export.
+         *
+         * <p>
+         * Example for immediate non-blocking export:
+         * <pre>{@code
+         * OpenTelemetryConfig.builder()
+         *     .apiKey(apiKey)
+         *     .processorType(SpanProcessorType.BATCH)
+         *     .maxBatchSize(1)  // Export immediately but don't block
+         *     .build();
+         * }</pre>
+         *
+         * @param maxBatchSize the maximum batch size (1-512, default 512)
+         * @return this Builder for method chaining
+         */
+        public Builder maxBatchSize(int maxBatchSize) {
+            this.maxBatchSize = maxBatchSize;
+            return this;
+        }
+
+        /**
+         * Builds and configures the OpenTelemetry instance.
+         *
+         * @return the configured OpenTelemetry instance
+         * @throws IllegalArgumentException if apiKey is not set
+         */
+        public OpenTelemetry build() {
+            return configureForLangSmith(apiKey, projectName, serviceName, baseUrl, processorType, maxBatchSize);
+        }
+    }
+
+    /**
+     * Creates a new Builder for configuring OpenTelemetry.
+     *
+     * @return a new Builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
      * Configures OpenTelemetry to export traces to LangSmith.
      *
      * <p>
@@ -80,7 +314,7 @@ public final class OpenTelemetryConfig {
      * @return the configured OpenTelemetry instance
      */
     public static OpenTelemetry configureForLangSmith(String apiKey, String projectName) {
-        return configureForLangSmith(apiKey, projectName, null, null);
+        return configureForLangSmith(apiKey, projectName, null, null, SpanProcessorType.BATCH, 512);
     }
 
     /**
@@ -94,44 +328,7 @@ public final class OpenTelemetryConfig {
      * @return the configured OpenTelemetry instance
      */
     public static OpenTelemetry configureForLangSmith(String apiKey, String projectName, String serviceName) {
-        return configureForLangSmith(apiKey, projectName, serviceName, null);
-    }
-
-    /**
-     * Configures OpenTelemetry to export traces to LangSmith with a custom service
-     * name and endpoint.
-     *
-     * @param apiKey      your LangSmith API key
-     * @param projectName your LangSmith project name (optional, can be null)
-     * @param serviceName the service name to identify your application (defaults to
-     *                    "langsmith-java-otel-wrappers")
-     * @param endpoint    the OTLP endpoint URL (optional, defaults to
-     *                    LANGSMITH_OTLP_ENDPOINT constant)
-     * @return the configured OpenTelemetry instance
-     */
-    public static OpenTelemetry configureForLangSmith(
-            String apiKey, String projectName, String serviceName, String endpoint) {
-        return configureForLangSmith(apiKey, projectName, serviceName, endpoint, SpanProcessorType.BATCH, 512);
-    }
-
-    /**
-     * Configures OpenTelemetry to export traces to LangSmith with custom batch
-     * size.
-     *
-     * @param apiKey       your LangSmith API key
-     * @param projectName  your LangSmith project name (optional, can be null)
-     * @param serviceName  the service name to identify your application (defaults
-     *                     to
-     *                     "langsmith-java-otel-wrappers")
-     * @param endpoint     the OTLP endpoint URL (optional, defaults to
-     *                     LANGSMITH_OTLP_ENDPOINT constant)
-     * @param maxBatchSize the maximum batch size before export is triggered
-     *                     (set to 1 for immediate export, default 512)
-     * @return the configured OpenTelemetry instance
-     */
-    public static OpenTelemetry configureForLangSmith(
-            String apiKey, String projectName, String serviceName, String endpoint, int maxBatchSize) {
-        return configureForLangSmith(apiKey, projectName, serviceName, endpoint, SpanProcessorType.BATCH, maxBatchSize);
+        return configureForLangSmith(apiKey, projectName, serviceName, null, SpanProcessorType.BATCH, 512);
     }
 
     /**
@@ -142,8 +339,8 @@ public final class OpenTelemetryConfig {
      * @param projectName   your LangSmith project name (optional, can be null)
      * @param serviceName   the service name to identify your application
      *                      (defaults to "langsmith-java-otel-wrappers")
-     * @param endpoint      the OTLP endpoint URL (optional, defaults to
-     *                      LANGSMITH_OTLP_ENDPOINT constant)
+     * @param baseUrl       the LangSmith base URL (optional, defaults to
+     *                      LANGCHAIN_BASE_URL env var or DEFAULT_BASE_URL constant)
      * @param processorType the span processor type (BATCH or SIMPLE)
      * @param maxBatchSize  the maximum batch size before export is triggered
      *                      (only used for BATCH processor, set to 1 for
@@ -154,15 +351,15 @@ public final class OpenTelemetryConfig {
             String apiKey,
             String projectName,
             String serviceName,
-            String endpoint,
+            String baseUrl,
             SpanProcessorType processorType,
             int maxBatchSize) {
         if (apiKey == null || apiKey.isEmpty()) {
             throw new IllegalArgumentException("LangSmith API key cannot be null or empty");
         }
 
-        // Use provided endpoint or build default from LANGCHAIN_BASE_URL or LANGSMITH_OTLP_ENDPOINT
-        String endpointUrl = endpoint != null && !endpoint.isEmpty() ? endpoint : buildDefaultOtlpEndpoint();
+        // Build OTLP endpoint from base URL
+        String endpointUrl = buildOtlpEndpoint(baseUrl);
 
         // Create OTLP HTTP exporter configured for LangSmith
         // Build the exporter with conditional headers
@@ -238,18 +435,16 @@ public final class OpenTelemetryConfig {
      * <li>LANGSMITH_PROJECT - Optional: Your LangSmith project name</li>
      * <li>OTEL_SERVICE_NAME - Optional: Service name (defaults to
      * "langsmith-java-otel-wrappers")</li>
-     * <li>LANGSMITH_OTLP_ENDPOINT - Optional: Custom OTLP endpoint URL</li>
      * <li>LANGCHAIN_BASE_URL - Optional: Base URL for LangSmith API (if set, OTLP endpoint
-     * will be automatically constructed as base_url/otel/v1/traces)</li>
+     * will be automatically constructed as base_url + "/otel/v1/traces")</li>
      * </ul>
      *
      * <p>
-     * Endpoint resolution priority:
-     * <ol>
-     * <li>LANGSMITH_OTLP_ENDPOINT (if set)</li>
-     * <li>LANGCHAIN_BASE_URL + /otel/v1/traces (if set)</li>
-     * <li>Production default: https://api.smith.langchain.com/otel/v1/traces</li>
-     * </ol>
+     * The OTLP endpoint is constructed as:
+     * <ul>
+     * <li>LANGCHAIN_BASE_URL + "/otel/v1/traces" (if LANGCHAIN_BASE_URL is set)</li>
+     * <li>Production default: "https://api.smith.langchain.com/otel/v1/traces" (if not set)</li>
+     * </ul>
      *
      * @return the configured OpenTelemetry instance
      * @throws IllegalStateException if LANGSMITH_API_KEY is not set
@@ -261,11 +456,9 @@ public final class OpenTelemetryConfig {
                     + "Please set it with your LangSmith API key.");
         }
 
-        String projectName = System.getenv("LANGSMITH_PROJECT");
-        String serviceName = System.getenv("OTEL_SERVICE_NAME");
-        String endpoint = System.getenv("LANGSMITH_OTLP_ENDPOINT");
-
-        return configureForLangSmith(apiKey, projectName, serviceName, endpoint);
+        // The builder already reads from environment variables by default
+        // We just need to ensure apiKey is set (throw error if not)
+        return builder().build();
     }
 
     /**
@@ -315,33 +508,33 @@ public final class OpenTelemetryConfig {
     }
 
     /**
-     * Builds the default OTLP endpoint URL.
-     * Priority order:
-     * 1. LANGSMITH_OTLP_ENDPOINT environment variable
-     * 2. LANGCHAIN_BASE_URL environment variable + /otel/v1/traces
-     * 3. Default production endpoint
+     * Builds the OTLP endpoint URL from a base URL.
      *
+     * <p>
+     * The endpoint is constructed as: baseUrl + OTLP_TRACES_PATH
+     *
+     * <p>
+     * If baseUrl is null or empty, defaults to DEFAULT_BASE_URL.
+     *
+     * @param baseUrl the base URL (can be null)
      * @return the OTLP endpoint URL
      */
-    private static String buildDefaultOtlpEndpoint() {
-        // First, check for explicit OTLP endpoint
-        String otlpEndpoint = System.getenv("LANGSMITH_OTLP_ENDPOINT");
-        if (otlpEndpoint != null && !otlpEndpoint.isEmpty()) {
-            return otlpEndpoint;
+    private static String buildOtlpEndpoint(String baseUrl) {
+        // Use provided base URL or default
+        String effectiveBaseUrl = baseUrl;
+        if (effectiveBaseUrl == null || effectiveBaseUrl.isEmpty()) {
+            effectiveBaseUrl = System.getenv("LANGCHAIN_BASE_URL");
+        }
+        if (effectiveBaseUrl == null || effectiveBaseUrl.isEmpty()) {
+            effectiveBaseUrl = DEFAULT_BASE_URL;
         }
 
-        // Second, check for LANGCHAIN_BASE_URL and append OTLP path
-        String baseUrl = System.getenv("LANGCHAIN_BASE_URL");
-        if (baseUrl != null && !baseUrl.isEmpty()) {
-            // Remove trailing slash if present
-            if (baseUrl.endsWith("/")) {
-                baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-            }
-            return baseUrl + "/otel/v1/traces";
+        // Remove trailing slash if present
+        if (effectiveBaseUrl.endsWith("/")) {
+            effectiveBaseUrl = effectiveBaseUrl.substring(0, effectiveBaseUrl.length() - 1);
         }
 
-        // Fall back to production default
-        return LANGSMITH_OTLP_ENDPOINT;
+        return effectiveBaseUrl + OTLP_TRACES_PATH;
     }
 
     /**

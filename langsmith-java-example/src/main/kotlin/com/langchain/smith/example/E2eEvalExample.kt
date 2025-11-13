@@ -15,10 +15,8 @@ import com.langchain.smith.wrappers.openai.WrappedOpenAIClient
 import com.openai.models.ChatModel
 import com.openai.models.chat.completions.ChatCompletion
 import com.openai.models.chat.completions.ChatCompletionCreateParams
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
 import java.time.OffsetDateTime
-import java.util.UUID
+import java.time.format.DateTimeFormatter
 
 /**
  * Demonstrates how to run real experiments in LangSmith using OpenAI with automatic tracing.
@@ -49,68 +47,6 @@ import java.util.UUID
  */
 
 /**
- * Generate a deterministic UUID v5 based on namespace and name.
- * This ensures idempotent example creation - the same inputs always generate the same ID.
- */
-fun generateUuid5ForExperiment(namespace: UUID, name: String): UUID {
-    val nameBytes = name.toByteArray(StandardCharsets.UTF_8)
-    val namespaceBytes = ByteArray(16)
-
-    // Convert namespace UUID to bytes
-    val bb = java.nio.ByteBuffer.wrap(namespaceBytes)
-    bb.putLong(namespace.mostSignificantBits)
-    bb.putLong(namespace.leastSignificantBits)
-
-    // Combine namespace and name
-    val combined = namespaceBytes + nameBytes
-
-    // Hash using SHA-1 (UUID v5 uses SHA-1)
-    val digest = MessageDigest.getInstance("SHA-1")
-    val hash = digest.digest(combined)
-
-    // Take first 16 bytes and set version/variant bits
-    hash[6] = ((hash[6].toInt() and 0x0F) or 0x50).toByte() // Version 5
-    hash[8] = ((hash[8].toInt() and 0x3F) or 0x80).toByte() // Variant
-
-    // Convert to UUID
-    val bb2 = java.nio.ByteBuffer.wrap(hash, 0, 16)
-    return UUID(bb2.long, bb2.long)
-}
-
-/**
- * Generate a deterministic example ID based on dataset ID, inputs, and reference outputs.
- */
-fun generateExampleIdForExperiment(datasetId: String, inputs: Map<String, Any>, referenceOutputs: Map<String, Any>): String {
-    // Use DNS namespace UUID as per UUID v5 spec
-    val namespace = UUID.fromString("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
-
-    // Create a stable string representation
-    val inputsJson = inputs.entries.sortedBy { it.key }.joinToString(",") { "${it.key}:${it.value}" }
-    val outputsJson = referenceOutputs.entries.sortedBy { it.key }.joinToString(",") { "${it.key}:${it.value}" }
-    val name = "$datasetId-$inputsJson-$outputsJson"
-
-    return generateUuid5ForExperiment(namespace, name).toString()
-}
-
-/**
- * Constructs the web URL for a dataset from the API base URL.
- */
-private fun buildDatasetUrlForExperiment(dataset: Dataset): String {
-    val baseUrl = System.getenv("LANGCHAIN_BASE_URL") ?: "https://api.smith.langchain.com"
-    val hostUrl = baseUrl.replace("api.", "")
-    return "$hostUrl/o/${dataset.tenantId()}/datasets/${dataset.id()}"
-}
-
-/**
- * Constructs the web URL for a session/experiment from the API base URL.
- */
-private fun buildSessionUrlForExperiment(tenantId: String, sessionId: String): String {
-    val baseUrl = System.getenv("LANGCHAIN_BASE_URL") ?: "https://api.smith.langchain.com"
-    val hostUrl = baseUrl.replace("api.", "")
-    return "$hostUrl/o/$tenantId/projects/p/$sessionId"
-}
-
-/**
  * Simple Q&A agent that uses OpenAI to answer questions.
  */
 class SimpleQAAgent(private val client: WrappedOpenAIClient, private val model: ChatModel = ChatModel.GPT_4O_MINI) {
@@ -138,8 +74,7 @@ fun main() {
     println()
 
     // Check required environment variables
-    val langsmithApiKey = System.getenv("LANGSMITH_API_KEY")
-    if (langsmithApiKey.isNullOrEmpty()) {
+    if (System.getenv("LANGSMITH_API_KEY").isNullOrEmpty()) {
         System.err.println("✗ Error: LANGSMITH_API_KEY environment variable is required")
         System.err.println("  Please set your LangSmith API key to run experiments")
         return
@@ -156,7 +91,7 @@ fun main() {
     val langsmithClient: LangsmithClient = LangsmithOkHttpClient.fromEnv()
 
     val datasetName = "Q&A Evaluation Dataset - Java Example"
-    val experimentName = "Q&A Experiment - Java"
+    val experimentName = "E2eEvalExample-${OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"))}"
 
     // Define test cases with questions and expected answers
     println("Defining test cases...")
@@ -201,7 +136,7 @@ fun main() {
         println("   ✓ Created new dataset (ID: ${created.id()})")
         created
     }
-    println("   → View dataset: ${buildDatasetUrlForExperiment(dataset)}")
+    println("   → View dataset: ${buildDatasetUrl(dataset)}")
     println()
 
     // 2. Create examples from test cases (idempotent with deterministic IDs)
@@ -211,7 +146,7 @@ fun main() {
         val referenceOutput = mapOf("answer" to testCase["expected_answer"]!!)
 
         // Generate deterministic ID for idempotent creation
-        val exampleId = generateExampleIdForExperiment(dataset.id(), input, referenceOutput)
+        val exampleId = generateExampleId(dataset.id(), input, referenceOutput)
 
         BulkCreateParams.Body.builder()
             .id(exampleId)
@@ -229,52 +164,28 @@ fun main() {
     println("   ✓ Created/updated ${createdExamples.size} examples with deterministic IDs")
     println()
 
-    // 3. Create or get experiment session linked to the dataset
+    // 3. Create experiment session linked to the dataset
+    // Each run creates a new session with a unique timestamped name
     println("3. Creating experiment session linked to dataset...")
-    val sessionListParams = com.langchain.smith.models.sessions.SessionListParams.builder()
+    val sessionParams = com.langchain.smith.models.sessions.SessionCreateParams.builder()
         .name(experimentName)
-        .referenceDataset(listOf(dataset.id()))
+        .description("Experiment session for Q&A evaluation using OpenAI")
+        .referenceDatasetId(dataset.id())  // Link session to dataset - critical for Experiments tab
         .build()
-    val existingSessions = langsmithClient.sessions().list(sessionListParams).toList()
-
-    // Handle both TracerSession (from list) and TracerSessionWithoutVirtualFields (from create)
-    val sessionName: String
-    val sessionId: String
-    val sessionTenantId: String
-
-    if (existingSessions.isNotEmpty()) {
-        val existing = existingSessions[0]
-        sessionName = existing.name().orElse(experimentName)
-        sessionId = existing.id()
-        sessionTenantId = existing.tenantId()
-        println("   ✓ Found existing session: $sessionName")
-    } else {
-        val sessionParams = com.langchain.smith.models.sessions.SessionCreateParams.builder()
-            .name(experimentName)
-            .description("Experiment session for Q&A evaluation using OpenAI")
-            .referenceDatasetId(dataset.id())  // Link session to dataset
-            .build()
-        val created = langsmithClient.sessions().create(sessionParams)
-        sessionName = created.name().orElse(experimentName)
-        sessionId = created.id()
-        sessionTenantId = created.tenantId()
-        println("   ✓ Created new session: $sessionName")
-    }
-    println("   ✓ Session linked to dataset for experiments tab")
+    val created = langsmithClient.sessions().create(sessionParams)
+    val sessionId = created.id()
+    val sessionTenantId = created.tenantId()
+    println("   ✓ Created experiment session: ${created.name()}")
+    println("   ✓ Session ID: $sessionId")
+    println("   ✓ Session linked to dataset")
     println()
 
-    // 4. Configure OpenTelemetry to send traces to this session
+    // 4. Configure OpenTelemetry to send traces to LangSmith
     println("4. Configuring OpenTelemetry for LangSmith...")
-    println("   Session: $sessionName")
-    OpenTelemetryConfig.configureForLangSmith(
-        langsmithApiKey,
-        sessionName,  // Use the session name so traces go to the right project
-        null, // service name (uses default)
-        null, // endpoint (uses default from LANGCHAIN_BASE_URL)
-        OpenTelemetryConfig.SpanProcessorType.SIMPLE, // Use SIMPLE for immediate export
-        1  // batch size of 1 for immediate export
-    )
-    println("   ✓ OpenTelemetry configured")
+    OpenTelemetryConfig.builder()
+        .processorType(OpenTelemetryConfig.SpanProcessorType.SIMPLE)
+        .build()
+    println("   ✓ OpenTelemetry configured to send traces with session_id attribute")
     println()
 
     // 5. Create wrapped OpenAI client
@@ -341,7 +252,7 @@ fun main() {
     println()
     println("What happened:")
     println("  • Dataset: $datasetName with ${createdExamples.size} examples")
-    println("  • Session: $sessionName linked to dataset")
+    println("  • Session: $experimentName linked to dataset")
     println("  • Experiment: ${testCases.size} runs with real OpenAI calls")
     println("  • Each run includes:")
     println("    - Input question from the dataset")
@@ -351,18 +262,18 @@ fun main() {
     println("    - Link to the dataset example via reference_example_id")
     println()
     println("How it works:")
-    println("  1. Create a session linked to the dataset (via reference_dataset_id)")
-    println("  2. Configure OpenTelemetry to send traces to that session")
-    println("  3. Use ExperimentContext to link each trace to its dataset example")
-    println("  4. WrappedOpenAIClient automatically creates and exports traces")
+    println("  1. Create/find a session linked to the dataset (via reference_dataset_id)")
+    println("  2. Configure OpenTelemetry WITHOUT passing project name (avoids overwriting session)")
+    println("  3. Use ExperimentContext.withExperiment() to set session_id + example_id on spans")
+    println("  4. WrappedOpenAIClient automatically creates and exports traces with proper linkage")
     println("  5. Experiment appears in dataset's 'Experiments' tab!")
     println()
     println("Next steps:")
     println("  1. View your experiment in LangSmith:")
-    println("     ${buildSessionUrlForExperiment(sessionTenantId, sessionId)}")
+    println("     ${buildSessionUrl(sessionTenantId, sessionId)}")
     println()
     println("  2. View the dataset and experiments tab:")
-    println("     ${buildDatasetUrlForExperiment(dataset)}")
+    println("     ${buildDatasetUrl(dataset)}")
     println()
     println("  3. In the LangSmith UI, you can:")
     println("     - Compare actual answers vs expected answers side-by-side")
@@ -371,8 +282,9 @@ fun main() {
     println("     - Analyze token usage and latency metrics")
     println()
     println("  4. Run this example again:")
-    println("     - Runs will be added to the same session")
-    println("     - Dataset, session, and examples are reused (idempotent)")
+    println("     - A new experiment session will be created with a unique timestamp")
+    println("     - Dataset and examples are reused (idempotent)")
+    println("     - Each run appears as a separate experiment in the Experiments tab")
     println("     - You can compare results across multiple experiment runs")
     println()
 }
