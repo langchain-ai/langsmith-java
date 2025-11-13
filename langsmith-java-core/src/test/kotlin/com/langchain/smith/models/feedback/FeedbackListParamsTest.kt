@@ -12,6 +12,7 @@ internal class FeedbackListParamsTest {
     @Test
     fun create() {
         FeedbackListParams.builder()
+            .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .hasComment(true)
             .hasScore(true)
             .includeUserNames(true)
@@ -32,6 +33,7 @@ internal class FeedbackListParamsTest {
     fun queryParams() {
         val params =
             FeedbackListParams.builder()
+                .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .hasComment(true)
                 .hasScore(true)
                 .includeUserNames(true)
@@ -52,6 +54,7 @@ internal class FeedbackListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
+                    .put("comparative_experiment_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("has_comment", "true")
                     .put("has_score", "true")
                     .put("include_user_names", "true")
