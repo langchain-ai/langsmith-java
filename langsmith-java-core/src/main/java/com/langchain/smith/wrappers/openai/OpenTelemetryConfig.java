@@ -135,7 +135,7 @@ public final class OpenTelemetryConfig {
          *
          * <p>
          * <b>Note:</b> For experiments, you may want to leave this unset and instead
-         * use {@link ExperimentContext#withExperiment(String, String, String)} to set
+         * use {@link ExperimentContext#withExperiment(String, String)} to set
          * the session ID via span attributes. This prevents the project name from
          * overwriting the session's reference_dataset_id.
          *
