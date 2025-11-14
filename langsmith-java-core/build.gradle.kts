@@ -37,7 +37,12 @@ dependencies {
     // OpenAI SDK (for OpenTelemetry wrappers)
     api("com.openai:openai-java:4.6.1")
 
+    // SLF4J for logging (API only - consumers choose implementation)
+    api("org.slf4j:slf4j-api:2.0.17")
+
     testImplementation(kotlin("test"))
+    // Simple logging for tests only
+    testImplementation("org.slf4j:slf4j-simple:2.0.17")
     testImplementation(project(":langsmith-java-client-okhttp"))
     testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.2")
     testImplementation("org.assertj:assertj-core:3.25.3")

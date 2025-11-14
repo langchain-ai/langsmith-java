@@ -10,6 +10,8 @@ import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Configuration utility for setting up OpenTelemetry to export traces to
@@ -18,23 +20,28 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * This class provides a convenient way to configure OpenTelemetry with
  * LangSmith's OTLP
- * endpoint. You can use this programmatically, or configure via environment
- * variables.
+ * endpoint using a Builder pattern. Configuration can be done programmatically
+ * or via environment variables.
  *
  * <p>
  * Example usage:
  *
  * <pre>{@code
  * // Configure OpenTelemetry for LangSmith before using the wrapper
- * OpenTelemetryConfig.configureForLangSmith(
- *     "your-langsmith-api-key",
- *     "your-project-name");
+ * OpenTelemetryConfig.builder()
+ *     .apiKey("your-langsmith-api-key")
+ *     .projectName("your-project-name")
+ *     .build();
+ *
+ * // Or using only environment variables (LANGSMITH_API_KEY, LANGSMITH_PROJECT)
+ * OpenTelemetryConfig.builder().build();
  *
  * // Now use the wrapped client - traces will be sent to LangSmith
  * WrappedOpenAIClient client = OpenAIWrappers.wrapFromEnv();
  * }</pre>
  */
 public final class OpenTelemetryConfig {
+    private static final Logger logger = LoggerFactory.getLogger(OpenTelemetryConfig.class);
 
     private OpenTelemetryConfig() {
         // Utility class
@@ -111,11 +118,11 @@ public final class OpenTelemetryConfig {
          *
          * <p>
          * If not set explicitly, the builder will use the value from the
-         * LANGSMITH_API_KEY environment variable.
+         * LANGSMITH_API_KEY environment variable. At least one of these must be provided.
          *
          * @param apiKey your LangSmith API key
          * @return this Builder for method chaining
-         * @throws IllegalArgumentException if apiKey is null or empty when build() is called
+         * @throws IllegalStateException if apiKey is null or empty when build() is called
          */
         public Builder apiKey(String apiKey) {
             this.apiKey = apiKey;
@@ -283,10 +290,76 @@ public final class OpenTelemetryConfig {
          * Builds and configures the OpenTelemetry instance.
          *
          * @return the configured OpenTelemetry instance
-         * @throws IllegalArgumentException if apiKey is not set
+         * @throws IllegalStateException if apiKey is not set
          */
         public OpenTelemetry build() {
-            return configureForLangSmith(apiKey, projectName, serviceName, baseUrl, processorType, maxBatchSize);
+            // Validate required fields
+            if (apiKey == null || apiKey.isEmpty()) {
+                throw new IllegalStateException("LangSmith API key is required. Set it using apiKey() or LANGSMITH_API_KEY environment variable.");
+            }
+
+            // Build OTLP endpoint from base URL
+            String endpointUrl = buildOtlpEndpoint(baseUrl);
+
+            // Create OTLP HTTP exporter configured for LangSmith
+            // Build the exporter with conditional headers
+            // Note: Using Object to work around Java 8 limitation (can't use var)
+            // The builder() method returns a builder that supports method chaining
+            Object builder = OtlpHttpSpanExporter.builder().setEndpoint(endpointUrl).addHeader("x-api-key", apiKey);
+
+            // Only add project header if projectName is not null and not empty
+            if (projectName != null && !projectName.isEmpty()) {
+                // Use reflection to call addHeader on the builder
+                try {
+                    java.lang.reflect.Method addHeaderMethod =
+                            builder.getClass().getMethod("addHeader", String.class, String.class);
+                    builder = addHeaderMethod.invoke(builder, "Langsmith-Project", projectName);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to add project header", e);
+                }
+            }
+
+            // Build the exporter using reflection
+            OtlpHttpSpanExporter spanExporter;
+            try {
+                java.lang.reflect.Method buildMethod = builder.getClass().getMethod("build");
+                spanExporter = (OtlpHttpSpanExporter) buildMethod.invoke(builder);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to build OtlpHttpSpanExporter", e);
+            }
+
+            // Wrap exporter to log export errors
+            SpanExporter loggingExporter = new LoggingSpanExporter(spanExporter);
+
+            // Create resource with service name
+            Resource resource = Resource.getDefault()
+                    .merge(Resource.builder()
+                            .put("service.name", serviceName != null ? serviceName : "langsmith-java-otel-wrappers")
+                            .build());
+
+            // Build and configure span processor based on type
+            SpanProcessor spanProcessor;
+            if (processorType == SpanProcessorType.SIMPLE) {
+                // SimpleSpanProcessor - exports synchronously on span.end()
+                // Good for testing, but blocks the application thread
+                spanProcessor = SimpleSpanProcessor.create(loggingExporter);
+            } else {
+                // BatchSpanProcessor - queues and exports in batches
+                // Good for production, non-blocking
+                // If maxBatchSize is 1, spans are exported immediately as they complete
+                spanProcessor = BatchSpanProcessor.builder(loggingExporter)
+                        .setScheduleDelay(100, TimeUnit.MILLISECONDS) // Export every 100ms
+                        .setMaxExportBatchSize(maxBatchSize) // Trigger export when batch reaches this size
+                        .setExporterTimeout(5, TimeUnit.SECONDS) // 5 second timeout
+                        .build();
+            }
+
+            SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                    .addSpanProcessor(spanProcessor)
+                    .setResource(resource)
+                    .build();
+
+            return OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
         }
     }
 
@@ -297,168 +370,6 @@ public final class OpenTelemetryConfig {
      */
     public static Builder builder() {
         return new Builder();
-    }
-
-    /**
-     * Configures OpenTelemetry to export traces to LangSmith.
-     *
-     * <p>
-     * This method configures the global OpenTelemetry instance to send traces to
-     * LangSmith's
-     * OTLP endpoint. After calling this method, all spans created by the wrapped
-     * OpenAI client
-     * will be exported to LangSmith.
-     *
-     * @param apiKey      your LangSmith API key
-     * @param projectName your LangSmith project name (optional, can be null)
-     * @return the configured OpenTelemetry instance
-     */
-    public static OpenTelemetry configureForLangSmith(String apiKey, String projectName) {
-        return configureForLangSmith(apiKey, projectName, null, null, SpanProcessorType.BATCH, 512);
-    }
-
-    /**
-     * Configures OpenTelemetry to export traces to LangSmith with a custom service
-     * name.
-     *
-     * @param apiKey      your LangSmith API key
-     * @param projectName your LangSmith project name (optional, can be null)
-     * @param serviceName the service name to identify your application (defaults to
-     *                    "langsmith-java-otel-wrappers")
-     * @return the configured OpenTelemetry instance
-     */
-    public static OpenTelemetry configureForLangSmith(String apiKey, String projectName, String serviceName) {
-        return configureForLangSmith(apiKey, projectName, serviceName, null, SpanProcessorType.BATCH, 512);
-    }
-
-    /**
-     * Configures OpenTelemetry to export traces to LangSmith with custom span
-     * processor type and batch size.
-     *
-     * @param apiKey        your LangSmith API key
-     * @param projectName   your LangSmith project name (optional, can be null)
-     * @param serviceName   the service name to identify your application
-     *                      (defaults to "langsmith-java-otel-wrappers")
-     * @param baseUrl       the LangSmith base URL (optional, defaults to
-     *                      LANGCHAIN_BASE_URL env var or DEFAULT_BASE_URL constant)
-     * @param processorType the span processor type (BATCH or SIMPLE)
-     * @param maxBatchSize  the maximum batch size before export is triggered
-     *                      (only used for BATCH processor, set to 1 for
-     *                      immediate export)
-     * @return the configured OpenTelemetry instance
-     */
-    public static OpenTelemetry configureForLangSmith(
-            String apiKey,
-            String projectName,
-            String serviceName,
-            String baseUrl,
-            SpanProcessorType processorType,
-            int maxBatchSize) {
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new IllegalArgumentException("LangSmith API key cannot be null or empty");
-        }
-
-        // Build OTLP endpoint from base URL
-        String endpointUrl = buildOtlpEndpoint(baseUrl);
-
-        // Create OTLP HTTP exporter configured for LangSmith
-        // Build the exporter with conditional headers
-        // Note: Using Object to work around Java 8 limitation (can't use var)
-        // The builder() method returns a builder that supports method chaining
-        Object builder = OtlpHttpSpanExporter.builder().setEndpoint(endpointUrl).addHeader("x-api-key", apiKey);
-
-        // Only add project header if projectName is not null and not empty
-        if (projectName != null && !projectName.isEmpty()) {
-            // Use reflection to call addHeader on the builder
-            try {
-                java.lang.reflect.Method addHeaderMethod =
-                        builder.getClass().getMethod("addHeader", String.class, String.class);
-                builder = addHeaderMethod.invoke(builder, "Langsmith-Project", projectName);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to add project header", e);
-            }
-        }
-
-        // Build the exporter using reflection
-        OtlpHttpSpanExporter spanExporter;
-        try {
-            java.lang.reflect.Method buildMethod = builder.getClass().getMethod("build");
-            spanExporter = (OtlpHttpSpanExporter) buildMethod.invoke(builder);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to build OtlpHttpSpanExporter", e);
-        }
-
-        // Wrap exporter to log export errors
-        SpanExporter loggingExporter = new LoggingSpanExporter(spanExporter);
-
-        // Create resource with service name
-        Resource resource = Resource.getDefault()
-                .merge(Resource.builder()
-                        .put("service.name", serviceName != null ? serviceName : "langsmith-java-otel-wrappers")
-                        .build());
-
-        // Build and configure span processor based on type
-        SpanProcessor spanProcessor;
-        if (processorType == SpanProcessorType.SIMPLE) {
-            // SimpleSpanProcessor - exports synchronously on span.end()
-            // Good for testing, but blocks the application thread
-            spanProcessor = SimpleSpanProcessor.create(loggingExporter);
-        } else {
-            // BatchSpanProcessor - queues and exports in batches
-            // Good for production, non-blocking
-            // If maxBatchSize is 1, spans are exported immediately as they complete
-            spanProcessor = BatchSpanProcessor.builder(loggingExporter)
-                    .setScheduleDelay(100, TimeUnit.MILLISECONDS) // Export every 100ms
-                    .setMaxExportBatchSize(maxBatchSize) // Trigger export when batch reaches this size
-                    .setExporterTimeout(5, TimeUnit.SECONDS) // 5 second timeout
-                    .build();
-        }
-
-        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
-                .addSpanProcessor(spanProcessor)
-                .setResource(resource)
-                .build();
-
-        OpenTelemetry openTelemetry =
-                OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
-
-        return openTelemetry;
-    }
-
-    /**
-     * Configures OpenTelemetry from environment variables.
-     *
-     * <p>
-     * Reads configuration from the following environment variables:
-     * <ul>
-     * <li>LANGSMITH_API_KEY - Required: Your LangSmith API key</li>
-     * <li>LANGSMITH_PROJECT - Optional: Your LangSmith project name</li>
-     * <li>OTEL_SERVICE_NAME - Optional: Service name (defaults to
-     * "langsmith-java-otel-wrappers")</li>
-     * <li>LANGCHAIN_BASE_URL - Optional: Base URL for LangSmith API (if set, OTLP endpoint
-     * will be automatically constructed as base_url + "/otel/v1/traces")</li>
-     * </ul>
-     *
-     * <p>
-     * The OTLP endpoint is constructed as:
-     * <ul>
-     * <li>LANGCHAIN_BASE_URL + "/otel/v1/traces" (if LANGCHAIN_BASE_URL is set)</li>
-     * <li>Production default: "https://api.smith.langchain.com/otel/v1/traces" (if not set)</li>
-     * </ul>
-     *
-     * @return the configured OpenTelemetry instance
-     * @throws IllegalStateException if LANGSMITH_API_KEY is not set
-     */
-    public static OpenTelemetry configureFromEnv() {
-        String apiKey = System.getenv("LANGSMITH_API_KEY");
-        if (apiKey == null || apiKey.isEmpty()) {
-            throw new IllegalStateException("LANGSMITH_API_KEY environment variable is required. "
-                    + "Please set it with your LangSmith API key.");
-        }
-
-        // The builder already reads from environment variables by default
-        // We just need to ensure apiKey is set (throw error if not)
-        return builder().build();
     }
 
     /**
@@ -486,7 +397,6 @@ public final class OpenTelemetryConfig {
         if (openTelemetry instanceof OpenTelemetrySdk) {
             // Don't close the SDK instance - it's the global instance that should remain
             // alive
-            @SuppressWarnings("resource")
             OpenTelemetrySdk sdk = (OpenTelemetrySdk) openTelemetry;
             SdkTracerProvider tracerProvider = sdk.getSdkTracerProvider();
             if (tracerProvider != null) {
@@ -494,12 +404,11 @@ public final class OpenTelemetryConfig {
                     io.opentelemetry.sdk.common.CompletableResultCode result = tracerProvider.forceFlush();
                     result.join(timeout, unit);
                     if (!result.isSuccess()) {
-                        System.err.println("Warning: Flush did not complete successfully");
+                        logger.warn("Flush did not complete successfully");
                     }
                     return result.isSuccess();
                 } catch (Exception e) {
-                    System.err.println("Warning: Failed to flush spans: " + e.getMessage());
-                    e.printStackTrace();
+                    logger.warn("Failed to flush spans", e);
                     return false;
                 }
             }
@@ -553,8 +462,7 @@ public final class OpenTelemetryConfig {
                 try {
                     tracerProvider.shutdown().join(5, TimeUnit.SECONDS);
                 } catch (Exception e) {
-                    System.err.println("Warning: Failed to shutdown OpenTelemetry: " + e.getMessage());
-                    e.printStackTrace();
+                    logger.warn("Failed to shutdown OpenTelemetry", e);
                 }
             }
         }
@@ -576,9 +484,9 @@ public final class OpenTelemetryConfig {
         public io.opentelemetry.sdk.common.CompletableResultCode export(
                 java.util.Collection<io.opentelemetry.sdk.trace.data.SpanData> spans) {
             if (DEBUG) {
-                System.out.println("[LangSmith] Exporting " + spans.size() + " span(s):");
+                logger.debug("[LangSmith] Exporting " + spans.size() + " span(s):");
                 for (io.opentelemetry.sdk.trace.data.SpanData span : spans) {
-                    System.out.println("  - " + span.getName()
+                    logger.debug("  - " + span.getName()
                             + " (kind=" + span.getKind()
                             + ", attributes=" + span.getAttributes().size() + ")");
                 }
@@ -595,25 +503,22 @@ public final class OpenTelemetryConfig {
                 try {
                     result.join(5, java.util.concurrent.TimeUnit.SECONDS);
                     if (!result.isSuccess()) {
-                        System.err.println(
-                                "[LangSmith ERROR] Failed to export " + spans.size() + " span(s) to LangSmith");
-                        System.err.println("  This usually indicates a network error or authentication problem");
-                        System.err.println("  Check your LANGSMITH_API_KEY and network connectivity");
+                        logger.error("[LangSmith ERROR] Failed to export " + spans.size() + " span(s) to LangSmith");
+                        logger.error("  This usually indicates a network error or authentication problem");
+                        logger.error("  Check your LANGSMITH_API_KEY and network connectivity");
                     } else {
-                        System.out.println("[LangSmith] Successfully exported " + spans.size() + " span(s)");
+                        logger.debug("[LangSmith] Successfully exported " + spans.size() + " span(s)");
                     }
                 } catch (Exception e) {
-                    System.err.println("[LangSmith ERROR] Exception waiting for export result: " + e.getMessage());
-                    e.printStackTrace();
+                    logger.error("[LangSmith ERROR] Exception waiting for export result", e);
                 }
             } else {
                 // Without DEBUG, still log errors but don't block
                 result.whenComplete(() -> {
                     if (!result.isSuccess()) {
-                        System.err.println(
-                                "[LangSmith ERROR] Failed to export " + spans.size() + " span(s) to LangSmith");
-                        System.err.println("  This usually indicates a network error or authentication problem");
-                        System.err.println("  Check your LANGSMITH_API_KEY and network connectivity");
+                        logger.error("[LangSmith ERROR] Failed to export " + spans.size() + " span(s) to LangSmith");
+                        logger.error("  This usually indicates a network error or authentication problem");
+                        logger.error("  Check your LANGSMITH_API_KEY and network connectivity");
                     }
                 });
             }
@@ -623,14 +528,14 @@ public final class OpenTelemetryConfig {
         @Override
         public io.opentelemetry.sdk.common.CompletableResultCode flush() {
             if (DEBUG) {
-                System.out.println("[LangSmith] Flushing spans...");
+                logger.debug("[LangSmith] Flushing spans...");
             }
             io.opentelemetry.sdk.common.CompletableResultCode result = delegate.flush();
             result.whenComplete(() -> {
                 if (!result.isSuccess()) {
-                    System.err.println("[LangSmith ERROR] Failed to flush spans");
+                    logger.error("[LangSmith ERROR] Failed to flush spans");
                 } else if (DEBUG) {
-                    System.out.println("[LangSmith] Flush completed successfully");
+                    logger.debug("[LangSmith] Flush completed successfully");
                 }
             });
             return result;
@@ -639,7 +544,7 @@ public final class OpenTelemetryConfig {
         @Override
         public io.opentelemetry.sdk.common.CompletableResultCode shutdown() {
             if (DEBUG) {
-                System.out.println("[LangSmith] Shutting down span exporter...");
+                logger.debug("[LangSmith] Shutting down span exporter...");
             }
             return delegate.shutdown();
         }
