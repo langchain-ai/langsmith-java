@@ -245,7 +245,7 @@ public final class OpenTelemetryConfig {
          * @return this Builder for method chaining
          * @see SpanProcessorType
          */
-        public Builder processorType(SpanProcessorType Ignore ) {
+        public Builder processorType(SpanProcessorType processorType) {
             this.processorType = processorType;
             return this;
         }
@@ -305,9 +305,8 @@ public final class OpenTelemetryConfig {
             String endpointUrl = buildOtlpEndpoint(baseUrl);
 
             // Create OTLP HTTP exporter configured for LangSmith
-            OtlpHttpSpanExporterBuilder exporterBuilder = OtlpHttpSpanExporter.builder()
-                    .setEndpoint(endpointUrl)
-                    .addHeader("x-api-key", apiKey);
+            OtlpHttpSpanExporterBuilder exporterBuilder =
+                    OtlpHttpSpanExporter.builder().setEndpoint(endpointUrl).addHeader("x-api-key", apiKey);
 
             // Only add project header if projectName is not null and not empty
             if (projectName != null && !projectName.isEmpty()) {
