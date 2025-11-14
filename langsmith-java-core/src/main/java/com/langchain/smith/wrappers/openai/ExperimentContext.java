@@ -3,10 +3,10 @@ package com.langchain.smith.wrappers.openai;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.ContextKey;
 import io.opentelemetry.context.Scope;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Immutable context for experiment metadata that will be automatically
@@ -43,8 +43,7 @@ import java.util.Map;
  */
 public final class ExperimentContext {
 
-    private static final ContextKey<ExperimentData> CONTEXT_KEY =
-            ContextKey.named("langsmith-experiment-context");
+    private static final ContextKey<ExperimentData> CONTEXT_KEY = ContextKey.named("langsmith-experiment-context");
 
     private final ExperimentData data;
 
@@ -130,19 +129,19 @@ public final class ExperimentContext {
     /**
      * Gets the reference example ID.
      *
-     * @return the reference example ID, or null if not set
+     * @return an Optional containing the reference example ID, or empty if not set
      */
-    public String getReferenceExampleId() {
-        return data.referenceExampleId;
+    public Optional<String> getReferenceExampleId() {
+        return Optional.ofNullable(data.referenceExampleId);
     }
 
     /**
      * Gets the session ID.
      *
-     * @return the session ID, or null if not set
+     * @return an Optional containing the session ID, or empty if not set
      */
-    public String getSessionId() {
-        return data.sessionId;
+    public Optional<String> getSessionId() {
+        return Optional.ofNullable(data.sessionId);
     }
 
     /**
@@ -162,10 +161,7 @@ public final class ExperimentContext {
         final String sessionId;
         final Map<String, String> metadata;
 
-        private ExperimentData(
-                String referenceExampleId,
-                String sessionId,
-                Map<String, String> metadata) {
+        private ExperimentData(String referenceExampleId, String sessionId, Map<String, String> metadata) {
             this.referenceExampleId = referenceExampleId;
             this.sessionId = sessionId;
             this.metadata = Collections.unmodifiableMap(new HashMap<>(metadata));
