@@ -80,15 +80,18 @@ class WrappedChatService implements ChatService {
         @Override
         public ChatCompletion create(ChatCompletionCreateParams params, RequestOptions requestOptions) {
             // Extract model from params for span naming
-            String model = params.model() != null ? params.model().toString() : "unknown";
+            String model = params.model() != null ? params.model().toString() : null;
 
             Span span = TracingUtils.createSpanBuilder(model, "chat").startSpan();
 
             // Debug: Check if span is recording (not a noop span)
             if (logger.isDebugEnabled()) {
                 boolean isRecording = span.isRecording();
-                logger.debug("[WrappedChatService] Created span: {}, isRecording: {}, traceId: {}",
-                        span.getSpanContext().getSpanId(), isRecording, span.getSpanContext().getTraceId());
+                logger.debug(
+                        "[WrappedChatService] Created span: {}, isRecording: {}, traceId: {}",
+                        span.getSpanContext().getSpanId(),
+                        isRecording,
+                        span.getSpanContext().getTraceId());
             }
 
             try (Scope scope = span.makeCurrent()) {
@@ -117,11 +120,10 @@ class WrappedChatService implements ChatService {
                 }
 
                 // Extract response model and finish reason
-                String responseModel = result.model() != null ? result.model().toString() : null;
-                String finishReason =
-                        !result.choices().isEmpty() && result.choices().get(0).finishReason() != null
-                                ? result.choices().get(0).finishReason().toString()
-                                : "stop";
+                String responseModel = result.model();
+                String finishReason = !result.choices().isEmpty()
+                        ? result.choices().get(0).finishReason().toString()
+                        : "stop";
                 TracingUtils.setResponseMetadata(span, responseModel, finishReason);
 
                 // Capture output messages in JSON format
@@ -144,11 +146,15 @@ class WrappedChatService implements ChatService {
                 throw e;
             } finally {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[WrappedChatService] Ending span: {}", span.getSpanContext().getSpanId());
+                    logger.debug(
+                            "[WrappedChatService] Ending span: {}",
+                            span.getSpanContext().getSpanId());
                 }
                 span.end();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[WrappedChatService] Span ended: {}", span.getSpanContext().getSpanId());
+                    logger.debug(
+                            "[WrappedChatService] Span ended: {}",
+                            span.getSpanContext().getSpanId());
                 }
             }
         }
@@ -161,17 +167,17 @@ class WrappedChatService implements ChatService {
          */
         private void setExperimentContextAttributes(Span span) {
             // Set reference example ID if present
-            String referenceExampleId = ExperimentContext.current().getReferenceExampleId();
-            if (referenceExampleId != null && !referenceExampleId.isEmpty()) {
-                span.setAttribute("langsmith.reference_example_id", referenceExampleId);
-            }
+            ExperimentContext.current()
+                    .getReferenceExampleId()
+                    .filter(id -> !id.isEmpty())
+                    .ifPresent(id -> span.setAttribute("langsmith.reference_example_id", id));
 
             // Set session ID (experiment ID) if present
             // This is critical for linking runs to experiments in the dataset's Experiments tab
-            String sessionId = ExperimentContext.current().getSessionId();
-            if (sessionId != null && !sessionId.isEmpty()) {
-                span.setAttribute("langsmith.trace.session_id", sessionId);
-            }
+            ExperimentContext.current()
+                    .getSessionId()
+                    .filter(id -> !id.isEmpty())
+                    .ifPresent(id -> span.setAttribute("langsmith.trace.session_id", id));
 
             // Set custom metadata
             java.util.Map<String, String> metadata = ExperimentContext.current().getMetadata();
@@ -189,12 +195,14 @@ class WrappedChatService implements ChatService {
          * LangSmith conventions.
          */
         private String formatInputMessages(ChatCompletionCreateParams params) {
-            if (params.messages() == null || params.messages().isEmpty()) {
+            if (params.messages().isEmpty()) {
                 return "[]";
             }
 
             if (logger.isDebugEnabled()) {
-                logger.debug("[formatInputMessages] Processing {} message(s)", params.messages().size());
+                logger.debug(
+                        "[formatInputMessages] Processing {} message(s)",
+                        params.messages().size());
             }
 
             StringBuilder json = new StringBuilder("[");
@@ -221,7 +229,8 @@ class WrappedChatService implements ChatService {
                     logger.debug("[formatInputMessages] Processing message: {}", fullClassName);
                     java.lang.reflect.Method[] allMethods =
                             messageParam.getClass().getMethods();
-                    logger.debug("[formatInputMessages] Available methods: {}",
+                    logger.debug(
+                            "[formatInputMessages] Available methods: {}",
                             java.util.Arrays.stream(allMethods)
                                     .map(m -> m.getName() + "(" + m.getParameterCount() + ")")
                                     .collect(java.util.stream.Collectors.joining(", ")));
@@ -255,7 +264,8 @@ class WrappedChatService implements ChatService {
                         actualMessage = asUserMethod.invoke(messageParam);
                         role = "user";
                         if (logger.isDebugEnabled()) {
-                            logger.debug("[formatInputMessages] Found user message: {}",
+                            logger.debug(
+                                    "[formatInputMessages] Found user message: {}",
                                     actualMessage.getClass().getName());
                         }
                     } else if (isSystem) {
@@ -264,7 +274,8 @@ class WrappedChatService implements ChatService {
                         actualMessage = asSystemMethod.invoke(messageParam);
                         role = "system";
                         if (logger.isDebugEnabled()) {
-                            logger.debug("[formatInputMessages] Found system message: {}",
+                            logger.debug(
+                                    "[formatInputMessages] Found system message: {}",
                                     actualMessage.getClass().getName());
                         }
                     } else if (isAssistant) {
@@ -273,7 +284,8 @@ class WrappedChatService implements ChatService {
                         actualMessage = asAssistantMethod.invoke(messageParam);
                         role = "assistant";
                         if (logger.isDebugEnabled()) {
-                            logger.debug("[formatInputMessages] Found assistant message: {}",
+                            logger.debug(
+                                    "[formatInputMessages] Found assistant message: {}",
                                     actualMessage.getClass().getName());
                         }
                     } else if (isTool) {
@@ -282,7 +294,8 @@ class WrappedChatService implements ChatService {
                         actualMessage = asToolMethod.invoke(messageParam);
                         role = "tool";
                         if (logger.isDebugEnabled()) {
-                            logger.debug("[formatInputMessages] Found tool message: {}",
+                            logger.debug(
+                                    "[formatInputMessages] Found tool message: {}",
                                     actualMessage.getClass().getName());
                         }
                     }
@@ -295,8 +308,11 @@ class WrappedChatService implements ChatService {
                             Object contentResult = contentMethod.invoke(actualMessage);
 
                             if (logger.isDebugEnabled()) {
-                                logger.debug("[formatInputMessages] content() returned: {}",
-                                        contentResult != null ? contentResult.getClass().getName() : "null");
+                                logger.debug(
+                                        "[formatInputMessages] content() returned: {}",
+                                        contentResult != null
+                                                ? contentResult.getClass().getName()
+                                                : "null");
                             }
 
                             // Content might be a Content object with text() method
@@ -496,8 +512,10 @@ class WrappedChatService implements ChatService {
                 }
 
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[formatInputMessages] Final: role={}, content={}",
-                            role, content != null ? content.substring(0, Math.min(50, content.length())) : "null");
+                    logger.debug(
+                            "[formatInputMessages] Final: role={}, content={}",
+                            role,
+                            content != null ? content.substring(0, Math.min(50, content.length())) : "null");
                 }
 
                 json.append("}");
@@ -548,8 +566,7 @@ class WrappedChatService implements ChatService {
          * @param functionToolCall the function tool call object from the OpenAI SDK
          * @param parentSpan       the parent span (the chat completion span)
          */
-        private void createToolCallSpan(
-                ChatCompletionMessageFunctionToolCall functionToolCall, Span parentSpan) {
+        private void createToolCallSpan(ChatCompletionMessageFunctionToolCall functionToolCall, Span parentSpan) {
             try {
                 io.opentelemetry.api.OpenTelemetry openTelemetry = io.opentelemetry.api.GlobalOpenTelemetry.get();
                 io.opentelemetry.api.trace.Tracer tracer = openTelemetry.getTracer("langsmith-java-otel-wrappers");
@@ -587,8 +604,11 @@ class WrappedChatService implements ChatService {
                     }
 
                     if (logger.isDebugEnabled()) {
-                        logger.debug("[WrappedChatService] Created tool call span: {}, tool={}, arguments={}, parent={}",
-                                toolCallSpan.getSpanContext().getSpanId(), toolName, toolArguments,
+                        logger.debug(
+                                "[WrappedChatService] Created tool call span: {}, tool={}, arguments={}, parent={}",
+                                toolCallSpan.getSpanContext().getSpanId(),
+                                toolName,
+                                toolArguments,
                                 parentSpan.getSpanContext().getSpanId());
                     }
 
@@ -654,7 +674,7 @@ class WrappedChatService implements ChatService {
                             && params.rawParams() != null
                             && params.rawParams().model() != null
                     ? params.rawParams().model().toString()
-                    : "unknown";
+                    : null;
 
             Span span = TracingUtils.createSpanBuilder(model, "chat").startSpan();
 
@@ -712,7 +732,7 @@ class WrappedChatService implements ChatService {
         @Override
         public StreamResponse<ChatCompletionChunk> createStreaming(
                 ChatCompletionCreateParams params, RequestOptions requestOptions) {
-            String model = params.model() != null ? params.model().toString() : "unknown";
+            String model = params.model() != null ? params.model().toString() : null;
 
             Span span = TracingUtils.createSpanBuilder(model, "chat").startSpan();
 

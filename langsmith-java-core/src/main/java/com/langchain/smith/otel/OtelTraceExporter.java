@@ -148,8 +148,8 @@ public final class OtelTraceExporter {
         }
 
         // Log configuration for debugging
-        logger.debug("Created OpenTelemetry SDK with endpoint: {}, timeout: {}",
-            config.getEndpoint(), config.getTimeout());
+        logger.debug(
+                "Created OpenTelemetry SDK with endpoint: {}, timeout: {}", config.getEndpoint(), config.getTimeout());
         logger.debug("Headers: {}", config.getHeaders());
         logger.debug("Service name: {}, Project name: {}", serviceName, projectName);
 

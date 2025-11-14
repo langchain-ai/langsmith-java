@@ -62,7 +62,8 @@ class WrappedResponseService implements ResponseService {
     @Override
     public Response create(ResponseCreateParams params, RequestOptions requestOptions) {
         // Extract model from params
-        String model = params != null && params.model() != null ? params.model().toString() : "unknown";
+        String model =
+                params != null && params.model().isPresent() ? params.model().toString() : null;
 
         Span span = TracingUtils.createSpanBuilder(model, "response").startSpan();
 
@@ -123,7 +124,7 @@ class WrappedResponseService implements ResponseService {
                         && params.rawParams() != null
                         && params.rawParams().model() != null
                 ? params.rawParams().model().toString()
-                : "unknown";
+                : null;
 
         Span span = TracingUtils.createSpanBuilder(model, "response").startSpan();
 
@@ -185,7 +186,7 @@ class WrappedResponseService implements ResponseService {
     @Override
     public StreamResponse<ResponseStreamEvent> createStreaming(
             ResponseCreateParams params, RequestOptions requestOptions) {
-        String model = params != null && params.model() != null ? params.model().toString() : "unknown";
+        String model = params != null && params.model() != null ? params.model().toString() : null;
 
         Span span = TracingUtils.createSpanBuilder(model, "response").startSpan();
 
@@ -235,7 +236,7 @@ class WrappedResponseService implements ResponseService {
                         && params.rawParams() != null
                         && params.rawParams().model() != null
                 ? params.rawParams().model().toString()
-                : "unknown";
+                : null;
 
         Span span = TracingUtils.createSpanBuilder(model, "response").startSpan();
 
@@ -279,17 +280,17 @@ class WrappedResponseService implements ResponseService {
      */
     private void setExperimentContextAttributes(Span span) {
         // Set reference example ID if present
-        String referenceExampleId = ExperimentContext.current().getReferenceExampleId();
-        if (referenceExampleId != null && !referenceExampleId.isEmpty()) {
-            span.setAttribute("langsmith.reference_example_id", referenceExampleId);
-        }
+        ExperimentContext.current()
+                .getReferenceExampleId()
+                .filter(id -> !id.isEmpty())
+                .ifPresent(id -> span.setAttribute("langsmith.reference_example_id", id));
 
         // Set session ID (experiment ID) if present
         // This is critical for linking runs to experiments in the dataset's Experiments tab
-        String sessionId = ExperimentContext.current().getSessionId();
-        if (sessionId != null && !sessionId.isEmpty()) {
-            span.setAttribute("langsmith.trace.session_id", sessionId);
-        }
+        ExperimentContext.current()
+                .getSessionId()
+                .filter(id -> !id.isEmpty())
+                .ifPresent(id -> span.setAttribute("langsmith.trace.session_id", id));
 
         // Set custom metadata
         java.util.Map<String, String> metadata = ExperimentContext.current().getMetadata();

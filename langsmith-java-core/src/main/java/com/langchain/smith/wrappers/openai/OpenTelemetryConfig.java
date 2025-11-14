@@ -295,7 +295,9 @@ public final class OpenTelemetryConfig {
         public OpenTelemetry build() {
             // Validate required fields
             if (apiKey == null || apiKey.isEmpty()) {
-                throw new IllegalStateException("LangSmith API key is required. Set it using apiKey() or LANGSMITH_API_KEY environment variable.");
+                throw new IllegalStateException(
+                        "LangSmith API key is required. Set it using apiKey() or LANGSMITH_API_KEY environment"
+                                + " variable.");
             }
 
             // Build OTLP endpoint from base URL
@@ -305,7 +307,8 @@ public final class OpenTelemetryConfig {
             // Build the exporter with conditional headers
             // Note: Using Object to work around Java 8 limitation (can't use var)
             // The builder() method returns a builder that supports method chaining
-            Object builder = OtlpHttpSpanExporter.builder().setEndpoint(endpointUrl).addHeader("x-api-key", apiKey);
+            Object builder =
+                    OtlpHttpSpanExporter.builder().setEndpoint(endpointUrl).addHeader("x-api-key", apiKey);
 
             // Only add project header if projectName is not null and not empty
             if (projectName != null && !projectName.isEmpty()) {
