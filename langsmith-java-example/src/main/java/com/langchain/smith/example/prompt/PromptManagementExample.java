@@ -309,13 +309,11 @@ public class PromptManagementExample {
     private static boolean createCommit(LangsmithClient client, String promptName, String owner, String parentCommit) {
         System.out.println("3. Adding prompt content using client.commits().update()...");
         Map<String, Object> manifest = createChatPromptWithMultipleMessages(
-                "You are a helpful assistant that tells jokes.",
-                "Tell me a joke about {topic}",
-                new String[] {"topic"});
+                "You are a helpful assistant that tells jokes.", "Tell me a joke about {topic}", new String[] {"topic"
+                });
 
-        CommitUpdateParams.Builder builder = CommitUpdateParams.builder()
-                .owner(owner)
-                .manifest(JsonValue.from(manifest));
+        CommitUpdateParams.Builder builder =
+                CommitUpdateParams.builder().owner(owner).manifest(JsonValue.from(manifest));
         if (parentCommit != null) {
             builder.parentCommit(parentCommit);
         }
