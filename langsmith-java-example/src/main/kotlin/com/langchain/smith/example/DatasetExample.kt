@@ -22,7 +22,6 @@ import com.langchain.smith.models.examples.bulk.BulkCreateParams
  * ## Prerequisites
  * Set these environment variables before running:
  * - `LANGSMITH_API_KEY`: Your LangSmith API key
- * - `LANGCHAIN_BASE_URL`: LangSmith API URL (e.g., https://api.smith.langchain.com)
  *
  * ## Running
  * ```bash

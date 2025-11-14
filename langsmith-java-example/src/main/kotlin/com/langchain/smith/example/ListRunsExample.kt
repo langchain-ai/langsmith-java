@@ -16,7 +16,6 @@ import kotlin.system.exitProcess
  * ## Prerequisites
  * Set these environment variables before running:
  * - `LANGSMITH_API_KEY`: Your LangSmith API key
- * - `LANGSMITH_BASE_URL`: LangSmith API URL (e.g., https://api.smith.langchain.com)
  * - `LANGSMITH_PROJECT_ID`: The project ID to query runs from (find in LangSmith UI → Settings)
  *
  * ## Running

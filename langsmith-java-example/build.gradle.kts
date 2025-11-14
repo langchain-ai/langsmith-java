@@ -15,11 +15,20 @@ dependencies {
 
     // Jackson for JSON handling in examples
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
+    // OpenAI SDK for RunExperimentExample
+    implementation("com.openai:openai-java:4.6.1")
+
+    // SLF4J logging backend for examples
+    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
 
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude(group = "ch.qos.logback", module = "logback-classic")
+    }
+    implementation("org.springframework.boot:spring-boot-starter") {
+        exclude(group = "ch.qos.logback", module = "logback-classic")
+    }
 }
 
 tasks.withType<JavaCompile>().configureEach {
