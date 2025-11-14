@@ -77,8 +77,15 @@ public final class ExperimentContext {
      * @param exampleId the reference example ID from your LangSmith dataset
      * @param sessionId the session/experiment UUID
      * @return a Scope that will restore the previous context when closed
+     * @throws IllegalArgumentException if exampleId or sessionId is null or empty
      */
     public static Scope withExperiment(String exampleId, String sessionId) {
+        if (exampleId == null || exampleId.trim().isEmpty()) {
+            throw new IllegalArgumentException("exampleId cannot be null or empty");
+        }
+        if (sessionId == null || sessionId.trim().isEmpty()) {
+            throw new IllegalArgumentException("sessionId cannot be null or empty");
+        }
         return current()
                 .withReferenceExampleId(exampleId)
                 .withSessionId(sessionId)
@@ -90,8 +97,12 @@ public final class ExperimentContext {
      *
      * @param exampleId the reference example ID from your LangSmith dataset
      * @return a new ExperimentContext with the updated value
+     * @throws IllegalArgumentException if exampleId is null or empty
      */
     public ExperimentContext withReferenceExampleId(String exampleId) {
+        if (exampleId == null || exampleId.trim().isEmpty()) {
+            throw new IllegalArgumentException("exampleId cannot be null or empty");
+        }
         return new ExperimentContext(data.withReferenceExampleId(exampleId));
     }
 
@@ -100,8 +111,12 @@ public final class ExperimentContext {
      *
      * @param sessionId the session/experiment UUID from LangSmith
      * @return a new ExperimentContext with the updated value
+     * @throws IllegalArgumentException if sessionId is null or empty
      */
     public ExperimentContext withSessionId(String sessionId) {
+        if (sessionId == null || sessionId.trim().isEmpty()) {
+            throw new IllegalArgumentException("sessionId cannot be null or empty");
+        }
         return new ExperimentContext(data.withSessionId(sessionId));
     }
 
@@ -112,8 +127,15 @@ public final class ExperimentContext {
      * @param key   the metadata key
      * @param value the metadata value
      * @return a new ExperimentContext with the updated metadata
+     * @throws IllegalArgumentException if key or value is null or empty
      */
     public ExperimentContext withMetadata(String key, String value) {
+        if (key == null || key.trim().isEmpty()) {
+            throw new IllegalArgumentException("metadata key cannot be null or empty");
+        }
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("metadata value cannot be null or empty");
+        }
         return new ExperimentContext(data.withMetadata(key, value));
     }
 
