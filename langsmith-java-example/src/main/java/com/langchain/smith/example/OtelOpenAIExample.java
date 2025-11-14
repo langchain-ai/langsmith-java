@@ -85,13 +85,13 @@ public class OtelOpenAIExample {
         // Configure OpenTelemetry to send traces to LangSmith
         // Using SIMPLE processor for immediate export (best for short-lived examples)
         try {
-            OpenTelemetryConfig.configureForLangSmith(
-                    langsmithKey,
-                    projectName,
-                    "langsmith-java-openai-example",
-                    null,
-                    OpenTelemetryConfig.SpanProcessorType.SIMPLE,
-                    1);
+            OpenTelemetryConfig.builder()
+                    .apiKey(langsmithKey)
+                    .projectName(projectName)
+                    .serviceName("langsmith-java-openai-example")
+                    .processorType(OpenTelemetryConfig.SpanProcessorType.SIMPLE)
+                    .maxBatchSize(1)
+                    .build();
             System.out.println("✓ OpenTelemetry configured for LangSmith\n");
         } catch (Exception e) {
             System.err.println("✗ Failed to configure OpenTelemetry: " + e.getMessage());

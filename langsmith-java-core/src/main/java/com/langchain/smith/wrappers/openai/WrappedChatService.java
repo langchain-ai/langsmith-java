@@ -15,6 +15,8 @@ import com.openai.services.blocking.chat.ChatCompletionService;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.context.Scope;
 import java.util.function.Consumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wrapped ChatService that adds OpenTelemetry tracing to chat completion
@@ -47,6 +49,7 @@ class WrappedChatService implements ChatService {
      * Wrapped ChatCompletionService that adds tracing to create operations.
      */
     private static class WrappedChatCompletionService implements ChatCompletionService {
+        private static final Logger logger = LoggerFactory.getLogger(WrappedChatCompletionService.class);
 
         private final ChatCompletionService delegate;
 
@@ -82,13 +85,10 @@ class WrappedChatService implements ChatService {
             Span span = TracingUtils.createSpanBuilder(model, "chat").startSpan();
 
             // Debug: Check if span is recording (not a noop span)
-            boolean debug =
-                    Boolean.getBoolean("langsmith.debug") || "true".equalsIgnoreCase(System.getenv("LANGSMITH_DEBUG"));
-            if (debug) {
+            if (logger.isDebugEnabled()) {
                 boolean isRecording = span.isRecording();
-                System.out.println("[WrappedChatService] Created span: "
-                        + span.getSpanContext().getSpanId() + ", isRecording: " + isRecording + ", traceId: "
-                        + span.getSpanContext().getTraceId());
+                logger.debug("[WrappedChatService] Created span: {}, isRecording: {}, traceId: {}",
+                        span.getSpanContext().getSpanId(), isRecording, span.getSpanContext().getTraceId());
             }
 
             try (Scope scope = span.makeCurrent()) {
@@ -143,14 +143,12 @@ class WrappedChatService implements ChatService {
                 TracingUtils.recordException(span, e);
                 throw e;
             } finally {
-                if (debug) {
-                    System.out.println("[WrappedChatService] Ending span: "
-                            + span.getSpanContext().getSpanId());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("[WrappedChatService] Ending span: {}", span.getSpanContext().getSpanId());
                 }
                 span.end();
-                if (debug) {
-                    System.out.println("[WrappedChatService] Span ended: "
-                            + span.getSpanContext().getSpanId());
+                if (logger.isDebugEnabled()) {
+                    logger.debug("[WrappedChatService] Span ended: {}", span.getSpanContext().getSpanId());
                 }
             }
         }
@@ -195,11 +193,8 @@ class WrappedChatService implements ChatService {
                 return "[]";
             }
 
-            boolean debug =
-                    Boolean.getBoolean("langsmith.debug") || "true".equalsIgnoreCase(System.getenv("LANGSMITH_DEBUG"));
-            if (debug) {
-                System.out.println(
-                        "[formatInputMessages] Processing " + params.messages().size() + " message(s)");
+            if (logger.isDebugEnabled()) {
+                logger.debug("[formatInputMessages] Processing {} message(s)", params.messages().size());
             }
 
             StringBuilder json = new StringBuilder("[");
@@ -221,13 +216,13 @@ class WrappedChatService implements ChatService {
                 String className = messageParam.getClass().getSimpleName();
                 String fullClassName = messageParam.getClass().getName();
 
-                // Debug logging (debug variable already declared above)
-                if (debug) {
-                    System.out.println("[formatInputMessages] Processing message: " + fullClassName);
+                // Debug logging
+                if (logger.isDebugEnabled()) {
+                    logger.debug("[formatInputMessages] Processing message: {}", fullClassName);
                     java.lang.reflect.Method[] allMethods =
                             messageParam.getClass().getMethods();
-                    System.out.println("[formatInputMessages] Available methods: "
-                            + java.util.Arrays.stream(allMethods)
+                    logger.debug("[formatInputMessages] Available methods: {}",
+                            java.util.Arrays.stream(allMethods)
                                     .map(m -> m.getName() + "(" + m.getParameterCount() + ")")
                                     .collect(java.util.stream.Collectors.joining(", ")));
                 }
@@ -259,36 +254,36 @@ class WrappedChatService implements ChatService {
                                 messageParam.getClass().getMethod("asUser");
                         actualMessage = asUserMethod.invoke(messageParam);
                         role = "user";
-                        if (debug) {
-                            System.out.println("[formatInputMessages] Found user message: "
-                                    + actualMessage.getClass().getName());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("[formatInputMessages] Found user message: {}",
+                                    actualMessage.getClass().getName());
                         }
                     } else if (isSystem) {
                         java.lang.reflect.Method asSystemMethod =
                                 messageParam.getClass().getMethod("asSystem");
                         actualMessage = asSystemMethod.invoke(messageParam);
                         role = "system";
-                        if (debug) {
-                            System.out.println("[formatInputMessages] Found system message: "
-                                    + actualMessage.getClass().getName());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("[formatInputMessages] Found system message: {}",
+                                    actualMessage.getClass().getName());
                         }
                     } else if (isAssistant) {
                         java.lang.reflect.Method asAssistantMethod =
                                 messageParam.getClass().getMethod("asAssistant");
                         actualMessage = asAssistantMethod.invoke(messageParam);
                         role = "assistant";
-                        if (debug) {
-                            System.out.println("[formatInputMessages] Found assistant message: "
-                                    + actualMessage.getClass().getName());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("[formatInputMessages] Found assistant message: {}",
+                                    actualMessage.getClass().getName());
                         }
                     } else if (isTool) {
                         java.lang.reflect.Method asToolMethod =
                                 messageParam.getClass().getMethod("asTool");
                         actualMessage = asToolMethod.invoke(messageParam);
                         role = "tool";
-                        if (debug) {
-                            System.out.println("[formatInputMessages] Found tool message: "
-                                    + actualMessage.getClass().getName());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("[formatInputMessages] Found tool message: {}",
+                                    actualMessage.getClass().getName());
                         }
                     }
 
@@ -299,11 +294,9 @@ class WrappedChatService implements ChatService {
                                     actualMessage.getClass().getMethod("content");
                             Object contentResult = contentMethod.invoke(actualMessage);
 
-                            if (debug) {
-                                System.out.println("[formatInputMessages] content() returned: "
-                                        + (contentResult != null
-                                                ? contentResult.getClass().getName()
-                                                : "null"));
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("[formatInputMessages] content() returned: {}",
+                                        contentResult != null ? contentResult.getClass().getName() : "null");
                             }
 
                             // Content might be a Content object with text() method
@@ -336,15 +329,14 @@ class WrappedChatService implements ChatService {
                                 }
                             }
                         } catch (NoSuchMethodException e) {
-                            if (debug) {
-                                System.out.println("[formatInputMessages] No content() method on actual message");
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("[formatInputMessages] No content() method on actual message");
                             }
                         }
                     }
                 } catch (Exception e) {
-                    if (debug) {
-                        System.out.println("[formatInputMessages] Error accessing message: " + e.getMessage());
-                        e.printStackTrace();
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("[formatInputMessages] Error accessing message", e);
                     }
                 }
 
@@ -370,8 +362,8 @@ class WrappedChatService implements ChatService {
                             role = "tool";
                         }
                     } catch (Exception e) {
-                        if (debug) {
-                            System.out.println("[formatInputMessages] Error calling role(): " + e.getMessage());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("[formatInputMessages] Error calling role()", e);
                         }
                         // Fallback to class name
                         if (className.contains("User") || fullClassName.contains("User")) {
@@ -389,8 +381,8 @@ class WrappedChatService implements ChatService {
                 // Final fallback: try toString parsing
                 if (content == null) {
                     String messageStr = messageParam.toString();
-                    if (debug) {
-                        System.out.println("[formatInputMessages] toString(): " + messageStr);
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("[formatInputMessages] toString(): {}", messageStr);
                     }
 
                     // For tool messages, look for content=Content{text={...}} pattern
@@ -503,9 +495,9 @@ class WrappedChatService implements ChatService {
                             .append("\"");
                 }
 
-                if (debug) {
-                    System.out.println("[formatInputMessages] Final: role=" + role + ", content="
-                            + (content != null ? content.substring(0, Math.min(50, content.length())) : "null"));
+                if (logger.isDebugEnabled()) {
+                    logger.debug("[formatInputMessages] Final: role={}, content={}",
+                            role, content != null ? content.substring(0, Math.min(50, content.length())) : "null");
                 }
 
                 json.append("}");
@@ -513,8 +505,8 @@ class WrappedChatService implements ChatService {
             json.append("]");
 
             String result = json.toString();
-            if (debug) {
-                System.out.println("[formatInputMessages] Final JSON: " + result);
+            if (logger.isDebugEnabled()) {
+                logger.debug("[formatInputMessages] Final JSON: {}", result);
             }
             return result;
         }
@@ -531,9 +523,6 @@ class WrappedChatService implements ChatService {
                 return;
             }
 
-            boolean debug =
-                    Boolean.getBoolean("langsmith.debug") || "true".equalsIgnoreCase(System.getenv("LANGSMITH_DEBUG"));
-
             for (com.openai.models.chat.completions.ChatCompletion.Choice choice : completion.choices()) {
                 com.openai.models.chat.completions.ChatCompletionMessage message = choice.message();
 
@@ -545,7 +534,7 @@ class WrappedChatService implements ChatService {
                         // Check if it's a function tool call
                         if (toolCall.isFunction()) {
                             ChatCompletionMessageFunctionToolCall functionToolCall = toolCall.asFunction();
-                            createToolCallSpan(functionToolCall, parentSpan, debug);
+                            createToolCallSpan(functionToolCall, parentSpan);
                         }
                         // Note: Custom tool calls are not yet supported
                     }
@@ -558,10 +547,9 @@ class WrappedChatService implements ChatService {
          *
          * @param functionToolCall the function tool call object from the OpenAI SDK
          * @param parentSpan       the parent span (the chat completion span)
-         * @param debug            whether debug logging is enabled
          */
         private void createToolCallSpan(
-                ChatCompletionMessageFunctionToolCall functionToolCall, Span parentSpan, boolean debug) {
+                ChatCompletionMessageFunctionToolCall functionToolCall, Span parentSpan) {
             try {
                 io.opentelemetry.api.OpenTelemetry openTelemetry = io.opentelemetry.api.GlobalOpenTelemetry.get();
                 io.opentelemetry.api.trace.Tracer tracer = openTelemetry.getTracer("langsmith-java-otel-wrappers");
@@ -598,11 +586,10 @@ class WrappedChatService implements ChatService {
                         toolCallSpan.setAttribute("gen_ai.tool.arguments", toolArguments);
                     }
 
-                    if (debug) {
-                        System.out.println("[WrappedChatService] Created tool call span: "
-                                + toolCallSpan.getSpanContext().getSpanId()
-                                + ", tool=" + toolName + ", arguments=" + toolArguments + ", parent="
-                                + parentSpan.getSpanContext().getSpanId());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("[WrappedChatService] Created tool call span: {}, tool={}, arguments={}, parent={}",
+                                toolCallSpan.getSpanContext().getSpanId(), toolName, toolArguments,
+                                parentSpan.getSpanContext().getSpanId());
                     }
 
                     // Note: Tool call result would be set when the tool is actually executed
@@ -611,9 +598,8 @@ class WrappedChatService implements ChatService {
                     toolCallSpan.end();
                 }
             } catch (Exception e) {
-                if (debug) {
-                    System.out.println("[WrappedChatService] Error creating tool call span: " + e.getMessage());
-                    e.printStackTrace();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("[WrappedChatService] Error creating tool call span", e);
                 }
             }
         }

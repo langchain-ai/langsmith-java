@@ -13,8 +13,8 @@ import io.opentelemetry.semconv.ResourceAttributes;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages OpenTelemetry SDK for exporting traces to OTLP endpoints.
@@ -23,16 +23,9 @@ import java.util.logging.Logger;
  * providing a Tracer for creating spans with Gen AI semantic conventions.
  */
 public final class OtelTraceExporter {
-    private static final Logger logger = Logger.getLogger(OtelTraceExporter.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(OtelTraceExporter.class);
     private static final String INSTRUMENTATION_NAME = "langsmith-java";
     private static final String INSTRUMENTATION_VERSION = "0.1.0";
-
-    static {
-        logger.setLevel(Level.FINE);
-        java.util.logging.ConsoleHandler consoleHandler = new java.util.logging.ConsoleHandler();
-        consoleHandler.setLevel(Level.FINE);
-        logger.addHandler(consoleHandler);
-    }
 
     private final OtelConfig config;
     private final OpenTelemetry openTelemetry;
@@ -155,11 +148,10 @@ public final class OtelTraceExporter {
         }
 
         // Log configuration for debugging
-        logger.log(Level.FINE, "Created OpenTelemetry SDK with endpoint: {0}, timeout: {1}", new Object[] {
-            config.getEndpoint(), config.getTimeout()
-        });
-        logger.log(Level.FINE, "Headers: {0}", config.getHeaders());
-        logger.log(Level.FINE, "Service name: {0}, Project name: {1}", new Object[] {serviceName, projectName});
+        logger.debug("Created OpenTelemetry SDK with endpoint: {}, timeout: {}",
+            config.getEndpoint(), config.getTimeout());
+        logger.debug("Headers: {}", config.getHeaders());
+        logger.debug("Service name: {}, Project name: {}", serviceName, projectName);
 
         return new OtelTraceExporter(config, openTelemetry, tracer, tracerProvider, projectName);
     }
