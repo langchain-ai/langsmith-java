@@ -1,244 +1,192 @@
 package com.langchain.smith.wrappers.openai;
 
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.ContextKey;
+import io.opentelemetry.context.Scope;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Thread-local context for experiment metadata that will be automatically
+ * Immutable context for experiment metadata that will be automatically
  * attached to OpenTelemetry spans.
  *
  * <p>
  * This class provides a convenient way to associate experiment metadata with
- * LLM calls without requiring manual span creation. When you set a reference
- * example ID or other metadata using this context, the wrapped OpenAI client
- * will automatically attach it to the spans it creates.
+ * LLM calls without requiring manual span creation. When you set experiment
+ * context using this class, the wrapped OpenAI client will automatically
+ * attach it to the spans it creates.
+ *
+ * <p>
+ * This class follows the OpenTelemetry Context pattern with immutable
+ * context objects and explicit scope management.
  *
  * <p>
  * Example usage (recommended - try-with-resources):
  *
  * <pre>{@code
- * // Automatically clears context when done
- * try (var ctx = ExperimentContext.withExperiment("example-123", "session-789")) {
+ * // Convenience method (recommended)
+ * try (Scope scope = ExperimentContext.withExperiment("example-123", "session-789")) {
  *     ChatCompletion completion = client.chat().completions().create(params);
- * } // Context automatically cleared here
- * }</pre>
- *
- * <p>
- * Example usage (manual):
- *
- * <pre>{@code
- * // Set experiment context before making LLM call
- * ExperimentContext.setReferenceExampleId("example-123");
- * ExperimentContext.setDatasetId("dataset-456");
- * ExperimentContext.setSessionId("session-789");
- * ChatCompletion completion = client.chat().completions().create(params);
- * ExperimentContext.clear();
+ * }
  * }</pre>
  *
  * <p>
  * This is particularly useful for running experiments where you want to link
  * LLM traces to specific dataset examples in LangSmith.
+ *
+ * <p>
+ * Thread Safety: This class is thread-safe. Each thread maintains its own
+ * context via OpenTelemetry's Context mechanism. Context instances are
+ * immutable and safe to share across threads.
  */
 public final class ExperimentContext {
 
-    private static final ThreadLocal<Context> CONTEXT = ThreadLocal.withInitial(Context::new);
+    private static final ContextKey<ExperimentData> CONTEXT_KEY =
+            ContextKey.named("langsmith-experiment-context");
 
-    private ExperimentContext() {
-        // Utility class
+    private final ExperimentData data;
+
+    private ExperimentContext(ExperimentData data) {
+        this.data = data;
     }
 
     /**
-     * Scope that automatically clears context when closed.
-     * Implements AutoCloseable for try-with-resources support.
+     * Gets the current ExperimentContext from the OpenTelemetry Context.
+     * Returns an empty context if no context has been set.
+     *
+     * @return the current ExperimentContext
      */
-    public static class Scope implements AutoCloseable {
-        private final Context previousContext;
-
-        private Scope(Context previousContext) {
-            this.previousContext = previousContext;
-        }
-
-        @Override
-        public void close() {
-            // Restore previous context (or clear if it was empty)
-            if (previousContext.isEmpty()) {
-                clear();
-            } else {
-                CONTEXT.set(previousContext);
-            }
-        }
+    public static ExperimentContext current() {
+        Context otelContext = Context.current();
+        ExperimentData data = otelContext.get(CONTEXT_KEY);
+        return new ExperimentContext(data != null ? data : ExperimentData.empty());
     }
 
     /**
-     * Sets all experiment context values and returns a Scope for try-with-resources.
+     * Convenience method to set all experiment context values and return a Scope.
      * This is the recommended method for running experiments as it properly links runs to
-     * the experiment session and automatically clears context when done.
+     * the experiment session.
      *
      * <pre>{@code
-     * try (var ctx = ExperimentContext.withExperiment(example.id(), session.id())) {
+     * try (Scope scope = ExperimentContext.withExperiment(example.id(), session.id())) {
      *     ChatCompletion completion = client.chat().completions().create(params);
-     * } // Context automatically cleared here
+     * }
      * }</pre>
      *
      * @param exampleId the reference example ID from your LangSmith dataset
      * @param sessionId the session/experiment UUID
-     * @return a Scope that will clear the context when closed
+     * @return a Scope that will restore the previous context when closed
      */
     public static Scope withExperiment(String exampleId, String sessionId) {
-        Context previous = CONTEXT.get().copy();
-        setReferenceExampleId(exampleId);
-        setSessionId(sessionId);
-        return new Scope(previous);
+        return current()
+                .withReferenceExampleId(exampleId)
+                .withSessionId(sessionId)
+                .makeCurrent();
     }
 
     /**
-     * Sets the reference example ID for the current thread.
-     * This ID will be attached to all LLM spans created in this thread until cleared.
+     * Returns a new ExperimentContext with the reference example ID set.
      *
      * @param exampleId the reference example ID from your LangSmith dataset
+     * @return a new ExperimentContext with the updated value
      */
-    public static void setReferenceExampleId(String exampleId) {
-        CONTEXT.get().referenceExampleId = exampleId;
+    public ExperimentContext withReferenceExampleId(String exampleId) {
+        return new ExperimentContext(data.withReferenceExampleId(exampleId));
     }
 
     /**
-     * Gets the reference example ID for the current thread.
-     *
-     * @return the reference example ID, or null if not set
-     */
-    public static String getReferenceExampleId() {
-        return CONTEXT.get().referenceExampleId;
-    }
-
-    /**
-     * Sets the dataset ID for the current thread.
-     * This ID will be attached to all LLM spans created in this thread until cleared.
-     *
-     * @param datasetId the dataset ID from your LangSmith dataset
-     */
-    public static void setDatasetId(String datasetId) {
-        CONTEXT.get().datasetId = datasetId;
-    }
-
-    /**
-     * Gets the dataset ID for the current thread.
-     *
-     * @return the dataset ID, or null if not set
-     */
-    public static String getDatasetId() {
-        return CONTEXT.get().datasetId;
-    }
-
-    /**
-     * Sets the session ID (experiment ID) for the current thread.
-     * This ID will be attached to all LLM spans created in this thread until cleared.
+     * Returns a new ExperimentContext with the session ID set.
      *
      * @param sessionId the session/experiment UUID from LangSmith
+     * @return a new ExperimentContext with the updated value
      */
-    public static void setSessionId(String sessionId) {
-        CONTEXT.get().sessionId = sessionId;
+    public ExperimentContext withSessionId(String sessionId) {
+        return new ExperimentContext(data.withSessionId(sessionId));
     }
 
     /**
-     * Gets the session ID for the current thread.
-     *
-     * @return the session ID, or null if not set
-     */
-    public static String getSessionId() {
-        return CONTEXT.get().sessionId;
-    }
-
-    /**
-     * Sets custom metadata that will be attached to spans as attributes.
-     * Metadata keys will be prefixed with "langsmith.metadata." when set as span attributes.
+     * Returns a new ExperimentContext with custom metadata added.
+     * Metadata will be attached to spans as attributes prefixed with "langsmith.metadata.".
      *
      * @param key   the metadata key
      * @param value the metadata value
+     * @return a new ExperimentContext with the updated metadata
      */
-    public static void setMetadata(String key, String value) {
-        CONTEXT.get().metadata.put(key, value);
+    public ExperimentContext withMetadata(String key, String value) {
+        return new ExperimentContext(data.withMetadata(key, value));
     }
 
     /**
-     * Gets all custom metadata for the current thread.
+     * Makes this ExperimentContext the current context in the OpenTelemetry Context.
+     * Returns a Scope that will restore the previous context when closed.
+     */
+    private Scope makeCurrent() {
+        Context otelContext = Context.current().with(CONTEXT_KEY, this.data);
+        return otelContext.makeCurrent();
+    }
+
+    /**
+     * Gets the reference example ID.
      *
-     * @return a map of metadata key-value pairs
+     * @return the reference example ID, or null if not set
      */
-    public static Map<String, String> getMetadata() {
-        return new HashMap<>(CONTEXT.get().metadata);
+    public String getReferenceExampleId() {
+        return data.referenceExampleId;
     }
 
     /**
-     * Adds a tag that will be attached to spans.
-     * Tags are stored as a comma-separated list in the "langsmith.tags" attribute.
+     * Gets the session ID.
      *
-     * @param tag the tag to add
+     * @return the session ID, or null if not set
      */
-    public static void addTag(String tag) {
-        CONTEXT.get().tags.add(tag);
+    public String getSessionId() {
+        return data.sessionId;
     }
 
     /**
-     * Gets all tags for the current thread.
+     * Gets all custom metadata as an unmodifiable map.
      *
-     * @return a comma-separated string of tags, or null if no tags are set
+     * @return an unmodifiable map of metadata key-value pairs
      */
-    public static String getTags() {
-        java.util.List<String> tags = CONTEXT.get().tags;
-        return tags.isEmpty() ? null : String.join(",", tags);
+    public Map<String, String> getMetadata() {
+        return data.metadata;
     }
 
     /**
-     * Clears all experiment context for the current thread.
-     * This should be called after completing an experiment run to avoid
-     * leaking context to subsequent operations.
+     * Immutable data holder for experiment context values.
      */
-    public static void clear() {
-        CONTEXT.get().clear();
-    }
+    private static class ExperimentData {
+        final String referenceExampleId;
+        final String sessionId;
+        final Map<String, String> metadata;
 
-    /**
-     * Removes the thread-local context entirely.
-     * This is useful for cleanup in thread pool environments.
-     */
-    public static void remove() {
-        CONTEXT.remove();
-    }
-
-    /**
-     * Internal context holder for thread-local data.
-     */
-    private static class Context {
-        String referenceExampleId;
-        String datasetId;
-        String sessionId;
-        Map<String, String> metadata = new HashMap<>();
-        java.util.List<String> tags = new java.util.ArrayList<>();
-
-        void clear() {
-            referenceExampleId = null;
-            datasetId = null;
-            sessionId = null;
-            metadata.clear();
-            tags.clear();
+        private ExperimentData(
+                String referenceExampleId,
+                String sessionId,
+                Map<String, String> metadata) {
+            this.referenceExampleId = referenceExampleId;
+            this.sessionId = sessionId;
+            this.metadata = Collections.unmodifiableMap(new HashMap<>(metadata));
         }
 
-        boolean isEmpty() {
-            return referenceExampleId == null
-                    && datasetId == null
-                    && sessionId == null
-                    && metadata.isEmpty()
-                    && tags.isEmpty();
+        static ExperimentData empty() {
+            return new ExperimentData(null, null, new HashMap<>());
         }
 
-        Context copy() {
-            Context copy = new Context();
-            copy.referenceExampleId = this.referenceExampleId;
-            copy.datasetId = this.datasetId;
-            copy.sessionId = this.sessionId;
-            copy.metadata = new HashMap<>(this.metadata);
-            copy.tags = new java.util.ArrayList<>(this.tags);
-            return copy;
+        ExperimentData withReferenceExampleId(String exampleId) {
+            return new ExperimentData(exampleId, sessionId, metadata);
+        }
+
+        ExperimentData withSessionId(String sessionId) {
+            return new ExperimentData(referenceExampleId, sessionId, metadata);
+        }
+
+        ExperimentData withMetadata(String key, String value) {
+            Map<String, String> newMetadata = new HashMap<>(metadata);
+            newMetadata.put(key, value);
+            return new ExperimentData(referenceExampleId, sessionId, newMetadata);
         }
     }
 }

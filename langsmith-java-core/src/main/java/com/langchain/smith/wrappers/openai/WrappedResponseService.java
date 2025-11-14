@@ -273,38 +273,26 @@ class WrappedResponseService implements ResponseService {
 
     /**
      * Sets experiment context attributes on the span if they are present.
-     * This includes reference example ID, dataset ID, session ID, metadata, and tags.
+     * This includes reference example ID, session ID, and metadata.
      *
      * @param span the span to set attributes on
      */
     private void setExperimentContextAttributes(Span span) {
         // Set reference example ID if present
-        String referenceExampleId = ExperimentContext.getReferenceExampleId();
+        String referenceExampleId = ExperimentContext.current().getReferenceExampleId();
         if (referenceExampleId != null && !referenceExampleId.isEmpty()) {
             span.setAttribute("langsmith.reference_example_id", referenceExampleId);
         }
 
-        // Set dataset ID if present
-        String datasetId = ExperimentContext.getDatasetId();
-        if (datasetId != null && !datasetId.isEmpty()) {
-            span.setAttribute("langsmith.dataset_id", datasetId);
-        }
-
         // Set session ID (experiment ID) if present
         // This is critical for linking runs to experiments in the dataset's Experiments tab
-        String sessionId = ExperimentContext.getSessionId();
+        String sessionId = ExperimentContext.current().getSessionId();
         if (sessionId != null && !sessionId.isEmpty()) {
             span.setAttribute("langsmith.trace.session_id", sessionId);
         }
 
-        // Set tags if present
-        String tags = ExperimentContext.getTags();
-        if (tags != null && !tags.isEmpty()) {
-            span.setAttribute("langsmith.tags", tags);
-        }
-
         // Set custom metadata
-        java.util.Map<String, String> metadata = ExperimentContext.getMetadata();
+        java.util.Map<String, String> metadata = ExperimentContext.current().getMetadata();
         for (java.util.Map.Entry<String, String> entry : metadata.entrySet()) {
             span.setAttribute("langsmith.metadata." + entry.getKey(), entry.getValue());
         }
