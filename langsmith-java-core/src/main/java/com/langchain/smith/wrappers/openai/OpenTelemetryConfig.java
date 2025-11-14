@@ -2,6 +2,7 @@ package com.langchain.smith.wrappers.openai;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter;
+import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporterBuilder;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
@@ -244,7 +245,7 @@ public final class OpenTelemetryConfig {
          * @return this Builder for method chaining
          * @see SpanProcessorType
          */
-        public Builder processorType(SpanProcessorType processorType) {
+        public Builder processorType(SpanProcessorType Ignore ) {
             this.processorType = processorType;
             return this;
         }
@@ -304,32 +305,16 @@ public final class OpenTelemetryConfig {
             String endpointUrl = buildOtlpEndpoint(baseUrl);
 
             // Create OTLP HTTP exporter configured for LangSmith
-            // Build the exporter with conditional headers
-            // Note: Using Object to work around Java 8 limitation (can't use var)
-            // The builder() method returns a builder that supports method chaining
-            Object builder =
-                    OtlpHttpSpanExporter.builder().setEndpoint(endpointUrl).addHeader("x-api-key", apiKey);
+            OtlpHttpSpanExporterBuilder exporterBuilder = OtlpHttpSpanExporter.builder()
+                    .setEndpoint(endpointUrl)
+                    .addHeader("x-api-key", apiKey);
 
             // Only add project header if projectName is not null and not empty
             if (projectName != null && !projectName.isEmpty()) {
-                // Use reflection to call addHeader on the builder
-                try {
-                    java.lang.reflect.Method addHeaderMethod =
-                            builder.getClass().getMethod("addHeader", String.class, String.class);
-                    builder = addHeaderMethod.invoke(builder, "Langsmith-Project", projectName);
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to add project header", e);
-                }
+                exporterBuilder.addHeader("Langsmith-Project", projectName);
             }
 
-            // Build the exporter using reflection
-            OtlpHttpSpanExporter spanExporter;
-            try {
-                java.lang.reflect.Method buildMethod = builder.getClass().getMethod("build");
-                spanExporter = (OtlpHttpSpanExporter) buildMethod.invoke(builder);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to build OtlpHttpSpanExporter", e);
-            }
+            OtlpHttpSpanExporter spanExporter = exporterBuilder.build();
 
             // Wrap exporter to log export errors
             SpanExporter loggingExporter = new LoggingSpanExporter(spanExporter);
