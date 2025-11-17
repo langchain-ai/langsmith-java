@@ -1,4 +1,4 @@
-package com.langchain.smith.example.config;
+package com.langchain.smith.example.otel.config;
 
 import com.langchain.smith.otel.OtelTraceExporter;
 import javax.annotation.PreDestroy;
