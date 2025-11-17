@@ -24,7 +24,7 @@ import com.langchain.smith.models.repos.RepoWithLookups
  *
  * Prerequisites:
  * - `LANGSMITH_API_KEY`: Your LangSmith API key
- * - `LANGCHAIN_BASE_URL`: LangSmith API URL (https://api.smith.langchain.com)
+ * - `LANGSMITH_ENDPOINT`: LangSmith API URL (https://api.smith.langchain.com)
  *
  * Running:
  * ```bash

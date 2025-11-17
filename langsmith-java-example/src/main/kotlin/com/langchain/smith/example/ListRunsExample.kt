@@ -26,7 +26,7 @@ import kotlin.system.exitProcess
  */
 fun main() {
     // Configure client from environment variables
-    // Requires: LANGSMITH_API_KEY and LANGSMITH_BASE_URL
+    // Requires: LANGSMITH_API_KEY and LANGSMITH_ENDPOINT
     val client: LangsmithClient = LangsmithOkHttpClient.fromEnv()
 
     // Get project ID from environment variable or use a default

@@ -408,12 +408,12 @@ private constructor(
          * |`tenantId`      |`langchain.langsmithTenantId`      |`LANGSMITH_TENANT_ID`      |false   |-                                   |
          * |`bearerToken`   |`langchain.langsmithBearerToken`   |`LANGSMITH_BEARER_TOKEN`   |false   |-                                   |
          * |`organizationId`|`langchain.langsmithOrganizationId`|`LANGSMITH_ORGANIZATION_ID`|false   |-                                   |
-         * |`baseUrl`       |`langchain.baseUrl`                |`LANGCHAIN_BASE_URL`       |true    |`"https://api.smith.langchain.com/"`|
+         * |`baseUrl`       |`langchain.baseUrl`                |`LANGSMITH_ENDPOINT`       |true    |`"https://api.smith.langchain.com/"`|
          *
          * System properties take precedence over environment variables.
          */
         fun fromEnv() = apply {
-            (System.getProperty("langchain.baseUrl") ?: System.getenv("LANGCHAIN_BASE_URL"))?.let {
+            (System.getProperty("langchain.baseUrl") ?: System.getenv("LANGSMITH_ENDPOINT"))?.let {
                 baseUrl(it)
             }
             (System.getProperty("langchain.langsmithApiKey") ?: System.getenv("LANGSMITH_API_KEY"))
