@@ -108,7 +108,7 @@ private constructor(
     /**
      * The base URL to use for every request.
      *
-     * Defaults to the production environment: `https://api.example.com`.
+     * Defaults to the production environment: `https://api.smith.langchain.com/`.
      */
     fun baseUrl(): String = baseUrl ?: PRODUCTION_URL
 
@@ -128,7 +128,7 @@ private constructor(
 
     companion object {
 
-        const val PRODUCTION_URL = "https://api.example.com"
+        const val PRODUCTION_URL = "https://api.smith.langchain.com/"
 
         /**
          * Returns a mutable builder for constructing an instance of [ClientOptions].
@@ -239,7 +239,7 @@ private constructor(
         /**
          * The base URL to use for every request.
          *
-         * Defaults to the production environment: `https://api.example.com`.
+         * Defaults to the production environment: `https://api.smith.langchain.com/`.
          */
         fun baseUrl(baseUrl: String?) = apply { this.baseUrl = baseUrl }
 
@@ -402,13 +402,13 @@ private constructor(
          *
          * See this table for the available options:
          *
-         * |Setter          |System property                    |Environment variable       |Required|Default value              |
-         * |----------------|-----------------------------------|---------------------------|--------|---------------------------|
-         * |`apiKey`        |`langchain.langsmithApiKey`        |`LANGSMITH_API_KEY`        |false   |-                          |
-         * |`tenantId`      |`langchain.langsmithTenantId`      |`LANGSMITH_TENANT_ID`      |false   |-                          |
-         * |`bearerToken`   |`langchain.langsmithBearerToken`   |`LANGSMITH_BEARER_TOKEN`   |false   |-                          |
-         * |`organizationId`|`langchain.langsmithOrganizationId`|`LANGSMITH_ORGANIZATION_ID`|false   |-                          |
-         * |`baseUrl`       |`langchain.baseUrl`                |`LANGCHAIN_BASE_URL`       |true    |`"https://api.example.com"`|
+         * |Setter          |System property                    |Environment variable       |Required|Default value                       |
+         * |----------------|-----------------------------------|---------------------------|--------|------------------------------------|
+         * |`apiKey`        |`langchain.langsmithApiKey`        |`LANGSMITH_API_KEY`        |false   |-                                   |
+         * |`tenantId`      |`langchain.langsmithTenantId`      |`LANGSMITH_TENANT_ID`      |false   |-                                   |
+         * |`bearerToken`   |`langchain.langsmithBearerToken`   |`LANGSMITH_BEARER_TOKEN`   |false   |-                                   |
+         * |`organizationId`|`langchain.langsmithOrganizationId`|`LANGSMITH_ORGANIZATION_ID`|false   |-                                   |
+         * |`baseUrl`       |`langchain.baseUrl`                |`LANGCHAIN_BASE_URL`       |true    |`"https://api.smith.langchain.com/"`|
          *
          * System properties take precedence over environment variables.
          */

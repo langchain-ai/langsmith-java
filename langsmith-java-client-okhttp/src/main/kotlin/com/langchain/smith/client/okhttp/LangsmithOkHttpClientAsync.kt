@@ -144,7 +144,7 @@ class LangsmithOkHttpClientAsync private constructor() {
         /**
          * The base URL to use for every request.
          *
-         * Defaults to the production environment: `https://api.example.com`.
+         * Defaults to the production environment: `https://api.smith.langchain.com/`.
          */
         fun baseUrl(baseUrl: String?) = apply { clientOptions.baseUrl(baseUrl) }
 

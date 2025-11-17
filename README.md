@@ -122,13 +122,13 @@ LangsmithClient client = LangsmithOkHttpClient.builder()
 
 See this table for the available options:
 
-| Setter           | System property                     | Environment variable        | Required | Default value               |
-| ---------------- | ----------------------------------- | --------------------------- | -------- | --------------------------- |
-| `apiKey`         | `langchain.langsmithApiKey`         | `LANGSMITH_API_KEY`         | false    | -                           |
-| `tenantId`       | `langchain.langsmithTenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                           |
-| `bearerToken`    | `langchain.langsmithBearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                           |
-| `organizationId` | `langchain.langsmithOrganizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                           |
-| `baseUrl`        | `langchain.baseUrl`                 | `LANGCHAIN_BASE_URL`        | true     | `"https://api.example.com"` |
+| Setter           | System property                     | Environment variable        | Required | Default value                        |
+| ---------------- | ----------------------------------- | --------------------------- | -------- | ------------------------------------ |
+| `apiKey`         | `langchain.langsmithApiKey`         | `LANGSMITH_API_KEY`         | false    | -                                    |
+| `tenantId`       | `langchain.langsmithTenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                                    |
+| `bearerToken`    | `langchain.langsmithBearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                                    |
+| `organizationId` | `langchain.langsmithOrganizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                                    |
+| `baseUrl`        | `langchain.baseUrl`                 | `LANGCHAIN_BASE_URL`        | true     | `"https://api.smith.langchain.com/"` |
 
 System properties take precedence over environment variables.
 
