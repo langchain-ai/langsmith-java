@@ -33,7 +33,7 @@ import com.langchain.smith.models.examples.bulk.BulkCreateParams
  * Constructs the web URL for a dataset from the API base URL.
  */
 fun getDatasetUrl(dataset: Dataset): String {
-    val baseUrl = System.getenv("LANGCHAIN_BASE_URL") ?: "https://api.smith.langchain.com"
+    val baseUrl = System.getenv("LANGSMITH_ENDPOINT") ?: "https://api.smith.langchain.com"
     val hostUrl = baseUrl.replace("api.", "")
     return "$hostUrl/o/${dataset.tenantId()}/datasets/${dataset.id()}"
 }
@@ -55,7 +55,7 @@ fun deleteDatasetWithConfirmation(client: LangsmithClient, dataset: Dataset) {
 
 fun main() {
     // Configure client from environment variables
-    // Requires: LANGSMITH_API_KEY and LANGCHAIN_BASE_URL
+    // Requires: LANGSMITH_API_KEY and LANGSMITH_ENDPOINT
     val client: LangsmithClient = LangsmithOkHttpClient.fromEnv()
 
     val datasetName = "Sample Dataset created in Kotlin"
