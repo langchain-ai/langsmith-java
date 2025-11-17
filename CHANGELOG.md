@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.1.0-alpha.10 (2025-11-17)
+
+Full Changelog: [v0.1.0-alpha.9...v0.1.0-alpha.10](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.9...v0.1.0-alpha.10)
+
+### Features
+
+* **api:** api update ([09fe76d](https://github.com/langchain-ai/langsmith-java/commit/09fe76d418f4d0adff2539db4e76abd950e1b1ba))
+* **api:** api update ([3800b92](https://github.com/langchain-ai/langsmith-java/commit/3800b92761f1e238c9f76e8df2cabaed186a4eca))
+* **api:** api update ([df4d45b](https://github.com/langchain-ai/langsmith-java/commit/df4d45b2319a20eef3938a6c065423a8d458c7df))
+* **api:** enable post /runs/batch ([38a4268](https://github.com/langchain-ai/langsmith-java/commit/38a4268c565bc27b59b0a7bd7145888c1f7e51af))
+* **api:** manual updates ([8e76b0d](https://github.com/langchain-ai/langsmith-java/commit/8e76b0d513e52007da90b9c8482203481b1753f6))
+* **api:** switch license to MIT ([fb7fc1f](https://github.com/langchain-ai/langsmith-java/commit/fb7fc1f29d4bdd6e0a6b8fb743af3cd195c08fcc))
+
+
+### Bug Fixes
+
+* **client:** multi-value header serialization ([c477835](https://github.com/langchain-ai/langsmith-java/commit/c477835e95825176bc659da0c0a42714863fb308))
+* lint ([91f5b8e](https://github.com/langchain-ai/langsmith-java/commit/91f5b8e78493a421a1c60351c7a6ef556f47fdcb))
+
+
+### Chores
+
+* align env vars with other SDKs ([ba82822](https://github.com/langchain-ai/langsmith-java/commit/ba8282230cf48fa04b9277d41128909d9c18cbc4))
+* combine otel examples ([a2074ab](https://github.com/langchain-ai/langsmith-java/commit/a2074ab7b1346d8a9f0ccfae947ebeaf3b7bab55))
+* convert to kotlin ([875050c](https://github.com/langchain-ai/langsmith-java/commit/875050c7524511a14a82f4e741625aeea5fe50a9))
+
+
+### Refactors
+
+* ExperimentContext to use OpenTelemetry Context pattern ([def5492](https://github.com/langchain-ai/langsmith-java/commit/def549215491cb5cf46db9f132c902388865f536))
+* migrate to SLF4J logging and Builder-only API ([02cc2f3](https://github.com/langchain-ai/langsmith-java/commit/02cc2f35a2e12446a1f0874ed0d3053f755b506d))
+
 ## 0.1.0-alpha.9 (2025-11-11)
 
 Full Changelog: [v0.1.0-alpha.8...v0.1.0-alpha.9](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.8...v0.1.0-alpha.9)
