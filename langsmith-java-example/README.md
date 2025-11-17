@@ -8,10 +8,15 @@ This module contains runnable examples organized by feature:
 
 All examples require:
 ```bash
+./gradlew :langsmith-java-example:run -Pexample=ExampleName -Dlangchain.langsmithApiKey=your_api_key
+```
+
+Alternatively, you can use environment variables:
+```bash
 export LANGSMITH_API_KEY=your_api_key
 ```
 
-The `LANGCHAIN_BASE_URL` environment variable is optional and defaults to `https://api.smith.langchain.com` if not set.
+The `langchain.baseUrl` system property (or `LANGCHAIN_BASE_URL` environment variable) is optional and defaults to `https://api.smith.langchain.com/` if not set.
 
 ## OpenTelemetry Tracing Examples
 
@@ -37,10 +42,10 @@ open http://localhost:16686
 Make actual OpenAI API calls with automatic tracing to LangSmith.
 
 ```bash
-export OPENAI_API_KEY=your_openai_key
-export LANGSMITH_PROJECT=my-project  # optional, defaults to "default"
-
-./gradlew :langsmith-java-example:run -Pexample=OtelOpenAI
+./gradlew :langsmith-java-example:run -Pexample=OtelOpenAI \
+  -Dlangchain.langsmithApiKey=your_api_key \
+  -DOPENAI_API_KEY=your_openai_key \
+  -DLANGSMITH_PROJECT=my-project  # optional, defaults to "default"
 ```
 
 View traces at https://smith.langchain.com
@@ -50,9 +55,9 @@ View traces at https://smith.langchain.com
 Send mock traces to LangSmith without external API calls.
 
 ```bash
-export LANGSMITH_PROJECT=my-project  # optional, defaults to "default"
-
-./gradlew :langsmith-java-example:run -Pexample=OtelLangSmith
+./gradlew :langsmith-java-example:run -Pexample=OtelLangSmith \
+  -Dlangchain.langsmithApiKey=your_api_key \
+  -DLANGSMITH_PROJECT=my-project  # optional, defaults to "default"
 ```
 
 View traces at https://smith.langchain.com
@@ -62,10 +67,10 @@ View traces at https://smith.langchain.com
 REST API with OpenTelemetry traces sent to LangSmith.
 
 ```bash
-export LANGSMITH_PROJECT=my-project  # optional
-
 # Start server
-./gradlew :langsmith-java-example:run -Pexample=SpringBootLangSmith
+./gradlew :langsmith-java-example:run -Pexample=SpringBootLangSmith \
+  -Dlangchain.langsmithApiKey=your_api_key \
+  -DLANGSMITH_PROJECT=my-project  # optional
 
 # In another terminal, test endpoints:
 curl -X POST http://localhost:8080/api/chat \
@@ -84,7 +89,8 @@ Located in `src/main/java/com/langchain/smith/example/prompt/`
 **RECOMMENDED** - Clean, simple example following the same pattern as the Dataset example.
 
 ```bash
-./gradlew :langsmith-java-example:run -Pexample=PromptManagement
+./gradlew :langsmith-java-example:run -Pexample=PromptManagement \
+  -Dlangchain.langsmithApiKey=your_api_key
 ```
 
 **Features demonstrated:**
