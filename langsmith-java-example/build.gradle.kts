@@ -15,20 +15,11 @@ dependencies {
 
     // Jackson for JSON handling in examples
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
-    // OpenAI SDK for RunExperimentExample
-    implementation("com.openai:openai-java:4.6.1")
-
-    // SLF4J logging backend for examples
-    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
 
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude(group = "ch.qos.logback", module = "logback-classic")
-    }
-    implementation("org.springframework.boot:spring-boot-starter") {
-        exclude(group = "ch.qos.logback", module = "logback-classic")
-    }
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -45,29 +36,44 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 application {
     // Use `./gradlew :langsmith-java-example:run` to run `Main`
     // Use `./gradlew :langsmith-java-example:run -Pexample=Something` to run `SomethingExample`
-    mainClass = "com.langchain.smith.example.${
-        if (project.hasProperty("example")) {
-            val exampleName = project.property("example") as String
-            val baseName = if (exampleName.endsWith("Example")) exampleName else "${exampleName}Example"
-            
-            // Check if it's a Java or Kotlin file
-            val javaFile = file("src/main/java/com/langchain/smith/example/${baseName}.java")
-            val kotlinFile = file("src/main/kotlin/com/langchain/smith/example/${baseName}.kt")
+    mainClass = if (project.hasProperty("example")) {
+        val exampleName = project.property("example") as String
+        val baseName = if (exampleName.endsWith("Example")) exampleName else "${exampleName}Example"
+        
+        // Search in multiple subdirectories: root, otel, prompt
+        val searchPaths = listOf(
+            "" to "com.langchain.smith.example",
+            "otel/" to "com.langchain.smith.example.otel",
+            "prompt/" to "com.langchain.smith.example.prompt"
+        )
+        
+        var foundPackage = ""
+        var isKotlin = false
+        
+        for ((subdir, packageName) in searchPaths) {
+            val javaFile = file("src/main/java/com/langchain/smith/example/${subdir}${baseName}.java")
+            val kotlinFile = file("src/main/kotlin/com/langchain/smith/example/${subdir}${baseName}.kt")
             
             if (javaFile.exists()) {
-                // Java file - no Kt suffix
-                baseName
+                foundPackage = packageName
+                isKotlin = false
+                break
             } else if (kotlinFile.exists()) {
-                // Kotlin file - add Kt suffix for main function
-                "${baseName}Kt"
-            } else {
-                // Default: assume Kotlin for backwards compatibility
-                "${baseName}Kt"
+                foundPackage = packageName
+                isKotlin = true
+                break
             }
-        } else {
-            "Main"
         }
-    }"
+        
+        if (foundPackage.isNotEmpty()) {
+            "${foundPackage}.${baseName}${if (isKotlin) "Kt" else ""}"
+        } else {
+            // Default: assume Kotlin in root for backwards compatibility
+            "com.langchain.smith.example.${baseName}Kt"
+        }
+    } else {
+        "Main"
+    }
 }
 
 // Export stdin to examples for readln()

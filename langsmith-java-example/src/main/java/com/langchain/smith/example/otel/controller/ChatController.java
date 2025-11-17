@@ -1,6 +1,6 @@
-package com.langchain.smith.example.controller;
+package com.langchain.smith.example.otel.controller;
 
-import com.langchain.smith.example.service.LlmService;
+import com.langchain.smith.example.otel.service.LlmService;
 import com.langchain.smith.otel.OtelSpanCreator;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;

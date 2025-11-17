@@ -1,4 +1,4 @@
-package com.langchain.smith.example;
+package com.langchain.smith.example.otel;
 
 import com.langchain.smith.otel.OtelConfig;
 import com.langchain.smith.otel.OtelSpanCreator;

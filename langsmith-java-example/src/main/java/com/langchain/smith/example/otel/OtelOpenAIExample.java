@@ -1,4 +1,4 @@
-package com.langchain.smith.example;
+package com.langchain.smith.example.otel;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
