@@ -1,4 +1,4 @@
-package com.langchain.smith.example.service;
+package com.langchain.smith.example.otel.service;
 
 import com.langchain.smith.otel.OtelSpanCreator;
 import io.opentelemetry.api.trace.Span;
