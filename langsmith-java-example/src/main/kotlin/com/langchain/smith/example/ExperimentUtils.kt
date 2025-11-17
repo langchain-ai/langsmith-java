@@ -53,7 +53,7 @@ fun generateExampleId(datasetId: String, inputs: Map<String, Any>, referenceOutp
  * Constructs the web URL for a dataset from the API base URL.
  */
 fun buildDatasetUrl(dataset: Dataset): String {
-    val baseUrl = System.getenv("LANGCHAIN_BASE_URL") ?: "https://api.smith.langchain.com"
+    val baseUrl = System.getenv("LANGSMITH_ENDPOINT") ?: "https://api.smith.langchain.com"
     val hostUrl = baseUrl.replace("api.", "")
     return "$hostUrl/o/${dataset.tenantId()}/datasets/${dataset.id()}"
 }
@@ -62,7 +62,7 @@ fun buildDatasetUrl(dataset: Dataset): String {
  * Constructs the web URL for a session/experiment from the API base URL.
  */
 fun buildSessionUrl(tenantId: String, sessionId: String): String {
-    val baseUrl = System.getenv("LANGCHAIN_BASE_URL") ?: "https://api.smith.langchain.com"
+    val baseUrl = System.getenv("LANGSMITH_ENDPOINT") ?: "https://api.smith.langchain.com"
     val hostUrl = baseUrl.replace("api.", "")
     return "$hostUrl/o/$tenantId/projects/p/$sessionId"
 }

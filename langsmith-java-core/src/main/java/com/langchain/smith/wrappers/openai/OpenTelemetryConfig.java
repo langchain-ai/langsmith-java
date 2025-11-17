@@ -50,7 +50,7 @@ public final class OpenTelemetryConfig {
 
     /**
      * Default LangSmith base URL.
-     * Can be overridden by setting LANGCHAIN_BASE_URL environment variable or
+     * Can be overridden by setting LANGSMITH_ENDPOINT environment variable or
      * by passing a custom base URL to the configuration methods.
      */
     public static final String DEFAULT_BASE_URL = "https://api.smith.langchain.com";
@@ -107,7 +107,7 @@ public final class OpenTelemetryConfig {
             this.apiKey = System.getenv("LANGSMITH_API_KEY");
             this.projectName = System.getenv("LANGSMITH_PROJECT");
             this.serviceName = System.getenv("OTEL_SERVICE_NAME");
-            this.baseUrl = System.getenv("LANGCHAIN_BASE_URL");
+            this.baseUrl = System.getenv("LANGSMITH_ENDPOINT");
         }
 
         /**
@@ -176,11 +176,11 @@ public final class OpenTelemetryConfig {
         }
 
         /**
-         * Sets the LangSmith base URL (optional, defaults to LANGCHAIN_BASE_URL env var).
+         * Sets the LangSmith base URL (optional, defaults to LANGSMITH_ENDPOINT env var).
          *
          * <p>
          * The base URL is used to construct the OTLP endpoint by appending "/otel/v1/traces".
-         * If not set explicitly, the builder will use the value from the LANGCHAIN_BASE_URL
+         * If not set explicitly, the builder will use the value from the LANGSMITH_ENDPOINT
          * environment variable, or default to "https://api.smith.langchain.com".
          *
          * <p>
@@ -419,7 +419,7 @@ public final class OpenTelemetryConfig {
         // Use provided base URL or default
         String effectiveBaseUrl = baseUrl;
         if (effectiveBaseUrl == null || effectiveBaseUrl.isEmpty()) {
-            effectiveBaseUrl = System.getenv("LANGCHAIN_BASE_URL");
+            effectiveBaseUrl = System.getenv("LANGSMITH_ENDPOINT");
         }
         if (effectiveBaseUrl == null || effectiveBaseUrl.isEmpty()) {
             effectiveBaseUrl = DEFAULT_BASE_URL;

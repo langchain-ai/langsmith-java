@@ -16,7 +16,7 @@ Alternatively, you can use environment variables:
 export LANGSMITH_API_KEY=your_api_key
 ```
 
-The `langchain.baseUrl` system property (or `LANGCHAIN_BASE_URL` environment variable) is optional and defaults to `https://api.smith.langchain.com/` if not set.
+The `langchain.baseUrl` system property (or `LANGSMITH_ENDPOINT` environment variable) is optional and defaults to `https://api.smith.langchain.com/` if not set.
 
 ## OpenTelemetry Tracing Examples
 
