@@ -105,7 +105,7 @@ internal class RepoServiceTest {
                 RepoListParams.builder()
                     .hasCommits(true)
                     .isArchived(RepoListParams.IsArchived.TRUE)
-                    .isPublic(RepoListParams.IsPublic.TRUE)
+                    .isPublic(true)
                     .limit(1L)
                     .offset(0L)
                     .query("query")
