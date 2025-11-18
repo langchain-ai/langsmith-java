@@ -2,7 +2,7 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.10)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.11)
 
 <!-- x-release-please-end -->
 
@@ -15,7 +15,7 @@ The [LangSmith](https://www.langchain.com/langsmith/observability) Java SDK prov
 ### Gradle
 
 ```kotlin
-implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.10")
+implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.11")
 ```
 
 ### Maven
@@ -24,7 +24,7 @@ implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.10")
 <dependency>
   <groupId>com.langchain.smith</groupId>
   <artifactId>langsmith-java</artifactId>
-  <version>0.1.0-alpha.10</version>
+  <version>0.1.0-alpha.11</version>
 </dependency>
 ```
 
