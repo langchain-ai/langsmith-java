@@ -24,7 +24,7 @@ import com.langchain.smith.models.repos.RepoWithLookups
  *
  * Prerequisites:
  * - `LANGSMITH_API_KEY`: Your LangSmith API key
- * - `LANGCHAIN_BASE_URL`: LangSmith API URL (https://api.smith.langchain.com)
+ * - `LANGSMITH_ENDPOINT` or `LANGCHAIN_ENDPOINT`: LangSmith API URL (https://api.smith.langchain.com)
  *
  * Running:
  * ```bash
@@ -150,51 +150,105 @@ fun main() {
 /**
  * Creates a chat prompt manifest with multiple messages (system + user) compatible with LangSmith.
  */
-private fun createChatPromptWithMultipleMessages(
-    systemMessage: String,
-    userMessage: String,
-    inputVariables: Array<String>
-): Map<String, Any> {
-    val messages = listOf(
-        createMessagePrompt("system", systemMessage),
-        createMessagePrompt("human", userMessage)
-    )
+class ChatPromptBuilder {
+    private val messages = mutableListOf<Message>()
+    private val inputVariables = mutableSetOf<String>()
 
-    return mapOf(
-        "lc" to 1,
-        "type" to "constructor",
-        "id" to arrayOf("langchain", "prompts", "chat", "ChatPromptTemplate"),
-        "kwargs" to mapOf(
-            "input_variables" to inputVariables,
-            "messages" to messages.toTypedArray()
-        )
-    )
-}
-
-/**
- * Creates a message prompt (system, human, or AI).
- */
-private fun createMessagePrompt(messageType: String, template: String): Map<String, Any> {
-    val className = when (messageType.lowercase()) {
-        "system" -> "SystemMessagePromptTemplate"
-        "ai", "assistant" -> "AIMessagePromptTemplate"
-        "human", "user" -> "HumanMessagePromptTemplate"
-        else -> "HumanMessagePromptTemplate"
+    /**
+     * Adds a system message to the prompt.
+     */
+    fun systemMessage(template: String): ChatPromptBuilder {
+        messages.add(Message(MessageType.SYSTEM, template))
+        extractVariables(template)
+        return this
     }
 
-    val stringPrompt = mutableMapOf<String, Any>(
-        "lc" to 1,
-        "type" to "prompt",
-        "id" to arrayOf("langchain", "prompts", "prompt", "StringPromptTemplate"),
-        "kwargs" to mapOf("template" to template)
-    )
+    /**
+     * Adds a user/human message to the prompt.
+     */
+    fun userMessage(template: String): ChatPromptBuilder {
+        messages.add(Message(MessageType.HUMAN, template))
+        extractVariables(template)
+        return this
+    }
 
-    return mapOf(
-        "lc" to 1,
-        "type" to "constructor",
-        "id" to arrayOf("langchain", "core", "prompts", "chat", className),
-        "kwargs" to mapOf("prompt" to stringPrompt)
-    )
+    /**
+     * Adds an AI/assistant message to the prompt.
+     */
+    fun aiMessage(template: String): ChatPromptBuilder {
+        messages.add(Message(MessageType.AI, template))
+        extractVariables(template)
+        return this
+    }
+
+    /**
+     * Explicitly adds input variables (optional - variables are auto-detected from templates).
+     */
+    fun inputVariables(vararg variables: String): ChatPromptBuilder {
+        inputVariables.addAll(variables)
+        return this
+    }
+
+    /**
+     * Builds the prompt manifest compatible with LangSmith.
+     * Users don't need to know about the internal structure.
+     */
+    fun build(): Map<String, Any> {
+        if (messages.isEmpty()) {
+            throw IllegalStateException("At least one message is required")
+        }
+
+        val manifestMessages = messages.map { it.toManifest() }
+        val finalInputVariables = if (inputVariables.isEmpty()) {
+            // Auto-detect from all messages if not explicitly set
+            messages.flatMap { extractVariables(it.template) }.distinct().toTypedArray()
+        } else {
+            inputVariables.toTypedArray()
+        }
+
+        return mapOf(
+            "lc" to 1,
+            "type" to "constructor",
+            "id" to arrayOf("langchain_core", "prompts", "chat", "ChatPromptTemplate"),
+            "kwargs" to mapOf(
+                "input_variables" to finalInputVariables,
+                "messages" to manifestMessages.toTypedArray()
+            )
+        )
+    }
+
+    private fun extractVariables(template: String): Set<String> {
+        val regex = Regex("\\{([^}]+)\\}")
+        return regex.findAll(template).map { it.groupValues[1] }.toSet()
+    }
+
+    private data class Message(val type: MessageType, val template: String) {
+        fun toManifest(): Map<String, Any> {
+            val className = when (type) {
+                MessageType.SYSTEM -> "SystemMessagePromptTemplate"
+                MessageType.AI -> "AIMessagePromptTemplate"
+                MessageType.HUMAN -> "HumanMessagePromptTemplate"
+            }
+
+            val promptTemplate = mapOf(
+                "lc" to 1,
+                "type" to "constructor",
+                "id" to arrayOf("langchain_core", "prompts", "prompt", "PromptTemplate"),
+                "kwargs" to mapOf("template" to template)
+            )
+
+            return mapOf(
+                "lc" to 1,
+                "type" to "constructor",
+                "id" to arrayOf("langchain_core", "prompts", "chat", className),
+                "kwargs" to mapOf("prompt" to promptTemplate)
+            )
+        }
+    }
+
+    private enum class MessageType {
+        SYSTEM, HUMAN, AI
+    }
 }
 
 /**
@@ -262,11 +316,12 @@ private fun createCommit(
     parentCommit: String?
 ): Boolean {
     println("3. Adding prompt content using client.commits().update()...")
-    val manifest = createChatPromptWithMultipleMessages(
-        "You are a helpful assistant that tells jokes.",
-        "Tell me a joke about {topic}",
-        arrayOf("topic")
-    )
+    // Use the builder API - no need to know internal manifest structure
+    val manifest = ChatPromptBuilder()
+        .systemMessage("You are a helpful assistant that tells jokes.")
+        .userMessage("Tell me a joke about {topic}")
+        .inputVariables("topic")
+        .build()
 
     val params = CommitUpdateParams.builder()
         .owner(owner)
