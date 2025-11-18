@@ -19,7 +19,7 @@ class RepoListParams
 private constructor(
     private val hasCommits: Boolean?,
     private val isArchived: IsArchived?,
-    private val boolean_: IsPublic?,
+    private val isPublic: IsPublic?,
     private val limit: Long?,
     private val offset: Long?,
     private val query: String?,
@@ -40,7 +40,7 @@ private constructor(
 
     fun isArchived(): Optional<IsArchived> = Optional.ofNullable(isArchived)
 
-    fun boolean_(): Optional<IsPublic> = Optional.ofNullable(boolean_)
+    fun isPublic(): Optional<IsPublic> = Optional.ofNullable(isPublic)
 
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
@@ -87,7 +87,7 @@ private constructor(
 
         private var hasCommits: Boolean? = null
         private var isArchived: IsArchived? = null
-        private var boolean_: IsPublic? = null
+        private var isPublic: IsPublic? = null
         private var limit: Long? = null
         private var offset: Long? = null
         private var query: String? = null
@@ -107,7 +107,7 @@ private constructor(
         internal fun from(repoListParams: RepoListParams) = apply {
             hasCommits = repoListParams.hasCommits
             isArchived = repoListParams.isArchived
-            boolean_ = repoListParams.boolean_
+            isPublic = repoListParams.isPublic
             limit = repoListParams.limit
             offset = repoListParams.offset
             query = repoListParams.query
@@ -141,10 +141,10 @@ private constructor(
         /** Alias for calling [Builder.isArchived] with `isArchived.orElse(null)`. */
         fun isArchived(isArchived: Optional<IsArchived>) = isArchived(isArchived.getOrNull())
 
-        fun boolean_(boolean_: IsPublic?) = apply { this.boolean_ = boolean_ }
+        fun isPublic(isPublic: IsPublic?) = apply { this.isPublic = isPublic }
 
-        /** Alias for calling [Builder.boolean_] with `boolean_.orElse(null)`. */
-        fun boolean_(boolean_: Optional<IsPublic>) = boolean_(boolean_.getOrNull())
+        /** Alias for calling [Builder.isPublic] with `isPublic.orElse(null)`. */
+        fun isPublic(isPublic: Optional<IsPublic>) = isPublic(isPublic.getOrNull())
 
         fun limit(limit: Long?) = apply { this.limit = limit }
 
@@ -369,7 +369,7 @@ private constructor(
             RepoListParams(
                 hasCommits,
                 isArchived,
-                boolean_,
+                isPublic,
                 limit,
                 offset,
                 query,
@@ -394,7 +394,7 @@ private constructor(
             .apply {
                 hasCommits?.let { put("has_commits", it.toString()) }
                 isArchived?.let { put("is_archived", it.toString()) }
-                boolean_?.let { put("is_public", it.toString()) }
+                isPublic?.let { put("is_public", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 offset?.let { put("offset", it.toString()) }
                 query?.let { put("query", it) }
@@ -959,7 +959,7 @@ private constructor(
         return other is RepoListParams &&
             hasCommits == other.hasCommits &&
             isArchived == other.isArchived &&
-            boolean_ == other.boolean_ &&
+            isPublic == other.isPublic &&
             limit == other.limit &&
             offset == other.offset &&
             query == other.query &&
@@ -980,7 +980,7 @@ private constructor(
         Objects.hash(
             hasCommits,
             isArchived,
-            boolean_,
+            isPublic,
             limit,
             offset,
             query,
@@ -998,5 +998,5 @@ private constructor(
         )
 
     override fun toString() =
-        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, boolean_=$boolean_, limit=$limit, offset=$offset, query=$query, sortDirection=$sortDirection, sortField=$sortField, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, sortDirection=$sortDirection, sortField=$sortField, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
