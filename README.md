@@ -381,7 +381,7 @@ LangsmithClient client = LangsmithOkHttpClient.builder()
 
 ### Timeouts
 
-Requests time out after 1 minute by default.
+Requests time out after 1.5 minutes by default.
 
 To set a custom timeout, configure the method call using the `timeout` method:
 
