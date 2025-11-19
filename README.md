@@ -39,19 +39,25 @@ This library requires Java 8 or later.
 ```java
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
-import com.langchain.smith.models.sessions.CustomChartsSection;
-import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
-import com.langchain.smith.models.sessions.SessionDashboardParams;
+import com.langchain.smith.models.runs.RunQueryParams;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
 // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGSMITH_ENDPOINT` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
-SessionDashboardParams params = SessionDashboardParams.builder()
-    .sessionId("REPLACE_ME")
-    .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
+RunQueryParams params = RunQueryParams.builder()
+    .addSession("REPLACE_ME")
+    .limit(10L)
     .build();
-CustomChartsSection customChartsSection = client.sessions().dashboard(params);
+var response = client.runs().query(params);
+
+// Print runs
+System.out.println("Found " + response.runs().size() + " runs:");
+for (var run : response.runs()) {
+    System.out.println("Run ID: " + run.id());
+    System.out.println("Run Name: " + run.name());
+    System.out.println("---");
+}
 ```
 
 ## Examples
