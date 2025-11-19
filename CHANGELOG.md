@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.12 (2025-11-19)
+
+Full Changelog: [v0.1.0-alpha.11...v0.1.0-alpha.12](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.11...v0.1.0-alpha.12)
+
+### Features
+
+* **api:** Set targets.java.publish.docs: true ([aec9261](https://github.com/langchain-ai/langsmith-java/commit/aec9261033ddb4a438e0bd409e96c2cb0c056471))
+
+
+### Chores
+
+* Move runner to ubuntu-latest-l to allow dokka to complete javadoc building ([05a9c63](https://github.com/langchain-ai/langsmith-java/commit/05a9c630d30918370524825769f9779a5925e9a3))
+
 ## 0.1.0-alpha.11 (2025-11-19)
 
 Full Changelog: [v0.1.0-alpha.10...v0.1.0-alpha.11](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.10...v0.1.0-alpha.11)
