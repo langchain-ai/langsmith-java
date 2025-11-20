@@ -20,7 +20,7 @@ or products provided by LangChain, please follow the respective company's securi
 
 ### LangChain Terms and Policies
 
-Please contact oss@langchain.dev for any questions or concerns regarding the security of our services.
+Please contact [support.langchain.com](http://support.langchain.com/) for any questions or concerns regarding the security of our services.
 
 ---
 
