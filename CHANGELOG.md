@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-alpha.15 (2025-11-20)
+
+Full Changelog: [v0.1.0-alpha.14...v0.1.0-alpha.15](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.14...v0.1.0-alpha.15)
+
 ## 0.1.0-alpha.14 (2025-11-20)
 
 Full Changelog: [v0.1.0-alpha.13...v0.1.0-alpha.14](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.13...v0.1.0-alpha.14)
