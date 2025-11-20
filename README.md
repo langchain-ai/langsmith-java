@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.16)
-[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith-java/0.1.0-alpha.16/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.16)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.17)
+[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith-java/0.1.0-alpha.17/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.17)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.16).
+Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.17).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smit
 ### Gradle
 
 ```kotlin
-implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.16")
+implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.17")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.16")
 <dependency>
   <groupId>com.langchain.smith</groupId>
   <artifactId>langsmith-java</artifactId>
-  <version>0.1.0-alpha.16</version>
+  <version>0.1.0-alpha.17</version>
 </dependency>
 ```
 
