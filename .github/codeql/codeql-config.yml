@@ -1,0 +1,12 @@
+name: "CodeQL config"
+
+queries:
+  - uses: security-extended
+
+paths-ignore:
+  - '**/test/**'
+  - '**/tests/**'
+  - '**/*Test.java'
+  - '**/*Test.kt'
+  - '**/build/**'
+  - '.gradle/**'
