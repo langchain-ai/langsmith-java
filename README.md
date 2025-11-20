@@ -9,9 +9,11 @@
 
 The [LangSmith](https://www.langchain.com/langsmith/observability) Java SDK provides convenient access to the LangSmith [REST API](https://api.smith.langchain.com/docs) from applications written in Java.
 
+To learn more about LangSmith, check out the [docs](https://docs.smith.langchain.com/).
+
 <!-- x-release-please-start-version -->
 
-Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.12).
+The REST API documentation can be found on [docs.smith.langchain.com](https://docs.smith.langchain.com/). Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.12).
 
 <!-- x-release-please-end -->
 
