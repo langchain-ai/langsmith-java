@@ -23,6 +23,7 @@ import com.langchain.smith.models.examples.ExampleDeleteAllParams
 import com.langchain.smith.models.examples.ExampleDeleteAllResponse
 import com.langchain.smith.models.examples.ExampleDeleteParams
 import com.langchain.smith.models.examples.ExampleDeleteResponse
+import com.langchain.smith.models.examples.ExampleListPageAsync
 import com.langchain.smith.models.examples.ExampleListParams
 import com.langchain.smith.models.examples.ExampleRetrieveCountParams
 import com.langchain.smith.models.examples.ExampleRetrieveParams
@@ -81,7 +82,7 @@ class ExampleServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: ExampleListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<Example>> =
+    ): CompletableFuture<ExampleListPageAsync> =
         // get /api/v1/examples
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -241,7 +242,7 @@ class ExampleServiceAsyncImpl internal constructor(private val clientOptions: Cl
         override fun list(
             params: ExampleListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<Example>>> {
+        ): CompletableFuture<HttpResponseFor<ExampleListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -260,6 +261,14 @@ class ExampleServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
+                            }
+                            .let {
+                                ExampleListPageAsync.builder()
+                                    .service(ExampleServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
                             }
                     }
                 }

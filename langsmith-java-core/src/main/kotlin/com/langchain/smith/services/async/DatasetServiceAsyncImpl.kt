@@ -23,6 +23,7 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
+import com.langchain.smith.models.datasets.DatasetListPageAsync
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
@@ -139,7 +140,7 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: DatasetListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<Dataset>> =
+    ): CompletableFuture<DatasetListPageAsync> =
         // get /api/v1/datasets
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -377,7 +378,7 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         override fun list(
             params: DatasetListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<Dataset>>> {
+        ): CompletableFuture<HttpResponseFor<DatasetListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -396,6 +397,14 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
+                            }
+                            .let {
+                                DatasetListPageAsync.builder()
+                                    .service(DatasetServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
                             }
                     }
                 }

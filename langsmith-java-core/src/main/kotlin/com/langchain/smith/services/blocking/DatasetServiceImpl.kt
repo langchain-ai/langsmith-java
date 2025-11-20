@@ -23,6 +23,7 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
+import com.langchain.smith.models.datasets.DatasetListPage
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
@@ -125,7 +126,7 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         // patch /api/v1/datasets/{dataset_id}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(params: DatasetListParams, requestOptions: RequestOptions): List<Dataset> =
+    override fun list(params: DatasetListParams, requestOptions: RequestOptions): DatasetListPage =
         // get /api/v1/datasets
         withRawResponse().list(params, requestOptions).parse()
 
@@ -351,7 +352,7 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         override fun list(
             params: DatasetListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<Dataset>> {
+        ): HttpResponseFor<DatasetListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -368,6 +369,13 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        DatasetListPage.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

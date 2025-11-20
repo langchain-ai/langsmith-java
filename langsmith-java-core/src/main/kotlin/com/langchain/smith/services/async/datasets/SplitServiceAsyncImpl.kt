@@ -17,7 +17,7 @@ import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.datasets.splits.SplitCreateParams
-import com.langchain.smith.models.datasets.splits.SplitListParams
+import com.langchain.smith.models.datasets.splits.SplitRetrieveParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -41,12 +41,12 @@ class SplitServiceAsyncImpl internal constructor(private val clientOptions: Clie
         // put /api/v1/datasets/{dataset_id}/splits
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
-    override fun list(
-        params: SplitListParams,
+    override fun retrieve(
+        params: SplitRetrieveParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<List<String>> =
         // get /api/v1/datasets/{dataset_id}/splits
-        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SplitServiceAsync.WithRawResponse {
@@ -89,11 +89,11 @@ class SplitServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 }
         }
 
-        private val listHandler: Handler<List<String>> =
+        private val retrieveHandler: Handler<List<String>> =
             jsonHandler<List<String>>(clientOptions.jsonMapper)
 
-        override fun list(
-            params: SplitListParams,
+        override fun retrieve(
+            params: SplitRetrieveParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<List<String>>> {
             // We check here instead of in the params builder because this can be specified
@@ -111,7 +111,7 @@ class SplitServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
-                        response.use { listHandler.handle(it) }
+                        response.use { retrieveHandler.handle(it) }
                     }
                 }
         }

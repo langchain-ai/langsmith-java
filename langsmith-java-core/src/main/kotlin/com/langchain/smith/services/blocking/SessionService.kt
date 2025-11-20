@@ -11,6 +11,7 @@ import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
+import com.langchain.smith.models.sessions.SessionListPage
 import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
@@ -120,20 +121,20 @@ interface SessionService {
         update(sessionId, SessionUpdateParams.none(), requestOptions)
 
     /** Get all sessions. */
-    fun list(): List<TracerSession> = list(SessionListParams.none())
+    fun list(): SessionListPage = list(SessionListParams.none())
 
     /** @see list */
     fun list(
         params: SessionListParams = SessionListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<TracerSession>
+    ): SessionListPage
 
     /** @see list */
-    fun list(params: SessionListParams = SessionListParams.none()): List<TracerSession> =
+    fun list(params: SessionListParams = SessionListParams.none()): SessionListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): List<TracerSession> =
+    fun list(requestOptions: RequestOptions): SessionListPage =
         list(SessionListParams.none(), requestOptions)
 
     /** Delete a specific session. */
@@ -326,25 +327,24 @@ interface SessionService {
          * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
          * [SessionService.list].
          */
-        @MustBeClosed
-        fun list(): HttpResponseFor<List<TracerSession>> = list(SessionListParams.none())
+        @MustBeClosed fun list(): HttpResponseFor<SessionListPage> = list(SessionListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: SessionListParams = SessionListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<TracerSession>>
+        ): HttpResponseFor<SessionListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: SessionListParams = SessionListParams.none()
-        ): HttpResponseFor<List<TracerSession>> = list(params, RequestOptions.none())
+        ): HttpResponseFor<SessionListPage> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<List<TracerSession>> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<SessionListPage> =
             list(SessionListParams.none(), requestOptions)
 
         /**

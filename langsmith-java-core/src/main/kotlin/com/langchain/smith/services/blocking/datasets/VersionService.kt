@@ -6,7 +6,7 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.datasets.DatasetVersion
+import com.langchain.smith.models.datasets.versions.VersionListPage
 import com.langchain.smith.models.datasets.versions.VersionListParams
 import com.langchain.smith.models.datasets.versions.VersionRetrieveDiffParams
 import com.langchain.smith.models.datasets.versions.VersionRetrieveDiffResponse
@@ -27,32 +27,32 @@ interface VersionService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): VersionService
 
     /** Get dataset versions. */
-    fun list(datasetId: String): List<DatasetVersion> = list(datasetId, VersionListParams.none())
+    fun list(datasetId: String): VersionListPage = list(datasetId, VersionListParams.none())
 
     /** @see list */
     fun list(
         datasetId: String,
         params: VersionListParams = VersionListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<DatasetVersion> = list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+    ): VersionListPage = list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
     /** @see list */
     fun list(
         datasetId: String,
         params: VersionListParams = VersionListParams.none(),
-    ): List<DatasetVersion> = list(datasetId, params, RequestOptions.none())
+    ): VersionListPage = list(datasetId, params, RequestOptions.none())
 
     /** @see list */
     fun list(
         params: VersionListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<DatasetVersion>
+    ): VersionListPage
 
     /** @see list */
-    fun list(params: VersionListParams): List<DatasetVersion> = list(params, RequestOptions.none())
+    fun list(params: VersionListParams): VersionListPage = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(datasetId: String, requestOptions: RequestOptions): List<DatasetVersion> =
+    fun list(datasetId: String, requestOptions: RequestOptions): VersionListPage =
         list(datasetId, VersionListParams.none(), requestOptions)
 
     /** Get diff between two dataset versions. */
@@ -94,7 +94,7 @@ interface VersionService {
          * otherwise the same as [VersionService.list].
          */
         @MustBeClosed
-        fun list(datasetId: String): HttpResponseFor<List<DatasetVersion>> =
+        fun list(datasetId: String): HttpResponseFor<VersionListPage> =
             list(datasetId, VersionListParams.none())
 
         /** @see list */
@@ -103,7 +103,7 @@ interface VersionService {
             datasetId: String,
             params: VersionListParams = VersionListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<DatasetVersion>> =
+        ): HttpResponseFor<VersionListPage> =
             list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
         /** @see list */
@@ -111,18 +111,18 @@ interface VersionService {
         fun list(
             datasetId: String,
             params: VersionListParams = VersionListParams.none(),
-        ): HttpResponseFor<List<DatasetVersion>> = list(datasetId, params, RequestOptions.none())
+        ): HttpResponseFor<VersionListPage> = list(datasetId, params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: VersionListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<DatasetVersion>>
+        ): HttpResponseFor<VersionListPage>
 
         /** @see list */
         @MustBeClosed
-        fun list(params: VersionListParams): HttpResponseFor<List<DatasetVersion>> =
+        fun list(params: VersionListParams): HttpResponseFor<VersionListPage> =
             list(params, RequestOptions.none())
 
         /** @see list */
@@ -130,7 +130,7 @@ interface VersionService {
         fun list(
             datasetId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<DatasetVersion>> =
+        ): HttpResponseFor<VersionListPage> =
             list(datasetId, VersionListParams.none(), requestOptions)
 
         /**

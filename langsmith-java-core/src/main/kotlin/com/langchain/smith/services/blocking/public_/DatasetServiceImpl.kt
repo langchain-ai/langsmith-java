@@ -18,10 +18,13 @@ import com.langchain.smith.core.prepare
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.public_.datasets.DatasetListParams
 import com.langchain.smith.models.public_.datasets.DatasetListResponse
+import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativePage
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeResponse
+import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackPage
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
+import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsPage
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
 import java.util.function.Consumer
@@ -49,21 +52,21 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
     override fun retrieveComparative(
         params: DatasetRetrieveComparativeParams,
         requestOptions: RequestOptions,
-    ): List<DatasetRetrieveComparativeResponse> =
+    ): DatasetRetrieveComparativePage =
         // get /api/v1/public/{share_token}/datasets/comparative
         withRawResponse().retrieveComparative(params, requestOptions).parse()
 
     override fun retrieveFeedback(
         params: DatasetRetrieveFeedbackParams,
         requestOptions: RequestOptions,
-    ): List<FeedbackSchema> =
+    ): DatasetRetrieveFeedbackPage =
         // get /api/v1/public/{share_token}/datasets/feedback
         withRawResponse().retrieveFeedback(params, requestOptions).parse()
 
     override fun retrieveSessions(
         params: DatasetRetrieveSessionsParams,
         requestOptions: RequestOptions,
-    ): List<TracerSession> =
+    ): DatasetRetrieveSessionsPage =
         // get /api/v1/public/{share_token}/datasets/sessions
         withRawResponse().retrieveSessions(params, requestOptions).parse()
 
@@ -123,7 +126,7 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         override fun retrieveComparative(
             params: DatasetRetrieveComparativeParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<DatasetRetrieveComparativeResponse>> {
+        ): HttpResponseFor<DatasetRetrieveComparativePage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -151,6 +154,13 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
                             it.forEach { it.validate() }
                         }
                     }
+                    .let {
+                        DatasetRetrieveComparativePage.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
+                    }
             }
         }
 
@@ -160,7 +170,7 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         override fun retrieveFeedback(
             params: DatasetRetrieveFeedbackParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<FeedbackSchema>> {
+        ): HttpResponseFor<DatasetRetrieveFeedbackPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -188,6 +198,13 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
                             it.forEach { it.validate() }
                         }
                     }
+                    .let {
+                        DatasetRetrieveFeedbackPage.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
+                    }
             }
         }
 
@@ -197,7 +214,7 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         override fun retrieveSessions(
             params: DatasetRetrieveSessionsParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<TracerSession>> {
+        ): HttpResponseFor<DatasetRetrieveSessionsPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -224,6 +241,13 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        DatasetRetrieveSessionsPage.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

@@ -10,8 +10,8 @@ import com.langchain.smith.models.datasets.comparative.ComparativeCreateParams
 import com.langchain.smith.models.datasets.comparative.ComparativeCreateResponse
 import com.langchain.smith.models.datasets.comparative.ComparativeDeleteParams
 import com.langchain.smith.models.datasets.comparative.ComparativeDeleteResponse
+import com.langchain.smith.models.datasets.comparative.ComparativeListPage
 import com.langchain.smith.models.datasets.comparative.ComparativeListParams
-import com.langchain.smith.models.datasets.comparative.ComparativeListResponse
 import java.util.function.Consumer
 
 interface ComparativeService {
@@ -39,35 +39,33 @@ interface ComparativeService {
     ): ComparativeCreateResponse
 
     /** Get all comparative experiments for a given dataset. */
-    fun list(datasetId: String): List<ComparativeListResponse> =
-        list(datasetId, ComparativeListParams.none())
+    fun list(datasetId: String): ComparativeListPage = list(datasetId, ComparativeListParams.none())
 
     /** @see list */
     fun list(
         datasetId: String,
         params: ComparativeListParams = ComparativeListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<ComparativeListResponse> =
-        list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+    ): ComparativeListPage = list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
     /** @see list */
     fun list(
         datasetId: String,
         params: ComparativeListParams = ComparativeListParams.none(),
-    ): List<ComparativeListResponse> = list(datasetId, params, RequestOptions.none())
+    ): ComparativeListPage = list(datasetId, params, RequestOptions.none())
 
     /** @see list */
     fun list(
         params: ComparativeListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<ComparativeListResponse>
+    ): ComparativeListPage
 
     /** @see list */
-    fun list(params: ComparativeListParams): List<ComparativeListResponse> =
+    fun list(params: ComparativeListParams): ComparativeListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(datasetId: String, requestOptions: RequestOptions): List<ComparativeListResponse> =
+    fun list(datasetId: String, requestOptions: RequestOptions): ComparativeListPage =
         list(datasetId, ComparativeListParams.none(), requestOptions)
 
     /** Delete a specific comparative experiment. */
@@ -142,7 +140,7 @@ interface ComparativeService {
          * otherwise the same as [ComparativeService.list].
          */
         @MustBeClosed
-        fun list(datasetId: String): HttpResponseFor<List<ComparativeListResponse>> =
+        fun list(datasetId: String): HttpResponseFor<ComparativeListPage> =
             list(datasetId, ComparativeListParams.none())
 
         /** @see list */
@@ -151,7 +149,7 @@ interface ComparativeService {
             datasetId: String,
             params: ComparativeListParams = ComparativeListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<ComparativeListResponse>> =
+        ): HttpResponseFor<ComparativeListPage> =
             list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
         /** @see list */
@@ -159,19 +157,18 @@ interface ComparativeService {
         fun list(
             datasetId: String,
             params: ComparativeListParams = ComparativeListParams.none(),
-        ): HttpResponseFor<List<ComparativeListResponse>> =
-            list(datasetId, params, RequestOptions.none())
+        ): HttpResponseFor<ComparativeListPage> = list(datasetId, params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: ComparativeListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<ComparativeListResponse>>
+        ): HttpResponseFor<ComparativeListPage>
 
         /** @see list */
         @MustBeClosed
-        fun list(params: ComparativeListParams): HttpResponseFor<List<ComparativeListResponse>> =
+        fun list(params: ComparativeListParams): HttpResponseFor<ComparativeListPage> =
             list(params, RequestOptions.none())
 
         /** @see list */
@@ -179,7 +176,7 @@ interface ComparativeService {
         fun list(
             datasetId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<ComparativeListResponse>> =
+        ): HttpResponseFor<ComparativeListPage> =
             list(datasetId, ComparativeListParams.none(), requestOptions)
 
         /**

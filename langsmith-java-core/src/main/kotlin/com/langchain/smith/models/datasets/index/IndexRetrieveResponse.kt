@@ -19,7 +19,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Dataset schema for serving. */
-class IndexListResponse
+class IndexRetrieveResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val datasetId: JsonField<String>,
@@ -95,7 +95,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [IndexListResponse].
+         * Returns a mutable builder for constructing an instance of [IndexRetrieveResponse].
          *
          * The following fields are required:
          * ```java
@@ -105,7 +105,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [IndexListResponse]. */
+    /** A builder for [IndexRetrieveResponse]. */
     class Builder internal constructor() {
 
         private var datasetId: JsonField<String>? = null
@@ -114,11 +114,11 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(indexListResponse: IndexListResponse) = apply {
-            datasetId = indexListResponse.datasetId
-            lastUpdatedVersion = indexListResponse.lastUpdatedVersion
-            tag = indexListResponse.tag
-            additionalProperties = indexListResponse.additionalProperties.toMutableMap()
+        internal fun from(indexRetrieveResponse: IndexRetrieveResponse) = apply {
+            datasetId = indexRetrieveResponse.datasetId
+            lastUpdatedVersion = indexRetrieveResponse.lastUpdatedVersion
+            tag = indexRetrieveResponse.tag
+            additionalProperties = indexRetrieveResponse.additionalProperties.toMutableMap()
         }
 
         fun datasetId(datasetId: String) = datasetId(JsonField.of(datasetId))
@@ -185,7 +185,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [IndexListResponse].
+         * Returns an immutable instance of [IndexRetrieveResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -196,8 +196,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): IndexListResponse =
-            IndexListResponse(
+        fun build(): IndexRetrieveResponse =
+            IndexRetrieveResponse(
                 checkRequired("datasetId", datasetId),
                 lastUpdatedVersion,
                 tag,
@@ -207,7 +207,7 @@ private constructor(
 
     private var validated: Boolean = false
 
-    fun validate(): IndexListResponse = apply {
+    fun validate(): IndexRetrieveResponse = apply {
         if (validated) {
             return@apply
         }
@@ -242,7 +242,7 @@ private constructor(
             return true
         }
 
-        return other is IndexListResponse &&
+        return other is IndexRetrieveResponse &&
             datasetId == other.datasetId &&
             lastUpdatedVersion == other.lastUpdatedVersion &&
             tag == other.tag &&
@@ -256,5 +256,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "IndexListResponse{datasetId=$datasetId, lastUpdatedVersion=$lastUpdatedVersion, tag=$tag, additionalProperties=$additionalProperties}"
+        "IndexRetrieveResponse{datasetId=$datasetId, lastUpdatedVersion=$lastUpdatedVersion, tag=$tag, additionalProperties=$additionalProperties}"
 }

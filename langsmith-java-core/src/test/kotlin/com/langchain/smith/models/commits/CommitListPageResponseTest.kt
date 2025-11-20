@@ -9,12 +9,12 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class CommitListResponseTest {
+internal class CommitListPageResponseTest {
 
     @Test
     fun create() {
-        val commitListResponse =
-            CommitListResponse.builder()
+        val commitListPageResponse =
+            CommitListPageResponse.builder()
                 .addCommit(
                     CommitWithLookups.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -34,7 +34,7 @@ internal class CommitListResponseTest {
                 .total(0L)
                 .build()
 
-        assertThat(commitListResponse.commits())
+        assertThat(commitListPageResponse.commits())
             .containsExactly(
                 CommitWithLookups.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -51,14 +51,14 @@ internal class CommitListResponseTest {
                     .parentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
-        assertThat(commitListResponse.total()).isEqualTo(0L)
+        assertThat(commitListPageResponse.total()).isEqualTo(0L)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val commitListResponse =
-            CommitListResponse.builder()
+        val commitListPageResponse =
+            CommitListPageResponse.builder()
                 .addCommit(
                     CommitWithLookups.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -78,12 +78,12 @@ internal class CommitListResponseTest {
                 .total(0L)
                 .build()
 
-        val roundtrippedCommitListResponse =
+        val roundtrippedCommitListPageResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(commitListResponse),
-                jacksonTypeRef<CommitListResponse>(),
+                jsonMapper.writeValueAsString(commitListPageResponse),
+                jacksonTypeRef<CommitListPageResponse>(),
             )
 
-        assertThat(roundtrippedCommitListResponse).isEqualTo(commitListResponse)
+        assertThat(roundtrippedCommitListPageResponse).isEqualTo(commitListPageResponse)
     }
 }

@@ -11,8 +11,8 @@ import com.langchain.smith.models.repos.GetRepoResponse
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoDeleteResponse
+import com.langchain.smith.models.repos.RepoListPage
 import com.langchain.smith.models.repos.RepoListParams
-import com.langchain.smith.models.repos.RepoListResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import java.util.function.Consumer
@@ -82,20 +82,20 @@ interface RepoService {
     ): CreateRepoResponse
 
     /** Get all repos. */
-    fun list(): RepoListResponse = list(RepoListParams.none())
+    fun list(): RepoListPage = list(RepoListParams.none())
 
     /** @see list */
     fun list(
         params: RepoListParams = RepoListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): RepoListResponse
+    ): RepoListPage
 
     /** @see list */
-    fun list(params: RepoListParams = RepoListParams.none()): RepoListResponse =
+    fun list(params: RepoListParams = RepoListParams.none()): RepoListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): RepoListResponse =
+    fun list(requestOptions: RequestOptions): RepoListPage =
         list(RepoListParams.none(), requestOptions)
 
     /** Delete a repo. */
@@ -205,24 +205,23 @@ interface RepoService {
          * Returns a raw HTTP response for `get /api/v1/repos`, but is otherwise the same as
          * [RepoService.list].
          */
-        @MustBeClosed fun list(): HttpResponseFor<RepoListResponse> = list(RepoListParams.none())
+        @MustBeClosed fun list(): HttpResponseFor<RepoListPage> = list(RepoListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: RepoListParams = RepoListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RepoListResponse>
+        ): HttpResponseFor<RepoListPage>
 
         /** @see list */
         @MustBeClosed
-        fun list(
-            params: RepoListParams = RepoListParams.none()
-        ): HttpResponseFor<RepoListResponse> = list(params, RequestOptions.none())
+        fun list(params: RepoListParams = RepoListParams.none()): HttpResponseFor<RepoListPage> =
+            list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<RepoListResponse> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<RepoListPage> =
             list(RepoListParams.none(), requestOptions)
 
         /**

@@ -39,7 +39,7 @@ internal class ShareServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun list() {
+    fun retrieve() {
         val client =
             LangsmithOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -50,7 +50,7 @@ internal class ShareServiceAsyncTest {
         val shareServiceAsync = client.datasets().share()
 
         val datasetShareSchemaFuture =
-            shareServiceAsync.list("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            shareServiceAsync.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         val datasetShareSchema = datasetShareSchemaFuture.get()
         val unwrappedDatasetShareSchema = datasetShareSchema.getOrNull()

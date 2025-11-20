@@ -10,12 +10,12 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class RepoListResponseTest {
+internal class RepoListPageResponseTest {
 
     @Test
     fun create() {
-        val repoListResponse =
-            RepoListResponse.builder()
+        val repoListPageResponse =
+            RepoListPageResponse.builder()
                 .addRepo(
                     RepoWithLookups.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -60,7 +60,7 @@ internal class RepoListResponseTest {
                 .total(0L)
                 .build()
 
-        assertThat(repoListResponse.repos())
+        assertThat(repoListPageResponse.repos())
             .containsExactly(
                 RepoWithLookups.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -102,14 +102,14 @@ internal class RepoListResponseTest {
                     .upstreamRepoId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
-        assertThat(repoListResponse.total()).isEqualTo(0L)
+        assertThat(repoListPageResponse.total()).isEqualTo(0L)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val repoListResponse =
-            RepoListResponse.builder()
+        val repoListPageResponse =
+            RepoListPageResponse.builder()
                 .addRepo(
                     RepoWithLookups.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -154,12 +154,12 @@ internal class RepoListResponseTest {
                 .total(0L)
                 .build()
 
-        val roundtrippedRepoListResponse =
+        val roundtrippedRepoListPageResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(repoListResponse),
-                jacksonTypeRef<RepoListResponse>(),
+                jsonMapper.writeValueAsString(repoListPageResponse),
+                jacksonTypeRef<RepoListPageResponse>(),
             )
 
-        assertThat(roundtrippedRepoListResponse).isEqualTo(repoListResponse)
+        assertThat(roundtrippedRepoListPageResponse).isEqualTo(repoListPageResponse)
     }
 }

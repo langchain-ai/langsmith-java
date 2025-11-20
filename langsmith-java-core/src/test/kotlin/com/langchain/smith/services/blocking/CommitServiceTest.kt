@@ -81,11 +81,9 @@ internal class CommitServiceTest {
                 .build()
         val commitService = client.commits()
 
-        val commits =
-            commitService.list(
-                CommitListParams.builder().owner("owner").repo("repo").limit(1L).offset(0L).build()
-            )
+        val page =
+            commitService.list(CommitListParams.builder().owner("owner").repo("repo").build())
 
-        commits.validate()
+        page.response().validate()
     }
 }

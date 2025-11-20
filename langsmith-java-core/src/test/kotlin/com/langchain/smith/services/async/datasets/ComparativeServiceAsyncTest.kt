@@ -6,8 +6,6 @@ import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.datasets.comparative.ComparativeCreateParams
-import com.langchain.smith.models.datasets.comparative.ComparativeListParams
-import com.langchain.smith.models.datasets.comparative.SortByComparativeExperimentColumn
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -58,22 +56,10 @@ internal class ComparativeServiceAsyncTest {
                 .build()
         val comparativeServiceAsync = client.datasets().comparative()
 
-        val comparativesFuture =
-            comparativeServiceAsync.list(
-                ComparativeListParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .limit(1L)
-                    .name("name")
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .sortBy(SortByComparativeExperimentColumn.NAME)
-                    .sortByDesc(true)
-                    .build()
-            )
+        val pageFuture = comparativeServiceAsync.list("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
-        val comparatives = comparativesFuture.get()
-        comparatives.forEach { it.validate() }
+        val page = pageFuture.get()
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

@@ -21,8 +21,9 @@ import com.langchain.smith.models.repos.GetRepoResponse
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoDeleteResponse
+import com.langchain.smith.models.repos.RepoListPage
+import com.langchain.smith.models.repos.RepoListPageResponse
 import com.langchain.smith.models.repos.RepoListParams
-import com.langchain.smith.models.repos.RepoListResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import java.util.function.Consumer
@@ -60,7 +61,7 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
         // patch /api/v1/repos/{owner}/{repo}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(params: RepoListParams, requestOptions: RequestOptions): RepoListResponse =
+    override fun list(params: RepoListParams, requestOptions: RequestOptions): RepoListPage =
         // get /api/v1/repos
         withRawResponse().list(params, requestOptions).parse()
 
@@ -185,13 +186,13 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
             }
         }
 
-        private val listHandler: Handler<RepoListResponse> =
-            jsonHandler<RepoListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<RepoListPageResponse> =
+            jsonHandler<RepoListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: RepoListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<RepoListResponse> {
+        ): HttpResponseFor<RepoListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -208,6 +209,13 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        RepoListPage.builder()
+                            .service(RepoServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

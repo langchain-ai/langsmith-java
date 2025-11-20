@@ -5,7 +5,7 @@ package com.langchain.smith.services.async.datasets
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.models.datasets.splits.SplitCreateParams
-import com.langchain.smith.models.datasets.splits.SplitListParams
+import com.langchain.smith.models.datasets.splits.SplitRetrieveParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -41,7 +41,7 @@ internal class SplitServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun list() {
+    fun retrieve() {
         val client =
             LangsmithOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -52,8 +52,8 @@ internal class SplitServiceAsyncTest {
         val splitServiceAsync = client.datasets().splits()
 
         val splitsFuture =
-            splitServiceAsync.list(
-                SplitListParams.builder()
+            splitServiceAsync.retrieve(
+                SplitRetrieveParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .build()

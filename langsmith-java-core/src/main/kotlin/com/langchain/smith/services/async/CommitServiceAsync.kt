@@ -5,8 +5,8 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.commits.CommitListPageAsync
 import com.langchain.smith.models.commits.CommitListParams
-import com.langchain.smith.models.commits.CommitListResponse
 import com.langchain.smith.models.commits.CommitManifestResponse
 import com.langchain.smith.models.commits.CommitRetrieveParams
 import com.langchain.smith.models.commits.CommitUpdateParams
@@ -75,7 +75,7 @@ interface CommitServiceAsync {
     ): CompletableFuture<CommitUpdateResponse>
 
     /** Get all commits. */
-    fun list(repo: String, params: CommitListParams): CompletableFuture<CommitListResponse> =
+    fun list(repo: String, params: CommitListParams): CompletableFuture<CommitListPageAsync> =
         list(repo, params, RequestOptions.none())
 
     /** @see list */
@@ -83,18 +83,18 @@ interface CommitServiceAsync {
         repo: String,
         params: CommitListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CommitListResponse> =
+    ): CompletableFuture<CommitListPageAsync> =
         list(params.toBuilder().repo(repo).build(), requestOptions)
 
     /** @see list */
-    fun list(params: CommitListParams): CompletableFuture<CommitListResponse> =
+    fun list(params: CommitListParams): CompletableFuture<CommitListPageAsync> =
         list(params, RequestOptions.none())
 
     /** @see list */
     fun list(
         params: CommitListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<CommitListResponse>
+    ): CompletableFuture<CommitListPageAsync>
 
     /**
      * A view of [CommitServiceAsync] that provides access to raw HTTP responses for each method.
@@ -177,7 +177,7 @@ interface CommitServiceAsync {
         fun list(
             repo: String,
             params: CommitListParams,
-        ): CompletableFuture<HttpResponseFor<CommitListResponse>> =
+        ): CompletableFuture<HttpResponseFor<CommitListPageAsync>> =
             list(repo, params, RequestOptions.none())
 
         /** @see list */
@@ -185,17 +185,19 @@ interface CommitServiceAsync {
             repo: String,
             params: CommitListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CommitListResponse>> =
+        ): CompletableFuture<HttpResponseFor<CommitListPageAsync>> =
             list(params.toBuilder().repo(repo).build(), requestOptions)
 
         /** @see list */
-        fun list(params: CommitListParams): CompletableFuture<HttpResponseFor<CommitListResponse>> =
+        fun list(
+            params: CommitListParams
+        ): CompletableFuture<HttpResponseFor<CommitListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             params: CommitListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<CommitListResponse>>
+        ): CompletableFuture<HttpResponseFor<CommitListPageAsync>>
     }
 }

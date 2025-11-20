@@ -4,7 +4,6 @@ package com.langchain.smith.services.blocking.datasets
 
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.models.datasets.versions.VersionListParams
 import com.langchain.smith.models.datasets.versions.VersionRetrieveDiffParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
@@ -26,18 +25,9 @@ internal class VersionServiceTest {
                 .build()
         val versionService = client.datasets().versions()
 
-        val datasetVersions =
-            versionService.list(
-                VersionListParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .example("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .limit(1L)
-                    .offset(0L)
-                    .search("search")
-                    .build()
-            )
+        val page = versionService.list("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
-        datasetVersions.forEach { it.validate() }
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

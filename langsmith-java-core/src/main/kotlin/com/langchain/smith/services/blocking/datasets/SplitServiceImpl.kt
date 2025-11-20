@@ -17,7 +17,7 @@ import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.datasets.splits.SplitCreateParams
-import com.langchain.smith.models.datasets.splits.SplitListParams
+import com.langchain.smith.models.datasets.splits.SplitRetrieveParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -37,9 +37,12 @@ class SplitServiceImpl internal constructor(private val clientOptions: ClientOpt
         // put /api/v1/datasets/{dataset_id}/splits
         withRawResponse().create(params, requestOptions).parse()
 
-    override fun list(params: SplitListParams, requestOptions: RequestOptions): List<String> =
+    override fun retrieve(
+        params: SplitRetrieveParams,
+        requestOptions: RequestOptions,
+    ): List<String> =
         // get /api/v1/datasets/{dataset_id}/splits
-        withRawResponse().list(params, requestOptions).parse()
+        withRawResponse().retrieve(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SplitService.WithRawResponse {
@@ -79,11 +82,11 @@ class SplitServiceImpl internal constructor(private val clientOptions: ClientOpt
             }
         }
 
-        private val listHandler: Handler<List<String>> =
+        private val retrieveHandler: Handler<List<String>> =
             jsonHandler<List<String>>(clientOptions.jsonMapper)
 
-        override fun list(
-            params: SplitListParams,
+        override fun retrieve(
+            params: SplitRetrieveParams,
             requestOptions: RequestOptions,
         ): HttpResponseFor<List<String>> {
             // We check here instead of in the params builder because this can be specified
@@ -99,7 +102,7 @@ class SplitServiceImpl internal constructor(private val clientOptions: ClientOpt
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
-                response.use { listHandler.handle(it) }
+                response.use { retrieveHandler.handle(it) }
             }
         }
     }

@@ -19,6 +19,7 @@ import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.feedback.FeedbackCreateParams
 import com.langchain.smith.models.feedback.FeedbackDeleteParams
 import com.langchain.smith.models.feedback.FeedbackDeleteResponse
+import com.langchain.smith.models.feedback.FeedbackListPageAsync
 import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
@@ -69,7 +70,7 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun list(
         params: FeedbackListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<FeedbackSchema>> =
+    ): CompletableFuture<FeedbackListPageAsync> =
         // get /api/v1/feedback
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -203,7 +204,7 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
         override fun list(
             params: FeedbackListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> {
+        ): CompletableFuture<HttpResponseFor<FeedbackListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -222,6 +223,14 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
+                            }
+                            .let {
+                                FeedbackListPageAsync.builder()
+                                    .service(FeedbackServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
                             }
                     }
                 }

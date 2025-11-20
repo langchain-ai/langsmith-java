@@ -15,8 +15,8 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueExportParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueExportResponse
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateResponse
+import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesPage
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesParams
-import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesResponse
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveQueuesParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveResponse
@@ -241,7 +241,7 @@ interface AnnotationQueueService {
     ): AnnotationQueuePopulateResponse
 
     /** Get Annotation Queues */
-    fun retrieveAnnotationQueues(): List<AnnotationQueueRetrieveAnnotationQueuesResponse> =
+    fun retrieveAnnotationQueues(): AnnotationQueueRetrieveAnnotationQueuesPage =
         retrieveAnnotationQueues(AnnotationQueueRetrieveAnnotationQueuesParams.none())
 
     /** @see retrieveAnnotationQueues */
@@ -249,19 +249,19 @@ interface AnnotationQueueService {
         params: AnnotationQueueRetrieveAnnotationQueuesParams =
             AnnotationQueueRetrieveAnnotationQueuesParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<AnnotationQueueRetrieveAnnotationQueuesResponse>
+    ): AnnotationQueueRetrieveAnnotationQueuesPage
 
     /** @see retrieveAnnotationQueues */
     fun retrieveAnnotationQueues(
         params: AnnotationQueueRetrieveAnnotationQueuesParams =
             AnnotationQueueRetrieveAnnotationQueuesParams.none()
-    ): List<AnnotationQueueRetrieveAnnotationQueuesResponse> =
+    ): AnnotationQueueRetrieveAnnotationQueuesPage =
         retrieveAnnotationQueues(params, RequestOptions.none())
 
     /** @see retrieveAnnotationQueues */
     fun retrieveAnnotationQueues(
         requestOptions: RequestOptions
-    ): List<AnnotationQueueRetrieveAnnotationQueuesResponse> =
+    ): AnnotationQueueRetrieveAnnotationQueuesPage =
         retrieveAnnotationQueues(
             AnnotationQueueRetrieveAnnotationQueuesParams.none(),
             requestOptions,
@@ -735,7 +735,7 @@ interface AnnotationQueueService {
          */
         @MustBeClosed
         fun retrieveAnnotationQueues():
-            HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>> =
+            HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPage> =
             retrieveAnnotationQueues(AnnotationQueueRetrieveAnnotationQueuesParams.none())
 
         /** @see retrieveAnnotationQueues */
@@ -744,21 +744,21 @@ interface AnnotationQueueService {
             params: AnnotationQueueRetrieveAnnotationQueuesParams =
                 AnnotationQueueRetrieveAnnotationQueuesParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>>
+        ): HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPage>
 
         /** @see retrieveAnnotationQueues */
         @MustBeClosed
         fun retrieveAnnotationQueues(
             params: AnnotationQueueRetrieveAnnotationQueuesParams =
                 AnnotationQueueRetrieveAnnotationQueuesParams.none()
-        ): HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>> =
+        ): HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPage> =
             retrieveAnnotationQueues(params, RequestOptions.none())
 
         /** @see retrieveAnnotationQueues */
         @MustBeClosed
         fun retrieveAnnotationQueues(
             requestOptions: RequestOptions
-        ): HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>> =
+        ): HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPage> =
             retrieveAnnotationQueues(
                 AnnotationQueueRetrieveAnnotationQueuesParams.none(),
                 requestOptions,

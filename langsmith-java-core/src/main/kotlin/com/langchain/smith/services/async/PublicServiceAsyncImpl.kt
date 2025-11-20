@@ -16,6 +16,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.public_.PublicRetrieveFeedbacksPageAsync
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import com.langchain.smith.services.async.public_.DatasetServiceAsync
 import com.langchain.smith.services.async.public_.DatasetServiceAsyncImpl
@@ -42,7 +43,7 @@ class PublicServiceAsyncImpl internal constructor(private val clientOptions: Cli
     override fun retrieveFeedbacks(
         params: PublicRetrieveFeedbacksParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<FeedbackSchema>> =
+    ): CompletableFuture<PublicRetrieveFeedbacksPageAsync> =
         // get /api/v1/public/{share_token}/feedbacks
         withRawResponse().retrieveFeedbacks(params, requestOptions).thenApply { it.parse() }
 
@@ -71,7 +72,7 @@ class PublicServiceAsyncImpl internal constructor(private val clientOptions: Cli
         override fun retrieveFeedbacks(
             params: PublicRetrieveFeedbacksParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> {
+        ): CompletableFuture<HttpResponseFor<PublicRetrieveFeedbacksPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -93,6 +94,14 @@ class PublicServiceAsyncImpl internal constructor(private val clientOptions: Cli
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
+                            }
+                            .let {
+                                PublicRetrieveFeedbacksPageAsync.builder()
+                                    .service(PublicServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
                             }
                     }
                 }

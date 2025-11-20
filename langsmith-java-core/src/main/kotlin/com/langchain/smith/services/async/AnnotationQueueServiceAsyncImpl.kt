@@ -25,6 +25,7 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueExportParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueExportResponse
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateResponse
+import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesPageAsync
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesResponse
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveParams
@@ -115,7 +116,7 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
     override fun retrieveAnnotationQueues(
         params: AnnotationQueueRetrieveAnnotationQueuesParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<AnnotationQueueRetrieveAnnotationQueuesResponse>> =
+    ): CompletableFuture<AnnotationQueueRetrieveAnnotationQueuesPageAsync> =
         // get /api/v1/annotation-queues
         withRawResponse().retrieveAnnotationQueues(params, requestOptions).thenApply { it.parse() }
 
@@ -425,9 +426,7 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         override fun retrieveAnnotationQueues(
             params: AnnotationQueueRetrieveAnnotationQueuesParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<
-            HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>>
-        > {
+        ): CompletableFuture<HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -446,6 +445,14 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
+                            }
+                            .let {
+                                AnnotationQueueRetrieveAnnotationQueuesPageAsync.builder()
+                                    .service(AnnotationQueueServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
                             }
                     }
                 }

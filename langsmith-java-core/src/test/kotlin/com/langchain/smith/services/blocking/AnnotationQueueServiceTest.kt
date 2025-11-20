@@ -9,7 +9,6 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueAnnotationQueu
 import com.langchain.smith.models.annotationqueues.AnnotationQueueCreateRunStatusParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueExportParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateParams
-import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveRunParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveTotalArchivedParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRubricItemSchema
@@ -235,21 +234,9 @@ internal class AnnotationQueueServiceTest {
                 .build()
         val annotationQueueService = client.annotationQueues()
 
-        val response =
-            annotationQueueService.retrieveAnnotationQueues(
-                AnnotationQueueRetrieveAnnotationQueuesParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .limit(1L)
-                    .name("name")
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .queueType(AnnotationQueueRetrieveAnnotationQueuesParams.QueueType.SINGLE)
-                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val page = annotationQueueService.retrieveAnnotationQueues()
 
-        response.forEach { it.validate() }
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

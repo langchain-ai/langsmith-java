@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.datasets.share
+package com.langchain.smith.models.datasets.index
 
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.http.Headers
@@ -9,8 +9,8 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get the state of sharing a dataset */
-class ShareListParams
+/** Get index info. */
+class IndexRetrieveParams
 private constructor(
     private val datasetId: String?,
     private val additionalHeaders: Headers,
@@ -29,13 +29,13 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): ShareListParams = builder().build()
+        @JvmStatic fun none(): IndexRetrieveParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [ShareListParams]. */
+        /** Returns a mutable builder for constructing an instance of [IndexRetrieveParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ShareListParams]. */
+    /** A builder for [IndexRetrieveParams]. */
     class Builder internal constructor() {
 
         private var datasetId: String? = null
@@ -43,10 +43,10 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(shareListParams: ShareListParams) = apply {
-            datasetId = shareListParams.datasetId
-            additionalHeaders = shareListParams.additionalHeaders.toBuilder()
-            additionalQueryParams = shareListParams.additionalQueryParams.toBuilder()
+        internal fun from(indexRetrieveParams: IndexRetrieveParams) = apply {
+            datasetId = indexRetrieveParams.datasetId
+            additionalHeaders = indexRetrieveParams.additionalHeaders.toBuilder()
+            additionalQueryParams = indexRetrieveParams.additionalQueryParams.toBuilder()
         }
 
         fun datasetId(datasetId: String?) = apply { this.datasetId = datasetId }
@@ -153,12 +153,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ShareListParams].
+         * Returns an immutable instance of [IndexRetrieveParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ShareListParams =
-            ShareListParams(datasetId, additionalHeaders.build(), additionalQueryParams.build())
+        fun build(): IndexRetrieveParams =
+            IndexRetrieveParams(datasetId, additionalHeaders.build(), additionalQueryParams.build())
     }
 
     fun _pathParam(index: Int): String =
@@ -176,7 +176,7 @@ private constructor(
             return true
         }
 
-        return other is ShareListParams &&
+        return other is IndexRetrieveParams &&
             datasetId == other.datasetId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -185,5 +185,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(datasetId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ShareListParams{datasetId=$datasetId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "IndexRetrieveParams{datasetId=$datasetId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
