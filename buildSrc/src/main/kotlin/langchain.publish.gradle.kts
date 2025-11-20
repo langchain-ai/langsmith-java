@@ -42,6 +42,7 @@ configure<MavenPublishBaseExtension> {
         developers {
             developer {
                 name.set("LangChain")
+                email.set("oss@langchain.dev")
             }
         }
 
