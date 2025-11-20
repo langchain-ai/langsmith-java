@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.16 (2025-11-20)
+
+Full Changelog: [v0.1.0-alpha.15...v0.1.0-alpha.16](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.15...v0.1.0-alpha.16)
+
+### Chores
+
+* Update runner to ubuntu-latest-l-oss for Sonatype Publish ([a3e0b04](https://github.com/langchain-ai/langsmith-java/commit/a3e0b04186527cd5a8cfba0d5a7c5be5241e57e1))
+
 ## 0.1.0-alpha.15 (2025-11-20)
 
 Full Changelog: [v0.1.0-alpha.14...v0.1.0-alpha.15](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.14...v0.1.0-alpha.15)
