@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.17 (2025-11-20)
+
+Full Changelog: [v0.1.0-alpha.16...v0.1.0-alpha.17](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.16...v0.1.0-alpha.17)
+
+### Chores
+
+* Configure workflow for CodeQL ([f0b024d](https://github.com/langchain-ai/langsmith-java/commit/f0b024dde59c5aab9c1da151061342d2586fe882))
+
 ## 0.1.0-alpha.16 (2025-11-20)
 
 Full Changelog: [v0.1.0-alpha.15...v0.1.0-alpha.16](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.15...v0.1.0-alpha.16)
