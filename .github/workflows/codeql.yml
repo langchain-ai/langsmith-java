@@ -1,0 +1,40 @@
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches: [main, next]
+  pull_request:
+    branches: [main, next]
+  schedule:
+    - cron: "0 0 * * 0" # Weekly scan on Sunday at midnight
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            8
+            21
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: "java-kotlin"
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: Build SDK
+        run: ./gradlew build testClasses -x test --no-daemon --no-build-cache clean build
