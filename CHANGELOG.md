@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.14 (2025-11-20)
+
+Full Changelog: [v0.1.0-alpha.13...v0.1.0-alpha.14](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.13...v0.1.0-alpha.14)
+
+### Chores
+
+* Update support portal link ([6a36fa7](https://github.com/langchain-ai/langsmith-java/commit/6a36fa7802d64d0fa0e3dc8f7f4958c2d9763f6c))
+
 ## 0.1.0-alpha.13 (2025-11-20)
 
 Full Changelog: [v0.1.0-alpha.12...v0.1.0-alpha.13](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.12...v0.1.0-alpha.13)
