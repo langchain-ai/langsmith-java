@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0-alpha.13 (2025-11-20)
+
+Full Changelog: [v0.1.0-alpha.12...v0.1.0-alpha.13](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.12...v0.1.0-alpha.13)
+
+### Features
+
+* **api:** add rate limiting ([51fa6d7](https://github.com/langchain-ai/langsmith-java/commit/51fa6d7ec24088d1f5e4f7d64afa8b84ec0f32e1))
+* **api:** Update contact email ([20a193d](https://github.com/langchain-ai/langsmith-java/commit/20a193d472fb6ba20d990852e7d116b7d688e9cb))
+* **api:** Update docs to https://docs.smith.langchain.com/ ([f741f44](https://github.com/langchain-ai/langsmith-java/commit/f741f4487be9e79a4062bcb4e25f8605c2b6159c))
+
 ## 0.1.0-alpha.12 (2025-11-19)
 
 Full Changelog: [v0.1.0-alpha.11...v0.1.0-alpha.12](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.11...v0.1.0-alpha.12)
