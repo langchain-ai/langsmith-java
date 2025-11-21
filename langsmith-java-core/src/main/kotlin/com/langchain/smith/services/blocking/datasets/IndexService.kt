@@ -10,8 +10,8 @@ import com.langchain.smith.models.datasets.index.IndexCreateParams
 import com.langchain.smith.models.datasets.index.IndexCreateResponse
 import com.langchain.smith.models.datasets.index.IndexDeleteAllParams
 import com.langchain.smith.models.datasets.index.IndexDeleteAllResponse
-import com.langchain.smith.models.datasets.index.IndexListParams
-import com.langchain.smith.models.datasets.index.IndexListResponse
+import com.langchain.smith.models.datasets.index.IndexRetrieveParams
+import com.langchain.smith.models.datasets.index.IndexRetrieveResponse
 import com.langchain.smith.models.datasets.index.IndexSyncParams
 import com.langchain.smith.models.datasets.index.IndexSyncResponse
 import java.util.function.Consumer
@@ -61,33 +61,36 @@ interface IndexService {
         create(datasetId, IndexCreateParams.none(), requestOptions)
 
     /** Get index info. */
-    fun list(datasetId: String): IndexListResponse = list(datasetId, IndexListParams.none())
+    fun retrieve(datasetId: String): IndexRetrieveResponse =
+        retrieve(datasetId, IndexRetrieveParams.none())
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: IndexListParams = IndexListParams.none(),
+        params: IndexRetrieveParams = IndexRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): IndexListResponse = list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+    ): IndexRetrieveResponse =
+        retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: IndexListParams = IndexListParams.none(),
-    ): IndexListResponse = list(datasetId, params, RequestOptions.none())
+        params: IndexRetrieveParams = IndexRetrieveParams.none(),
+    ): IndexRetrieveResponse = retrieve(datasetId, params, RequestOptions.none())
 
-    /** @see list */
-    fun list(
-        params: IndexListParams,
+    /** @see retrieve */
+    fun retrieve(
+        params: IndexRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): IndexListResponse
+    ): IndexRetrieveResponse
 
-    /** @see list */
-    fun list(params: IndexListParams): IndexListResponse = list(params, RequestOptions.none())
+    /** @see retrieve */
+    fun retrieve(params: IndexRetrieveParams): IndexRetrieveResponse =
+        retrieve(params, RequestOptions.none())
 
-    /** @see list */
-    fun list(datasetId: String, requestOptions: RequestOptions): IndexListResponse =
-        list(datasetId, IndexListParams.none(), requestOptions)
+    /** @see retrieve */
+    fun retrieve(datasetId: String, requestOptions: RequestOptions): IndexRetrieveResponse =
+        retrieve(datasetId, IndexRetrieveParams.none(), requestOptions)
 
     /** Remove an index for a dataset. */
     fun deleteAll(datasetId: String): IndexDeleteAllResponse =
@@ -206,47 +209,48 @@ interface IndexService {
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/index`, but is
-         * otherwise the same as [IndexService.list].
+         * otherwise the same as [IndexService.retrieve].
          */
         @MustBeClosed
-        fun list(datasetId: String): HttpResponseFor<IndexListResponse> =
-            list(datasetId, IndexListParams.none())
+        fun retrieve(datasetId: String): HttpResponseFor<IndexRetrieveResponse> =
+            retrieve(datasetId, IndexRetrieveParams.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
+        fun retrieve(
             datasetId: String,
-            params: IndexListParams = IndexListParams.none(),
+            params: IndexRetrieveParams = IndexRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<IndexListResponse> =
-            list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+        ): HttpResponseFor<IndexRetrieveResponse> =
+            retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
+        fun retrieve(
             datasetId: String,
-            params: IndexListParams = IndexListParams.none(),
-        ): HttpResponseFor<IndexListResponse> = list(datasetId, params, RequestOptions.none())
+            params: IndexRetrieveParams = IndexRetrieveParams.none(),
+        ): HttpResponseFor<IndexRetrieveResponse> =
+            retrieve(datasetId, params, RequestOptions.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
-            params: IndexListParams,
+        fun retrieve(
+            params: IndexRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<IndexListResponse>
+        ): HttpResponseFor<IndexRetrieveResponse>
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(params: IndexListParams): HttpResponseFor<IndexListResponse> =
-            list(params, RequestOptions.none())
+        fun retrieve(params: IndexRetrieveParams): HttpResponseFor<IndexRetrieveResponse> =
+            retrieve(params, RequestOptions.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
+        fun retrieve(
             datasetId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<IndexListResponse> =
-            list(datasetId, IndexListParams.none(), requestOptions)
+        ): HttpResponseFor<IndexRetrieveResponse> =
+            retrieve(datasetId, IndexRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/datasets/{dataset_id}/index`, but is

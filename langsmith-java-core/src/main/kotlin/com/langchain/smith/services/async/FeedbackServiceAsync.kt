@@ -9,6 +9,7 @@ import com.langchain.smith.models.feedback.FeedbackCreateParams
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import com.langchain.smith.models.feedback.FeedbackDeleteParams
 import com.langchain.smith.models.feedback.FeedbackDeleteResponse
+import com.langchain.smith.models.feedback.FeedbackListPageAsync
 import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
@@ -128,21 +129,21 @@ interface FeedbackServiceAsync {
         update(feedbackId, FeedbackUpdateParams.none(), requestOptions)
 
     /** List all Feedback by query params. */
-    fun list(): CompletableFuture<List<FeedbackSchema>> = list(FeedbackListParams.none())
+    fun list(): CompletableFuture<FeedbackListPageAsync> = list(FeedbackListParams.none())
 
     /** @see list */
     fun list(
         params: FeedbackListParams = FeedbackListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<FeedbackSchema>>
+    ): CompletableFuture<FeedbackListPageAsync>
 
     /** @see list */
     fun list(
         params: FeedbackListParams = FeedbackListParams.none()
-    ): CompletableFuture<List<FeedbackSchema>> = list(params, RequestOptions.none())
+    ): CompletableFuture<FeedbackListPageAsync> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<List<FeedbackSchema>> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<FeedbackListPageAsync> =
         list(FeedbackListParams.none(), requestOptions)
 
     /** Delete a feedback. */
@@ -313,25 +314,25 @@ interface FeedbackServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/feedback`, but is otherwise the same as
          * [FeedbackServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
+        fun list(): CompletableFuture<HttpResponseFor<FeedbackListPageAsync>> =
             list(FeedbackListParams.none())
 
         /** @see list */
         fun list(
             params: FeedbackListParams = FeedbackListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>>
+        ): CompletableFuture<HttpResponseFor<FeedbackListPageAsync>>
 
         /** @see list */
         fun list(
             params: FeedbackListParams = FeedbackListParams.none()
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
+        ): CompletableFuture<HttpResponseFor<FeedbackListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
+        ): CompletableFuture<HttpResponseFor<FeedbackListPageAsync>> =
             list(FeedbackListParams.none(), requestOptions)
 
         /**

@@ -7,11 +7,11 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class SplitListParamsTest {
+internal class SplitRetrieveParamsTest {
 
     @Test
     fun create() {
-        SplitListParams.builder()
+        SplitRetrieveParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .build()
@@ -20,7 +20,7 @@ internal class SplitListParamsTest {
     @Test
     fun pathParams() {
         val params =
-            SplitListParams.builder().datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+            SplitRetrieveParams.builder().datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         // out-of-bound path param
@@ -30,7 +30,7 @@ internal class SplitListParamsTest {
     @Test
     fun queryParams() {
         val params =
-            SplitListParams.builder()
+            SplitRetrieveParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
@@ -44,7 +44,7 @@ internal class SplitListParamsTest {
     @Test
     fun queryParamsWithoutOptionalFields() {
         val params =
-            SplitListParams.builder().datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+            SplitRetrieveParams.builder().datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
 
         val queryParams = params._queryParams()
 

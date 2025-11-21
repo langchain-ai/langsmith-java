@@ -18,7 +18,7 @@ import java.util.Collections
 import java.util.Objects
 import kotlin.jvm.optionals.getOrNull
 
-class RepoListResponse
+class RepoListPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val repos: JsonField<List<RepoWithLookups>>,
@@ -75,7 +75,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [RepoListResponse].
+         * Returns a mutable builder for constructing an instance of [RepoListPageResponse].
          *
          * The following fields are required:
          * ```java
@@ -86,7 +86,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [RepoListResponse]. */
+    /** A builder for [RepoListPageResponse]. */
     class Builder internal constructor() {
 
         private var repos: JsonField<MutableList<RepoWithLookups>>? = null
@@ -94,10 +94,10 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(repoListResponse: RepoListResponse) = apply {
-            repos = repoListResponse.repos.map { it.toMutableList() }
-            total = repoListResponse.total
-            additionalProperties = repoListResponse.additionalProperties.toMutableMap()
+        internal fun from(repoListPageResponse: RepoListPageResponse) = apply {
+            repos = repoListPageResponse.repos.map { it.toMutableList() }
+            total = repoListPageResponse.total
+            additionalProperties = repoListPageResponse.additionalProperties.toMutableMap()
         }
 
         fun repos(repos: List<RepoWithLookups>) = repos(JsonField.of(repos))
@@ -153,7 +153,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [RepoListResponse].
+         * Returns an immutable instance of [RepoListPageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -165,8 +165,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): RepoListResponse =
-            RepoListResponse(
+        fun build(): RepoListPageResponse =
+            RepoListPageResponse(
                 checkRequired("repos", repos).map { it.toImmutable() },
                 checkRequired("total", total),
                 additionalProperties.toMutableMap(),
@@ -175,7 +175,7 @@ private constructor(
 
     private var validated: Boolean = false
 
-    fun validate(): RepoListResponse = apply {
+    fun validate(): RepoListPageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -208,7 +208,7 @@ private constructor(
             return true
         }
 
-        return other is RepoListResponse &&
+        return other is RepoListPageResponse &&
             repos == other.repos &&
             total == other.total &&
             additionalProperties == other.additionalProperties
@@ -219,5 +219,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RepoListResponse{repos=$repos, total=$total, additionalProperties=$additionalProperties}"
+        "RepoListPageResponse{repos=$repos, total=$total, additionalProperties=$additionalProperties}"
 }

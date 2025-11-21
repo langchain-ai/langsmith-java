@@ -10,6 +10,7 @@ import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
+import com.langchain.smith.models.sessions.SessionListPageAsync
 import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
@@ -128,21 +129,21 @@ interface SessionServiceAsync {
         update(sessionId, SessionUpdateParams.none(), requestOptions)
 
     /** Get all sessions. */
-    fun list(): CompletableFuture<List<TracerSession>> = list(SessionListParams.none())
+    fun list(): CompletableFuture<SessionListPageAsync> = list(SessionListParams.none())
 
     /** @see list */
     fun list(
         params: SessionListParams = SessionListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<TracerSession>>
+    ): CompletableFuture<SessionListPageAsync>
 
     /** @see list */
     fun list(
         params: SessionListParams = SessionListParams.none()
-    ): CompletableFuture<List<TracerSession>> = list(params, RequestOptions.none())
+    ): CompletableFuture<SessionListPageAsync> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<List<TracerSession>> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<SessionListPageAsync> =
         list(SessionListParams.none(), requestOptions)
 
     /** Delete a specific session. */
@@ -333,25 +334,25 @@ interface SessionServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/sessions`, but is otherwise the same as
          * [SessionServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<List<TracerSession>>> =
+        fun list(): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
             list(SessionListParams.none())
 
         /** @see list */
         fun list(
             params: SessionListParams = SessionListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>>
+        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>>
 
         /** @see list */
         fun list(
             params: SessionListParams = SessionListParams.none()
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> =
+        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> =
+        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> =
             list(SessionListParams.none(), requestOptions)
 
         /**

@@ -18,10 +18,13 @@ import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.public_.datasets.DatasetListParams
 import com.langchain.smith.models.public_.datasets.DatasetListResponse
+import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativePageAsync
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeResponse
+import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackPageAsync
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
+import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsPageAsync
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
 import java.util.concurrent.CompletableFuture
@@ -50,21 +53,21 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun retrieveComparative(
         params: DatasetRetrieveComparativeParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<DatasetRetrieveComparativeResponse>> =
+    ): CompletableFuture<DatasetRetrieveComparativePageAsync> =
         // get /api/v1/public/{share_token}/datasets/comparative
         withRawResponse().retrieveComparative(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieveFeedback(
         params: DatasetRetrieveFeedbackParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<FeedbackSchema>> =
+    ): CompletableFuture<DatasetRetrieveFeedbackPageAsync> =
         // get /api/v1/public/{share_token}/datasets/feedback
         withRawResponse().retrieveFeedback(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieveSessions(
         params: DatasetRetrieveSessionsParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<TracerSession>> =
+    ): CompletableFuture<DatasetRetrieveSessionsPageAsync> =
         // get /api/v1/public/{share_token}/datasets/sessions
         withRawResponse().retrieveSessions(params, requestOptions).thenApply { it.parse() }
 
@@ -127,7 +130,7 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         override fun retrieveComparative(
             params: DatasetRetrieveComparativeParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<DatasetRetrieveComparativeResponse>>> {
+        ): CompletableFuture<HttpResponseFor<DatasetRetrieveComparativePageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -157,6 +160,14 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                     it.forEach { it.validate() }
                                 }
                             }
+                            .let {
+                                DatasetRetrieveComparativePageAsync.builder()
+                                    .service(DatasetServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
+                            }
                     }
                 }
         }
@@ -167,7 +178,7 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         override fun retrieveFeedback(
             params: DatasetRetrieveFeedbackParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> {
+        ): CompletableFuture<HttpResponseFor<DatasetRetrieveFeedbackPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -197,6 +208,14 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                     it.forEach { it.validate() }
                                 }
                             }
+                            .let {
+                                DatasetRetrieveFeedbackPageAsync.builder()
+                                    .service(DatasetServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
+                            }
                     }
                 }
         }
@@ -207,7 +226,7 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         override fun retrieveSessions(
             params: DatasetRetrieveSessionsParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> {
+        ): CompletableFuture<HttpResponseFor<DatasetRetrieveSessionsPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -236,6 +255,14 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
+                            }
+                            .let {
+                                DatasetRetrieveSessionsPageAsync.builder()
+                                    .service(DatasetServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
                             }
                     }
                 }

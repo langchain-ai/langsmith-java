@@ -5,7 +5,7 @@ package com.langchain.smith.services.async.datasets
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.datasets.DatasetVersion
+import com.langchain.smith.models.datasets.versions.VersionListPageAsync
 import com.langchain.smith.models.datasets.versions.VersionListParams
 import com.langchain.smith.models.datasets.versions.VersionRetrieveDiffParams
 import com.langchain.smith.models.datasets.versions.VersionRetrieveDiffResponse
@@ -27,7 +27,7 @@ interface VersionServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): VersionServiceAsync
 
     /** Get dataset versions. */
-    fun list(datasetId: String): CompletableFuture<List<DatasetVersion>> =
+    fun list(datasetId: String): CompletableFuture<VersionListPageAsync> =
         list(datasetId, VersionListParams.none())
 
     /** @see list */
@@ -35,30 +35,30 @@ interface VersionServiceAsync {
         datasetId: String,
         params: VersionListParams = VersionListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<DatasetVersion>> =
+    ): CompletableFuture<VersionListPageAsync> =
         list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
     /** @see list */
     fun list(
         datasetId: String,
         params: VersionListParams = VersionListParams.none(),
-    ): CompletableFuture<List<DatasetVersion>> = list(datasetId, params, RequestOptions.none())
+    ): CompletableFuture<VersionListPageAsync> = list(datasetId, params, RequestOptions.none())
 
     /** @see list */
     fun list(
         params: VersionListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<DatasetVersion>>
+    ): CompletableFuture<VersionListPageAsync>
 
     /** @see list */
-    fun list(params: VersionListParams): CompletableFuture<List<DatasetVersion>> =
+    fun list(params: VersionListParams): CompletableFuture<VersionListPageAsync> =
         list(params, RequestOptions.none())
 
     /** @see list */
     fun list(
         datasetId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<DatasetVersion>> =
+    ): CompletableFuture<VersionListPageAsync> =
         list(datasetId, VersionListParams.none(), requestOptions)
 
     /** Get diff between two dataset versions. */
@@ -105,7 +105,7 @@ interface VersionServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/versions`, but is
          * otherwise the same as [VersionServiceAsync.list].
          */
-        fun list(datasetId: String): CompletableFuture<HttpResponseFor<List<DatasetVersion>>> =
+        fun list(datasetId: String): CompletableFuture<HttpResponseFor<VersionListPageAsync>> =
             list(datasetId, VersionListParams.none())
 
         /** @see list */
@@ -113,33 +113,33 @@ interface VersionServiceAsync {
             datasetId: String,
             params: VersionListParams = VersionListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<DatasetVersion>>> =
+        ): CompletableFuture<HttpResponseFor<VersionListPageAsync>> =
             list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
         /** @see list */
         fun list(
             datasetId: String,
             params: VersionListParams = VersionListParams.none(),
-        ): CompletableFuture<HttpResponseFor<List<DatasetVersion>>> =
+        ): CompletableFuture<HttpResponseFor<VersionListPageAsync>> =
             list(datasetId, params, RequestOptions.none())
 
         /** @see list */
         fun list(
             params: VersionListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<DatasetVersion>>>
+        ): CompletableFuture<HttpResponseFor<VersionListPageAsync>>
 
         /** @see list */
         fun list(
             params: VersionListParams
-        ): CompletableFuture<HttpResponseFor<List<DatasetVersion>>> =
+        ): CompletableFuture<HttpResponseFor<VersionListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             datasetId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<DatasetVersion>>> =
+        ): CompletableFuture<HttpResponseFor<VersionListPageAsync>> =
             list(datasetId, VersionListParams.none(), requestOptions)
 
         /**

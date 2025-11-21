@@ -20,6 +20,7 @@ import com.langchain.smith.models.datasets.comparative.ComparativeCreateParams
 import com.langchain.smith.models.datasets.comparative.ComparativeCreateResponse
 import com.langchain.smith.models.datasets.comparative.ComparativeDeleteParams
 import com.langchain.smith.models.datasets.comparative.ComparativeDeleteResponse
+import com.langchain.smith.models.datasets.comparative.ComparativeListPage
 import com.langchain.smith.models.datasets.comparative.ComparativeListParams
 import com.langchain.smith.models.datasets.comparative.ComparativeListResponse
 import java.util.function.Consumer
@@ -47,7 +48,7 @@ class ComparativeServiceImpl internal constructor(private val clientOptions: Cli
     override fun list(
         params: ComparativeListParams,
         requestOptions: RequestOptions,
-    ): List<ComparativeListResponse> =
+    ): ComparativeListPage =
         // get /api/v1/datasets/{dataset_id}/comparative
         withRawResponse().list(params, requestOptions).parse()
 
@@ -105,7 +106,7 @@ class ComparativeServiceImpl internal constructor(private val clientOptions: Cli
         override fun list(
             params: ComparativeListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<ComparativeListResponse>> {
+        ): HttpResponseFor<ComparativeListPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -125,6 +126,13 @@ class ComparativeServiceImpl internal constructor(private val clientOptions: Cli
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        ComparativeListPage.builder()
+                            .service(ComparativeServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

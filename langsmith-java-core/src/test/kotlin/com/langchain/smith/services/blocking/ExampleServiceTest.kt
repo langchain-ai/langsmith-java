@@ -8,10 +8,8 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.AttachmentsOperations
 import com.langchain.smith.models.examples.ExampleCreateParams
 import com.langchain.smith.models.examples.ExampleDeleteAllParams
-import com.langchain.smith.models.examples.ExampleListParams
 import com.langchain.smith.models.examples.ExampleRetrieveCountParams
 import com.langchain.smith.models.examples.ExampleRetrieveParams
-import com.langchain.smith.models.examples.ExampleSelect
 import com.langchain.smith.models.examples.ExampleUpdateParams
 import com.langchain.smith.models.examples.ExampleUploadFromCsvParams
 import java.time.OffsetDateTime
@@ -127,26 +125,9 @@ internal class ExampleServiceTest {
                 .build()
         val exampleService = client.examples()
 
-        val examples =
-            exampleService.list(
-                ExampleListParams.builder()
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .dataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .descending(true)
-                    .filter("filter")
-                    .addFullTextContain("string")
-                    .limit(1L)
-                    .metadata("metadata")
-                    .offset(0L)
-                    .order(ExampleListParams.Order.RECENT)
-                    .randomSeed(0.0)
-                    .addSelect(ExampleSelect.ID)
-                    .addSplit("string")
-                    .build()
-            )
+        val page = exampleService.list()
 
-        examples.forEach { it.validate() }
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

@@ -20,7 +20,7 @@ import com.langchain.smith.models.datasets.share.DatasetShareSchema
 import com.langchain.smith.models.datasets.share.ShareCreateParams
 import com.langchain.smith.models.datasets.share.ShareDeleteAllParams
 import com.langchain.smith.models.datasets.share.ShareDeleteAllResponse
-import com.langchain.smith.models.datasets.share.ShareListParams
+import com.langchain.smith.models.datasets.share.ShareRetrieveParams
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -45,12 +45,12 @@ class ShareServiceAsyncImpl internal constructor(private val clientOptions: Clie
         // put /api/v1/datasets/{dataset_id}/share
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
-    override fun list(
-        params: ShareListParams,
+    override fun retrieve(
+        params: ShareRetrieveParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Optional<DatasetShareSchema>> =
         // get /api/v1/datasets/{dataset_id}/share
-        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun deleteAll(
         params: ShareDeleteAllParams,
@@ -106,11 +106,11 @@ class ShareServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 }
         }
 
-        private val listHandler: Handler<Optional<DatasetShareSchema>> =
+        private val retrieveHandler: Handler<Optional<DatasetShareSchema>> =
             jsonHandler<Optional<DatasetShareSchema>>(clientOptions.jsonMapper)
 
-        override fun list(
-            params: ShareListParams,
+        override fun retrieve(
+            params: ShareRetrieveParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<Optional<DatasetShareSchema>>> {
             // We check here instead of in the params builder because this can be specified
@@ -129,7 +129,7 @@ class ShareServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { listHandler.handle(it) }
+                            .use { retrieveHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.ifPresent { it.validate() }

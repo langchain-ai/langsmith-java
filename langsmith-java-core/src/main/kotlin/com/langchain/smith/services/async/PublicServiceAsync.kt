@@ -5,7 +5,7 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.public_.PublicRetrieveFeedbacksPageAsync
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import com.langchain.smith.services.async.public_.DatasetServiceAsync
 import java.util.concurrent.CompletableFuture
@@ -28,7 +28,7 @@ interface PublicServiceAsync {
     fun datasets(): DatasetServiceAsync
 
     /** Read Shared Feedbacks */
-    fun retrieveFeedbacks(shareToken: String): CompletableFuture<List<FeedbackSchema>> =
+    fun retrieveFeedbacks(shareToken: String): CompletableFuture<PublicRetrieveFeedbacksPageAsync> =
         retrieveFeedbacks(shareToken, PublicRetrieveFeedbacksParams.none())
 
     /** @see retrieveFeedbacks */
@@ -36,32 +36,33 @@ interface PublicServiceAsync {
         shareToken: String,
         params: PublicRetrieveFeedbacksParams = PublicRetrieveFeedbacksParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<FeedbackSchema>> =
+    ): CompletableFuture<PublicRetrieveFeedbacksPageAsync> =
         retrieveFeedbacks(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
     /** @see retrieveFeedbacks */
     fun retrieveFeedbacks(
         shareToken: String,
         params: PublicRetrieveFeedbacksParams = PublicRetrieveFeedbacksParams.none(),
-    ): CompletableFuture<List<FeedbackSchema>> =
+    ): CompletableFuture<PublicRetrieveFeedbacksPageAsync> =
         retrieveFeedbacks(shareToken, params, RequestOptions.none())
 
     /** @see retrieveFeedbacks */
     fun retrieveFeedbacks(
         params: PublicRetrieveFeedbacksParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<FeedbackSchema>>
+    ): CompletableFuture<PublicRetrieveFeedbacksPageAsync>
 
     /** @see retrieveFeedbacks */
     fun retrieveFeedbacks(
         params: PublicRetrieveFeedbacksParams
-    ): CompletableFuture<List<FeedbackSchema>> = retrieveFeedbacks(params, RequestOptions.none())
+    ): CompletableFuture<PublicRetrieveFeedbacksPageAsync> =
+        retrieveFeedbacks(params, RequestOptions.none())
 
     /** @see retrieveFeedbacks */
     fun retrieveFeedbacks(
         shareToken: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<FeedbackSchema>> =
+    ): CompletableFuture<PublicRetrieveFeedbacksPageAsync> =
         retrieveFeedbacks(shareToken, PublicRetrieveFeedbacksParams.none(), requestOptions)
 
     /**
@@ -86,7 +87,7 @@ interface PublicServiceAsync {
          */
         fun retrieveFeedbacks(
             shareToken: String
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
+        ): CompletableFuture<HttpResponseFor<PublicRetrieveFeedbacksPageAsync>> =
             retrieveFeedbacks(shareToken, PublicRetrieveFeedbacksParams.none())
 
         /** @see retrieveFeedbacks */
@@ -94,33 +95,33 @@ interface PublicServiceAsync {
             shareToken: String,
             params: PublicRetrieveFeedbacksParams = PublicRetrieveFeedbacksParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
+        ): CompletableFuture<HttpResponseFor<PublicRetrieveFeedbacksPageAsync>> =
             retrieveFeedbacks(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
         /** @see retrieveFeedbacks */
         fun retrieveFeedbacks(
             shareToken: String,
             params: PublicRetrieveFeedbacksParams = PublicRetrieveFeedbacksParams.none(),
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
+        ): CompletableFuture<HttpResponseFor<PublicRetrieveFeedbacksPageAsync>> =
             retrieveFeedbacks(shareToken, params, RequestOptions.none())
 
         /** @see retrieveFeedbacks */
         fun retrieveFeedbacks(
             params: PublicRetrieveFeedbacksParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>>
+        ): CompletableFuture<HttpResponseFor<PublicRetrieveFeedbacksPageAsync>>
 
         /** @see retrieveFeedbacks */
         fun retrieveFeedbacks(
             params: PublicRetrieveFeedbacksParams
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
+        ): CompletableFuture<HttpResponseFor<PublicRetrieveFeedbacksPageAsync>> =
             retrieveFeedbacks(params, RequestOptions.none())
 
         /** @see retrieveFeedbacks */
         fun retrieveFeedbacks(
             shareToken: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
+        ): CompletableFuture<HttpResponseFor<PublicRetrieveFeedbacksPageAsync>> =
             retrieveFeedbacks(shareToken, PublicRetrieveFeedbacksParams.none(), requestOptions)
     }
 }

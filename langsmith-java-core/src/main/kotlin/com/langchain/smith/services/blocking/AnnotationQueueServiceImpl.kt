@@ -25,6 +25,7 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueExportParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueExportResponse
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateResponse
+import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesPage
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesResponse
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveParams
@@ -112,7 +113,7 @@ class AnnotationQueueServiceImpl internal constructor(private val clientOptions:
     override fun retrieveAnnotationQueues(
         params: AnnotationQueueRetrieveAnnotationQueuesParams,
         requestOptions: RequestOptions,
-    ): List<AnnotationQueueRetrieveAnnotationQueuesResponse> =
+    ): AnnotationQueueRetrieveAnnotationQueuesPage =
         // get /api/v1/annotation-queues
         withRawResponse().retrieveAnnotationQueues(params, requestOptions).parse()
 
@@ -401,7 +402,7 @@ class AnnotationQueueServiceImpl internal constructor(private val clientOptions:
         override fun retrieveAnnotationQueues(
             params: AnnotationQueueRetrieveAnnotationQueuesParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>> {
+        ): HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -418,6 +419,13 @@ class AnnotationQueueServiceImpl internal constructor(private val clientOptions:
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        AnnotationQueueRetrieveAnnotationQueuesPage.builder()
+                            .service(AnnotationQueueServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

@@ -38,7 +38,7 @@ internal class ShareServiceTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun list() {
+    fun retrieve() {
         val client =
             LangsmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -48,7 +48,7 @@ internal class ShareServiceTest {
                 .build()
         val shareService = client.datasets().share()
 
-        val datasetShareSchema = shareService.list("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val datasetShareSchema = shareService.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         val unwrappedDatasetShareSchema = datasetShareSchema.getOrNull()
         unwrappedDatasetShareSchema?.validate()

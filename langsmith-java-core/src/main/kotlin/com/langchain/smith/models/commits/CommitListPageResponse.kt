@@ -18,7 +18,7 @@ import java.util.Collections
 import java.util.Objects
 import kotlin.jvm.optionals.getOrNull
 
-class CommitListResponse
+class CommitListPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val commits: JsonField<List<CommitWithLookups>>,
@@ -77,7 +77,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [CommitListResponse].
+         * Returns a mutable builder for constructing an instance of [CommitListPageResponse].
          *
          * The following fields are required:
          * ```java
@@ -88,7 +88,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [CommitListResponse]. */
+    /** A builder for [CommitListPageResponse]. */
     class Builder internal constructor() {
 
         private var commits: JsonField<MutableList<CommitWithLookups>>? = null
@@ -96,10 +96,10 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(commitListResponse: CommitListResponse) = apply {
-            commits = commitListResponse.commits.map { it.toMutableList() }
-            total = commitListResponse.total
-            additionalProperties = commitListResponse.additionalProperties.toMutableMap()
+        internal fun from(commitListPageResponse: CommitListPageResponse) = apply {
+            commits = commitListPageResponse.commits.map { it.toMutableList() }
+            total = commitListPageResponse.total
+            additionalProperties = commitListPageResponse.additionalProperties.toMutableMap()
         }
 
         fun commits(commits: List<CommitWithLookups>) = commits(JsonField.of(commits))
@@ -157,7 +157,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [CommitListResponse].
+         * Returns an immutable instance of [CommitListPageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -169,8 +169,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): CommitListResponse =
-            CommitListResponse(
+        fun build(): CommitListPageResponse =
+            CommitListPageResponse(
                 checkRequired("commits", commits).map { it.toImmutable() },
                 checkRequired("total", total),
                 additionalProperties.toMutableMap(),
@@ -179,7 +179,7 @@ private constructor(
 
     private var validated: Boolean = false
 
-    fun validate(): CommitListResponse = apply {
+    fun validate(): CommitListPageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -212,7 +212,7 @@ private constructor(
             return true
         }
 
-        return other is CommitListResponse &&
+        return other is CommitListPageResponse &&
             commits == other.commits &&
             total == other.total &&
             additionalProperties == other.additionalProperties
@@ -223,5 +223,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CommitListResponse{commits=$commits, total=$total, additionalProperties=$additionalProperties}"
+        "CommitListPageResponse{commits=$commits, total=$total, additionalProperties=$additionalProperties}"
 }

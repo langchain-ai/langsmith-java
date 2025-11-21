@@ -20,8 +20,8 @@ import com.langchain.smith.models.datasets.index.IndexCreateParams
 import com.langchain.smith.models.datasets.index.IndexCreateResponse
 import com.langchain.smith.models.datasets.index.IndexDeleteAllParams
 import com.langchain.smith.models.datasets.index.IndexDeleteAllResponse
-import com.langchain.smith.models.datasets.index.IndexListParams
-import com.langchain.smith.models.datasets.index.IndexListResponse
+import com.langchain.smith.models.datasets.index.IndexRetrieveParams
+import com.langchain.smith.models.datasets.index.IndexRetrieveResponse
 import com.langchain.smith.models.datasets.index.IndexSyncParams
 import com.langchain.smith.models.datasets.index.IndexSyncResponse
 import java.util.concurrent.CompletableFuture
@@ -47,12 +47,12 @@ class IndexServiceAsyncImpl internal constructor(private val clientOptions: Clie
         // post /api/v1/datasets/{dataset_id}/index
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
-    override fun list(
-        params: IndexListParams,
+    override fun retrieve(
+        params: IndexRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<IndexListResponse> =
+    ): CompletableFuture<IndexRetrieveResponse> =
         // get /api/v1/datasets/{dataset_id}/index
-        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun deleteAll(
         params: IndexDeleteAllParams,
@@ -115,13 +115,13 @@ class IndexServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 }
         }
 
-        private val listHandler: Handler<IndexListResponse> =
-            jsonHandler<IndexListResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<IndexRetrieveResponse> =
+            jsonHandler<IndexRetrieveResponse>(clientOptions.jsonMapper)
 
-        override fun list(
-            params: IndexListParams,
+        override fun retrieve(
+            params: IndexRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<IndexListResponse>> {
+        ): CompletableFuture<HttpResponseFor<IndexRetrieveResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -138,7 +138,7 @@ class IndexServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { listHandler.handle(it) }
+                            .use { retrieveHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

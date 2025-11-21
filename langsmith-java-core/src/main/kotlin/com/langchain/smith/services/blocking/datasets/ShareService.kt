@@ -10,7 +10,7 @@ import com.langchain.smith.models.datasets.share.DatasetShareSchema
 import com.langchain.smith.models.datasets.share.ShareCreateParams
 import com.langchain.smith.models.datasets.share.ShareDeleteAllParams
 import com.langchain.smith.models.datasets.share.ShareDeleteAllResponse
-import com.langchain.smith.models.datasets.share.ShareListParams
+import com.langchain.smith.models.datasets.share.ShareRetrieveParams
 import java.util.Optional
 import java.util.function.Consumer
 
@@ -59,36 +59,36 @@ interface ShareService {
         create(datasetId, ShareCreateParams.none(), requestOptions)
 
     /** Get the state of sharing a dataset */
-    fun list(datasetId: String): Optional<DatasetShareSchema> =
-        list(datasetId, ShareListParams.none())
+    fun retrieve(datasetId: String): Optional<DatasetShareSchema> =
+        retrieve(datasetId, ShareRetrieveParams.none())
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: ShareListParams = ShareListParams.none(),
+        params: ShareRetrieveParams = ShareRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Optional<DatasetShareSchema> =
-        list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+        retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: ShareListParams = ShareListParams.none(),
-    ): Optional<DatasetShareSchema> = list(datasetId, params, RequestOptions.none())
+        params: ShareRetrieveParams = ShareRetrieveParams.none(),
+    ): Optional<DatasetShareSchema> = retrieve(datasetId, params, RequestOptions.none())
 
-    /** @see list */
-    fun list(
-        params: ShareListParams,
+    /** @see retrieve */
+    fun retrieve(
+        params: ShareRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Optional<DatasetShareSchema>
 
-    /** @see list */
-    fun list(params: ShareListParams): Optional<DatasetShareSchema> =
-        list(params, RequestOptions.none())
+    /** @see retrieve */
+    fun retrieve(params: ShareRetrieveParams): Optional<DatasetShareSchema> =
+        retrieve(params, RequestOptions.none())
 
-    /** @see list */
-    fun list(datasetId: String, requestOptions: RequestOptions): Optional<DatasetShareSchema> =
-        list(datasetId, ShareListParams.none(), requestOptions)
+    /** @see retrieve */
+    fun retrieve(datasetId: String, requestOptions: RequestOptions): Optional<DatasetShareSchema> =
+        retrieve(datasetId, ShareRetrieveParams.none(), requestOptions)
 
     /** Unshare a dataset. */
     fun deleteAll(datasetId: String): ShareDeleteAllResponse =
@@ -178,48 +178,48 @@ interface ShareService {
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/share`, but is
-         * otherwise the same as [ShareService.list].
+         * otherwise the same as [ShareService.retrieve].
          */
         @MustBeClosed
-        fun list(datasetId: String): HttpResponseFor<Optional<DatasetShareSchema>> =
-            list(datasetId, ShareListParams.none())
+        fun retrieve(datasetId: String): HttpResponseFor<Optional<DatasetShareSchema>> =
+            retrieve(datasetId, ShareRetrieveParams.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
+        fun retrieve(
             datasetId: String,
-            params: ShareListParams = ShareListParams.none(),
+            params: ShareRetrieveParams = ShareRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Optional<DatasetShareSchema>> =
-            list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+            retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
+        fun retrieve(
             datasetId: String,
-            params: ShareListParams = ShareListParams.none(),
+            params: ShareRetrieveParams = ShareRetrieveParams.none(),
         ): HttpResponseFor<Optional<DatasetShareSchema>> =
-            list(datasetId, params, RequestOptions.none())
+            retrieve(datasetId, params, RequestOptions.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
-            params: ShareListParams,
+        fun retrieve(
+            params: ShareRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Optional<DatasetShareSchema>>
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(params: ShareListParams): HttpResponseFor<Optional<DatasetShareSchema>> =
-            list(params, RequestOptions.none())
+        fun retrieve(params: ShareRetrieveParams): HttpResponseFor<Optional<DatasetShareSchema>> =
+            retrieve(params, RequestOptions.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
+        fun retrieve(
             datasetId: String,
             requestOptions: RequestOptions,
         ): HttpResponseFor<Optional<DatasetShareSchema>> =
-            list(datasetId, ShareListParams.none(), requestOptions)
+            retrieve(datasetId, ShareRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/datasets/{dataset_id}/share`, but is

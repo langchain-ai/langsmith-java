@@ -11,6 +11,7 @@ import com.langchain.smith.models.examples.ExampleDeleteAllParams
 import com.langchain.smith.models.examples.ExampleDeleteAllResponse
 import com.langchain.smith.models.examples.ExampleDeleteParams
 import com.langchain.smith.models.examples.ExampleDeleteResponse
+import com.langchain.smith.models.examples.ExampleListPageAsync
 import com.langchain.smith.models.examples.ExampleListParams
 import com.langchain.smith.models.examples.ExampleRetrieveCountParams
 import com.langchain.smith.models.examples.ExampleRetrieveParams
@@ -118,21 +119,21 @@ interface ExampleServiceAsync {
         update(exampleId, ExampleUpdateParams.none(), requestOptions)
 
     /** Get all examples by query params */
-    fun list(): CompletableFuture<List<Example>> = list(ExampleListParams.none())
+    fun list(): CompletableFuture<ExampleListPageAsync> = list(ExampleListParams.none())
 
     /** @see list */
     fun list(
         params: ExampleListParams = ExampleListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<Example>>
+    ): CompletableFuture<ExampleListPageAsync>
 
     /** @see list */
     fun list(
         params: ExampleListParams = ExampleListParams.none()
-    ): CompletableFuture<List<Example>> = list(params, RequestOptions.none())
+    ): CompletableFuture<ExampleListPageAsync> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<List<Example>> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<ExampleListPageAsync> =
         list(ExampleListParams.none(), requestOptions)
 
     /** Soft delete an example. Only deletes the example in the 'latest' version of the dataset. */
@@ -342,24 +343,25 @@ interface ExampleServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/examples`, but is otherwise the same as
          * [ExampleServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<List<Example>>> =
+        fun list(): CompletableFuture<HttpResponseFor<ExampleListPageAsync>> =
             list(ExampleListParams.none())
 
         /** @see list */
         fun list(
             params: ExampleListParams = ExampleListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<Example>>>
+        ): CompletableFuture<HttpResponseFor<ExampleListPageAsync>>
 
         /** @see list */
         fun list(
             params: ExampleListParams = ExampleListParams.none()
-        ): CompletableFuture<HttpResponseFor<List<Example>>> = list(params, RequestOptions.none())
+        ): CompletableFuture<HttpResponseFor<ExampleListPageAsync>> =
+            list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<List<Example>>> =
+        ): CompletableFuture<HttpResponseFor<ExampleListPageAsync>> =
             list(ExampleListParams.none(), requestOptions)
 
         /**

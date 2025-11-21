@@ -10,8 +10,8 @@ import com.langchain.smith.models.repos.GetRepoResponse
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoDeleteResponse
+import com.langchain.smith.models.repos.RepoListPageAsync
 import com.langchain.smith.models.repos.RepoListParams
-import com.langchain.smith.models.repos.RepoListResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import java.util.concurrent.CompletableFuture
@@ -86,20 +86,20 @@ interface RepoServiceAsync {
     ): CompletableFuture<CreateRepoResponse>
 
     /** Get all repos. */
-    fun list(): CompletableFuture<RepoListResponse> = list(RepoListParams.none())
+    fun list(): CompletableFuture<RepoListPageAsync> = list(RepoListParams.none())
 
     /** @see list */
     fun list(
         params: RepoListParams = RepoListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RepoListResponse>
+    ): CompletableFuture<RepoListPageAsync>
 
     /** @see list */
-    fun list(params: RepoListParams = RepoListParams.none()): CompletableFuture<RepoListResponse> =
+    fun list(params: RepoListParams = RepoListParams.none()): CompletableFuture<RepoListPageAsync> =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<RepoListResponse> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<RepoListPageAsync> =
         list(RepoListParams.none(), requestOptions)
 
     /** Delete a repo. */
@@ -213,25 +213,25 @@ interface RepoServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/repos`, but is otherwise the same as
          * [RepoServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<RepoListResponse>> =
+        fun list(): CompletableFuture<HttpResponseFor<RepoListPageAsync>> =
             list(RepoListParams.none())
 
         /** @see list */
         fun list(
             params: RepoListParams = RepoListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RepoListResponse>>
+        ): CompletableFuture<HttpResponseFor<RepoListPageAsync>>
 
         /** @see list */
         fun list(
             params: RepoListParams = RepoListParams.none()
-        ): CompletableFuture<HttpResponseFor<RepoListResponse>> =
+        ): CompletableFuture<HttpResponseFor<RepoListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<RepoListResponse>> =
+        ): CompletableFuture<HttpResponseFor<RepoListPageAsync>> =
             list(RepoListParams.none(), requestOptions)
 
         /**

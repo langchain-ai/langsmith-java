@@ -6,7 +6,6 @@ import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
-import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import org.junit.jupiter.api.Disabled
@@ -100,28 +99,9 @@ internal class RepoServiceTest {
                 .build()
         val repoService = client.repos()
 
-        val repos =
-            repoService.list(
-                RepoListParams.builder()
-                    .hasCommits(true)
-                    .isArchived(RepoListParams.IsArchived.TRUE)
-                    .isPublic(RepoListParams.IsPublic.TRUE)
-                    .limit(1L)
-                    .offset(0L)
-                    .query("query")
-                    .sortDirection(RepoListParams.SortDirection.ASC)
-                    .sortField(RepoListParams.SortField.NUM_LIKES)
-                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addTag("string")
-                    .tenantHandle("tenant_handle")
-                    .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .upstreamRepoHandle("upstream_repo_handle")
-                    .upstreamRepoOwner("upstream_repo_owner")
-                    .withLatestManifest(true)
-                    .build()
-            )
+        val page = repoService.list()
 
-        repos.validate()
+        page.response().validate()
     }
 
     @Disabled("Prism tests are disabled")

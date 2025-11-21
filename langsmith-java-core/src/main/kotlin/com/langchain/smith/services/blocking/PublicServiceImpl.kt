@@ -16,6 +16,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.public_.PublicRetrieveFeedbacksPage
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import com.langchain.smith.services.blocking.public_.DatasetService
 import com.langchain.smith.services.blocking.public_.DatasetServiceImpl
@@ -41,7 +42,7 @@ class PublicServiceImpl internal constructor(private val clientOptions: ClientOp
     override fun retrieveFeedbacks(
         params: PublicRetrieveFeedbacksParams,
         requestOptions: RequestOptions,
-    ): List<FeedbackSchema> =
+    ): PublicRetrieveFeedbacksPage =
         // get /api/v1/public/{share_token}/feedbacks
         withRawResponse().retrieveFeedbacks(params, requestOptions).parse()
 
@@ -70,7 +71,7 @@ class PublicServiceImpl internal constructor(private val clientOptions: ClientOp
         override fun retrieveFeedbacks(
             params: PublicRetrieveFeedbacksParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<FeedbackSchema>> {
+        ): HttpResponseFor<PublicRetrieveFeedbacksPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -90,6 +91,13 @@ class PublicServiceImpl internal constructor(private val clientOptions: ClientOp
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        PublicRetrieveFeedbacksPage.builder()
+                            .service(PublicServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

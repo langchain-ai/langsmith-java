@@ -8,7 +8,6 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.datasets.DataType
 import com.langchain.smith.models.datasets.DatasetCloneParams
 import com.langchain.smith.models.datasets.DatasetCreateParams
-import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveJsonlParams
 import com.langchain.smith.models.datasets.DatasetRetrieveOpenAIFtParams
@@ -18,7 +17,6 @@ import com.langchain.smith.models.datasets.DatasetTransformation
 import com.langchain.smith.models.datasets.DatasetUpdateParams
 import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
 import com.langchain.smith.models.datasets.DatasetUploadParams
-import com.langchain.smith.models.datasets.SortByDatasetColumn
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -154,24 +152,9 @@ internal class DatasetServiceTest {
                 .build()
         val datasetService = client.datasets()
 
-        val datasets =
-            datasetService.list(
-                DatasetListParams.builder()
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .datatypeOfDataTypes(listOf(DataType.KV))
-                    .excludeCorrectionsDatasets(true)
-                    .limit(1L)
-                    .metadata("metadata")
-                    .name("name")
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .sortBy(SortByDatasetColumn.NAME)
-                    .sortByDesc(true)
-                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val page = datasetService.list()
 
-        datasets.forEach { it.validate() }
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

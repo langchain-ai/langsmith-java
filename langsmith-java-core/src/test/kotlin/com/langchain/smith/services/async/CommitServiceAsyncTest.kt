@@ -83,12 +83,10 @@ internal class CommitServiceAsyncTest {
                 .build()
         val commitServiceAsync = client.commits()
 
-        val commitsFuture =
-            commitServiceAsync.list(
-                CommitListParams.builder().owner("owner").repo("repo").limit(1L).offset(0L).build()
-            )
+        val pageFuture =
+            commitServiceAsync.list(CommitListParams.builder().owner("owner").repo("repo").build())
 
-        val commits = commitsFuture.get()
-        commits.validate()
+        val page = pageFuture.get()
+        page.response().validate()
     }
 }

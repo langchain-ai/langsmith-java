@@ -20,7 +20,7 @@ import com.langchain.smith.models.datasets.share.DatasetShareSchema
 import com.langchain.smith.models.datasets.share.ShareCreateParams
 import com.langchain.smith.models.datasets.share.ShareDeleteAllParams
 import com.langchain.smith.models.datasets.share.ShareDeleteAllResponse
-import com.langchain.smith.models.datasets.share.ShareListParams
+import com.langchain.smith.models.datasets.share.ShareRetrieveParams
 import java.util.Optional
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -44,12 +44,12 @@ class ShareServiceImpl internal constructor(private val clientOptions: ClientOpt
         // put /api/v1/datasets/{dataset_id}/share
         withRawResponse().create(params, requestOptions).parse()
 
-    override fun list(
-        params: ShareListParams,
+    override fun retrieve(
+        params: ShareRetrieveParams,
         requestOptions: RequestOptions,
     ): Optional<DatasetShareSchema> =
         // get /api/v1/datasets/{dataset_id}/share
-        withRawResponse().list(params, requestOptions).parse()
+        withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun deleteAll(
         params: ShareDeleteAllParams,
@@ -102,11 +102,11 @@ class ShareServiceImpl internal constructor(private val clientOptions: ClientOpt
             }
         }
 
-        private val listHandler: Handler<Optional<DatasetShareSchema>> =
+        private val retrieveHandler: Handler<Optional<DatasetShareSchema>> =
             jsonHandler<Optional<DatasetShareSchema>>(clientOptions.jsonMapper)
 
-        override fun list(
-            params: ShareListParams,
+        override fun retrieve(
+            params: ShareRetrieveParams,
             requestOptions: RequestOptions,
         ): HttpResponseFor<Optional<DatasetShareSchema>> {
             // We check here instead of in the params builder because this can be specified
@@ -123,7 +123,7 @@ class ShareServiceImpl internal constructor(private val clientOptions: ClientOpt
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { listHandler.handle(it) }
+                    .use { retrieveHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.ifPresent { it.validate() }

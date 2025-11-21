@@ -13,7 +13,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Get Dataset Splits */
-class SplitListParams
+class SplitRetrieveParams
 private constructor(
     private val datasetId: String?,
     private val asOf: AsOf?,
@@ -39,13 +39,13 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): SplitListParams = builder().build()
+        @JvmStatic fun none(): SplitRetrieveParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [SplitListParams]. */
+        /** Returns a mutable builder for constructing an instance of [SplitRetrieveParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SplitListParams]. */
+    /** A builder for [SplitRetrieveParams]. */
     class Builder internal constructor() {
 
         private var datasetId: String? = null
@@ -54,11 +54,11 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(splitListParams: SplitListParams) = apply {
-            datasetId = splitListParams.datasetId
-            asOf = splitListParams.asOf
-            additionalHeaders = splitListParams.additionalHeaders.toBuilder()
-            additionalQueryParams = splitListParams.additionalQueryParams.toBuilder()
+        internal fun from(splitRetrieveParams: SplitRetrieveParams) = apply {
+            datasetId = splitRetrieveParams.datasetId
+            asOf = splitRetrieveParams.asOf
+            additionalHeaders = splitRetrieveParams.additionalHeaders.toBuilder()
+            additionalQueryParams = splitRetrieveParams.additionalQueryParams.toBuilder()
         }
 
         fun datasetId(datasetId: String?) = apply { this.datasetId = datasetId }
@@ -180,12 +180,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [SplitListParams].
+         * Returns an immutable instance of [SplitRetrieveParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): SplitListParams =
-            SplitListParams(
+        fun build(): SplitRetrieveParams =
+            SplitRetrieveParams(
                 datasetId,
                 asOf,
                 additionalHeaders.build(),
@@ -291,7 +291,7 @@ private constructor(
             return true
         }
 
-        return other is SplitListParams &&
+        return other is SplitRetrieveParams &&
             datasetId == other.datasetId &&
             asOf == other.asOf &&
             additionalHeaders == other.additionalHeaders &&
@@ -302,5 +302,5 @@ private constructor(
         Objects.hash(datasetId, asOf, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "SplitListParams{datasetId=$datasetId, asOf=$asOf, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SplitRetrieveParams{datasetId=$datasetId, asOf=$asOf, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

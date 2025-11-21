@@ -5,17 +5,17 @@ package com.langchain.smith.models.datasets.share
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ShareListParamsTest {
+internal class ShareRetrieveParamsTest {
 
     @Test
     fun create() {
-        ShareListParams.builder().datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+        ShareRetrieveParams.builder().datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
     }
 
     @Test
     fun pathParams() {
         val params =
-            ShareListParams.builder().datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
+            ShareRetrieveParams.builder().datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         // out-of-bound path param

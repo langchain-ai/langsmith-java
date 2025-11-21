@@ -6,8 +6,8 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.commits.CommitListPage
 import com.langchain.smith.models.commits.CommitListParams
-import com.langchain.smith.models.commits.CommitListResponse
 import com.langchain.smith.models.commits.CommitManifestResponse
 import com.langchain.smith.models.commits.CommitRetrieveParams
 import com.langchain.smith.models.commits.CommitUpdateParams
@@ -71,7 +71,7 @@ interface CommitService {
     ): CommitUpdateResponse
 
     /** Get all commits. */
-    fun list(repo: String, params: CommitListParams): CommitListResponse =
+    fun list(repo: String, params: CommitListParams): CommitListPage =
         list(repo, params, RequestOptions.none())
 
     /** @see list */
@@ -79,16 +79,16 @@ interface CommitService {
         repo: String,
         params: CommitListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CommitListResponse = list(params.toBuilder().repo(repo).build(), requestOptions)
+    ): CommitListPage = list(params.toBuilder().repo(repo).build(), requestOptions)
 
     /** @see list */
-    fun list(params: CommitListParams): CommitListResponse = list(params, RequestOptions.none())
+    fun list(params: CommitListParams): CommitListPage = list(params, RequestOptions.none())
 
     /** @see list */
     fun list(
         params: CommitListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CommitListResponse
+    ): CommitListPage
 
     /** A view of [CommitService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -167,7 +167,7 @@ interface CommitService {
          * the same as [CommitService.list].
          */
         @MustBeClosed
-        fun list(repo: String, params: CommitListParams): HttpResponseFor<CommitListResponse> =
+        fun list(repo: String, params: CommitListParams): HttpResponseFor<CommitListPage> =
             list(repo, params, RequestOptions.none())
 
         /** @see list */
@@ -176,12 +176,12 @@ interface CommitService {
             repo: String,
             params: CommitListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CommitListResponse> =
+        ): HttpResponseFor<CommitListPage> =
             list(params.toBuilder().repo(repo).build(), requestOptions)
 
         /** @see list */
         @MustBeClosed
-        fun list(params: CommitListParams): HttpResponseFor<CommitListResponse> =
+        fun list(params: CommitListParams): HttpResponseFor<CommitListPage> =
             list(params, RequestOptions.none())
 
         /** @see list */
@@ -189,6 +189,6 @@ interface CommitService {
         fun list(
             params: CommitListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CommitListResponse>
+        ): HttpResponseFor<CommitListPage>
     }
 }

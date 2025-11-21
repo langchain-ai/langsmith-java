@@ -7,7 +7,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.datasets.splits.SplitCreateParams
-import com.langchain.smith.models.datasets.splits.SplitListParams
+import com.langchain.smith.models.datasets.splits.SplitRetrieveParams
 import java.util.function.Consumer
 
 interface SplitService {
@@ -45,31 +45,34 @@ interface SplitService {
     ): List<String>
 
     /** Get Dataset Splits */
-    fun list(datasetId: String): List<String> = list(datasetId, SplitListParams.none())
+    fun retrieve(datasetId: String): List<String> = retrieve(datasetId, SplitRetrieveParams.none())
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: SplitListParams = SplitListParams.none(),
+        params: SplitRetrieveParams = SplitRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<String> = list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+    ): List<String> = retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see list */
-    fun list(datasetId: String, params: SplitListParams = SplitListParams.none()): List<String> =
-        list(datasetId, params, RequestOptions.none())
+    /** @see retrieve */
+    fun retrieve(
+        datasetId: String,
+        params: SplitRetrieveParams = SplitRetrieveParams.none(),
+    ): List<String> = retrieve(datasetId, params, RequestOptions.none())
 
-    /** @see list */
-    fun list(
-        params: SplitListParams,
+    /** @see retrieve */
+    fun retrieve(
+        params: SplitRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<String>
 
-    /** @see list */
-    fun list(params: SplitListParams): List<String> = list(params, RequestOptions.none())
+    /** @see retrieve */
+    fun retrieve(params: SplitRetrieveParams): List<String> =
+        retrieve(params, RequestOptions.none())
 
-    /** @see list */
-    fun list(datasetId: String, requestOptions: RequestOptions): List<String> =
-        list(datasetId, SplitListParams.none(), requestOptions)
+    /** @see retrieve */
+    fun retrieve(datasetId: String, requestOptions: RequestOptions): List<String> =
+        retrieve(datasetId, SplitRetrieveParams.none(), requestOptions)
 
     /** A view of [SplitService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -112,43 +115,46 @@ interface SplitService {
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/splits`, but is
-         * otherwise the same as [SplitService.list].
+         * otherwise the same as [SplitService.retrieve].
          */
         @MustBeClosed
-        fun list(datasetId: String): HttpResponseFor<List<String>> =
-            list(datasetId, SplitListParams.none())
+        fun retrieve(datasetId: String): HttpResponseFor<List<String>> =
+            retrieve(datasetId, SplitRetrieveParams.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
+        fun retrieve(
             datasetId: String,
-            params: SplitListParams = SplitListParams.none(),
+            params: SplitRetrieveParams = SplitRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<List<String>> =
-            list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+            retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
+        fun retrieve(
             datasetId: String,
-            params: SplitListParams = SplitListParams.none(),
-        ): HttpResponseFor<List<String>> = list(datasetId, params, RequestOptions.none())
+            params: SplitRetrieveParams = SplitRetrieveParams.none(),
+        ): HttpResponseFor<List<String>> = retrieve(datasetId, params, RequestOptions.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(
-            params: SplitListParams,
+        fun retrieve(
+            params: SplitRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<List<String>>
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(params: SplitListParams): HttpResponseFor<List<String>> =
-            list(params, RequestOptions.none())
+        fun retrieve(params: SplitRetrieveParams): HttpResponseFor<List<String>> =
+            retrieve(params, RequestOptions.none())
 
-        /** @see list */
+        /** @see retrieve */
         @MustBeClosed
-        fun list(datasetId: String, requestOptions: RequestOptions): HttpResponseFor<List<String>> =
-            list(datasetId, SplitListParams.none(), requestOptions)
+        fun retrieve(
+            datasetId: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<List<String>> =
+            retrieve(datasetId, SplitRetrieveParams.none(), requestOptions)
     }
 }
