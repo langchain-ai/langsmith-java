@@ -16,16 +16,16 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.public_.datasets.DatasetListComparativePageAsync
+import com.langchain.smith.models.public_.datasets.DatasetListComparativeParams
+import com.langchain.smith.models.public_.datasets.DatasetListComparativeResponse
+import com.langchain.smith.models.public_.datasets.DatasetListFeedbackPageAsync
+import com.langchain.smith.models.public_.datasets.DatasetListFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetListParams
 import com.langchain.smith.models.public_.datasets.DatasetListResponse
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativePageAsync
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeResponse
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackPageAsync
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
+import com.langchain.smith.models.public_.datasets.DatasetListSessionsPageAsync
+import com.langchain.smith.models.public_.datasets.DatasetListSessionsParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsPageAsync
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -50,26 +50,26 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         // get /api/v1/public/{share_token}/datasets
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
-    override fun retrieveComparative(
-        params: DatasetRetrieveComparativeParams,
+    override fun listComparative(
+        params: DatasetListComparativeParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetRetrieveComparativePageAsync> =
+    ): CompletableFuture<DatasetListComparativePageAsync> =
         // get /api/v1/public/{share_token}/datasets/comparative
-        withRawResponse().retrieveComparative(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().listComparative(params, requestOptions).thenApply { it.parse() }
 
-    override fun retrieveFeedback(
-        params: DatasetRetrieveFeedbackParams,
+    override fun listFeedback(
+        params: DatasetListFeedbackParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetRetrieveFeedbackPageAsync> =
+    ): CompletableFuture<DatasetListFeedbackPageAsync> =
         // get /api/v1/public/{share_token}/datasets/feedback
-        withRawResponse().retrieveFeedback(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().listFeedback(params, requestOptions).thenApply { it.parse() }
 
-    override fun retrieveSessions(
-        params: DatasetRetrieveSessionsParams,
+    override fun listSessions(
+        params: DatasetListSessionsParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<DatasetRetrieveSessionsPageAsync> =
+    ): CompletableFuture<DatasetListSessionsPageAsync> =
         // get /api/v1/public/{share_token}/datasets/sessions
-        withRawResponse().retrieveSessions(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().listSessions(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieveSessionsBulk(
         params: DatasetRetrieveSessionsBulkParams,
@@ -124,13 +124,13 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveComparativeHandler: Handler<List<DatasetRetrieveComparativeResponse>> =
-            jsonHandler<List<DatasetRetrieveComparativeResponse>>(clientOptions.jsonMapper)
+        private val listComparativeHandler: Handler<List<DatasetListComparativeResponse>> =
+            jsonHandler<List<DatasetListComparativeResponse>>(clientOptions.jsonMapper)
 
-        override fun retrieveComparative(
-            params: DatasetRetrieveComparativeParams,
+        override fun listComparative(
+            params: DatasetListComparativeParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetRetrieveComparativePageAsync>> {
+        ): CompletableFuture<HttpResponseFor<DatasetListComparativePageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -154,14 +154,14 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { retrieveComparativeHandler.handle(it) }
+                            .use { listComparativeHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
                             }
                             .let {
-                                DatasetRetrieveComparativePageAsync.builder()
+                                DatasetListComparativePageAsync.builder()
                                     .service(DatasetServiceAsyncImpl(clientOptions))
                                     .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
                                     .params(params)
@@ -172,13 +172,13 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveFeedbackHandler: Handler<List<FeedbackSchema>> =
+        private val listFeedbackHandler: Handler<List<FeedbackSchema>> =
             jsonHandler<List<FeedbackSchema>>(clientOptions.jsonMapper)
 
-        override fun retrieveFeedback(
-            params: DatasetRetrieveFeedbackParams,
+        override fun listFeedback(
+            params: DatasetListFeedbackParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetRetrieveFeedbackPageAsync>> {
+        ): CompletableFuture<HttpResponseFor<DatasetListFeedbackPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -202,14 +202,14 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { retrieveFeedbackHandler.handle(it) }
+                            .use { listFeedbackHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
                             }
                             .let {
-                                DatasetRetrieveFeedbackPageAsync.builder()
+                                DatasetListFeedbackPageAsync.builder()
                                     .service(DatasetServiceAsyncImpl(clientOptions))
                                     .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
                                     .params(params)
@@ -220,13 +220,13 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 }
         }
 
-        private val retrieveSessionsHandler: Handler<List<TracerSession>> =
+        private val listSessionsHandler: Handler<List<TracerSession>> =
             jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
 
-        override fun retrieveSessions(
-            params: DatasetRetrieveSessionsParams,
+        override fun listSessions(
+            params: DatasetListSessionsParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<DatasetRetrieveSessionsPageAsync>> {
+        ): CompletableFuture<HttpResponseFor<DatasetListSessionsPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -250,14 +250,14 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { retrieveSessionsHandler.handle(it) }
+                            .use { listSessionsHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
                             }
                             .let {
-                                DatasetRetrieveSessionsPageAsync.builder()
+                                DatasetListSessionsPageAsync.builder()
                                     .service(DatasetServiceAsyncImpl(clientOptions))
                                     .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
                                     .params(params)

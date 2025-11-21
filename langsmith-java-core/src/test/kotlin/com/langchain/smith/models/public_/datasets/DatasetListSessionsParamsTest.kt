@@ -8,11 +8,11 @@ import com.langchain.smith.models.sessions.SessionSortableColumns
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class DatasetRetrieveSessionsParamsTest {
+internal class DatasetListSessionsParamsTest {
 
     @Test
     fun create() {
-        DatasetRetrieveSessionsParams.builder()
+        DatasetListSessionsParams.builder()
             .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .datasetVersion("dataset_version")
@@ -31,7 +31,7 @@ internal class DatasetRetrieveSessionsParamsTest {
     @Test
     fun pathParams() {
         val params =
-            DatasetRetrieveSessionsParams.builder()
+            DatasetListSessionsParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -43,7 +43,7 @@ internal class DatasetRetrieveSessionsParamsTest {
     @Test
     fun headers() {
         val params =
-            DatasetRetrieveSessionsParams.builder()
+            DatasetListSessionsParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .datasetVersion("dataset_version")
@@ -66,7 +66,7 @@ internal class DatasetRetrieveSessionsParamsTest {
     @Test
     fun headersWithoutOptionalFields() {
         val params =
-            DatasetRetrieveSessionsParams.builder()
+            DatasetListSessionsParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -78,7 +78,7 @@ internal class DatasetRetrieveSessionsParamsTest {
     @Test
     fun queryParams() {
         val params =
-            DatasetRetrieveSessionsParams.builder()
+            DatasetListSessionsParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .datasetVersion("dataset_version")
@@ -115,7 +115,7 @@ internal class DatasetRetrieveSessionsParamsTest {
     @Test
     fun queryParamsWithoutOptionalFields() {
         val params =
-            DatasetRetrieveSessionsParams.builder()
+            DatasetListSessionsParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 

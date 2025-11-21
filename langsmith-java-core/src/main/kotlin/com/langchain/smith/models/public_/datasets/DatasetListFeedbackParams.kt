@@ -13,7 +13,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Get feedback for runs in projects run over a dataset that has been shared. */
-class DatasetRetrieveFeedbackParams
+class DatasetListFeedbackParams
 private constructor(
     private val shareToken: String?,
     private val hasComment: Boolean?,
@@ -63,16 +63,15 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): DatasetRetrieveFeedbackParams = builder().build()
+        @JvmStatic fun none(): DatasetListFeedbackParams = builder().build()
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [DatasetRetrieveFeedbackParams].
+         * Returns a mutable builder for constructing an instance of [DatasetListFeedbackParams].
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [DatasetRetrieveFeedbackParams]. */
+    /** A builder for [DatasetListFeedbackParams]. */
     class Builder internal constructor() {
 
         private var shareToken: String? = null
@@ -90,20 +89,20 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(datasetRetrieveFeedbackParams: DatasetRetrieveFeedbackParams) = apply {
-            shareToken = datasetRetrieveFeedbackParams.shareToken
-            hasComment = datasetRetrieveFeedbackParams.hasComment
-            hasScore = datasetRetrieveFeedbackParams.hasScore
-            key = datasetRetrieveFeedbackParams.key?.toMutableList()
-            level = datasetRetrieveFeedbackParams.level
-            limit = datasetRetrieveFeedbackParams.limit
-            offset = datasetRetrieveFeedbackParams.offset
-            run = datasetRetrieveFeedbackParams.run?.toMutableList()
-            session = datasetRetrieveFeedbackParams.session?.toMutableList()
-            source = datasetRetrieveFeedbackParams.source?.toMutableList()
-            user = datasetRetrieveFeedbackParams.user?.toMutableList()
-            additionalHeaders = datasetRetrieveFeedbackParams.additionalHeaders.toBuilder()
-            additionalQueryParams = datasetRetrieveFeedbackParams.additionalQueryParams.toBuilder()
+        internal fun from(datasetListFeedbackParams: DatasetListFeedbackParams) = apply {
+            shareToken = datasetListFeedbackParams.shareToken
+            hasComment = datasetListFeedbackParams.hasComment
+            hasScore = datasetListFeedbackParams.hasScore
+            key = datasetListFeedbackParams.key?.toMutableList()
+            level = datasetListFeedbackParams.level
+            limit = datasetListFeedbackParams.limit
+            offset = datasetListFeedbackParams.offset
+            run = datasetListFeedbackParams.run?.toMutableList()
+            session = datasetListFeedbackParams.session?.toMutableList()
+            source = datasetListFeedbackParams.source?.toMutableList()
+            user = datasetListFeedbackParams.user?.toMutableList()
+            additionalHeaders = datasetListFeedbackParams.additionalHeaders.toBuilder()
+            additionalQueryParams = datasetListFeedbackParams.additionalQueryParams.toBuilder()
         }
 
         fun shareToken(shareToken: String?) = apply { this.shareToken = shareToken }
@@ -334,12 +333,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [DatasetRetrieveFeedbackParams].
+         * Returns an immutable instance of [DatasetListFeedbackParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): DatasetRetrieveFeedbackParams =
-            DatasetRetrieveFeedbackParams(
+        fun build(): DatasetListFeedbackParams =
+            DatasetListFeedbackParams(
                 shareToken,
                 hasComment,
                 hasScore,
@@ -386,7 +385,7 @@ private constructor(
             return true
         }
 
-        return other is DatasetRetrieveFeedbackParams &&
+        return other is DatasetListFeedbackParams &&
             shareToken == other.shareToken &&
             hasComment == other.hasComment &&
             hasScore == other.hasScore &&
@@ -420,5 +419,5 @@ private constructor(
         )
 
     override fun toString() =
-        "DatasetRetrieveFeedbackParams{shareToken=$shareToken, hasComment=$hasComment, hasScore=$hasScore, key=$key, level=$level, limit=$limit, offset=$offset, run=$run, session=$session, source=$source, user=$user, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "DatasetListFeedbackParams{shareToken=$shareToken, hasComment=$hasComment, hasScore=$hasScore, key=$key, level=$level, limit=$limit, offset=$offset, run=$run, session=$session, source=$source, user=$user, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -10,12 +10,12 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class DatasetRetrieveComparativeResponseTest {
+internal class DatasetListComparativeResponseTest {
 
     @Test
     fun create() {
-        val datasetRetrieveComparativeResponse =
-            DatasetRetrieveComparativeResponse.builder()
+        val datasetListComparativeResponse =
+            DatasetListComparativeResponse.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addExperimentsInfo(
@@ -31,32 +31,32 @@ internal class DatasetRetrieveComparativeResponseTest {
                 .name("name")
                 .build()
 
-        assertThat(datasetRetrieveComparativeResponse.id())
+        assertThat(datasetListComparativeResponse.id())
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-        assertThat(datasetRetrieveComparativeResponse.createdAt())
+        assertThat(datasetListComparativeResponse.createdAt())
             .isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(datasetRetrieveComparativeResponse.experimentsInfo())
+        assertThat(datasetListComparativeResponse.experimentsInfo())
             .containsExactly(
                 SimpleExperimentInfo.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .name("name")
                     .build()
             )
-        assertThat(datasetRetrieveComparativeResponse.modifiedAt())
+        assertThat(datasetListComparativeResponse.modifiedAt())
             .isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(datasetRetrieveComparativeResponse.description()).contains("description")
-        assertThat(datasetRetrieveComparativeResponse._extra())
+        assertThat(datasetListComparativeResponse.description()).contains("description")
+        assertThat(datasetListComparativeResponse._extra())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(datasetRetrieveComparativeResponse._feedbackStats())
+        assertThat(datasetListComparativeResponse._feedbackStats())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(datasetRetrieveComparativeResponse.name()).contains("name")
+        assertThat(datasetListComparativeResponse.name()).contains("name")
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val datasetRetrieveComparativeResponse =
-            DatasetRetrieveComparativeResponse.builder()
+        val datasetListComparativeResponse =
+            DatasetListComparativeResponse.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addExperimentsInfo(
@@ -72,13 +72,13 @@ internal class DatasetRetrieveComparativeResponseTest {
                 .name("name")
                 .build()
 
-        val roundtrippedDatasetRetrieveComparativeResponse =
+        val roundtrippedDatasetListComparativeResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(datasetRetrieveComparativeResponse),
-                jacksonTypeRef<DatasetRetrieveComparativeResponse>(),
+                jsonMapper.writeValueAsString(datasetListComparativeResponse),
+                jacksonTypeRef<DatasetListComparativeResponse>(),
             )
 
-        assertThat(roundtrippedDatasetRetrieveComparativeResponse)
-            .isEqualTo(datasetRetrieveComparativeResponse)
+        assertThat(roundtrippedDatasetListComparativeResponse)
+            .isEqualTo(datasetListComparativeResponse)
     }
 }

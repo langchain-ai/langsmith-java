@@ -43,7 +43,7 @@ internal class DatasetServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveComparative() {
+    fun listComparative() {
         val client =
             LangsmithOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -53,8 +53,7 @@ internal class DatasetServiceAsyncTest {
                 .build()
         val datasetServiceAsync = client.public_().datasets()
 
-        val pageFuture =
-            datasetServiceAsync.retrieveComparative("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val pageFuture = datasetServiceAsync.listComparative("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         val page = pageFuture.get()
         page.items().forEach { it.validate() }
@@ -62,7 +61,7 @@ internal class DatasetServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveFeedback() {
+    fun listFeedback() {
         val client =
             LangsmithOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -72,8 +71,7 @@ internal class DatasetServiceAsyncTest {
                 .build()
         val datasetServiceAsync = client.public_().datasets()
 
-        val pageFuture =
-            datasetServiceAsync.retrieveFeedback("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val pageFuture = datasetServiceAsync.listFeedback("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         val page = pageFuture.get()
         page.items().forEach { it.validate() }
@@ -81,7 +79,7 @@ internal class DatasetServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveSessions() {
+    fun listSessions() {
         val client =
             LangsmithOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -91,8 +89,7 @@ internal class DatasetServiceAsyncTest {
                 .build()
         val datasetServiceAsync = client.public_().datasets()
 
-        val pageFuture =
-            datasetServiceAsync.retrieveSessions("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val pageFuture = datasetServiceAsync.listSessions("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         val page = pageFuture.get()
         page.items().forEach { it.validate() }

@@ -6,15 +6,15 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.public_.datasets.DatasetListComparativePage
+import com.langchain.smith.models.public_.datasets.DatasetListComparativeParams
+import com.langchain.smith.models.public_.datasets.DatasetListFeedbackPage
+import com.langchain.smith.models.public_.datasets.DatasetListFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetListParams
 import com.langchain.smith.models.public_.datasets.DatasetListResponse
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativePage
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackPage
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
+import com.langchain.smith.models.public_.datasets.DatasetListSessionsPage
+import com.langchain.smith.models.public_.datasets.DatasetListSessionsParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsPage
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
 import java.util.function.Consumer
 
@@ -62,111 +62,103 @@ interface DatasetService {
         list(shareToken, DatasetListParams.none(), requestOptions)
 
     /** Get all comparative experiments for a given dataset. */
-    fun retrieveComparative(shareToken: String): DatasetRetrieveComparativePage =
-        retrieveComparative(shareToken, DatasetRetrieveComparativeParams.none())
+    fun listComparative(shareToken: String): DatasetListComparativePage =
+        listComparative(shareToken, DatasetListComparativeParams.none())
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
+    /** @see listComparative */
+    fun listComparative(
         shareToken: String,
-        params: DatasetRetrieveComparativeParams = DatasetRetrieveComparativeParams.none(),
+        params: DatasetListComparativeParams = DatasetListComparativeParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetRetrieveComparativePage =
-        retrieveComparative(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+    ): DatasetListComparativePage =
+        listComparative(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
+    /** @see listComparative */
+    fun listComparative(
         shareToken: String,
-        params: DatasetRetrieveComparativeParams = DatasetRetrieveComparativeParams.none(),
-    ): DatasetRetrieveComparativePage =
-        retrieveComparative(shareToken, params, RequestOptions.none())
+        params: DatasetListComparativeParams = DatasetListComparativeParams.none(),
+    ): DatasetListComparativePage = listComparative(shareToken, params, RequestOptions.none())
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
-        params: DatasetRetrieveComparativeParams,
+    /** @see listComparative */
+    fun listComparative(
+        params: DatasetListComparativeParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetRetrieveComparativePage
+    ): DatasetListComparativePage
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
-        params: DatasetRetrieveComparativeParams
-    ): DatasetRetrieveComparativePage = retrieveComparative(params, RequestOptions.none())
+    /** @see listComparative */
+    fun listComparative(params: DatasetListComparativeParams): DatasetListComparativePage =
+        listComparative(params, RequestOptions.none())
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
+    /** @see listComparative */
+    fun listComparative(
         shareToken: String,
         requestOptions: RequestOptions,
-    ): DatasetRetrieveComparativePage =
-        retrieveComparative(shareToken, DatasetRetrieveComparativeParams.none(), requestOptions)
+    ): DatasetListComparativePage =
+        listComparative(shareToken, DatasetListComparativeParams.none(), requestOptions)
 
     /** Get feedback for runs in projects run over a dataset that has been shared. */
-    fun retrieveFeedback(shareToken: String): DatasetRetrieveFeedbackPage =
-        retrieveFeedback(shareToken, DatasetRetrieveFeedbackParams.none())
+    fun listFeedback(shareToken: String): DatasetListFeedbackPage =
+        listFeedback(shareToken, DatasetListFeedbackParams.none())
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
+    /** @see listFeedback */
+    fun listFeedback(
         shareToken: String,
-        params: DatasetRetrieveFeedbackParams = DatasetRetrieveFeedbackParams.none(),
+        params: DatasetListFeedbackParams = DatasetListFeedbackParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetRetrieveFeedbackPage =
-        retrieveFeedback(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+    ): DatasetListFeedbackPage =
+        listFeedback(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
+    /** @see listFeedback */
+    fun listFeedback(
         shareToken: String,
-        params: DatasetRetrieveFeedbackParams = DatasetRetrieveFeedbackParams.none(),
-    ): DatasetRetrieveFeedbackPage = retrieveFeedback(shareToken, params, RequestOptions.none())
+        params: DatasetListFeedbackParams = DatasetListFeedbackParams.none(),
+    ): DatasetListFeedbackPage = listFeedback(shareToken, params, RequestOptions.none())
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
-        params: DatasetRetrieveFeedbackParams,
+    /** @see listFeedback */
+    fun listFeedback(
+        params: DatasetListFeedbackParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetRetrieveFeedbackPage
+    ): DatasetListFeedbackPage
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(params: DatasetRetrieveFeedbackParams): DatasetRetrieveFeedbackPage =
-        retrieveFeedback(params, RequestOptions.none())
+    /** @see listFeedback */
+    fun listFeedback(params: DatasetListFeedbackParams): DatasetListFeedbackPage =
+        listFeedback(params, RequestOptions.none())
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
-        shareToken: String,
-        requestOptions: RequestOptions,
-    ): DatasetRetrieveFeedbackPage =
-        retrieveFeedback(shareToken, DatasetRetrieveFeedbackParams.none(), requestOptions)
+    /** @see listFeedback */
+    fun listFeedback(shareToken: String, requestOptions: RequestOptions): DatasetListFeedbackPage =
+        listFeedback(shareToken, DatasetListFeedbackParams.none(), requestOptions)
 
     /** Get projects run on a dataset that has been shared. */
-    fun retrieveSessions(shareToken: String): DatasetRetrieveSessionsPage =
-        retrieveSessions(shareToken, DatasetRetrieveSessionsParams.none())
+    fun listSessions(shareToken: String): DatasetListSessionsPage =
+        listSessions(shareToken, DatasetListSessionsParams.none())
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
+    /** @see listSessions */
+    fun listSessions(
         shareToken: String,
-        params: DatasetRetrieveSessionsParams = DatasetRetrieveSessionsParams.none(),
+        params: DatasetListSessionsParams = DatasetListSessionsParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetRetrieveSessionsPage =
-        retrieveSessions(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+    ): DatasetListSessionsPage =
+        listSessions(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
+    /** @see listSessions */
+    fun listSessions(
         shareToken: String,
-        params: DatasetRetrieveSessionsParams = DatasetRetrieveSessionsParams.none(),
-    ): DatasetRetrieveSessionsPage = retrieveSessions(shareToken, params, RequestOptions.none())
+        params: DatasetListSessionsParams = DatasetListSessionsParams.none(),
+    ): DatasetListSessionsPage = listSessions(shareToken, params, RequestOptions.none())
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
-        params: DatasetRetrieveSessionsParams,
+    /** @see listSessions */
+    fun listSessions(
+        params: DatasetListSessionsParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): DatasetRetrieveSessionsPage
+    ): DatasetListSessionsPage
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(params: DatasetRetrieveSessionsParams): DatasetRetrieveSessionsPage =
-        retrieveSessions(params, RequestOptions.none())
+    /** @see listSessions */
+    fun listSessions(params: DatasetListSessionsParams): DatasetListSessionsPage =
+        listSessions(params, RequestOptions.none())
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
-        shareToken: String,
-        requestOptions: RequestOptions,
-    ): DatasetRetrieveSessionsPage =
-        retrieveSessions(shareToken, DatasetRetrieveSessionsParams.none(), requestOptions)
+    /** @see listSessions */
+    fun listSessions(shareToken: String, requestOptions: RequestOptions): DatasetListSessionsPage =
+        listSessions(shareToken, DatasetListSessionsParams.none(), requestOptions)
 
     /** Get sessions from multiple datasets using share tokens. */
     fun retrieveSessionsBulk(params: DatasetRetrieveSessionsBulkParams): List<TracerSession> =
@@ -234,146 +226,142 @@ interface DatasetService {
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/datasets/comparative`,
-         * but is otherwise the same as [DatasetService.retrieveComparative].
+         * but is otherwise the same as [DatasetService.listComparative].
          */
         @MustBeClosed
-        fun retrieveComparative(
-            shareToken: String
-        ): HttpResponseFor<DatasetRetrieveComparativePage> =
-            retrieveComparative(shareToken, DatasetRetrieveComparativeParams.none())
+        fun listComparative(shareToken: String): HttpResponseFor<DatasetListComparativePage> =
+            listComparative(shareToken, DatasetListComparativeParams.none())
 
-        /** @see retrieveComparative */
+        /** @see listComparative */
         @MustBeClosed
-        fun retrieveComparative(
+        fun listComparative(
             shareToken: String,
-            params: DatasetRetrieveComparativeParams = DatasetRetrieveComparativeParams.none(),
+            params: DatasetListComparativeParams = DatasetListComparativeParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetRetrieveComparativePage> =
-            retrieveComparative(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+        ): HttpResponseFor<DatasetListComparativePage> =
+            listComparative(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-        /** @see retrieveComparative */
+        /** @see listComparative */
         @MustBeClosed
-        fun retrieveComparative(
+        fun listComparative(
             shareToken: String,
-            params: DatasetRetrieveComparativeParams = DatasetRetrieveComparativeParams.none(),
-        ): HttpResponseFor<DatasetRetrieveComparativePage> =
-            retrieveComparative(shareToken, params, RequestOptions.none())
+            params: DatasetListComparativeParams = DatasetListComparativeParams.none(),
+        ): HttpResponseFor<DatasetListComparativePage> =
+            listComparative(shareToken, params, RequestOptions.none())
 
-        /** @see retrieveComparative */
+        /** @see listComparative */
         @MustBeClosed
-        fun retrieveComparative(
-            params: DatasetRetrieveComparativeParams,
+        fun listComparative(
+            params: DatasetListComparativeParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetRetrieveComparativePage>
+        ): HttpResponseFor<DatasetListComparativePage>
 
-        /** @see retrieveComparative */
+        /** @see listComparative */
         @MustBeClosed
-        fun retrieveComparative(
-            params: DatasetRetrieveComparativeParams
-        ): HttpResponseFor<DatasetRetrieveComparativePage> =
-            retrieveComparative(params, RequestOptions.none())
+        fun listComparative(
+            params: DatasetListComparativeParams
+        ): HttpResponseFor<DatasetListComparativePage> =
+            listComparative(params, RequestOptions.none())
 
-        /** @see retrieveComparative */
+        /** @see listComparative */
         @MustBeClosed
-        fun retrieveComparative(
+        fun listComparative(
             shareToken: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<DatasetRetrieveComparativePage> =
-            retrieveComparative(shareToken, DatasetRetrieveComparativeParams.none(), requestOptions)
+        ): HttpResponseFor<DatasetListComparativePage> =
+            listComparative(shareToken, DatasetListComparativeParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/datasets/feedback`, but
-         * is otherwise the same as [DatasetService.retrieveFeedback].
+         * is otherwise the same as [DatasetService.listFeedback].
          */
         @MustBeClosed
-        fun retrieveFeedback(shareToken: String): HttpResponseFor<DatasetRetrieveFeedbackPage> =
-            retrieveFeedback(shareToken, DatasetRetrieveFeedbackParams.none())
+        fun listFeedback(shareToken: String): HttpResponseFor<DatasetListFeedbackPage> =
+            listFeedback(shareToken, DatasetListFeedbackParams.none())
 
-        /** @see retrieveFeedback */
+        /** @see listFeedback */
         @MustBeClosed
-        fun retrieveFeedback(
+        fun listFeedback(
             shareToken: String,
-            params: DatasetRetrieveFeedbackParams = DatasetRetrieveFeedbackParams.none(),
+            params: DatasetListFeedbackParams = DatasetListFeedbackParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetRetrieveFeedbackPage> =
-            retrieveFeedback(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+        ): HttpResponseFor<DatasetListFeedbackPage> =
+            listFeedback(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-        /** @see retrieveFeedback */
+        /** @see listFeedback */
         @MustBeClosed
-        fun retrieveFeedback(
+        fun listFeedback(
             shareToken: String,
-            params: DatasetRetrieveFeedbackParams = DatasetRetrieveFeedbackParams.none(),
-        ): HttpResponseFor<DatasetRetrieveFeedbackPage> =
-            retrieveFeedback(shareToken, params, RequestOptions.none())
+            params: DatasetListFeedbackParams = DatasetListFeedbackParams.none(),
+        ): HttpResponseFor<DatasetListFeedbackPage> =
+            listFeedback(shareToken, params, RequestOptions.none())
 
-        /** @see retrieveFeedback */
+        /** @see listFeedback */
         @MustBeClosed
-        fun retrieveFeedback(
-            params: DatasetRetrieveFeedbackParams,
+        fun listFeedback(
+            params: DatasetListFeedbackParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetRetrieveFeedbackPage>
+        ): HttpResponseFor<DatasetListFeedbackPage>
 
-        /** @see retrieveFeedback */
+        /** @see listFeedback */
         @MustBeClosed
-        fun retrieveFeedback(
-            params: DatasetRetrieveFeedbackParams
-        ): HttpResponseFor<DatasetRetrieveFeedbackPage> =
-            retrieveFeedback(params, RequestOptions.none())
+        fun listFeedback(
+            params: DatasetListFeedbackParams
+        ): HttpResponseFor<DatasetListFeedbackPage> = listFeedback(params, RequestOptions.none())
 
-        /** @see retrieveFeedback */
+        /** @see listFeedback */
         @MustBeClosed
-        fun retrieveFeedback(
+        fun listFeedback(
             shareToken: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<DatasetRetrieveFeedbackPage> =
-            retrieveFeedback(shareToken, DatasetRetrieveFeedbackParams.none(), requestOptions)
+        ): HttpResponseFor<DatasetListFeedbackPage> =
+            listFeedback(shareToken, DatasetListFeedbackParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/datasets/sessions`, but
-         * is otherwise the same as [DatasetService.retrieveSessions].
+         * is otherwise the same as [DatasetService.listSessions].
          */
         @MustBeClosed
-        fun retrieveSessions(shareToken: String): HttpResponseFor<DatasetRetrieveSessionsPage> =
-            retrieveSessions(shareToken, DatasetRetrieveSessionsParams.none())
+        fun listSessions(shareToken: String): HttpResponseFor<DatasetListSessionsPage> =
+            listSessions(shareToken, DatasetListSessionsParams.none())
 
-        /** @see retrieveSessions */
+        /** @see listSessions */
         @MustBeClosed
-        fun retrieveSessions(
+        fun listSessions(
             shareToken: String,
-            params: DatasetRetrieveSessionsParams = DatasetRetrieveSessionsParams.none(),
+            params: DatasetListSessionsParams = DatasetListSessionsParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetRetrieveSessionsPage> =
-            retrieveSessions(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+        ): HttpResponseFor<DatasetListSessionsPage> =
+            listSessions(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-        /** @see retrieveSessions */
+        /** @see listSessions */
         @MustBeClosed
-        fun retrieveSessions(
+        fun listSessions(
             shareToken: String,
-            params: DatasetRetrieveSessionsParams = DatasetRetrieveSessionsParams.none(),
-        ): HttpResponseFor<DatasetRetrieveSessionsPage> =
-            retrieveSessions(shareToken, params, RequestOptions.none())
+            params: DatasetListSessionsParams = DatasetListSessionsParams.none(),
+        ): HttpResponseFor<DatasetListSessionsPage> =
+            listSessions(shareToken, params, RequestOptions.none())
 
-        /** @see retrieveSessions */
+        /** @see listSessions */
         @MustBeClosed
-        fun retrieveSessions(
-            params: DatasetRetrieveSessionsParams,
+        fun listSessions(
+            params: DatasetListSessionsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<DatasetRetrieveSessionsPage>
+        ): HttpResponseFor<DatasetListSessionsPage>
 
-        /** @see retrieveSessions */
+        /** @see listSessions */
         @MustBeClosed
-        fun retrieveSessions(
-            params: DatasetRetrieveSessionsParams
-        ): HttpResponseFor<DatasetRetrieveSessionsPage> =
-            retrieveSessions(params, RequestOptions.none())
+        fun listSessions(
+            params: DatasetListSessionsParams
+        ): HttpResponseFor<DatasetListSessionsPage> = listSessions(params, RequestOptions.none())
 
-        /** @see retrieveSessions */
+        /** @see listSessions */
         @MustBeClosed
-        fun retrieveSessions(
+        fun listSessions(
             shareToken: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<DatasetRetrieveSessionsPage> =
-            retrieveSessions(shareToken, DatasetRetrieveSessionsParams.none(), requestOptions)
+        ): HttpResponseFor<DatasetListSessionsPage> =
+            listSessions(shareToken, DatasetListSessionsParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/datasets/sessions-bulk`, but is

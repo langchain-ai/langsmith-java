@@ -7,11 +7,11 @@ import com.langchain.smith.models.datasets.comparative.SortByComparativeExperime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class DatasetRetrieveComparativeParamsTest {
+internal class DatasetListComparativeParamsTest {
 
     @Test
     fun create() {
-        DatasetRetrieveComparativeParams.builder()
+        DatasetListComparativeParams.builder()
             .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .limit(1L)
             .name("name")
@@ -25,7 +25,7 @@ internal class DatasetRetrieveComparativeParamsTest {
     @Test
     fun pathParams() {
         val params =
-            DatasetRetrieveComparativeParams.builder()
+            DatasetListComparativeParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -37,7 +37,7 @@ internal class DatasetRetrieveComparativeParamsTest {
     @Test
     fun queryParams() {
         val params =
-            DatasetRetrieveComparativeParams.builder()
+            DatasetListComparativeParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .limit(1L)
                 .name("name")
@@ -65,7 +65,7 @@ internal class DatasetRetrieveComparativeParamsTest {
     @Test
     fun queryParamsWithoutOptionalFields() {
         val params =
-            DatasetRetrieveComparativeParams.builder()
+            DatasetListComparativeParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 

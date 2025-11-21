@@ -8,11 +8,11 @@ import com.langchain.smith.models.feedback.SourceType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class DatasetRetrieveFeedbackParamsTest {
+internal class DatasetListFeedbackParamsTest {
 
     @Test
     fun create() {
-        DatasetRetrieveFeedbackParams.builder()
+        DatasetListFeedbackParams.builder()
             .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .hasComment(true)
             .hasScore(true)
@@ -30,7 +30,7 @@ internal class DatasetRetrieveFeedbackParamsTest {
     @Test
     fun pathParams() {
         val params =
-            DatasetRetrieveFeedbackParams.builder()
+            DatasetListFeedbackParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -42,7 +42,7 @@ internal class DatasetRetrieveFeedbackParamsTest {
     @Test
     fun queryParams() {
         val params =
-            DatasetRetrieveFeedbackParams.builder()
+            DatasetListFeedbackParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .hasComment(true)
                 .hasScore(true)
@@ -81,7 +81,7 @@ internal class DatasetRetrieveFeedbackParamsTest {
     @Test
     fun queryParamsWithoutOptionalFields() {
         val params =
-            DatasetRetrieveFeedbackParams.builder()
+            DatasetListFeedbackParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 

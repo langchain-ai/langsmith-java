@@ -5,43 +5,42 @@ package com.langchain.smith.models.public_.datasets
 import com.langchain.smith.core.AutoPager
 import com.langchain.smith.core.Page
 import com.langchain.smith.core.checkRequired
-import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.services.blocking.public_.DatasetService
 import java.util.Objects
 import kotlin.jvm.optionals.getOrDefault
 
-/** @see DatasetService.retrieveFeedback */
-class DatasetRetrieveFeedbackPage
+/** @see DatasetService.listSessions */
+class DatasetListSessionsPage
 private constructor(
     private val service: DatasetService,
-    private val params: DatasetRetrieveFeedbackParams,
-    private val items: List<FeedbackSchema>,
-) : Page<FeedbackSchema> {
+    private val params: DatasetListSessionsParams,
+    private val items: List<TracerSession>,
+) : Page<TracerSession> {
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
-    fun nextPageParams(): DatasetRetrieveFeedbackParams {
+    fun nextPageParams(): DatasetListSessionsParams {
         val offset = params.offset().getOrDefault(0)
         return params.toBuilder().offset(offset + items().size).build()
     }
 
-    override fun nextPage(): DatasetRetrieveFeedbackPage =
-        service.retrieveFeedback(nextPageParams())
+    override fun nextPage(): DatasetListSessionsPage = service.listSessions(nextPageParams())
 
-    fun autoPager(): AutoPager<FeedbackSchema> = AutoPager.from(this)
+    fun autoPager(): AutoPager<TracerSession> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
-    fun params(): DatasetRetrieveFeedbackParams = params
+    fun params(): DatasetListSessionsParams = params
 
     /** The response that this page was parsed from. */
-    override fun items(): List<FeedbackSchema> = items
+    override fun items(): List<TracerSession> = items
 
     fun toBuilder() = Builder().from(this)
 
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [DatasetRetrieveFeedbackPage].
+         * Returns a mutable builder for constructing an instance of [DatasetListSessionsPage].
          *
          * The following fields are required:
          * ```java
@@ -53,30 +52,30 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [DatasetRetrieveFeedbackPage]. */
+    /** A builder for [DatasetListSessionsPage]. */
     class Builder internal constructor() {
 
         private var service: DatasetService? = null
-        private var params: DatasetRetrieveFeedbackParams? = null
-        private var items: List<FeedbackSchema>? = null
+        private var params: DatasetListSessionsParams? = null
+        private var items: List<TracerSession>? = null
 
         @JvmSynthetic
-        internal fun from(datasetRetrieveFeedbackPage: DatasetRetrieveFeedbackPage) = apply {
-            service = datasetRetrieveFeedbackPage.service
-            params = datasetRetrieveFeedbackPage.params
-            items = datasetRetrieveFeedbackPage.items
+        internal fun from(datasetListSessionsPage: DatasetListSessionsPage) = apply {
+            service = datasetListSessionsPage.service
+            params = datasetListSessionsPage.params
+            items = datasetListSessionsPage.items
         }
 
         fun service(service: DatasetService) = apply { this.service = service }
 
         /** The parameters that were used to request this page. */
-        fun params(params: DatasetRetrieveFeedbackParams) = apply { this.params = params }
+        fun params(params: DatasetListSessionsParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun items(items: List<FeedbackSchema>) = apply { this.items = items }
+        fun items(items: List<TracerSession>) = apply { this.items = items }
 
         /**
-         * Returns an immutable instance of [DatasetRetrieveFeedbackPage].
+         * Returns an immutable instance of [DatasetListSessionsPage].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -89,8 +88,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): DatasetRetrieveFeedbackPage =
-            DatasetRetrieveFeedbackPage(
+        fun build(): DatasetListSessionsPage =
+            DatasetListSessionsPage(
                 checkRequired("service", service),
                 checkRequired("params", params),
                 checkRequired("items", items),
@@ -102,7 +101,7 @@ private constructor(
             return true
         }
 
-        return other is DatasetRetrieveFeedbackPage &&
+        return other is DatasetListSessionsPage &&
             service == other.service &&
             params == other.params &&
             items == other.items
@@ -111,5 +110,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(service, params, items)
 
     override fun toString() =
-        "DatasetRetrieveFeedbackPage{service=$service, params=$params, items=$items}"
+        "DatasetListSessionsPage{service=$service, params=$params, items=$items}"
 }

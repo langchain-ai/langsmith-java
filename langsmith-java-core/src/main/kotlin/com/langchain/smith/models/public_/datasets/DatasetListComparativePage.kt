@@ -5,43 +5,41 @@ package com.langchain.smith.models.public_.datasets
 import com.langchain.smith.core.AutoPager
 import com.langchain.smith.core.Page
 import com.langchain.smith.core.checkRequired
-import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.services.blocking.public_.DatasetService
 import java.util.Objects
 import kotlin.jvm.optionals.getOrDefault
 
-/** @see DatasetService.retrieveSessions */
-class DatasetRetrieveSessionsPage
+/** @see DatasetService.listComparative */
+class DatasetListComparativePage
 private constructor(
     private val service: DatasetService,
-    private val params: DatasetRetrieveSessionsParams,
-    private val items: List<TracerSession>,
-) : Page<TracerSession> {
+    private val params: DatasetListComparativeParams,
+    private val items: List<DatasetListComparativeResponse>,
+) : Page<DatasetListComparativeResponse> {
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
-    fun nextPageParams(): DatasetRetrieveSessionsParams {
+    fun nextPageParams(): DatasetListComparativeParams {
         val offset = params.offset().getOrDefault(0)
         return params.toBuilder().offset(offset + items().size).build()
     }
 
-    override fun nextPage(): DatasetRetrieveSessionsPage =
-        service.retrieveSessions(nextPageParams())
+    override fun nextPage(): DatasetListComparativePage = service.listComparative(nextPageParams())
 
-    fun autoPager(): AutoPager<TracerSession> = AutoPager.from(this)
+    fun autoPager(): AutoPager<DatasetListComparativeResponse> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
-    fun params(): DatasetRetrieveSessionsParams = params
+    fun params(): DatasetListComparativeParams = params
 
     /** The response that this page was parsed from. */
-    override fun items(): List<TracerSession> = items
+    override fun items(): List<DatasetListComparativeResponse> = items
 
     fun toBuilder() = Builder().from(this)
 
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [DatasetRetrieveSessionsPage].
+         * Returns a mutable builder for constructing an instance of [DatasetListComparativePage].
          *
          * The following fields are required:
          * ```java
@@ -53,30 +51,30 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [DatasetRetrieveSessionsPage]. */
+    /** A builder for [DatasetListComparativePage]. */
     class Builder internal constructor() {
 
         private var service: DatasetService? = null
-        private var params: DatasetRetrieveSessionsParams? = null
-        private var items: List<TracerSession>? = null
+        private var params: DatasetListComparativeParams? = null
+        private var items: List<DatasetListComparativeResponse>? = null
 
         @JvmSynthetic
-        internal fun from(datasetRetrieveSessionsPage: DatasetRetrieveSessionsPage) = apply {
-            service = datasetRetrieveSessionsPage.service
-            params = datasetRetrieveSessionsPage.params
-            items = datasetRetrieveSessionsPage.items
+        internal fun from(datasetListComparativePage: DatasetListComparativePage) = apply {
+            service = datasetListComparativePage.service
+            params = datasetListComparativePage.params
+            items = datasetListComparativePage.items
         }
 
         fun service(service: DatasetService) = apply { this.service = service }
 
         /** The parameters that were used to request this page. */
-        fun params(params: DatasetRetrieveSessionsParams) = apply { this.params = params }
+        fun params(params: DatasetListComparativeParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun items(items: List<TracerSession>) = apply { this.items = items }
+        fun items(items: List<DatasetListComparativeResponse>) = apply { this.items = items }
 
         /**
-         * Returns an immutable instance of [DatasetRetrieveSessionsPage].
+         * Returns an immutable instance of [DatasetListComparativePage].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -89,8 +87,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): DatasetRetrieveSessionsPage =
-            DatasetRetrieveSessionsPage(
+        fun build(): DatasetListComparativePage =
+            DatasetListComparativePage(
                 checkRequired("service", service),
                 checkRequired("params", params),
                 checkRequired("items", items),
@@ -102,7 +100,7 @@ private constructor(
             return true
         }
 
-        return other is DatasetRetrieveSessionsPage &&
+        return other is DatasetListComparativePage &&
             service == other.service &&
             params == other.params &&
             items == other.items
@@ -111,5 +109,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(service, params, items)
 
     override fun toString() =
-        "DatasetRetrieveSessionsPage{service=$service, params=$params, items=$items}"
+        "DatasetListComparativePage{service=$service, params=$params, items=$items}"
 }
