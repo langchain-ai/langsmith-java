@@ -42,7 +42,7 @@ internal class DatasetServiceTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveComparative() {
+    fun listComparative() {
         val client =
             LangsmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -52,14 +52,14 @@ internal class DatasetServiceTest {
                 .build()
         val datasetService = client.public_().datasets()
 
-        val page = datasetService.retrieveComparative("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val page = datasetService.listComparative("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveFeedback() {
+    fun listFeedback() {
         val client =
             LangsmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -69,14 +69,14 @@ internal class DatasetServiceTest {
                 .build()
         val datasetService = client.public_().datasets()
 
-        val page = datasetService.retrieveFeedback("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val page = datasetService.listFeedback("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveSessions() {
+    fun listSessions() {
         val client =
             LangsmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -86,7 +86,7 @@ internal class DatasetServiceTest {
                 .build()
         val datasetService = client.public_().datasets()
 
-        val page = datasetService.retrieveSessions("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val page = datasetService.listSessions("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         page.items().forEach { it.validate() }
     }

@@ -5,48 +5,47 @@ package com.langchain.smith.models.public_.datasets
 import com.langchain.smith.core.AutoPagerAsync
 import com.langchain.smith.core.PageAsync
 import com.langchain.smith.core.checkRequired
-import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.sessions.TracerSession
 import com.langchain.smith.services.async.public_.DatasetServiceAsync
 import java.util.Objects
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import kotlin.jvm.optionals.getOrDefault
 
-/** @see DatasetServiceAsync.retrieveFeedback */
-class DatasetRetrieveFeedbackPageAsync
+/** @see DatasetServiceAsync.listSessions */
+class DatasetListSessionsPageAsync
 private constructor(
     private val service: DatasetServiceAsync,
     private val streamHandlerExecutor: Executor,
-    private val params: DatasetRetrieveFeedbackParams,
-    private val items: List<FeedbackSchema>,
-) : PageAsync<FeedbackSchema> {
+    private val params: DatasetListSessionsParams,
+    private val items: List<TracerSession>,
+) : PageAsync<TracerSession> {
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
-    fun nextPageParams(): DatasetRetrieveFeedbackParams {
+    fun nextPageParams(): DatasetListSessionsParams {
         val offset = params.offset().getOrDefault(0)
         return params.toBuilder().offset(offset + items().size).build()
     }
 
-    override fun nextPage(): CompletableFuture<DatasetRetrieveFeedbackPageAsync> =
-        service.retrieveFeedback(nextPageParams())
+    override fun nextPage(): CompletableFuture<DatasetListSessionsPageAsync> =
+        service.listSessions(nextPageParams())
 
-    fun autoPager(): AutoPagerAsync<FeedbackSchema> =
+    fun autoPager(): AutoPagerAsync<TracerSession> =
         AutoPagerAsync.from(this, streamHandlerExecutor)
 
     /** The parameters that were used to request this page. */
-    fun params(): DatasetRetrieveFeedbackParams = params
+    fun params(): DatasetListSessionsParams = params
 
     /** The response that this page was parsed from. */
-    override fun items(): List<FeedbackSchema> = items
+    override fun items(): List<TracerSession> = items
 
     fun toBuilder() = Builder().from(this)
 
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [DatasetRetrieveFeedbackPageAsync].
+         * Returns a mutable builder for constructing an instance of [DatasetListSessionsPageAsync].
          *
          * The following fields are required:
          * ```java
@@ -59,22 +58,21 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [DatasetRetrieveFeedbackPageAsync]. */
+    /** A builder for [DatasetListSessionsPageAsync]. */
     class Builder internal constructor() {
 
         private var service: DatasetServiceAsync? = null
         private var streamHandlerExecutor: Executor? = null
-        private var params: DatasetRetrieveFeedbackParams? = null
-        private var items: List<FeedbackSchema>? = null
+        private var params: DatasetListSessionsParams? = null
+        private var items: List<TracerSession>? = null
 
         @JvmSynthetic
-        internal fun from(datasetRetrieveFeedbackPageAsync: DatasetRetrieveFeedbackPageAsync) =
-            apply {
-                service = datasetRetrieveFeedbackPageAsync.service
-                streamHandlerExecutor = datasetRetrieveFeedbackPageAsync.streamHandlerExecutor
-                params = datasetRetrieveFeedbackPageAsync.params
-                items = datasetRetrieveFeedbackPageAsync.items
-            }
+        internal fun from(datasetListSessionsPageAsync: DatasetListSessionsPageAsync) = apply {
+            service = datasetListSessionsPageAsync.service
+            streamHandlerExecutor = datasetListSessionsPageAsync.streamHandlerExecutor
+            params = datasetListSessionsPageAsync.params
+            items = datasetListSessionsPageAsync.items
+        }
 
         fun service(service: DatasetServiceAsync) = apply { this.service = service }
 
@@ -83,13 +81,13 @@ private constructor(
         }
 
         /** The parameters that were used to request this page. */
-        fun params(params: DatasetRetrieveFeedbackParams) = apply { this.params = params }
+        fun params(params: DatasetListSessionsParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun items(items: List<FeedbackSchema>) = apply { this.items = items }
+        fun items(items: List<TracerSession>) = apply { this.items = items }
 
         /**
-         * Returns an immutable instance of [DatasetRetrieveFeedbackPageAsync].
+         * Returns an immutable instance of [DatasetListSessionsPageAsync].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -103,8 +101,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): DatasetRetrieveFeedbackPageAsync =
-            DatasetRetrieveFeedbackPageAsync(
+        fun build(): DatasetListSessionsPageAsync =
+            DatasetListSessionsPageAsync(
                 checkRequired("service", service),
                 checkRequired("streamHandlerExecutor", streamHandlerExecutor),
                 checkRequired("params", params),
@@ -117,7 +115,7 @@ private constructor(
             return true
         }
 
-        return other is DatasetRetrieveFeedbackPageAsync &&
+        return other is DatasetListSessionsPageAsync &&
             service == other.service &&
             streamHandlerExecutor == other.streamHandlerExecutor &&
             params == other.params &&
@@ -127,5 +125,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(service, streamHandlerExecutor, params, items)
 
     override fun toString() =
-        "DatasetRetrieveFeedbackPageAsync{service=$service, streamHandlerExecutor=$streamHandlerExecutor, params=$params, items=$items}"
+        "DatasetListSessionsPageAsync{service=$service, streamHandlerExecutor=$streamHandlerExecutor, params=$params, items=$items}"
 }

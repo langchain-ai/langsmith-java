@@ -11,33 +11,33 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import kotlin.jvm.optionals.getOrDefault
 
-/** @see DatasetServiceAsync.retrieveComparative */
-class DatasetRetrieveComparativePageAsync
+/** @see DatasetServiceAsync.listComparative */
+class DatasetListComparativePageAsync
 private constructor(
     private val service: DatasetServiceAsync,
     private val streamHandlerExecutor: Executor,
-    private val params: DatasetRetrieveComparativeParams,
-    private val items: List<DatasetRetrieveComparativeResponse>,
-) : PageAsync<DatasetRetrieveComparativeResponse> {
+    private val params: DatasetListComparativeParams,
+    private val items: List<DatasetListComparativeResponse>,
+) : PageAsync<DatasetListComparativeResponse> {
 
     override fun hasNextPage(): Boolean = items().isNotEmpty()
 
-    fun nextPageParams(): DatasetRetrieveComparativeParams {
+    fun nextPageParams(): DatasetListComparativeParams {
         val offset = params.offset().getOrDefault(0)
         return params.toBuilder().offset(offset + items().size).build()
     }
 
-    override fun nextPage(): CompletableFuture<DatasetRetrieveComparativePageAsync> =
-        service.retrieveComparative(nextPageParams())
+    override fun nextPage(): CompletableFuture<DatasetListComparativePageAsync> =
+        service.listComparative(nextPageParams())
 
-    fun autoPager(): AutoPagerAsync<DatasetRetrieveComparativeResponse> =
+    fun autoPager(): AutoPagerAsync<DatasetListComparativeResponse> =
         AutoPagerAsync.from(this, streamHandlerExecutor)
 
     /** The parameters that were used to request this page. */
-    fun params(): DatasetRetrieveComparativeParams = params
+    fun params(): DatasetListComparativeParams = params
 
     /** The response that this page was parsed from. */
-    override fun items(): List<DatasetRetrieveComparativeResponse> = items
+    override fun items(): List<DatasetListComparativeResponse> = items
 
     fun toBuilder() = Builder().from(this)
 
@@ -45,7 +45,7 @@ private constructor(
 
         /**
          * Returns a mutable builder for constructing an instance of
-         * [DatasetRetrieveComparativePageAsync].
+         * [DatasetListComparativePageAsync].
          *
          * The following fields are required:
          * ```java
@@ -58,23 +58,22 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [DatasetRetrieveComparativePageAsync]. */
+    /** A builder for [DatasetListComparativePageAsync]. */
     class Builder internal constructor() {
 
         private var service: DatasetServiceAsync? = null
         private var streamHandlerExecutor: Executor? = null
-        private var params: DatasetRetrieveComparativeParams? = null
-        private var items: List<DatasetRetrieveComparativeResponse>? = null
+        private var params: DatasetListComparativeParams? = null
+        private var items: List<DatasetListComparativeResponse>? = null
 
         @JvmSynthetic
-        internal fun from(
-            datasetRetrieveComparativePageAsync: DatasetRetrieveComparativePageAsync
-        ) = apply {
-            service = datasetRetrieveComparativePageAsync.service
-            streamHandlerExecutor = datasetRetrieveComparativePageAsync.streamHandlerExecutor
-            params = datasetRetrieveComparativePageAsync.params
-            items = datasetRetrieveComparativePageAsync.items
-        }
+        internal fun from(datasetListComparativePageAsync: DatasetListComparativePageAsync) =
+            apply {
+                service = datasetListComparativePageAsync.service
+                streamHandlerExecutor = datasetListComparativePageAsync.streamHandlerExecutor
+                params = datasetListComparativePageAsync.params
+                items = datasetListComparativePageAsync.items
+            }
 
         fun service(service: DatasetServiceAsync) = apply { this.service = service }
 
@@ -83,13 +82,13 @@ private constructor(
         }
 
         /** The parameters that were used to request this page. */
-        fun params(params: DatasetRetrieveComparativeParams) = apply { this.params = params }
+        fun params(params: DatasetListComparativeParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun items(items: List<DatasetRetrieveComparativeResponse>) = apply { this.items = items }
+        fun items(items: List<DatasetListComparativeResponse>) = apply { this.items = items }
 
         /**
-         * Returns an immutable instance of [DatasetRetrieveComparativePageAsync].
+         * Returns an immutable instance of [DatasetListComparativePageAsync].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -103,8 +102,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): DatasetRetrieveComparativePageAsync =
-            DatasetRetrieveComparativePageAsync(
+        fun build(): DatasetListComparativePageAsync =
+            DatasetListComparativePageAsync(
                 checkRequired("service", service),
                 checkRequired("streamHandlerExecutor", streamHandlerExecutor),
                 checkRequired("params", params),
@@ -117,7 +116,7 @@ private constructor(
             return true
         }
 
-        return other is DatasetRetrieveComparativePageAsync &&
+        return other is DatasetListComparativePageAsync &&
             service == other.service &&
             streamHandlerExecutor == other.streamHandlerExecutor &&
             params == other.params &&
@@ -127,5 +126,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(service, streamHandlerExecutor, params, items)
 
     override fun toString() =
-        "DatasetRetrieveComparativePageAsync{service=$service, streamHandlerExecutor=$streamHandlerExecutor, params=$params, items=$items}"
+        "DatasetListComparativePageAsync{service=$service, streamHandlerExecutor=$streamHandlerExecutor, params=$params, items=$items}"
 }

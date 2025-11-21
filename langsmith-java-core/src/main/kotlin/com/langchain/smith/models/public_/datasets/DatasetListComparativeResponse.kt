@@ -22,7 +22,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Publicly-shared ComparativeExperiment schema. */
-class DatasetRetrieveComparativeResponse
+class DatasetListComparativeResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
@@ -171,7 +171,7 @@ private constructor(
 
         /**
          * Returns a mutable builder for constructing an instance of
-         * [DatasetRetrieveComparativeResponse].
+         * [DatasetListComparativeResponse].
          *
          * The following fields are required:
          * ```java
@@ -184,7 +184,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [DatasetRetrieveComparativeResponse]. */
+    /** A builder for [DatasetListComparativeResponse]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String>? = null
@@ -198,20 +198,19 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(datasetRetrieveComparativeResponse: DatasetRetrieveComparativeResponse) =
-            apply {
-                id = datasetRetrieveComparativeResponse.id
-                createdAt = datasetRetrieveComparativeResponse.createdAt
-                experimentsInfo =
-                    datasetRetrieveComparativeResponse.experimentsInfo.map { it.toMutableList() }
-                modifiedAt = datasetRetrieveComparativeResponse.modifiedAt
-                description = datasetRetrieveComparativeResponse.description
-                extra = datasetRetrieveComparativeResponse.extra
-                feedbackStats = datasetRetrieveComparativeResponse.feedbackStats
-                name = datasetRetrieveComparativeResponse.name
-                additionalProperties =
-                    datasetRetrieveComparativeResponse.additionalProperties.toMutableMap()
-            }
+        internal fun from(datasetListComparativeResponse: DatasetListComparativeResponse) = apply {
+            id = datasetListComparativeResponse.id
+            createdAt = datasetListComparativeResponse.createdAt
+            experimentsInfo =
+                datasetListComparativeResponse.experimentsInfo.map { it.toMutableList() }
+            modifiedAt = datasetListComparativeResponse.modifiedAt
+            description = datasetListComparativeResponse.description
+            extra = datasetListComparativeResponse.extra
+            feedbackStats = datasetListComparativeResponse.feedbackStats
+            name = datasetListComparativeResponse.name
+            additionalProperties =
+                datasetListComparativeResponse.additionalProperties.toMutableMap()
+        }
 
         fun id(id: String) = id(JsonField.of(id))
 
@@ -324,7 +323,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [DatasetRetrieveComparativeResponse].
+         * Returns an immutable instance of [DatasetListComparativeResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -338,8 +337,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): DatasetRetrieveComparativeResponse =
-            DatasetRetrieveComparativeResponse(
+        fun build(): DatasetListComparativeResponse =
+            DatasetListComparativeResponse(
                 checkRequired("id", id),
                 checkRequired("createdAt", createdAt),
                 checkRequired("experimentsInfo", experimentsInfo).map { it.toImmutable() },
@@ -354,7 +353,7 @@ private constructor(
 
     private var validated: Boolean = false
 
-    fun validate(): DatasetRetrieveComparativeResponse = apply {
+    fun validate(): DatasetListComparativeResponse = apply {
         if (validated) {
             return@apply
         }
@@ -395,7 +394,7 @@ private constructor(
             return true
         }
 
-        return other is DatasetRetrieveComparativeResponse &&
+        return other is DatasetListComparativeResponse &&
             id == other.id &&
             createdAt == other.createdAt &&
             experimentsInfo == other.experimentsInfo &&
@@ -424,5 +423,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "DatasetRetrieveComparativeResponse{id=$id, createdAt=$createdAt, experimentsInfo=$experimentsInfo, modifiedAt=$modifiedAt, description=$description, extra=$extra, feedbackStats=$feedbackStats, name=$name, additionalProperties=$additionalProperties}"
+        "DatasetListComparativeResponse{id=$id, createdAt=$createdAt, experimentsInfo=$experimentsInfo, modifiedAt=$modifiedAt, description=$description, extra=$extra, feedbackStats=$feedbackStats, name=$name, additionalProperties=$additionalProperties}"
 }
