@@ -120,8 +120,8 @@ fun main() {
         .build()
     val existingDatasets = client.datasets().list(listParams)
 
-    val dataset = if (existingDatasets.isNotEmpty()) {
-        val existing = existingDatasets[0]
+    val dataset = if (existingDatasets.items().isNotEmpty()) {
+        val existing = existingDatasets.items()[0]
         println("   ✓ Found existing dataset (ID: ${existing.id()})")
         existing
     } else {
