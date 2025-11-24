@@ -31,7 +31,7 @@ private constructor(
     private val endTime: JsonField<OffsetDateTime>,
     private val error: JsonField<String>,
     private val metadata: JsonValue,
-    private val shape: JsonField<List<Long>>,
+    private val shape: JsonField<Shape>,
     private val startTime: JsonField<OffsetDateTime>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -49,7 +49,7 @@ private constructor(
         endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("error") @ExcludeMissing error: JsonField<String> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
-        @JsonProperty("shape") @ExcludeMissing shape: JsonField<List<Long>> = JsonMissing.of(),
+        @JsonProperty("shape") @ExcludeMissing shape: JsonField<Shape> = JsonMissing.of(),
         @JsonProperty("start_time")
         @ExcludeMissing
         startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -97,7 +97,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun shape(): Optional<List<Long>> = shape.getOptional("shape")
+    fun shape(): Optional<Shape> = shape.getOptional("shape")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -152,7 +152,7 @@ private constructor(
      *
      * Unlike [shape], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("shape") @ExcludeMissing fun _shape(): JsonField<List<Long>> = shape
+    @JsonProperty("shape") @ExcludeMissing fun _shape(): JsonField<Shape> = shape
 
     /**
      * Returns the raw JSON value of [startTime].
@@ -201,7 +201,7 @@ private constructor(
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var error: JsonField<String> = JsonMissing.of()
         private var metadata: JsonValue = JsonMissing.of()
-        private var shape: JsonField<MutableList<Long>>? = null
+        private var shape: JsonField<Shape> = JsonMissing.of()
         private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -214,7 +214,7 @@ private constructor(
             endTime = insightRetrieveJobResponse.endTime
             error = insightRetrieveJobResponse.error
             metadata = insightRetrieveJobResponse.metadata
-            shape = insightRetrieveJobResponse.shape.map { it.toMutableList() }
+            shape = insightRetrieveJobResponse.shape
             startTime = insightRetrieveJobResponse.startTime
             additionalProperties = insightRetrieveJobResponse.additionalProperties.toMutableMap()
         }
@@ -303,33 +303,18 @@ private constructor(
 
         fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
 
-        fun shape(shape: List<Long>?) = shape(JsonField.ofNullable(shape))
+        fun shape(shape: Shape?) = shape(JsonField.ofNullable(shape))
 
         /** Alias for calling [Builder.shape] with `shape.orElse(null)`. */
-        fun shape(shape: Optional<List<Long>>) = shape(shape.getOrNull())
+        fun shape(shape: Optional<Shape>) = shape(shape.getOrNull())
 
         /**
          * Sets [Builder.shape] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.shape] with a well-typed `List<Long>` value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.shape] with a well-typed [Shape] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun shape(shape: JsonField<List<Long>>) = apply {
-            this.shape = shape.map { it.toMutableList() }
-        }
-
-        /**
-         * Adds a single [Long] to [Builder.shape].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addShape(shape: Long) = apply {
-            this.shape =
-                (this.shape ?: JsonField.of(mutableListOf())).also {
-                    checkKnown("shape", it).add(shape)
-                }
-        }
+        fun shape(shape: JsonField<Shape>) = apply { this.shape = shape }
 
         fun startTime(startTime: OffsetDateTime?) = startTime(JsonField.ofNullable(startTime))
 
@@ -388,7 +373,7 @@ private constructor(
                 endTime,
                 error,
                 metadata,
-                (shape ?: JsonMissing.of()).map { it.toImmutable() },
+                shape,
                 startTime,
                 additionalProperties.toMutableMap(),
             )
@@ -407,7 +392,7 @@ private constructor(
         status()
         endTime()
         error()
-        shape()
+        shape().ifPresent { it.validate() }
         startTime()
         validated = true
     }
@@ -433,7 +418,7 @@ private constructor(
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (error.asKnown().isPresent) 1 else 0) +
-            (shape.asKnown().getOrNull()?.size ?: 0) +
+            (shape.asKnown().getOrNull()?.validity() ?: 0) +
             (if (startTime.asKnown().isPresent) 1 else 0)
 
     /** A single cluster of runs. */
@@ -835,6 +820,105 @@ private constructor(
 
         override fun toString() =
             "Cluster{id=$id, description=$description, level=$level, name=$name, numRuns=$numRuns, stats=$stats, parentId=$parentId, parentName=$parentName, additionalProperties=$additionalProperties}"
+    }
+
+    class Shape
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Shape]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Shape]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(shape: Shape) = apply {
+                additionalProperties = shape.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Shape].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Shape = Shape(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Shape = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Shape && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Shape{additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
