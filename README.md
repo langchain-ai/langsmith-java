@@ -55,7 +55,7 @@ import com.langchain.smith.models.runs.RunQueryParams;
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 RunQueryParams params = RunQueryParams.builder()
-    .addSession("REPLACE_ME")
+    .addSession("1ffaeba7-541e-469f-bae7-df3208ea3d45")
     .limit(10L)
     .build();
 var response = client.runs().query(params);
@@ -197,7 +197,7 @@ import java.util.concurrent.CompletableFuture;
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
-    .sessionId("REPLACE_ME")
+    .sessionId("1ffaeba7-541e-469f-bae7-df3208ea3d45")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
 CompletableFuture<CustomChartsSection> customChartsSection = client.async().sessions().dashboard(params);
@@ -218,7 +218,7 @@ import java.util.concurrent.CompletableFuture;
 LangsmithClientAsync client = LangsmithOkHttpClientAsync.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
-    .sessionId("REPLACE_ME")
+    .sessionId("1ffaeba7-541e-469f-bae7-df3208ea3d45")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
 CompletableFuture<CustomChartsSection> customChartsSection = client.sessions().dashboard(params);
@@ -308,7 +308,7 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
 import com.langchain.smith.models.sessions.SessionDashboardParams;
 
 SessionDashboardParams params = SessionDashboardParams.builder()
-    .sessionId("REPLACE_ME")
+    .sessionId("1ffaeba7-541e-469f-bae7-df3208ea3d45")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
 HttpResponseFor<CustomChartsSection> customChartsSection = client.sessions().withRawResponse().dashboard(params);
