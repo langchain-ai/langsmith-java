@@ -67,8 +67,8 @@ fun main() {
         .build()
     val existingDatasets = client.datasets().list(listParams)
 
-    if (existingDatasets.isNotEmpty()) {
-        val existing = existingDatasets[0]
+    if (existingDatasets.items().isNotEmpty()) {
+        val existing = existingDatasets.items()[0]
         System.err.println("Error: Dataset with name '$datasetName' already exists")
         System.err.println("View existing dataset: ${getDatasetUrl(existing)}")
         deleteDatasetWithConfirmation(client, existing)

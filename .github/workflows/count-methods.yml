@@ -1,0 +1,58 @@
+name: Count number of methods in the SDK
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches-ignore:
+      - 'generated'
+      - 'codegen/**'
+      - 'integrated/**'
+      - 'stl-preview-head/**'
+      - 'stl-preview-base/**'
+
+jobs:
+  count-methods:
+    name: count methods
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read method count from .stats.yml
+        id: read_method_count
+        run: |
+          if [ ! -f .stats.yml ]; then
+            echo "Error: .stats.yml file not found"
+            exit 1
+          fi
+          
+          METHOD_COUNT=$(grep -E '^configured_endpoints:\s*[0-9]+' .stats.yml | awk '{print $2}' || echo "")
+          
+          if [ -z "$METHOD_COUNT" ]; then
+            echo "Error: Could not find configured_endpoints in .stats.yml"
+            exit 1
+          fi
+          
+          echo "Method count from .stats.yml: $METHOD_COUNT"
+          echo "method_count=$METHOD_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Fail if method count exceeds threshold
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const methodCount = parseInt('${{ steps.read_method_count.outputs.method_count }}');
+            const threshold = 100;
+            
+            if (methodCount > threshold) {
+              core.setFailed(
+                `   Method count check failed!\n` +
+                `   Current method count: ${methodCount}\n` +
+                `   Maximum allowed: ${threshold}\n` +
+                `   Excess: ${methodCount - threshold} methods\n\n` +
+                `This check ensures the SDK doesn't exceed the configured endpoint limit.`
+              );
+            } else {
+              console.log(`Currently at ${methodCount} methods`);
+            }
