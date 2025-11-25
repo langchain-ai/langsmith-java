@@ -78,7 +78,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun numReviewersPerItem(): Optional<Long> = body.numReviewersPerItem()
+    fun numReviewersPerItem(): Optional<NumReviewersPerItem> = body.numReviewersPerItem()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -140,7 +140,7 @@ private constructor(
      * Unlike [numReviewersPerItem], this method doesn't throw if the JSON field has an unexpected
      * type.
      */
-    fun _numReviewersPerItem(): JsonField<Long> = body._numReviewersPerItem()
+    fun _numReviewersPerItem(): JsonField<NumReviewersPerItem> = body._numReviewersPerItem()
 
     /**
      * Returns the raw JSON value of [reservationMinutes].
@@ -299,34 +299,36 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
 
-        fun numReviewersPerItem(numReviewersPerItem: Long?) = apply {
+        fun numReviewersPerItem(numReviewersPerItem: NumReviewersPerItem?) = apply {
             body.numReviewersPerItem(numReviewersPerItem)
         }
 
         /**
-         * Alias for [Builder.numReviewersPerItem].
-         *
-         * This unboxed primitive overload exists for backwards compatibility.
-         */
-        fun numReviewersPerItem(numReviewersPerItem: Long) =
-            numReviewersPerItem(numReviewersPerItem as Long?)
-
-        /**
          * Alias for calling [Builder.numReviewersPerItem] with `numReviewersPerItem.orElse(null)`.
          */
-        fun numReviewersPerItem(numReviewersPerItem: Optional<Long>) =
+        fun numReviewersPerItem(numReviewersPerItem: Optional<NumReviewersPerItem>) =
             numReviewersPerItem(numReviewersPerItem.getOrNull())
 
         /**
          * Sets [Builder.numReviewersPerItem] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.numReviewersPerItem] with a well-typed [Long] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.numReviewersPerItem] with a well-typed
+         * [NumReviewersPerItem] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
          */
-        fun numReviewersPerItem(numReviewersPerItem: JsonField<Long>) = apply {
+        fun numReviewersPerItem(numReviewersPerItem: JsonField<NumReviewersPerItem>) = apply {
             body.numReviewersPerItem(numReviewersPerItem)
         }
+
+        /**
+         * Alias for calling [numReviewersPerItem] with `NumReviewersPerItem.ofInteger(integer)`.
+         */
+        fun numReviewersPerItem(integer: Long) = apply { body.numReviewersPerItem(integer) }
+
+        /**
+         * Alias for calling [numReviewersPerItem] with `NumReviewersPerItem.ofMissing(missing)`.
+         */
+        fun numReviewersPerItem(missing: Missing) = apply { body.numReviewersPerItem(missing) }
 
         fun reservationMinutes(reservationMinutes: Long?) = apply {
             body.reservationMinutes(reservationMinutes)
@@ -558,7 +560,7 @@ private constructor(
         private val enableReservations: JsonField<Boolean>,
         private val metadata: JsonField<Metadata>,
         private val name: JsonField<String>,
-        private val numReviewersPerItem: JsonField<Long>,
+        private val numReviewersPerItem: JsonField<NumReviewersPerItem>,
         private val reservationMinutes: JsonField<Long>,
         private val rubricInstructions: JsonField<String>,
         private val rubricItems: JsonField<List<AnnotationQueueRubricItemSchema>>,
@@ -582,7 +584,7 @@ private constructor(
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("num_reviewers_per_item")
             @ExcludeMissing
-            numReviewersPerItem: JsonField<Long> = JsonMissing.of(),
+            numReviewersPerItem: JsonField<NumReviewersPerItem> = JsonMissing.of(),
             @JsonProperty("reservation_minutes")
             @ExcludeMissing
             reservationMinutes: JsonField<Long> = JsonMissing.of(),
@@ -640,7 +642,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun numReviewersPerItem(): Optional<Long> =
+        fun numReviewersPerItem(): Optional<NumReviewersPerItem> =
             numReviewersPerItem.getOptional("num_reviewers_per_item")
 
         /**
@@ -715,7 +717,7 @@ private constructor(
          */
         @JsonProperty("num_reviewers_per_item")
         @ExcludeMissing
-        fun _numReviewersPerItem(): JsonField<Long> = numReviewersPerItem
+        fun _numReviewersPerItem(): JsonField<NumReviewersPerItem> = numReviewersPerItem
 
         /**
          * Returns the raw JSON value of [reservationMinutes].
@@ -772,7 +774,7 @@ private constructor(
             private var enableReservations: JsonField<Boolean> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
-            private var numReviewersPerItem: JsonField<Long> = JsonMissing.of()
+            private var numReviewersPerItem: JsonField<NumReviewersPerItem> = JsonMissing.of()
             private var reservationMinutes: JsonField<Long> = JsonMissing.of()
             private var rubricInstructions: JsonField<String> = JsonMissing.of()
             private var rubricItems: JsonField<MutableList<AnnotationQueueRubricItemSchema>>? = null
@@ -874,34 +876,40 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
-            fun numReviewersPerItem(numReviewersPerItem: Long?) =
+            fun numReviewersPerItem(numReviewersPerItem: NumReviewersPerItem?) =
                 numReviewersPerItem(JsonField.ofNullable(numReviewersPerItem))
-
-            /**
-             * Alias for [Builder.numReviewersPerItem].
-             *
-             * This unboxed primitive overload exists for backwards compatibility.
-             */
-            fun numReviewersPerItem(numReviewersPerItem: Long) =
-                numReviewersPerItem(numReviewersPerItem as Long?)
 
             /**
              * Alias for calling [Builder.numReviewersPerItem] with
              * `numReviewersPerItem.orElse(null)`.
              */
-            fun numReviewersPerItem(numReviewersPerItem: Optional<Long>) =
+            fun numReviewersPerItem(numReviewersPerItem: Optional<NumReviewersPerItem>) =
                 numReviewersPerItem(numReviewersPerItem.getOrNull())
 
             /**
              * Sets [Builder.numReviewersPerItem] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.numReviewersPerItem] with a well-typed [Long] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
+             * You should usually call [Builder.numReviewersPerItem] with a well-typed
+             * [NumReviewersPerItem] value instead. This method is primarily for setting the field
+             * to an undocumented or not yet supported value.
              */
-            fun numReviewersPerItem(numReviewersPerItem: JsonField<Long>) = apply {
+            fun numReviewersPerItem(numReviewersPerItem: JsonField<NumReviewersPerItem>) = apply {
                 this.numReviewersPerItem = numReviewersPerItem
             }
+
+            /**
+             * Alias for calling [numReviewersPerItem] with
+             * `NumReviewersPerItem.ofInteger(integer)`.
+             */
+            fun numReviewersPerItem(integer: Long) =
+                numReviewersPerItem(NumReviewersPerItem.ofInteger(integer))
+
+            /**
+             * Alias for calling [numReviewersPerItem] with
+             * `NumReviewersPerItem.ofMissing(missing)`.
+             */
+            fun numReviewersPerItem(missing: Missing) =
+                numReviewersPerItem(NumReviewersPerItem.ofMissing(missing))
 
             fun reservationMinutes(reservationMinutes: Long?) =
                 reservationMinutes(JsonField.ofNullable(reservationMinutes))
@@ -1034,7 +1042,7 @@ private constructor(
             enableReservations()
             metadata().ifPresent { it.validate() }
             name()
-            numReviewersPerItem()
+            numReviewersPerItem().ifPresent { it.validate() }
             reservationMinutes()
             rubricInstructions()
             rubricItems().ifPresent { it.forEach { it.validate() } }
@@ -1062,7 +1070,7 @@ private constructor(
                 (if (enableReservations.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
-                (if (numReviewersPerItem.asKnown().isPresent) 1 else 0) +
+                (numReviewersPerItem.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (reservationMinutes.asKnown().isPresent) 1 else 0) +
                 (if (rubricInstructions.asKnown().isPresent) 1 else 0) +
                 (rubricItems.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
@@ -1272,6 +1280,182 @@ private constructor(
                     value.missing != null -> generator.writeObject(value.missing)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid Metadata")
+                }
+            }
+        }
+    }
+
+    @JsonDeserialize(using = NumReviewersPerItem.Deserializer::class)
+    @JsonSerialize(using = NumReviewersPerItem.Serializer::class)
+    class NumReviewersPerItem
+    private constructor(
+        private val integer: Long? = null,
+        private val missing: Missing? = null,
+        private val _json: JsonValue? = null,
+    ) {
+
+        fun integer(): Optional<Long> = Optional.ofNullable(integer)
+
+        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
+
+        fun isInteger(): Boolean = integer != null
+
+        fun isMissing(): Boolean = missing != null
+
+        fun asInteger(): Long = integer.getOrThrow("integer")
+
+        fun asMissing(): Missing = missing.getOrThrow("missing")
+
+        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                integer != null -> visitor.visitInteger(integer)
+                missing != null -> visitor.visitMissing(missing)
+                else -> visitor.unknown(_json)
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): NumReviewersPerItem = apply {
+            if (validated) {
+                return@apply
+            }
+
+            accept(
+                object : Visitor<Unit> {
+                    override fun visitInteger(integer: Long) {}
+
+                    override fun visitMissing(missing: Missing) {
+                        missing.validate()
+                    }
+                }
+            )
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            accept(
+                object : Visitor<Int> {
+                    override fun visitInteger(integer: Long) = 1
+
+                    override fun visitMissing(missing: Missing) = missing.validity()
+
+                    override fun unknown(json: JsonValue?) = 0
+                }
+            )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is NumReviewersPerItem &&
+                integer == other.integer &&
+                missing == other.missing
+        }
+
+        override fun hashCode(): Int = Objects.hash(integer, missing)
+
+        override fun toString(): String =
+            when {
+                integer != null -> "NumReviewersPerItem{integer=$integer}"
+                missing != null -> "NumReviewersPerItem{missing=$missing}"
+                _json != null -> "NumReviewersPerItem{_unknown=$_json}"
+                else -> throw IllegalStateException("Invalid NumReviewersPerItem")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofInteger(integer: Long) = NumReviewersPerItem(integer = integer)
+
+            @JvmStatic fun ofMissing(missing: Missing) = NumReviewersPerItem(missing = missing)
+        }
+
+        /**
+         * An interface that defines how to map each variant of [NumReviewersPerItem] to a value of
+         * type [T].
+         */
+        interface Visitor<out T> {
+
+            fun visitInteger(integer: Long): T
+
+            fun visitMissing(missing: Missing): T
+
+            /**
+             * Maps an unknown variant of [NumReviewersPerItem] to a value of type [T].
+             *
+             * An instance of [NumReviewersPerItem] can contain an unknown variant if it was
+             * deserialized from data that doesn't match any known variant. For example, if the SDK
+             * is on an older version than the API, then the API may respond with new variants that
+             * the SDK is unaware of.
+             *
+             * @throws LangChainInvalidDataException in the default implementation.
+             */
+            fun unknown(json: JsonValue?): T {
+                throw LangChainInvalidDataException("Unknown NumReviewersPerItem: $json")
+            }
+        }
+
+        internal class Deserializer :
+            BaseDeserializer<NumReviewersPerItem>(NumReviewersPerItem::class) {
+
+            override fun ObjectCodec.deserialize(node: JsonNode): NumReviewersPerItem {
+                val json = JsonValue.fromJsonNode(node)
+
+                val bestMatches =
+                    sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
+                                NumReviewersPerItem(missing = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<Long>())?.let {
+                                NumReviewersPerItem(integer = it, _json = json)
+                            },
+                        )
+                        .filterNotNull()
+                        .allMaxBy { it.validity() }
+                        .toList()
+                return when (bestMatches.size) {
+                    // This can happen if what we're deserializing is completely incompatible with
+                    // all the possible variants (e.g. deserializing from boolean).
+                    0 -> NumReviewersPerItem(_json = json)
+                    1 -> bestMatches.single()
+                    // If there's more than one match with the highest validity, then use the first
+                    // completely valid match, or simply the first match if none are completely
+                    // valid.
+                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                }
+            }
+        }
+
+        internal class Serializer :
+            BaseSerializer<NumReviewersPerItem>(NumReviewersPerItem::class) {
+
+            override fun serialize(
+                value: NumReviewersPerItem,
+                generator: JsonGenerator,
+                provider: SerializerProvider,
+            ) {
+                when {
+                    value.integer != null -> generator.writeObject(value.integer)
+                    value.missing != null -> generator.writeObject(value.missing)
+                    value._json != null -> generator.writeObject(value._json)
+                    else -> throw IllegalStateException("Invalid NumReviewersPerItem")
                 }
             }
         }
