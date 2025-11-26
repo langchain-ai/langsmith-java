@@ -112,8 +112,16 @@ internal class TokenServiceAsyncTest {
                 TokenUpdateParams.builder()
                     .token("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .comment("comment")
-                    .correction(JsonValue.from(mapOf<String, Any>()))
-                    .metadata(JsonValue.from(mapOf<String, Any>()))
+                    .correction(
+                        TokenUpdateParams.Correction.UnionMember0.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .metadata(
+                        TokenUpdateParams.Metadata.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .score(0.0)
                     .value(0.0)
                     .build()

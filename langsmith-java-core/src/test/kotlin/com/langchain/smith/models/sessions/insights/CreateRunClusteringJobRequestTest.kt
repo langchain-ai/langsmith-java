@@ -16,7 +16,11 @@ internal class CreateRunClusteringJobRequestTest {
     fun create() {
         val createRunClusteringJobRequest =
             CreateRunClusteringJobRequest.builder()
-                .attributeSchemas(JsonValue.from(mapOf<String, Any>()))
+                .attributeSchemas(
+                    CreateRunClusteringJobRequest.AttributeSchemas.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .filter("filter")
                 .addHierarchy(0L)
@@ -39,8 +43,12 @@ internal class CreateRunClusteringJobRequestTest {
                 .validateModelSecrets(true)
                 .build()
 
-        assertThat(createRunClusteringJobRequest._attributeSchemas())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(createRunClusteringJobRequest.attributeSchemas())
+            .contains(
+                CreateRunClusteringJobRequest.AttributeSchemas.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(createRunClusteringJobRequest.endTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(createRunClusteringJobRequest.filter()).contains("filter")
@@ -73,7 +81,11 @@ internal class CreateRunClusteringJobRequestTest {
         val jsonMapper = jsonMapper()
         val createRunClusteringJobRequest =
             CreateRunClusteringJobRequest.builder()
-                .attributeSchemas(JsonValue.from(mapOf<String, Any>()))
+                .attributeSchemas(
+                    CreateRunClusteringJobRequest.AttributeSchemas.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .filter("filter")
                 .addHierarchy(0L)

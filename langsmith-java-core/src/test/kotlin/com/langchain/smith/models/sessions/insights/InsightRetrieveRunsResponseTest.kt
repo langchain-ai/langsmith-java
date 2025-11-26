@@ -15,12 +15,20 @@ internal class InsightRetrieveRunsResponseTest {
         val insightRetrieveRunsResponse =
             InsightRetrieveRunsResponse.builder()
                 .offset(0L)
-                .addRun(JsonValue.from(mapOf<String, Any>()))
+                .addRun(
+                    InsightRetrieveRunsResponse.Run.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .build()
 
         assertThat(insightRetrieveRunsResponse.offset()).contains(0L)
         assertThat(insightRetrieveRunsResponse.runs())
-            .containsExactly(JsonValue.from(mapOf<String, Any>()))
+            .containsExactly(
+                InsightRetrieveRunsResponse.Run.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
     }
 
     @Test
@@ -29,7 +37,11 @@ internal class InsightRetrieveRunsResponseTest {
         val insightRetrieveRunsResponse =
             InsightRetrieveRunsResponse.builder()
                 .offset(0L)
-                .addRun(JsonValue.from(mapOf<String, Any>()))
+                .addRun(
+                    InsightRetrieveRunsResponse.Run.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .build()
 
         val roundtrippedInsightRetrieveRunsResponse =

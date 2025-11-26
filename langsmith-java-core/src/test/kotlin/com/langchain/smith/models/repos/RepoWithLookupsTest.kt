@@ -35,13 +35,25 @@ internal class RepoWithLookupsTest {
                 .latestCommitManifest(
                     CommitManifestResponse.builder()
                         .commitHash("commit_hash")
-                        .manifest(JsonValue.from(mapOf<String, Any>()))
+                        .manifest(
+                            CommitManifestResponse.Manifest.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .addExample(
                             CommitManifestResponse.Example.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .inputs(JsonValue.from(mapOf<String, Any>()))
-                                .outputs(JsonValue.from(mapOf<String, Any>()))
+                                .inputs(
+                                    CommitManifestResponse.Example.Inputs.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .outputs(
+                                    CommitManifestResponse.Example.Outputs.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
                                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .build()
                         )
@@ -77,13 +89,25 @@ internal class RepoWithLookupsTest {
             .contains(
                 CommitManifestResponse.builder()
                     .commitHash("commit_hash")
-                    .manifest(JsonValue.from(mapOf<String, Any>()))
+                    .manifest(
+                        CommitManifestResponse.Manifest.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .addExample(
                         CommitManifestResponse.Example.builder()
                             .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .inputs(JsonValue.from(mapOf<String, Any>()))
-                            .outputs(JsonValue.from(mapOf<String, Any>()))
+                            .inputs(
+                                CommitManifestResponse.Example.Inputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .outputs(
+                                CommitManifestResponse.Example.Outputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
                             .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .build()
                     )
@@ -123,13 +147,25 @@ internal class RepoWithLookupsTest {
                 .latestCommitManifest(
                     CommitManifestResponse.builder()
                         .commitHash("commit_hash")
-                        .manifest(JsonValue.from(mapOf<String, Any>()))
+                        .manifest(
+                            CommitManifestResponse.Manifest.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .addExample(
                             CommitManifestResponse.Example.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .inputs(JsonValue.from(mapOf<String, Any>()))
-                                .outputs(JsonValue.from(mapOf<String, Any>()))
+                                .inputs(
+                                    CommitManifestResponse.Example.Inputs.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .outputs(
+                                    CommitManifestResponse.Example.Outputs.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
                                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .build()
                         )

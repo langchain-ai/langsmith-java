@@ -14,11 +14,20 @@ internal class ApiFeedbackSourceTest {
     fun create() {
         val apiFeedbackSource =
             ApiFeedbackSource.builder()
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    ApiFeedbackSource.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .type(ApiFeedbackSource.Type.API)
                 .build()
 
-        assertThat(apiFeedbackSource._metadata()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(apiFeedbackSource.metadata())
+            .contains(
+                ApiFeedbackSource.Metadata.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(apiFeedbackSource.type()).contains(ApiFeedbackSource.Type.API)
     }
 
@@ -27,7 +36,11 @@ internal class ApiFeedbackSourceTest {
         val jsonMapper = jsonMapper()
         val apiFeedbackSource =
             ApiFeedbackSource.builder()
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    ApiFeedbackSource.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .type(ApiFeedbackSource.Type.API)
                 .build()
 

@@ -14,15 +14,33 @@ internal class DemoConfigTest {
     fun create() {
         val demoConfig =
             DemoConfig.builder()
-                .addExample(JsonValue.from(mapOf<String, Any>()))
+                .addExample(
+                    DemoConfig.Example.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .messageIndex(0L)
-                .metaprompt(JsonValue.from(mapOf<String, Any>()))
+                .metaprompt(
+                    DemoConfig.Metaprompt.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .overallFeedback("overall_feedback")
                 .build()
 
-        assertThat(demoConfig.examples()).containsExactly(JsonValue.from(mapOf<String, Any>()))
+        assertThat(demoConfig.examples())
+            .containsExactly(
+                DemoConfig.Example.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(demoConfig.messageIndex()).isEqualTo(0L)
-        assertThat(demoConfig._metaprompt()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(demoConfig.metaprompt())
+            .isEqualTo(
+                DemoConfig.Metaprompt.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(demoConfig.overallFeedback()).contains("overall_feedback")
     }
 
@@ -31,9 +49,17 @@ internal class DemoConfigTest {
         val jsonMapper = jsonMapper()
         val demoConfig =
             DemoConfig.builder()
-                .addExample(JsonValue.from(mapOf<String, Any>()))
+                .addExample(
+                    DemoConfig.Example.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .messageIndex(0L)
-                .metaprompt(JsonValue.from(mapOf<String, Any>()))
+                .metaprompt(
+                    DemoConfig.Metaprompt.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .overallFeedback("overall_feedback")
                 .build()
 

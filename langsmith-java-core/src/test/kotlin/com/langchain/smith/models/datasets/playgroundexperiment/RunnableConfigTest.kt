@@ -16,9 +16,17 @@ internal class RunnableConfigTest {
         val runnableConfig =
             RunnableConfig.builder()
                 .callbacksOfJsonValues(listOf(JsonValue.from(mapOf<String, Any>())))
-                .configurable(JsonValue.from(mapOf<String, Any>()))
+                .configurable(
+                    RunnableConfig.Configurable.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .maxConcurrency(0L)
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    RunnableConfig.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .recursionLimit(0L)
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .runName("run_name")
@@ -29,9 +37,19 @@ internal class RunnableConfigTest {
             .contains(
                 RunnableConfig.Callbacks.ofJsonValues(listOf(JsonValue.from(mapOf<String, Any>())))
             )
-        assertThat(runnableConfig._configurable()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(runnableConfig.configurable())
+            .contains(
+                RunnableConfig.Configurable.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(runnableConfig.maxConcurrency()).contains(0L)
-        assertThat(runnableConfig._metadata()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(runnableConfig.metadata())
+            .contains(
+                RunnableConfig.Metadata.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(runnableConfig.recursionLimit()).contains(0L)
         assertThat(runnableConfig.runId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(runnableConfig.runName()).contains("run_name")
@@ -44,9 +62,17 @@ internal class RunnableConfigTest {
         val runnableConfig =
             RunnableConfig.builder()
                 .callbacksOfJsonValues(listOf(JsonValue.from(mapOf<String, Any>())))
-                .configurable(JsonValue.from(mapOf<String, Any>()))
+                .configurable(
+                    RunnableConfig.Configurable.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .maxConcurrency(0L)
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    RunnableConfig.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .recursionLimit(0L)
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .runName("run_name")

@@ -22,9 +22,9 @@ import kotlin.jvm.optionals.getOrNull
 class DemoConfig
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val examples: JsonField<List<JsonValue>>,
+    private val examples: JsonField<List<Example>>,
     private val messageIndex: JsonField<Long>,
-    private val metaprompt: JsonValue,
+    private val metaprompt: JsonField<Metaprompt>,
     private val overallFeedback: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -33,11 +33,13 @@ private constructor(
     private constructor(
         @JsonProperty("examples")
         @ExcludeMissing
-        examples: JsonField<List<JsonValue>> = JsonMissing.of(),
+        examples: JsonField<List<Example>> = JsonMissing.of(),
         @JsonProperty("message_index")
         @ExcludeMissing
         messageIndex: JsonField<Long> = JsonMissing.of(),
-        @JsonProperty("metaprompt") @ExcludeMissing metaprompt: JsonValue = JsonMissing.of(),
+        @JsonProperty("metaprompt")
+        @ExcludeMissing
+        metaprompt: JsonField<Metaprompt> = JsonMissing.of(),
         @JsonProperty("overall_feedback")
         @ExcludeMissing
         overallFeedback: JsonField<String> = JsonMissing.of(),
@@ -47,7 +49,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun examples(): List<JsonValue> = examples.getRequired("examples")
+    fun examples(): List<Example> = examples.getRequired("examples")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -55,7 +57,11 @@ private constructor(
      */
     fun messageIndex(): Long = messageIndex.getRequired("message_index")
 
-    @JsonProperty("metaprompt") @ExcludeMissing fun _metaprompt(): JsonValue = metaprompt
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun metaprompt(): Metaprompt = metaprompt.getRequired("metaprompt")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -68,7 +74,7 @@ private constructor(
      *
      * Unlike [examples], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("examples") @ExcludeMissing fun _examples(): JsonField<List<JsonValue>> = examples
+    @JsonProperty("examples") @ExcludeMissing fun _examples(): JsonField<List<Example>> = examples
 
     /**
      * Returns the raw JSON value of [messageIndex].
@@ -78,6 +84,15 @@ private constructor(
     @JsonProperty("message_index")
     @ExcludeMissing
     fun _messageIndex(): JsonField<Long> = messageIndex
+
+    /**
+     * Returns the raw JSON value of [metaprompt].
+     *
+     * Unlike [metaprompt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("metaprompt")
+    @ExcludeMissing
+    fun _metaprompt(): JsonField<Metaprompt> = metaprompt
 
     /**
      * Returns the raw JSON value of [overallFeedback].
@@ -119,9 +134,9 @@ private constructor(
     /** A builder for [DemoConfig]. */
     class Builder internal constructor() {
 
-        private var examples: JsonField<MutableList<JsonValue>>? = null
+        private var examples: JsonField<MutableList<Example>>? = null
         private var messageIndex: JsonField<Long>? = null
-        private var metaprompt: JsonValue? = null
+        private var metaprompt: JsonField<Metaprompt>? = null
         private var overallFeedback: JsonField<String>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -134,25 +149,25 @@ private constructor(
             additionalProperties = demoConfig.additionalProperties.toMutableMap()
         }
 
-        fun examples(examples: List<JsonValue>) = examples(JsonField.of(examples))
+        fun examples(examples: List<Example>) = examples(JsonField.of(examples))
 
         /**
          * Sets [Builder.examples] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.examples] with a well-typed `List<JsonValue>` value
+         * You should usually call [Builder.examples] with a well-typed `List<Example>` value
          * instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun examples(examples: JsonField<List<JsonValue>>) = apply {
+        fun examples(examples: JsonField<List<Example>>) = apply {
             this.examples = examples.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [JsonValue] to [examples].
+         * Adds a single [Example] to [examples].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addExample(example: JsonValue) = apply {
+        fun addExample(example: Example) = apply {
             examples =
                 (examples ?: JsonField.of(mutableListOf())).also {
                     checkKnown("examples", it).add(example)
@@ -170,7 +185,16 @@ private constructor(
          */
         fun messageIndex(messageIndex: JsonField<Long>) = apply { this.messageIndex = messageIndex }
 
-        fun metaprompt(metaprompt: JsonValue) = apply { this.metaprompt = metaprompt }
+        fun metaprompt(metaprompt: Metaprompt) = metaprompt(JsonField.of(metaprompt))
+
+        /**
+         * Sets [Builder.metaprompt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.metaprompt] with a well-typed [Metaprompt] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun metaprompt(metaprompt: JsonField<Metaprompt>) = apply { this.metaprompt = metaprompt }
 
         fun overallFeedback(overallFeedback: String?) =
             overallFeedback(JsonField.ofNullable(overallFeedback))
@@ -241,8 +265,9 @@ private constructor(
             return@apply
         }
 
-        examples()
+        examples().forEach { it.validate() }
         messageIndex()
+        metaprompt().validate()
         overallFeedback()
         validated = true
     }
@@ -262,9 +287,208 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (examples.asKnown().getOrNull()?.size ?: 0) +
+        (examples.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (messageIndex.asKnown().isPresent) 1 else 0) +
+            (metaprompt.asKnown().getOrNull()?.validity() ?: 0) +
             (if (overallFeedback.asKnown().isPresent) 1 else 0)
+
+    class Example
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Example]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Example]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(example: Example) = apply {
+                additionalProperties = example.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Example].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Example = Example(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Example = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Example && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Example{additionalProperties=$additionalProperties}"
+    }
+
+    class Metaprompt
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Metaprompt]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Metaprompt]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(metaprompt: Metaprompt) = apply {
+                additionalProperties = metaprompt.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Metaprompt].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Metaprompt = Metaprompt(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Metaprompt = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Metaprompt && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Metaprompt{additionalProperties=$additionalProperties}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

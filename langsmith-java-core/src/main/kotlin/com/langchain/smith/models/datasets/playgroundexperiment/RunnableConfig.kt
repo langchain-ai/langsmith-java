@@ -34,9 +34,9 @@ class RunnableConfig
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val callbacks: JsonField<Callbacks>,
-    private val configurable: JsonValue,
+    private val configurable: JsonField<Configurable>,
     private val maxConcurrency: JsonField<Long>,
-    private val metadata: JsonValue,
+    private val metadata: JsonField<Metadata>,
     private val recursionLimit: JsonField<Long>,
     private val runId: JsonField<String>,
     private val runName: JsonField<String>,
@@ -49,11 +49,13 @@ private constructor(
         @JsonProperty("callbacks")
         @ExcludeMissing
         callbacks: JsonField<Callbacks> = JsonMissing.of(),
-        @JsonProperty("configurable") @ExcludeMissing configurable: JsonValue = JsonMissing.of(),
+        @JsonProperty("configurable")
+        @ExcludeMissing
+        configurable: JsonField<Configurable> = JsonMissing.of(),
         @JsonProperty("max_concurrency")
         @ExcludeMissing
         maxConcurrency: JsonField<Long> = JsonMissing.of(),
-        @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
+        @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
         @JsonProperty("recursion_limit")
         @ExcludeMissing
         recursionLimit: JsonField<Long> = JsonMissing.of(),
@@ -78,7 +80,11 @@ private constructor(
      */
     fun callbacks(): Optional<Callbacks> = callbacks.getOptional("callbacks")
 
-    @JsonProperty("configurable") @ExcludeMissing fun _configurable(): JsonValue = configurable
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun configurable(): Optional<Configurable> = configurable.getOptional("configurable")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -86,7 +92,11 @@ private constructor(
      */
     fun maxConcurrency(): Optional<Long> = maxConcurrency.getOptional("max_concurrency")
 
-    @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -120,6 +130,15 @@ private constructor(
     @JsonProperty("callbacks") @ExcludeMissing fun _callbacks(): JsonField<Callbacks> = callbacks
 
     /**
+     * Returns the raw JSON value of [configurable].
+     *
+     * Unlike [configurable], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("configurable")
+    @ExcludeMissing
+    fun _configurable(): JsonField<Configurable> = configurable
+
+    /**
      * Returns the raw JSON value of [maxConcurrency].
      *
      * Unlike [maxConcurrency], this method doesn't throw if the JSON field has an unexpected type.
@@ -127,6 +146,13 @@ private constructor(
     @JsonProperty("max_concurrency")
     @ExcludeMissing
     fun _maxConcurrency(): JsonField<Long> = maxConcurrency
+
+    /**
+     * Returns the raw JSON value of [metadata].
+     *
+     * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
 
     /**
      * Returns the raw JSON value of [recursionLimit].
@@ -180,9 +206,9 @@ private constructor(
     class Builder internal constructor() {
 
         private var callbacks: JsonField<Callbacks> = JsonMissing.of()
-        private var configurable: JsonValue = JsonMissing.of()
+        private var configurable: JsonField<Configurable> = JsonMissing.of()
         private var maxConcurrency: JsonField<Long> = JsonMissing.of()
-        private var metadata: JsonValue = JsonMissing.of()
+        private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var recursionLimit: JsonField<Long> = JsonMissing.of()
         private var runId: JsonField<String> = JsonMissing.of()
         private var runName: JsonField<String> = JsonMissing.of()
@@ -223,7 +249,18 @@ private constructor(
         /** Alias for calling [callbacks] with `Callbacks.ofJsonValue(jsonValue)`. */
         fun callbacks(jsonValue: JsonValue) = callbacks(Callbacks.ofJsonValue(jsonValue))
 
-        fun configurable(configurable: JsonValue) = apply { this.configurable = configurable }
+        fun configurable(configurable: Configurable) = configurable(JsonField.of(configurable))
+
+        /**
+         * Sets [Builder.configurable] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.configurable] with a well-typed [Configurable] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun configurable(configurable: JsonField<Configurable>) = apply {
+            this.configurable = configurable
+        }
 
         fun maxConcurrency(maxConcurrency: Long?) =
             maxConcurrency(JsonField.ofNullable(maxConcurrency))
@@ -250,7 +287,16 @@ private constructor(
             this.maxConcurrency = maxConcurrency
         }
 
-        fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
+        fun metadata(metadata: Metadata) = metadata(JsonField.of(metadata))
+
+        /**
+         * Sets [Builder.metadata] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.metadata] with a well-typed [Metadata] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
         fun recursionLimit(recursionLimit: Long) = recursionLimit(JsonField.of(recursionLimit))
 
@@ -356,7 +402,9 @@ private constructor(
         }
 
         callbacks().ifPresent { it.validate() }
+        configurable().ifPresent { it.validate() }
         maxConcurrency()
+        metadata().ifPresent { it.validate() }
         recursionLimit()
         runId()
         runName()
@@ -380,7 +428,9 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (callbacks.asKnown().getOrNull()?.validity() ?: 0) +
+            (configurable.asKnown().getOrNull()?.validity() ?: 0) +
             (if (maxConcurrency.asKnown().isPresent) 1 else 0) +
+            (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (recursionLimit.asKnown().isPresent) 1 else 0) +
             (if (runId.asKnown().isPresent) 1 else 0) +
             (if (runName.asKnown().isPresent) 1 else 0) +
@@ -557,6 +607,204 @@ private constructor(
                 }
             }
         }
+    }
+
+    class Configurable
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Configurable]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Configurable]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(configurable: Configurable) = apply {
+                additionalProperties = configurable.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Configurable].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Configurable = Configurable(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Configurable = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Configurable && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Configurable{additionalProperties=$additionalProperties}"
+    }
+
+    class Metadata
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Metadata]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Metadata]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(metadata: Metadata) = apply {
+                additionalProperties = metadata.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Metadata].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Metadata = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Metadata && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
