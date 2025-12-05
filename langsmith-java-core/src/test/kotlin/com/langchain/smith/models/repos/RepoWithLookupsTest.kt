@@ -30,6 +30,7 @@ internal class RepoWithLookupsTest {
                 .addTag("string")
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .createdBy("created_by")
                 .description("description")
                 .lastCommitHash("last_commit_hash")
                 .latestCommitManifest(
@@ -83,6 +84,7 @@ internal class RepoWithLookupsTest {
         assertThat(repoWithLookups.tenantId()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(repoWithLookups.updatedAt())
             .isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(repoWithLookups.createdBy()).contains("created_by")
         assertThat(repoWithLookups.description()).contains("description")
         assertThat(repoWithLookups.lastCommitHash()).contains("last_commit_hash")
         assertThat(repoWithLookups.latestCommitManifest())
@@ -142,6 +144,7 @@ internal class RepoWithLookupsTest {
                 .addTag("string")
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .createdBy("created_by")
                 .description("description")
                 .lastCommitHash("last_commit_hash")
                 .latestCommitManifest(
