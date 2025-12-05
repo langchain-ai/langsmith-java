@@ -32,6 +32,7 @@ internal class RepoListPageResponseTest {
                         .addTag("string")
                         .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .createdBy("created_by")
                         .description("description")
                         .lastCommitHash("last_commit_hash")
                         .latestCommitManifest(
@@ -89,6 +90,7 @@ internal class RepoListPageResponseTest {
                     .addTag("string")
                     .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .createdBy("created_by")
                     .description("description")
                     .lastCommitHash("last_commit_hash")
                     .latestCommitManifest(
@@ -150,6 +152,7 @@ internal class RepoListPageResponseTest {
                         .addTag("string")
                         .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .createdBy("created_by")
                         .description("description")
                         .lastCommitHash("last_commit_hash")
                         .latestCommitManifest(

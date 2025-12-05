@@ -16,8 +16,8 @@ import org.junit.jupiter.params.provider.EnumSource
 internal class RunCreateResponseTest {
 
     @Test
-    fun ofExamplesWithRuns() {
-        val examplesWithRuns =
+    fun ofExampleWithRuns() {
+        val exampleWithRuns =
             listOf(
                 ExampleWithRuns.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -162,17 +162,17 @@ internal class RunCreateResponseTest {
                     .build()
             )
 
-        val runCreateResponse = RunCreateResponse.ofExamplesWithRuns(examplesWithRuns)
+        val runCreateResponse = RunCreateResponse.ofExampleWithRuns(exampleWithRuns)
 
-        assertThat(runCreateResponse.examplesWithRuns()).contains(examplesWithRuns)
+        assertThat(runCreateResponse.exampleWithRuns()).contains(exampleWithRuns)
         assertThat(runCreateResponse.exampleWithRunsChes()).isEmpty
     }
 
     @Test
-    fun ofExamplesWithRunsRoundtrip() {
+    fun ofExampleWithRunsRoundtrip() {
         val jsonMapper = jsonMapper()
         val runCreateResponse =
-            RunCreateResponse.ofExamplesWithRuns(
+            RunCreateResponse.ofExampleWithRuns(
                 listOf(
                     ExampleWithRuns.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -444,7 +444,7 @@ internal class RunCreateResponseTest {
 
         val runCreateResponse = RunCreateResponse.ofExampleWithRunsChes(exampleWithRunsChes)
 
-        assertThat(runCreateResponse.examplesWithRuns()).isEmpty
+        assertThat(runCreateResponse.exampleWithRuns()).isEmpty
         assertThat(runCreateResponse.exampleWithRunsChes()).contains(exampleWithRunsChes)
     }
 
