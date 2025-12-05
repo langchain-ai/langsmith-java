@@ -239,7 +239,7 @@ internal class ProGuardCompatibilityTest {
     fun runCreateResponseRoundtrip() {
         val jsonMapper = jsonMapper()
         val runCreateResponse =
-            RunCreateResponse.ofExampleWithRuns(
+            RunCreateResponse.ofExamplesWithRuns(
                 listOf(
                     ExampleWithRuns.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
