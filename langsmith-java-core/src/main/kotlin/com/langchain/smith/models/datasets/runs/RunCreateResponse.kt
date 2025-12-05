@@ -23,22 +23,21 @@ import java.util.Optional
 @JsonSerialize(using = RunCreateResponse.Serializer::class)
 class RunCreateResponse
 private constructor(
-    private val examplesWithRuns: List<ExampleWithRuns>? = null,
+    private val exampleWithRuns: List<ExampleWithRuns>? = null,
     private val exampleWithRunsChes: List<ExampleWithRunsCh>? = null,
     private val _json: JsonValue? = null,
 ) {
 
-    fun examplesWithRuns(): Optional<List<ExampleWithRuns>> = Optional.ofNullable(examplesWithRuns)
+    fun exampleWithRuns(): Optional<List<ExampleWithRuns>> = Optional.ofNullable(exampleWithRuns)
 
     fun exampleWithRunsChes(): Optional<List<ExampleWithRunsCh>> =
         Optional.ofNullable(exampleWithRunsChes)
 
-    fun isExamplesWithRuns(): Boolean = examplesWithRuns != null
+    fun isExampleWithRuns(): Boolean = exampleWithRuns != null
 
     fun isExampleWithRunsChes(): Boolean = exampleWithRunsChes != null
 
-    fun asExamplesWithRuns(): List<ExampleWithRuns> =
-        examplesWithRuns.getOrThrow("examplesWithRuns")
+    fun asExampleWithRuns(): List<ExampleWithRuns> = exampleWithRuns.getOrThrow("exampleWithRuns")
 
     fun asExampleWithRunsChes(): List<ExampleWithRunsCh> =
         exampleWithRunsChes.getOrThrow("exampleWithRunsChes")
@@ -47,7 +46,7 @@ private constructor(
 
     fun <T> accept(visitor: Visitor<T>): T =
         when {
-            examplesWithRuns != null -> visitor.visitExamplesWithRuns(examplesWithRuns)
+            exampleWithRuns != null -> visitor.visitExampleWithRuns(exampleWithRuns)
             exampleWithRunsChes != null -> visitor.visitExampleWithRunsChes(exampleWithRunsChes)
             else -> visitor.unknown(_json)
         }
@@ -61,8 +60,8 @@ private constructor(
 
         accept(
             object : Visitor<Unit> {
-                override fun visitExamplesWithRuns(examplesWithRuns: List<ExampleWithRuns>) {
-                    examplesWithRuns.forEach { it.validate() }
+                override fun visitExampleWithRuns(exampleWithRuns: List<ExampleWithRuns>) {
+                    exampleWithRuns.forEach { it.validate() }
                 }
 
                 override fun visitExampleWithRunsChes(
@@ -92,8 +91,8 @@ private constructor(
     internal fun validity(): Int =
         accept(
             object : Visitor<Int> {
-                override fun visitExamplesWithRuns(examplesWithRuns: List<ExampleWithRuns>) =
-                    examplesWithRuns.sumOf { it.validity().toInt() }
+                override fun visitExampleWithRuns(exampleWithRuns: List<ExampleWithRuns>) =
+                    exampleWithRuns.sumOf { it.validity().toInt() }
 
                 override fun visitExampleWithRunsChes(
                     exampleWithRunsChes: List<ExampleWithRunsCh>
@@ -109,15 +108,15 @@ private constructor(
         }
 
         return other is RunCreateResponse &&
-            examplesWithRuns == other.examplesWithRuns &&
+            exampleWithRuns == other.exampleWithRuns &&
             exampleWithRunsChes == other.exampleWithRunsChes
     }
 
-    override fun hashCode(): Int = Objects.hash(examplesWithRuns, exampleWithRunsChes)
+    override fun hashCode(): Int = Objects.hash(exampleWithRuns, exampleWithRunsChes)
 
     override fun toString(): String =
         when {
-            examplesWithRuns != null -> "RunCreateResponse{examplesWithRuns=$examplesWithRuns}"
+            exampleWithRuns != null -> "RunCreateResponse{exampleWithRuns=$exampleWithRuns}"
             exampleWithRunsChes != null ->
                 "RunCreateResponse{exampleWithRunsChes=$exampleWithRunsChes}"
             _json != null -> "RunCreateResponse{_unknown=$_json}"
@@ -127,8 +126,8 @@ private constructor(
     companion object {
 
         @JvmStatic
-        fun ofExamplesWithRuns(examplesWithRuns: List<ExampleWithRuns>) =
-            RunCreateResponse(examplesWithRuns = examplesWithRuns.toImmutable())
+        fun ofExampleWithRuns(exampleWithRuns: List<ExampleWithRuns>) =
+            RunCreateResponse(exampleWithRuns = exampleWithRuns.toImmutable())
 
         @JvmStatic
         fun ofExampleWithRunsChes(exampleWithRunsChes: List<ExampleWithRunsCh>) =
@@ -141,7 +140,7 @@ private constructor(
      */
     interface Visitor<out T> {
 
-        fun visitExamplesWithRuns(examplesWithRuns: List<ExampleWithRuns>): T
+        fun visitExampleWithRuns(exampleWithRuns: List<ExampleWithRuns>): T
 
         fun visitExampleWithRunsChes(exampleWithRunsChes: List<ExampleWithRunsCh>): T
 
@@ -168,7 +167,7 @@ private constructor(
             val bestMatches =
                 sequenceOf(
                         tryDeserialize(node, jacksonTypeRef<List<ExampleWithRuns>>())?.let {
-                            RunCreateResponse(examplesWithRuns = it, _json = json)
+                            RunCreateResponse(exampleWithRuns = it, _json = json)
                         },
                         tryDeserialize(node, jacksonTypeRef<List<ExampleWithRunsCh>>())?.let {
                             RunCreateResponse(exampleWithRunsChes = it, _json = json)
@@ -197,7 +196,7 @@ private constructor(
             provider: SerializerProvider,
         ) {
             when {
-                value.examplesWithRuns != null -> generator.writeObject(value.examplesWithRuns)
+                value.exampleWithRuns != null -> generator.writeObject(value.exampleWithRuns)
                 value.exampleWithRunsChes != null ->
                     generator.writeObject(value.exampleWithRunsChes)
                 value._json != null -> generator.writeObject(value._json)

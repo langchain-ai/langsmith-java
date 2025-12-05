@@ -39,6 +39,7 @@ private constructor(
     private val tags: JsonField<List<String>>,
     private val tenantId: JsonField<String>,
     private val updatedAt: JsonField<OffsetDateTime>,
+    private val createdBy: JsonField<String>,
     private val description: JsonField<String>,
     private val lastCommitHash: JsonField<String>,
     private val latestCommitManifest: JsonField<CommitManifestResponse>,
@@ -77,6 +78,7 @@ private constructor(
         @JsonProperty("updated_at")
         @ExcludeMissing
         updatedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
@@ -117,6 +119,7 @@ private constructor(
         tags,
         tenantId,
         updatedAt,
+        createdBy,
         description,
         lastCommitHash,
         latestCommitManifest,
@@ -212,6 +215,12 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun updatedAt(): OffsetDateTime = updatedAt.getRequired("updated_at")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun createdBy(): Optional<String> = createdBy.getOptional("created_by")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -377,6 +386,13 @@ private constructor(
     fun _updatedAt(): JsonField<OffsetDateTime> = updatedAt
 
     /**
+     * Returns the raw JSON value of [createdBy].
+     *
+     * Unlike [createdBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("created_by") @ExcludeMissing fun _createdBy(): JsonField<String> = createdBy
+
+    /**
      * Returns the raw JSON value of [description].
      *
      * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
@@ -511,6 +527,7 @@ private constructor(
         private var tags: JsonField<MutableList<String>>? = null
         private var tenantId: JsonField<String>? = null
         private var updatedAt: JsonField<OffsetDateTime>? = null
+        private var createdBy: JsonField<String> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
         private var lastCommitHash: JsonField<String> = JsonMissing.of()
         private var latestCommitManifest: JsonField<CommitManifestResponse> = JsonMissing.of()
@@ -538,6 +555,7 @@ private constructor(
             tags = repoWithLookups.tags.map { it.toMutableList() }
             tenantId = repoWithLookups.tenantId
             updatedAt = repoWithLookups.updatedAt
+            createdBy = repoWithLookups.createdBy
             description = repoWithLookups.description
             lastCommitHash = repoWithLookups.lastCommitHash
             latestCommitManifest = repoWithLookups.latestCommitManifest
@@ -710,6 +728,20 @@ private constructor(
          * supported value.
          */
         fun updatedAt(updatedAt: JsonField<OffsetDateTime>) = apply { this.updatedAt = updatedAt }
+
+        fun createdBy(createdBy: String?) = createdBy(JsonField.ofNullable(createdBy))
+
+        /** Alias for calling [Builder.createdBy] with `createdBy.orElse(null)`. */
+        fun createdBy(createdBy: Optional<String>) = createdBy(createdBy.getOrNull())
+
+        /**
+         * Sets [Builder.createdBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.createdBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun createdBy(createdBy: JsonField<String>) = apply { this.createdBy = createdBy }
 
         fun description(description: String?) = description(JsonField.ofNullable(description))
 
@@ -941,6 +973,7 @@ private constructor(
                 checkRequired("tags", tags).map { it.toImmutable() },
                 checkRequired("tenantId", tenantId),
                 checkRequired("updatedAt", updatedAt),
+                createdBy,
                 description,
                 lastCommitHash,
                 latestCommitManifest,
@@ -975,6 +1008,7 @@ private constructor(
         tags()
         tenantId()
         updatedAt()
+        createdBy()
         description()
         lastCommitHash()
         latestCommitManifest().ifPresent { it.validate() }
@@ -1016,6 +1050,7 @@ private constructor(
             (tags.asKnown().getOrNull()?.size ?: 0) +
             (if (tenantId.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
+            (if (createdBy.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
             (if (lastCommitHash.asKnown().isPresent) 1 else 0) +
             (latestCommitManifest.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1046,6 +1081,7 @@ private constructor(
             tags == other.tags &&
             tenantId == other.tenantId &&
             updatedAt == other.updatedAt &&
+            createdBy == other.createdBy &&
             description == other.description &&
             lastCommitHash == other.lastCommitHash &&
             latestCommitManifest == other.latestCommitManifest &&
@@ -1074,6 +1110,7 @@ private constructor(
             tags,
             tenantId,
             updatedAt,
+            createdBy,
             description,
             lastCommitHash,
             latestCommitManifest,
@@ -1090,5 +1127,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RepoWithLookups{id=$id, createdAt=$createdAt, fullName=$fullName, isArchived=$isArchived, isPublic=$isPublic, numCommits=$numCommits, numDownloads=$numDownloads, numLikes=$numLikes, numViews=$numViews, owner=$owner, repoHandle=$repoHandle, tags=$tags, tenantId=$tenantId, updatedAt=$updatedAt, description=$description, lastCommitHash=$lastCommitHash, latestCommitManifest=$latestCommitManifest, likedByAuthUser=$likedByAuthUser, originalRepoFullName=$originalRepoFullName, originalRepoId=$originalRepoId, readme=$readme, upstreamRepoFullName=$upstreamRepoFullName, upstreamRepoId=$upstreamRepoId, additionalProperties=$additionalProperties}"
+        "RepoWithLookups{id=$id, createdAt=$createdAt, fullName=$fullName, isArchived=$isArchived, isPublic=$isPublic, numCommits=$numCommits, numDownloads=$numDownloads, numLikes=$numLikes, numViews=$numViews, owner=$owner, repoHandle=$repoHandle, tags=$tags, tenantId=$tenantId, updatedAt=$updatedAt, createdBy=$createdBy, description=$description, lastCommitHash=$lastCommitHash, latestCommitManifest=$latestCommitManifest, likedByAuthUser=$likedByAuthUser, originalRepoFullName=$originalRepoFullName, originalRepoId=$originalRepoId, readme=$readme, upstreamRepoFullName=$upstreamRepoFullName, upstreamRepoId=$upstreamRepoId, additionalProperties=$additionalProperties}"
 }
