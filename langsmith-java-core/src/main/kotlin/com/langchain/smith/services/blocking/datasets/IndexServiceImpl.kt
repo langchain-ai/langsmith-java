@@ -18,10 +18,6 @@ import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.datasets.index.IndexCreateParams
 import com.langchain.smith.models.datasets.index.IndexCreateResponse
-import com.langchain.smith.models.datasets.index.IndexDeleteAllParams
-import com.langchain.smith.models.datasets.index.IndexDeleteAllResponse
-import com.langchain.smith.models.datasets.index.IndexRetrieveParams
-import com.langchain.smith.models.datasets.index.IndexRetrieveResponse
 import com.langchain.smith.models.datasets.index.IndexSyncParams
 import com.langchain.smith.models.datasets.index.IndexSyncResponse
 import java.util.function.Consumer
@@ -45,20 +41,6 @@ class IndexServiceImpl internal constructor(private val clientOptions: ClientOpt
     ): IndexCreateResponse =
         // post /api/v1/datasets/{dataset_id}/index
         withRawResponse().create(params, requestOptions).parse()
-
-    override fun retrieve(
-        params: IndexRetrieveParams,
-        requestOptions: RequestOptions,
-    ): IndexRetrieveResponse =
-        // get /api/v1/datasets/{dataset_id}/index
-        withRawResponse().retrieve(params, requestOptions).parse()
-
-    override fun deleteAll(
-        params: IndexDeleteAllParams,
-        requestOptions: RequestOptions,
-    ): IndexDeleteAllResponse =
-        // delete /api/v1/datasets/{dataset_id}/index
-        withRawResponse().deleteAll(params, requestOptions).parse()
 
     override fun sync(params: IndexSyncParams, requestOptions: RequestOptions): IndexSyncResponse =
         // post /api/v1/datasets/{dataset_id}/index/sync
@@ -100,67 +82,6 @@ class IndexServiceImpl internal constructor(private val clientOptions: ClientOpt
             return errorHandler.handle(response).parseable {
                 response
                     .use { createHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val retrieveHandler: Handler<IndexRetrieveResponse> =
-            jsonHandler<IndexRetrieveResponse>(clientOptions.jsonMapper)
-
-        override fun retrieve(
-            params: IndexRetrieveParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<IndexRetrieveResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "index")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { retrieveHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val deleteAllHandler: Handler<IndexDeleteAllResponse> =
-            jsonHandler<IndexDeleteAllResponse>(clientOptions.jsonMapper)
-
-        override fun deleteAll(
-            params: IndexDeleteAllParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<IndexDeleteAllResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.DELETE)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "index")
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { deleteAllHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

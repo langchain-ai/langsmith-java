@@ -39,11 +39,7 @@ private constructor(
     fun _manifest(): JsonValue = body._manifest()
 
     /**
-     * Configuration for a `Runnable`.
-     *
-     * See the
-     * [reference docs](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig)
-     * for more details.
+     * Configuration for a Runnable.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -361,13 +357,7 @@ private constructor(
 
         fun manifest(manifest: JsonValue) = apply { body.manifest(manifest) }
 
-        /**
-         * Configuration for a `Runnable`.
-         *
-         * See the
-         * [reference docs](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig)
-         * for more details.
-         */
+        /** Configuration for a Runnable. */
         fun options(options: RunnableConfig) = apply { body.options(options) }
 
         /**
@@ -923,11 +913,7 @@ private constructor(
         @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
 
         /**
-         * Configuration for a `Runnable`.
-         *
-         * See the
-         * [reference docs](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig)
-         * for more details.
+         * Configuration for a Runnable.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -1291,13 +1277,7 @@ private constructor(
 
             fun manifest(manifest: JsonValue) = apply { this.manifest = manifest }
 
-            /**
-             * Configuration for a `Runnable`.
-             *
-             * See the
-             * [reference docs](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig)
-             * for more details.
-             */
+            /** Configuration for a Runnable. */
             fun options(options: RunnableConfig) = options(JsonField.of(options))
 
             /**
