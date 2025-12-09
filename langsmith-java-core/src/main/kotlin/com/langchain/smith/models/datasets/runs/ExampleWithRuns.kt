@@ -664,6 +664,7 @@ private constructor(
         private val lastQueuedAt: JsonField<OffsetDateTime>,
         private val manifestId: JsonField<String>,
         private val manifestS3Id: JsonField<String>,
+        private val messages: JsonField<List<Message>>,
         private val outputs: JsonField<Outputs>,
         private val outputsPreview: JsonField<String>,
         private val outputsS3Urls: JsonField<OutputsS3Urls>,
@@ -763,6 +764,9 @@ private constructor(
             @JsonProperty("manifest_s3_id")
             @ExcludeMissing
             manifestS3Id: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("messages")
+            @ExcludeMissing
+            messages: JsonField<List<Message>> = JsonMissing.of(),
             @JsonProperty("outputs") @ExcludeMissing outputs: JsonField<Outputs> = JsonMissing.of(),
             @JsonProperty("outputs_preview")
             @ExcludeMissing
@@ -864,6 +868,7 @@ private constructor(
             lastQueuedAt,
             manifestId,
             manifestS3Id,
+            messages,
             outputs,
             outputsPreview,
             outputsS3Urls,
@@ -1066,6 +1071,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun manifestS3Id(): Optional<String> = manifestS3Id.getOptional("manifest_s3_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun messages(): Optional<List<Message>> = messages.getOptional("messages")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1471,6 +1482,15 @@ private constructor(
         fun _manifestS3Id(): JsonField<String> = manifestS3Id
 
         /**
+         * Returns the raw JSON value of [messages].
+         *
+         * Unlike [messages], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("messages")
+        @ExcludeMissing
+        fun _messages(): JsonField<List<Message>> = messages
+
+        /**
          * Returns the raw JSON value of [outputs].
          *
          * Unlike [outputs], this method doesn't throw if the JSON field has an unexpected type.
@@ -1768,6 +1788,7 @@ private constructor(
             private var lastQueuedAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var manifestId: JsonField<String> = JsonMissing.of()
             private var manifestS3Id: JsonField<String> = JsonMissing.of()
+            private var messages: JsonField<MutableList<Message>>? = null
             private var outputs: JsonField<Outputs> = JsonMissing.of()
             private var outputsPreview: JsonField<String> = JsonMissing.of()
             private var outputsS3Urls: JsonField<OutputsS3Urls> = JsonMissing.of()
@@ -1826,6 +1847,7 @@ private constructor(
                 lastQueuedAt = run.lastQueuedAt
                 manifestId = run.manifestId
                 manifestS3Id = run.manifestS3Id
+                messages = run.messages.map { it.toMutableList() }
                 outputs = run.outputs
                 outputsPreview = run.outputsPreview
                 outputsS3Urls = run.outputsS3Urls
@@ -2322,6 +2344,34 @@ private constructor(
              */
             fun manifestS3Id(manifestS3Id: JsonField<String>) = apply {
                 this.manifestS3Id = manifestS3Id
+            }
+
+            fun messages(messages: List<Message>?) = messages(JsonField.ofNullable(messages))
+
+            /** Alias for calling [Builder.messages] with `messages.orElse(null)`. */
+            fun messages(messages: Optional<List<Message>>) = messages(messages.getOrNull())
+
+            /**
+             * Sets [Builder.messages] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.messages] with a well-typed `List<Message>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun messages(messages: JsonField<List<Message>>) = apply {
+                this.messages = messages.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [Message] to [messages].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addMessage(message: Message) = apply {
+                messages =
+                    (messages ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("messages", it).add(message)
+                    }
             }
 
             fun outputs(outputs: Outputs?) = outputs(JsonField.ofNullable(outputs))
@@ -2847,6 +2897,7 @@ private constructor(
                     lastQueuedAt,
                     manifestId,
                     manifestS3Id,
+                    (messages ?: JsonMissing.of()).map { it.toImmutable() },
                     outputs,
                     outputsPreview,
                     outputsS3Urls,
@@ -2912,6 +2963,7 @@ private constructor(
             lastQueuedAt()
             manifestId()
             manifestS3Id()
+            messages().ifPresent { it.forEach { it.validate() } }
             outputs().ifPresent { it.validate() }
             outputsPreview()
             outputsS3Urls().ifPresent { it.validate() }
@@ -2985,6 +3037,7 @@ private constructor(
                 (if (lastQueuedAt.asKnown().isPresent) 1 else 0) +
                 (if (manifestId.asKnown().isPresent) 1 else 0) +
                 (if (manifestS3Id.asKnown().isPresent) 1 else 0) +
+                (messages.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (outputs.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (outputsPreview.asKnown().isPresent) 1 else 0) +
                 (outputsS3Urls.asKnown().getOrNull()?.validity() ?: 0) +
@@ -3900,6 +3953,108 @@ private constructor(
             override fun toString() = "InputsS3Urls{additionalProperties=$additionalProperties}"
         }
 
+        class Message
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Message]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Message]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(message: Message) = apply {
+                    additionalProperties = message.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Message].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Message = Message(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): Message = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Message && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Message{additionalProperties=$additionalProperties}"
+        }
+
         class Outputs
         @JsonCreator
         private constructor(
@@ -4687,6 +4842,7 @@ private constructor(
                 lastQueuedAt == other.lastQueuedAt &&
                 manifestId == other.manifestId &&
                 manifestS3Id == other.manifestS3Id &&
+                messages == other.messages &&
                 outputs == other.outputs &&
                 outputsPreview == other.outputsPreview &&
                 outputsS3Urls == other.outputsS3Urls &&
@@ -4746,6 +4902,7 @@ private constructor(
                 lastQueuedAt,
                 manifestId,
                 manifestS3Id,
+                messages,
                 outputs,
                 outputsPreview,
                 outputsS3Urls,
@@ -4779,7 +4936,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Run{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, childRunIds=$childRunIds, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, manifestId=$manifestId, manifestS3Id=$manifestS3Id, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
+            "Run{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, childRunIds=$childRunIds, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, manifestId=$manifestId, manifestS3Id=$manifestS3Id, messages=$messages, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
     }
 
     class AttachmentUrls

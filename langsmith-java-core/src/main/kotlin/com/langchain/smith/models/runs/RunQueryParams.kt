@@ -2665,6 +2665,8 @@ private constructor(
 
             @JvmField val TRACE_MIN_MAX_START_TIME = of("trace_min_max_start_time")
 
+            @JvmField val MESSAGES = of("messages")
+
             @JvmStatic fun of(value: String) = Select(JsonField.of(value))
         }
 
@@ -2728,6 +2730,7 @@ private constructor(
             TRACE_UPGRADE,
             THREAD_ID,
             TRACE_MIN_MAX_START_TIME,
+            MESSAGES,
         }
 
         /**
@@ -2798,6 +2801,7 @@ private constructor(
             TRACE_UPGRADE,
             THREAD_ID,
             TRACE_MIN_MAX_START_TIME,
+            MESSAGES,
             /** An enum member indicating that [Select] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -2869,6 +2873,7 @@ private constructor(
                 TRACE_UPGRADE -> Value.TRACE_UPGRADE
                 THREAD_ID -> Value.THREAD_ID
                 TRACE_MIN_MAX_START_TIME -> Value.TRACE_MIN_MAX_START_TIME
+                MESSAGES -> Value.MESSAGES
                 else -> Value._UNKNOWN
             }
 
@@ -2941,6 +2946,7 @@ private constructor(
                 TRACE_UPGRADE -> Known.TRACE_UPGRADE
                 THREAD_ID -> Known.THREAD_ID
                 TRACE_MIN_MAX_START_TIME -> Known.TRACE_MIN_MAX_START_TIME
+                MESSAGES -> Known.MESSAGES
                 else -> throw LangChainInvalidDataException("Unknown Select: $value")
             }
 
