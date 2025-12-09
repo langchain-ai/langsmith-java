@@ -29,7 +29,13 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Configuration for a Runnable. */
+/**
+ * Configuration for a `Runnable`.
+ *
+ * See the
+ * [reference docs](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig)
+ * for more details.
+ */
 class RunnableConfig
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
