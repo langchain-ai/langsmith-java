@@ -9,7 +9,7 @@ import com.langchain.smith.models.datasets.share.DatasetShareSchema
 import com.langchain.smith.models.datasets.share.ShareCreateParams
 import com.langchain.smith.models.datasets.share.ShareDeleteAllParams
 import com.langchain.smith.models.datasets.share.ShareDeleteAllResponse
-import com.langchain.smith.models.datasets.share.ShareListParams
+import com.langchain.smith.models.datasets.share.ShareRetrieveParams
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -64,40 +64,40 @@ interface ShareServiceAsync {
         create(datasetId, ShareCreateParams.none(), requestOptions)
 
     /** Get the state of sharing a dataset */
-    fun list(datasetId: String): CompletableFuture<Optional<DatasetShareSchema>> =
-        list(datasetId, ShareListParams.none())
+    fun retrieve(datasetId: String): CompletableFuture<Optional<DatasetShareSchema>> =
+        retrieve(datasetId, ShareRetrieveParams.none())
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: ShareListParams = ShareListParams.none(),
+        params: ShareRetrieveParams = ShareRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Optional<DatasetShareSchema>> =
-        list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+        retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: ShareListParams = ShareListParams.none(),
+        params: ShareRetrieveParams = ShareRetrieveParams.none(),
     ): CompletableFuture<Optional<DatasetShareSchema>> =
-        list(datasetId, params, RequestOptions.none())
+        retrieve(datasetId, params, RequestOptions.none())
 
-    /** @see list */
-    fun list(
-        params: ShareListParams,
+    /** @see retrieve */
+    fun retrieve(
+        params: ShareRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Optional<DatasetShareSchema>>
 
-    /** @see list */
-    fun list(params: ShareListParams): CompletableFuture<Optional<DatasetShareSchema>> =
-        list(params, RequestOptions.none())
+    /** @see retrieve */
+    fun retrieve(params: ShareRetrieveParams): CompletableFuture<Optional<DatasetShareSchema>> =
+        retrieve(params, RequestOptions.none())
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
         requestOptions: RequestOptions,
     ): CompletableFuture<Optional<DatasetShareSchema>> =
-        list(datasetId, ShareListParams.none(), requestOptions)
+        retrieve(datasetId, ShareRetrieveParams.none(), requestOptions)
 
     /** Unshare a dataset. */
     fun deleteAll(datasetId: String): CompletableFuture<ShareDeleteAllResponse> =
@@ -190,46 +190,46 @@ interface ShareServiceAsync {
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/share`, but is
-         * otherwise the same as [ShareServiceAsync.list].
+         * otherwise the same as [ShareServiceAsync.retrieve].
          */
-        fun list(
+        fun retrieve(
             datasetId: String
         ): CompletableFuture<HttpResponseFor<Optional<DatasetShareSchema>>> =
-            list(datasetId, ShareListParams.none())
+            retrieve(datasetId, ShareRetrieveParams.none())
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
-            params: ShareListParams = ShareListParams.none(),
+            params: ShareRetrieveParams = ShareRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Optional<DatasetShareSchema>>> =
-            list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+            retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
-            params: ShareListParams = ShareListParams.none(),
+            params: ShareRetrieveParams = ShareRetrieveParams.none(),
         ): CompletableFuture<HttpResponseFor<Optional<DatasetShareSchema>>> =
-            list(datasetId, params, RequestOptions.none())
+            retrieve(datasetId, params, RequestOptions.none())
 
-        /** @see list */
-        fun list(
-            params: ShareListParams,
+        /** @see retrieve */
+        fun retrieve(
+            params: ShareRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Optional<DatasetShareSchema>>>
 
-        /** @see list */
-        fun list(
-            params: ShareListParams
+        /** @see retrieve */
+        fun retrieve(
+            params: ShareRetrieveParams
         ): CompletableFuture<HttpResponseFor<Optional<DatasetShareSchema>>> =
-            list(params, RequestOptions.none())
+            retrieve(params, RequestOptions.none())
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<Optional<DatasetShareSchema>>> =
-            list(datasetId, ShareListParams.none(), requestOptions)
+            retrieve(datasetId, ShareRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/datasets/{dataset_id}/share`, but is

@@ -9,8 +9,8 @@ import com.langchain.smith.models.datasets.index.IndexCreateParams
 import com.langchain.smith.models.datasets.index.IndexCreateResponse
 import com.langchain.smith.models.datasets.index.IndexDeleteAllParams
 import com.langchain.smith.models.datasets.index.IndexDeleteAllResponse
-import com.langchain.smith.models.datasets.index.IndexListParams
-import com.langchain.smith.models.datasets.index.IndexListResponse
+import com.langchain.smith.models.datasets.index.IndexRetrieveParams
+import com.langchain.smith.models.datasets.index.IndexRetrieveResponse
 import com.langchain.smith.models.datasets.index.IndexSyncParams
 import com.langchain.smith.models.datasets.index.IndexSyncResponse
 import java.util.concurrent.CompletableFuture
@@ -66,39 +66,39 @@ interface IndexServiceAsync {
         create(datasetId, IndexCreateParams.none(), requestOptions)
 
     /** Get index info. */
-    fun list(datasetId: String): CompletableFuture<IndexListResponse> =
-        list(datasetId, IndexListParams.none())
+    fun retrieve(datasetId: String): CompletableFuture<IndexRetrieveResponse> =
+        retrieve(datasetId, IndexRetrieveParams.none())
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: IndexListParams = IndexListParams.none(),
+        params: IndexRetrieveParams = IndexRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<IndexListResponse> =
-        list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+    ): CompletableFuture<IndexRetrieveResponse> =
+        retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: IndexListParams = IndexListParams.none(),
-    ): CompletableFuture<IndexListResponse> = list(datasetId, params, RequestOptions.none())
+        params: IndexRetrieveParams = IndexRetrieveParams.none(),
+    ): CompletableFuture<IndexRetrieveResponse> = retrieve(datasetId, params, RequestOptions.none())
 
-    /** @see list */
-    fun list(
-        params: IndexListParams,
+    /** @see retrieve */
+    fun retrieve(
+        params: IndexRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<IndexListResponse>
+    ): CompletableFuture<IndexRetrieveResponse>
 
-    /** @see list */
-    fun list(params: IndexListParams): CompletableFuture<IndexListResponse> =
-        list(params, RequestOptions.none())
+    /** @see retrieve */
+    fun retrieve(params: IndexRetrieveParams): CompletableFuture<IndexRetrieveResponse> =
+        retrieve(params, RequestOptions.none())
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<IndexListResponse> =
-        list(datasetId, IndexListParams.none(), requestOptions)
+    ): CompletableFuture<IndexRetrieveResponse> =
+        retrieve(datasetId, IndexRetrieveParams.none(), requestOptions)
 
     /** Remove an index for a dataset. */
     fun deleteAll(datasetId: String): CompletableFuture<IndexDeleteAllResponse> =
@@ -226,42 +226,44 @@ interface IndexServiceAsync {
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/index`, but is
-         * otherwise the same as [IndexServiceAsync.list].
+         * otherwise the same as [IndexServiceAsync.retrieve].
          */
-        fun list(datasetId: String): CompletableFuture<HttpResponseFor<IndexListResponse>> =
-            list(datasetId, IndexListParams.none())
+        fun retrieve(datasetId: String): CompletableFuture<HttpResponseFor<IndexRetrieveResponse>> =
+            retrieve(datasetId, IndexRetrieveParams.none())
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
-            params: IndexListParams = IndexListParams.none(),
+            params: IndexRetrieveParams = IndexRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<IndexListResponse>> =
-            list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<IndexRetrieveResponse>> =
+            retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
-            params: IndexListParams = IndexListParams.none(),
-        ): CompletableFuture<HttpResponseFor<IndexListResponse>> =
-            list(datasetId, params, RequestOptions.none())
+            params: IndexRetrieveParams = IndexRetrieveParams.none(),
+        ): CompletableFuture<HttpResponseFor<IndexRetrieveResponse>> =
+            retrieve(datasetId, params, RequestOptions.none())
 
-        /** @see list */
-        fun list(
-            params: IndexListParams,
+        /** @see retrieve */
+        fun retrieve(
+            params: IndexRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<IndexListResponse>>
+        ): CompletableFuture<HttpResponseFor<IndexRetrieveResponse>>
 
-        /** @see list */
-        fun list(params: IndexListParams): CompletableFuture<HttpResponseFor<IndexListResponse>> =
-            list(params, RequestOptions.none())
+        /** @see retrieve */
+        fun retrieve(
+            params: IndexRetrieveParams
+        ): CompletableFuture<HttpResponseFor<IndexRetrieveResponse>> =
+            retrieve(params, RequestOptions.none())
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<IndexListResponse>> =
-            list(datasetId, IndexListParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<IndexRetrieveResponse>> =
+            retrieve(datasetId, IndexRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/datasets/{dataset_id}/index`, but is

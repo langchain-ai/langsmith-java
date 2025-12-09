@@ -120,8 +120,8 @@ fun main() {
         .build()
     val existingDatasets = client.datasets().list(listParams)
 
-    val dataset = if (existingDatasets.isNotEmpty()) {
-        val existing = existingDatasets[0]
+    val dataset = if (existingDatasets.items().isNotEmpty()) {
+        val existing = existingDatasets.items()[0]
         println("   ✓ Found existing dataset (ID: ${existing.id()})")
         existing
     } else {
@@ -197,9 +197,10 @@ fun main() {
         val example = createdExamples[index]
         val runId = java.util.UUID.randomUUID().toString()
 
-        // Generate dotted_order following LangSmith SDK pattern: YYYYMMDDTHHMMSSffffffZ + UUID
-        // See: https://github.com/langchain-ai/langsmith-sdk/blob/main/python/langsmith/run_trees.py
-        val dottedOrderFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssSSSSSSSSS'Z'")
+        // Generate dotted_order following LangSmith format: {timestamp}Z{run_id}
+        // Format: YYYYMMDDTHHMMSSmmmmmmZ{run_id} where mmmmmm is 6 digits for microseconds
+        // For root runs: single part (no dots), timestamp matches trace_id (run_id)
+        val dottedOrderFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssSSSSSS'Z'")
         val dottedOrder = startTime.format(dottedOrderFormatter) + runId
 
         Run.builder()

@@ -9,9 +9,7 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest
 import com.langchain.smith.models.sessions.RunStatsGroupBy
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
-import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
-import com.langchain.smith.models.sessions.SessionSortableColumns
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TimedeltaInput
 import java.time.OffsetDateTime
@@ -121,33 +119,10 @@ internal class SessionServiceAsyncTest {
                 .build()
         val sessionServiceAsync = client.sessions()
 
-        val tracerSessionsFuture =
-            sessionServiceAsync.list(
-                SessionListParams.builder()
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .datasetVersion("dataset_version")
-                    .facets(true)
-                    .filter("filter")
-                    .includeStats(true)
-                    .limit(1L)
-                    .metadata("metadata")
-                    .name("name")
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .addReferenceDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .referenceFree(true)
-                    .sortBy(SessionSortableColumns.NAME)
-                    .sortByDesc(true)
-                    .sortByFeedbackKey("sort_by_feedback_key")
-                    .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .useApproxStats(true)
-                    .accept("accept")
-                    .build()
-            )
+        val pageFuture = sessionServiceAsync.list()
 
-        val tracerSessions = tracerSessionsFuture.get()
-        tracerSessions.forEach { it.validate() }
+        val page = pageFuture.get()
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

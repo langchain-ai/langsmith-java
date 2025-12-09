@@ -5,14 +5,15 @@ package com.langchain.smith.services.async.public_
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.public_.datasets.DatasetListComparativePageAsync
+import com.langchain.smith.models.public_.datasets.DatasetListComparativeParams
+import com.langchain.smith.models.public_.datasets.DatasetListFeedbackPageAsync
+import com.langchain.smith.models.public_.datasets.DatasetListFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetListParams
 import com.langchain.smith.models.public_.datasets.DatasetListResponse
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeResponse
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
+import com.langchain.smith.models.public_.datasets.DatasetListSessionsPageAsync
+import com.langchain.smith.models.public_.datasets.DatasetListSessionsParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -67,118 +68,116 @@ interface DatasetServiceAsync {
         list(shareToken, DatasetListParams.none(), requestOptions)
 
     /** Get all comparative experiments for a given dataset. */
-    fun retrieveComparative(
-        shareToken: String
-    ): CompletableFuture<List<DatasetRetrieveComparativeResponse>> =
-        retrieveComparative(shareToken, DatasetRetrieveComparativeParams.none())
+    fun listComparative(shareToken: String): CompletableFuture<DatasetListComparativePageAsync> =
+        listComparative(shareToken, DatasetListComparativeParams.none())
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
+    /** @see listComparative */
+    fun listComparative(
         shareToken: String,
-        params: DatasetRetrieveComparativeParams = DatasetRetrieveComparativeParams.none(),
+        params: DatasetListComparativeParams = DatasetListComparativeParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<DatasetRetrieveComparativeResponse>> =
-        retrieveComparative(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+    ): CompletableFuture<DatasetListComparativePageAsync> =
+        listComparative(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
+    /** @see listComparative */
+    fun listComparative(
         shareToken: String,
-        params: DatasetRetrieveComparativeParams = DatasetRetrieveComparativeParams.none(),
-    ): CompletableFuture<List<DatasetRetrieveComparativeResponse>> =
-        retrieveComparative(shareToken, params, RequestOptions.none())
+        params: DatasetListComparativeParams = DatasetListComparativeParams.none(),
+    ): CompletableFuture<DatasetListComparativePageAsync> =
+        listComparative(shareToken, params, RequestOptions.none())
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
-        params: DatasetRetrieveComparativeParams,
+    /** @see listComparative */
+    fun listComparative(
+        params: DatasetListComparativeParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<DatasetRetrieveComparativeResponse>>
+    ): CompletableFuture<DatasetListComparativePageAsync>
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
-        params: DatasetRetrieveComparativeParams
-    ): CompletableFuture<List<DatasetRetrieveComparativeResponse>> =
-        retrieveComparative(params, RequestOptions.none())
+    /** @see listComparative */
+    fun listComparative(
+        params: DatasetListComparativeParams
+    ): CompletableFuture<DatasetListComparativePageAsync> =
+        listComparative(params, RequestOptions.none())
 
-    /** @see retrieveComparative */
-    fun retrieveComparative(
+    /** @see listComparative */
+    fun listComparative(
         shareToken: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<DatasetRetrieveComparativeResponse>> =
-        retrieveComparative(shareToken, DatasetRetrieveComparativeParams.none(), requestOptions)
+    ): CompletableFuture<DatasetListComparativePageAsync> =
+        listComparative(shareToken, DatasetListComparativeParams.none(), requestOptions)
 
     /** Get feedback for runs in projects run over a dataset that has been shared. */
-    fun retrieveFeedback(shareToken: String): CompletableFuture<List<FeedbackSchema>> =
-        retrieveFeedback(shareToken, DatasetRetrieveFeedbackParams.none())
+    fun listFeedback(shareToken: String): CompletableFuture<DatasetListFeedbackPageAsync> =
+        listFeedback(shareToken, DatasetListFeedbackParams.none())
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
+    /** @see listFeedback */
+    fun listFeedback(
         shareToken: String,
-        params: DatasetRetrieveFeedbackParams = DatasetRetrieveFeedbackParams.none(),
+        params: DatasetListFeedbackParams = DatasetListFeedbackParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<FeedbackSchema>> =
-        retrieveFeedback(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+    ): CompletableFuture<DatasetListFeedbackPageAsync> =
+        listFeedback(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
+    /** @see listFeedback */
+    fun listFeedback(
         shareToken: String,
-        params: DatasetRetrieveFeedbackParams = DatasetRetrieveFeedbackParams.none(),
-    ): CompletableFuture<List<FeedbackSchema>> =
-        retrieveFeedback(shareToken, params, RequestOptions.none())
+        params: DatasetListFeedbackParams = DatasetListFeedbackParams.none(),
+    ): CompletableFuture<DatasetListFeedbackPageAsync> =
+        listFeedback(shareToken, params, RequestOptions.none())
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
-        params: DatasetRetrieveFeedbackParams,
+    /** @see listFeedback */
+    fun listFeedback(
+        params: DatasetListFeedbackParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<FeedbackSchema>>
+    ): CompletableFuture<DatasetListFeedbackPageAsync>
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
-        params: DatasetRetrieveFeedbackParams
-    ): CompletableFuture<List<FeedbackSchema>> = retrieveFeedback(params, RequestOptions.none())
+    /** @see listFeedback */
+    fun listFeedback(
+        params: DatasetListFeedbackParams
+    ): CompletableFuture<DatasetListFeedbackPageAsync> = listFeedback(params, RequestOptions.none())
 
-    /** @see retrieveFeedback */
-    fun retrieveFeedback(
+    /** @see listFeedback */
+    fun listFeedback(
         shareToken: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<FeedbackSchema>> =
-        retrieveFeedback(shareToken, DatasetRetrieveFeedbackParams.none(), requestOptions)
+    ): CompletableFuture<DatasetListFeedbackPageAsync> =
+        listFeedback(shareToken, DatasetListFeedbackParams.none(), requestOptions)
 
     /** Get projects run on a dataset that has been shared. */
-    fun retrieveSessions(shareToken: String): CompletableFuture<List<TracerSession>> =
-        retrieveSessions(shareToken, DatasetRetrieveSessionsParams.none())
+    fun listSessions(shareToken: String): CompletableFuture<DatasetListSessionsPageAsync> =
+        listSessions(shareToken, DatasetListSessionsParams.none())
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
+    /** @see listSessions */
+    fun listSessions(
         shareToken: String,
-        params: DatasetRetrieveSessionsParams = DatasetRetrieveSessionsParams.none(),
+        params: DatasetListSessionsParams = DatasetListSessionsParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<TracerSession>> =
-        retrieveSessions(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+    ): CompletableFuture<DatasetListSessionsPageAsync> =
+        listSessions(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
+    /** @see listSessions */
+    fun listSessions(
         shareToken: String,
-        params: DatasetRetrieveSessionsParams = DatasetRetrieveSessionsParams.none(),
-    ): CompletableFuture<List<TracerSession>> =
-        retrieveSessions(shareToken, params, RequestOptions.none())
+        params: DatasetListSessionsParams = DatasetListSessionsParams.none(),
+    ): CompletableFuture<DatasetListSessionsPageAsync> =
+        listSessions(shareToken, params, RequestOptions.none())
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
-        params: DatasetRetrieveSessionsParams,
+    /** @see listSessions */
+    fun listSessions(
+        params: DatasetListSessionsParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<TracerSession>>
+    ): CompletableFuture<DatasetListSessionsPageAsync>
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
-        params: DatasetRetrieveSessionsParams
-    ): CompletableFuture<List<TracerSession>> = retrieveSessions(params, RequestOptions.none())
+    /** @see listSessions */
+    fun listSessions(
+        params: DatasetListSessionsParams
+    ): CompletableFuture<DatasetListSessionsPageAsync> = listSessions(params, RequestOptions.none())
 
-    /** @see retrieveSessions */
-    fun retrieveSessions(
+    /** @see listSessions */
+    fun listSessions(
         shareToken: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<TracerSession>> =
-        retrieveSessions(shareToken, DatasetRetrieveSessionsParams.none(), requestOptions)
+    ): CompletableFuture<DatasetListSessionsPageAsync> =
+        listSessions(shareToken, DatasetListSessionsParams.none(), requestOptions)
 
     /** Get sessions from multiple datasets using share tokens. */
     fun retrieveSessionsBulk(
@@ -248,132 +247,132 @@ interface DatasetServiceAsync {
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/datasets/comparative`,
-         * but is otherwise the same as [DatasetServiceAsync.retrieveComparative].
+         * but is otherwise the same as [DatasetServiceAsync.listComparative].
          */
-        fun retrieveComparative(
+        fun listComparative(
             shareToken: String
-        ): CompletableFuture<HttpResponseFor<List<DatasetRetrieveComparativeResponse>>> =
-            retrieveComparative(shareToken, DatasetRetrieveComparativeParams.none())
+        ): CompletableFuture<HttpResponseFor<DatasetListComparativePageAsync>> =
+            listComparative(shareToken, DatasetListComparativeParams.none())
 
-        /** @see retrieveComparative */
-        fun retrieveComparative(
+        /** @see listComparative */
+        fun listComparative(
             shareToken: String,
-            params: DatasetRetrieveComparativeParams = DatasetRetrieveComparativeParams.none(),
+            params: DatasetListComparativeParams = DatasetListComparativeParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<DatasetRetrieveComparativeResponse>>> =
-            retrieveComparative(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<DatasetListComparativePageAsync>> =
+            listComparative(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-        /** @see retrieveComparative */
-        fun retrieveComparative(
+        /** @see listComparative */
+        fun listComparative(
             shareToken: String,
-            params: DatasetRetrieveComparativeParams = DatasetRetrieveComparativeParams.none(),
-        ): CompletableFuture<HttpResponseFor<List<DatasetRetrieveComparativeResponse>>> =
-            retrieveComparative(shareToken, params, RequestOptions.none())
+            params: DatasetListComparativeParams = DatasetListComparativeParams.none(),
+        ): CompletableFuture<HttpResponseFor<DatasetListComparativePageAsync>> =
+            listComparative(shareToken, params, RequestOptions.none())
 
-        /** @see retrieveComparative */
-        fun retrieveComparative(
-            params: DatasetRetrieveComparativeParams,
+        /** @see listComparative */
+        fun listComparative(
+            params: DatasetListComparativeParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<DatasetRetrieveComparativeResponse>>>
+        ): CompletableFuture<HttpResponseFor<DatasetListComparativePageAsync>>
 
-        /** @see retrieveComparative */
-        fun retrieveComparative(
-            params: DatasetRetrieveComparativeParams
-        ): CompletableFuture<HttpResponseFor<List<DatasetRetrieveComparativeResponse>>> =
-            retrieveComparative(params, RequestOptions.none())
+        /** @see listComparative */
+        fun listComparative(
+            params: DatasetListComparativeParams
+        ): CompletableFuture<HttpResponseFor<DatasetListComparativePageAsync>> =
+            listComparative(params, RequestOptions.none())
 
-        /** @see retrieveComparative */
-        fun retrieveComparative(
+        /** @see listComparative */
+        fun listComparative(
             shareToken: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<DatasetRetrieveComparativeResponse>>> =
-            retrieveComparative(shareToken, DatasetRetrieveComparativeParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<DatasetListComparativePageAsync>> =
+            listComparative(shareToken, DatasetListComparativeParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/datasets/feedback`, but
-         * is otherwise the same as [DatasetServiceAsync.retrieveFeedback].
+         * is otherwise the same as [DatasetServiceAsync.listFeedback].
          */
-        fun retrieveFeedback(
+        fun listFeedback(
             shareToken: String
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
-            retrieveFeedback(shareToken, DatasetRetrieveFeedbackParams.none())
+        ): CompletableFuture<HttpResponseFor<DatasetListFeedbackPageAsync>> =
+            listFeedback(shareToken, DatasetListFeedbackParams.none())
 
-        /** @see retrieveFeedback */
-        fun retrieveFeedback(
+        /** @see listFeedback */
+        fun listFeedback(
             shareToken: String,
-            params: DatasetRetrieveFeedbackParams = DatasetRetrieveFeedbackParams.none(),
+            params: DatasetListFeedbackParams = DatasetListFeedbackParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
-            retrieveFeedback(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<DatasetListFeedbackPageAsync>> =
+            listFeedback(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-        /** @see retrieveFeedback */
-        fun retrieveFeedback(
+        /** @see listFeedback */
+        fun listFeedback(
             shareToken: String,
-            params: DatasetRetrieveFeedbackParams = DatasetRetrieveFeedbackParams.none(),
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
-            retrieveFeedback(shareToken, params, RequestOptions.none())
+            params: DatasetListFeedbackParams = DatasetListFeedbackParams.none(),
+        ): CompletableFuture<HttpResponseFor<DatasetListFeedbackPageAsync>> =
+            listFeedback(shareToken, params, RequestOptions.none())
 
-        /** @see retrieveFeedback */
-        fun retrieveFeedback(
-            params: DatasetRetrieveFeedbackParams,
+        /** @see listFeedback */
+        fun listFeedback(
+            params: DatasetListFeedbackParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>>
+        ): CompletableFuture<HttpResponseFor<DatasetListFeedbackPageAsync>>
 
-        /** @see retrieveFeedback */
-        fun retrieveFeedback(
-            params: DatasetRetrieveFeedbackParams
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
-            retrieveFeedback(params, RequestOptions.none())
+        /** @see listFeedback */
+        fun listFeedback(
+            params: DatasetListFeedbackParams
+        ): CompletableFuture<HttpResponseFor<DatasetListFeedbackPageAsync>> =
+            listFeedback(params, RequestOptions.none())
 
-        /** @see retrieveFeedback */
-        fun retrieveFeedback(
+        /** @see listFeedback */
+        fun listFeedback(
             shareToken: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<FeedbackSchema>>> =
-            retrieveFeedback(shareToken, DatasetRetrieveFeedbackParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<DatasetListFeedbackPageAsync>> =
+            listFeedback(shareToken, DatasetListFeedbackParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/datasets/sessions`, but
-         * is otherwise the same as [DatasetServiceAsync.retrieveSessions].
+         * is otherwise the same as [DatasetServiceAsync.listSessions].
          */
-        fun retrieveSessions(
+        fun listSessions(
             shareToken: String
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> =
-            retrieveSessions(shareToken, DatasetRetrieveSessionsParams.none())
+        ): CompletableFuture<HttpResponseFor<DatasetListSessionsPageAsync>> =
+            listSessions(shareToken, DatasetListSessionsParams.none())
 
-        /** @see retrieveSessions */
-        fun retrieveSessions(
+        /** @see listSessions */
+        fun listSessions(
             shareToken: String,
-            params: DatasetRetrieveSessionsParams = DatasetRetrieveSessionsParams.none(),
+            params: DatasetListSessionsParams = DatasetListSessionsParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> =
-            retrieveSessions(params.toBuilder().shareToken(shareToken).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<DatasetListSessionsPageAsync>> =
+            listSessions(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
-        /** @see retrieveSessions */
-        fun retrieveSessions(
+        /** @see listSessions */
+        fun listSessions(
             shareToken: String,
-            params: DatasetRetrieveSessionsParams = DatasetRetrieveSessionsParams.none(),
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> =
-            retrieveSessions(shareToken, params, RequestOptions.none())
+            params: DatasetListSessionsParams = DatasetListSessionsParams.none(),
+        ): CompletableFuture<HttpResponseFor<DatasetListSessionsPageAsync>> =
+            listSessions(shareToken, params, RequestOptions.none())
 
-        /** @see retrieveSessions */
-        fun retrieveSessions(
-            params: DatasetRetrieveSessionsParams,
+        /** @see listSessions */
+        fun listSessions(
+            params: DatasetListSessionsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>>
+        ): CompletableFuture<HttpResponseFor<DatasetListSessionsPageAsync>>
 
-        /** @see retrieveSessions */
-        fun retrieveSessions(
-            params: DatasetRetrieveSessionsParams
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> =
-            retrieveSessions(params, RequestOptions.none())
+        /** @see listSessions */
+        fun listSessions(
+            params: DatasetListSessionsParams
+        ): CompletableFuture<HttpResponseFor<DatasetListSessionsPageAsync>> =
+            listSessions(params, RequestOptions.none())
 
-        /** @see retrieveSessions */
-        fun retrieveSessions(
+        /** @see listSessions */
+        fun listSessions(
             shareToken: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> =
-            retrieveSessions(shareToken, DatasetRetrieveSessionsParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<DatasetListSessionsPageAsync>> =
+            listSessions(shareToken, DatasetListSessionsParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/datasets/sessions-bulk`, but is

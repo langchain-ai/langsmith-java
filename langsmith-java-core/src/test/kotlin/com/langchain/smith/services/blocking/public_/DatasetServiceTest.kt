@@ -5,15 +5,8 @@ package com.langchain.smith.services.blocking.public_
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.models.datasets.SortByDatasetColumn
-import com.langchain.smith.models.datasets.comparative.SortByComparativeExperimentColumn
-import com.langchain.smith.models.feedback.FeedbackLevel
-import com.langchain.smith.models.feedback.SourceType
 import com.langchain.smith.models.public_.datasets.DatasetListParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
-import com.langchain.smith.models.sessions.SessionSortableColumns
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -49,7 +42,7 @@ internal class DatasetServiceTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveComparative() {
+    fun listComparative() {
         val client =
             LangsmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -59,25 +52,14 @@ internal class DatasetServiceTest {
                 .build()
         val datasetService = client.public_().datasets()
 
-        val response =
-            datasetService.retrieveComparative(
-                DatasetRetrieveComparativeParams.builder()
-                    .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .limit(1L)
-                    .name("name")
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .sortBy(SortByComparativeExperimentColumn.NAME)
-                    .sortByDesc(true)
-                    .build()
-            )
+        val page = datasetService.listComparative("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
-        response.forEach { it.validate() }
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveFeedback() {
+    fun listFeedback() {
         val client =
             LangsmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -87,29 +69,14 @@ internal class DatasetServiceTest {
                 .build()
         val datasetService = client.public_().datasets()
 
-        val feedbackSchemata =
-            datasetService.retrieveFeedback(
-                DatasetRetrieveFeedbackParams.builder()
-                    .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .hasComment(true)
-                    .hasScore(true)
-                    .addKey("string")
-                    .level(FeedbackLevel.RUN)
-                    .limit(1L)
-                    .offset(0L)
-                    .addRun("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addSource(SourceType.API)
-                    .addUser("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val page = datasetService.listFeedback("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
-        feedbackSchemata.forEach { it.validate() }
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieveSessions() {
+    fun listSessions() {
         val client =
             LangsmithOkHttpClient.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -119,25 +86,9 @@ internal class DatasetServiceTest {
                 .build()
         val datasetService = client.public_().datasets()
 
-        val tracerSessions =
-            datasetService.retrieveSessions(
-                DatasetRetrieveSessionsParams.builder()
-                    .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .datasetVersion("dataset_version")
-                    .facets(true)
-                    .limit(1L)
-                    .name("name")
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .sortBy(SessionSortableColumns.NAME)
-                    .sortByDesc(true)
-                    .sortByFeedbackKey("sort_by_feedback_key")
-                    .accept("accept")
-                    .build()
-            )
+        val page = datasetService.listSessions("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
-        tracerSessions.forEach { it.validate() }
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

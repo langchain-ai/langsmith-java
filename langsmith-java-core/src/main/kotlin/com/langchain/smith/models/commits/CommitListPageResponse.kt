@@ -1,0 +1,227 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langchain.smith.models.commits
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.ExcludeMissing
+import com.langchain.smith.core.JsonField
+import com.langchain.smith.core.JsonMissing
+import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.checkRequired
+import com.langchain.smith.core.toImmutable
+import com.langchain.smith.errors.LangChainInvalidDataException
+import java.util.Collections
+import java.util.Objects
+import kotlin.jvm.optionals.getOrNull
+
+class CommitListPageResponse
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
+private constructor(
+    private val commits: JsonField<List<CommitWithLookups>>,
+    private val total: JsonField<Long>,
+    private val additionalProperties: MutableMap<String, JsonValue>,
+) {
+
+    @JsonCreator
+    private constructor(
+        @JsonProperty("commits")
+        @ExcludeMissing
+        commits: JsonField<List<CommitWithLookups>> = JsonMissing.of(),
+        @JsonProperty("total") @ExcludeMissing total: JsonField<Long> = JsonMissing.of(),
+    ) : this(commits, total, mutableMapOf())
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun commits(): List<CommitWithLookups> = commits.getRequired("commits")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun total(): Long = total.getRequired("total")
+
+    /**
+     * Returns the raw JSON value of [commits].
+     *
+     * Unlike [commits], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("commits")
+    @ExcludeMissing
+    fun _commits(): JsonField<List<CommitWithLookups>> = commits
+
+    /**
+     * Returns the raw JSON value of [total].
+     *
+     * Unlike [total], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("total") @ExcludeMissing fun _total(): JsonField<Long> = total
+
+    @JsonAnySetter
+    private fun putAdditionalProperty(key: String, value: JsonValue) {
+        additionalProperties.put(key, value)
+    }
+
+    @JsonAnyGetter
+    @ExcludeMissing
+    fun _additionalProperties(): Map<String, JsonValue> =
+        Collections.unmodifiableMap(additionalProperties)
+
+    fun toBuilder() = Builder().from(this)
+
+    companion object {
+
+        /**
+         * Returns a mutable builder for constructing an instance of [CommitListPageResponse].
+         *
+         * The following fields are required:
+         * ```java
+         * .commits()
+         * .total()
+         * ```
+         */
+        @JvmStatic fun builder() = Builder()
+    }
+
+    /** A builder for [CommitListPageResponse]. */
+    class Builder internal constructor() {
+
+        private var commits: JsonField<MutableList<CommitWithLookups>>? = null
+        private var total: JsonField<Long>? = null
+        private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+        @JvmSynthetic
+        internal fun from(commitListPageResponse: CommitListPageResponse) = apply {
+            commits = commitListPageResponse.commits.map { it.toMutableList() }
+            total = commitListPageResponse.total
+            additionalProperties = commitListPageResponse.additionalProperties.toMutableMap()
+        }
+
+        fun commits(commits: List<CommitWithLookups>) = commits(JsonField.of(commits))
+
+        /**
+         * Sets [Builder.commits] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.commits] with a well-typed `List<CommitWithLookups>`
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun commits(commits: JsonField<List<CommitWithLookups>>) = apply {
+            this.commits = commits.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [CommitWithLookups] to [commits].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addCommit(commit: CommitWithLookups) = apply {
+            commits =
+                (commits ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("commits", it).add(commit)
+                }
+        }
+
+        fun total(total: Long) = total(JsonField.of(total))
+
+        /**
+         * Sets [Builder.total] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.total] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun total(total: JsonField<Long>) = apply { this.total = total }
+
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.clear()
+            putAllAdditionalProperties(additionalProperties)
+        }
+
+        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+            additionalProperties.put(key, value)
+        }
+
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.putAll(additionalProperties)
+        }
+
+        fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+            keys.forEach(::removeAdditionalProperty)
+        }
+
+        /**
+         * Returns an immutable instance of [CommitListPageResponse].
+         *
+         * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .commits()
+         * .total()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
+         */
+        fun build(): CommitListPageResponse =
+            CommitListPageResponse(
+                checkRequired("commits", commits).map { it.toImmutable() },
+                checkRequired("total", total),
+                additionalProperties.toMutableMap(),
+            )
+    }
+
+    private var validated: Boolean = false
+
+    fun validate(): CommitListPageResponse = apply {
+        if (validated) {
+            return@apply
+        }
+
+        commits().forEach { it.validate() }
+        total()
+        validated = true
+    }
+
+    fun isValid(): Boolean =
+        try {
+            validate()
+            true
+        } catch (e: LangChainInvalidDataException) {
+            false
+        }
+
+    /**
+     * Returns a score indicating how many valid values are contained in this object recursively.
+     *
+     * Used for best match union deserialization.
+     */
+    @JvmSynthetic
+    internal fun validity(): Int =
+        (commits.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (total.asKnown().isPresent) 1 else 0)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+
+        return other is CommitListPageResponse &&
+            commits == other.commits &&
+            total == other.total &&
+            additionalProperties == other.additionalProperties
+    }
+
+    private val hashCode: Int by lazy { Objects.hash(commits, total, additionalProperties) }
+
+    override fun hashCode(): Int = hashCode
+
+    override fun toString() =
+        "CommitListPageResponse{commits=$commits, total=$total, additionalProperties=$additionalProperties}"
+}

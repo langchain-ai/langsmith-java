@@ -21,8 +21,9 @@ import com.langchain.smith.models.repos.GetRepoResponse
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
 import com.langchain.smith.models.repos.RepoDeleteResponse
+import com.langchain.smith.models.repos.RepoListPageAsync
+import com.langchain.smith.models.repos.RepoListPageResponse
 import com.langchain.smith.models.repos.RepoListParams
-import com.langchain.smith.models.repos.RepoListResponse
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import java.util.concurrent.CompletableFuture
@@ -65,7 +66,7 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun list(
         params: RepoListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<RepoListResponse> =
+    ): CompletableFuture<RepoListPageAsync> =
         // get /api/v1/repos
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -199,13 +200,13 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 }
         }
 
-        private val listHandler: Handler<RepoListResponse> =
-            jsonHandler<RepoListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<RepoListPageResponse> =
+            jsonHandler<RepoListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: RepoListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RepoListResponse>> {
+        ): CompletableFuture<HttpResponseFor<RepoListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -224,6 +225,14 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                RepoListPageAsync.builder()
+                                    .service(RepoServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

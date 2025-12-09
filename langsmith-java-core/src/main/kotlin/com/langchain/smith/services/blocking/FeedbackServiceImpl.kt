@@ -19,6 +19,7 @@ import com.langchain.smith.core.prepare
 import com.langchain.smith.models.feedback.FeedbackCreateParams
 import com.langchain.smith.models.feedback.FeedbackDeleteParams
 import com.langchain.smith.models.feedback.FeedbackDeleteResponse
+import com.langchain.smith.models.feedback.FeedbackListPage
 import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
@@ -68,7 +69,7 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
     override fun list(
         params: FeedbackListParams,
         requestOptions: RequestOptions,
-    ): List<FeedbackSchema> =
+    ): FeedbackListPage =
         // get /api/v1/feedback
         withRawResponse().list(params, requestOptions).parse()
 
@@ -193,7 +194,7 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
         override fun list(
             params: FeedbackListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<FeedbackSchema>> {
+        ): HttpResponseFor<FeedbackListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -210,6 +211,13 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        FeedbackListPage.builder()
+                            .service(FeedbackServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

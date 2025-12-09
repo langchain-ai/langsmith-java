@@ -21,6 +21,7 @@ import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
+import com.langchain.smith.models.sessions.SessionListPage
 import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
@@ -68,10 +69,7 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         // patch /api/v1/sessions/{session_id}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(
-        params: SessionListParams,
-        requestOptions: RequestOptions,
-    ): List<TracerSession> =
+    override fun list(params: SessionListParams, requestOptions: RequestOptions): SessionListPage =
         // get /api/v1/sessions
         withRawResponse().list(params, requestOptions).parse()
 
@@ -203,7 +201,7 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
         override fun list(
             params: SessionListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<TracerSession>> {
+        ): HttpResponseFor<SessionListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -220,6 +218,13 @@ class SessionServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        SessionListPage.builder()
+                            .service(SessionServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

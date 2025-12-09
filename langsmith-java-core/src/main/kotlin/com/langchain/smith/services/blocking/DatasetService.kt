@@ -12,6 +12,7 @@ import com.langchain.smith.models.datasets.DatasetCloneResponse
 import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetDeleteParams
 import com.langchain.smith.models.datasets.DatasetDeleteResponse
+import com.langchain.smith.models.datasets.DatasetListPage
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvParams
 import com.langchain.smith.models.datasets.DatasetRetrieveCsvResponse
@@ -142,20 +143,20 @@ interface DatasetService {
         update(datasetId, DatasetUpdateParams.none(), requestOptions)
 
     /** Get all datasets by query params and owner. */
-    fun list(): List<Dataset> = list(DatasetListParams.none())
+    fun list(): DatasetListPage = list(DatasetListParams.none())
 
     /** @see list */
     fun list(
         params: DatasetListParams = DatasetListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<Dataset>
+    ): DatasetListPage
 
     /** @see list */
-    fun list(params: DatasetListParams = DatasetListParams.none()): List<Dataset> =
+    fun list(params: DatasetListParams = DatasetListParams.none()): DatasetListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): List<Dataset> =
+    fun list(requestOptions: RequestOptions): DatasetListPage =
         list(DatasetListParams.none(), requestOptions)
 
     /** Delete a specific dataset. */
@@ -531,24 +532,24 @@ interface DatasetService {
          * Returns a raw HTTP response for `get /api/v1/datasets`, but is otherwise the same as
          * [DatasetService.list].
          */
-        @MustBeClosed fun list(): HttpResponseFor<List<Dataset>> = list(DatasetListParams.none())
+        @MustBeClosed fun list(): HttpResponseFor<DatasetListPage> = list(DatasetListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: DatasetListParams = DatasetListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<Dataset>>
+        ): HttpResponseFor<DatasetListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: DatasetListParams = DatasetListParams.none()
-        ): HttpResponseFor<List<Dataset>> = list(params, RequestOptions.none())
+        ): HttpResponseFor<DatasetListPage> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<List<Dataset>> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<DatasetListPage> =
             list(DatasetListParams.none(), requestOptions)
 
         /**

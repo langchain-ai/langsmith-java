@@ -16,8 +16,9 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.commits.CommitListPageAsync
+import com.langchain.smith.models.commits.CommitListPageResponse
 import com.langchain.smith.models.commits.CommitListParams
-import com.langchain.smith.models.commits.CommitListResponse
 import com.langchain.smith.models.commits.CommitManifestResponse
 import com.langchain.smith.models.commits.CommitRetrieveParams
 import com.langchain.smith.models.commits.CommitUpdateParams
@@ -55,7 +56,7 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
     override fun list(
         params: CommitListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<CommitListResponse> =
+    ): CompletableFuture<CommitListPageAsync> =
         // get /api/v1/commits/{owner}/{repo}
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -152,13 +153,13 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 }
         }
 
-        private val listHandler: Handler<CommitListResponse> =
-            jsonHandler<CommitListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<CommitListPageResponse> =
+            jsonHandler<CommitListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: CommitListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<CommitListResponse>> {
+        ): CompletableFuture<HttpResponseFor<CommitListPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("repo", params.repo().getOrNull())
@@ -186,6 +187,14 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                CommitListPageAsync.builder()
+                                    .service(CommitServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

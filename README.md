@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.17)
-[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith-java/0.1.0-alpha.17/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.17)
+[![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-alpha.18)
+[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith-java/0.1.0-alpha.18/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.18)
 
 <!-- x-release-please-end -->
 
@@ -13,7 +13,7 @@ To learn more about LangSmith, check out the [docs](https://docs.smith.langchain
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.smith.langchain.com](https://docs.smith.langchain.com/). Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.17).
+The REST API documentation can be found on [docs.smith.langchain.com](https://docs.smith.langchain.com/). Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-alpha.18).
 
 <!-- x-release-please-end -->
 
@@ -24,7 +24,7 @@ The REST API documentation can be found on [docs.smith.langchain.com](https://do
 ### Gradle
 
 ```kotlin
-implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.17")
+implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.18")
 ```
 
 ### Maven
@@ -33,7 +33,7 @@ implementation("com.langchain.smith:langsmith-java:0.1.0-alpha.17")
 <dependency>
   <groupId>com.langchain.smith</groupId>
   <artifactId>langsmith-java</artifactId>
-  <version>0.1.0-alpha.17</version>
+  <version>0.1.0-alpha.18</version>
 </dependency>
 ```
 
@@ -55,7 +55,7 @@ import com.langchain.smith.models.runs.RunQueryParams;
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 RunQueryParams params = RunQueryParams.builder()
-    .addSession("REPLACE_ME")
+    .addSession("1ffaeba7-541e-469f-bae7-df3208ea3d45")
     .limit(10L)
     .build();
 var response = client.runs().query(params);
@@ -197,7 +197,7 @@ import java.util.concurrent.CompletableFuture;
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
-    .sessionId("REPLACE_ME")
+    .sessionId("1ffaeba7-541e-469f-bae7-df3208ea3d45")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
 CompletableFuture<CustomChartsSection> customChartsSection = client.async().sessions().dashboard(params);
@@ -218,7 +218,7 @@ import java.util.concurrent.CompletableFuture;
 LangsmithClientAsync client = LangsmithOkHttpClientAsync.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
-    .sessionId("REPLACE_ME")
+    .sessionId("1ffaeba7-541e-469f-bae7-df3208ea3d45")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
 CompletableFuture<CustomChartsSection> customChartsSection = client.sessions().dashboard(params);
@@ -308,7 +308,7 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
 import com.langchain.smith.models.sessions.SessionDashboardParams;
 
 SessionDashboardParams params = SessionDashboardParams.builder()
-    .sessionId("REPLACE_ME")
+    .sessionId("1ffaeba7-541e-469f-bae7-df3208ea3d45")
     .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
 HttpResponseFor<CustomChartsSection> customChartsSection = client.sessions().withRawResponse().dashboard(params);
@@ -349,6 +349,106 @@ The SDK throws custom unchecked exception types:
 - [`LangChainInvalidDataException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangChainInvalidDataException.kt): Failure to interpret successfully parsed data. For example, when accessing a property that's supposed to be required, but the API unexpectedly omitted it from the response.
 
 - [`LangChainException`](langsmith-java-core/src/main/kotlin/com/langchain/smith/errors/LangChainException.kt): Base class for all exceptions. Most errors will result in one of the previously mentioned ones, but completely generic errors may be thrown using the base class.
+
+## Pagination
+
+The SDK defines methods that return a paginated lists of results. It provides convenient ways to access the results either one page at a time or item-by-item across all pages.
+
+### Auto-pagination
+
+To iterate through all results across all pages, use the `autoPager()` method, which automatically fetches more pages as needed.
+
+When using the synchronous client, the method returns an [`Iterable`](https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html)
+
+```java
+import com.langchain.smith.models.datasets.Dataset;
+import com.langchain.smith.models.datasets.DatasetListPage;
+
+DatasetListPage page = client.datasets().list();
+
+// Process as an Iterable
+for (Dataset dataset : page.autoPager()) {
+    System.out.println(dataset);
+}
+
+// Process as a Stream
+page.autoPager()
+    .stream()
+    .limit(50)
+    .forEach(dataset -> System.out.println(dataset));
+```
+
+When using the asynchronous client, the method returns an [`AsyncStreamResponse`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/http/AsyncStreamResponse.kt):
+
+```java
+import com.langchain.smith.core.http.AsyncStreamResponse;
+import com.langchain.smith.models.datasets.Dataset;
+import com.langchain.smith.models.datasets.DatasetListPageAsync;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+CompletableFuture<DatasetListPageAsync> pageFuture = client.async().datasets().list();
+
+pageFuture.thenRun(page -> page.autoPager().subscribe(dataset -> {
+    System.out.println(dataset);
+}));
+
+// If you need to handle errors or completion of the stream
+pageFuture.thenRun(page -> page.autoPager().subscribe(new AsyncStreamResponse.Handler<>() {
+    @Override
+    public void onNext(Dataset dataset) {
+        System.out.println(dataset);
+    }
+
+    @Override
+    public void onComplete(Optional<Throwable> error) {
+        if (error.isPresent()) {
+            System.out.println("Something went wrong!");
+            throw new RuntimeException(error.get());
+        } else {
+            System.out.println("No more!");
+        }
+    }
+}));
+
+// Or use futures
+pageFuture.thenRun(page -> page.autoPager()
+    .subscribe(dataset -> {
+        System.out.println(dataset);
+    })
+    .onCompleteFuture()
+    .whenComplete((unused, error) -> {
+        if (error != null) {
+            System.out.println("Something went wrong!");
+            throw new RuntimeException(error);
+        } else {
+            System.out.println("No more!");
+        }
+    }));
+```
+
+### Manual pagination
+
+To access individual page items and manually request the next page, use the `items()`,
+`hasNextPage()`, and `nextPage()` methods:
+
+```java
+import com.langchain.smith.models.datasets.Dataset;
+import com.langchain.smith.models.datasets.DatasetListPage;
+
+DatasetListPage page = client.datasets().list();
+while (true) {
+    for (Dataset dataset : page.items()) {
+        System.out.println(dataset);
+    }
+
+    if (!page.hasNextPage()) {
+        break;
+    }
+
+    page = page.nextPage();
+}
+```
 
 ## Logging
 

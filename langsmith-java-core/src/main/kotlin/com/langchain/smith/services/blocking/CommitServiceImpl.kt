@@ -16,8 +16,9 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.commits.CommitListPage
+import com.langchain.smith.models.commits.CommitListPageResponse
 import com.langchain.smith.models.commits.CommitListParams
-import com.langchain.smith.models.commits.CommitListResponse
 import com.langchain.smith.models.commits.CommitManifestResponse
 import com.langchain.smith.models.commits.CommitRetrieveParams
 import com.langchain.smith.models.commits.CommitUpdateParams
@@ -51,10 +52,7 @@ class CommitServiceImpl internal constructor(private val clientOptions: ClientOp
         // post /api/v1/commits/{owner}/{repo}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(
-        params: CommitListParams,
-        requestOptions: RequestOptions,
-    ): CommitListResponse =
+    override fun list(params: CommitListParams, requestOptions: RequestOptions): CommitListPage =
         // get /api/v1/commits/{owner}/{repo}
         withRawResponse().list(params, requestOptions).parse()
 
@@ -145,13 +143,13 @@ class CommitServiceImpl internal constructor(private val clientOptions: ClientOp
             }
         }
 
-        private val listHandler: Handler<CommitListResponse> =
-            jsonHandler<CommitListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<CommitListPageResponse> =
+            jsonHandler<CommitListPageResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: CommitListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<CommitListResponse> {
+        ): HttpResponseFor<CommitListPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("repo", params.repo().getOrNull())
@@ -177,6 +175,13 @@ class CommitServiceImpl internal constructor(private val clientOptions: ClientOp
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        CommitListPage.builder()
+                            .service(CommitServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

@@ -6,7 +6,7 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.public_.PublicRetrieveFeedbacksPage
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import com.langchain.smith.services.blocking.public_.DatasetService
 import java.util.function.Consumer
@@ -28,7 +28,7 @@ interface PublicService {
     fun datasets(): DatasetService
 
     /** Read Shared Feedbacks */
-    fun retrieveFeedbacks(shareToken: String): List<FeedbackSchema> =
+    fun retrieveFeedbacks(shareToken: String): PublicRetrieveFeedbacksPage =
         retrieveFeedbacks(shareToken, PublicRetrieveFeedbacksParams.none())
 
     /** @see retrieveFeedbacks */
@@ -36,30 +36,30 @@ interface PublicService {
         shareToken: String,
         params: PublicRetrieveFeedbacksParams = PublicRetrieveFeedbacksParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<FeedbackSchema> =
+    ): PublicRetrieveFeedbacksPage =
         retrieveFeedbacks(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
     /** @see retrieveFeedbacks */
     fun retrieveFeedbacks(
         shareToken: String,
         params: PublicRetrieveFeedbacksParams = PublicRetrieveFeedbacksParams.none(),
-    ): List<FeedbackSchema> = retrieveFeedbacks(shareToken, params, RequestOptions.none())
+    ): PublicRetrieveFeedbacksPage = retrieveFeedbacks(shareToken, params, RequestOptions.none())
 
     /** @see retrieveFeedbacks */
     fun retrieveFeedbacks(
         params: PublicRetrieveFeedbacksParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<FeedbackSchema>
+    ): PublicRetrieveFeedbacksPage
 
     /** @see retrieveFeedbacks */
-    fun retrieveFeedbacks(params: PublicRetrieveFeedbacksParams): List<FeedbackSchema> =
+    fun retrieveFeedbacks(params: PublicRetrieveFeedbacksParams): PublicRetrieveFeedbacksPage =
         retrieveFeedbacks(params, RequestOptions.none())
 
     /** @see retrieveFeedbacks */
     fun retrieveFeedbacks(
         shareToken: String,
         requestOptions: RequestOptions,
-    ): List<FeedbackSchema> =
+    ): PublicRetrieveFeedbacksPage =
         retrieveFeedbacks(shareToken, PublicRetrieveFeedbacksParams.none(), requestOptions)
 
     /** A view of [PublicService] that provides access to raw HTTP responses for each method. */
@@ -79,7 +79,7 @@ interface PublicService {
          * otherwise the same as [PublicService.retrieveFeedbacks].
          */
         @MustBeClosed
-        fun retrieveFeedbacks(shareToken: String): HttpResponseFor<List<FeedbackSchema>> =
+        fun retrieveFeedbacks(shareToken: String): HttpResponseFor<PublicRetrieveFeedbacksPage> =
             retrieveFeedbacks(shareToken, PublicRetrieveFeedbacksParams.none())
 
         /** @see retrieveFeedbacks */
@@ -88,7 +88,7 @@ interface PublicService {
             shareToken: String,
             params: PublicRetrieveFeedbacksParams = PublicRetrieveFeedbacksParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<FeedbackSchema>> =
+        ): HttpResponseFor<PublicRetrieveFeedbacksPage> =
             retrieveFeedbacks(params.toBuilder().shareToken(shareToken).build(), requestOptions)
 
         /** @see retrieveFeedbacks */
@@ -96,7 +96,7 @@ interface PublicService {
         fun retrieveFeedbacks(
             shareToken: String,
             params: PublicRetrieveFeedbacksParams = PublicRetrieveFeedbacksParams.none(),
-        ): HttpResponseFor<List<FeedbackSchema>> =
+        ): HttpResponseFor<PublicRetrieveFeedbacksPage> =
             retrieveFeedbacks(shareToken, params, RequestOptions.none())
 
         /** @see retrieveFeedbacks */
@@ -104,20 +104,21 @@ interface PublicService {
         fun retrieveFeedbacks(
             params: PublicRetrieveFeedbacksParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<FeedbackSchema>>
+        ): HttpResponseFor<PublicRetrieveFeedbacksPage>
 
         /** @see retrieveFeedbacks */
         @MustBeClosed
         fun retrieveFeedbacks(
             params: PublicRetrieveFeedbacksParams
-        ): HttpResponseFor<List<FeedbackSchema>> = retrieveFeedbacks(params, RequestOptions.none())
+        ): HttpResponseFor<PublicRetrieveFeedbacksPage> =
+            retrieveFeedbacks(params, RequestOptions.none())
 
         /** @see retrieveFeedbacks */
         @MustBeClosed
         fun retrieveFeedbacks(
             shareToken: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<FeedbackSchema>> =
+        ): HttpResponseFor<PublicRetrieveFeedbacksPage> =
             retrieveFeedbacks(shareToken, PublicRetrieveFeedbacksParams.none(), requestOptions)
     }
 }

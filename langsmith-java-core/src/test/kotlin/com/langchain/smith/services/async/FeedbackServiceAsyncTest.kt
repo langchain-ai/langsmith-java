@@ -7,11 +7,8 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.feedback.AppFeedbackSource
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
-import com.langchain.smith.models.feedback.FeedbackLevel
-import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
-import com.langchain.smith.models.feedback.SourceType
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -151,28 +148,10 @@ internal class FeedbackServiceAsyncTest {
                 .build()
         val feedbackServiceAsync = client.feedback()
 
-        val feedbackSchemataFuture =
-            feedbackServiceAsync.list(
-                FeedbackListParams.builder()
-                    .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .hasComment(true)
-                    .hasScore(true)
-                    .includeUserNames(true)
-                    .addKey("string")
-                    .level(FeedbackLevel.RUN)
-                    .limit(1L)
-                    .maxCreatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .minCreatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .offset(0L)
-                    .addRun("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addSource(SourceType.API)
-                    .addUser("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val pageFuture = feedbackServiceAsync.list()
 
-        val feedbackSchemata = feedbackSchemataFuture.get()
-        feedbackSchemata.forEach { it.validate() }
+        val page = pageFuture.get()
+        page.items().forEach { it.validate() }
     }
 
     @Disabled("Prism tests are disabled")

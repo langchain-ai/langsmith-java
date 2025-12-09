@@ -14,8 +14,8 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueExportParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueExportResponse
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateResponse
+import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesPageAsync
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesParams
-import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveAnnotationQueuesResponse
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveQueuesParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveResponse
@@ -267,7 +267,7 @@ interface AnnotationQueueServiceAsync {
 
     /** Get Annotation Queues */
     fun retrieveAnnotationQueues():
-        CompletableFuture<List<AnnotationQueueRetrieveAnnotationQueuesResponse>> =
+        CompletableFuture<AnnotationQueueRetrieveAnnotationQueuesPageAsync> =
         retrieveAnnotationQueues(AnnotationQueueRetrieveAnnotationQueuesParams.none())
 
     /** @see retrieveAnnotationQueues */
@@ -275,19 +275,19 @@ interface AnnotationQueueServiceAsync {
         params: AnnotationQueueRetrieveAnnotationQueuesParams =
             AnnotationQueueRetrieveAnnotationQueuesParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<List<AnnotationQueueRetrieveAnnotationQueuesResponse>>
+    ): CompletableFuture<AnnotationQueueRetrieveAnnotationQueuesPageAsync>
 
     /** @see retrieveAnnotationQueues */
     fun retrieveAnnotationQueues(
         params: AnnotationQueueRetrieveAnnotationQueuesParams =
             AnnotationQueueRetrieveAnnotationQueuesParams.none()
-    ): CompletableFuture<List<AnnotationQueueRetrieveAnnotationQueuesResponse>> =
+    ): CompletableFuture<AnnotationQueueRetrieveAnnotationQueuesPageAsync> =
         retrieveAnnotationQueues(params, RequestOptions.none())
 
     /** @see retrieveAnnotationQueues */
     fun retrieveAnnotationQueues(
         requestOptions: RequestOptions
-    ): CompletableFuture<List<AnnotationQueueRetrieveAnnotationQueuesResponse>> =
+    ): CompletableFuture<AnnotationQueueRetrieveAnnotationQueuesPageAsync> =
         retrieveAnnotationQueues(
             AnnotationQueueRetrieveAnnotationQueuesParams.none(),
             requestOptions,
@@ -756,31 +756,27 @@ interface AnnotationQueueServiceAsync {
          * same as [AnnotationQueueServiceAsync.retrieveAnnotationQueues].
          */
         fun retrieveAnnotationQueues():
-            CompletableFuture<
-                HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>>
-            > = retrieveAnnotationQueues(AnnotationQueueRetrieveAnnotationQueuesParams.none())
+            CompletableFuture<HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPageAsync>> =
+            retrieveAnnotationQueues(AnnotationQueueRetrieveAnnotationQueuesParams.none())
 
         /** @see retrieveAnnotationQueues */
         fun retrieveAnnotationQueues(
             params: AnnotationQueueRetrieveAnnotationQueuesParams =
                 AnnotationQueueRetrieveAnnotationQueuesParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>>>
+        ): CompletableFuture<HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPageAsync>>
 
         /** @see retrieveAnnotationQueues */
         fun retrieveAnnotationQueues(
             params: AnnotationQueueRetrieveAnnotationQueuesParams =
                 AnnotationQueueRetrieveAnnotationQueuesParams.none()
-        ): CompletableFuture<
-            HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>>
-        > = retrieveAnnotationQueues(params, RequestOptions.none())
+        ): CompletableFuture<HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPageAsync>> =
+            retrieveAnnotationQueues(params, RequestOptions.none())
 
         /** @see retrieveAnnotationQueues */
         fun retrieveAnnotationQueues(
             requestOptions: RequestOptions
-        ): CompletableFuture<
-            HttpResponseFor<List<AnnotationQueueRetrieveAnnotationQueuesResponse>>
-        > =
+        ): CompletableFuture<HttpResponseFor<AnnotationQueueRetrieveAnnotationQueuesPageAsync>> =
             retrieveAnnotationQueues(
                 AnnotationQueueRetrieveAnnotationQueuesParams.none(),
                 requestOptions,

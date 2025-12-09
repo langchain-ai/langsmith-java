@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import java.time.OffsetDateTime
-import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -34,7 +33,11 @@ internal class InsightRetrieveJobResponseTest {
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .error("error")
                 .metadata(JsonValue.from(mapOf<String, Any>()))
-                .addShape(0L)
+                .shape(
+                    InsightRetrieveJobResponse.Shape.builder()
+                        .putAdditionalProperty("foo", JsonValue.from(0))
+                        .build()
+                )
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 
@@ -60,7 +63,12 @@ internal class InsightRetrieveJobResponseTest {
         assertThat(insightRetrieveJobResponse.error()).contains("error")
         assertThat(insightRetrieveJobResponse._metadata())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(insightRetrieveJobResponse.shape().getOrNull()).containsExactly(0L)
+        assertThat(insightRetrieveJobResponse.shape())
+            .contains(
+                InsightRetrieveJobResponse.Shape.builder()
+                    .putAdditionalProperty("foo", JsonValue.from(0))
+                    .build()
+            )
         assertThat(insightRetrieveJobResponse.startTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
     }
@@ -88,7 +96,11 @@ internal class InsightRetrieveJobResponseTest {
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .error("error")
                 .metadata(JsonValue.from(mapOf<String, Any>()))
-                .addShape(0L)
+                .shape(
+                    InsightRetrieveJobResponse.Shape.builder()
+                        .putAdditionalProperty("foo", JsonValue.from(0))
+                        .build()
+                )
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 

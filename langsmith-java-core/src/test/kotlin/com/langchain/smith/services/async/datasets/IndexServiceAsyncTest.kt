@@ -38,7 +38,7 @@ internal class IndexServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun list() {
+    fun retrieve() {
         val client =
             LangsmithOkHttpClientAsync.builder()
                 .baseUrl(TestServerExtension.BASE_URL)
@@ -48,10 +48,10 @@ internal class IndexServiceAsyncTest {
                 .build()
         val indexServiceAsync = client.datasets().index()
 
-        val indicesFuture = indexServiceAsync.list("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val indexFuture = indexServiceAsync.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
-        val indices = indicesFuture.get()
-        indices.validate()
+        val index = indexFuture.get()
+        index.validate()
     }
 
     @Disabled("Prism tests are disabled")

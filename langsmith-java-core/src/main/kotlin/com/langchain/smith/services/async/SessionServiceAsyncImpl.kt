@@ -21,6 +21,7 @@ import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionDashboardParams
 import com.langchain.smith.models.sessions.SessionDeleteParams
 import com.langchain.smith.models.sessions.SessionDeleteResponse
+import com.langchain.smith.models.sessions.SessionListPageAsync
 import com.langchain.smith.models.sessions.SessionListParams
 import com.langchain.smith.models.sessions.SessionRetrieveParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
@@ -72,7 +73,7 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun list(
         params: SessionListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<List<TracerSession>> =
+    ): CompletableFuture<SessionListPageAsync> =
         // get /api/v1/sessions
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -213,7 +214,7 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
         override fun list(
             params: SessionListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<List<TracerSession>>> {
+        ): CompletableFuture<HttpResponseFor<SessionListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -232,6 +233,14 @@ class SessionServiceAsyncImpl internal constructor(private val clientOptions: Cl
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }
                                 }
+                            }
+                            .let {
+                                SessionListPageAsync.builder()
+                                    .service(SessionServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .items(it)
+                                    .build()
                             }
                     }
                 }

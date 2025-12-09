@@ -16,6 +16,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.datasets.DatasetVersion
+import com.langchain.smith.models.datasets.versions.VersionListPage
 import com.langchain.smith.models.datasets.versions.VersionListParams
 import com.langchain.smith.models.datasets.versions.VersionRetrieveDiffParams
 import com.langchain.smith.models.datasets.versions.VersionRetrieveDiffResponse
@@ -34,10 +35,7 @@ class VersionServiceImpl internal constructor(private val clientOptions: ClientO
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): VersionService =
         VersionServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun list(
-        params: VersionListParams,
-        requestOptions: RequestOptions,
-    ): List<DatasetVersion> =
+    override fun list(params: VersionListParams, requestOptions: RequestOptions): VersionListPage =
         // get /api/v1/datasets/{dataset_id}/versions
         withRawResponse().list(params, requestOptions).parse()
 
@@ -67,7 +65,7 @@ class VersionServiceImpl internal constructor(private val clientOptions: ClientO
         override fun list(
             params: VersionListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<DatasetVersion>> {
+        ): HttpResponseFor<VersionListPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -87,6 +85,13 @@ class VersionServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        VersionListPage.builder()
+                            .service(VersionServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

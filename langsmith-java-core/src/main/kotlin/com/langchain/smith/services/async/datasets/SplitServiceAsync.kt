@@ -6,7 +6,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.datasets.splits.SplitCreateParams
-import com.langchain.smith.models.datasets.splits.SplitListParams
+import com.langchain.smith.models.datasets.splits.SplitRetrieveParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -47,36 +47,39 @@ interface SplitServiceAsync {
     ): CompletableFuture<List<String>>
 
     /** Get Dataset Splits */
-    fun list(datasetId: String): CompletableFuture<List<String>> =
-        list(datasetId, SplitListParams.none())
+    fun retrieve(datasetId: String): CompletableFuture<List<String>> =
+        retrieve(datasetId, SplitRetrieveParams.none())
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: SplitListParams = SplitListParams.none(),
+        params: SplitRetrieveParams = SplitRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<List<String>> =
-        list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+        retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see list */
-    fun list(
+    /** @see retrieve */
+    fun retrieve(
         datasetId: String,
-        params: SplitListParams = SplitListParams.none(),
-    ): CompletableFuture<List<String>> = list(datasetId, params, RequestOptions.none())
+        params: SplitRetrieveParams = SplitRetrieveParams.none(),
+    ): CompletableFuture<List<String>> = retrieve(datasetId, params, RequestOptions.none())
 
-    /** @see list */
-    fun list(
-        params: SplitListParams,
+    /** @see retrieve */
+    fun retrieve(
+        params: SplitRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<List<String>>
 
-    /** @see list */
-    fun list(params: SplitListParams): CompletableFuture<List<String>> =
-        list(params, RequestOptions.none())
+    /** @see retrieve */
+    fun retrieve(params: SplitRetrieveParams): CompletableFuture<List<String>> =
+        retrieve(params, RequestOptions.none())
 
-    /** @see list */
-    fun list(datasetId: String, requestOptions: RequestOptions): CompletableFuture<List<String>> =
-        list(datasetId, SplitListParams.none(), requestOptions)
+    /** @see retrieve */
+    fun retrieve(
+        datasetId: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<List<String>> =
+        retrieve(datasetId, SplitRetrieveParams.none(), requestOptions)
 
     /** A view of [SplitServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -120,41 +123,43 @@ interface SplitServiceAsync {
 
         /**
          * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/splits`, but is
-         * otherwise the same as [SplitServiceAsync.list].
+         * otherwise the same as [SplitServiceAsync.retrieve].
          */
-        fun list(datasetId: String): CompletableFuture<HttpResponseFor<List<String>>> =
-            list(datasetId, SplitListParams.none())
+        fun retrieve(datasetId: String): CompletableFuture<HttpResponseFor<List<String>>> =
+            retrieve(datasetId, SplitRetrieveParams.none())
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
-            params: SplitListParams = SplitListParams.none(),
+            params: SplitRetrieveParams = SplitRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<List<String>>> =
-            list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+            retrieve(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
-            params: SplitListParams = SplitListParams.none(),
+            params: SplitRetrieveParams = SplitRetrieveParams.none(),
         ): CompletableFuture<HttpResponseFor<List<String>>> =
-            list(datasetId, params, RequestOptions.none())
+            retrieve(datasetId, params, RequestOptions.none())
 
-        /** @see list */
-        fun list(
-            params: SplitListParams,
+        /** @see retrieve */
+        fun retrieve(
+            params: SplitRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<List<String>>>
 
-        /** @see list */
-        fun list(params: SplitListParams): CompletableFuture<HttpResponseFor<List<String>>> =
-            list(params, RequestOptions.none())
+        /** @see retrieve */
+        fun retrieve(
+            params: SplitRetrieveParams
+        ): CompletableFuture<HttpResponseFor<List<String>>> =
+            retrieve(params, RequestOptions.none())
 
-        /** @see list */
-        fun list(
+        /** @see retrieve */
+        fun retrieve(
             datasetId: String,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<List<String>>> =
-            list(datasetId, SplitListParams.none(), requestOptions)
+            retrieve(datasetId, SplitRetrieveParams.none(), requestOptions)
     }
 }

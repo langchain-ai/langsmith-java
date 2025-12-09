@@ -16,13 +16,16 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.feedback.FeedbackSchema
+import com.langchain.smith.models.public_.datasets.DatasetListComparativePage
+import com.langchain.smith.models.public_.datasets.DatasetListComparativeParams
+import com.langchain.smith.models.public_.datasets.DatasetListComparativeResponse
+import com.langchain.smith.models.public_.datasets.DatasetListFeedbackPage
+import com.langchain.smith.models.public_.datasets.DatasetListFeedbackParams
 import com.langchain.smith.models.public_.datasets.DatasetListParams
 import com.langchain.smith.models.public_.datasets.DatasetListResponse
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveComparativeResponse
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveFeedbackParams
+import com.langchain.smith.models.public_.datasets.DatasetListSessionsPage
+import com.langchain.smith.models.public_.datasets.DatasetListSessionsParams
 import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsBulkParams
-import com.langchain.smith.models.public_.datasets.DatasetRetrieveSessionsParams
 import com.langchain.smith.models.sessions.TracerSession
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -46,26 +49,26 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         // get /api/v1/public/{share_token}/datasets
         withRawResponse().list(params, requestOptions).parse()
 
-    override fun retrieveComparative(
-        params: DatasetRetrieveComparativeParams,
+    override fun listComparative(
+        params: DatasetListComparativeParams,
         requestOptions: RequestOptions,
-    ): List<DatasetRetrieveComparativeResponse> =
+    ): DatasetListComparativePage =
         // get /api/v1/public/{share_token}/datasets/comparative
-        withRawResponse().retrieveComparative(params, requestOptions).parse()
+        withRawResponse().listComparative(params, requestOptions).parse()
 
-    override fun retrieveFeedback(
-        params: DatasetRetrieveFeedbackParams,
+    override fun listFeedback(
+        params: DatasetListFeedbackParams,
         requestOptions: RequestOptions,
-    ): List<FeedbackSchema> =
+    ): DatasetListFeedbackPage =
         // get /api/v1/public/{share_token}/datasets/feedback
-        withRawResponse().retrieveFeedback(params, requestOptions).parse()
+        withRawResponse().listFeedback(params, requestOptions).parse()
 
-    override fun retrieveSessions(
-        params: DatasetRetrieveSessionsParams,
+    override fun listSessions(
+        params: DatasetListSessionsParams,
         requestOptions: RequestOptions,
-    ): List<TracerSession> =
+    ): DatasetListSessionsPage =
         // get /api/v1/public/{share_token}/datasets/sessions
-        withRawResponse().retrieveSessions(params, requestOptions).parse()
+        withRawResponse().listSessions(params, requestOptions).parse()
 
     override fun retrieveSessionsBulk(
         params: DatasetRetrieveSessionsBulkParams,
@@ -117,13 +120,13 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             }
         }
 
-        private val retrieveComparativeHandler: Handler<List<DatasetRetrieveComparativeResponse>> =
-            jsonHandler<List<DatasetRetrieveComparativeResponse>>(clientOptions.jsonMapper)
+        private val listComparativeHandler: Handler<List<DatasetListComparativeResponse>> =
+            jsonHandler<List<DatasetListComparativeResponse>>(clientOptions.jsonMapper)
 
-        override fun retrieveComparative(
-            params: DatasetRetrieveComparativeParams,
+        override fun listComparative(
+            params: DatasetListComparativeParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<DatasetRetrieveComparativeResponse>> {
+        ): HttpResponseFor<DatasetListComparativePage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -145,22 +148,29 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { retrieveComparativeHandler.handle(it) }
+                    .use { listComparativeHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
                     }
+                    .let {
+                        DatasetListComparativePage.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
+                    }
             }
         }
 
-        private val retrieveFeedbackHandler: Handler<List<FeedbackSchema>> =
+        private val listFeedbackHandler: Handler<List<FeedbackSchema>> =
             jsonHandler<List<FeedbackSchema>>(clientOptions.jsonMapper)
 
-        override fun retrieveFeedback(
-            params: DatasetRetrieveFeedbackParams,
+        override fun listFeedback(
+            params: DatasetListFeedbackParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<FeedbackSchema>> {
+        ): HttpResponseFor<DatasetListFeedbackPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -182,22 +192,29 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { retrieveFeedbackHandler.handle(it) }
+                    .use { listFeedbackHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
                     }
+                    .let {
+                        DatasetListFeedbackPage.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
+                    }
             }
         }
 
-        private val retrieveSessionsHandler: Handler<List<TracerSession>> =
+        private val listSessionsHandler: Handler<List<TracerSession>> =
             jsonHandler<List<TracerSession>>(clientOptions.jsonMapper)
 
-        override fun retrieveSessions(
-            params: DatasetRetrieveSessionsParams,
+        override fun listSessions(
+            params: DatasetListSessionsParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<TracerSession>> {
+        ): HttpResponseFor<DatasetListSessionsPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("shareToken", params.shareToken().getOrNull())
@@ -219,11 +236,18 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { retrieveSessionsHandler.handle(it) }
+                    .use { listSessionsHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        DatasetListSessionsPage.builder()
+                            .service(DatasetServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

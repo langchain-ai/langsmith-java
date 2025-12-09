@@ -10,6 +10,7 @@ import com.langchain.smith.models.feedback.FeedbackCreateParams
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import com.langchain.smith.models.feedback.FeedbackDeleteParams
 import com.langchain.smith.models.feedback.FeedbackDeleteResponse
+import com.langchain.smith.models.feedback.FeedbackListPage
 import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
@@ -117,20 +118,20 @@ interface FeedbackService {
         update(feedbackId, FeedbackUpdateParams.none(), requestOptions)
 
     /** List all Feedback by query params. */
-    fun list(): List<FeedbackSchema> = list(FeedbackListParams.none())
+    fun list(): FeedbackListPage = list(FeedbackListParams.none())
 
     /** @see list */
     fun list(
         params: FeedbackListParams = FeedbackListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<FeedbackSchema>
+    ): FeedbackListPage
 
     /** @see list */
-    fun list(params: FeedbackListParams = FeedbackListParams.none()): List<FeedbackSchema> =
+    fun list(params: FeedbackListParams = FeedbackListParams.none()): FeedbackListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): List<FeedbackSchema> =
+    fun list(requestOptions: RequestOptions): FeedbackListPage =
         list(FeedbackListParams.none(), requestOptions)
 
     /** Delete a feedback. */
@@ -301,24 +302,24 @@ interface FeedbackService {
          * [FeedbackService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<List<FeedbackSchema>> = list(FeedbackListParams.none())
+        fun list(): HttpResponseFor<FeedbackListPage> = list(FeedbackListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: FeedbackListParams = FeedbackListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<FeedbackSchema>>
+        ): HttpResponseFor<FeedbackListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: FeedbackListParams = FeedbackListParams.none()
-        ): HttpResponseFor<List<FeedbackSchema>> = list(params, RequestOptions.none())
+        ): HttpResponseFor<FeedbackListPage> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<List<FeedbackSchema>> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<FeedbackListPage> =
             list(FeedbackListParams.none(), requestOptions)
 
         /**

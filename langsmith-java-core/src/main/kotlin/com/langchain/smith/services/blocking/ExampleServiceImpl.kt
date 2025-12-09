@@ -23,6 +23,7 @@ import com.langchain.smith.models.examples.ExampleDeleteAllParams
 import com.langchain.smith.models.examples.ExampleDeleteAllResponse
 import com.langchain.smith.models.examples.ExampleDeleteParams
 import com.langchain.smith.models.examples.ExampleDeleteResponse
+import com.langchain.smith.models.examples.ExampleListPage
 import com.langchain.smith.models.examples.ExampleListParams
 import com.langchain.smith.models.examples.ExampleRetrieveCountParams
 import com.langchain.smith.models.examples.ExampleRetrieveParams
@@ -71,7 +72,7 @@ class ExampleServiceImpl internal constructor(private val clientOptions: ClientO
         // patch /api/v1/examples/{example_id}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(params: ExampleListParams, requestOptions: RequestOptions): List<Example> =
+    override fun list(params: ExampleListParams, requestOptions: RequestOptions): ExampleListPage =
         // get /api/v1/examples
         withRawResponse().list(params, requestOptions).parse()
 
@@ -222,7 +223,7 @@ class ExampleServiceImpl internal constructor(private val clientOptions: ClientO
         override fun list(
             params: ExampleListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<List<Example>> {
+        ): HttpResponseFor<ExampleListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -239,6 +240,13 @@ class ExampleServiceImpl internal constructor(private val clientOptions: ClientO
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }
                         }
+                    }
+                    .let {
+                        ExampleListPage.builder()
+                            .service(ExampleServiceImpl(clientOptions))
+                            .params(params)
+                            .items(it)
+                            .build()
                     }
             }
         }

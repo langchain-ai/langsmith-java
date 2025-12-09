@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.1.0-alpha.18 (2025-12-09)
+
+Full Changelog: [v0.1.0-alpha.17...v0.1.0-alpha.18](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.17...v0.1.0-alpha.18)
+
+### Features
+
+* **api:** add go target ([ff3556a](https://github.com/langchain-ai/langsmith-java/commit/ff3556a80ff2fc128c17d06cc78b366e27865239))
+* **api:** api update ([9a1ad24](https://github.com/langchain-ai/langsmith-java/commit/9a1ad247305770017095b760fa59c49883f6d204))
+* **api:** change paginated retrieve methods to list ([229ed3e](https://github.com/langchain-ai/langsmith-java/commit/229ed3e0214e1d73cd81e05e118f5f6c7be670a7))
+* **api:** pagination ([bd22dc6](https://github.com/langchain-ai/langsmith-java/commit/bd22dc6238f748edb0f0f70214f1a60b9087b525))
+* **api:** pagination read me ([eccc183](https://github.com/langchain-ai/langsmith-java/commit/eccc183d0ec53b8b06122598daadafd707e28be3))
+* **api:** readme example - change REPLACE_ME session_id to uuid ([a12609a](https://github.com/langchain-ai/langsmith-java/commit/a12609a69ae1d7d45a75f3032c74dc8a16c49242))
+* method counter in ci ([8bb864e](https://github.com/langchain-ai/langsmith-java/commit/8bb864eaeccd46cb8153836e7b25ccfb1ba79838))
+
+
+### Bug Fixes
+
+* formatting error in record experiment example ([#81](https://github.com/langchain-ai/langsmith-java/issues/81)) ([243e318](https://github.com/langchain-ai/langsmith-java/commit/243e318f8defffda4b4116a8e2728c75f341dea7))
+
+
+### Chores
+
+* **internal:** version bump ([dcfaf78](https://github.com/langchain-ai/langsmith-java/commit/dcfaf785e20ada8e5c967a324aa23c9aa008372c))
+
 ## 0.1.0-alpha.17 (2025-11-20)
 
 Full Changelog: [v0.1.0-alpha.16...v0.1.0-alpha.17](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.16...v0.1.0-alpha.17)

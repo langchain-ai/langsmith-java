@@ -12,6 +12,7 @@ import com.langchain.smith.models.examples.ExampleDeleteAllParams
 import com.langchain.smith.models.examples.ExampleDeleteAllResponse
 import com.langchain.smith.models.examples.ExampleDeleteParams
 import com.langchain.smith.models.examples.ExampleDeleteResponse
+import com.langchain.smith.models.examples.ExampleListPage
 import com.langchain.smith.models.examples.ExampleListParams
 import com.langchain.smith.models.examples.ExampleRetrieveCountParams
 import com.langchain.smith.models.examples.ExampleRetrieveParams
@@ -111,20 +112,20 @@ interface ExampleService {
         update(exampleId, ExampleUpdateParams.none(), requestOptions)
 
     /** Get all examples by query params */
-    fun list(): List<Example> = list(ExampleListParams.none())
+    fun list(): ExampleListPage = list(ExampleListParams.none())
 
     /** @see list */
     fun list(
         params: ExampleListParams = ExampleListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<Example>
+    ): ExampleListPage
 
     /** @see list */
-    fun list(params: ExampleListParams = ExampleListParams.none()): List<Example> =
+    fun list(params: ExampleListParams = ExampleListParams.none()): ExampleListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): List<Example> =
+    fun list(requestOptions: RequestOptions): ExampleListPage =
         list(ExampleListParams.none(), requestOptions)
 
     /** Soft delete an example. Only deletes the example in the 'latest' version of the dataset. */
@@ -332,24 +333,24 @@ interface ExampleService {
          * Returns a raw HTTP response for `get /api/v1/examples`, but is otherwise the same as
          * [ExampleService.list].
          */
-        @MustBeClosed fun list(): HttpResponseFor<List<Example>> = list(ExampleListParams.none())
+        @MustBeClosed fun list(): HttpResponseFor<ExampleListPage> = list(ExampleListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: ExampleListParams = ExampleListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<Example>>
+        ): HttpResponseFor<ExampleListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: ExampleListParams = ExampleListParams.none()
-        ): HttpResponseFor<List<Example>> = list(params, RequestOptions.none())
+        ): HttpResponseFor<ExampleListPage> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<List<Example>> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<ExampleListPage> =
             list(ExampleListParams.none(), requestOptions)
 
         /**

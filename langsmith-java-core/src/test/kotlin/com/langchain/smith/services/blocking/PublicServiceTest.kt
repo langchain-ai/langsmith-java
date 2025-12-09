@@ -4,9 +4,6 @@ package com.langchain.smith.services.blocking
 
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.models.feedback.FeedbackLevel
-import com.langchain.smith.models.feedback.SourceType
-import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -26,23 +23,8 @@ internal class PublicServiceTest {
                 .build()
         val publicService = client.public_()
 
-        val feedbackSchemata =
-            publicService.retrieveFeedbacks(
-                PublicRetrieveFeedbacksParams.builder()
-                    .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .hasComment(true)
-                    .hasScore(true)
-                    .addKey("string")
-                    .level(FeedbackLevel.RUN)
-                    .limit(1L)
-                    .offset(0L)
-                    .addRun("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .addSource(SourceType.API)
-                    .addUser("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        val page = publicService.retrieveFeedbacks("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
-        feedbackSchemata.forEach { it.validate() }
+        page.items().forEach { it.validate() }
     }
 }
