@@ -37,40 +37,6 @@ internal class IndexServiceTest {
 
     @Disabled("Prism tests are disabled")
     @Test
-    fun retrieve() {
-        val client =
-            LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val indexService = client.datasets().index()
-
-        val index = indexService.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-
-        index.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
-    fun deleteAll() {
-        val client =
-            LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val indexService = client.datasets().index()
-
-        val response = indexService.deleteAll("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-
-        response.validate()
-    }
-
-    @Disabled("Prism tests are disabled")
-    @Test
     fun sync() {
         val client =
             LangsmithOkHttpClient.builder()
