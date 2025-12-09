@@ -24,6 +24,8 @@ import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
+import com.langchain.smith.services.blocking.feedback.ConfigService
+import com.langchain.smith.services.blocking.feedback.ConfigServiceImpl
 import com.langchain.smith.services.blocking.feedback.TokenService
 import com.langchain.smith.services.blocking.feedback.TokenServiceImpl
 import java.util.function.Consumer
@@ -38,12 +40,16 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
 
     private val tokens: TokenService by lazy { TokenServiceImpl(clientOptions) }
 
+    private val configs: ConfigService by lazy { ConfigServiceImpl(clientOptions) }
+
     override fun withRawResponse(): FeedbackService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): FeedbackService =
         FeedbackServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun tokens(): TokenService = tokens
+
+    override fun configs(): ConfigService = configs
 
     override fun create(
         params: FeedbackCreateParams,
@@ -90,6 +96,10 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
             TokenServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val configs: ConfigService.WithRawResponse by lazy {
+            ConfigServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): FeedbackService.WithRawResponse =
@@ -98,6 +108,8 @@ class FeedbackServiceImpl internal constructor(private val clientOptions: Client
             )
 
         override fun tokens(): TokenService.WithRawResponse = tokens
+
+        override fun configs(): ConfigService.WithRawResponse = configs
 
         private val createHandler: Handler<FeedbackSchema> =
             jsonHandler<FeedbackSchema>(clientOptions.jsonMapper)
