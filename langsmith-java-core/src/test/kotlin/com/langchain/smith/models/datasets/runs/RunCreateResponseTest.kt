@@ -89,6 +89,11 @@ internal class RunCreateResponseTest {
                             .lastQueuedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .manifestId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .manifestS3Id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .addMessage(
+                                ExampleWithRuns.Run.Message.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
                             .outputs(
                                 ExampleWithRuns.Run.Outputs.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -244,6 +249,11 @@ internal class RunCreateResponseTest {
                                 .lastQueuedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .manifestId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .manifestS3Id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .addMessage(
+                                    ExampleWithRuns.Run.Message.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
                                 .outputs(
                                     ExampleWithRuns.Run.Outputs.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
