@@ -14,6 +14,7 @@ import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
+import com.langchain.smith.services.async.feedback.ConfigServiceAsync
 import com.langchain.smith.services.async.feedback.TokenServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -33,6 +34,8 @@ interface FeedbackServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): FeedbackServiceAsync
 
     fun tokens(): TokenServiceAsync
+
+    fun configs(): ConfigServiceAsync
 
     /** Create a new feedback. */
     fun create(params: FeedbackCreateParams): CompletableFuture<FeedbackSchema> =
@@ -196,6 +199,8 @@ interface FeedbackServiceAsync {
         ): FeedbackServiceAsync.WithRawResponse
 
         fun tokens(): TokenServiceAsync.WithRawResponse
+
+        fun configs(): ConfigServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/feedback`, but is otherwise the same as

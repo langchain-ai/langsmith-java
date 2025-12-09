@@ -24,6 +24,8 @@ import com.langchain.smith.models.feedback.FeedbackListParams
 import com.langchain.smith.models.feedback.FeedbackRetrieveParams
 import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.feedback.FeedbackUpdateParams
+import com.langchain.smith.services.async.feedback.ConfigServiceAsync
+import com.langchain.smith.services.async.feedback.ConfigServiceAsyncImpl
 import com.langchain.smith.services.async.feedback.TokenServiceAsync
 import com.langchain.smith.services.async.feedback.TokenServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
@@ -39,12 +41,16 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
 
     private val tokens: TokenServiceAsync by lazy { TokenServiceAsyncImpl(clientOptions) }
 
+    private val configs: ConfigServiceAsync by lazy { ConfigServiceAsyncImpl(clientOptions) }
+
     override fun withRawResponse(): FeedbackServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): FeedbackServiceAsync =
         FeedbackServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun tokens(): TokenServiceAsync = tokens
+
+    override fun configs(): ConfigServiceAsync = configs
 
     override fun create(
         params: FeedbackCreateParams,
@@ -91,6 +97,10 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
             TokenServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val configs: ConfigServiceAsync.WithRawResponse by lazy {
+            ConfigServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): FeedbackServiceAsync.WithRawResponse =
@@ -99,6 +109,8 @@ class FeedbackServiceAsyncImpl internal constructor(private val clientOptions: C
             )
 
         override fun tokens(): TokenServiceAsync.WithRawResponse = tokens
+
+        override fun configs(): ConfigServiceAsync.WithRawResponse = configs
 
         private val createHandler: Handler<FeedbackSchema> =
             jsonHandler<FeedbackSchema>(clientOptions.jsonMapper)
