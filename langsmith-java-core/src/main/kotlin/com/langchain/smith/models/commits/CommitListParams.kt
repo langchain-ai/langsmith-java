@@ -14,12 +14,14 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Lists all commits for a repository with pagination support. This endpoint supports both
  * authenticated and unauthenticated access. Authenticated users can access private repos, while
- * unauthenticated users can only access public repos.
+ * unauthenticated users can only access public repos. The include_stats parameter controls whether
+ * download and view statistics are computed (defaults to true).
  */
 class CommitListParams
 private constructor(
     private val owner: JsonValue,
     private val repo: JsonValue?,
+    private val includeStats: Boolean?,
     private val limit: Long?,
     private val offset: Long?,
     private val additionalHeaders: Headers,
@@ -29,6 +31,9 @@ private constructor(
     fun owner(): JsonValue = owner
 
     fun repo(): Optional<JsonValue> = Optional.ofNullable(repo)
+
+    /** IncludeStats determines whether to compute num_downloads and num_views */
+    fun includeStats(): Optional<Boolean> = Optional.ofNullable(includeStats)
 
     /** Limit is the pagination limit */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
@@ -62,6 +67,7 @@ private constructor(
 
         private var owner: JsonValue? = null
         private var repo: JsonValue? = null
+        private var includeStats: Boolean? = null
         private var limit: Long? = null
         private var offset: Long? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
@@ -71,6 +77,7 @@ private constructor(
         internal fun from(commitListParams: CommitListParams) = apply {
             owner = commitListParams.owner
             repo = commitListParams.repo
+            includeStats = commitListParams.includeStats
             limit = commitListParams.limit
             offset = commitListParams.offset
             additionalHeaders = commitListParams.additionalHeaders.toBuilder()
@@ -83,6 +90,19 @@ private constructor(
 
         /** Alias for calling [Builder.repo] with `repo.orElse(null)`. */
         fun repo(repo: Optional<JsonValue>) = repo(repo.getOrNull())
+
+        /** IncludeStats determines whether to compute num_downloads and num_views */
+        fun includeStats(includeStats: Boolean?) = apply { this.includeStats = includeStats }
+
+        /**
+         * Alias for [Builder.includeStats].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includeStats(includeStats: Boolean) = includeStats(includeStats as Boolean?)
+
+        /** Alias for calling [Builder.includeStats] with `includeStats.orElse(null)`. */
+        fun includeStats(includeStats: Optional<Boolean>) = includeStats(includeStats.getOrNull())
 
         /** Limit is the pagination limit */
         fun limit(limit: Long?) = apply { this.limit = limit }
@@ -224,6 +244,7 @@ private constructor(
             CommitListParams(
                 checkRequired("owner", owner),
                 repo,
+                includeStats,
                 limit,
                 offset,
                 additionalHeaders.build(),
@@ -243,6 +264,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                includeStats?.let { put("include_stats", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 offset?.let { put("offset", it.toString()) }
                 putAll(additionalQueryParams)
@@ -257,6 +279,7 @@ private constructor(
         return other is CommitListParams &&
             owner == other.owner &&
             repo == other.repo &&
+            includeStats == other.includeStats &&
             limit == other.limit &&
             offset == other.offset &&
             additionalHeaders == other.additionalHeaders &&
@@ -264,8 +287,16 @@ private constructor(
     }
 
     override fun hashCode(): Int =
-        Objects.hash(owner, repo, limit, offset, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            owner,
+            repo,
+            includeStats,
+            limit,
+            offset,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "CommitListParams{owner=$owner, repo=$repo, limit=$limit, offset=$offset, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CommitListParams{owner=$owner, repo=$repo, includeStats=$includeStats, limit=$limit, offset=$offset, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
