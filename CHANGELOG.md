@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.1.0-alpha.19 (2025-12-10)
+
+Full Changelog: [v0.1.0-alpha.18...v0.1.0-alpha.19](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.18...v0.1.0-alpha.19)
+
+### Features
+
+* **api:** api update ([c0d8bec](https://github.com/langchain-ai/langsmith-java/commit/c0d8bec69c14c9300a39737092b4a29210d4df59))
+* **api:** api update ([9a9d362](https://github.com/langchain-ai/langsmith-java/commit/9a9d362b6e509abc8257c4ff8d5f11911f3ca4c0))
+* **api:** api update ([e27bc6f](https://github.com/langchain-ai/langsmith-java/commit/e27bc6fd053032d0597a5dc4f4d636bada559748))
+* **api:** api update ([ae353d7](https://github.com/langchain-ai/langsmith-java/commit/ae353d775aa03a2f820c9d065f79528401963c2c))
+* **api:** api update ([fdb6021](https://github.com/langchain-ai/langsmith-java/commit/fdb6021eb3de21d7e3930dfe9f99a943100118b2))
+* **api:** api update ([da999c0](https://github.com/langchain-ai/langsmith-java/commit/da999c02267725a5d5c4fdbf17f9482ad5df638e))
+* **api:** api update ([daa7b07](https://github.com/langchain-ai/langsmith-java/commit/daa7b07fa755ad0d1feb6f6b3370c3bb5ff3c049))
+* **api:** api update ([4985a65](https://github.com/langchain-ai/langsmith-java/commit/4985a651acb592b38f4d94afda202a4ecddb6be2))
+* **api:** manual updates ([9ff3976](https://github.com/langchain-ai/langsmith-java/commit/9ff39760388f6cf4e68945ce536a0dd92d4f84bf))
+* **api:** manual updates ([aa705c4](https://github.com/langchain-ai/langsmith-java/commit/aa705c489b4a64d2815c5ceacde5161c7518afac))
+
+
+### Bug Fixes
+
+* **client:** cancel okhttp call when future cancelled ([89ab779](https://github.com/langchain-ai/langsmith-java/commit/89ab7791a8e27347610bbecea44867c5b991073b))
+* fix trace input and output ([#83](https://github.com/langchain-ai/langsmith-java/issues/83)) ([7a64410](https://github.com/langchain-ai/langsmith-java/commit/7a644105f69db9d10064ba38c18ee294fc62f360))
+
+
+### Chores
+
+* **api:** delete index methods ([7e90f5f](https://github.com/langchain-ai/langsmith-java/commit/7e90f5f70e263458f594ce92ae9a7b1a29e81f85))
+
+
+### Documentation
+
+* remove `$` for better copy-pasteabality ([4163726](https://github.com/langchain-ai/langsmith-java/commit/4163726d6d496289f025006b9a03363caeb879c7))
+
 ## 0.1.0-alpha.18 (2025-12-09)
 
 Full Changelog: [v0.1.0-alpha.17...v0.1.0-alpha.18](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.17...v0.1.0-alpha.18)
