@@ -20,8 +20,10 @@ import com.openai.models.chat.completions.ChatCompletionTool;
 import com.openai.models.chat.completions.ChatCompletionToolChoiceOption;
 import com.openai.models.chat.completions.ChatCompletionToolMessageParam;
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ import java.util.Map;
  *   <li>Configuring OpenTelemetry to send traces to LangSmith</li>
  *   <li>Using the wrapped OpenAI client for automatic tracing</li>
  *   <li>Making actual API calls to OpenAI with tool definitions</li>
- *   <li>Automatic tool call span creation</li>
+ *   <li>Manual tool execution span creation with input/output</li>
  *   <li>Multi-turn conversations with tool execution</li>
  *   <li>Viewing rich traces in the LangSmith dashboard</li>
  * </ul>
@@ -131,9 +133,10 @@ public class OtelOpenAIExample {
             parametersJson.put("required", JsonValue.from(Arrays.asList("location")));
 
             // Create initial request with tool definitions
+            String initialUserMessage = "What is the capital of France and what's the current weather there?";
             ChatCompletionCreateParams params = ChatCompletionCreateParams.builder()
                     .model(ChatModel.GPT_4O_MINI)
-                    .addUserMessage("What is the capital of France and what's the current weather there?")
+                    .addUserMessage(initialUserMessage)
                     .tools(Arrays.asList(ChatCompletionTool.ofFunction(ChatCompletionFunctionTool.builder()
                             .function(FunctionDefinition.builder()
                                     .name("get_weather")
@@ -146,6 +149,9 @@ public class OtelOpenAIExample {
                     .toolChoice(
                             ChatCompletionToolChoiceOption.Companion.ofAuto(ChatCompletionToolChoiceOption.Auto.AUTO))
                     .build();
+
+            // Set input on workflow span
+            workflowSpan.setAttribute(AttributeKey.stringKey("gen_ai.prompt"), initialUserMessage);
 
             System.out.println("\n1. Making initial API call with tool definitions...");
             ChatCompletion completion = client.chat().completions().create(params);
@@ -177,12 +183,37 @@ public class OtelOpenAIExample {
                         ChatCompletionMessageFunctionToolCall functionToolCall = toolCall.asFunction();
                         String toolName = functionToolCall.function().name();
                         String toolArguments = functionToolCall.function().arguments();
+                        String toolCallId = functionToolCall.id();
 
                         System.out.println("   - Tool: " + toolName + " | Args: " + toolArguments);
 
-                        // Execute the tool (simulated weather API)
-                        String toolResult = executeTool(toolName, toolArguments);
-                        System.out.println("   - Result: " + toolResult);
+                        // Create a tool execution span to capture the tool execution and result
+                        Span toolExecutionSpan = tracer.spanBuilder("tool_execution " + toolName)
+                                .setSpanKind(SpanKind.INTERNAL)
+                                .setAttribute(AttributeKey.stringKey("gen_ai.operation.name"), "tool")
+                                .setAttribute(AttributeKey.stringKey("gen_ai.tool.name"), toolName)
+                                .setAttribute(AttributeKey.stringKey("gen_ai.tool.call.id"), toolCallId)
+                                .setAttribute(AttributeKey.stringKey("gen_ai.tool.arguments"), toolArguments)
+                                .setAttribute(AttributeKey.stringKey("langsmith.span.kind"), "tool")
+                                .setAttribute(AttributeKey.stringKey("gen_ai.prompt"), toolArguments)
+                                .startSpan();
+
+                        String toolResult;
+                        try (Scope toolExecutionScope = toolExecutionSpan.makeCurrent()) {
+                            // Execute the tool (simulated weather API)
+                            toolResult = executeTool(toolName, toolArguments);
+                            System.out.println("   - Result: " + toolResult);
+
+                            // Set tool execution result as output
+                            toolExecutionSpan.setAttribute(AttributeKey.stringKey("gen_ai.completion"), toolResult);
+                            toolExecutionSpan.setStatus(StatusCode.OK);
+                        } catch (Exception e) {
+                            toolExecutionSpan.recordException(e);
+                            toolExecutionSpan.setStatus(StatusCode.ERROR);
+                            toolResult = "{\"error\": \"" + e.getMessage() + "\"}";
+                        } finally {
+                            toolExecutionSpan.end();
+                        }
 
                         // Add tool result message
                         messages.add(ChatCompletionMessageParam.ofTool(ChatCompletionToolMessageParam.builder()
@@ -219,14 +250,15 @@ public class OtelOpenAIExample {
                 System.out.println("  Total:  " + usage.totalTokens());
             });
 
-            workflowSpan.setAttribute("response.content", finalContent);
-            workflowSpan.setStatus(io.opentelemetry.api.trace.StatusCode.OK);
+            // Set output on workflow span
+            workflowSpan.setAttribute(AttributeKey.stringKey("gen_ai.completion"), finalContent);
+            workflowSpan.setStatus(StatusCode.OK);
 
         } catch (Exception e) {
             System.err.println("\n✗ Error during API call: " + e.getMessage());
             e.printStackTrace();
             workflowSpan.recordException(e);
-            workflowSpan.setStatus(io.opentelemetry.api.trace.StatusCode.ERROR);
+            workflowSpan.setStatus(StatusCode.ERROR);
         } finally {
             workflowSpan.end();
         }
@@ -250,8 +282,8 @@ public class OtelOpenAIExample {
         System.out.println(SEPARATOR);
         System.out.println("\nNote: Check the trace waterfall in LangSmith UI to see:");
         System.out.println("  - Parent workflow span (chain)");
-        System.out.println("  - Child LLM spans (automatically created)");
-        System.out.println("  - Tool call spans (automatically created by wrapper)");
+        System.out.println("  - Child LLM spans (automatically created by wrapper)");
+        System.out.println("  - Tool execution spans (created when tools are executed)");
     }
 
     /**

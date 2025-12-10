@@ -111,6 +111,12 @@ class WrappedChatService implements ChatService {
                 String inputMessagesJson = formatInputMessages(params);
                 TracingUtils.setInputMessages(span, inputMessagesJson);
 
+                // Extract prompt (first user message) for gen_ai.prompt attribute
+                String prompt = extractPromptFromParams(params);
+                if (prompt != null && !prompt.isEmpty()) {
+                    span.setAttribute(io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.prompt"), prompt);
+                }
+
                 ChatCompletion result;
                 // If requestOptions is null, use the single-parameter version
                 if (requestOptions == null) {
@@ -130,6 +136,12 @@ class WrappedChatService implements ChatService {
                 String outputMessagesJson = formatOutputMessages(result);
                 TracingUtils.setOutputMessages(span, outputMessagesJson);
 
+                // Extract completion (assistant response) for gen_ai.completion attribute
+                String completion = extractCompletionFromResult(result);
+                if (completion != null && !completion.isEmpty()) {
+                    span.setAttribute(io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.completion"), completion);
+                }
+
                 // Extract usage information from result
                 result.usage().ifPresent(usage -> {
                     TracingUtils.setResponseAttributes(
@@ -137,8 +149,9 @@ class WrappedChatService implements ChatService {
                                     usage.totalTokens());
                 });
 
-                // Create tool call spans for any tool calls in the response
-                createToolCallSpans(result, span);
+                // Tool call spans are not created automatically here.
+                // Users should create tool execution spans manually when executing tools
+                // to capture both input (arguments) and output (result).
 
                 return result;
             } catch (Exception e) {
@@ -530,101 +543,6 @@ class WrappedChatService implements ChatService {
         }
 
         /**
-         * Creates tool call spans for any tool calls detected in the chat completion
-         * response.
-         *
-         * @param completion the chat completion response
-         * @param parentSpan the parent span (the chat completion span)
-         */
-        private void createToolCallSpans(ChatCompletion completion, Span parentSpan) {
-            if (completion.choices() == null || completion.choices().isEmpty()) {
-                return;
-            }
-
-            for (com.openai.models.chat.completions.ChatCompletion.Choice choice : completion.choices()) {
-                com.openai.models.chat.completions.ChatCompletionMessage message = choice.message();
-
-                // Check if message has tool calls
-                java.util.Optional<java.util.List<ChatCompletionMessageToolCall>> toolCallsOpt = message.toolCalls();
-                if (toolCallsOpt.isPresent()) {
-                    java.util.List<ChatCompletionMessageToolCall> toolCalls = toolCallsOpt.get();
-                    for (ChatCompletionMessageToolCall toolCall : toolCalls) {
-                        // Check if it's a function tool call
-                        if (toolCall.isFunction()) {
-                            ChatCompletionMessageFunctionToolCall functionToolCall = toolCall.asFunction();
-                            createToolCallSpan(functionToolCall, parentSpan);
-                        }
-                        // Note: Custom tool calls are not yet supported
-                    }
-                }
-            }
-        }
-
-        /**
-         * Creates a single tool call span from a function tool call object.
-         *
-         * @param functionToolCall the function tool call object from the OpenAI SDK
-         * @param parentSpan       the parent span (the chat completion span)
-         */
-        private void createToolCallSpan(ChatCompletionMessageFunctionToolCall functionToolCall, Span parentSpan) {
-            try {
-                io.opentelemetry.api.OpenTelemetry openTelemetry = io.opentelemetry.api.GlobalOpenTelemetry.get();
-                io.opentelemetry.api.trace.Tracer tracer = openTelemetry.getTracer("langsmith-java-otel-wrappers");
-
-                // Extract tool call information directly from the SDK objects
-                String toolCallId = functionToolCall.id();
-                com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall.Function function =
-                        functionToolCall.function();
-                String toolName = function.name();
-                String toolArguments = function.arguments();
-
-                // Create span name
-                String spanName = toolName != null ? "tool_call " + toolName : "tool_call";
-
-                // Create tool call span as a child of the parent span
-                io.opentelemetry.api.trace.Span toolCallSpan = tracer.spanBuilder(spanName)
-                        .setSpanKind(io.opentelemetry.api.trace.SpanKind.CLIENT)
-                        .setAttribute("gen_ai.operation.name", "tool_call")
-                        .setAttribute("langsmith.span.kind", "tool")
-                        .setAttribute("gen_ai.system", "openai")
-                        .setAttribute("gen_ai.provider.name", "openai")
-                        .startSpan();
-
-                try (io.opentelemetry.context.Scope toolScope = toolCallSpan.makeCurrent()) {
-                    // Set tool call attributes
-                    if (toolCallId != null) {
-                        toolCallSpan.setAttribute("gen_ai.tool.call.id", toolCallId);
-                    }
-                    if (toolName != null) {
-                        toolCallSpan.setAttribute("gen_ai.tool.name", toolName);
-                        toolCallSpan.setAttribute("langsmith.trace.name", "Tool Call: " + toolName);
-                    }
-                    if (toolArguments != null && !toolArguments.isEmpty()) {
-                        toolCallSpan.setAttribute("gen_ai.tool.arguments", toolArguments);
-                    }
-
-                    if (logger.isDebugEnabled()) {
-                        logger.debug(
-                                "[WrappedChatService] Created tool call span: {}, tool={}, arguments={}, parent={}",
-                                toolCallSpan.getSpanContext().getSpanId(),
-                                toolName,
-                                toolArguments,
-                                parentSpan.getSpanContext().getSpanId());
-                    }
-
-                    // Note: Tool call result would be set when the tool is actually executed
-                    // This span represents the tool call request, not the execution
-                } finally {
-                    toolCallSpan.end();
-                }
-            } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("[WrappedChatService] Error creating tool call span", e);
-                }
-            }
-        }
-
-        /**
          * Formats output messages from ChatCompletion as a JSON array string.
          */
         private String formatOutputMessages(ChatCompletion completion) {
@@ -653,11 +571,102 @@ class WrappedChatService implements ChatService {
                             .append("\"");
                 });
 
+                // Add tool_calls if present
+                message.toolCalls().ifPresent(toolCalls -> {
+                    if (!toolCalls.isEmpty()) {
+                        json.append(",\"tool_calls\":[");
+                        boolean firstToolCall = true;
+                        for (ChatCompletionMessageToolCall toolCall : toolCalls) {
+                            // Only process function tool calls (other types not yet supported)
+                            if (!toolCall.isFunction()) {
+                                continue;
+                            }
+
+                            if (!firstToolCall) {
+                                json.append(",");
+                            }
+                            firstToolCall = false;
+
+                            ChatCompletionMessageFunctionToolCall functionToolCall = toolCall.asFunction();
+                            json.append("{");
+                            json.append("\"id\":\"").append(TracingUtils.escapeJsonString(functionToolCall.id())).append("\"");
+                            json.append(",\"type\":\"function\"");
+
+                            com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall.Function function =
+                                    functionToolCall.function();
+                            json.append(",\"function\":{");
+                            json.append("\"name\":\"")
+                                    .append(TracingUtils.escapeJsonString(function.name()))
+                                    .append("\"");
+                            json.append(",\"arguments\":\"")
+                                    .append(TracingUtils.escapeJsonString(function.arguments()))
+                                    .append("\"");
+                            json.append("}");
+                            json.append("}");
+                        }
+                        json.append("]");
+                    }
+                });
+
                 json.append("}");
             }
             json.append("]");
 
             return json.toString();
+        }
+
+        /**
+         * Extracts the prompt text from the first user message in the params.
+         *
+         * @param params the chat completion create params
+         * @return the prompt text, or null if not found
+         */
+        private String extractPromptFromParams(ChatCompletionCreateParams params) {
+            if (params.messages().isEmpty()) {
+                return null;
+            }
+
+            // Find the first user message
+            for (com.openai.models.chat.completions.ChatCompletionMessageParam messageParam : params.messages()) {
+                if (messageParam.isUser()) {
+                    com.openai.models.chat.completions.ChatCompletionUserMessageParam userMessage =
+                            messageParam.asUser();
+                    // Try to get content from the user message
+                    if (userMessage.content() != null) {
+                        // Content can be a string or a list of content parts
+                        Object content = userMessage.content();
+                        if (content instanceof String) {
+                            return (String) content;
+                        } else if (content instanceof java.util.List) {
+                            @SuppressWarnings("unchecked")
+                            java.util.List<?> contentList = (java.util.List<?>) content;
+                            if (!contentList.isEmpty()) {
+                                Object firstContent = contentList.get(0);
+                                if (firstContent instanceof String) {
+                                    return (String) firstContent;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Extracts the completion text from the assistant message in the result.
+         *
+         * @param result the chat completion result
+         * @return the completion text, or null if not found
+         */
+        private String extractCompletionFromResult(ChatCompletion result) {
+            if (result.choices() == null || result.choices().isEmpty()) {
+                return null;
+            }
+
+            com.openai.models.chat.completions.ChatCompletionMessage message =
+                    result.choices().get(0).message();
+            return message.content().orElse(null);
         }
 
         @Override
