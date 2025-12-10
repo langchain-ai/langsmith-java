@@ -2,11 +2,15 @@
 
 package com.langchain.smith.models.datasets
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.langchain.smith.core.Enum
+import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -16,6 +20,7 @@ class DatasetListParams
 private constructor(
     private val id: List<String>?,
     private val datatype: Datatype?,
+    private val exclude: List<Exclude>?,
     private val excludeCorrectionsDatasets: Boolean?,
     private val limit: Long?,
     private val metadata: String?,
@@ -33,6 +38,8 @@ private constructor(
 
     /** Enum for dataset data types. */
     fun datatype(): Optional<Datatype> = Optional.ofNullable(datatype)
+
+    fun exclude(): Optional<List<Exclude>> = Optional.ofNullable(exclude)
 
     fun excludeCorrectionsDatasets(): Optional<Boolean> =
         Optional.ofNullable(excludeCorrectionsDatasets)
@@ -75,6 +82,7 @@ private constructor(
 
         private var id: MutableList<String>? = null
         private var datatype: Datatype? = null
+        private var exclude: MutableList<Exclude>? = null
         private var excludeCorrectionsDatasets: Boolean? = null
         private var limit: Long? = null
         private var metadata: String? = null
@@ -91,6 +99,7 @@ private constructor(
         internal fun from(datasetListParams: DatasetListParams) = apply {
             id = datasetListParams.id?.toMutableList()
             datatype = datasetListParams.datatype
+            exclude = datasetListParams.exclude?.toMutableList()
             excludeCorrectionsDatasets = datasetListParams.excludeCorrectionsDatasets
             limit = datasetListParams.limit
             metadata = datasetListParams.metadata
@@ -128,6 +137,20 @@ private constructor(
 
         /** Alias for calling [datatype] with `Datatype.ofDataType(dataType)`. */
         fun datatype(dataType: DataType) = datatype(Datatype.ofDataType(dataType))
+
+        fun exclude(exclude: List<Exclude>?) = apply { this.exclude = exclude?.toMutableList() }
+
+        /** Alias for calling [Builder.exclude] with `exclude.orElse(null)`. */
+        fun exclude(exclude: Optional<List<Exclude>>) = exclude(exclude.getOrNull())
+
+        /**
+         * Adds a single [Exclude] to [Builder.exclude].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addExclude(exclude: Exclude) = apply {
+            this.exclude = (this.exclude ?: mutableListOf()).apply { add(exclude) }
+        }
 
         fun excludeCorrectionsDatasets(excludeCorrectionsDatasets: Boolean?) = apply {
             this.excludeCorrectionsDatasets = excludeCorrectionsDatasets
@@ -328,6 +351,7 @@ private constructor(
             DatasetListParams(
                 id?.toImmutable(),
                 datatype,
+                exclude?.toImmutable(),
                 excludeCorrectionsDatasets,
                 limit,
                 metadata,
@@ -359,6 +383,7 @@ private constructor(
                         }
                     }
                 )
+                exclude?.let { put("exclude", it.joinToString(",") { it.toString() }) }
                 excludeCorrectionsDatasets?.let {
                     put("exclude_corrections_datasets", it.toString())
                 }
@@ -441,6 +466,127 @@ private constructor(
         }
     }
 
+    class Exclude @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val EXAMPLE_COUNT = of("example_count")
+
+            @JvmStatic fun of(value: String) = Exclude(JsonField.of(value))
+        }
+
+        /** An enum containing [Exclude]'s known values. */
+        enum class Known {
+            EXAMPLE_COUNT
+        }
+
+        /**
+         * An enum containing [Exclude]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Exclude] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            EXAMPLE_COUNT,
+            /** An enum member indicating that [Exclude] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                EXAMPLE_COUNT -> Value.EXAMPLE_COUNT
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                EXAMPLE_COUNT -> Known.EXAMPLE_COUNT
+                else -> throw LangChainInvalidDataException("Unknown Exclude: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): Exclude = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Exclude && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -449,6 +595,7 @@ private constructor(
         return other is DatasetListParams &&
             id == other.id &&
             datatype == other.datatype &&
+            exclude == other.exclude &&
             excludeCorrectionsDatasets == other.excludeCorrectionsDatasets &&
             limit == other.limit &&
             metadata == other.metadata &&
@@ -466,6 +613,7 @@ private constructor(
         Objects.hash(
             id,
             datatype,
+            exclude,
             excludeCorrectionsDatasets,
             limit,
             metadata,
@@ -480,5 +628,5 @@ private constructor(
         )
 
     override fun toString() =
-        "DatasetListParams{id=$id, datatype=$datatype, excludeCorrectionsDatasets=$excludeCorrectionsDatasets, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "DatasetListParams{id=$id, datatype=$datatype, exclude=$exclude, excludeCorrectionsDatasets=$excludeCorrectionsDatasets, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

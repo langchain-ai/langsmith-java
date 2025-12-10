@@ -17,7 +17,6 @@ internal class DatasetTest {
         val dataset =
             Dataset.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .exampleCount(0L)
                 .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .name("name")
                 .sessionCount(0L)
@@ -25,6 +24,7 @@ internal class DatasetTest {
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .dataType(DataType.KV)
                 .description("description")
+                .exampleCount(0L)
                 .externallyManaged(true)
                 .inputsSchemaDefinition(
                     Dataset.InputsSchemaDefinition.builder()
@@ -53,7 +53,6 @@ internal class DatasetTest {
                 .build()
 
         assertThat(dataset.id()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-        assertThat(dataset.exampleCount()).isEqualTo(0L)
         assertThat(dataset.modifiedAt()).isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(dataset.name()).isEqualTo("name")
         assertThat(dataset.sessionCount()).isEqualTo(0L)
@@ -61,6 +60,7 @@ internal class DatasetTest {
         assertThat(dataset.createdAt()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(dataset.dataType()).contains(DataType.KV)
         assertThat(dataset.description()).contains("description")
+        assertThat(dataset.exampleCount()).contains(0L)
         assertThat(dataset.externallyManaged()).contains(true)
         assertThat(dataset.inputsSchemaDefinition())
             .contains(
@@ -99,7 +99,6 @@ internal class DatasetTest {
         val dataset =
             Dataset.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .exampleCount(0L)
                 .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .name("name")
                 .sessionCount(0L)
@@ -107,6 +106,7 @@ internal class DatasetTest {
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .dataType(DataType.KV)
                 .description("description")
+                .exampleCount(0L)
                 .externallyManaged(true)
                 .inputsSchemaDefinition(
                     Dataset.InputsSchemaDefinition.builder()
