@@ -25,7 +25,6 @@ class Dataset
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
-    private val exampleCount: JsonField<Long>,
     private val modifiedAt: JsonField<OffsetDateTime>,
     private val name: JsonField<String>,
     private val sessionCount: JsonField<Long>,
@@ -33,6 +32,7 @@ private constructor(
     private val createdAt: JsonField<OffsetDateTime>,
     private val dataType: JsonField<DataType>,
     private val description: JsonField<String>,
+    private val exampleCount: JsonField<Long>,
     private val externallyManaged: JsonField<Boolean>,
     private val inputsSchemaDefinition: JsonField<InputsSchemaDefinition>,
     private val lastSessionStartTime: JsonField<OffsetDateTime>,
@@ -45,9 +45,6 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("example_count")
-        @ExcludeMissing
-        exampleCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("modified_at")
         @ExcludeMissing
         modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -63,6 +60,9 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("example_count")
+        @ExcludeMissing
+        exampleCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("externally_managed")
         @ExcludeMissing
         externallyManaged: JsonField<Boolean> = JsonMissing.of(),
@@ -81,7 +81,6 @@ private constructor(
         transformations: JsonField<List<DatasetTransformation>> = JsonMissing.of(),
     ) : this(
         id,
-        exampleCount,
         modifiedAt,
         name,
         sessionCount,
@@ -89,6 +88,7 @@ private constructor(
         createdAt,
         dataType,
         description,
+        exampleCount,
         externallyManaged,
         inputsSchemaDefinition,
         lastSessionStartTime,
@@ -103,12 +103,6 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun id(): String = id.getRequired("id")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun exampleCount(): Long = exampleCount.getRequired("example_count")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -158,6 +152,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun exampleCount(): Optional<Long> = exampleCount.getOptional("example_count")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun externallyManaged(): Optional<Boolean> = externallyManaged.getOptional("externally_managed")
 
     /**
@@ -200,15 +200,6 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
-
-    /**
-     * Returns the raw JSON value of [exampleCount].
-     *
-     * Unlike [exampleCount], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("example_count")
-    @ExcludeMissing
-    fun _exampleCount(): JsonField<Long> = exampleCount
 
     /**
      * Returns the raw JSON value of [modifiedAt].
@@ -264,6 +255,15 @@ private constructor(
      * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
+
+    /**
+     * Returns the raw JSON value of [exampleCount].
+     *
+     * Unlike [exampleCount], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("example_count")
+    @ExcludeMissing
+    fun _exampleCount(): JsonField<Long> = exampleCount
 
     /**
      * Returns the raw JSON value of [externallyManaged].
@@ -341,7 +341,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .id()
-         * .exampleCount()
          * .modifiedAt()
          * .name()
          * .sessionCount()
@@ -355,7 +354,6 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: JsonField<String>? = null
-        private var exampleCount: JsonField<Long>? = null
         private var modifiedAt: JsonField<OffsetDateTime>? = null
         private var name: JsonField<String>? = null
         private var sessionCount: JsonField<Long>? = null
@@ -363,6 +361,7 @@ private constructor(
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var dataType: JsonField<DataType> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
+        private var exampleCount: JsonField<Long> = JsonMissing.of()
         private var externallyManaged: JsonField<Boolean> = JsonMissing.of()
         private var inputsSchemaDefinition: JsonField<InputsSchemaDefinition> = JsonMissing.of()
         private var lastSessionStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -374,7 +373,6 @@ private constructor(
         @JvmSynthetic
         internal fun from(dataset: Dataset) = apply {
             id = dataset.id
-            exampleCount = dataset.exampleCount
             modifiedAt = dataset.modifiedAt
             name = dataset.name
             sessionCount = dataset.sessionCount
@@ -382,6 +380,7 @@ private constructor(
             createdAt = dataset.createdAt
             dataType = dataset.dataType
             description = dataset.description
+            exampleCount = dataset.exampleCount
             externallyManaged = dataset.externallyManaged
             inputsSchemaDefinition = dataset.inputsSchemaDefinition
             lastSessionStartTime = dataset.lastSessionStartTime
@@ -400,17 +399,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
-
-        fun exampleCount(exampleCount: Long) = exampleCount(JsonField.of(exampleCount))
-
-        /**
-         * Sets [Builder.exampleCount] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.exampleCount] with a well-typed [Long] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun exampleCount(exampleCount: JsonField<Long>) = apply { this.exampleCount = exampleCount }
 
         fun modifiedAt(modifiedAt: OffsetDateTime) = modifiedAt(JsonField.of(modifiedAt))
 
@@ -495,6 +483,27 @@ private constructor(
          * value.
          */
         fun description(description: JsonField<String>) = apply { this.description = description }
+
+        fun exampleCount(exampleCount: Long?) = exampleCount(JsonField.ofNullable(exampleCount))
+
+        /**
+         * Alias for [Builder.exampleCount].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun exampleCount(exampleCount: Long) = exampleCount(exampleCount as Long?)
+
+        /** Alias for calling [Builder.exampleCount] with `exampleCount.orElse(null)`. */
+        fun exampleCount(exampleCount: Optional<Long>) = exampleCount(exampleCount.getOrNull())
+
+        /**
+         * Sets [Builder.exampleCount] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.exampleCount] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun exampleCount(exampleCount: JsonField<Long>) = apply { this.exampleCount = exampleCount }
 
         fun externallyManaged(externallyManaged: Boolean?) =
             externallyManaged(JsonField.ofNullable(externallyManaged))
@@ -658,7 +667,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .id()
-         * .exampleCount()
          * .modifiedAt()
          * .name()
          * .sessionCount()
@@ -670,7 +678,6 @@ private constructor(
         fun build(): Dataset =
             Dataset(
                 checkRequired("id", id),
-                checkRequired("exampleCount", exampleCount),
                 checkRequired("modifiedAt", modifiedAt),
                 checkRequired("name", name),
                 checkRequired("sessionCount", sessionCount),
@@ -678,6 +685,7 @@ private constructor(
                 createdAt,
                 dataType,
                 description,
+                exampleCount,
                 externallyManaged,
                 inputsSchemaDefinition,
                 lastSessionStartTime,
@@ -696,7 +704,6 @@ private constructor(
         }
 
         id()
-        exampleCount()
         modifiedAt()
         name()
         sessionCount()
@@ -704,6 +711,7 @@ private constructor(
         createdAt()
         dataType().ifPresent { it.validate() }
         description()
+        exampleCount()
         externallyManaged()
         inputsSchemaDefinition().ifPresent { it.validate() }
         lastSessionStartTime()
@@ -729,7 +737,6 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
-            (if (exampleCount.asKnown().isPresent) 1 else 0) +
             (if (modifiedAt.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (sessionCount.asKnown().isPresent) 1 else 0) +
@@ -737,6 +744,7 @@ private constructor(
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (dataType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
+            (if (exampleCount.asKnown().isPresent) 1 else 0) +
             (if (externallyManaged.asKnown().isPresent) 1 else 0) +
             (inputsSchemaDefinition.asKnown().getOrNull()?.validity() ?: 0) +
             (if (lastSessionStartTime.asKnown().isPresent) 1 else 0) +
@@ -1058,7 +1066,6 @@ private constructor(
 
         return other is Dataset &&
             id == other.id &&
-            exampleCount == other.exampleCount &&
             modifiedAt == other.modifiedAt &&
             name == other.name &&
             sessionCount == other.sessionCount &&
@@ -1066,6 +1073,7 @@ private constructor(
             createdAt == other.createdAt &&
             dataType == other.dataType &&
             description == other.description &&
+            exampleCount == other.exampleCount &&
             externallyManaged == other.externallyManaged &&
             inputsSchemaDefinition == other.inputsSchemaDefinition &&
             lastSessionStartTime == other.lastSessionStartTime &&
@@ -1078,7 +1086,6 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             id,
-            exampleCount,
             modifiedAt,
             name,
             sessionCount,
@@ -1086,6 +1093,7 @@ private constructor(
             createdAt,
             dataType,
             description,
+            exampleCount,
             externallyManaged,
             inputsSchemaDefinition,
             lastSessionStartTime,
@@ -1099,5 +1107,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Dataset{id=$id, exampleCount=$exampleCount, modifiedAt=$modifiedAt, name=$name, sessionCount=$sessionCount, tenantId=$tenantId, createdAt=$createdAt, dataType=$dataType, description=$description, externallyManaged=$externallyManaged, inputsSchemaDefinition=$inputsSchemaDefinition, lastSessionStartTime=$lastSessionStartTime, metadata=$metadata, outputsSchemaDefinition=$outputsSchemaDefinition, transformations=$transformations, additionalProperties=$additionalProperties}"
+        "Dataset{id=$id, modifiedAt=$modifiedAt, name=$name, sessionCount=$sessionCount, tenantId=$tenantId, createdAt=$createdAt, dataType=$dataType, description=$description, exampleCount=$exampleCount, externallyManaged=$externallyManaged, inputsSchemaDefinition=$inputsSchemaDefinition, lastSessionStartTime=$lastSessionStartTime, metadata=$metadata, outputsSchemaDefinition=$outputsSchemaDefinition, transformations=$transformations, additionalProperties=$additionalProperties}"
 }
