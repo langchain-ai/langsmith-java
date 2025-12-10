@@ -76,9 +76,12 @@ public class OtelLangSmithExample {
         System.out.println("        └─ 5. database.retriever (200ms)\n");
 
         // ROOT SPAN: Main agent chain
+        String initialPrompt = "What's the weather in San Francisco?";
         Span rootSpan = OtelSpanCreator.createChainSpan(tracer, "langsmith.java.example", projectName, sessionId);
 
         try (Scope rootScope = rootSpan.makeCurrent()) {
+            // Set input on root span
+            OtelSpanCreator.setInput(rootSpan, initialPrompt);
             // CHILD 1: First LLM call
             Span llmSpan1 =
                     OtelSpanCreator.createLlmSpan(tracer, "openai.llm.call", "openai", "gpt-4", projectName, sessionId);
@@ -93,11 +96,18 @@ public class OtelLangSmithExample {
             }
 
             // CHILD 2: Tool call
+            String toolInput = "{\"location\":\"San Francisco\"}";
+            String toolOutput = "{\"temperature\":\"72°F\",\"condition\":\"Sunny\",\"humidity\":\"65%\"}";
             Span toolSpan =
                     OtelSpanCreator.createToolSpan(tracer, "weather.tool", "get_weather", projectName, sessionId);
             try (Scope toolScope = toolSpan.makeCurrent()) {
-                toolSpan.setAttribute(AttributeKey.stringKey("tool.input"), "{\"location\":\"San Francisco\"}");
+                // Set tool input using gen_ai.prompt
+                OtelSpanCreator.setInput(toolSpan, toolInput);
+                // Set tool arguments attribute
+                toolSpan.setAttribute(AttributeKey.stringKey("gen_ai.tool.arguments"), toolInput);
                 Thread.sleep(300);
+                // Set tool output using gen_ai.completion
+                OtelSpanCreator.setOutput(toolSpan, toolOutput);
                 toolSpan.setStatus(StatusCode.OK);
             } finally {
                 toolSpan.end();
@@ -130,6 +140,9 @@ public class OtelLangSmithExample {
                 llmSpan2.end();
             }
 
+            // Set output on root span
+            String finalOutput = "The weather in San Francisco is sunny with a temperature of 72°F.";
+            OtelSpanCreator.setOutput(rootSpan, finalOutput);
             rootSpan.setStatus(StatusCode.OK);
 
         } finally {

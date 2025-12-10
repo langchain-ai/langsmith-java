@@ -64,6 +64,59 @@ public final class OtelSpanCreator {
     }
 
     /**
+     * Sets the output messages in JSON format on a span.
+     * This is used to represent the full message structure including tool calls.
+     *
+     * <p>The messages JSON should follow OpenAI's message format:
+     * <pre>
+     * [
+     *   {
+     *     "role": "assistant",
+     *     "content": "Let me check the weather...",
+     *     "tool_calls": [
+     *       {
+     *         "id": "call_123",
+     *         "type": "function",
+     *         "function": {
+     *           "name": "get_weather",
+     *           "arguments": "{\"location\":\"San Francisco\"}"
+     *         }
+     *       }
+     *     ]
+     *   }
+     * ]
+     * </pre>
+     *
+     * @param span the span to set the output messages on
+     * @param messagesJson JSON string containing the output messages array
+     */
+    public static void setOutputMessages(Span span, String messagesJson) {
+        if (messagesJson != null) {
+            span.setAttribute(AttributeKey.stringKey("gen_ai.output.messages"), messagesJson);
+        }
+    }
+
+    /**
+     * Sets the input messages in JSON format on a span.
+     *
+     * <p>The messages JSON should follow OpenAI's message format:
+     * <pre>
+     * [
+     *   {"role": "user", "content": "What's the weather?"},
+     *   {"role": "system", "content": "You are a helpful assistant."}
+     * ]
+     * </pre>
+     *
+     * @param span the span to set the input messages on
+     * @param messagesJson JSON string containing the input messages array
+     */
+    public static void setInputMessages(Span span, String messagesJson) {
+        if (messagesJson != null) {
+            span.setAttribute(AttributeKey.stringKey("gen_ai.input.messages"), messagesJson);
+        }
+    }
+
+    /**
      * Sets token usage information on a span.
      *
      * @param span the span to set token usage on

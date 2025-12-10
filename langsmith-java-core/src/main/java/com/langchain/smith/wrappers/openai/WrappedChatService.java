@@ -111,6 +111,12 @@ class WrappedChatService implements ChatService {
                 String inputMessagesJson = formatInputMessages(params);
                 TracingUtils.setInputMessages(span, inputMessagesJson);
 
+                // Extract prompt (first user message) for gen_ai.prompt attribute
+                String prompt = extractPromptFromParams(params);
+                if (prompt != null && !prompt.isEmpty()) {
+                    span.setAttribute(io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.prompt"), prompt);
+                }
+
                 ChatCompletion result;
                 // If requestOptions is null, use the single-parameter version
                 if (requestOptions == null) {
@@ -130,6 +136,13 @@ class WrappedChatService implements ChatService {
                 String outputMessagesJson = formatOutputMessages(result);
                 TracingUtils.setOutputMessages(span, outputMessagesJson);
 
+                // Extract completion (assistant response) for gen_ai.completion attribute
+                String completion = extractCompletionFromResult(result);
+                if (completion != null && !completion.isEmpty()) {
+                    span.setAttribute(
+                            io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.completion"), completion);
+                }
+
                 // Extract usage information from result
                 result.usage().ifPresent(usage -> {
                     TracingUtils.setResponseAttributes(
@@ -137,8 +150,10 @@ class WrappedChatService implements ChatService {
                                     usage.totalTokens());
                 });
 
-                // Create tool call spans for any tool calls in the response
-                createToolCallSpans(result, span);
+                // Tool call spans are not created automatically here.
+                // Users should create tool execution spans manually when executing tools
+                // to capture both input (arguments) and output (result).
+                // createToolCallSpans(result, span);
 
                 return result;
             } catch (Exception e) {
@@ -601,6 +616,8 @@ class WrappedChatService implements ChatService {
                     }
                     if (toolArguments != null && !toolArguments.isEmpty()) {
                         toolCallSpan.setAttribute("gen_ai.tool.arguments", toolArguments);
+                        // Set tool arguments as input/prompt for LangSmith visibility
+                        toolCallSpan.setAttribute("gen_ai.prompt", toolArguments);
                     }
 
                     if (logger.isDebugEnabled()) {
@@ -653,11 +670,104 @@ class WrappedChatService implements ChatService {
                             .append("\"");
                 });
 
+                // Add tool_calls if present
+                message.toolCalls().ifPresent(toolCalls -> {
+                    if (!toolCalls.isEmpty()) {
+                        json.append(",\"tool_calls\":[");
+                        boolean firstToolCall = true;
+                        for (ChatCompletionMessageToolCall toolCall : toolCalls) {
+                            // Only process function tool calls (other types not yet supported)
+                            if (!toolCall.isFunction()) {
+                                continue;
+                            }
+
+                            if (!firstToolCall) {
+                                json.append(",");
+                            }
+                            firstToolCall = false;
+
+                            ChatCompletionMessageFunctionToolCall functionToolCall = toolCall.asFunction();
+                            json.append("{");
+                            json.append("\"id\":\"")
+                                    .append(TracingUtils.escapeJsonString(functionToolCall.id()))
+                                    .append("\"");
+                            json.append(",\"type\":\"function\"");
+
+                            com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall.Function function =
+                                    functionToolCall.function();
+                            json.append(",\"function\":{");
+                            json.append("\"name\":\"")
+                                    .append(TracingUtils.escapeJsonString(function.name()))
+                                    .append("\"");
+                            json.append(",\"arguments\":\"")
+                                    .append(TracingUtils.escapeJsonString(function.arguments()))
+                                    .append("\"");
+                            json.append("}");
+                            json.append("}");
+                        }
+                        json.append("]");
+                    }
+                });
+
                 json.append("}");
             }
             json.append("]");
 
             return json.toString();
+        }
+
+        /**
+         * Extracts the prompt text from the first user message in the params.
+         *
+         * @param params the chat completion create params
+         * @return the prompt text, or null if not found
+         */
+        private String extractPromptFromParams(ChatCompletionCreateParams params) {
+            if (params.messages().isEmpty()) {
+                return null;
+            }
+
+            // Find the first user message
+            for (com.openai.models.chat.completions.ChatCompletionMessageParam messageParam : params.messages()) {
+                if (messageParam.isUser()) {
+                    com.openai.models.chat.completions.ChatCompletionUserMessageParam userMessage =
+                            messageParam.asUser();
+                    // Try to get content from the user message
+                    if (userMessage.content() != null) {
+                        // Content can be a string or a list of content parts
+                        Object content = userMessage.content();
+                        if (content instanceof String) {
+                            return (String) content;
+                        } else if (content instanceof java.util.List) {
+                            @SuppressWarnings("unchecked")
+                            java.util.List<?> contentList = (java.util.List<?>) content;
+                            if (!contentList.isEmpty()) {
+                                Object firstContent = contentList.get(0);
+                                if (firstContent instanceof String) {
+                                    return (String) firstContent;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Extracts the completion text from the assistant message in the result.
+         *
+         * @param result the chat completion result
+         * @return the completion text, or null if not found
+         */
+        private String extractCompletionFromResult(ChatCompletion result) {
+            if (result.choices() == null || result.choices().isEmpty()) {
+                return null;
+            }
+
+            com.openai.models.chat.completions.ChatCompletionMessage message =
+                    result.choices().get(0).message();
+            return message.content().orElse(null);
         }
 
         @Override
