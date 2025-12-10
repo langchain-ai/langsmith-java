@@ -37,7 +37,11 @@ internal class InsightServiceTest {
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .createRunClusteringJobRequest(
                         CreateRunClusteringJobRequest.builder()
-                            .attributeSchemas(JsonValue.from(mapOf<String, Any>()))
+                            .attributeSchemas(
+                                CreateRunClusteringJobRequest.AttributeSchemas.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
                             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .filter("filter")
                             .addHierarchy(0L)

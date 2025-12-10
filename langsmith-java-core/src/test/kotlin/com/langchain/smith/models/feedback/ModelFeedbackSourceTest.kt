@@ -14,11 +14,20 @@ internal class ModelFeedbackSourceTest {
     fun create() {
         val modelFeedbackSource =
             ModelFeedbackSource.builder()
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    ModelFeedbackSource.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .type(ModelFeedbackSource.Type.MODEL)
                 .build()
 
-        assertThat(modelFeedbackSource._metadata()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(modelFeedbackSource.metadata())
+            .contains(
+                ModelFeedbackSource.Metadata.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(modelFeedbackSource.type()).contains(ModelFeedbackSource.Type.MODEL)
     }
 
@@ -27,7 +36,11 @@ internal class ModelFeedbackSourceTest {
         val jsonMapper = jsonMapper()
         val modelFeedbackSource =
             ModelFeedbackSource.builder()
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    ModelFeedbackSource.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .type(ModelFeedbackSource.Type.MODEL)
                 .build()
 

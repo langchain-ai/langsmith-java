@@ -13,7 +13,11 @@ internal class FeedbackUpdateParamsTest {
         FeedbackUpdateParams.builder()
             .feedbackId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .comment("comment")
-            .correction(JsonValue.from(mapOf<String, Any>()))
+            .correction(
+                FeedbackUpdateParams.Correction.UnionMember0.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
             .feedbackConfig(
                 FeedbackUpdateParams.FeedbackConfig.builder()
                     .type(FeedbackUpdateParams.FeedbackConfig.Type.CONTINUOUS)
@@ -50,7 +54,11 @@ internal class FeedbackUpdateParamsTest {
             FeedbackUpdateParams.builder()
                 .feedbackId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comment("comment")
-                .correction(JsonValue.from(mapOf<String, Any>()))
+                .correction(
+                    FeedbackUpdateParams.Correction.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .feedbackConfig(
                     FeedbackUpdateParams.FeedbackConfig.builder()
                         .type(FeedbackUpdateParams.FeedbackConfig.Type.CONTINUOUS)
@@ -73,7 +81,11 @@ internal class FeedbackUpdateParamsTest {
         assertThat(body.comment()).contains("comment")
         assertThat(body.correction())
             .contains(
-                FeedbackUpdateParams.Correction.ofJsonValue(JsonValue.from(mapOf<String, Any>()))
+                FeedbackUpdateParams.Correction.ofUnionMember0(
+                    FeedbackUpdateParams.Correction.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
             )
         assertThat(body.feedbackConfig())
             .contains(

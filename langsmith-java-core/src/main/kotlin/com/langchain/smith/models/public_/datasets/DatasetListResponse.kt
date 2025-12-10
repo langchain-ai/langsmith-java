@@ -38,8 +38,8 @@ private constructor(
     private val dataType: JsonField<DataType>,
     private val description: JsonField<String>,
     private val externallyManaged: JsonField<Boolean>,
-    private val inputsSchemaDefinition: JsonValue,
-    private val outputsSchemaDefinition: JsonValue,
+    private val inputsSchemaDefinition: JsonField<InputsSchemaDefinition>,
+    private val outputsSchemaDefinition: JsonField<OutputsSchemaDefinition>,
     private val transformations: JsonField<List<DatasetTransformation>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -63,10 +63,10 @@ private constructor(
         externallyManaged: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("inputs_schema_definition")
         @ExcludeMissing
-        inputsSchemaDefinition: JsonValue = JsonMissing.of(),
+        inputsSchemaDefinition: JsonField<InputsSchemaDefinition> = JsonMissing.of(),
         @JsonProperty("outputs_schema_definition")
         @ExcludeMissing
-        outputsSchemaDefinition: JsonValue = JsonMissing.of(),
+        outputsSchemaDefinition: JsonField<OutputsSchemaDefinition> = JsonMissing.of(),
         @JsonProperty("transformations")
         @ExcludeMissing
         transformations: JsonField<List<DatasetTransformation>> = JsonMissing.of(),
@@ -128,13 +128,19 @@ private constructor(
      */
     fun externallyManaged(): Optional<Boolean> = externallyManaged.getOptional("externally_managed")
 
-    @JsonProperty("inputs_schema_definition")
-    @ExcludeMissing
-    fun _inputsSchemaDefinition(): JsonValue = inputsSchemaDefinition
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun inputsSchemaDefinition(): Optional<InputsSchemaDefinition> =
+        inputsSchemaDefinition.getOptional("inputs_schema_definition")
 
-    @JsonProperty("outputs_schema_definition")
-    @ExcludeMissing
-    fun _outputsSchemaDefinition(): JsonValue = outputsSchemaDefinition
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun outputsSchemaDefinition(): Optional<OutputsSchemaDefinition> =
+        outputsSchemaDefinition.getOptional("outputs_schema_definition")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -200,6 +206,26 @@ private constructor(
     fun _externallyManaged(): JsonField<Boolean> = externallyManaged
 
     /**
+     * Returns the raw JSON value of [inputsSchemaDefinition].
+     *
+     * Unlike [inputsSchemaDefinition], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("inputs_schema_definition")
+    @ExcludeMissing
+    fun _inputsSchemaDefinition(): JsonField<InputsSchemaDefinition> = inputsSchemaDefinition
+
+    /**
+     * Returns the raw JSON value of [outputsSchemaDefinition].
+     *
+     * Unlike [outputsSchemaDefinition], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("outputs_schema_definition")
+    @ExcludeMissing
+    fun _outputsSchemaDefinition(): JsonField<OutputsSchemaDefinition> = outputsSchemaDefinition
+
+    /**
      * Returns the raw JSON value of [transformations].
      *
      * Unlike [transformations], this method doesn't throw if the JSON field has an unexpected type.
@@ -245,8 +271,8 @@ private constructor(
         private var dataType: JsonField<DataType> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
         private var externallyManaged: JsonField<Boolean> = JsonMissing.of()
-        private var inputsSchemaDefinition: JsonValue = JsonMissing.of()
-        private var outputsSchemaDefinition: JsonValue = JsonMissing.of()
+        private var inputsSchemaDefinition: JsonField<InputsSchemaDefinition> = JsonMissing.of()
+        private var outputsSchemaDefinition: JsonField<OutputsSchemaDefinition> = JsonMissing.of()
         private var transformations: JsonField<MutableList<DatasetTransformation>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -362,13 +388,49 @@ private constructor(
             this.externallyManaged = externallyManaged
         }
 
-        fun inputsSchemaDefinition(inputsSchemaDefinition: JsonValue) = apply {
-            this.inputsSchemaDefinition = inputsSchemaDefinition
-        }
+        fun inputsSchemaDefinition(inputsSchemaDefinition: InputsSchemaDefinition?) =
+            inputsSchemaDefinition(JsonField.ofNullable(inputsSchemaDefinition))
 
-        fun outputsSchemaDefinition(outputsSchemaDefinition: JsonValue) = apply {
-            this.outputsSchemaDefinition = outputsSchemaDefinition
-        }
+        /**
+         * Alias for calling [Builder.inputsSchemaDefinition] with
+         * `inputsSchemaDefinition.orElse(null)`.
+         */
+        fun inputsSchemaDefinition(inputsSchemaDefinition: Optional<InputsSchemaDefinition>) =
+            inputsSchemaDefinition(inputsSchemaDefinition.getOrNull())
+
+        /**
+         * Sets [Builder.inputsSchemaDefinition] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.inputsSchemaDefinition] with a well-typed
+         * [InputsSchemaDefinition] value instead. This method is primarily for setting the field to
+         * an undocumented or not yet supported value.
+         */
+        fun inputsSchemaDefinition(inputsSchemaDefinition: JsonField<InputsSchemaDefinition>) =
+            apply {
+                this.inputsSchemaDefinition = inputsSchemaDefinition
+            }
+
+        fun outputsSchemaDefinition(outputsSchemaDefinition: OutputsSchemaDefinition?) =
+            outputsSchemaDefinition(JsonField.ofNullable(outputsSchemaDefinition))
+
+        /**
+         * Alias for calling [Builder.outputsSchemaDefinition] with
+         * `outputsSchemaDefinition.orElse(null)`.
+         */
+        fun outputsSchemaDefinition(outputsSchemaDefinition: Optional<OutputsSchemaDefinition>) =
+            outputsSchemaDefinition(outputsSchemaDefinition.getOrNull())
+
+        /**
+         * Sets [Builder.outputsSchemaDefinition] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.outputsSchemaDefinition] with a well-typed
+         * [OutputsSchemaDefinition] value instead. This method is primarily for setting the field
+         * to an undocumented or not yet supported value.
+         */
+        fun outputsSchemaDefinition(outputsSchemaDefinition: JsonField<OutputsSchemaDefinition>) =
+            apply {
+                this.outputsSchemaDefinition = outputsSchemaDefinition
+            }
 
         fun transformations(transformations: List<DatasetTransformation>?) =
             transformations(JsonField.ofNullable(transformations))
@@ -463,6 +525,8 @@ private constructor(
         dataType().ifPresent { it.validate() }
         description()
         externallyManaged()
+        inputsSchemaDefinition().ifPresent { it.validate() }
+        outputsSchemaDefinition().ifPresent { it.validate() }
         transformations().ifPresent { it.forEach { it.validate() } }
         validated = true
     }
@@ -489,7 +553,217 @@ private constructor(
             (dataType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
             (if (externallyManaged.asKnown().isPresent) 1 else 0) +
+            (inputsSchemaDefinition.asKnown().getOrNull()?.validity() ?: 0) +
+            (outputsSchemaDefinition.asKnown().getOrNull()?.validity() ?: 0) +
             (transformations.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+    class InputsSchemaDefinition
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [InputsSchemaDefinition].
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [InputsSchemaDefinition]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(inputsSchemaDefinition: InputsSchemaDefinition) = apply {
+                additionalProperties = inputsSchemaDefinition.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [InputsSchemaDefinition].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): InputsSchemaDefinition =
+                InputsSchemaDefinition(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): InputsSchemaDefinition = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is InputsSchemaDefinition &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "InputsSchemaDefinition{additionalProperties=$additionalProperties}"
+    }
+
+    class OutputsSchemaDefinition
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [OutputsSchemaDefinition].
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [OutputsSchemaDefinition]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(outputsSchemaDefinition: OutputsSchemaDefinition) = apply {
+                additionalProperties = outputsSchemaDefinition.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [OutputsSchemaDefinition].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): OutputsSchemaDefinition =
+                OutputsSchemaDefinition(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): OutputsSchemaDefinition = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is OutputsSchemaDefinition &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "OutputsSchemaDefinition{additionalProperties=$additionalProperties}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

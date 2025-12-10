@@ -46,9 +46,21 @@ internal class DatasetServiceAsyncTest {
                     .dataType(DataType.KV)
                     .description("description")
                     .externallyManaged(true)
-                    .extra(JsonValue.from(mapOf<String, Any>()))
-                    .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
-                    .outputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
+                    .extra(
+                        DatasetCreateParams.Extra.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .inputsSchemaDefinition(
+                        DatasetCreateParams.InputsSchemaDefinition.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .outputsSchemaDefinition(
+                        DatasetCreateParams.OutputsSchemaDefinition.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .addTransformation(
                         DatasetTransformation.builder()
                             .addPath("string")
@@ -99,10 +111,22 @@ internal class DatasetServiceAsyncTest {
                 DatasetUpdateParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .description("string")
-                    .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
-                    .metadata(JsonValue.from(mapOf<String, Any>()))
+                    .inputsSchemaDefinition(
+                        DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .metadata(
+                        DatasetUpdateParams.Metadata.UnionMember0.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .name("string")
-                    .outputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
+                    .outputsSchemaDefinition(
+                        DatasetUpdateParams.OutputsSchemaDefinition.UnionMember0.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .patchExamples(
                         DatasetUpdateParams.PatchExamples.builder()
                             .putAdditionalProperty(
@@ -115,9 +139,9 @@ internal class DatasetServiceAsyncTest {
                                                 "retain" to listOf("string"),
                                             ),
                                         "dataset_id" to "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-                                        "inputs" to mapOf<String, Any>(),
-                                        "metadata" to mapOf<String, Any>(),
-                                        "outputs" to mapOf<String, Any>(),
+                                        "inputs" to mapOf("foo" to "bar"),
+                                        "metadata" to mapOf("foo" to "bar"),
+                                        "outputs" to mapOf("foo" to "bar"),
                                         "overwrite" to true,
                                         "split" to listOf("string"),
                                     )

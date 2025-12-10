@@ -27,8 +27,16 @@ internal class ComparativeListResponseTest {
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
-                .extra(JsonValue.from(mapOf<String, Any>()))
-                .feedbackStats(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    ComparativeListResponse.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .feedbackStats(
+                    ComparativeListResponse.FeedbackStats.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("name")
                 .build()
 
@@ -49,9 +57,18 @@ internal class ComparativeListResponseTest {
         assertThat(comparativeListResponse.tenantId())
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(comparativeListResponse.description()).contains("description")
-        assertThat(comparativeListResponse._extra()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(comparativeListResponse._feedbackStats())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(comparativeListResponse.extra())
+            .contains(
+                ComparativeListResponse.Extra.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
+        assertThat(comparativeListResponse.feedbackStats())
+            .contains(
+                ComparativeListResponse.FeedbackStats.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(comparativeListResponse.name()).contains("name")
     }
 
@@ -72,8 +89,16 @@ internal class ComparativeListResponseTest {
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
-                .extra(JsonValue.from(mapOf<String, Any>()))
-                .feedbackStats(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    ComparativeListResponse.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .feedbackStats(
+                    ComparativeListResponse.FeedbackStats.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("name")
                 .build()
 

@@ -280,8 +280,8 @@ private constructor(
          */
         fun metadata(metadata: JsonField<Metadata>) = apply { body.metadata(metadata) }
 
-        /** Alias for calling [metadata] with `Metadata.ofJsonValue(jsonValue)`. */
-        fun metadata(jsonValue: JsonValue) = apply { body.metadata(jsonValue) }
+        /** Alias for calling [metadata] with `Metadata.ofUnionMember0(unionMember0)`. */
+        fun metadata(unionMember0: Metadata.UnionMember0) = apply { body.metadata(unionMember0) }
 
         /** Alias for calling [metadata] with `Metadata.ofMissing(missing)`. */
         fun metadata(missing: Missing) = apply { body.metadata(missing) }
@@ -856,8 +856,9 @@ private constructor(
              */
             fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
-            /** Alias for calling [metadata] with `Metadata.ofJsonValue(jsonValue)`. */
-            fun metadata(jsonValue: JsonValue) = metadata(Metadata.ofJsonValue(jsonValue))
+            /** Alias for calling [metadata] with `Metadata.ofUnionMember0(unionMember0)`. */
+            fun metadata(unionMember0: Metadata.UnionMember0) =
+                metadata(Metadata.ofUnionMember0(unionMember0))
 
             /** Alias for calling [metadata] with `Metadata.ofMissing(missing)`. */
             fun metadata(missing: Missing) = metadata(Metadata.ofMissing(missing))
@@ -1118,20 +1119,20 @@ private constructor(
     @JsonSerialize(using = Metadata.Serializer::class)
     class Metadata
     private constructor(
-        private val jsonValue: JsonValue? = null,
+        private val unionMember0: UnionMember0? = null,
         private val missing: Missing? = null,
         private val _json: JsonValue? = null,
     ) {
 
-        fun jsonValue(): Optional<JsonValue> = Optional.ofNullable(jsonValue)
+        fun unionMember0(): Optional<UnionMember0> = Optional.ofNullable(unionMember0)
 
         fun missing(): Optional<Missing> = Optional.ofNullable(missing)
 
-        fun isJsonValue(): Boolean = jsonValue != null
+        fun isUnionMember0(): Boolean = unionMember0 != null
 
         fun isMissing(): Boolean = missing != null
 
-        fun asJsonValue(): JsonValue = jsonValue.getOrThrow("jsonValue")
+        fun asUnionMember0(): UnionMember0 = unionMember0.getOrThrow("unionMember0")
 
         fun asMissing(): Missing = missing.getOrThrow("missing")
 
@@ -1139,7 +1140,7 @@ private constructor(
 
         fun <T> accept(visitor: Visitor<T>): T =
             when {
-                jsonValue != null -> visitor.visitJsonValue(jsonValue)
+                unionMember0 != null -> visitor.visitUnionMember0(unionMember0)
                 missing != null -> visitor.visitMissing(missing)
                 else -> visitor.unknown(_json)
             }
@@ -1153,7 +1154,9 @@ private constructor(
 
             accept(
                 object : Visitor<Unit> {
-                    override fun visitJsonValue(jsonValue: JsonValue) {}
+                    override fun visitUnionMember0(unionMember0: UnionMember0) {
+                        unionMember0.validate()
+                    }
 
                     override fun visitMissing(missing: Missing) {
                         missing.validate()
@@ -1181,7 +1184,8 @@ private constructor(
         internal fun validity(): Int =
             accept(
                 object : Visitor<Int> {
-                    override fun visitJsonValue(jsonValue: JsonValue) = 1
+                    override fun visitUnionMember0(unionMember0: UnionMember0) =
+                        unionMember0.validity()
 
                     override fun visitMissing(missing: Missing) = missing.validity()
 
@@ -1194,14 +1198,16 @@ private constructor(
                 return true
             }
 
-            return other is Metadata && jsonValue == other.jsonValue && missing == other.missing
+            return other is Metadata &&
+                unionMember0 == other.unionMember0 &&
+                missing == other.missing
         }
 
-        override fun hashCode(): Int = Objects.hash(jsonValue, missing)
+        override fun hashCode(): Int = Objects.hash(unionMember0, missing)
 
         override fun toString(): String =
             when {
-                jsonValue != null -> "Metadata{jsonValue=$jsonValue}"
+                unionMember0 != null -> "Metadata{unionMember0=$unionMember0}"
                 missing != null -> "Metadata{missing=$missing}"
                 _json != null -> "Metadata{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid Metadata")
@@ -1209,7 +1215,8 @@ private constructor(
 
         companion object {
 
-            @JvmStatic fun ofJsonValue(jsonValue: JsonValue) = Metadata(jsonValue = jsonValue)
+            @JvmStatic
+            fun ofUnionMember0(unionMember0: UnionMember0) = Metadata(unionMember0 = unionMember0)
 
             @JvmStatic fun ofMissing(missing: Missing) = Metadata(missing = missing)
         }
@@ -1219,7 +1226,7 @@ private constructor(
          */
         interface Visitor<out T> {
 
-            fun visitJsonValue(jsonValue: JsonValue): T
+            fun visitUnionMember0(unionMember0: UnionMember0): T
 
             fun visitMissing(missing: Missing): T
 
@@ -1245,11 +1252,11 @@ private constructor(
 
                 val bestMatches =
                     sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<UnionMember0>())?.let {
+                                Metadata(unionMember0 = it, _json = json)
+                            },
                             tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
                                 Metadata(missing = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<JsonValue>())?.let {
-                                Metadata(jsonValue = it, _json = json)
                             },
                         )
                         .filterNotNull()
@@ -1257,7 +1264,7 @@ private constructor(
                         .toList()
                 return when (bestMatches.size) {
                     // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants.
+                    // all the possible variants (e.g. deserializing from boolean).
                     0 -> Metadata(_json = json)
                     1 -> bestMatches.single()
                     // If there's more than one match with the highest validity, then use the first
@@ -1276,12 +1283,114 @@ private constructor(
                 provider: SerializerProvider,
             ) {
                 when {
-                    value.jsonValue != null -> generator.writeObject(value.jsonValue)
+                    value.unionMember0 != null -> generator.writeObject(value.unionMember0)
                     value.missing != null -> generator.writeObject(value.missing)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid Metadata")
                 }
             }
+        }
+
+        class UnionMember0
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [UnionMember0]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [UnionMember0]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(unionMember0: UnionMember0) = apply {
+                    additionalProperties = unionMember0.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [UnionMember0].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): UnionMember0 = UnionMember0(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): UnionMember0 = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is UnionMember0 && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "UnionMember0{additionalProperties=$additionalProperties}"
         }
     }
 

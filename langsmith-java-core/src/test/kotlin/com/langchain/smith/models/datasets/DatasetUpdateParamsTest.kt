@@ -13,10 +13,22 @@ internal class DatasetUpdateParamsTest {
         DatasetUpdateParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .description("string")
-            .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
-            .metadata(JsonValue.from(mapOf<String, Any>()))
+            .inputsSchemaDefinition(
+                DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
+            .metadata(
+                DatasetUpdateParams.Metadata.UnionMember0.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
             .name("string")
-            .outputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
+            .outputsSchemaDefinition(
+                DatasetUpdateParams.OutputsSchemaDefinition.UnionMember0.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
             .patchExamples(
                 DatasetUpdateParams.PatchExamples.builder()
                     .putAdditionalProperty(
@@ -29,9 +41,9 @@ internal class DatasetUpdateParamsTest {
                                         "retain" to listOf("string"),
                                     ),
                                 "dataset_id" to "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-                                "inputs" to mapOf<String, Any>(),
-                                "metadata" to mapOf<String, Any>(),
-                                "outputs" to mapOf<String, Any>(),
+                                "inputs" to mapOf("foo" to "bar"),
+                                "metadata" to mapOf("foo" to "bar"),
+                                "outputs" to mapOf("foo" to "bar"),
                                 "overwrite" to true,
                                 "split" to listOf("string"),
                             )
@@ -68,10 +80,22 @@ internal class DatasetUpdateParamsTest {
             DatasetUpdateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("string")
-                .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .inputsSchemaDefinition(
+                    DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .metadata(
+                    DatasetUpdateParams.Metadata.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("string")
-                .outputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
+                .outputsSchemaDefinition(
+                    DatasetUpdateParams.OutputsSchemaDefinition.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .patchExamples(
                     DatasetUpdateParams.PatchExamples.builder()
                         .putAdditionalProperty(
@@ -84,9 +108,9 @@ internal class DatasetUpdateParamsTest {
                                             "retain" to listOf("string"),
                                         ),
                                     "dataset_id" to "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-                                    "inputs" to mapOf<String, Any>(),
-                                    "metadata" to mapOf<String, Any>(),
-                                    "outputs" to mapOf<String, Any>(),
+                                    "inputs" to mapOf("foo" to "bar"),
+                                    "metadata" to mapOf("foo" to "bar"),
+                                    "outputs" to mapOf("foo" to "bar"),
                                     "overwrite" to true,
                                     "split" to listOf("string"),
                                 )
@@ -111,19 +135,27 @@ internal class DatasetUpdateParamsTest {
         assertThat(body.description()).contains(DatasetUpdateParams.Description.ofString("string"))
         assertThat(body.inputsSchemaDefinition())
             .contains(
-                DatasetUpdateParams.InputsSchemaDefinition.ofJsonValue(
-                    JsonValue.from(mapOf<String, Any>())
+                DatasetUpdateParams.InputsSchemaDefinition.ofUnionMember0(
+                    DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
                 )
             )
         assertThat(body.metadata())
             .contains(
-                DatasetUpdateParams.Metadata.ofJsonValue(JsonValue.from(mapOf<String, Any>()))
+                DatasetUpdateParams.Metadata.ofUnionMember0(
+                    DatasetUpdateParams.Metadata.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
             )
         assertThat(body.name()).contains(DatasetUpdateParams.Name.ofString("string"))
         assertThat(body.outputsSchemaDefinition())
             .contains(
-                DatasetUpdateParams.OutputsSchemaDefinition.ofJsonValue(
-                    JsonValue.from(mapOf<String, Any>())
+                DatasetUpdateParams.OutputsSchemaDefinition.ofUnionMember0(
+                    DatasetUpdateParams.OutputsSchemaDefinition.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
                 )
             )
         assertThat(body.patchExamples())
@@ -139,9 +171,9 @@ internal class DatasetUpdateParamsTest {
                                         "retain" to listOf("string"),
                                     ),
                                 "dataset_id" to "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-                                "inputs" to mapOf<String, Any>(),
-                                "metadata" to mapOf<String, Any>(),
-                                "outputs" to mapOf<String, Any>(),
+                                "inputs" to mapOf("foo" to "bar"),
+                                "metadata" to mapOf("foo" to "bar"),
+                                "outputs" to mapOf("foo" to "bar"),
                                 "overwrite" to true,
                                 "split" to listOf("string"),
                             )

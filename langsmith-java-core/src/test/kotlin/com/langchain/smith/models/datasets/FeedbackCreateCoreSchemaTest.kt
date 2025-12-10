@@ -20,9 +20,17 @@ internal class FeedbackCreateCoreSchemaTest {
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comment("comment")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .correction(JsonValue.from(mapOf<String, Any>()))
+                .correction(
+                    FeedbackCreateCoreSchema.Correction.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .extra(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    FeedbackCreateCoreSchema.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .feedbackConfig(
                     FeedbackCreateCoreSchema.FeedbackConfig.builder()
                         .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
@@ -39,7 +47,11 @@ internal class FeedbackCreateCoreSchemaTest {
                 .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .feedbackSource(
                     AppFeedbackSource.builder()
-                        .metadata(JsonValue.from(mapOf<String, Any>()))
+                        .metadata(
+                            AppFeedbackSource.Metadata.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .type(AppFeedbackSource.Type.APP)
                         .build()
                 )
@@ -55,14 +67,20 @@ internal class FeedbackCreateCoreSchemaTest {
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(feedbackCreateCoreSchema.correction())
             .contains(
-                FeedbackCreateCoreSchema.Correction.ofJsonValue(
-                    JsonValue.from(mapOf<String, Any>())
+                FeedbackCreateCoreSchema.Correction.ofUnionMember0(
+                    FeedbackCreateCoreSchema.Correction.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
                 )
             )
         assertThat(feedbackCreateCoreSchema.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(feedbackCreateCoreSchema._extra())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(feedbackCreateCoreSchema.extra())
+            .contains(
+                FeedbackCreateCoreSchema.Extra.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(feedbackCreateCoreSchema.feedbackConfig())
             .contains(
                 FeedbackCreateCoreSchema.FeedbackConfig.builder()
@@ -83,7 +101,11 @@ internal class FeedbackCreateCoreSchemaTest {
             .contains(
                 FeedbackCreateCoreSchema.FeedbackSource.ofApp(
                     AppFeedbackSource.builder()
-                        .metadata(JsonValue.from(mapOf<String, Any>()))
+                        .metadata(
+                            AppFeedbackSource.Metadata.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .type(AppFeedbackSource.Type.APP)
                         .build()
                 )
@@ -105,9 +127,17 @@ internal class FeedbackCreateCoreSchemaTest {
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comment("comment")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .correction(JsonValue.from(mapOf<String, Any>()))
+                .correction(
+                    FeedbackCreateCoreSchema.Correction.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .extra(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    FeedbackCreateCoreSchema.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .feedbackConfig(
                     FeedbackCreateCoreSchema.FeedbackConfig.builder()
                         .type(FeedbackCreateCoreSchema.FeedbackConfig.Type.CONTINUOUS)
@@ -124,7 +154,11 @@ internal class FeedbackCreateCoreSchemaTest {
                 .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .feedbackSource(
                     AppFeedbackSource.builder()
-                        .metadata(JsonValue.from(mapOf<String, Any>()))
+                        .metadata(
+                            AppFeedbackSource.Metadata.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .type(AppFeedbackSource.Type.APP)
                         .build()
                 )

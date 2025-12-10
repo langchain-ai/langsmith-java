@@ -3,29 +3,23 @@
 package com.langchain.smith.models.datasets
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
-import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
-import java.util.Collections
 import java.util.Objects
 
 class DatasetCloneResponse
-@JsonCreator(mode = JsonCreator.Mode.DISABLED)
-private constructor(private val additionalProperties: MutableMap<String, JsonValue>) {
-
-    @JsonCreator private constructor() : this(mutableMapOf())
-
-    @JsonAnySetter
-    private fun putAdditionalProperty(key: String, value: JsonValue) {
-        additionalProperties.put(key, value)
-    }
+@JsonCreator
+private constructor(
+    @com.fasterxml.jackson.annotation.JsonValue
+    private val additionalProperties: Map<String, JsonValue>
+) {
 
     @JsonAnyGetter
     @ExcludeMissing
-    fun _additionalProperties(): Map<String, JsonValue> =
-        Collections.unmodifiableMap(additionalProperties)
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
 
     fun toBuilder() = Builder().from(this)
 
@@ -69,8 +63,7 @@ private constructor(private val additionalProperties: MutableMap<String, JsonVal
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): DatasetCloneResponse =
-            DatasetCloneResponse(additionalProperties.toMutableMap())
+        fun build(): DatasetCloneResponse = DatasetCloneResponse(additionalProperties.toImmutable())
     }
 
     private var validated: Boolean = false
@@ -96,7 +89,9 @@ private constructor(private val additionalProperties: MutableMap<String, JsonVal
      *
      * Used for best match union deserialization.
      */
-    @JvmSynthetic internal fun validity(): Int = 0
+    @JvmSynthetic
+    internal fun validity(): Int =
+        additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

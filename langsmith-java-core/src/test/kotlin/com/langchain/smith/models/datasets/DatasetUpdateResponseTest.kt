@@ -23,8 +23,16 @@ internal class DatasetUpdateResponseTest {
                 .dataType(DataType.KV)
                 .description("description")
                 .externallyManaged(true)
-                .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
-                .outputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
+                .inputsSchemaDefinition(
+                    DatasetUpdateResponse.InputsSchemaDefinition.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .outputsSchemaDefinition(
+                    DatasetUpdateResponse.OutputsSchemaDefinition.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .addTransformation(
                     DatasetTransformation.builder()
                         .addPath("string")
@@ -44,10 +52,18 @@ internal class DatasetUpdateResponseTest {
         assertThat(datasetUpdateResponse.dataType()).contains(DataType.KV)
         assertThat(datasetUpdateResponse.description()).contains("description")
         assertThat(datasetUpdateResponse.externallyManaged()).contains(true)
-        assertThat(datasetUpdateResponse._inputsSchemaDefinition())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(datasetUpdateResponse._outputsSchemaDefinition())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(datasetUpdateResponse.inputsSchemaDefinition())
+            .contains(
+                DatasetUpdateResponse.InputsSchemaDefinition.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
+        assertThat(datasetUpdateResponse.outputsSchemaDefinition())
+            .contains(
+                DatasetUpdateResponse.OutputsSchemaDefinition.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(datasetUpdateResponse.transformations().getOrNull())
             .containsExactly(
                 DatasetTransformation.builder()
@@ -71,8 +87,16 @@ internal class DatasetUpdateResponseTest {
                 .dataType(DataType.KV)
                 .description("description")
                 .externallyManaged(true)
-                .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
-                .outputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
+                .inputsSchemaDefinition(
+                    DatasetUpdateResponse.InputsSchemaDefinition.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .outputsSchemaDefinition(
+                    DatasetUpdateResponse.OutputsSchemaDefinition.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .addTransformation(
                     DatasetTransformation.builder()
                         .addPath("string")

@@ -19,9 +19,21 @@ internal class DatasetCreateParamsTest {
             .dataType(DataType.KV)
             .description("description")
             .externallyManaged(true)
-            .extra(JsonValue.from(mapOf<String, Any>()))
-            .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
-            .outputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
+            .extra(
+                DatasetCreateParams.Extra.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
+            .inputsSchemaDefinition(
+                DatasetCreateParams.InputsSchemaDefinition.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
+            .outputsSchemaDefinition(
+                DatasetCreateParams.OutputsSchemaDefinition.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
             .addTransformation(
                 DatasetTransformation.builder()
                     .addPath("string")
@@ -43,9 +55,21 @@ internal class DatasetCreateParamsTest {
                 .dataType(DataType.KV)
                 .description("description")
                 .externallyManaged(true)
-                .extra(JsonValue.from(mapOf<String, Any>()))
-                .inputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
-                .outputsSchemaDefinition(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    DatasetCreateParams.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .inputsSchemaDefinition(
+                    DatasetCreateParams.InputsSchemaDefinition.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .outputsSchemaDefinition(
+                    DatasetCreateParams.OutputsSchemaDefinition.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .addTransformation(
                     DatasetTransformation.builder()
                         .addPath("string")
@@ -64,9 +88,24 @@ internal class DatasetCreateParamsTest {
         assertThat(body.dataType()).contains(DataType.KV)
         assertThat(body.description()).contains("description")
         assertThat(body.externallyManaged()).contains(true)
-        assertThat(body._extra()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(body._inputsSchemaDefinition()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(body._outputsSchemaDefinition()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(body.extra())
+            .contains(
+                DatasetCreateParams.Extra.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
+        assertThat(body.inputsSchemaDefinition())
+            .contains(
+                DatasetCreateParams.InputsSchemaDefinition.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
+        assertThat(body.outputsSchemaDefinition())
+            .contains(
+                DatasetCreateParams.OutputsSchemaDefinition.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(body.transformations().getOrNull())
             .containsExactly(
                 DatasetTransformation.builder()

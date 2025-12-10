@@ -424,7 +424,7 @@ private constructor(
         private val title: JsonField<String>,
         private val commonFilters: JsonField<CommonFilters>,
         private val description: JsonField<String>,
-        private val metadata: JsonValue,
+        private val metadata: JsonField<Metadata>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -446,7 +446,9 @@ private constructor(
             @JsonProperty("description")
             @ExcludeMissing
             description: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
+            @JsonProperty("metadata")
+            @ExcludeMissing
+            metadata: JsonField<Metadata> = JsonMissing.of(),
         ) : this(
             id,
             chartType,
@@ -510,7 +512,11 @@ private constructor(
          */
         fun description(): Optional<String> = description.getOptional("description")
 
-        @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
         /**
          * Returns the raw JSON value of [id].
@@ -575,6 +581,13 @@ private constructor(
         @ExcludeMissing
         fun _description(): JsonField<String> = description
 
+        /**
+         * Returns the raw JSON value of [metadata].
+         *
+         * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -616,7 +629,7 @@ private constructor(
             private var title: JsonField<String>? = null
             private var commonFilters: JsonField<CommonFilters> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
-            private var metadata: JsonValue = JsonMissing.of()
+            private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -762,7 +775,19 @@ private constructor(
                 this.description = description
             }
 
-            fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
+            fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+            /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+            fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+            /**
+             * Sets [Builder.metadata] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.metadata] with a well-typed [Metadata] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -830,6 +855,7 @@ private constructor(
             title()
             commonFilters().ifPresent { it.validate() }
             description()
+            metadata().ifPresent { it.validate() }
             validated = true
         }
 
@@ -856,7 +882,8 @@ private constructor(
                 (series.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (title.asKnown().isPresent) 1 else 0) +
                 (commonFilters.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (description.asKnown().isPresent) 1 else 0)
+                (if (description.asKnown().isPresent) 1 else 0) +
+                (metadata.asKnown().getOrNull()?.validity() ?: 0)
 
         /** Enum for custom chart types. */
         class ChartType @JsonCreator private constructor(private val value: JsonField<String>) :
@@ -1156,8 +1183,9 @@ private constructor(
                 /** Alias for calling [value] with `Value.ofNumber(number)`. */
                 fun value(number: Double) = value(Value.ofNumber(number))
 
-                /** Alias for calling [value] with `Value.ofJson(json)`. */
-                fun value(json: JsonValue) = value(Value.ofJson(json))
+                /** Alias for calling [value] with `Value.ofUnionMember1(unionMember1)`. */
+                fun value(unionMember1: Value.UnionMember1) =
+                    value(Value.ofUnionMember1(unionMember1))
 
                 fun group(group: String?) = group(JsonField.ofNullable(group))
 
@@ -1259,28 +1287,28 @@ private constructor(
             class Value
             private constructor(
                 private val number: Double? = null,
-                private val json: JsonValue? = null,
+                private val unionMember1: UnionMember1? = null,
                 private val _json: JsonValue? = null,
             ) {
 
                 fun number(): Optional<Double> = Optional.ofNullable(number)
 
-                fun json(): Optional<JsonValue> = Optional.ofNullable(json)
+                fun unionMember1(): Optional<UnionMember1> = Optional.ofNullable(unionMember1)
 
                 fun isNumber(): Boolean = number != null
 
-                fun isJson(): Boolean = json != null
+                fun isUnionMember1(): Boolean = unionMember1 != null
 
                 fun asNumber(): Double = number.getOrThrow("number")
 
-                fun asJson(): JsonValue = json.getOrThrow("json")
+                fun asUnionMember1(): UnionMember1 = unionMember1.getOrThrow("unionMember1")
 
                 fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
                 fun <T> accept(visitor: Visitor<T>): T =
                     when {
                         number != null -> visitor.visitNumber(number)
-                        json != null -> visitor.visitJson(json)
+                        unionMember1 != null -> visitor.visitUnionMember1(unionMember1)
                         else -> visitor.unknown(_json)
                     }
 
@@ -1295,7 +1323,9 @@ private constructor(
                         object : Visitor<Unit> {
                             override fun visitNumber(number: Double) {}
 
-                            override fun visitJson(json: JsonValue) {}
+                            override fun visitUnionMember1(unionMember1: UnionMember1) {
+                                unionMember1.validate()
+                            }
                         }
                     )
                     validated = true
@@ -1321,7 +1351,8 @@ private constructor(
                         object : Visitor<Int> {
                             override fun visitNumber(number: Double) = 1
 
-                            override fun visitJson(json: JsonValue) = 1
+                            override fun visitUnionMember1(unionMember1: UnionMember1) =
+                                unionMember1.validity()
 
                             override fun unknown(json: JsonValue?) = 0
                         }
@@ -1332,15 +1363,17 @@ private constructor(
                         return true
                     }
 
-                    return other is Value && number == other.number && json == other.json
+                    return other is Value &&
+                        number == other.number &&
+                        unionMember1 == other.unionMember1
                 }
 
-                override fun hashCode(): Int = Objects.hash(number, json)
+                override fun hashCode(): Int = Objects.hash(number, unionMember1)
 
                 override fun toString(): String =
                     when {
                         number != null -> "Value{number=$number}"
-                        json != null -> "Value{json=$json}"
+                        unionMember1 != null -> "Value{unionMember1=$unionMember1}"
                         _json != null -> "Value{_unknown=$_json}"
                         else -> throw IllegalStateException("Invalid Value")
                     }
@@ -1349,7 +1382,9 @@ private constructor(
 
                     @JvmStatic fun ofNumber(number: Double) = Value(number = number)
 
-                    @JvmStatic fun ofJson(json: JsonValue) = Value(json = json)
+                    @JvmStatic
+                    fun ofUnionMember1(unionMember1: UnionMember1) =
+                        Value(unionMember1 = unionMember1)
                 }
 
                 /**
@@ -1360,7 +1395,7 @@ private constructor(
 
                     fun visitNumber(number: Double): T
 
-                    fun visitJson(json: JsonValue): T
+                    fun visitUnionMember1(unionMember1: UnionMember1): T
 
                     /**
                      * Maps an unknown variant of [Value] to a value of type [T].
@@ -1384,11 +1419,11 @@ private constructor(
 
                         val bestMatches =
                             sequenceOf(
+                                    tryDeserialize(node, jacksonTypeRef<UnionMember1>())?.let {
+                                        Value(unionMember1 = it, _json = json)
+                                    },
                                     tryDeserialize(node, jacksonTypeRef<Double>())?.let {
                                         Value(number = it, _json = json)
-                                    },
-                                    tryDeserialize(node, jacksonTypeRef<JsonValue>())?.let {
-                                        Value(json = it, _json = json)
                                     },
                                 )
                                 .filterNotNull()
@@ -1396,7 +1431,8 @@ private constructor(
                                 .toList()
                         return when (bestMatches.size) {
                             // This can happen if what we're deserializing is completely
-                            // incompatible with all the possible variants.
+                            // incompatible with all the possible variants (e.g. deserializing from
+                            // boolean).
                             0 -> Value(_json = json)
                             1 -> bestMatches.single()
                             // If there's more than one match with the highest validity, then use
@@ -1416,11 +1452,120 @@ private constructor(
                     ) {
                         when {
                             value.number != null -> generator.writeObject(value.number)
-                            value.json != null -> generator.writeObject(value.json)
+                            value.unionMember1 != null -> generator.writeObject(value.unionMember1)
                             value._json != null -> generator.writeObject(value._json)
                             else -> throw IllegalStateException("Invalid Value")
                         }
                     }
+                }
+
+                class UnionMember1
+                @JsonCreator
+                private constructor(
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    private val additionalProperties: Map<String, JsonValue>
+                ) {
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [UnionMember1].
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [UnionMember1]. */
+                    class Builder internal constructor() {
+
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(unionMember1: UnionMember1) = apply {
+                            additionalProperties = unionMember1.additionalProperties.toMutableMap()
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [UnionMember1].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): UnionMember1 = UnionMember1(additionalProperties.toImmutable())
+                    }
+
+                    private var validated: Boolean = false
+
+                    fun validate(): UnionMember1 = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        additionalProperties.count { (_, value) ->
+                            !value.isNull() && !value.isMissing()
+                        }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is UnionMember1 &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "UnionMember1{additionalProperties=$additionalProperties}"
                 }
             }
 
@@ -3533,6 +3678,108 @@ private constructor(
                 "CommonFilters{filter=$filter, session=$session, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
         }
 
+        class Metadata
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Metadata]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Metadata]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(metadata: Metadata) = apply {
+                    additionalProperties = metadata.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Metadata].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): Metadata = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Metadata && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
+        }
+
         override fun equals(other: Any?): Boolean {
             if (this === other) {
                 return true
@@ -3878,7 +4125,7 @@ private constructor(
             private val title: JsonField<String>,
             private val commonFilters: JsonField<CommonFilters>,
             private val description: JsonField<String>,
-            private val metadata: JsonValue,
+            private val metadata: JsonField<Metadata>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
 
@@ -3902,7 +4149,9 @@ private constructor(
                 @JsonProperty("description")
                 @ExcludeMissing
                 description: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
+                @JsonProperty("metadata")
+                @ExcludeMissing
+                metadata: JsonField<Metadata> = JsonMissing.of(),
             ) : this(
                 id,
                 chartType,
@@ -3973,7 +4222,11 @@ private constructor(
              */
             fun description(): Optional<String> = description.getOptional("description")
 
-            @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
             /**
              * Returns the raw JSON value of [id].
@@ -4040,6 +4293,16 @@ private constructor(
             @ExcludeMissing
             fun _description(): JsonField<String> = description
 
+            /**
+             * Returns the raw JSON value of [metadata].
+             *
+             * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("metadata")
+            @ExcludeMissing
+            fun _metadata(): JsonField<Metadata> = metadata
+
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
                 additionalProperties.put(key, value)
@@ -4081,7 +4344,7 @@ private constructor(
                 private var title: JsonField<String>? = null
                 private var commonFilters: JsonField<CommonFilters> = JsonMissing.of()
                 private var description: JsonField<String> = JsonMissing.of()
-                private var metadata: JsonValue = JsonMissing.of()
+                private var metadata: JsonField<Metadata> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                 @JvmSynthetic
@@ -4231,7 +4494,19 @@ private constructor(
                     this.description = description
                 }
 
-                fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
+                fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+                /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+                fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+                /**
+                 * Sets [Builder.metadata] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.metadata] with a well-typed [Metadata] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
                 fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                     this.additionalProperties.clear()
@@ -4302,6 +4577,7 @@ private constructor(
                 title()
                 commonFilters().ifPresent { it.validate() }
                 description()
+                metadata().ifPresent { it.validate() }
                 validated = true
             }
 
@@ -4328,7 +4604,8 @@ private constructor(
                     (series.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                     (if (title.asKnown().isPresent) 1 else 0) +
                     (commonFilters.asKnown().getOrNull()?.validity() ?: 0) +
-                    (if (description.asKnown().isPresent) 1 else 0)
+                    (if (description.asKnown().isPresent) 1 else 0) +
+                    (metadata.asKnown().getOrNull()?.validity() ?: 0)
 
             /** Enum for custom chart types. */
             class ChartType @JsonCreator private constructor(private val value: JsonField<String>) :
@@ -4636,8 +4913,9 @@ private constructor(
                     /** Alias for calling [value] with `Value.ofNumber(number)`. */
                     fun value(number: Double) = value(Value.ofNumber(number))
 
-                    /** Alias for calling [value] with `Value.ofJson(json)`. */
-                    fun value(json: JsonValue) = value(Value.ofJson(json))
+                    /** Alias for calling [value] with `Value.ofUnionMember1(unionMember1)`. */
+                    fun value(unionMember1: Value.UnionMember1) =
+                        value(Value.ofUnionMember1(unionMember1))
 
                     fun group(group: String?) = group(JsonField.ofNullable(group))
 
@@ -4739,28 +5017,28 @@ private constructor(
                 class Value
                 private constructor(
                     private val number: Double? = null,
-                    private val json: JsonValue? = null,
+                    private val unionMember1: UnionMember1? = null,
                     private val _json: JsonValue? = null,
                 ) {
 
                     fun number(): Optional<Double> = Optional.ofNullable(number)
 
-                    fun json(): Optional<JsonValue> = Optional.ofNullable(json)
+                    fun unionMember1(): Optional<UnionMember1> = Optional.ofNullable(unionMember1)
 
                     fun isNumber(): Boolean = number != null
 
-                    fun isJson(): Boolean = json != null
+                    fun isUnionMember1(): Boolean = unionMember1 != null
 
                     fun asNumber(): Double = number.getOrThrow("number")
 
-                    fun asJson(): JsonValue = json.getOrThrow("json")
+                    fun asUnionMember1(): UnionMember1 = unionMember1.getOrThrow("unionMember1")
 
                     fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
                     fun <T> accept(visitor: Visitor<T>): T =
                         when {
                             number != null -> visitor.visitNumber(number)
-                            json != null -> visitor.visitJson(json)
+                            unionMember1 != null -> visitor.visitUnionMember1(unionMember1)
                             else -> visitor.unknown(_json)
                         }
 
@@ -4775,7 +5053,9 @@ private constructor(
                             object : Visitor<Unit> {
                                 override fun visitNumber(number: Double) {}
 
-                                override fun visitJson(json: JsonValue) {}
+                                override fun visitUnionMember1(unionMember1: UnionMember1) {
+                                    unionMember1.validate()
+                                }
                             }
                         )
                         validated = true
@@ -4801,7 +5081,8 @@ private constructor(
                             object : Visitor<Int> {
                                 override fun visitNumber(number: Double) = 1
 
-                                override fun visitJson(json: JsonValue) = 1
+                                override fun visitUnionMember1(unionMember1: UnionMember1) =
+                                    unionMember1.validity()
 
                                 override fun unknown(json: JsonValue?) = 0
                             }
@@ -4812,15 +5093,17 @@ private constructor(
                             return true
                         }
 
-                        return other is Value && number == other.number && json == other.json
+                        return other is Value &&
+                            number == other.number &&
+                            unionMember1 == other.unionMember1
                     }
 
-                    override fun hashCode(): Int = Objects.hash(number, json)
+                    override fun hashCode(): Int = Objects.hash(number, unionMember1)
 
                     override fun toString(): String =
                         when {
                             number != null -> "Value{number=$number}"
-                            json != null -> "Value{json=$json}"
+                            unionMember1 != null -> "Value{unionMember1=$unionMember1}"
                             _json != null -> "Value{_unknown=$_json}"
                             else -> throw IllegalStateException("Invalid Value")
                         }
@@ -4829,7 +5112,9 @@ private constructor(
 
                         @JvmStatic fun ofNumber(number: Double) = Value(number = number)
 
-                        @JvmStatic fun ofJson(json: JsonValue) = Value(json = json)
+                        @JvmStatic
+                        fun ofUnionMember1(unionMember1: UnionMember1) =
+                            Value(unionMember1 = unionMember1)
                     }
 
                     /**
@@ -4840,7 +5125,7 @@ private constructor(
 
                         fun visitNumber(number: Double): T
 
-                        fun visitJson(json: JsonValue): T
+                        fun visitUnionMember1(unionMember1: UnionMember1): T
 
                         /**
                          * Maps an unknown variant of [Value] to a value of type [T].
@@ -4864,11 +5149,11 @@ private constructor(
 
                             val bestMatches =
                                 sequenceOf(
+                                        tryDeserialize(node, jacksonTypeRef<UnionMember1>())?.let {
+                                            Value(unionMember1 = it, _json = json)
+                                        },
                                         tryDeserialize(node, jacksonTypeRef<Double>())?.let {
                                             Value(number = it, _json = json)
-                                        },
-                                        tryDeserialize(node, jacksonTypeRef<JsonValue>())?.let {
-                                            Value(json = it, _json = json)
                                         },
                                     )
                                     .filterNotNull()
@@ -4876,7 +5161,8 @@ private constructor(
                                     .toList()
                             return when (bestMatches.size) {
                                 // This can happen if what we're deserializing is completely
-                                // incompatible with all the possible variants.
+                                // incompatible with all the possible variants (e.g. deserializing
+                                // from boolean).
                                 0 -> Value(_json = json)
                                 1 -> bestMatches.single()
                                 // If there's more than one match with the highest validity, then
@@ -4897,11 +5183,125 @@ private constructor(
                         ) {
                             when {
                                 value.number != null -> generator.writeObject(value.number)
-                                value.json != null -> generator.writeObject(value.json)
+                                value.unionMember1 != null ->
+                                    generator.writeObject(value.unionMember1)
                                 value._json != null -> generator.writeObject(value._json)
                                 else -> throw IllegalStateException("Invalid Value")
                             }
                         }
+                    }
+
+                    class UnionMember1
+                    @JsonCreator
+                    private constructor(
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        private val additionalProperties: Map<String, JsonValue>
+                    ) {
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [UnionMember1].
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [UnionMember1]. */
+                        class Builder internal constructor() {
+
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(unionMember1: UnionMember1) = apply {
+                                additionalProperties =
+                                    unionMember1.additionalProperties.toMutableMap()
+                            }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [UnionMember1].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             */
+                            fun build(): UnionMember1 =
+                                UnionMember1(additionalProperties.toImmutable())
+                        }
+
+                        private var validated: Boolean = false
+
+                        fun validate(): UnionMember1 = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            additionalProperties.count { (_, value) ->
+                                !value.isNull() && !value.isMissing()
+                            }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is UnionMember1 &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "UnionMember1{additionalProperties=$additionalProperties}"
                     }
                 }
 
@@ -7052,6 +7452,110 @@ private constructor(
 
                 override fun toString() =
                     "CommonFilters{filter=$filter, session=$session, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            }
+
+            class Metadata
+            @JsonCreator
+            private constructor(
+                @com.fasterxml.jackson.annotation.JsonValue
+                private val additionalProperties: Map<String, JsonValue>
+            ) {
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [Metadata]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Metadata]. */
+                class Builder internal constructor() {
+
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(metadata: Metadata) = apply {
+                        additionalProperties = metadata.additionalProperties.toMutableMap()
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Metadata].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+                }
+
+                private var validated: Boolean = false
+
+                fun validate(): Metadata = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    additionalProperties.count { (_, value) ->
+                        !value.isNull() && !value.isMissing()
+                    }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Metadata && additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
             }
 
             override fun equals(other: Any?): Boolean {

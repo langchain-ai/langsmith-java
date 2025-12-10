@@ -26,8 +26,16 @@ internal class DatasetListComparativeResponseTest {
                 )
                 .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .description("description")
-                .extra(JsonValue.from(mapOf<String, Any>()))
-                .feedbackStats(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    DatasetListComparativeResponse.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .feedbackStats(
+                    DatasetListComparativeResponse.FeedbackStats.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("name")
                 .build()
 
@@ -45,10 +53,18 @@ internal class DatasetListComparativeResponseTest {
         assertThat(datasetListComparativeResponse.modifiedAt())
             .isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(datasetListComparativeResponse.description()).contains("description")
-        assertThat(datasetListComparativeResponse._extra())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(datasetListComparativeResponse._feedbackStats())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(datasetListComparativeResponse.extra())
+            .contains(
+                DatasetListComparativeResponse.Extra.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
+        assertThat(datasetListComparativeResponse.feedbackStats())
+            .contains(
+                DatasetListComparativeResponse.FeedbackStats.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(datasetListComparativeResponse.name()).contains("name")
     }
 
@@ -67,8 +83,16 @@ internal class DatasetListComparativeResponseTest {
                 )
                 .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .description("description")
-                .extra(JsonValue.from(mapOf<String, Any>()))
-                .feedbackStats(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    DatasetListComparativeResponse.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .feedbackStats(
+                    DatasetListComparativeResponse.FeedbackStats.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("name")
                 .build()
 

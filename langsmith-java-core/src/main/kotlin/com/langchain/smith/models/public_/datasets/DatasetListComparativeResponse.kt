@@ -30,8 +30,8 @@ private constructor(
     private val experimentsInfo: JsonField<List<SimpleExperimentInfo>>,
     private val modifiedAt: JsonField<OffsetDateTime>,
     private val description: JsonField<String>,
-    private val extra: JsonValue,
-    private val feedbackStats: JsonValue,
+    private val extra: JsonField<Extra>,
+    private val feedbackStats: JsonField<FeedbackStats>,
     private val name: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -51,8 +51,10 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("extra") @ExcludeMissing extra: JsonValue = JsonMissing.of(),
-        @JsonProperty("feedback_stats") @ExcludeMissing feedbackStats: JsonValue = JsonMissing.of(),
+        @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
+        @JsonProperty("feedback_stats")
+        @ExcludeMissing
+        feedbackStats: JsonField<FeedbackStats> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
     ) : this(
         id,
@@ -97,9 +99,17 @@ private constructor(
      */
     fun description(): Optional<String> = description.getOptional("description")
 
-    @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonValue = extra
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extra(): Optional<Extra> = extra.getOptional("extra")
 
-    @JsonProperty("feedback_stats") @ExcludeMissing fun _feedbackStats(): JsonValue = feedbackStats
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun feedbackStats(): Optional<FeedbackStats> = feedbackStats.getOptional("feedback_stats")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -149,6 +159,22 @@ private constructor(
     @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
 
     /**
+     * Returns the raw JSON value of [extra].
+     *
+     * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonField<Extra> = extra
+
+    /**
+     * Returns the raw JSON value of [feedbackStats].
+     *
+     * Unlike [feedbackStats], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("feedback_stats")
+    @ExcludeMissing
+    fun _feedbackStats(): JsonField<FeedbackStats> = feedbackStats
+
+    /**
      * Returns the raw JSON value of [name].
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
@@ -192,8 +218,8 @@ private constructor(
         private var experimentsInfo: JsonField<MutableList<SimpleExperimentInfo>>? = null
         private var modifiedAt: JsonField<OffsetDateTime>? = null
         private var description: JsonField<String> = JsonMissing.of()
-        private var extra: JsonValue = JsonMissing.of()
-        private var feedbackStats: JsonValue = JsonMissing.of()
+        private var extra: JsonField<Extra> = JsonMissing.of()
+        private var feedbackStats: JsonField<FeedbackStats> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -286,9 +312,36 @@ private constructor(
          */
         fun description(description: JsonField<String>) = apply { this.description = description }
 
-        fun extra(extra: JsonValue) = apply { this.extra = extra }
+        fun extra(extra: Extra?) = extra(JsonField.ofNullable(extra))
 
-        fun feedbackStats(feedbackStats: JsonValue) = apply { this.feedbackStats = feedbackStats }
+        /** Alias for calling [Builder.extra] with `extra.orElse(null)`. */
+        fun extra(extra: Optional<Extra>) = extra(extra.getOrNull())
+
+        /**
+         * Sets [Builder.extra] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extra] with a well-typed [Extra] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
+
+        fun feedbackStats(feedbackStats: FeedbackStats?) =
+            feedbackStats(JsonField.ofNullable(feedbackStats))
+
+        /** Alias for calling [Builder.feedbackStats] with `feedbackStats.orElse(null)`. */
+        fun feedbackStats(feedbackStats: Optional<FeedbackStats>) =
+            feedbackStats(feedbackStats.getOrNull())
+
+        /**
+         * Sets [Builder.feedbackStats] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.feedbackStats] with a well-typed [FeedbackStats] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun feedbackStats(feedbackStats: JsonField<FeedbackStats>) = apply {
+            this.feedbackStats = feedbackStats
+        }
 
         fun name(name: String?) = name(JsonField.ofNullable(name))
 
@@ -363,6 +416,8 @@ private constructor(
         experimentsInfo().forEach { it.validate() }
         modifiedAt()
         description()
+        extra().ifPresent { it.validate() }
+        feedbackStats().ifPresent { it.validate() }
         name()
         validated = true
     }
@@ -387,7 +442,207 @@ private constructor(
             (experimentsInfo.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (modifiedAt.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
+            (extra.asKnown().getOrNull()?.validity() ?: 0) +
+            (feedbackStats.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0)
+
+    class Extra
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Extra]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Extra]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(extra: Extra) = apply {
+                additionalProperties = extra.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Extra].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Extra = Extra(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Extra = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Extra && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Extra{additionalProperties=$additionalProperties}"
+    }
+
+    class FeedbackStats
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [FeedbackStats]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [FeedbackStats]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(feedbackStats: FeedbackStats) = apply {
+                additionalProperties = feedbackStats.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [FeedbackStats].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): FeedbackStats = FeedbackStats(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): FeedbackStats = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is FeedbackStats && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "FeedbackStats{additionalProperties=$additionalProperties}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

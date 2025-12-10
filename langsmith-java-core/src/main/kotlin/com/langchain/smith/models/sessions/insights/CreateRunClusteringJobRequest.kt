@@ -24,7 +24,7 @@ import kotlin.jvm.optionals.getOrNull
 class CreateRunClusteringJobRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val attributeSchemas: JsonValue,
+    private val attributeSchemas: JsonField<AttributeSchemas>,
     private val endTime: JsonField<OffsetDateTime>,
     private val filter: JsonField<String>,
     private val hierarchy: JsonField<List<Long>>,
@@ -44,7 +44,7 @@ private constructor(
     private constructor(
         @JsonProperty("attribute_schemas")
         @ExcludeMissing
-        attributeSchemas: JsonValue = JsonMissing.of(),
+        attributeSchemas: JsonField<AttributeSchemas> = JsonMissing.of(),
         @JsonProperty("end_time")
         @ExcludeMissing
         endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -90,9 +90,12 @@ private constructor(
         mutableMapOf(),
     )
 
-    @JsonProperty("attribute_schemas")
-    @ExcludeMissing
-    fun _attributeSchemas(): JsonValue = attributeSchemas
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun attributeSchemas(): Optional<AttributeSchemas> =
+        attributeSchemas.getOptional("attribute_schemas")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -166,6 +169,16 @@ private constructor(
      */
     fun validateModelSecrets(): Optional<Boolean> =
         validateModelSecrets.getOptional("validate_model_secrets")
+
+    /**
+     * Returns the raw JSON value of [attributeSchemas].
+     *
+     * Unlike [attributeSchemas], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("attribute_schemas")
+    @ExcludeMissing
+    fun _attributeSchemas(): JsonField<AttributeSchemas> = attributeSchemas
 
     /**
      * Returns the raw JSON value of [endTime].
@@ -286,7 +299,7 @@ private constructor(
     /** A builder for [CreateRunClusteringJobRequest]. */
     class Builder internal constructor() {
 
-        private var attributeSchemas: JsonValue = JsonMissing.of()
+        private var attributeSchemas: JsonField<AttributeSchemas> = JsonMissing.of()
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var filter: JsonField<String> = JsonMissing.of()
         private var hierarchy: JsonField<MutableList<Long>>? = null
@@ -319,7 +332,21 @@ private constructor(
             additionalProperties = createRunClusteringJobRequest.additionalProperties.toMutableMap()
         }
 
-        fun attributeSchemas(attributeSchemas: JsonValue) = apply {
+        fun attributeSchemas(attributeSchemas: AttributeSchemas?) =
+            attributeSchemas(JsonField.ofNullable(attributeSchemas))
+
+        /** Alias for calling [Builder.attributeSchemas] with `attributeSchemas.orElse(null)`. */
+        fun attributeSchemas(attributeSchemas: Optional<AttributeSchemas>) =
+            attributeSchemas(attributeSchemas.getOrNull())
+
+        /**
+         * Sets [Builder.attributeSchemas] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.attributeSchemas] with a well-typed [AttributeSchemas]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun attributeSchemas(attributeSchemas: JsonField<AttributeSchemas>) = apply {
             this.attributeSchemas = attributeSchemas
         }
 
@@ -567,6 +594,7 @@ private constructor(
             return@apply
         }
 
+        attributeSchemas().ifPresent { it.validate() }
         endTime()
         filter()
         hierarchy()
@@ -597,7 +625,8 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (endTime.asKnown().isPresent) 1 else 0) +
+        (attributeSchemas.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (filter.asKnown().isPresent) 1 else 0) +
             (hierarchy.asKnown().getOrNull()?.size ?: 0) +
             (if (lastNHours.asKnown().isPresent) 1 else 0) +
@@ -609,6 +638,105 @@ private constructor(
             (if (summaryPrompt.asKnown().isPresent) 1 else 0) +
             (userContext.asKnown().getOrNull()?.validity() ?: 0) +
             (if (validateModelSecrets.asKnown().isPresent) 1 else 0)
+
+    class AttributeSchemas
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [AttributeSchemas]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [AttributeSchemas]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(attributeSchemas: AttributeSchemas) = apply {
+                additionalProperties = attributeSchemas.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [AttributeSchemas].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): AttributeSchemas = AttributeSchemas(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): AttributeSchemas = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AttributeSchemas && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "AttributeSchemas{additionalProperties=$additionalProperties}"
+    }
 
     class Model @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
