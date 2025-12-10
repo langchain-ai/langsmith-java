@@ -491,7 +491,35 @@ public final class OpenTelemetryConfig {
                     result.join(5, java.util.concurrent.TimeUnit.SECONDS);
                     if (!result.isSuccess()) {
                         logger.error("[LangSmith ERROR] Failed to export " + spans.size() + " span(s) to LangSmith");
-                        logger.error("  This usually indicates a network error or authentication problem");
+                        
+                        // Try to get more error details
+                        try {
+                            // Check if there's an exception
+                            java.lang.reflect.Method getExceptionMethod = result.getClass().getMethod("getException");
+                            Throwable exception = (Throwable) getExceptionMethod.invoke(result);
+                            if (exception != null) {
+                                logger.error("  Exception: " + exception.getClass().getName() + ": " + exception.getMessage());
+                                if (exception.getCause() != null) {
+                                    logger.error("  Caused by: " + exception.getCause().getClass().getName() + ": " + exception.getCause().getMessage());
+                                }
+                                // Print full stack trace in debug mode
+                                java.io.StringWriter sw = new java.io.StringWriter();
+                                exception.printStackTrace(new java.io.PrintWriter(sw));
+                                logger.debug("  Stack trace:\n" + sw.toString());
+                            }
+                        } catch (Exception e) {
+                            // Reflection failed, try to get error message another way
+                            logger.debug("  Could not extract exception details: " + e.getMessage());
+                        }
+                        
+                        // Log span details for debugging
+                        logger.error("  Spans being exported:");
+                        for (io.opentelemetry.sdk.trace.data.SpanData span : spans) {
+                            logger.error("    - " + span.getName() + " (traceId=" + span.getTraceId() + ", spanId=" + span.getSpanId() + ")");
+                            logger.debug("      Attributes: " + span.getAttributes());
+                        }
+                        
+                        logger.error("  This usually indicates a network error, authentication problem, or invalid span data");
                         logger.error("  Check your LANGSMITH_API_KEY and network connectivity");
                     } else {
                         logger.debug("[LangSmith] Successfully exported " + spans.size() + " span(s)");
@@ -504,8 +532,24 @@ public final class OpenTelemetryConfig {
                 result.whenComplete(() -> {
                     if (!result.isSuccess()) {
                         logger.error("[LangSmith ERROR] Failed to export " + spans.size() + " span(s) to LangSmith");
-                        logger.error("  This usually indicates a network error or authentication problem");
+                        
+                        // Try to get exception details even without DEBUG
+                        try {
+                            java.lang.reflect.Method getExceptionMethod = result.getClass().getMethod("getException");
+                            Throwable exception = (Throwable) getExceptionMethod.invoke(result);
+                            if (exception != null) {
+                                logger.error("  Error: " + exception.getMessage());
+                                if (exception.getCause() != null) {
+                                    logger.error("  Caused by: " + exception.getCause().getMessage());
+                                }
+                            }
+                        } catch (Exception e) {
+                            // Ignore reflection errors
+                        }
+                        
+                        logger.error("  This usually indicates a network error, authentication problem, or invalid span data");
                         logger.error("  Check your LANGSMITH_API_KEY and network connectivity");
+                        logger.error("  Set LANGSMITH_DEBUG=true for more details");
                     }
                 });
             }
