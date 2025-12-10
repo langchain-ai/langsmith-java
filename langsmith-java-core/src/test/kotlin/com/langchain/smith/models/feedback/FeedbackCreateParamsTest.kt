@@ -18,7 +18,11 @@ internal class FeedbackCreateParamsTest {
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .comment("comment")
                     .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .correction(JsonValue.from(mapOf<String, Any>()))
+                    .correction(
+                        FeedbackCreateSchema.Correction.UnionMember0.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .feedbackConfig(
@@ -37,7 +41,11 @@ internal class FeedbackCreateParamsTest {
                     .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .feedbackSource(
                         AppFeedbackSource.builder()
-                            .metadata(JsonValue.from(mapOf<String, Any>()))
+                            .metadata(
+                                AppFeedbackSource.Metadata.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
                             .type(AppFeedbackSource.Type.APP)
                             .build()
                     )
@@ -62,7 +70,11 @@ internal class FeedbackCreateParamsTest {
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .comment("comment")
                         .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .correction(JsonValue.from(mapOf<String, Any>()))
+                        .correction(
+                            FeedbackCreateSchema.Correction.UnionMember0.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
                         .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .error(true)
                         .feedbackConfig(
@@ -81,7 +93,11 @@ internal class FeedbackCreateParamsTest {
                         .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .feedbackSource(
                             AppFeedbackSource.builder()
-                                .metadata(JsonValue.from(mapOf<String, Any>()))
+                                .metadata(
+                                    AppFeedbackSource.Metadata.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
                                 .type(AppFeedbackSource.Type.APP)
                                 .build()
                         )
@@ -104,7 +120,11 @@ internal class FeedbackCreateParamsTest {
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .comment("comment")
                     .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .correction(JsonValue.from(mapOf<String, Any>()))
+                    .correction(
+                        FeedbackCreateSchema.Correction.UnionMember0.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .feedbackConfig(
@@ -123,7 +143,11 @@ internal class FeedbackCreateParamsTest {
                     .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .feedbackSource(
                         AppFeedbackSource.builder()
-                            .metadata(JsonValue.from(mapOf<String, Any>()))
+                            .metadata(
+                                AppFeedbackSource.Metadata.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
                             .type(AppFeedbackSource.Type.APP)
                             .build()
                     )

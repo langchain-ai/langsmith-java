@@ -59,7 +59,11 @@ internal class CommitServiceTest {
                 CommitUpdateParams.builder()
                     .owner("owner")
                     .repo("repo")
-                    .manifest(JsonValue.from(mapOf<String, Any>()))
+                    .manifest(
+                        CommitUpdateParams.Manifest.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .addExampleRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .parentCommit("parent_commit")
                     .skipWebhooks(true)

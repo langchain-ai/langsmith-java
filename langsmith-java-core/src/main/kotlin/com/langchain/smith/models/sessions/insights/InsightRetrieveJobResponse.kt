@@ -30,7 +30,7 @@ private constructor(
     private val status: JsonField<String>,
     private val endTime: JsonField<OffsetDateTime>,
     private val error: JsonField<String>,
-    private val metadata: JsonValue,
+    private val metadata: JsonField<Metadata>,
     private val shape: JsonField<Shape>,
     private val startTime: JsonField<OffsetDateTime>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -48,7 +48,7 @@ private constructor(
         @ExcludeMissing
         endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("error") @ExcludeMissing error: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
+        @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
         @JsonProperty("shape") @ExcludeMissing shape: JsonField<Shape> = JsonMissing.of(),
         @JsonProperty("start_time")
         @ExcludeMissing
@@ -91,7 +91,11 @@ private constructor(
      */
     fun error(): Optional<String> = error.getOptional("error")
 
-    @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -148,6 +152,13 @@ private constructor(
     @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<String> = error
 
     /**
+     * Returns the raw JSON value of [metadata].
+     *
+     * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
+
+    /**
      * Returns the raw JSON value of [shape].
      *
      * Unlike [shape], this method doesn't throw if the JSON field has an unexpected type.
@@ -200,7 +211,7 @@ private constructor(
         private var status: JsonField<String>? = null
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var error: JsonField<String> = JsonMissing.of()
-        private var metadata: JsonValue = JsonMissing.of()
+        private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var shape: JsonField<Shape> = JsonMissing.of()
         private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -301,7 +312,19 @@ private constructor(
          */
         fun error(error: JsonField<String>) = apply { this.error = error }
 
-        fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
+        fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+        /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+        fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+        /**
+         * Sets [Builder.metadata] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.metadata] with a well-typed [Metadata] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
         fun shape(shape: Shape?) = shape(JsonField.ofNullable(shape))
 
@@ -392,6 +415,7 @@ private constructor(
         status()
         endTime()
         error()
+        metadata().ifPresent { it.validate() }
         shape().ifPresent { it.validate() }
         startTime()
         validated = true
@@ -418,6 +442,7 @@ private constructor(
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (error.asKnown().isPresent) 1 else 0) +
+            (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (shape.asKnown().getOrNull()?.validity() ?: 0) +
             (if (startTime.asKnown().isPresent) 1 else 0)
 
@@ -430,7 +455,7 @@ private constructor(
         private val level: JsonField<Long>,
         private val name: JsonField<String>,
         private val numRuns: JsonField<Long>,
-        private val stats: JsonValue,
+        private val stats: JsonField<Stats>,
         private val parentId: JsonField<String>,
         private val parentName: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -445,7 +470,7 @@ private constructor(
             @JsonProperty("level") @ExcludeMissing level: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("num_runs") @ExcludeMissing numRuns: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("stats") @ExcludeMissing stats: JsonValue = JsonMissing.of(),
+            @JsonProperty("stats") @ExcludeMissing stats: JsonField<Stats> = JsonMissing.of(),
             @JsonProperty("parent_id")
             @ExcludeMissing
             parentId: JsonField<String> = JsonMissing.of(),
@@ -484,7 +509,11 @@ private constructor(
          */
         fun numRuns(): Long = numRuns.getRequired("num_runs")
 
-        @JsonProperty("stats") @ExcludeMissing fun _stats(): JsonValue = stats
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun stats(): Optional<Stats> = stats.getOptional("stats")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -534,6 +563,13 @@ private constructor(
          * Unlike [numRuns], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("num_runs") @ExcludeMissing fun _numRuns(): JsonField<Long> = numRuns
+
+        /**
+         * Returns the raw JSON value of [stats].
+         *
+         * Unlike [stats], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("stats") @ExcludeMissing fun _stats(): JsonField<Stats> = stats
 
         /**
          * Returns the raw JSON value of [parentId].
@@ -589,7 +625,7 @@ private constructor(
             private var level: JsonField<Long>? = null
             private var name: JsonField<String>? = null
             private var numRuns: JsonField<Long>? = null
-            private var stats: JsonValue? = null
+            private var stats: JsonField<Stats>? = null
             private var parentId: JsonField<String> = JsonMissing.of()
             private var parentName: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -664,7 +700,19 @@ private constructor(
              */
             fun numRuns(numRuns: JsonField<Long>) = apply { this.numRuns = numRuns }
 
-            fun stats(stats: JsonValue) = apply { this.stats = stats }
+            fun stats(stats: Stats?) = stats(JsonField.ofNullable(stats))
+
+            /** Alias for calling [Builder.stats] with `stats.orElse(null)`. */
+            fun stats(stats: Optional<Stats>) = stats(stats.getOrNull())
+
+            /**
+             * Sets [Builder.stats] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.stats] with a well-typed [Stats] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun stats(stats: JsonField<Stats>) = apply { this.stats = stats }
 
             fun parentId(parentId: String?) = parentId(JsonField.ofNullable(parentId))
 
@@ -756,6 +804,7 @@ private constructor(
             level()
             name()
             numRuns()
+            stats().ifPresent { it.validate() }
             parentId()
             parentName()
             validated = true
@@ -782,8 +831,111 @@ private constructor(
                 (if (level.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (if (numRuns.asKnown().isPresent) 1 else 0) +
+                (stats.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (parentId.asKnown().isPresent) 1 else 0) +
                 (if (parentName.asKnown().isPresent) 1 else 0)
+
+        class Stats
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Stats]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Stats]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(stats: Stats) = apply {
+                    additionalProperties = stats.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Stats].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Stats = Stats(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): Stats = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Stats && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Stats{additionalProperties=$additionalProperties}"
+        }
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -820,6 +972,105 @@ private constructor(
 
         override fun toString() =
             "Cluster{id=$id, description=$description, level=$level, name=$name, numRuns=$numRuns, stats=$stats, parentId=$parentId, parentName=$parentName, additionalProperties=$additionalProperties}"
+    }
+
+    class Metadata
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Metadata]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Metadata]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(metadata: Metadata) = apply {
+                additionalProperties = metadata.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Metadata].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Metadata = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Metadata && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
     }
 
     class Shape

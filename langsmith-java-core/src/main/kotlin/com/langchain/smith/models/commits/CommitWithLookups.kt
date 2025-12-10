@@ -30,7 +30,7 @@ private constructor(
     private val commitHash: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val exampleRunIds: JsonField<List<String>>,
-    private val manifest: JsonValue,
+    private val manifest: JsonField<Manifest>,
     private val numDownloads: JsonField<Long>,
     private val numViews: JsonField<Long>,
     private val repoId: JsonField<String>,
@@ -53,7 +53,7 @@ private constructor(
         @JsonProperty("example_run_ids")
         @ExcludeMissing
         exampleRunIds: JsonField<List<String>> = JsonMissing.of(),
-        @JsonProperty("manifest") @ExcludeMissing manifest: JsonValue = JsonMissing.of(),
+        @JsonProperty("manifest") @ExcludeMissing manifest: JsonField<Manifest> = JsonMissing.of(),
         @JsonProperty("num_downloads")
         @ExcludeMissing
         numDownloads: JsonField<Long> = JsonMissing.of(),
@@ -107,7 +107,11 @@ private constructor(
      */
     fun exampleRunIds(): List<String> = exampleRunIds.getRequired("example_run_ids")
 
-    @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun manifest(): Manifest = manifest.getRequired("manifest")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -182,6 +186,13 @@ private constructor(
     @JsonProperty("example_run_ids")
     @ExcludeMissing
     fun _exampleRunIds(): JsonField<List<String>> = exampleRunIds
+
+    /**
+     * Returns the raw JSON value of [manifest].
+     *
+     * Unlike [manifest], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonField<Manifest> = manifest
 
     /**
      * Returns the raw JSON value of [numDownloads].
@@ -279,7 +290,7 @@ private constructor(
         private var commitHash: JsonField<String>? = null
         private var createdAt: JsonField<OffsetDateTime>? = null
         private var exampleRunIds: JsonField<MutableList<String>>? = null
-        private var manifest: JsonValue? = null
+        private var manifest: JsonField<Manifest>? = null
         private var numDownloads: JsonField<Long>? = null
         private var numViews: JsonField<Long>? = null
         private var repoId: JsonField<String>? = null
@@ -363,7 +374,16 @@ private constructor(
                 }
         }
 
-        fun manifest(manifest: JsonValue) = apply { this.manifest = manifest }
+        fun manifest(manifest: Manifest) = manifest(JsonField.of(manifest))
+
+        /**
+         * Sets [Builder.manifest] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.manifest] with a well-typed [Manifest] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun manifest(manifest: JsonField<Manifest>) = apply { this.manifest = manifest }
 
         fun numDownloads(numDownloads: Long) = numDownloads(JsonField.of(numDownloads))
 
@@ -519,6 +539,7 @@ private constructor(
         commitHash()
         createdAt()
         exampleRunIds()
+        manifest().validate()
         numDownloads()
         numViews()
         repoId()
@@ -548,6 +569,7 @@ private constructor(
             (if (commitHash.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (exampleRunIds.asKnown().getOrNull()?.size ?: 0) +
+            (manifest.asKnown().getOrNull()?.validity() ?: 0) +
             (if (numDownloads.asKnown().isPresent) 1 else 0) +
             (if (numViews.asKnown().isPresent) 1 else 0) +
             (if (repoId.asKnown().isPresent) 1 else 0) +
@@ -555,6 +577,105 @@ private constructor(
             (if (fullName.asKnown().isPresent) 1 else 0) +
             (if (parentCommitHash.asKnown().isPresent) 1 else 0) +
             (if (parentId.asKnown().isPresent) 1 else 0)
+
+    class Manifest
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Manifest]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Manifest]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(manifest: Manifest) = apply {
+                additionalProperties = manifest.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Manifest].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Manifest = Manifest(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Manifest = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Manifest && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Manifest{additionalProperties=$additionalProperties}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {

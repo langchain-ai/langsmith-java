@@ -21,7 +21,11 @@ internal class ComparativeCreateResponseTest {
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
-                .extra(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    ComparativeCreateResponse.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("name")
                 .build()
 
@@ -35,8 +39,12 @@ internal class ComparativeCreateResponseTest {
         assertThat(comparativeCreateResponse.tenantId())
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(comparativeCreateResponse.description()).contains("description")
-        assertThat(comparativeCreateResponse._extra())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(comparativeCreateResponse.extra())
+            .contains(
+                ComparativeCreateResponse.Extra.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(comparativeCreateResponse.name()).contains("name")
     }
 
@@ -51,7 +59,11 @@ internal class ComparativeCreateResponseTest {
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
-                .extra(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    ComparativeCreateResponse.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("name")
                 .build()
 

@@ -14,7 +14,11 @@ internal class CommitUpdateParamsTest {
         CommitUpdateParams.builder()
             .owner("owner")
             .repo("repo")
-            .manifest(JsonValue.from(mapOf<String, Any>()))
+            .manifest(
+                CommitUpdateParams.Manifest.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
             .addExampleRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .parentCommit("parent_commit")
             .skipWebhooks(true)
@@ -27,7 +31,11 @@ internal class CommitUpdateParamsTest {
             CommitUpdateParams.builder()
                 .owner("owner")
                 .repo("repo")
-                .manifest(JsonValue.from(mapOf<String, Any>()))
+                .manifest(
+                    CommitUpdateParams.Manifest.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("owner")
@@ -42,7 +50,11 @@ internal class CommitUpdateParamsTest {
             CommitUpdateParams.builder()
                 .owner("owner")
                 .repo("repo")
-                .manifest(JsonValue.from(mapOf<String, Any>()))
+                .manifest(
+                    CommitUpdateParams.Manifest.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .addExampleRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .parentCommit("parent_commit")
                 .skipWebhooks(true)
@@ -50,7 +62,12 @@ internal class CommitUpdateParamsTest {
 
         val body = params._body()
 
-        assertThat(body._manifest()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(body.manifest())
+            .isEqualTo(
+                CommitUpdateParams.Manifest.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(body.exampleRunIds().getOrNull())
             .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.parentCommit()).contains("parent_commit")
@@ -63,11 +80,20 @@ internal class CommitUpdateParamsTest {
             CommitUpdateParams.builder()
                 .owner("owner")
                 .repo("repo")
-                .manifest(JsonValue.from(mapOf<String, Any>()))
+                .manifest(
+                    CommitUpdateParams.Manifest.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .build()
 
         val body = params._body()
 
-        assertThat(body._manifest()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(body.manifest())
+            .isEqualTo(
+                CommitUpdateParams.Manifest.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
     }
 }

@@ -14,12 +14,20 @@ internal class AutoEvalFeedbackSourceTest {
     fun create() {
         val autoEvalFeedbackSource =
             AutoEvalFeedbackSource.builder()
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    AutoEvalFeedbackSource.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .type(AutoEvalFeedbackSource.Type.AUTO_EVAL)
                 .build()
 
-        assertThat(autoEvalFeedbackSource._metadata())
-            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(autoEvalFeedbackSource.metadata())
+            .contains(
+                AutoEvalFeedbackSource.Metadata.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
         assertThat(autoEvalFeedbackSource.type()).contains(AutoEvalFeedbackSource.Type.AUTO_EVAL)
     }
 
@@ -28,7 +36,11 @@ internal class AutoEvalFeedbackSourceTest {
         val jsonMapper = jsonMapper()
         val autoEvalFeedbackSource =
             AutoEvalFeedbackSource.builder()
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    AutoEvalFeedbackSource.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .type(AutoEvalFeedbackSource.Type.AUTO_EVAL)
                 .build()
 

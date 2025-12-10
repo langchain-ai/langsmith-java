@@ -27,14 +27,14 @@ class ExampleWithRuns
 private constructor(
     private val id: JsonField<String>,
     private val datasetId: JsonField<String>,
-    private val inputs: JsonValue,
+    private val inputs: JsonField<Inputs>,
     private val name: JsonField<String>,
     private val runs: JsonField<List<Run>>,
-    private val attachmentUrls: JsonValue,
+    private val attachmentUrls: JsonField<AttachmentUrls>,
     private val createdAt: JsonField<OffsetDateTime>,
-    private val metadata: JsonValue,
+    private val metadata: JsonField<Metadata>,
     private val modifiedAt: JsonField<OffsetDateTime>,
-    private val outputs: JsonValue,
+    private val outputs: JsonField<Outputs>,
     private val sourceRunId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -43,20 +43,20 @@ private constructor(
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("dataset_id") @ExcludeMissing datasetId: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("inputs") @ExcludeMissing inputs: JsonValue = JsonMissing.of(),
+        @JsonProperty("inputs") @ExcludeMissing inputs: JsonField<Inputs> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("runs") @ExcludeMissing runs: JsonField<List<Run>> = JsonMissing.of(),
         @JsonProperty("attachment_urls")
         @ExcludeMissing
-        attachmentUrls: JsonValue = JsonMissing.of(),
+        attachmentUrls: JsonField<AttachmentUrls> = JsonMissing.of(),
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
-        @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
+        @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
         @JsonProperty("modified_at")
         @ExcludeMissing
         modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
-        @JsonProperty("outputs") @ExcludeMissing outputs: JsonValue = JsonMissing.of(),
+        @JsonProperty("outputs") @ExcludeMissing outputs: JsonField<Outputs> = JsonMissing.of(),
         @JsonProperty("source_run_id")
         @ExcludeMissing
         sourceRunId: JsonField<String> = JsonMissing.of(),
@@ -87,7 +87,11 @@ private constructor(
      */
     fun datasetId(): String = datasetId.getRequired("dataset_id")
 
-    @JsonProperty("inputs") @ExcludeMissing fun _inputs(): JsonValue = inputs
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun inputs(): Inputs = inputs.getRequired("inputs")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -101,9 +105,11 @@ private constructor(
      */
     fun runs(): List<Run> = runs.getRequired("runs")
 
-    @JsonProperty("attachment_urls")
-    @ExcludeMissing
-    fun _attachmentUrls(): JsonValue = attachmentUrls
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun attachmentUrls(): Optional<AttachmentUrls> = attachmentUrls.getOptional("attachment_urls")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -111,7 +117,11 @@ private constructor(
      */
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
 
-    @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -119,7 +129,11 @@ private constructor(
      */
     fun modifiedAt(): Optional<OffsetDateTime> = modifiedAt.getOptional("modified_at")
 
-    @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonValue = outputs
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun outputs(): Optional<Outputs> = outputs.getOptional("outputs")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -142,6 +156,13 @@ private constructor(
     @JsonProperty("dataset_id") @ExcludeMissing fun _datasetId(): JsonField<String> = datasetId
 
     /**
+     * Returns the raw JSON value of [inputs].
+     *
+     * Unlike [inputs], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("inputs") @ExcludeMissing fun _inputs(): JsonField<Inputs> = inputs
+
+    /**
      * Returns the raw JSON value of [name].
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
@@ -156,6 +177,15 @@ private constructor(
     @JsonProperty("runs") @ExcludeMissing fun _runs(): JsonField<List<Run>> = runs
 
     /**
+     * Returns the raw JSON value of [attachmentUrls].
+     *
+     * Unlike [attachmentUrls], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("attachment_urls")
+    @ExcludeMissing
+    fun _attachmentUrls(): JsonField<AttachmentUrls> = attachmentUrls
+
+    /**
      * Returns the raw JSON value of [createdAt].
      *
      * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -165,6 +195,13 @@ private constructor(
     fun _createdAt(): JsonField<OffsetDateTime> = createdAt
 
     /**
+     * Returns the raw JSON value of [metadata].
+     *
+     * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
+
+    /**
      * Returns the raw JSON value of [modifiedAt].
      *
      * Unlike [modifiedAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -172,6 +209,13 @@ private constructor(
     @JsonProperty("modified_at")
     @ExcludeMissing
     fun _modifiedAt(): JsonField<OffsetDateTime> = modifiedAt
+
+    /**
+     * Returns the raw JSON value of [outputs].
+     *
+     * Unlike [outputs], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonField<Outputs> = outputs
 
     /**
      * Returns the raw JSON value of [sourceRunId].
@@ -216,14 +260,14 @@ private constructor(
 
         private var id: JsonField<String>? = null
         private var datasetId: JsonField<String>? = null
-        private var inputs: JsonValue? = null
+        private var inputs: JsonField<Inputs>? = null
         private var name: JsonField<String>? = null
         private var runs: JsonField<MutableList<Run>>? = null
-        private var attachmentUrls: JsonValue = JsonMissing.of()
+        private var attachmentUrls: JsonField<AttachmentUrls> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
-        private var metadata: JsonValue = JsonMissing.of()
+        private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
-        private var outputs: JsonValue = JsonMissing.of()
+        private var outputs: JsonField<Outputs> = JsonMissing.of()
         private var sourceRunId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -264,7 +308,15 @@ private constructor(
          */
         fun datasetId(datasetId: JsonField<String>) = apply { this.datasetId = datasetId }
 
-        fun inputs(inputs: JsonValue) = apply { this.inputs = inputs }
+        fun inputs(inputs: Inputs) = inputs(JsonField.of(inputs))
+
+        /**
+         * Sets [Builder.inputs] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.inputs] with a well-typed [Inputs] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun inputs(inputs: JsonField<Inputs>) = apply { this.inputs = inputs }
 
         fun name(name: String) = name(JsonField.of(name))
 
@@ -295,7 +347,21 @@ private constructor(
             runs = (runs ?: JsonField.of(mutableListOf())).also { checkKnown("runs", it).add(run) }
         }
 
-        fun attachmentUrls(attachmentUrls: JsonValue) = apply {
+        fun attachmentUrls(attachmentUrls: AttachmentUrls?) =
+            attachmentUrls(JsonField.ofNullable(attachmentUrls))
+
+        /** Alias for calling [Builder.attachmentUrls] with `attachmentUrls.orElse(null)`. */
+        fun attachmentUrls(attachmentUrls: Optional<AttachmentUrls>) =
+            attachmentUrls(attachmentUrls.getOrNull())
+
+        /**
+         * Sets [Builder.attachmentUrls] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.attachmentUrls] with a well-typed [AttachmentUrls] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun attachmentUrls(attachmentUrls: JsonField<AttachmentUrls>) = apply {
             this.attachmentUrls = attachmentUrls
         }
 
@@ -310,7 +376,19 @@ private constructor(
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
-        fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
+        fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+        /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+        fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+        /**
+         * Sets [Builder.metadata] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.metadata] with a well-typed [Metadata] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
         fun modifiedAt(modifiedAt: OffsetDateTime?) = modifiedAt(JsonField.ofNullable(modifiedAt))
 
@@ -328,7 +406,18 @@ private constructor(
             this.modifiedAt = modifiedAt
         }
 
-        fun outputs(outputs: JsonValue) = apply { this.outputs = outputs }
+        fun outputs(outputs: Outputs?) = outputs(JsonField.ofNullable(outputs))
+
+        /** Alias for calling [Builder.outputs] with `outputs.orElse(null)`. */
+        fun outputs(outputs: Optional<Outputs>) = outputs(outputs.getOrNull())
+
+        /**
+         * Sets [Builder.outputs] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.outputs] with a well-typed [Outputs] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun outputs(outputs: JsonField<Outputs>) = apply { this.outputs = outputs }
 
         fun sourceRunId(sourceRunId: String?) = sourceRunId(JsonField.ofNullable(sourceRunId))
 
@@ -405,10 +494,14 @@ private constructor(
 
         id()
         datasetId()
+        inputs().validate()
         name()
         runs().forEach { it.validate() }
+        attachmentUrls().ifPresent { it.validate() }
         createdAt()
+        metadata().ifPresent { it.validate() }
         modifiedAt()
+        outputs().ifPresent { it.validate() }
         sourceRunId()
         validated = true
     }
@@ -430,11 +523,114 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (datasetId.asKnown().isPresent) 1 else 0) +
+            (inputs.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (runs.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (attachmentUrls.asKnown().getOrNull()?.validity() ?: 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
+            (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (modifiedAt.asKnown().isPresent) 1 else 0) +
+            (outputs.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sourceRunId.asKnown().isPresent) 1 else 0)
+
+    class Inputs
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Inputs]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Inputs]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(inputs: Inputs) = apply {
+                additionalProperties = inputs.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Inputs].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Inputs = Inputs(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Inputs = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Inputs && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Inputs{additionalProperties=$additionalProperties}"
+    }
 
     /** Run schema. */
     class Run
@@ -456,21 +652,21 @@ private constructor(
         private val directChildRunIds: JsonField<List<String>>,
         private val endTime: JsonField<OffsetDateTime>,
         private val error: JsonField<String>,
-        private val events: JsonField<List<JsonValue>>,
+        private val events: JsonField<List<Event>>,
         private val executionOrder: JsonField<Long>,
-        private val extra: JsonValue,
+        private val extra: JsonField<Extra>,
         private val feedbackStats: JsonField<FeedbackStats>,
         private val firstTokenTime: JsonField<OffsetDateTime>,
         private val inDataset: JsonField<Boolean>,
-        private val inputs: JsonValue,
+        private val inputs: JsonField<Inputs>,
         private val inputsPreview: JsonField<String>,
-        private val inputsS3Urls: JsonValue,
+        private val inputsS3Urls: JsonField<InputsS3Urls>,
         private val lastQueuedAt: JsonField<OffsetDateTime>,
         private val manifestId: JsonField<String>,
         private val manifestS3Id: JsonField<String>,
-        private val outputs: JsonValue,
+        private val outputs: JsonField<Outputs>,
         private val outputsPreview: JsonField<String>,
-        private val outputsS3Urls: JsonValue,
+        private val outputsS3Urls: JsonField<OutputsS3Urls>,
         private val parentRunId: JsonField<String>,
         private val parentRunIds: JsonField<List<String>>,
         private val priceModelId: JsonField<String>,
@@ -480,8 +676,8 @@ private constructor(
         private val promptTokens: JsonField<Long>,
         private val referenceDatasetId: JsonField<String>,
         private val referenceExampleId: JsonField<String>,
-        private val s3Urls: JsonValue,
-        private val serialized: JsonValue,
+        private val s3Urls: JsonField<S3Urls>,
+        private val serialized: JsonField<Serialized>,
         private val shareToken: JsonField<String>,
         private val startTime: JsonField<OffsetDateTime>,
         private val tags: JsonField<List<String>>,
@@ -537,11 +733,11 @@ private constructor(
             @JsonProperty("error") @ExcludeMissing error: JsonField<String> = JsonMissing.of(),
             @JsonProperty("events")
             @ExcludeMissing
-            events: JsonField<List<JsonValue>> = JsonMissing.of(),
+            events: JsonField<List<Event>> = JsonMissing.of(),
             @JsonProperty("execution_order")
             @ExcludeMissing
             executionOrder: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("extra") @ExcludeMissing extra: JsonValue = JsonMissing.of(),
+            @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
             @JsonProperty("feedback_stats")
             @ExcludeMissing
             feedbackStats: JsonField<FeedbackStats> = JsonMissing.of(),
@@ -551,13 +747,13 @@ private constructor(
             @JsonProperty("in_dataset")
             @ExcludeMissing
             inDataset: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("inputs") @ExcludeMissing inputs: JsonValue = JsonMissing.of(),
+            @JsonProperty("inputs") @ExcludeMissing inputs: JsonField<Inputs> = JsonMissing.of(),
             @JsonProperty("inputs_preview")
             @ExcludeMissing
             inputsPreview: JsonField<String> = JsonMissing.of(),
             @JsonProperty("inputs_s3_urls")
             @ExcludeMissing
-            inputsS3Urls: JsonValue = JsonMissing.of(),
+            inputsS3Urls: JsonField<InputsS3Urls> = JsonMissing.of(),
             @JsonProperty("last_queued_at")
             @ExcludeMissing
             lastQueuedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -567,13 +763,13 @@ private constructor(
             @JsonProperty("manifest_s3_id")
             @ExcludeMissing
             manifestS3Id: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("outputs") @ExcludeMissing outputs: JsonValue = JsonMissing.of(),
+            @JsonProperty("outputs") @ExcludeMissing outputs: JsonField<Outputs> = JsonMissing.of(),
             @JsonProperty("outputs_preview")
             @ExcludeMissing
             outputsPreview: JsonField<String> = JsonMissing.of(),
             @JsonProperty("outputs_s3_urls")
             @ExcludeMissing
-            outputsS3Urls: JsonValue = JsonMissing.of(),
+            outputsS3Urls: JsonField<OutputsS3Urls> = JsonMissing.of(),
             @JsonProperty("parent_run_id")
             @ExcludeMissing
             parentRunId: JsonField<String> = JsonMissing.of(),
@@ -601,8 +797,10 @@ private constructor(
             @JsonProperty("reference_example_id")
             @ExcludeMissing
             referenceExampleId: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("s3_urls") @ExcludeMissing s3Urls: JsonValue = JsonMissing.of(),
-            @JsonProperty("serialized") @ExcludeMissing serialized: JsonValue = JsonMissing.of(),
+            @JsonProperty("s3_urls") @ExcludeMissing s3Urls: JsonField<S3Urls> = JsonMissing.of(),
+            @JsonProperty("serialized")
+            @ExcludeMissing
+            serialized: JsonField<Serialized> = JsonMissing.of(),
             @JsonProperty("share_token")
             @ExcludeMissing
             shareToken: JsonField<String> = JsonMissing.of(),
@@ -800,7 +998,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun events(): Optional<List<JsonValue>> = events.getOptional("events")
+        fun events(): Optional<List<Event>> = events.getOptional("events")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -808,7 +1006,11 @@ private constructor(
          */
         fun executionOrder(): Optional<Long> = executionOrder.getOptional("execution_order")
 
-        @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonValue = extra
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun extra(): Optional<Extra> = extra.getOptional("extra")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -829,7 +1031,11 @@ private constructor(
          */
         fun inDataset(): Optional<Boolean> = inDataset.getOptional("in_dataset")
 
-        @JsonProperty("inputs") @ExcludeMissing fun _inputs(): JsonValue = inputs
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun inputs(): Optional<Inputs> = inputs.getOptional("inputs")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -837,9 +1043,11 @@ private constructor(
          */
         fun inputsPreview(): Optional<String> = inputsPreview.getOptional("inputs_preview")
 
-        @JsonProperty("inputs_s3_urls")
-        @ExcludeMissing
-        fun _inputsS3Urls(): JsonValue = inputsS3Urls
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun inputsS3Urls(): Optional<InputsS3Urls> = inputsS3Urls.getOptional("inputs_s3_urls")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -859,7 +1067,11 @@ private constructor(
          */
         fun manifestS3Id(): Optional<String> = manifestS3Id.getOptional("manifest_s3_id")
 
-        @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonValue = outputs
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun outputs(): Optional<Outputs> = outputs.getOptional("outputs")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -867,9 +1079,11 @@ private constructor(
          */
         fun outputsPreview(): Optional<String> = outputsPreview.getOptional("outputs_preview")
 
-        @JsonProperty("outputs_s3_urls")
-        @ExcludeMissing
-        fun _outputsS3Urls(): JsonValue = outputsS3Urls
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun outputsS3Urls(): Optional<OutputsS3Urls> = outputsS3Urls.getOptional("outputs_s3_urls")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -929,9 +1143,17 @@ private constructor(
         fun referenceExampleId(): Optional<String> =
             referenceExampleId.getOptional("reference_example_id")
 
-        @JsonProperty("s3_urls") @ExcludeMissing fun _s3Urls(): JsonValue = s3Urls
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun s3Urls(): Optional<S3Urls> = s3Urls.getOptional("s3_urls")
 
-        @JsonProperty("serialized") @ExcludeMissing fun _serialized(): JsonValue = serialized
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun serialized(): Optional<Serialized> = serialized.getOptional("serialized")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1146,7 +1368,7 @@ private constructor(
          *
          * Unlike [events], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("events") @ExcludeMissing fun _events(): JsonField<List<JsonValue>> = events
+        @JsonProperty("events") @ExcludeMissing fun _events(): JsonField<List<Event>> = events
 
         /**
          * Returns the raw JSON value of [executionOrder].
@@ -1157,6 +1379,13 @@ private constructor(
         @JsonProperty("execution_order")
         @ExcludeMissing
         fun _executionOrder(): JsonField<Long> = executionOrder
+
+        /**
+         * Returns the raw JSON value of [extra].
+         *
+         * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonField<Extra> = extra
 
         /**
          * Returns the raw JSON value of [feedbackStats].
@@ -1186,6 +1415,13 @@ private constructor(
         @JsonProperty("in_dataset") @ExcludeMissing fun _inDataset(): JsonField<Boolean> = inDataset
 
         /**
+         * Returns the raw JSON value of [inputs].
+         *
+         * Unlike [inputs], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("inputs") @ExcludeMissing fun _inputs(): JsonField<Inputs> = inputs
+
+        /**
          * Returns the raw JSON value of [inputsPreview].
          *
          * Unlike [inputsPreview], this method doesn't throw if the JSON field has an unexpected
@@ -1194,6 +1430,16 @@ private constructor(
         @JsonProperty("inputs_preview")
         @ExcludeMissing
         fun _inputsPreview(): JsonField<String> = inputsPreview
+
+        /**
+         * Returns the raw JSON value of [inputsS3Urls].
+         *
+         * Unlike [inputsS3Urls], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("inputs_s3_urls")
+        @ExcludeMissing
+        fun _inputsS3Urls(): JsonField<InputsS3Urls> = inputsS3Urls
 
         /**
          * Returns the raw JSON value of [lastQueuedAt].
@@ -1225,6 +1471,13 @@ private constructor(
         fun _manifestS3Id(): JsonField<String> = manifestS3Id
 
         /**
+         * Returns the raw JSON value of [outputs].
+         *
+         * Unlike [outputs], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonField<Outputs> = outputs
+
+        /**
          * Returns the raw JSON value of [outputsPreview].
          *
          * Unlike [outputsPreview], this method doesn't throw if the JSON field has an unexpected
@@ -1233,6 +1486,16 @@ private constructor(
         @JsonProperty("outputs_preview")
         @ExcludeMissing
         fun _outputsPreview(): JsonField<String> = outputsPreview
+
+        /**
+         * Returns the raw JSON value of [outputsS3Urls].
+         *
+         * Unlike [outputsS3Urls], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("outputs_s3_urls")
+        @ExcludeMissing
+        fun _outputsS3Urls(): JsonField<OutputsS3Urls> = outputsS3Urls
 
         /**
          * Returns the raw JSON value of [parentRunId].
@@ -1321,6 +1584,22 @@ private constructor(
         @JsonProperty("reference_example_id")
         @ExcludeMissing
         fun _referenceExampleId(): JsonField<String> = referenceExampleId
+
+        /**
+         * Returns the raw JSON value of [s3Urls].
+         *
+         * Unlike [s3Urls], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("s3_urls") @ExcludeMissing fun _s3Urls(): JsonField<S3Urls> = s3Urls
+
+        /**
+         * Returns the raw JSON value of [serialized].
+         *
+         * Unlike [serialized], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("serialized")
+        @ExcludeMissing
+        fun _serialized(): JsonField<Serialized> = serialized
 
         /**
          * Returns the raw JSON value of [shareToken].
@@ -1477,21 +1756,21 @@ private constructor(
             private var directChildRunIds: JsonField<MutableList<String>>? = null
             private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var error: JsonField<String> = JsonMissing.of()
-            private var events: JsonField<MutableList<JsonValue>>? = null
+            private var events: JsonField<MutableList<Event>>? = null
             private var executionOrder: JsonField<Long> = JsonMissing.of()
-            private var extra: JsonValue = JsonMissing.of()
+            private var extra: JsonField<Extra> = JsonMissing.of()
             private var feedbackStats: JsonField<FeedbackStats> = JsonMissing.of()
             private var firstTokenTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var inDataset: JsonField<Boolean> = JsonMissing.of()
-            private var inputs: JsonValue = JsonMissing.of()
+            private var inputs: JsonField<Inputs> = JsonMissing.of()
             private var inputsPreview: JsonField<String> = JsonMissing.of()
-            private var inputsS3Urls: JsonValue = JsonMissing.of()
+            private var inputsS3Urls: JsonField<InputsS3Urls> = JsonMissing.of()
             private var lastQueuedAt: JsonField<OffsetDateTime> = JsonMissing.of()
             private var manifestId: JsonField<String> = JsonMissing.of()
             private var manifestS3Id: JsonField<String> = JsonMissing.of()
-            private var outputs: JsonValue = JsonMissing.of()
+            private var outputs: JsonField<Outputs> = JsonMissing.of()
             private var outputsPreview: JsonField<String> = JsonMissing.of()
-            private var outputsS3Urls: JsonValue = JsonMissing.of()
+            private var outputsS3Urls: JsonField<OutputsS3Urls> = JsonMissing.of()
             private var parentRunId: JsonField<String> = JsonMissing.of()
             private var parentRunIds: JsonField<MutableList<String>>? = null
             private var priceModelId: JsonField<String> = JsonMissing.of()
@@ -1501,8 +1780,8 @@ private constructor(
             private var promptTokens: JsonField<Long> = JsonMissing.of()
             private var referenceDatasetId: JsonField<String> = JsonMissing.of()
             private var referenceExampleId: JsonField<String> = JsonMissing.of()
-            private var s3Urls: JsonValue = JsonMissing.of()
-            private var serialized: JsonValue = JsonMissing.of()
+            private var s3Urls: JsonField<S3Urls> = JsonMissing.of()
+            private var serialized: JsonField<Serialized> = JsonMissing.of()
             private var shareToken: JsonField<String> = JsonMissing.of()
             private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var tags: JsonField<MutableList<String>>? = null
@@ -1833,28 +2112,28 @@ private constructor(
              */
             fun error(error: JsonField<String>) = apply { this.error = error }
 
-            fun events(events: List<JsonValue>?) = events(JsonField.ofNullable(events))
+            fun events(events: List<Event>?) = events(JsonField.ofNullable(events))
 
             /** Alias for calling [Builder.events] with `events.orElse(null)`. */
-            fun events(events: Optional<List<JsonValue>>) = events(events.getOrNull())
+            fun events(events: Optional<List<Event>>) = events(events.getOrNull())
 
             /**
              * Sets [Builder.events] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.events] with a well-typed `List<JsonValue>` value
+             * You should usually call [Builder.events] with a well-typed `List<Event>` value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun events(events: JsonField<List<JsonValue>>) = apply {
+            fun events(events: JsonField<List<Event>>) = apply {
                 this.events = events.map { it.toMutableList() }
             }
 
             /**
-             * Adds a single [JsonValue] to [events].
+             * Adds a single [Event] to [events].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addEvent(event: JsonValue) = apply {
+            fun addEvent(event: Event) = apply {
                 events =
                     (events ?: JsonField.of(mutableListOf())).also {
                         checkKnown("events", it).add(event)
@@ -1874,7 +2153,19 @@ private constructor(
                 this.executionOrder = executionOrder
             }
 
-            fun extra(extra: JsonValue) = apply { this.extra = extra }
+            fun extra(extra: Extra?) = extra(JsonField.ofNullable(extra))
+
+            /** Alias for calling [Builder.extra] with `extra.orElse(null)`. */
+            fun extra(extra: Optional<Extra>) = extra(extra.getOrNull())
+
+            /**
+             * Sets [Builder.extra] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.extra] with a well-typed [Extra] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
 
             fun feedbackStats(feedbackStats: FeedbackStats?) =
                 feedbackStats(JsonField.ofNullable(feedbackStats))
@@ -1933,7 +2224,19 @@ private constructor(
              */
             fun inDataset(inDataset: JsonField<Boolean>) = apply { this.inDataset = inDataset }
 
-            fun inputs(inputs: JsonValue) = apply { this.inputs = inputs }
+            fun inputs(inputs: Inputs?) = inputs(JsonField.ofNullable(inputs))
+
+            /** Alias for calling [Builder.inputs] with `inputs.orElse(null)`. */
+            fun inputs(inputs: Optional<Inputs>) = inputs(inputs.getOrNull())
+
+            /**
+             * Sets [Builder.inputs] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.inputs] with a well-typed [Inputs] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun inputs(inputs: JsonField<Inputs>) = apply { this.inputs = inputs }
 
             fun inputsPreview(inputsPreview: String?) =
                 inputsPreview(JsonField.ofNullable(inputsPreview))
@@ -1953,7 +2256,23 @@ private constructor(
                 this.inputsPreview = inputsPreview
             }
 
-            fun inputsS3Urls(inputsS3Urls: JsonValue) = apply { this.inputsS3Urls = inputsS3Urls }
+            fun inputsS3Urls(inputsS3Urls: InputsS3Urls?) =
+                inputsS3Urls(JsonField.ofNullable(inputsS3Urls))
+
+            /** Alias for calling [Builder.inputsS3Urls] with `inputsS3Urls.orElse(null)`. */
+            fun inputsS3Urls(inputsS3Urls: Optional<InputsS3Urls>) =
+                inputsS3Urls(inputsS3Urls.getOrNull())
+
+            /**
+             * Sets [Builder.inputsS3Urls] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.inputsS3Urls] with a well-typed [InputsS3Urls] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun inputsS3Urls(inputsS3Urls: JsonField<InputsS3Urls>) = apply {
+                this.inputsS3Urls = inputsS3Urls
+            }
 
             fun lastQueuedAt(lastQueuedAt: OffsetDateTime?) =
                 lastQueuedAt(JsonField.ofNullable(lastQueuedAt))
@@ -2005,7 +2324,19 @@ private constructor(
                 this.manifestS3Id = manifestS3Id
             }
 
-            fun outputs(outputs: JsonValue) = apply { this.outputs = outputs }
+            fun outputs(outputs: Outputs?) = outputs(JsonField.ofNullable(outputs))
+
+            /** Alias for calling [Builder.outputs] with `outputs.orElse(null)`. */
+            fun outputs(outputs: Optional<Outputs>) = outputs(outputs.getOrNull())
+
+            /**
+             * Sets [Builder.outputs] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.outputs] with a well-typed [Outputs] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun outputs(outputs: JsonField<Outputs>) = apply { this.outputs = outputs }
 
             fun outputsPreview(outputsPreview: String?) =
                 outputsPreview(JsonField.ofNullable(outputsPreview))
@@ -2025,7 +2356,21 @@ private constructor(
                 this.outputsPreview = outputsPreview
             }
 
-            fun outputsS3Urls(outputsS3Urls: JsonValue) = apply {
+            fun outputsS3Urls(outputsS3Urls: OutputsS3Urls?) =
+                outputsS3Urls(JsonField.ofNullable(outputsS3Urls))
+
+            /** Alias for calling [Builder.outputsS3Urls] with `outputsS3Urls.orElse(null)`. */
+            fun outputsS3Urls(outputsS3Urls: Optional<OutputsS3Urls>) =
+                outputsS3Urls(outputsS3Urls.getOrNull())
+
+            /**
+             * Sets [Builder.outputsS3Urls] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.outputsS3Urls] with a well-typed [OutputsS3Urls]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun outputsS3Urls(outputsS3Urls: JsonField<OutputsS3Urls>) = apply {
                 this.outputsS3Urls = outputsS3Urls
             }
 
@@ -2203,9 +2548,35 @@ private constructor(
                 this.referenceExampleId = referenceExampleId
             }
 
-            fun s3Urls(s3Urls: JsonValue) = apply { this.s3Urls = s3Urls }
+            fun s3Urls(s3Urls: S3Urls?) = s3Urls(JsonField.ofNullable(s3Urls))
 
-            fun serialized(serialized: JsonValue) = apply { this.serialized = serialized }
+            /** Alias for calling [Builder.s3Urls] with `s3Urls.orElse(null)`. */
+            fun s3Urls(s3Urls: Optional<S3Urls>) = s3Urls(s3Urls.getOrNull())
+
+            /**
+             * Sets [Builder.s3Urls] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.s3Urls] with a well-typed [S3Urls] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun s3Urls(s3Urls: JsonField<S3Urls>) = apply { this.s3Urls = s3Urls }
+
+            fun serialized(serialized: Serialized?) = serialized(JsonField.ofNullable(serialized))
+
+            /** Alias for calling [Builder.serialized] with `serialized.orElse(null)`. */
+            fun serialized(serialized: Optional<Serialized>) = serialized(serialized.getOrNull())
+
+            /**
+             * Sets [Builder.serialized] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.serialized] with a well-typed [Serialized] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun serialized(serialized: JsonField<Serialized>) = apply {
+                this.serialized = serialized
+            }
 
             fun shareToken(shareToken: String?) = shareToken(JsonField.ofNullable(shareToken))
 
@@ -2529,16 +2900,21 @@ private constructor(
             directChildRunIds()
             endTime()
             error()
-            events()
+            events().ifPresent { it.forEach { it.validate() } }
             executionOrder()
+            extra().ifPresent { it.validate() }
             feedbackStats().ifPresent { it.validate() }
             firstTokenTime()
             inDataset()
+            inputs().ifPresent { it.validate() }
             inputsPreview()
+            inputsS3Urls().ifPresent { it.validate() }
             lastQueuedAt()
             manifestId()
             manifestS3Id()
+            outputs().ifPresent { it.validate() }
             outputsPreview()
+            outputsS3Urls().ifPresent { it.validate() }
             parentRunId()
             parentRunIds()
             priceModelId()
@@ -2548,6 +2924,8 @@ private constructor(
             promptTokens()
             referenceDatasetId()
             referenceExampleId()
+            s3Urls().ifPresent { it.validate() }
+            serialized().ifPresent { it.validate() }
             shareToken()
             startTime()
             tags()
@@ -2595,16 +2973,21 @@ private constructor(
                 (directChildRunIds.asKnown().getOrNull()?.size ?: 0) +
                 (if (endTime.asKnown().isPresent) 1 else 0) +
                 (if (error.asKnown().isPresent) 1 else 0) +
-                (events.asKnown().getOrNull()?.size ?: 0) +
+                (events.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (if (executionOrder.asKnown().isPresent) 1 else 0) +
+                (extra.asKnown().getOrNull()?.validity() ?: 0) +
                 (feedbackStats.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (firstTokenTime.asKnown().isPresent) 1 else 0) +
                 (if (inDataset.asKnown().isPresent) 1 else 0) +
+                (inputs.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (inputsPreview.asKnown().isPresent) 1 else 0) +
+                (inputsS3Urls.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (lastQueuedAt.asKnown().isPresent) 1 else 0) +
                 (if (manifestId.asKnown().isPresent) 1 else 0) +
                 (if (manifestS3Id.asKnown().isPresent) 1 else 0) +
+                (outputs.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (outputsPreview.asKnown().isPresent) 1 else 0) +
+                (outputsS3Urls.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (parentRunId.asKnown().isPresent) 1 else 0) +
                 (parentRunIds.asKnown().getOrNull()?.size ?: 0) +
                 (if (priceModelId.asKnown().isPresent) 1 else 0) +
@@ -2614,6 +2997,8 @@ private constructor(
                 (if (promptTokens.asKnown().isPresent) 1 else 0) +
                 (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
                 (if (referenceExampleId.asKnown().isPresent) 1 else 0) +
+                (s3Urls.asKnown().getOrNull()?.validity() ?: 0) +
+                (serialized.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (shareToken.asKnown().isPresent) 1 else 0) +
                 (if (startTime.asKnown().isPresent) 1 else 0) +
                 (tags.asKnown().getOrNull()?.size ?: 0) +
@@ -3005,6 +3390,210 @@ private constructor(
                 "CompletionTokenDetails{additionalProperties=$additionalProperties}"
         }
 
+        class Event
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Event]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Event]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(event: Event) = apply {
+                    additionalProperties = event.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Event].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Event = Event(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): Event = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Event && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Event{additionalProperties=$additionalProperties}"
+        }
+
+        class Extra
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Extra]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Extra]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(extra: Extra) = apply {
+                    additionalProperties = extra.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Extra].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Extra = Extra(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): Extra = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Extra && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Extra{additionalProperties=$additionalProperties}"
+        }
+
         class FeedbackStats
         @JsonCreator
         private constructor(
@@ -3105,6 +3694,414 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() = "FeedbackStats{additionalProperties=$additionalProperties}"
+        }
+
+        class Inputs
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Inputs]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Inputs]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(inputs: Inputs) = apply {
+                    additionalProperties = inputs.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Inputs].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Inputs = Inputs(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): Inputs = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Inputs && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Inputs{additionalProperties=$additionalProperties}"
+        }
+
+        class InputsS3Urls
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [InputsS3Urls]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [InputsS3Urls]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(inputsS3Urls: InputsS3Urls) = apply {
+                    additionalProperties = inputsS3Urls.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [InputsS3Urls].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): InputsS3Urls = InputsS3Urls(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): InputsS3Urls = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is InputsS3Urls && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "InputsS3Urls{additionalProperties=$additionalProperties}"
+        }
+
+        class Outputs
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Outputs]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Outputs]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(outputs: Outputs) = apply {
+                    additionalProperties = outputs.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Outputs].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Outputs = Outputs(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): Outputs = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Outputs && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Outputs{additionalProperties=$additionalProperties}"
+        }
+
+        class OutputsS3Urls
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [OutputsS3Urls]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [OutputsS3Urls]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(outputsS3Urls: OutputsS3Urls) = apply {
+                    additionalProperties = outputsS3Urls.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [OutputsS3Urls].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): OutputsS3Urls = OutputsS3Urls(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): OutputsS3Urls = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is OutputsS3Urls && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "OutputsS3Urls{additionalProperties=$additionalProperties}"
         }
 
         class PromptCostDetails
@@ -3319,6 +4316,210 @@ private constructor(
 
             override fun toString() =
                 "PromptTokenDetails{additionalProperties=$additionalProperties}"
+        }
+
+        class S3Urls
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [S3Urls]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [S3Urls]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(s3Urls: S3Urls) = apply {
+                    additionalProperties = s3Urls.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [S3Urls].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): S3Urls = S3Urls(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): S3Urls = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is S3Urls && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "S3Urls{additionalProperties=$additionalProperties}"
+        }
+
+        class Serialized
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Serialized]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Serialized]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(serialized: Serialized) = apply {
+                    additionalProperties = serialized.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Serialized].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Serialized = Serialized(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            fun validate(): Serialized = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Serialized && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "Serialized{additionalProperties=$additionalProperties}"
         }
 
         class TraceTier @JsonCreator private constructor(private val value: JsonField<String>) :
@@ -3579,6 +4780,303 @@ private constructor(
 
         override fun toString() =
             "Run{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, childRunIds=$childRunIds, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, manifestId=$manifestId, manifestS3Id=$manifestS3Id, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
+    }
+
+    class AttachmentUrls
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [AttachmentUrls]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [AttachmentUrls]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(attachmentUrls: AttachmentUrls) = apply {
+                additionalProperties = attachmentUrls.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [AttachmentUrls].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): AttachmentUrls = AttachmentUrls(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): AttachmentUrls = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AttachmentUrls && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "AttachmentUrls{additionalProperties=$additionalProperties}"
+    }
+
+    class Metadata
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Metadata]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Metadata]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(metadata: Metadata) = apply {
+                additionalProperties = metadata.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Metadata].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Metadata = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Metadata && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
+    }
+
+    class Outputs
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Outputs]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Outputs]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(outputs: Outputs) = apply {
+                additionalProperties = outputs.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Outputs].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Outputs = Outputs(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Outputs = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Outputs && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Outputs{additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

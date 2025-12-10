@@ -82,7 +82,11 @@ private constructor(
      */
     fun evaluatorRules(): Optional<List<String>> = body.evaluatorRules()
 
-    fun _metadata(): JsonValue = body._metadata()
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun metadata(): Optional<Metadata> = body.metadata()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -206,6 +210,13 @@ private constructor(
      * Unlike [evaluatorRules], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _evaluatorRules(): JsonField<List<String>> = body._evaluatorRules()
+
+    /**
+     * Returns the raw JSON value of [metadata].
+     *
+     * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _metadata(): JsonField<Metadata> = body._metadata()
 
     /**
      * Returns the raw JSON value of [owner].
@@ -477,7 +488,19 @@ private constructor(
          */
         fun addEvaluatorRule(evaluatorRule: String) = apply { body.addEvaluatorRule(evaluatorRule) }
 
-        fun metadata(metadata: JsonValue) = apply { body.metadata(metadata) }
+        fun metadata(metadata: Metadata?) = apply { body.metadata(metadata) }
+
+        /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+        fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+        /**
+         * Sets [Builder.metadata] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.metadata] with a well-typed [Metadata] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun metadata(metadata: JsonField<Metadata>) = apply { body.metadata(metadata) }
 
         fun owner(owner: String?) = apply { body.owner(owner) }
 
@@ -826,7 +849,7 @@ private constructor(
         private val commit: JsonField<String>,
         private val datasetSplits: JsonField<List<String>>,
         private val evaluatorRules: JsonField<List<String>>,
-        private val metadata: JsonValue,
+        private val metadata: JsonField<Metadata>,
         private val owner: JsonField<String>,
         private val parallelToolCalls: JsonField<Boolean>,
         private val repetitions: JsonField<Long>,
@@ -864,7 +887,9 @@ private constructor(
             @JsonProperty("evaluator_rules")
             @ExcludeMissing
             evaluatorRules: JsonField<List<String>> = JsonMissing.of(),
-            @JsonProperty("metadata") @ExcludeMissing metadata: JsonValue = JsonMissing.of(),
+            @JsonProperty("metadata")
+            @ExcludeMissing
+            metadata: JsonField<Metadata> = JsonMissing.of(),
             @JsonProperty("owner") @ExcludeMissing owner: JsonField<String> = JsonMissing.of(),
             @JsonProperty("parallel_tool_calls")
             @ExcludeMissing
@@ -969,7 +994,11 @@ private constructor(
          */
         fun evaluatorRules(): Optional<List<String>> = evaluatorRules.getOptional("evaluator_rules")
 
-        @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1104,6 +1133,13 @@ private constructor(
         @JsonProperty("evaluator_rules")
         @ExcludeMissing
         fun _evaluatorRules(): JsonField<List<String>> = evaluatorRules
+
+        /**
+         * Returns the raw JSON value of [metadata].
+         *
+         * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
 
         /**
          * Returns the raw JSON value of [owner].
@@ -1241,7 +1277,7 @@ private constructor(
             private var commit: JsonField<String> = JsonMissing.of()
             private var datasetSplits: JsonField<MutableList<String>>? = null
             private var evaluatorRules: JsonField<MutableList<String>>? = null
-            private var metadata: JsonValue = JsonMissing.of()
+            private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var owner: JsonField<String> = JsonMissing.of()
             private var parallelToolCalls: JsonField<Boolean> = JsonMissing.of()
             private var repetitions: JsonField<Long> = JsonMissing.of()
@@ -1425,7 +1461,19 @@ private constructor(
                     }
             }
 
-            fun metadata(metadata: JsonValue) = apply { this.metadata = metadata }
+            fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+            /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+            fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+            /**
+             * Sets [Builder.metadata] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.metadata] with a well-typed [Metadata] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
             fun owner(owner: String?) = owner(JsonField.ofNullable(owner))
 
@@ -1701,6 +1749,7 @@ private constructor(
             commit()
             datasetSplits()
             evaluatorRules()
+            metadata().ifPresent { it.validate() }
             owner()
             parallelToolCalls()
             repetitions()
@@ -1739,6 +1788,7 @@ private constructor(
                 (if (commit.asKnown().isPresent) 1 else 0) +
                 (datasetSplits.asKnown().getOrNull()?.size ?: 0) +
                 (evaluatorRules.asKnown().getOrNull()?.size ?: 0) +
+                (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (owner.asKnown().isPresent) 1 else 0) +
                 (if (parallelToolCalls.asKnown().isPresent) 1 else 0) +
                 (if (repetitions.asKnown().isPresent) 1 else 0) +
@@ -1911,6 +1961,105 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() = "Secrets{additionalProperties=$additionalProperties}"
+    }
+
+    class Metadata
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Metadata]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Metadata]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(metadata: Metadata) = apply {
+                additionalProperties = metadata.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Metadata].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): Metadata = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Metadata && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

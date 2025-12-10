@@ -16,7 +16,11 @@ internal class AnnotationQueueUpdateParamsTest {
             .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .description("description")
             .enableReservations(true)
-            .metadata(JsonValue.from(mapOf<String, Any>()))
+            .metadata(
+                AnnotationQueueUpdateParams.Metadata.UnionMember0.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .build()
+            )
             .name("name")
             .numReviewersPerItem(0L)
             .reservationMinutes(0L)
@@ -60,7 +64,11 @@ internal class AnnotationQueueUpdateParamsTest {
                 .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
                 .enableReservations(true)
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .metadata(
+                    AnnotationQueueUpdateParams.Metadata.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("name")
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
@@ -90,8 +98,10 @@ internal class AnnotationQueueUpdateParamsTest {
         assertThat(body.enableReservations()).contains(true)
         assertThat(body.metadata())
             .contains(
-                AnnotationQueueUpdateParams.Metadata.ofJsonValue(
-                    JsonValue.from(mapOf<String, Any>())
+                AnnotationQueueUpdateParams.Metadata.ofUnionMember0(
+                    AnnotationQueueUpdateParams.Metadata.UnionMember0.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
                 )
             )
         assertThat(body.name()).contains("name")

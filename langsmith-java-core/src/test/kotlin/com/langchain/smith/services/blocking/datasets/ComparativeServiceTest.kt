@@ -33,7 +33,11 @@ internal class ComparativeServiceTest {
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .description("description")
-                    .extra(JsonValue.from(mapOf<String, Any>()))
+                    .extra(
+                        ComparativeCreateParams.Extra.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
                     .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .name("name")
                     .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

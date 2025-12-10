@@ -3,6 +3,7 @@
 package com.langchain.smith.models.datasets
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -11,13 +12,19 @@ internal class DatasetCloneResponseTest {
 
     @Test
     fun create() {
-        val datasetCloneResponse = DatasetCloneResponse.builder().build()
+        val datasetCloneResponse =
+            DatasetCloneResponse.builder()
+                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                .build()
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val datasetCloneResponse = DatasetCloneResponse.builder().build()
+        val datasetCloneResponse =
+            DatasetCloneResponse.builder()
+                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                .build()
 
         val roundtrippedDatasetCloneResponse =
             jsonMapper.readValue(
