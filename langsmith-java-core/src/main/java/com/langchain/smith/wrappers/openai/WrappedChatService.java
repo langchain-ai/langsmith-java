@@ -139,7 +139,8 @@ class WrappedChatService implements ChatService {
                 // Extract completion (assistant response) for gen_ai.completion attribute
                 String completion = extractCompletionFromResult(result);
                 if (completion != null && !completion.isEmpty()) {
-                    span.setAttribute(io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.completion"), completion);
+                    span.setAttribute(
+                            io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.completion"), completion);
                 }
 
                 // Extract usage information from result
@@ -687,7 +688,9 @@ class WrappedChatService implements ChatService {
 
                             ChatCompletionMessageFunctionToolCall functionToolCall = toolCall.asFunction();
                             json.append("{");
-                            json.append("\"id\":\"").append(TracingUtils.escapeJsonString(functionToolCall.id())).append("\"");
+                            json.append("\"id\":\"")
+                                    .append(TracingUtils.escapeJsonString(functionToolCall.id()))
+                                    .append("\"");
                             json.append(",\"type\":\"function\"");
 
                             com.openai.models.chat.completions.ChatCompletionMessageFunctionToolCall.Function function =

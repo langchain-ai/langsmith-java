@@ -151,7 +151,8 @@ public class OtelOpenAIExample {
                     .build();
 
             // Set input on workflow span
-            workflowSpan.setAttribute(io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.prompt"), initialUserMessage);
+            workflowSpan.setAttribute(
+                    io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.prompt"), initialUserMessage);
 
             System.out.println("\n1. Making initial API call with tool definitions...");
             ChatCompletion completion = client.chat().completions().create(params);
@@ -251,7 +252,8 @@ public class OtelOpenAIExample {
             });
 
             // Set output on workflow span
-            workflowSpan.setAttribute(io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.completion"), finalContent);
+            workflowSpan.setAttribute(
+                    io.opentelemetry.api.common.AttributeKey.stringKey("gen_ai.completion"), finalContent);
             workflowSpan.setAttribute("response.content", finalContent);
             workflowSpan.setStatus(io.opentelemetry.api.trace.StatusCode.OK);
 
