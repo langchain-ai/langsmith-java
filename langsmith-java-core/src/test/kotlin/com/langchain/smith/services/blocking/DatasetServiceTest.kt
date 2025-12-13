@@ -217,6 +217,7 @@ internal class DatasetServiceTest {
                     .targetDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .addExample("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .split("string")
                     .build()
             )
 

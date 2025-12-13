@@ -17,6 +17,7 @@ class ExampleRetrieveParams
 private constructor(
     private val exampleId: String?,
     private val asOf: AsOf?,
+    private val dataset: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -28,6 +29,8 @@ private constructor(
      * the dataset is used.
      */
     fun asOf(): Optional<AsOf> = Optional.ofNullable(asOf)
+
+    fun dataset(): Optional<String> = Optional.ofNullable(dataset)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -50,6 +53,7 @@ private constructor(
 
         private var exampleId: String? = null
         private var asOf: AsOf? = null
+        private var dataset: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -57,6 +61,7 @@ private constructor(
         internal fun from(exampleRetrieveParams: ExampleRetrieveParams) = apply {
             exampleId = exampleRetrieveParams.exampleId
             asOf = exampleRetrieveParams.asOf
+            dataset = exampleRetrieveParams.dataset
             additionalHeaders = exampleRetrieveParams.additionalHeaders.toBuilder()
             additionalQueryParams = exampleRetrieveParams.additionalQueryParams.toBuilder()
         }
@@ -80,6 +85,11 @@ private constructor(
 
         /** Alias for calling [asOf] with `AsOf.ofString(string)`. */
         fun asOf(string: String) = asOf(AsOf.ofString(string))
+
+        fun dataset(dataset: String?) = apply { this.dataset = dataset }
+
+        /** Alias for calling [Builder.dataset] with `dataset.orElse(null)`. */
+        fun dataset(dataset: Optional<String>) = dataset(dataset.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -188,6 +198,7 @@ private constructor(
             ExampleRetrieveParams(
                 exampleId,
                 asOf,
+                dataset,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -218,6 +229,7 @@ private constructor(
                         }
                     }
                 )
+                dataset?.let { put("dataset", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -294,13 +306,14 @@ private constructor(
         return other is ExampleRetrieveParams &&
             exampleId == other.exampleId &&
             asOf == other.asOf &&
+            dataset == other.dataset &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(exampleId, asOf, additionalHeaders, additionalQueryParams)
+        Objects.hash(exampleId, asOf, dataset, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ExampleRetrieveParams{exampleId=$exampleId, asOf=$asOf, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ExampleRetrieveParams{exampleId=$exampleId, asOf=$asOf, dataset=$dataset, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -14,6 +14,7 @@ internal class ExampleRetrieveParamsTest {
         ExampleRetrieveParams.builder()
             .exampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+            .dataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
 
@@ -35,12 +36,18 @@ internal class ExampleRetrieveParamsTest {
             ExampleRetrieveParams.builder()
                 .exampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .dataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         val queryParams = params._queryParams()
 
         assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("as_of", "2019-12-27T18:11:19.117Z").build())
+            .isEqualTo(
+                QueryParams.builder()
+                    .put("as_of", "2019-12-27T18:11:19.117Z")
+                    .put("dataset", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 
     @Test
