@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0-alpha.20 (2025-12-13)
+
+Full Changelog: [v0.1.0-alpha.19...v0.1.0-alpha.20](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.19...v0.1.0-alpha.20)
+
+### Features
+
+* **api:** api update ([8895f35](https://github.com/langchain-ai/langsmith-java/commit/8895f3571aafdffce373dac1052a4f26fd38347d))
+* **api:** api update ([9c66288](https://github.com/langchain-ai/langsmith-java/commit/9c66288568aceb6d7b77b8742dc34e132c122b66))
+* **api:** api update ([f73c866](https://github.com/langchain-ai/langsmith-java/commit/f73c86620f221064be73d86d9ce540f4e8aeb5c6))
+
 ## 0.1.0-alpha.19 (2025-12-10)
 
 Full Changelog: [v0.1.0-alpha.18...v0.1.0-alpha.19](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.18...v0.1.0-alpha.19)
