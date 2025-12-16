@@ -13,27 +13,24 @@ internal class RunCreateParamsTest {
     fun create() {
         RunCreateParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .format("format")
-            .queryExampleSchemaWithRuns(
-                QueryExampleSchemaWithRuns.builder()
-                    .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .filters(
-                        QueryExampleSchemaWithRuns.Filters.builder()
-                            .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                            .build()
-                    )
-                    .limit(1L)
-                    .offset(0L)
-                    .preview(true)
-                    .sortParams(
-                        SortParamsForRunsComparisonView.builder()
-                            .sortBy("sort_by")
-                            .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
-                            .build()
-                    )
+            .format(RunCreateParams.Format.CSV)
+            .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .filters(
+                RunCreateParams.Filters.builder()
+                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                     .build()
             )
+            .limit(1L)
+            .offset(0L)
+            .preview(true)
+            .sortParams(
+                SortParamsForRunsComparisonView.builder()
+                    .sortBy("sort_by")
+                    .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
+                    .build()
+            )
+            .stream(true)
             .build()
     }
 
@@ -42,11 +39,7 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .queryExampleSchemaWithRuns(
-                    QueryExampleSchemaWithRuns.builder()
-                        .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .build()
-                )
+                .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -59,32 +52,29 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .format("format")
-                .queryExampleSchemaWithRuns(
-                    QueryExampleSchemaWithRuns.builder()
-                        .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .filters(
-                            QueryExampleSchemaWithRuns.Filters.builder()
-                                .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                                .build()
-                        )
-                        .limit(1L)
-                        .offset(0L)
-                        .preview(true)
-                        .sortParams(
-                            SortParamsForRunsComparisonView.builder()
-                                .sortBy("sort_by")
-                                .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
-                                .build()
-                        )
+                .format(RunCreateParams.Format.CSV)
+                .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .filters(
+                    RunCreateParams.Filters.builder()
+                        .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                         .build()
                 )
+                .limit(1L)
+                .offset(0L)
+                .preview(true)
+                .sortParams(
+                    SortParamsForRunsComparisonView.builder()
+                        .sortBy("sort_by")
+                        .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
+                        .build()
+                )
+                .stream(true)
                 .build()
 
         val queryParams = params._queryParams()
 
-        assertThat(queryParams).isEqualTo(QueryParams.builder().put("format", "format").build())
+        assertThat(queryParams).isEqualTo(QueryParams.builder().put("format", "csv").build())
     }
 
     @Test
@@ -92,11 +82,7 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .queryExampleSchemaWithRuns(
-                    QueryExampleSchemaWithRuns.builder()
-                        .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .build()
-                )
+                .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         val queryParams = params._queryParams()
@@ -109,52 +95,47 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .format("format")
-                .queryExampleSchemaWithRuns(
-                    QueryExampleSchemaWithRuns.builder()
-                        .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .filters(
-                            QueryExampleSchemaWithRuns.Filters.builder()
-                                .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                                .build()
-                        )
-                        .limit(1L)
-                        .offset(0L)
-                        .preview(true)
-                        .sortParams(
-                            SortParamsForRunsComparisonView.builder()
-                                .sortBy("sort_by")
-                                .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
-                                .build()
-                        )
+                .format(RunCreateParams.Format.CSV)
+                .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .filters(
+                    RunCreateParams.Filters.builder()
+                        .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                         .build()
                 )
+                .limit(1L)
+                .offset(0L)
+                .preview(true)
+                .sortParams(
+                    SortParamsForRunsComparisonView.builder()
+                        .sortBy("sort_by")
+                        .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
+                        .build()
+                )
+                .stream(true)
                 .build()
 
         val body = params._body()
 
-        assertThat(body)
-            .isEqualTo(
-                QueryExampleSchemaWithRuns.builder()
-                    .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .filters(
-                        QueryExampleSchemaWithRuns.Filters.builder()
-                            .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                            .build()
-                    )
-                    .limit(1L)
-                    .offset(0L)
-                    .preview(true)
-                    .sortParams(
-                        SortParamsForRunsComparisonView.builder()
-                            .sortBy("sort_by")
-                            .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
-                            .build()
-                    )
+        assertThat(body.sessionIds()).containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(body.comparativeExperimentId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(body.filters())
+            .contains(
+                RunCreateParams.Filters.builder()
+                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                     .build()
             )
+        assertThat(body.limit()).contains(1L)
+        assertThat(body.offset()).contains(0L)
+        assertThat(body.preview()).contains(true)
+        assertThat(body.sortParams())
+            .contains(
+                SortParamsForRunsComparisonView.builder()
+                    .sortBy("sort_by")
+                    .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
+                    .build()
+            )
+        assertThat(body.stream()).contains(true)
     }
 
     @Test
@@ -162,20 +143,11 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .queryExampleSchemaWithRuns(
-                    QueryExampleSchemaWithRuns.builder()
-                        .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .build()
-                )
+                .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         val body = params._body()
 
-        assertThat(body)
-            .isEqualTo(
-                QueryExampleSchemaWithRuns.builder()
-                    .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        assertThat(body.sessionIds()).containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
 }
