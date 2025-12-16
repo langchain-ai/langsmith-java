@@ -30,6 +30,7 @@ internal class QueryExampleSchemaWithRunsTest {
                         .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
                         .build()
                 )
+                .stream(true)
                 .build()
 
         assertThat(queryExampleSchemaWithRuns.sessionIds())
@@ -52,6 +53,7 @@ internal class QueryExampleSchemaWithRunsTest {
                     .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
                     .build()
             )
+        assertThat(queryExampleSchemaWithRuns.stream()).contains(true)
     }
 
     @Test
@@ -75,6 +77,7 @@ internal class QueryExampleSchemaWithRunsTest {
                         .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
                         .build()
                 )
+                .stream(true)
                 .build()
 
         val roundtrippedQueryExampleSchemaWithRuns =
