@@ -11,7 +11,7 @@ internal class RunCreateParamsTest {
     fun create() {
         RunCreateParams.builder()
             .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .addBody("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .bodyOfStrings(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .build()
     }
 
@@ -20,7 +20,7 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .addBody("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .bodyOfStrings(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -33,11 +33,14 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .addBody("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .bodyOfStrings(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .build()
 
         val body = params._body()
 
-        assertThat(body).containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(body)
+            .isEqualTo(
+                RunCreateParams.Body.ofStrings(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
+            )
     }
 }
