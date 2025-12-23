@@ -2667,6 +2667,8 @@ private constructor(
 
             @JvmField val MESSAGES = of("messages")
 
+            @JvmField val INSERTED_AT = of("inserted_at")
+
             @JvmStatic fun of(value: String) = Select(JsonField.of(value))
         }
 
@@ -2731,6 +2733,7 @@ private constructor(
             THREAD_ID,
             TRACE_MIN_MAX_START_TIME,
             MESSAGES,
+            INSERTED_AT,
         }
 
         /**
@@ -2802,6 +2805,7 @@ private constructor(
             THREAD_ID,
             TRACE_MIN_MAX_START_TIME,
             MESSAGES,
+            INSERTED_AT,
             /** An enum member indicating that [Select] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -2874,6 +2878,7 @@ private constructor(
                 THREAD_ID -> Value.THREAD_ID
                 TRACE_MIN_MAX_START_TIME -> Value.TRACE_MIN_MAX_START_TIME
                 MESSAGES -> Value.MESSAGES
+                INSERTED_AT -> Value.INSERTED_AT
                 else -> Value._UNKNOWN
             }
 
@@ -2947,6 +2952,7 @@ private constructor(
                 THREAD_ID -> Known.THREAD_ID
                 TRACE_MIN_MAX_START_TIME -> Known.TRACE_MIN_MAX_START_TIME
                 MESSAGES -> Known.MESSAGES
+                INSERTED_AT -> Known.INSERTED_AT
                 else -> throw LangChainInvalidDataException("Unknown Select: $value")
             }
 
