@@ -70,6 +70,12 @@ private constructor(
     fun examples(): Optional<List<String>> = body.examples()
 
     /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun split(): Optional<Split> = body.split()
+
+    /**
      * Returns the raw JSON value of [sourceDatasetId].
      *
      * Unlike [sourceDatasetId], this method doesn't throw if the JSON field has an unexpected type.
@@ -96,6 +102,13 @@ private constructor(
      * Unlike [examples], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _examples(): JsonField<List<String>> = body._examples()
+
+    /**
+     * Returns the raw JSON value of [split].
+     *
+     * Unlike [split], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _split(): JsonField<Split> = body._split()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -144,6 +157,8 @@ private constructor(
          * - [targetDatasetId]
          * - [asOf]
          * - [examples]
+         * - [split]
+         * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -217,6 +232,25 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addExample(example: String) = apply { body.addExample(example) }
+
+        fun split(split: Split?) = apply { body.split(split) }
+
+        /** Alias for calling [Builder.split] with `split.orElse(null)`. */
+        fun split(split: Optional<Split>) = split(split.getOrNull())
+
+        /**
+         * Sets [Builder.split] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.split] with a well-typed [Split] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun split(split: JsonField<Split>) = apply { body.split(split) }
+
+        /** Alias for calling [split] with `Split.ofString(string)`. */
+        fun split(string: String) = apply { body.split(string) }
+
+        /** Alias for calling [split] with `Split.ofStrings(strings)`. */
+        fun splitOfStrings(strings: List<String>) = apply { body.splitOfStrings(strings) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -369,6 +403,7 @@ private constructor(
         private val targetDatasetId: JsonField<String>,
         private val asOf: JsonField<AsOf>,
         private val examples: JsonField<List<String>>,
+        private val split: JsonField<Split>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -384,7 +419,8 @@ private constructor(
             @JsonProperty("examples")
             @ExcludeMissing
             examples: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(sourceDatasetId, targetDatasetId, asOf, examples, mutableMapOf())
+            @JsonProperty("split") @ExcludeMissing split: JsonField<Split> = JsonMissing.of(),
+        ) : this(sourceDatasetId, targetDatasetId, asOf, examples, split, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -412,6 +448,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun examples(): Optional<List<String>> = examples.getOptional("examples")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun split(): Optional<Split> = split.getOptional("split")
 
         /**
          * Returns the raw JSON value of [sourceDatasetId].
@@ -449,6 +491,13 @@ private constructor(
         @ExcludeMissing
         fun _examples(): JsonField<List<String>> = examples
 
+        /**
+         * Returns the raw JSON value of [split].
+         *
+         * Unlike [split], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("split") @ExcludeMissing fun _split(): JsonField<Split> = split
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -482,6 +531,7 @@ private constructor(
             private var targetDatasetId: JsonField<String>? = null
             private var asOf: JsonField<AsOf> = JsonMissing.of()
             private var examples: JsonField<MutableList<String>>? = null
+            private var split: JsonField<Split> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -490,6 +540,7 @@ private constructor(
                 targetDatasetId = body.targetDatasetId
                 asOf = body.asOf
                 examples = body.examples.map { it.toMutableList() }
+                split = body.split
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -570,6 +621,26 @@ private constructor(
                     }
             }
 
+            fun split(split: Split?) = split(JsonField.ofNullable(split))
+
+            /** Alias for calling [Builder.split] with `split.orElse(null)`. */
+            fun split(split: Optional<Split>) = split(split.getOrNull())
+
+            /**
+             * Sets [Builder.split] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.split] with a well-typed [Split] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun split(split: JsonField<Split>) = apply { this.split = split }
+
+            /** Alias for calling [split] with `Split.ofString(string)`. */
+            fun split(string: String) = split(Split.ofString(string))
+
+            /** Alias for calling [split] with `Split.ofStrings(strings)`. */
+            fun splitOfStrings(strings: List<String>) = split(Split.ofStrings(strings))
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -608,6 +679,7 @@ private constructor(
                     checkRequired("targetDatasetId", targetDatasetId),
                     asOf,
                     (examples ?: JsonMissing.of()).map { it.toImmutable() },
+                    split,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -623,6 +695,7 @@ private constructor(
             targetDatasetId()
             asOf().ifPresent { it.validate() }
             examples()
+            split().ifPresent { it.validate() }
             validated = true
         }
 
@@ -645,7 +718,8 @@ private constructor(
             (if (sourceDatasetId.asKnown().isPresent) 1 else 0) +
                 (if (targetDatasetId.asKnown().isPresent) 1 else 0) +
                 (asOf.asKnown().getOrNull()?.validity() ?: 0) +
-                (examples.asKnown().getOrNull()?.size ?: 0)
+                (examples.asKnown().getOrNull()?.size ?: 0) +
+                (split.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -657,17 +731,25 @@ private constructor(
                 targetDatasetId == other.targetDatasetId &&
                 asOf == other.asOf &&
                 examples == other.examples &&
+                split == other.split &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(sourceDatasetId, targetDatasetId, asOf, examples, additionalProperties)
+            Objects.hash(
+                sourceDatasetId,
+                targetDatasetId,
+                asOf,
+                examples,
+                split,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sourceDatasetId=$sourceDatasetId, targetDatasetId=$targetDatasetId, asOf=$asOf, examples=$examples, additionalProperties=$additionalProperties}"
+            "Body{sourceDatasetId=$sourceDatasetId, targetDatasetId=$targetDatasetId, asOf=$asOf, examples=$examples, split=$split, additionalProperties=$additionalProperties}"
     }
 
     /**
@@ -837,6 +919,173 @@ private constructor(
                     value.string != null -> generator.writeObject(value.string)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid AsOf")
+                }
+            }
+        }
+    }
+
+    @JsonDeserialize(using = Split.Deserializer::class)
+    @JsonSerialize(using = Split.Serializer::class)
+    class Split
+    private constructor(
+        private val string: String? = null,
+        private val strings: List<String>? = null,
+        private val _json: JsonValue? = null,
+    ) {
+
+        fun string(): Optional<String> = Optional.ofNullable(string)
+
+        fun strings(): Optional<List<String>> = Optional.ofNullable(strings)
+
+        fun isString(): Boolean = string != null
+
+        fun isStrings(): Boolean = strings != null
+
+        fun asString(): String = string.getOrThrow("string")
+
+        fun asStrings(): List<String> = strings.getOrThrow("strings")
+
+        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                string != null -> visitor.visitString(string)
+                strings != null -> visitor.visitStrings(strings)
+                else -> visitor.unknown(_json)
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): Split = apply {
+            if (validated) {
+                return@apply
+            }
+
+            accept(
+                object : Visitor<Unit> {
+                    override fun visitString(string: String) {}
+
+                    override fun visitStrings(strings: List<String>) {}
+                }
+            )
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            accept(
+                object : Visitor<Int> {
+                    override fun visitString(string: String) = 1
+
+                    override fun visitStrings(strings: List<String>) = strings.size
+
+                    override fun unknown(json: JsonValue?) = 0
+                }
+            )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Split && string == other.string && strings == other.strings
+        }
+
+        override fun hashCode(): Int = Objects.hash(string, strings)
+
+        override fun toString(): String =
+            when {
+                string != null -> "Split{string=$string}"
+                strings != null -> "Split{strings=$strings}"
+                _json != null -> "Split{_unknown=$_json}"
+                else -> throw IllegalStateException("Invalid Split")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofString(string: String) = Split(string = string)
+
+            @JvmStatic fun ofStrings(strings: List<String>) = Split(strings = strings.toImmutable())
+        }
+
+        /** An interface that defines how to map each variant of [Split] to a value of type [T]. */
+        interface Visitor<out T> {
+
+            fun visitString(string: String): T
+
+            fun visitStrings(strings: List<String>): T
+
+            /**
+             * Maps an unknown variant of [Split] to a value of type [T].
+             *
+             * An instance of [Split] can contain an unknown variant if it was deserialized from
+             * data that doesn't match any known variant. For example, if the SDK is on an older
+             * version than the API, then the API may respond with new variants that the SDK is
+             * unaware of.
+             *
+             * @throws LangChainInvalidDataException in the default implementation.
+             */
+            fun unknown(json: JsonValue?): T {
+                throw LangChainInvalidDataException("Unknown Split: $json")
+            }
+        }
+
+        internal class Deserializer : BaseDeserializer<Split>(Split::class) {
+
+            override fun ObjectCodec.deserialize(node: JsonNode): Split {
+                val json = JsonValue.fromJsonNode(node)
+
+                val bestMatches =
+                    sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
+                                Split(string = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<List<String>>())?.let {
+                                Split(strings = it, _json = json)
+                            },
+                        )
+                        .filterNotNull()
+                        .allMaxBy { it.validity() }
+                        .toList()
+                return when (bestMatches.size) {
+                    // This can happen if what we're deserializing is completely incompatible with
+                    // all the possible variants (e.g. deserializing from object).
+                    0 -> Split(_json = json)
+                    1 -> bestMatches.single()
+                    // If there's more than one match with the highest validity, then use the first
+                    // completely valid match, or simply the first match if none are completely
+                    // valid.
+                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                }
+            }
+        }
+
+        internal class Serializer : BaseSerializer<Split>(Split::class) {
+
+            override fun serialize(
+                value: Split,
+                generator: JsonGenerator,
+                provider: SerializerProvider,
+            ) {
+                when {
+                    value.string != null -> generator.writeObject(value.string)
+                    value.strings != null -> generator.writeObject(value.strings)
+                    value._json != null -> generator.writeObject(value._json)
+                    else -> throw IllegalStateException("Invalid Split")
                 }
             }
         }

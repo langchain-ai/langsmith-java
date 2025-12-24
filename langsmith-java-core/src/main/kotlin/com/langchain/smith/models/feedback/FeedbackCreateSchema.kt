@@ -50,6 +50,7 @@ private constructor(
     private val runId: JsonField<String>,
     private val score: JsonField<Score>,
     private val sessionId: JsonField<String>,
+    private val startTime: JsonField<OffsetDateTime>,
     private val traceId: JsonField<String>,
     private val value: JsonField<Value>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -85,6 +86,9 @@ private constructor(
         @JsonProperty("run_id") @ExcludeMissing runId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("score") @ExcludeMissing score: JsonField<Score> = JsonMissing.of(),
         @JsonProperty("session_id") @ExcludeMissing sessionId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("start_time")
+        @ExcludeMissing
+        startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("trace_id") @ExcludeMissing traceId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("value") @ExcludeMissing value: JsonField<Value> = JsonMissing.of(),
     ) : this(
@@ -102,6 +106,7 @@ private constructor(
         runId,
         score,
         sessionId,
+        startTime,
         traceId,
         value,
         mutableMapOf(),
@@ -193,6 +198,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun sessionId(): Optional<String> = sessionId.getOptional("session_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -320,6 +331,15 @@ private constructor(
     @JsonProperty("session_id") @ExcludeMissing fun _sessionId(): JsonField<String> = sessionId
 
     /**
+     * Returns the raw JSON value of [startTime].
+     *
+     * Unlike [startTime], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("start_time")
+    @ExcludeMissing
+    fun _startTime(): JsonField<OffsetDateTime> = startTime
+
+    /**
      * Returns the raw JSON value of [traceId].
      *
      * Unlike [traceId], this method doesn't throw if the JSON field has an unexpected type.
@@ -375,6 +395,7 @@ private constructor(
         private var runId: JsonField<String> = JsonMissing.of()
         private var score: JsonField<Score> = JsonMissing.of()
         private var sessionId: JsonField<String> = JsonMissing.of()
+        private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var traceId: JsonField<String> = JsonMissing.of()
         private var value: JsonField<Value> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -395,6 +416,7 @@ private constructor(
             runId = feedbackCreateSchema.runId
             score = feedbackCreateSchema.score
             sessionId = feedbackCreateSchema.sessionId
+            startTime = feedbackCreateSchema.startTime
             traceId = feedbackCreateSchema.traceId
             value = feedbackCreateSchema.value
             additionalProperties = feedbackCreateSchema.additionalProperties.toMutableMap()
@@ -634,6 +656,20 @@ private constructor(
          */
         fun sessionId(sessionId: JsonField<String>) = apply { this.sessionId = sessionId }
 
+        fun startTime(startTime: OffsetDateTime?) = startTime(JsonField.ofNullable(startTime))
+
+        /** Alias for calling [Builder.startTime] with `startTime.orElse(null)`. */
+        fun startTime(startTime: Optional<OffsetDateTime>) = startTime(startTime.getOrNull())
+
+        /**
+         * Sets [Builder.startTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.startTime] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun startTime(startTime: JsonField<OffsetDateTime>) = apply { this.startTime = startTime }
+
         fun traceId(traceId: String?) = traceId(JsonField.ofNullable(traceId))
 
         /** Alias for calling [Builder.traceId] with `traceId.orElse(null)`. */
@@ -719,6 +755,7 @@ private constructor(
                 runId,
                 score,
                 sessionId,
+                startTime,
                 traceId,
                 value,
                 additionalProperties.toMutableMap(),
@@ -746,6 +783,7 @@ private constructor(
         runId()
         score().ifPresent { it.validate() }
         sessionId()
+        startTime()
         traceId()
         value().ifPresent { it.validate() }
         validated = true
@@ -780,6 +818,7 @@ private constructor(
             (if (runId.asKnown().isPresent) 1 else 0) +
             (score.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sessionId.asKnown().isPresent) 1 else 0) +
+            (if (startTime.asKnown().isPresent) 1 else 0) +
             (if (traceId.asKnown().isPresent) 1 else 0) +
             (value.asKnown().getOrNull()?.validity() ?: 0)
 
@@ -2440,6 +2479,7 @@ private constructor(
             runId == other.runId &&
             score == other.score &&
             sessionId == other.sessionId &&
+            startTime == other.startTime &&
             traceId == other.traceId &&
             value == other.value &&
             additionalProperties == other.additionalProperties
@@ -2461,6 +2501,7 @@ private constructor(
             runId,
             score,
             sessionId,
+            startTime,
             traceId,
             value,
             additionalProperties,
@@ -2470,5 +2511,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }
