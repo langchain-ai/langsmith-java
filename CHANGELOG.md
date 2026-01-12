@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0-alpha.20 (2026-01-12)
+
+Full Changelog: [v0.1.0-alpha.19...v0.1.0-alpha.20](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.19...v0.1.0-alpha.20)
+
+### Features
+
+* **api:** api update ([4b197f0](https://github.com/langchain-ai/langsmith-java/commit/4b197f03e8a2d7658d2e268d854114398429f7a9))
+* **api:** api update ([5703f0f](https://github.com/langchain-ai/langsmith-java/commit/5703f0f838d16543a4c518dc108065d4e72e58b6))
+* **api:** api update ([e2e98b7](https://github.com/langchain-ai/langsmith-java/commit/e2e98b7e9ab23ea0298e79cfc38a49797db0e978))
+* **api:** api update ([96a6948](https://github.com/langchain-ai/langsmith-java/commit/96a69483bf3e39b21a65dfb1af1eea6914939dfa))
+* **api:** api update ([8895f35](https://github.com/langchain-ai/langsmith-java/commit/8895f3571aafdffce373dac1052a4f26fd38347d))
+* **api:** api update ([9c66288](https://github.com/langchain-ai/langsmith-java/commit/9c66288568aceb6d7b77b8742dc34e132c122b66))
+* **api:** api update ([f73c866](https://github.com/langchain-ai/langsmith-java/commit/f73c86620f221064be73d86d9ce540f4e8aeb5c6))
+* **client:** add `HttpRequest#url()` method ([7c51e6a](https://github.com/langchain-ai/langsmith-java/commit/7c51e6a7139f20c181bc4349c247da8aaa151a89))
+* **client:** allow configuring dispatcher executor service ([4a50a22](https://github.com/langchain-ai/langsmith-java/commit/4a50a22f62527d90e5584b9c805b34cfa8c0a7c8))
+
 ## 0.1.0-alpha.19 (2025-12-10)
 
 Full Changelog: [v0.1.0-alpha.18...v0.1.0-alpha.19](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.18...v0.1.0-alpha.19)
