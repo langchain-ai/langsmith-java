@@ -43,7 +43,7 @@ interface ValidateServiceAsync {
     fun create(requestOptions: RequestOptions): CompletableFuture<ExampleValidationResult> =
         create(ValidateCreateParams.none(), requestOptions)
 
-    /** Validate an example. */
+    /** Validate examples in bulk. */
     fun bulk(): CompletableFuture<List<ExampleValidationResult>> = bulk(ValidateBulkParams.none())
 
     /** @see bulk */
