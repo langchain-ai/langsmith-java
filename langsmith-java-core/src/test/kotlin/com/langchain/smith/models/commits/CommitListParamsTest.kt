@@ -14,6 +14,7 @@ internal class CommitListParamsTest {
         CommitListParams.builder()
             .owner(JsonValue.from(mapOf<String, Any>()))
             .repo(JsonValue.from(mapOf<String, Any>()))
+            .includeStats(true)
             .limit(1L)
             .offset(0L)
             .build()
@@ -39,6 +40,7 @@ internal class CommitListParamsTest {
             CommitListParams.builder()
                 .owner(JsonValue.from(mapOf<String, Any>()))
                 .repo(JsonValue.from(mapOf<String, Any>()))
+                .includeStats(true)
                 .limit(1L)
                 .offset(0L)
                 .build()
@@ -46,7 +48,13 @@ internal class CommitListParamsTest {
         val queryParams = params._queryParams()
 
         assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("limit", "1").put("offset", "0").build())
+            .isEqualTo(
+                QueryParams.builder()
+                    .put("include_stats", "true")
+                    .put("limit", "1")
+                    .put("offset", "0")
+                    .build()
+            )
     }
 
     @Test

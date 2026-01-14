@@ -5,7 +5,6 @@ package com.langchain.smith.services.async.datasets
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.datasets.runs.QueryExampleSchemaWithRuns
 import com.langchain.smith.models.datasets.runs.QueryFeedbackDelta
 import com.langchain.smith.models.datasets.runs.RunCreateParams
 import com.langchain.smith.models.datasets.runs.RunDeltaParams
@@ -34,27 +33,24 @@ internal class RunServiceAsyncTest {
             runServiceAsync.create(
                 RunCreateParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .format("format")
-                    .queryExampleSchemaWithRuns(
-                        QueryExampleSchemaWithRuns.builder()
-                            .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .filters(
-                                QueryExampleSchemaWithRuns.Filters.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                                    .build()
-                            )
-                            .limit(1L)
-                            .offset(0L)
-                            .preview(true)
-                            .sortParams(
-                                SortParamsForRunsComparisonView.builder()
-                                    .sortBy("sort_by")
-                                    .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
-                                    .build()
-                            )
+                    .format(RunCreateParams.Format.CSV)
+                    .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .filters(
+                        RunCreateParams.Filters.builder()
+                            .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
+                    .limit(1L)
+                    .offset(0L)
+                    .preview(true)
+                    .sortParams(
+                        SortParamsForRunsComparisonView.builder()
+                            .sortBy("sort_by")
+                            .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
+                            .build()
+                    )
+                    .stream(true)
                     .build()
             )
 
