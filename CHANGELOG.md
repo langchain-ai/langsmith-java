@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0-alpha.21 (2026-01-14)
+
+Full Changelog: [v0.1.0-alpha.20...v0.1.0-alpha.21](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.20...v0.1.0-alpha.21)
+
+### Features
+
+* **api:** api update ([d5e92e1](https://github.com/langchain-ai/langsmith-java/commit/d5e92e102d1dd770ae1205dc52d5d7f0a0692dcb))
+* **api:** api update ([591546c](https://github.com/langchain-ai/langsmith-java/commit/591546c935e7e10e9521310870af83c8bd67ebd4))
+* **api:** api update ([440ea8a](https://github.com/langchain-ai/langsmith-java/commit/440ea8abf0a22148c636f06f5a4c778e20b947e9))
+* **api:** manual updates ([ee36c44](https://github.com/langchain-ai/langsmith-java/commit/ee36c44834da0d371168b876b7f9619c281f749e))
+
+
+### Chores
+
+* **internal:** support uploading Maven repo artifacts to stainless package server ([d1b01b9](https://github.com/langchain-ai/langsmith-java/commit/d1b01b9073fc2db7643fa07de2d421088218f4a3))
+
 ## 0.1.0-alpha.20 (2026-01-12)
 
 Full Changelog: [v0.1.0-alpha.19...v0.1.0-alpha.20](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.19...v0.1.0-alpha.20)
