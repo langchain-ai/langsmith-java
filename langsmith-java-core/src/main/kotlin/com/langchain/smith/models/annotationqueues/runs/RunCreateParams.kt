@@ -91,12 +91,16 @@ private constructor(
 
         fun body(body: Body) = apply { this.body = body }
 
-        /** Alias for calling [body] with `Body.ofRunUuidList(runUuidList)`. */
-        fun bodyOfRunUuidList(runUuidList: List<String>) = body(Body.ofRunUuidList(runUuidList))
+        /** Alias for calling [body] with `Body.ofStrings(strings)`. */
+        fun bodyOfStrings(strings: List<String>) = body(Body.ofStrings(strings))
 
-        /** Alias for calling [body] with `Body.ofRunAddSchemaList(runAddSchemaList)`. */
-        fun bodyOfRunAddSchemaList(runAddSchemaList: List<Body.AnnotationQueueRunAddSchema>) =
-            body(Body.ofRunAddSchemaList(runAddSchemaList))
+        /**
+         * Alias for calling [body] with
+         * `Body.ofAnnotationQueueRunAddSchemas(annotationQueueRunAddSchemas)`.
+         */
+        fun bodyOfAnnotationQueueRunAddSchemas(
+            annotationQueueRunAddSchemas: List<Body.AnnotationQueueRunAddSchema>
+        ) = body(Body.ofAnnotationQueueRunAddSchemas(annotationQueueRunAddSchemas))
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -233,31 +237,32 @@ private constructor(
     @JsonSerialize(using = Body.Serializer::class)
     class Body
     private constructor(
-        private val runUuidList: List<String>? = null,
-        private val runAddSchemaList: List<AnnotationQueueRunAddSchema>? = null,
+        private val strings: List<String>? = null,
+        private val annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>? = null,
         private val _json: JsonValue? = null,
     ) {
 
-        fun runUuidList(): Optional<List<String>> = Optional.ofNullable(runUuidList)
+        fun strings(): Optional<List<String>> = Optional.ofNullable(strings)
 
-        fun runAddSchemaList(): Optional<List<AnnotationQueueRunAddSchema>> =
-            Optional.ofNullable(runAddSchemaList)
+        fun annotationQueueRunAddSchemas(): Optional<List<AnnotationQueueRunAddSchema>> =
+            Optional.ofNullable(annotationQueueRunAddSchemas)
 
-        fun isRunUuidList(): Boolean = runUuidList != null
+        fun isStrings(): Boolean = strings != null
 
-        fun isRunAddSchemaList(): Boolean = runAddSchemaList != null
+        fun isAnnotationQueueRunAddSchemas(): Boolean = annotationQueueRunAddSchemas != null
 
-        fun asRunUuidList(): List<String> = runUuidList.getOrThrow("runUuidList")
+        fun asStrings(): List<String> = strings.getOrThrow("strings")
 
-        fun asRunAddSchemaList(): List<AnnotationQueueRunAddSchema> =
-            runAddSchemaList.getOrThrow("runAddSchemaList")
+        fun asAnnotationQueueRunAddSchemas(): List<AnnotationQueueRunAddSchema> =
+            annotationQueueRunAddSchemas.getOrThrow("annotationQueueRunAddSchemas")
 
         fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
         fun <T> accept(visitor: Visitor<T>): T =
             when {
-                runUuidList != null -> visitor.visitRunUuidList(runUuidList)
-                runAddSchemaList != null -> visitor.visitRunAddSchemaList(runAddSchemaList)
+                strings != null -> visitor.visitStrings(strings)
+                annotationQueueRunAddSchemas != null ->
+                    visitor.visitAnnotationQueueRunAddSchemas(annotationQueueRunAddSchemas)
                 else -> visitor.unknown(_json)
             }
 
@@ -270,12 +275,12 @@ private constructor(
 
             accept(
                 object : Visitor<Unit> {
-                    override fun visitRunUuidList(runUuidList: List<String>) {}
+                    override fun visitStrings(strings: List<String>) {}
 
-                    override fun visitRunAddSchemaList(
-                        runAddSchemaList: List<AnnotationQueueRunAddSchema>
+                    override fun visitAnnotationQueueRunAddSchemas(
+                        annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>
                     ) {
-                        runAddSchemaList.forEach { it.validate() }
+                        annotationQueueRunAddSchemas.forEach { it.validate() }
                     }
                 }
             )
@@ -300,11 +305,11 @@ private constructor(
         internal fun validity(): Int =
             accept(
                 object : Visitor<Int> {
-                    override fun visitRunUuidList(runUuidList: List<String>) = runUuidList.size
+                    override fun visitStrings(strings: List<String>) = strings.size
 
-                    override fun visitRunAddSchemaList(
-                        runAddSchemaList: List<AnnotationQueueRunAddSchema>
-                    ) = runAddSchemaList.sumOf { it.validity().toInt() }
+                    override fun visitAnnotationQueueRunAddSchemas(
+                        annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>
+                    ) = annotationQueueRunAddSchemas.sumOf { it.validity().toInt() }
 
                     override fun unknown(json: JsonValue?) = 0
                 }
@@ -316,37 +321,39 @@ private constructor(
             }
 
             return other is Body &&
-                runUuidList == other.runUuidList &&
-                runAddSchemaList == other.runAddSchemaList
+                strings == other.strings &&
+                annotationQueueRunAddSchemas == other.annotationQueueRunAddSchemas
         }
 
-        override fun hashCode(): Int = Objects.hash(runUuidList, runAddSchemaList)
+        override fun hashCode(): Int = Objects.hash(strings, annotationQueueRunAddSchemas)
 
         override fun toString(): String =
             when {
-                runUuidList != null -> "Body{runUuidList=$runUuidList}"
-                runAddSchemaList != null -> "Body{runAddSchemaList=$runAddSchemaList}"
+                strings != null -> "Body{strings=$strings}"
+                annotationQueueRunAddSchemas != null ->
+                    "Body{annotationQueueRunAddSchemas=$annotationQueueRunAddSchemas}"
                 _json != null -> "Body{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid Body")
             }
 
         companion object {
 
-            @JvmStatic
-            fun ofRunUuidList(runUuidList: List<String>) =
-                Body(runUuidList = runUuidList.toImmutable())
+            @JvmStatic fun ofStrings(strings: List<String>) = Body(strings = strings.toImmutable())
 
             @JvmStatic
-            fun ofRunAddSchemaList(runAddSchemaList: List<AnnotationQueueRunAddSchema>) =
-                Body(runAddSchemaList = runAddSchemaList.toImmutable())
+            fun ofAnnotationQueueRunAddSchemas(
+                annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>
+            ) = Body(annotationQueueRunAddSchemas = annotationQueueRunAddSchemas.toImmutable())
         }
 
         /** An interface that defines how to map each variant of [Body] to a value of type [T]. */
         interface Visitor<out T> {
 
-            fun visitRunUuidList(runUuidList: List<String>): T
+            fun visitStrings(strings: List<String>): T
 
-            fun visitRunAddSchemaList(runAddSchemaList: List<AnnotationQueueRunAddSchema>): T
+            fun visitAnnotationQueueRunAddSchemas(
+                annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>
+            ): T
 
             /**
              * Maps an unknown variant of [Body] to a value of type [T].
@@ -370,13 +377,13 @@ private constructor(
                 val bestMatches =
                     sequenceOf(
                             tryDeserialize(node, jacksonTypeRef<List<String>>())?.let {
-                                Body(runUuidList = it, _json = json)
+                                Body(strings = it, _json = json)
                             },
                             tryDeserialize(
                                     node,
                                     jacksonTypeRef<List<AnnotationQueueRunAddSchema>>(),
                                 )
-                                ?.let { Body(runAddSchemaList = it, _json = json) },
+                                ?.let { Body(annotationQueueRunAddSchemas = it, _json = json) },
                         )
                         .filterNotNull()
                         .allMaxBy { it.validity() }
@@ -402,8 +409,9 @@ private constructor(
                 provider: SerializerProvider,
             ) {
                 when {
-                    value.runUuidList != null -> generator.writeObject(value.runUuidList)
-                    value.runAddSchemaList != null -> generator.writeObject(value.runAddSchemaList)
+                    value.strings != null -> generator.writeObject(value.strings)
+                    value.annotationQueueRunAddSchemas != null ->
+                        generator.writeObject(value.annotationQueueRunAddSchemas)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid Body")
                 }
