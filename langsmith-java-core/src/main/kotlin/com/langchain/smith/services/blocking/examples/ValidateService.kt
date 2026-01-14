@@ -43,7 +43,7 @@ interface ValidateService {
     fun create(requestOptions: RequestOptions): ExampleValidationResult =
         create(ValidateCreateParams.none(), requestOptions)
 
-    /** Validate an example. */
+    /** Validate examples in bulk. */
     fun bulk(): List<ExampleValidationResult> = bulk(ValidateBulkParams.none())
 
     /** @see bulk */

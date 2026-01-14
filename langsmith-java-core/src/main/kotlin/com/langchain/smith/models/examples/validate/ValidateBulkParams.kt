@@ -10,7 +10,7 @@ import com.langchain.smith.core.toImmutable
 import java.util.Objects
 import java.util.Optional
 
-/** Validate an example. */
+/** Validate examples in bulk. */
 class ValidateBulkParams
 private constructor(
     private val additionalHeaders: Headers,
