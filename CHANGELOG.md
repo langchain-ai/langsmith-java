@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.0-alpha.22 (2026-01-17)
+
+Full Changelog: [v0.1.0-alpha.21...v0.1.0-alpha.22](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.21...v0.1.0-alpha.22)
+
+### Bug Fixes
+
+* **client:** disallow coercion from float to int ([bc01e05](https://github.com/langchain-ai/langsmith-java/commit/bc01e05032fb90f0318bde2107978ccf93eaa330))
+* **client:** fully respect max retries ([07ba637](https://github.com/langchain-ai/langsmith-java/commit/07ba63741949f3e159314c5556902e7a3fb93def))
+* **client:** send retry count header for max retries 0 ([07ba637](https://github.com/langchain-ai/langsmith-java/commit/07ba63741949f3e159314c5556902e7a3fb93def))
+* date time deserialization leniency ([ac7a559](https://github.com/langchain-ai/langsmith-java/commit/ac7a559ad9704bac385a49c724b0d86704d0da4f))
+* deserialization order ([71f380d](https://github.com/langchain-ai/langsmith-java/commit/71f380d5b09e54f6a0f0d2b703c2e3e2cc4e4766))
+
+
+### Chores
+
+* **ci:** upgrade `actions/setup-java` ([ee1ed58](https://github.com/langchain-ai/langsmith-java/commit/ee1ed58ada45c071662c61e700b473ee471660a1))
+* **internal:** clean up maven repo artifact script and add html documentation to repo root ([85d8771](https://github.com/langchain-ai/langsmith-java/commit/85d877129ea7e78b889b4d28f6ea06bcefacfce1))
+* **internal:** depend on packages directly in example ([07ba637](https://github.com/langchain-ai/langsmith-java/commit/07ba63741949f3e159314c5556902e7a3fb93def))
+* **internal:** improve maven repo docs ([d928145](https://github.com/langchain-ai/langsmith-java/commit/d92814500d00759eb188ab19bfc036b90022c782))
+* **internal:** update `actions/checkout` version ([70785ca](https://github.com/langchain-ai/langsmith-java/commit/70785ca2b98445faebb66ef7a54223d5b3ea9e31))
+* test on Jackson 2.14.0 to avoid encountering FasterXML/jackson-databind[#3240](https://github.com/langchain-ai/langsmith-java/issues/3240) in tests ([ac7a559](https://github.com/langchain-ai/langsmith-java/commit/ac7a559ad9704bac385a49c724b0d86704d0da4f))
+
 ## 0.1.0-alpha.21 (2026-01-14)
 
 Full Changelog: [v0.1.0-alpha.20...v0.1.0-alpha.21](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.20...v0.1.0-alpha.21)

@@ -1261,11 +1261,11 @@ private constructor(
 
                 val bestMatches =
                     sequenceOf(
-                            tryDeserialize(node, jacksonTypeRef<List<String>>())?.let {
-                                Split(strings = it, _json = json)
-                            },
                             tryDeserialize(node, jacksonTypeRef<String>())?.let {
                                 Split(string = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<List<String>>())?.let {
+                                Split(strings = it, _json = json)
                             },
                         )
                         .filterNotNull()
@@ -1273,7 +1273,7 @@ private constructor(
                         .toList()
                 return when (bestMatches.size) {
                     // This can happen if what we're deserializing is completely incompatible with
-                    // all the possible variants (e.g. deserializing from object).
+                    // all the possible variants (e.g. deserializing from boolean).
                     0 -> Split(_json = json)
                     1 -> bestMatches.single()
                     // If there's more than one match with the highest validity, then use the first
