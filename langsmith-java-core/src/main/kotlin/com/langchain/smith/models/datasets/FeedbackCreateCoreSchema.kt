@@ -2266,14 +2266,14 @@ private constructor(
                             tryDeserialize(node, jacksonTypeRef<UnionMember3>())?.let {
                                 Value(unionMember3 = it, _json = json)
                             },
+                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
+                                Value(string = it, _json = json)
+                            },
                             tryDeserialize(node, jacksonTypeRef<Double>())?.let {
                                 Value(number = it, _json = json)
                             },
                             tryDeserialize(node, jacksonTypeRef<Boolean>())?.let {
                                 Value(bool = it, _json = json)
-                            },
-                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
-                                Value(string = it, _json = json)
                             },
                         )
                         .filterNotNull()
