@@ -422,7 +422,7 @@ interface DatasetServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<DatasetVersion>
 
-    /** Create a new dataset from a CSV file. */
+    /** Create a new dataset from a CSV or JSONL file. */
     fun upload(params: DatasetUploadParams): CompletableFuture<Dataset> =
         upload(params, RequestOptions.none())
 

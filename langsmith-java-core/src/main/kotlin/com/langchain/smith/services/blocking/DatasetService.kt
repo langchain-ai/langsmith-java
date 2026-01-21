@@ -391,7 +391,7 @@ interface DatasetService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): DatasetVersion
 
-    /** Create a new dataset from a CSV file. */
+    /** Create a new dataset from a CSV or JSONL file. */
     fun upload(params: DatasetUploadParams): Dataset = upload(params, RequestOptions.none())
 
     /** @see upload */

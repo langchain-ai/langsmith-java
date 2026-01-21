@@ -24,7 +24,7 @@ import kotlin.io.path.inputStream
 import kotlin.io.path.name
 import kotlin.jvm.optionals.getOrNull
 
-/** Create a new dataset from a CSV file. */
+/** Create a new dataset from a CSV or JSONL file. */
 class DatasetUploadParams
 private constructor(
     private val body: Body,
