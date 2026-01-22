@@ -502,6 +502,7 @@ private constructor(
             headers.put("X-Stainless-Package-Version", getPackageVersion())
             headers.put("X-Stainless-Runtime", "JRE")
             headers.put("X-Stainless-Runtime-Version", getJavaVersion())
+            headers.put("X-Stainless-Kotlin-Version", KotlinVersion.CURRENT.toString())
             apiKey?.let {
                 if (!it.isEmpty()) {
                     headers.put("X-API-Key", it)
