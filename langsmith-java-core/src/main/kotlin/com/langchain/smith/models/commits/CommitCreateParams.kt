@@ -36,6 +36,12 @@ private constructor(
 
     fun repo(): Optional<JsonValue> = Optional.ofNullable(repo)
 
+    /**
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = commitCreateParams.manifest().convert(MyClass.class);
+     * ```
+     */
     fun _manifest(): JsonValue = body._manifest()
 
     /**
@@ -47,6 +53,11 @@ private constructor(
     /**
      * SkipWebhooks allows skipping webhook notifications. Can be true (boolean) to skip all, or an
      * array of webhook UUIDs to skip specific ones.
+     *
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = commitCreateParams.skipWebhooks().convert(MyClass.class);
+     * ```
      */
     fun _skipWebhooks(): JsonValue = body._skipWebhooks()
 
@@ -309,6 +320,12 @@ private constructor(
             skipWebhooks: JsonValue = JsonMissing.of(),
         ) : this(manifest, parentCommit, skipWebhooks, mutableMapOf())
 
+        /**
+         * This arbitrary value can be deserialized into a custom type using the `convert` method:
+         * ```java
+         * MyClass myObject = body.manifest().convert(MyClass.class);
+         * ```
+         */
         @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
 
         /**
@@ -320,6 +337,11 @@ private constructor(
         /**
          * SkipWebhooks allows skipping webhook notifications. Can be true (boolean) to skip all, or
          * an array of webhook UUIDs to skip specific ones.
+         *
+         * This arbitrary value can be deserialized into a custom type using the `convert` method:
+         * ```java
+         * MyClass myObject = body.skipWebhooks().convert(MyClass.class);
+         * ```
          */
         @JsonProperty("skip_webhooks") @ExcludeMissing fun _skipWebhooks(): JsonValue = skipWebhooks
 
