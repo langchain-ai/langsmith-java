@@ -36,6 +36,12 @@ private constructor(
      */
     fun datasetId(): String = body.datasetId()
 
+    /**
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = playgroundExperimentBatchParams.manifest().convert(MyClass.class);
+     * ```
+     */
     fun _manifest(): JsonValue = body._manifest()
 
     /**
@@ -958,6 +964,12 @@ private constructor(
          */
         fun datasetId(): String = datasetId.getRequired("dataset_id")
 
+        /**
+         * This arbitrary value can be deserialized into a custom type using the `convert` method:
+         * ```java
+         * MyClass myObject = body.manifest().convert(MyClass.class);
+         * ```
+         */
         @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
 
         /**

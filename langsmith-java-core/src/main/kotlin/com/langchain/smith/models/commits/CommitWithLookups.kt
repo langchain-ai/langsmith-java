@@ -124,7 +124,14 @@ private constructor(
      */
     fun fullName(): Optional<String> = fullName.getOptional("full_name")
 
-    /** The manifest of the commit */
+    /**
+     * The manifest of the commit
+     *
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = commitWithLookups.manifest().convert(MyClass.class);
+     * ```
+     */
     @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
 
     /**

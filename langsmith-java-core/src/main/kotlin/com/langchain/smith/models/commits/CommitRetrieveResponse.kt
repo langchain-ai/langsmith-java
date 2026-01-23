@@ -50,6 +50,12 @@ private constructor(
      */
     fun examples(): Optional<List<Example>> = examples.getOptional("examples")
 
+    /**
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = commitRetrieveResponse.manifest().convert(MyClass.class);
+     * ```
+     */
     @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
 
     /**
@@ -231,8 +237,20 @@ private constructor(
          */
         fun id(): Optional<String> = id.getOptional("id")
 
+        /**
+         * This arbitrary value can be deserialized into a custom type using the `convert` method:
+         * ```java
+         * MyClass myObject = example.inputs().convert(MyClass.class);
+         * ```
+         */
         @JsonProperty("inputs") @ExcludeMissing fun _inputs(): JsonValue = inputs
 
+        /**
+         * This arbitrary value can be deserialized into a custom type using the `convert` method:
+         * ```java
+         * MyClass myObject = example.outputs().convert(MyClass.class);
+         * ```
+         */
         @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonValue = outputs
 
         /**
