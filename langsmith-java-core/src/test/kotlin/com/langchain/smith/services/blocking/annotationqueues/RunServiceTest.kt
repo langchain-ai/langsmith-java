@@ -4,7 +4,6 @@ package com.langchain.smith.services.blocking.annotationqueues
 
 import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.annotationqueues.runs.RunCreateParams
 import com.langchain.smith.models.annotationqueues.runs.RunDeleteAllParams
 import com.langchain.smith.models.annotationqueues.runs.RunDeleteQueueParams
@@ -34,7 +33,7 @@ internal class RunServiceTest {
             runService.create(
                 RunCreateParams.builder()
                     .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .body(JsonValue.from(mapOf<String, Any>()))
+                    .bodyOfRunIdList(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                     .build()
             )
 

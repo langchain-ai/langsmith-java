@@ -2,7 +2,6 @@
 
 package com.langchain.smith.models.annotationqueues.runs
 
-import com.langchain.smith.core.JsonValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -12,7 +11,7 @@ internal class RunCreateParamsTest {
     fun create() {
         RunCreateParams.builder()
             .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .body(JsonValue.from(mapOf<String, Any>()))
+            .bodyOfRunIdList(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
             .build()
     }
 
@@ -21,7 +20,7 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .body(JsonValue.from(mapOf<String, Any>()))
+                .bodyOfRunIdList(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -34,11 +33,14 @@ internal class RunCreateParamsTest {
         val params =
             RunCreateParams.builder()
                 .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .body(JsonValue.from(mapOf<String, Any>()))
+                .bodyOfRunIdList(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
                 .build()
 
         val body = params._body()
 
-        assertThat(body).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(body)
+            .isEqualTo(
+                RunCreateParams.Body.ofRunIdList(listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"))
+            )
     }
 }
