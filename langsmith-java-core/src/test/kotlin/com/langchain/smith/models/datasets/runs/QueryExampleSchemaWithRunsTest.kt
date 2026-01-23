@@ -5,6 +5,7 @@ package com.langchain.smith.models.datasets.runs
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -16,6 +17,7 @@ internal class QueryExampleSchemaWithRunsTest {
             QueryExampleSchemaWithRuns.builder()
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .filters(
                     QueryExampleSchemaWithRuns.Filters.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
@@ -37,6 +39,8 @@ internal class QueryExampleSchemaWithRunsTest {
             .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(queryExampleSchemaWithRuns.comparativeExperimentId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(queryExampleSchemaWithRuns.exampleIds().getOrNull())
+            .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(queryExampleSchemaWithRuns.filters())
             .contains(
                 QueryExampleSchemaWithRuns.Filters.builder()
@@ -63,6 +67,7 @@ internal class QueryExampleSchemaWithRunsTest {
             QueryExampleSchemaWithRuns.builder()
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .filters(
                     QueryExampleSchemaWithRuns.Filters.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
