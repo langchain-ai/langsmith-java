@@ -24,6 +24,7 @@ class QueryExampleSchemaWithRuns
 private constructor(
     private val sessionIds: JsonField<List<String>>,
     private val comparativeExperimentId: JsonField<String>,
+    private val exampleIds: JsonField<List<String>>,
     private val filters: JsonField<Filters>,
     private val limit: JsonField<Long>,
     private val offset: JsonField<Long>,
@@ -41,6 +42,9 @@ private constructor(
         @JsonProperty("comparative_experiment_id")
         @ExcludeMissing
         comparativeExperimentId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("example_ids")
+        @ExcludeMissing
+        exampleIds: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("filters") @ExcludeMissing filters: JsonField<Filters> = JsonMissing.of(),
         @JsonProperty("limit") @ExcludeMissing limit: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("offset") @ExcludeMissing offset: JsonField<Long> = JsonMissing.of(),
@@ -52,6 +56,7 @@ private constructor(
     ) : this(
         sessionIds,
         comparativeExperimentId,
+        exampleIds,
         filters,
         limit,
         offset,
@@ -73,6 +78,12 @@ private constructor(
      */
     fun comparativeExperimentId(): Optional<String> =
         comparativeExperimentId.getOptional("comparative_experiment_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun exampleIds(): Optional<List<String>> = exampleIds.getOptional("example_ids")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -129,6 +140,15 @@ private constructor(
     @JsonProperty("comparative_experiment_id")
     @ExcludeMissing
     fun _comparativeExperimentId(): JsonField<String> = comparativeExperimentId
+
+    /**
+     * Returns the raw JSON value of [exampleIds].
+     *
+     * Unlike [exampleIds], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("example_ids")
+    @ExcludeMissing
+    fun _exampleIds(): JsonField<List<String>> = exampleIds
 
     /**
      * Returns the raw JSON value of [filters].
@@ -204,6 +224,7 @@ private constructor(
 
         private var sessionIds: JsonField<MutableList<String>>? = null
         private var comparativeExperimentId: JsonField<String> = JsonMissing.of()
+        private var exampleIds: JsonField<MutableList<String>>? = null
         private var filters: JsonField<Filters> = JsonMissing.of()
         private var limit: JsonField<Long> = JsonMissing.of()
         private var offset: JsonField<Long> = JsonMissing.of()
@@ -216,6 +237,7 @@ private constructor(
         internal fun from(queryExampleSchemaWithRuns: QueryExampleSchemaWithRuns) = apply {
             sessionIds = queryExampleSchemaWithRuns.sessionIds.map { it.toMutableList() }
             comparativeExperimentId = queryExampleSchemaWithRuns.comparativeExperimentId
+            exampleIds = queryExampleSchemaWithRuns.exampleIds.map { it.toMutableList() }
             filters = queryExampleSchemaWithRuns.filters
             limit = queryExampleSchemaWithRuns.limit
             offset = queryExampleSchemaWithRuns.offset
@@ -269,6 +291,34 @@ private constructor(
          */
         fun comparativeExperimentId(comparativeExperimentId: JsonField<String>) = apply {
             this.comparativeExperimentId = comparativeExperimentId
+        }
+
+        fun exampleIds(exampleIds: List<String>?) = exampleIds(JsonField.ofNullable(exampleIds))
+
+        /** Alias for calling [Builder.exampleIds] with `exampleIds.orElse(null)`. */
+        fun exampleIds(exampleIds: Optional<List<String>>) = exampleIds(exampleIds.getOrNull())
+
+        /**
+         * Sets [Builder.exampleIds] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.exampleIds] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun exampleIds(exampleIds: JsonField<List<String>>) = apply {
+            this.exampleIds = exampleIds.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [exampleIds].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addExampleId(exampleId: String) = apply {
+            exampleIds =
+                (exampleIds ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("exampleIds", it).add(exampleId)
+                }
         }
 
         fun filters(filters: Filters?) = filters(JsonField.ofNullable(filters))
@@ -377,6 +427,7 @@ private constructor(
             QueryExampleSchemaWithRuns(
                 checkRequired("sessionIds", sessionIds).map { it.toImmutable() },
                 comparativeExperimentId,
+                (exampleIds ?: JsonMissing.of()).map { it.toImmutable() },
                 filters,
                 limit,
                 offset,
@@ -396,6 +447,7 @@ private constructor(
 
         sessionIds()
         comparativeExperimentId()
+        exampleIds()
         filters().ifPresent { it.validate() }
         limit()
         offset()
@@ -422,6 +474,7 @@ private constructor(
     internal fun validity(): Int =
         (sessionIds.asKnown().getOrNull()?.size ?: 0) +
             (if (comparativeExperimentId.asKnown().isPresent) 1 else 0) +
+            (exampleIds.asKnown().getOrNull()?.size ?: 0) +
             (filters.asKnown().getOrNull()?.validity() ?: 0) +
             (if (limit.asKnown().isPresent) 1 else 0) +
             (if (offset.asKnown().isPresent) 1 else 0) +
@@ -536,6 +589,7 @@ private constructor(
         return other is QueryExampleSchemaWithRuns &&
             sessionIds == other.sessionIds &&
             comparativeExperimentId == other.comparativeExperimentId &&
+            exampleIds == other.exampleIds &&
             filters == other.filters &&
             limit == other.limit &&
             offset == other.offset &&
@@ -549,6 +603,7 @@ private constructor(
         Objects.hash(
             sessionIds,
             comparativeExperimentId,
+            exampleIds,
             filters,
             limit,
             offset,
@@ -562,5 +617,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "QueryExampleSchemaWithRuns{sessionIds=$sessionIds, comparativeExperimentId=$comparativeExperimentId, filters=$filters, limit=$limit, offset=$offset, preview=$preview, sortParams=$sortParams, stream=$stream, additionalProperties=$additionalProperties}"
+        "QueryExampleSchemaWithRuns{sessionIds=$sessionIds, comparativeExperimentId=$comparativeExperimentId, exampleIds=$exampleIds, filters=$filters, limit=$limit, offset=$offset, preview=$preview, sortParams=$sortParams, stream=$stream, additionalProperties=$additionalProperties}"
 }

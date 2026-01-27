@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.1.0-alpha.23 (2026-01-27)
+
+Full Changelog: [v0.1.0-alpha.22...v0.1.0-alpha.23](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.22...v0.1.0-alpha.23)
+
+### Features
+
+* **api:** api update ([5a8e383](https://github.com/langchain-ai/langsmith-java/commit/5a8e3831353d9ccb80bab2b2fa31a213d8262efd))
+* **api:** api update ([331d039](https://github.com/langchain-ai/langsmith-java/commit/331d03993770a12062245351fc8444e23fd2aa03))
+* **api:** api update ([d21744f](https://github.com/langchain-ai/langsmith-java/commit/d21744f925bb40a847940392aa3fc098556b36e1))
+* **api:** api update ([0988b86](https://github.com/langchain-ai/langsmith-java/commit/0988b869e825da61d4aa9a1e7de553becc1b95ca))
+* **api:** manual updates ([4cec23c](https://github.com/langchain-ai/langsmith-java/commit/4cec23c20c00c9a2f1839fa456968a67f3b5331e))
+* **api:** manual updates ([de01757](https://github.com/langchain-ai/langsmith-java/commit/de01757faa3880359178cc281e2d41efdcd15eb6))
+* **api:** manual updates ([c8d39e7](https://github.com/langchain-ai/langsmith-java/commit/c8d39e7b01523c2755c5afc31d18cc442b2baaaf))
+* **api:** manual updates ([38e454c](https://github.com/langchain-ai/langsmith-java/commit/38e454c138a822274a823eafa16746e1eaa16bea))
+* **api:** manual updates ([229047e](https://github.com/langchain-ai/langsmith-java/commit/229047e7fc6d514541da82115315d0ff0fc7db31))
+
+
+### Chores
+
+* **ci:** upgrade `actions/github-script` ([3578dfc](https://github.com/langchain-ai/langsmith-java/commit/3578dfceb57595ded5409b1c9581d195b422d267))
+
 ## 0.1.0-alpha.22 (2026-01-23)
 
 Full Changelog: [v0.1.0-alpha.21...v0.1.0-alpha.22](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.21...v0.1.0-alpha.22)
