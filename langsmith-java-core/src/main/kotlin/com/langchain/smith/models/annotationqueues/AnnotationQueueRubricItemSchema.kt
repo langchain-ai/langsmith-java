@@ -23,6 +23,7 @@ class AnnotationQueueRubricItemSchema
 private constructor(
     private val feedbackKey: JsonField<String>,
     private val description: JsonField<String>,
+    private val isRequired: JsonField<Boolean>,
     private val scoreDescriptions: JsonField<ScoreDescriptions>,
     private val valueDescriptions: JsonField<ValueDescriptions>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -36,13 +37,23 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("is_required")
+        @ExcludeMissing
+        isRequired: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("score_descriptions")
         @ExcludeMissing
         scoreDescriptions: JsonField<ScoreDescriptions> = JsonMissing.of(),
         @JsonProperty("value_descriptions")
         @ExcludeMissing
         valueDescriptions: JsonField<ValueDescriptions> = JsonMissing.of(),
-    ) : this(feedbackKey, description, scoreDescriptions, valueDescriptions, mutableMapOf())
+    ) : this(
+        feedbackKey,
+        description,
+        isRequired,
+        scoreDescriptions,
+        valueDescriptions,
+        mutableMapOf(),
+    )
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -55,6 +66,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = description.getOptional("description")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isRequired(): Optional<Boolean> = isRequired.getOptional("is_required")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -85,6 +102,13 @@ private constructor(
      * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
+
+    /**
+     * Returns the raw JSON value of [isRequired].
+     *
+     * Unlike [isRequired], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_required") @ExcludeMissing fun _isRequired(): JsonField<Boolean> = isRequired
 
     /**
      * Returns the raw JSON value of [scoreDescriptions].
@@ -137,6 +161,7 @@ private constructor(
 
         private var feedbackKey: JsonField<String>? = null
         private var description: JsonField<String> = JsonMissing.of()
+        private var isRequired: JsonField<Boolean> = JsonMissing.of()
         private var scoreDescriptions: JsonField<ScoreDescriptions> = JsonMissing.of()
         private var valueDescriptions: JsonField<ValueDescriptions> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -146,6 +171,7 @@ private constructor(
             apply {
                 feedbackKey = annotationQueueRubricItemSchema.feedbackKey
                 description = annotationQueueRubricItemSchema.description
+                isRequired = annotationQueueRubricItemSchema.isRequired
                 scoreDescriptions = annotationQueueRubricItemSchema.scoreDescriptions
                 valueDescriptions = annotationQueueRubricItemSchema.valueDescriptions
                 additionalProperties =
@@ -176,6 +202,27 @@ private constructor(
          * value.
          */
         fun description(description: JsonField<String>) = apply { this.description = description }
+
+        fun isRequired(isRequired: Boolean?) = isRequired(JsonField.ofNullable(isRequired))
+
+        /**
+         * Alias for [Builder.isRequired].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun isRequired(isRequired: Boolean) = isRequired(isRequired as Boolean?)
+
+        /** Alias for calling [Builder.isRequired] with `isRequired.orElse(null)`. */
+        fun isRequired(isRequired: Optional<Boolean>) = isRequired(isRequired.getOrNull())
+
+        /**
+         * Sets [Builder.isRequired] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isRequired] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isRequired(isRequired: JsonField<Boolean>) = apply { this.isRequired = isRequired }
 
         fun scoreDescriptions(scoreDescriptions: ScoreDescriptions?) =
             scoreDescriptions(JsonField.ofNullable(scoreDescriptions))
@@ -248,6 +295,7 @@ private constructor(
             AnnotationQueueRubricItemSchema(
                 checkRequired("feedbackKey", feedbackKey),
                 description,
+                isRequired,
                 scoreDescriptions,
                 valueDescriptions,
                 additionalProperties.toMutableMap(),
@@ -263,6 +311,7 @@ private constructor(
 
         feedbackKey()
         description()
+        isRequired()
         scoreDescriptions().ifPresent { it.validate() }
         valueDescriptions().ifPresent { it.validate() }
         validated = true
@@ -285,6 +334,7 @@ private constructor(
     internal fun validity(): Int =
         (if (feedbackKey.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
+            (if (isRequired.asKnown().isPresent) 1 else 0) +
             (scoreDescriptions.asKnown().getOrNull()?.validity() ?: 0) +
             (valueDescriptions.asKnown().getOrNull()?.validity() ?: 0)
 
@@ -494,6 +544,7 @@ private constructor(
         return other is AnnotationQueueRubricItemSchema &&
             feedbackKey == other.feedbackKey &&
             description == other.description &&
+            isRequired == other.isRequired &&
             scoreDescriptions == other.scoreDescriptions &&
             valueDescriptions == other.valueDescriptions &&
             additionalProperties == other.additionalProperties
@@ -503,6 +554,7 @@ private constructor(
         Objects.hash(
             feedbackKey,
             description,
+            isRequired,
             scoreDescriptions,
             valueDescriptions,
             additionalProperties,
@@ -512,5 +564,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AnnotationQueueRubricItemSchema{feedbackKey=$feedbackKey, description=$description, scoreDescriptions=$scoreDescriptions, valueDescriptions=$valueDescriptions, additionalProperties=$additionalProperties}"
+        "AnnotationQueueRubricItemSchema{feedbackKey=$feedbackKey, description=$description, isRequired=$isRequired, scoreDescriptions=$scoreDescriptions, valueDescriptions=$valueDescriptions, additionalProperties=$additionalProperties}"
 }
