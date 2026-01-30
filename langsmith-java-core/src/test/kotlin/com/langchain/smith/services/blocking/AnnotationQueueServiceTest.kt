@@ -71,6 +71,7 @@ internal class AnnotationQueueServiceTest {
                         AnnotationQueueRubricItemSchema.builder()
                             .feedbackKey("feedback_key")
                             .description("description")
+                            .isRequired(true)
                             .scoreDescriptions(
                                 AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
@@ -139,6 +140,7 @@ internal class AnnotationQueueServiceTest {
                         AnnotationQueueRubricItemSchema.builder()
                             .feedbackKey("feedback_key")
                             .description("description")
+                            .isRequired(true)
                             .scoreDescriptions(
                                 AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("string"))
