@@ -36,6 +36,7 @@ internal class RunServiceTest {
                     .format(RunCreateParams.Format.CSV)
                     .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .filters(
                         RunCreateParams.Filters.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
