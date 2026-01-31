@@ -4,6 +4,7 @@ package com.langchain.smith.models.datasets.runs
 
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.http.QueryParams
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -16,6 +17,7 @@ internal class RunCreateParamsTest {
             .format(RunCreateParams.Format.CSV)
             .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .filters(
                 RunCreateParams.Filters.builder()
                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
@@ -55,6 +57,7 @@ internal class RunCreateParamsTest {
                 .format(RunCreateParams.Format.CSV)
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .filters(
                     RunCreateParams.Filters.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
@@ -98,6 +101,7 @@ internal class RunCreateParamsTest {
                 .format(RunCreateParams.Format.CSV)
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .filters(
                     RunCreateParams.Filters.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
@@ -119,6 +123,8 @@ internal class RunCreateParamsTest {
 
         assertThat(body.sessionIds()).containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.comparativeExperimentId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(body.exampleIds().getOrNull())
+            .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.filters())
             .contains(
                 RunCreateParams.Filters.builder()
