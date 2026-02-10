@@ -7,6 +7,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.models.commits.CommitManifestResponse
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -30,6 +31,7 @@ internal class RepoWithLookupsTest {
                 .addTag("string")
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .addCommitTag("string")
                 .createdBy("created_by")
                 .description("description")
                 .lastCommitHash("last_commit_hash")
@@ -84,6 +86,7 @@ internal class RepoWithLookupsTest {
         assertThat(repoWithLookups.tenantId()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(repoWithLookups.updatedAt())
             .isEqualTo(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(repoWithLookups.commitTags().getOrNull()).containsExactly("string")
         assertThat(repoWithLookups.createdBy()).contains("created_by")
         assertThat(repoWithLookups.description()).contains("description")
         assertThat(repoWithLookups.lastCommitHash()).contains("last_commit_hash")
@@ -144,6 +147,7 @@ internal class RepoWithLookupsTest {
                 .addTag("string")
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .addCommitTag("string")
                 .createdBy("created_by")
                 .description("description")
                 .lastCommitHash("last_commit_hash")
