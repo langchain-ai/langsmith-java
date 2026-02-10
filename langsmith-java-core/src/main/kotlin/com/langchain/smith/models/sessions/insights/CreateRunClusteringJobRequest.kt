@@ -25,6 +25,7 @@ class CreateRunClusteringJobRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val attributeSchemas: JsonField<AttributeSchemas>,
+    private val configId: JsonField<String>,
     private val endTime: JsonField<OffsetDateTime>,
     private val filter: JsonField<String>,
     private val hierarchy: JsonField<List<Long>>,
@@ -45,6 +46,7 @@ private constructor(
         @JsonProperty("attribute_schemas")
         @ExcludeMissing
         attributeSchemas: JsonField<AttributeSchemas> = JsonMissing.of(),
+        @JsonProperty("config_id") @ExcludeMissing configId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("end_time")
         @ExcludeMissing
         endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -75,6 +77,7 @@ private constructor(
         validateModelSecrets: JsonField<Boolean> = JsonMissing.of(),
     ) : this(
         attributeSchemas,
+        configId,
         endTime,
         filter,
         hierarchy,
@@ -96,6 +99,12 @@ private constructor(
      */
     fun attributeSchemas(): Optional<AttributeSchemas> =
         attributeSchemas.getOptional("attribute_schemas")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun configId(): Optional<String> = configId.getOptional("config_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -179,6 +188,13 @@ private constructor(
     @JsonProperty("attribute_schemas")
     @ExcludeMissing
     fun _attributeSchemas(): JsonField<AttributeSchemas> = attributeSchemas
+
+    /**
+     * Returns the raw JSON value of [configId].
+     *
+     * Unlike [configId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("config_id") @ExcludeMissing fun _configId(): JsonField<String> = configId
 
     /**
      * Returns the raw JSON value of [endTime].
@@ -300,6 +316,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var attributeSchemas: JsonField<AttributeSchemas> = JsonMissing.of()
+        private var configId: JsonField<String> = JsonMissing.of()
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var filter: JsonField<String> = JsonMissing.of()
         private var hierarchy: JsonField<MutableList<Long>>? = null
@@ -317,6 +334,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(createRunClusteringJobRequest: CreateRunClusteringJobRequest) = apply {
             attributeSchemas = createRunClusteringJobRequest.attributeSchemas
+            configId = createRunClusteringJobRequest.configId
             endTime = createRunClusteringJobRequest.endTime
             filter = createRunClusteringJobRequest.filter
             hierarchy = createRunClusteringJobRequest.hierarchy.map { it.toMutableList() }
@@ -349,6 +367,19 @@ private constructor(
         fun attributeSchemas(attributeSchemas: JsonField<AttributeSchemas>) = apply {
             this.attributeSchemas = attributeSchemas
         }
+
+        fun configId(configId: String?) = configId(JsonField.ofNullable(configId))
+
+        /** Alias for calling [Builder.configId] with `configId.orElse(null)`. */
+        fun configId(configId: Optional<String>) = configId(configId.getOrNull())
+
+        /**
+         * Sets [Builder.configId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.configId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun configId(configId: JsonField<String>) = apply { this.configId = configId }
 
         fun endTime(endTime: OffsetDateTime?) = endTime(JsonField.ofNullable(endTime))
 
@@ -571,6 +602,7 @@ private constructor(
         fun build(): CreateRunClusteringJobRequest =
             CreateRunClusteringJobRequest(
                 attributeSchemas,
+                configId,
                 endTime,
                 filter,
                 (hierarchy ?: JsonMissing.of()).map { it.toImmutable() },
@@ -595,6 +627,7 @@ private constructor(
         }
 
         attributeSchemas().ifPresent { it.validate() }
+        configId()
         endTime()
         filter()
         hierarchy()
@@ -626,6 +659,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (attributeSchemas.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (configId.asKnown().isPresent) 1 else 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (filter.asKnown().isPresent) 1 else 0) +
             (hierarchy.asKnown().getOrNull()?.size ?: 0) +
@@ -1070,6 +1104,7 @@ private constructor(
 
         return other is CreateRunClusteringJobRequest &&
             attributeSchemas == other.attributeSchemas &&
+            configId == other.configId &&
             endTime == other.endTime &&
             filter == other.filter &&
             hierarchy == other.hierarchy &&
@@ -1088,6 +1123,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             attributeSchemas,
+            configId,
             endTime,
             filter,
             hierarchy,
@@ -1107,5 +1143,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateRunClusteringJobRequest{attributeSchemas=$attributeSchemas, endTime=$endTime, filter=$filter, hierarchy=$hierarchy, lastNHours=$lastNHours, model=$model, name=$name, partitions=$partitions, sample=$sample, startTime=$startTime, summaryPrompt=$summaryPrompt, userContext=$userContext, validateModelSecrets=$validateModelSecrets, additionalProperties=$additionalProperties}"
+        "CreateRunClusteringJobRequest{attributeSchemas=$attributeSchemas, configId=$configId, endTime=$endTime, filter=$filter, hierarchy=$hierarchy, lastNHours=$lastNHours, model=$model, name=$name, partitions=$partitions, sample=$sample, startTime=$startTime, summaryPrompt=$summaryPrompt, userContext=$userContext, validateModelSecrets=$validateModelSecrets, additionalProperties=$additionalProperties}"
 }
