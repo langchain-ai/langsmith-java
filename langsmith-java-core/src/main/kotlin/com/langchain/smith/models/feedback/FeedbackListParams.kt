@@ -3,6 +3,7 @@
 package com.langchain.smith.models.feedback
 
 import com.langchain.smith.core.Params
+import com.langchain.smith.core.getOrThrow
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
@@ -25,8 +26,8 @@ private constructor(
     private val maxCreatedAt: OffsetDateTime?,
     private val minCreatedAt: OffsetDateTime?,
     private val offset: Long?,
-    private val run: List<String>?,
-    private val session: List<String>?,
+    private val run: Run?,
+    private val session: Session?,
     private val source: List<SourceType>?,
     private val user: List<String>?,
     private val additionalHeaders: Headers,
@@ -54,9 +55,9 @@ private constructor(
 
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
-    fun run(): Optional<List<String>> = Optional.ofNullable(run)
+    fun run(): Optional<Run> = Optional.ofNullable(run)
 
-    fun session(): Optional<List<String>> = Optional.ofNullable(session)
+    fun session(): Optional<Session> = Optional.ofNullable(session)
 
     fun source(): Optional<List<SourceType>> = Optional.ofNullable(source)
 
@@ -91,8 +92,8 @@ private constructor(
         private var maxCreatedAt: OffsetDateTime? = null
         private var minCreatedAt: OffsetDateTime? = null
         private var offset: Long? = null
-        private var run: MutableList<String>? = null
-        private var session: MutableList<String>? = null
+        private var run: Run? = null
+        private var session: Session? = null
         private var source: MutableList<SourceType>? = null
         private var user: MutableList<String>? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
@@ -110,8 +111,8 @@ private constructor(
             maxCreatedAt = feedbackListParams.maxCreatedAt
             minCreatedAt = feedbackListParams.minCreatedAt
             offset = feedbackListParams.offset
-            run = feedbackListParams.run?.toMutableList()
-            session = feedbackListParams.session?.toMutableList()
+            run = feedbackListParams.run
+            session = feedbackListParams.session
             source = feedbackListParams.source?.toMutableList()
             user = feedbackListParams.user?.toMutableList()
             additionalHeaders = feedbackListParams.additionalHeaders.toBuilder()
@@ -225,33 +226,27 @@ private constructor(
         /** Alias for calling [Builder.offset] with `offset.orElse(null)`. */
         fun offset(offset: Optional<Long>) = offset(offset.getOrNull())
 
-        fun run(run: List<String>?) = apply { this.run = run?.toMutableList() }
+        fun run(run: Run?) = apply { this.run = run }
 
         /** Alias for calling [Builder.run] with `run.orElse(null)`. */
-        fun run(run: Optional<List<String>>) = run(run.getOrNull())
+        fun run(run: Optional<Run>) = run(run.getOrNull())
 
-        /**
-         * Adds a single [String] to [Builder.run].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addRun(run: String) = apply {
-            this.run = (this.run ?: mutableListOf()).apply { add(run) }
-        }
+        /** Alias for calling [run] with `Run.ofStrings(strings)`. */
+        fun runOfStrings(strings: List<String>) = run(Run.ofStrings(strings))
 
-        fun session(session: List<String>?) = apply { this.session = session?.toMutableList() }
+        /** Alias for calling [run] with `Run.ofString(string)`. */
+        fun run(string: String) = run(Run.ofString(string))
+
+        fun session(session: Session?) = apply { this.session = session }
 
         /** Alias for calling [Builder.session] with `session.orElse(null)`. */
-        fun session(session: Optional<List<String>>) = session(session.getOrNull())
+        fun session(session: Optional<Session>) = session(session.getOrNull())
 
-        /**
-         * Adds a single [String] to [Builder.session].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addSession(session: String) = apply {
-            this.session = (this.session ?: mutableListOf()).apply { add(session) }
-        }
+        /** Alias for calling [session] with `Session.ofStrings(strings)`. */
+        fun sessionOfStrings(strings: List<String>) = session(Session.ofStrings(strings))
+
+        /** Alias for calling [session] with `Session.ofString(string)`. */
+        fun session(string: String) = session(Session.ofString(string))
 
         fun source(source: List<SourceType>?) = apply { this.source = source?.toMutableList() }
 
@@ -396,8 +391,8 @@ private constructor(
                 maxCreatedAt,
                 minCreatedAt,
                 offset,
-                run?.toImmutable(),
-                session?.toImmutable(),
+                run,
+                session,
                 source?.toImmutable(),
                 user?.toImmutable(),
                 additionalHeaders.build(),
@@ -424,13 +419,152 @@ private constructor(
                     put("min_created_at", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
                 }
                 offset?.let { put("offset", it.toString()) }
-                run?.let { put("run", it.joinToString(",")) }
-                session?.let { put("session", it.joinToString(",")) }
+                run?.accept(
+                    object : Run.Visitor<Unit> {
+                        override fun visitStrings(strings: List<String>) {
+                            put("run", strings.joinToString(","))
+                        }
+
+                        override fun visitString(string: String) {
+                            put("run", string)
+                        }
+                    }
+                )
+                session?.accept(
+                    object : Session.Visitor<Unit> {
+                        override fun visitStrings(strings: List<String>) {
+                            put("session", strings.joinToString(","))
+                        }
+
+                        override fun visitString(string: String) {
+                            put("session", string)
+                        }
+                    }
+                )
                 source?.let { put("source", it.joinToString(",") { it.toString() }) }
                 user?.let { put("user", it.joinToString(",")) }
                 putAll(additionalQueryParams)
             }
             .build()
+
+    class Run
+    private constructor(
+        private val strings: List<String>? = null,
+        private val string: String? = null,
+    ) {
+
+        fun strings(): Optional<List<String>> = Optional.ofNullable(strings)
+
+        fun string(): Optional<String> = Optional.ofNullable(string)
+
+        fun isStrings(): Boolean = strings != null
+
+        fun isString(): Boolean = string != null
+
+        fun asStrings(): List<String> = strings.getOrThrow("strings")
+
+        fun asString(): String = string.getOrThrow("string")
+
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                strings != null -> visitor.visitStrings(strings)
+                string != null -> visitor.visitString(string)
+                else -> throw IllegalStateException("Invalid Run")
+            }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Run && strings == other.strings && string == other.string
+        }
+
+        override fun hashCode(): Int = Objects.hash(strings, string)
+
+        override fun toString(): String =
+            when {
+                strings != null -> "Run{strings=$strings}"
+                string != null -> "Run{string=$string}"
+                else -> throw IllegalStateException("Invalid Run")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofStrings(strings: List<String>) = Run(strings = strings.toImmutable())
+
+            @JvmStatic fun ofString(string: String) = Run(string = string)
+        }
+
+        /** An interface that defines how to map each variant of [Run] to a value of type [T]. */
+        interface Visitor<out T> {
+
+            fun visitStrings(strings: List<String>): T
+
+            fun visitString(string: String): T
+        }
+    }
+
+    class Session
+    private constructor(
+        private val strings: List<String>? = null,
+        private val string: String? = null,
+    ) {
+
+        fun strings(): Optional<List<String>> = Optional.ofNullable(strings)
+
+        fun string(): Optional<String> = Optional.ofNullable(string)
+
+        fun isStrings(): Boolean = strings != null
+
+        fun isString(): Boolean = string != null
+
+        fun asStrings(): List<String> = strings.getOrThrow("strings")
+
+        fun asString(): String = string.getOrThrow("string")
+
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                strings != null -> visitor.visitStrings(strings)
+                string != null -> visitor.visitString(string)
+                else -> throw IllegalStateException("Invalid Session")
+            }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Session && strings == other.strings && string == other.string
+        }
+
+        override fun hashCode(): Int = Objects.hash(strings, string)
+
+        override fun toString(): String =
+            when {
+                strings != null -> "Session{strings=$strings}"
+                string != null -> "Session{string=$string}"
+                else -> throw IllegalStateException("Invalid Session")
+            }
+
+        companion object {
+
+            @JvmStatic
+            fun ofStrings(strings: List<String>) = Session(strings = strings.toImmutable())
+
+            @JvmStatic fun ofString(string: String) = Session(string = string)
+        }
+
+        /**
+         * An interface that defines how to map each variant of [Session] to a value of type [T].
+         */
+        interface Visitor<out T> {
+
+            fun visitStrings(strings: List<String>): T
+
+            fun visitString(string: String): T
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
