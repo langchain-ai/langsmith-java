@@ -29,6 +29,7 @@ private constructor(
     private val name: JsonField<String>,
     private val sessionCount: JsonField<Long>,
     private val tenantId: JsonField<String>,
+    private val baselineExperimentId: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val dataType: JsonField<DataType>,
     private val description: JsonField<String>,
@@ -53,6 +54,9 @@ private constructor(
         @ExcludeMissing
         sessionCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("tenant_id") @ExcludeMissing tenantId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("baseline_experiment_id")
+        @ExcludeMissing
+        baselineExperimentId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -85,6 +89,7 @@ private constructor(
         name,
         sessionCount,
         tenantId,
+        baselineExperimentId,
         createdAt,
         dataType,
         description,
@@ -127,6 +132,13 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun tenantId(): String = tenantId.getRequired("tenant_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun baselineExperimentId(): Optional<String> =
+        baselineExperimentId.getOptional("baseline_experiment_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -232,6 +244,16 @@ private constructor(
      * Unlike [tenantId], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("tenant_id") @ExcludeMissing fun _tenantId(): JsonField<String> = tenantId
+
+    /**
+     * Returns the raw JSON value of [baselineExperimentId].
+     *
+     * Unlike [baselineExperimentId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("baseline_experiment_id")
+    @ExcludeMissing
+    fun _baselineExperimentId(): JsonField<String> = baselineExperimentId
 
     /**
      * Returns the raw JSON value of [createdAt].
@@ -358,6 +380,7 @@ private constructor(
         private var name: JsonField<String>? = null
         private var sessionCount: JsonField<Long>? = null
         private var tenantId: JsonField<String>? = null
+        private var baselineExperimentId: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var dataType: JsonField<DataType> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
@@ -377,6 +400,7 @@ private constructor(
             name = dataset.name
             sessionCount = dataset.sessionCount
             tenantId = dataset.tenantId
+            baselineExperimentId = dataset.baselineExperimentId
             createdAt = dataset.createdAt
             dataType = dataset.dataType
             description = dataset.description
@@ -443,6 +467,27 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun tenantId(tenantId: JsonField<String>) = apply { this.tenantId = tenantId }
+
+        fun baselineExperimentId(baselineExperimentId: String?) =
+            baselineExperimentId(JsonField.ofNullable(baselineExperimentId))
+
+        /**
+         * Alias for calling [Builder.baselineExperimentId] with
+         * `baselineExperimentId.orElse(null)`.
+         */
+        fun baselineExperimentId(baselineExperimentId: Optional<String>) =
+            baselineExperimentId(baselineExperimentId.getOrNull())
+
+        /**
+         * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.baselineExperimentId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun baselineExperimentId(baselineExperimentId: JsonField<String>) = apply {
+            this.baselineExperimentId = baselineExperimentId
+        }
 
         fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
 
@@ -682,6 +727,7 @@ private constructor(
                 checkRequired("name", name),
                 checkRequired("sessionCount", sessionCount),
                 checkRequired("tenantId", tenantId),
+                baselineExperimentId,
                 createdAt,
                 dataType,
                 description,
@@ -708,6 +754,7 @@ private constructor(
         name()
         sessionCount()
         tenantId()
+        baselineExperimentId()
         createdAt()
         dataType().ifPresent { it.validate() }
         description()
@@ -741,6 +788,7 @@ private constructor(
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (sessionCount.asKnown().isPresent) 1 else 0) +
             (if (tenantId.asKnown().isPresent) 1 else 0) +
+            (if (baselineExperimentId.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (dataType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
@@ -1070,6 +1118,7 @@ private constructor(
             name == other.name &&
             sessionCount == other.sessionCount &&
             tenantId == other.tenantId &&
+            baselineExperimentId == other.baselineExperimentId &&
             createdAt == other.createdAt &&
             dataType == other.dataType &&
             description == other.description &&
@@ -1090,6 +1139,7 @@ private constructor(
             name,
             sessionCount,
             tenantId,
+            baselineExperimentId,
             createdAt,
             dataType,
             description,
@@ -1107,5 +1157,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Dataset{id=$id, modifiedAt=$modifiedAt, name=$name, sessionCount=$sessionCount, tenantId=$tenantId, createdAt=$createdAt, dataType=$dataType, description=$description, exampleCount=$exampleCount, externallyManaged=$externallyManaged, inputsSchemaDefinition=$inputsSchemaDefinition, lastSessionStartTime=$lastSessionStartTime, metadata=$metadata, outputsSchemaDefinition=$outputsSchemaDefinition, transformations=$transformations, additionalProperties=$additionalProperties}"
+        "Dataset{id=$id, modifiedAt=$modifiedAt, name=$name, sessionCount=$sessionCount, tenantId=$tenantId, baselineExperimentId=$baselineExperimentId, createdAt=$createdAt, dataType=$dataType, description=$description, exampleCount=$exampleCount, externallyManaged=$externallyManaged, inputsSchemaDefinition=$inputsSchemaDefinition, lastSessionStartTime=$lastSessionStartTime, metadata=$metadata, outputsSchemaDefinition=$outputsSchemaDefinition, transformations=$transformations, additionalProperties=$additionalProperties}"
 }
