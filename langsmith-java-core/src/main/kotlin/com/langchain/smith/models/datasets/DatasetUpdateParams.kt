@@ -46,6 +46,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun baselineExperimentId(): Optional<BaselineExperimentId> = body.baselineExperimentId()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun description(): Optional<Description> = body.description()
 
     /**
@@ -84,6 +90,14 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun transformations(): Optional<Transformations> = body.transformations()
+
+    /**
+     * Returns the raw JSON value of [baselineExperimentId].
+     *
+     * Unlike [baselineExperimentId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _baselineExperimentId(): JsonField<BaselineExperimentId> = body._baselineExperimentId()
 
     /**
      * Returns the raw JSON value of [description].
@@ -182,14 +196,46 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [baselineExperimentId]
          * - [description]
          * - [inputsSchemaDefinition]
          * - [metadata]
          * - [name]
-         * - [outputsSchemaDefinition]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        fun baselineExperimentId(baselineExperimentId: BaselineExperimentId?) = apply {
+            body.baselineExperimentId(baselineExperimentId)
+        }
+
+        /**
+         * Alias for calling [Builder.baselineExperimentId] with
+         * `baselineExperimentId.orElse(null)`.
+         */
+        fun baselineExperimentId(baselineExperimentId: Optional<BaselineExperimentId>) =
+            baselineExperimentId(baselineExperimentId.getOrNull())
+
+        /**
+         * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.baselineExperimentId] with a well-typed
+         * [BaselineExperimentId] value instead. This method is primarily for setting the field to
+         * an undocumented or not yet supported value.
+         */
+        fun baselineExperimentId(baselineExperimentId: JsonField<BaselineExperimentId>) = apply {
+            body.baselineExperimentId(baselineExperimentId)
+        }
+
+        /**
+         * Alias for calling [baselineExperimentId] with `BaselineExperimentId.ofString(string)`.
+         */
+        fun baselineExperimentId(string: String) = apply { body.baselineExperimentId(string) }
+
+        /**
+         * Alias for calling [baselineExperimentId] with `BaselineExperimentId.ofMissing(missing)`.
+         */
+        fun baselineExperimentId(missing: Missing) = apply { body.baselineExperimentId(missing) }
 
         fun description(description: Description?) = apply { body.description(description) }
 
@@ -523,6 +569,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val baselineExperimentId: JsonField<BaselineExperimentId>,
         private val description: JsonField<Description>,
         private val inputsSchemaDefinition: JsonField<InputsSchemaDefinition>,
         private val metadata: JsonField<Metadata>,
@@ -535,6 +582,9 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("baseline_experiment_id")
+            @ExcludeMissing
+            baselineExperimentId: JsonField<BaselineExperimentId> = JsonMissing.of(),
             @JsonProperty("description")
             @ExcludeMissing
             description: JsonField<Description> = JsonMissing.of(),
@@ -555,6 +605,7 @@ private constructor(
             @ExcludeMissing
             transformations: JsonField<Transformations> = JsonMissing.of(),
         ) : this(
+            baselineExperimentId,
             description,
             inputsSchemaDefinition,
             metadata,
@@ -564,6 +615,13 @@ private constructor(
             transformations,
             mutableMapOf(),
         )
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun baselineExperimentId(): Optional<BaselineExperimentId> =
+            baselineExperimentId.getOptional("baseline_experiment_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -609,6 +667,16 @@ private constructor(
          */
         fun transformations(): Optional<Transformations> =
             transformations.getOptional("transformations")
+
+        /**
+         * Returns the raw JSON value of [baselineExperimentId].
+         *
+         * Unlike [baselineExperimentId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("baseline_experiment_id")
+        @ExcludeMissing
+        fun _baselineExperimentId(): JsonField<BaselineExperimentId> = baselineExperimentId
 
         /**
          * Returns the raw JSON value of [description].
@@ -694,6 +762,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var baselineExperimentId: JsonField<BaselineExperimentId> = JsonMissing.of()
             private var description: JsonField<Description> = JsonMissing.of()
             private var inputsSchemaDefinition: JsonField<InputsSchemaDefinition> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
@@ -706,6 +775,7 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                baselineExperimentId = body.baselineExperimentId
                 description = body.description
                 inputsSchemaDefinition = body.inputsSchemaDefinition
                 metadata = body.metadata
@@ -715,6 +785,42 @@ private constructor(
                 transformations = body.transformations
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
+
+            fun baselineExperimentId(baselineExperimentId: BaselineExperimentId?) =
+                baselineExperimentId(JsonField.ofNullable(baselineExperimentId))
+
+            /**
+             * Alias for calling [Builder.baselineExperimentId] with
+             * `baselineExperimentId.orElse(null)`.
+             */
+            fun baselineExperimentId(baselineExperimentId: Optional<BaselineExperimentId>) =
+                baselineExperimentId(baselineExperimentId.getOrNull())
+
+            /**
+             * Sets [Builder.baselineExperimentId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.baselineExperimentId] with a well-typed
+             * [BaselineExperimentId] value instead. This method is primarily for setting the field
+             * to an undocumented or not yet supported value.
+             */
+            fun baselineExperimentId(baselineExperimentId: JsonField<BaselineExperimentId>) =
+                apply {
+                    this.baselineExperimentId = baselineExperimentId
+                }
+
+            /**
+             * Alias for calling [baselineExperimentId] with
+             * `BaselineExperimentId.ofString(string)`.
+             */
+            fun baselineExperimentId(string: String) =
+                baselineExperimentId(BaselineExperimentId.ofString(string))
+
+            /**
+             * Alias for calling [baselineExperimentId] with
+             * `BaselineExperimentId.ofMissing(missing)`.
+             */
+            fun baselineExperimentId(missing: Missing) =
+                baselineExperimentId(BaselineExperimentId.ofMissing(missing))
 
             fun description(description: Description?) =
                 description(JsonField.ofNullable(description))
@@ -923,6 +1029,7 @@ private constructor(
              */
             fun build(): Body =
                 Body(
+                    baselineExperimentId,
                     description,
                     inputsSchemaDefinition,
                     metadata,
@@ -941,6 +1048,7 @@ private constructor(
                 return@apply
             }
 
+            baselineExperimentId().ifPresent { it.validate() }
             description().ifPresent { it.validate() }
             inputsSchemaDefinition().ifPresent { it.validate() }
             metadata().ifPresent { it.validate() }
@@ -967,7 +1075,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (description.asKnown().getOrNull()?.validity() ?: 0) +
+            (baselineExperimentId.asKnown().getOrNull()?.validity() ?: 0) +
+                (description.asKnown().getOrNull()?.validity() ?: 0) +
                 (inputsSchemaDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (name.asKnown().getOrNull()?.validity() ?: 0) +
@@ -981,6 +1090,7 @@ private constructor(
             }
 
             return other is Body &&
+                baselineExperimentId == other.baselineExperimentId &&
                 description == other.description &&
                 inputsSchemaDefinition == other.inputsSchemaDefinition &&
                 metadata == other.metadata &&
@@ -993,6 +1103,7 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
+                baselineExperimentId,
                 description,
                 inputsSchemaDefinition,
                 metadata,
@@ -1007,7 +1118,183 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{description=$description, inputsSchemaDefinition=$inputsSchemaDefinition, metadata=$metadata, name=$name, outputsSchemaDefinition=$outputsSchemaDefinition, patchExamples=$patchExamples, transformations=$transformations, additionalProperties=$additionalProperties}"
+            "Body{baselineExperimentId=$baselineExperimentId, description=$description, inputsSchemaDefinition=$inputsSchemaDefinition, metadata=$metadata, name=$name, outputsSchemaDefinition=$outputsSchemaDefinition, patchExamples=$patchExamples, transformations=$transformations, additionalProperties=$additionalProperties}"
+    }
+
+    @JsonDeserialize(using = BaselineExperimentId.Deserializer::class)
+    @JsonSerialize(using = BaselineExperimentId.Serializer::class)
+    class BaselineExperimentId
+    private constructor(
+        private val string: String? = null,
+        private val missing: Missing? = null,
+        private val _json: JsonValue? = null,
+    ) {
+
+        fun string(): Optional<String> = Optional.ofNullable(string)
+
+        fun missing(): Optional<Missing> = Optional.ofNullable(missing)
+
+        fun isString(): Boolean = string != null
+
+        fun isMissing(): Boolean = missing != null
+
+        fun asString(): String = string.getOrThrow("string")
+
+        fun asMissing(): Missing = missing.getOrThrow("missing")
+
+        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+        fun <T> accept(visitor: Visitor<T>): T =
+            when {
+                string != null -> visitor.visitString(string)
+                missing != null -> visitor.visitMissing(missing)
+                else -> visitor.unknown(_json)
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): BaselineExperimentId = apply {
+            if (validated) {
+                return@apply
+            }
+
+            accept(
+                object : Visitor<Unit> {
+                    override fun visitString(string: String) {}
+
+                    override fun visitMissing(missing: Missing) {
+                        missing.validate()
+                    }
+                }
+            )
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            accept(
+                object : Visitor<Int> {
+                    override fun visitString(string: String) = 1
+
+                    override fun visitMissing(missing: Missing) = missing.validity()
+
+                    override fun unknown(json: JsonValue?) = 0
+                }
+            )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is BaselineExperimentId &&
+                string == other.string &&
+                missing == other.missing
+        }
+
+        override fun hashCode(): Int = Objects.hash(string, missing)
+
+        override fun toString(): String =
+            when {
+                string != null -> "BaselineExperimentId{string=$string}"
+                missing != null -> "BaselineExperimentId{missing=$missing}"
+                _json != null -> "BaselineExperimentId{_unknown=$_json}"
+                else -> throw IllegalStateException("Invalid BaselineExperimentId")
+            }
+
+        companion object {
+
+            @JvmStatic fun ofString(string: String) = BaselineExperimentId(string = string)
+
+            @JvmStatic fun ofMissing(missing: Missing) = BaselineExperimentId(missing = missing)
+        }
+
+        /**
+         * An interface that defines how to map each variant of [BaselineExperimentId] to a value of
+         * type [T].
+         */
+        interface Visitor<out T> {
+
+            fun visitString(string: String): T
+
+            fun visitMissing(missing: Missing): T
+
+            /**
+             * Maps an unknown variant of [BaselineExperimentId] to a value of type [T].
+             *
+             * An instance of [BaselineExperimentId] can contain an unknown variant if it was
+             * deserialized from data that doesn't match any known variant. For example, if the SDK
+             * is on an older version than the API, then the API may respond with new variants that
+             * the SDK is unaware of.
+             *
+             * @throws LangChainInvalidDataException in the default implementation.
+             */
+            fun unknown(json: JsonValue?): T {
+                throw LangChainInvalidDataException("Unknown BaselineExperimentId: $json")
+            }
+        }
+
+        internal class Deserializer :
+            BaseDeserializer<BaselineExperimentId>(BaselineExperimentId::class) {
+
+            override fun ObjectCodec.deserialize(node: JsonNode): BaselineExperimentId {
+                val json = JsonValue.fromJsonNode(node)
+
+                val bestMatches =
+                    sequenceOf(
+                            tryDeserialize(node, jacksonTypeRef<Missing>())?.let {
+                                BaselineExperimentId(missing = it, _json = json)
+                            },
+                            tryDeserialize(node, jacksonTypeRef<String>())?.let {
+                                BaselineExperimentId(string = it, _json = json)
+                            },
+                        )
+                        .filterNotNull()
+                        .allMaxBy { it.validity() }
+                        .toList()
+                return when (bestMatches.size) {
+                    // This can happen if what we're deserializing is completely incompatible with
+                    // all the possible variants (e.g. deserializing from boolean).
+                    0 -> BaselineExperimentId(_json = json)
+                    1 -> bestMatches.single()
+                    // If there's more than one match with the highest validity, then use the first
+                    // completely valid match, or simply the first match if none are completely
+                    // valid.
+                    else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                }
+            }
+        }
+
+        internal class Serializer :
+            BaseSerializer<BaselineExperimentId>(BaselineExperimentId::class) {
+
+            override fun serialize(
+                value: BaselineExperimentId,
+                generator: JsonGenerator,
+                provider: SerializerProvider,
+            ) {
+                when {
+                    value.string != null -> generator.writeObject(value.string)
+                    value.missing != null -> generator.writeObject(value.missing)
+                    value._json != null -> generator.writeObject(value._json)
+                    else -> throw IllegalStateException("Invalid BaselineExperimentId")
+                }
+            }
+        }
     }
 
     @JsonDeserialize(using = Description.Deserializer::class)

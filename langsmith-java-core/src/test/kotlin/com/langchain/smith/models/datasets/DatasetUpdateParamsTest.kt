@@ -12,6 +12,7 @@ internal class DatasetUpdateParamsTest {
     fun create() {
         DatasetUpdateParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .description("string")
             .inputsSchemaDefinition(
                 DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
@@ -79,6 +80,7 @@ internal class DatasetUpdateParamsTest {
         val params =
             DatasetUpdateParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .baselineExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("string")
                 .inputsSchemaDefinition(
                     DatasetUpdateParams.InputsSchemaDefinition.UnionMember0.builder()
@@ -132,6 +134,12 @@ internal class DatasetUpdateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.baselineExperimentId())
+            .contains(
+                DatasetUpdateParams.BaselineExperimentId.ofString(
+                    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                )
+            )
         assertThat(body.description()).contains(DatasetUpdateParams.Description.ofString("string"))
         assertThat(body.inputsSchemaDefinition())
             .contains(
