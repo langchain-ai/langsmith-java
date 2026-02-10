@@ -42,6 +42,7 @@ internal class InsightServiceAsyncTest {
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
+                            .configId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .filter("filter")
                             .addHierarchy(0L)
