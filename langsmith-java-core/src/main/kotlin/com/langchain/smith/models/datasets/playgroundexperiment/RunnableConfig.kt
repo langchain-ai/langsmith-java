@@ -32,9 +32,21 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Configuration for a `Runnable`.
  *
- * See the
- * [reference docs](https://reference.langchain.com/python/langchain_core/runnables/#langchain_core.runnables.RunnableConfig)
- * for more details.
+ * !!! note Custom values
+ *
+ *     The `TypedDict` has `total=False` set intentionally to:
+ *     - Allow partial configs to be created and merged together via `merge_configs`
+ *     - Support config propagation from parent to child runnables via
+ *         `var_child_runnable_config` (a `ContextVar` that automatically passes
+ *         config down the call stack without explicit parameter passing), where
+ *         configs are merged rather than replaced
+ *     !!! example
+ *         ```python
+ *         # Parent sets tags
+ *         chain.invoke(input, config={"tags": ["parent"]})
+ *         # Child automatically inherits and can add:
+ *         # ensure_config({"tags": ["child"]}) -> {"tags": ["parent", "child"]}
+ *         ```
  */
 class RunnableConfig
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
