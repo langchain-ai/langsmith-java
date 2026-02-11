@@ -4,7 +4,6 @@ package com.langchain.smith.services.blocking
 
 import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
-import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.commits.CommitCreateParams
@@ -33,12 +32,12 @@ interface CommitService {
      * Creates a new commit in a repository. Requires authentication and write access to the
      * repository.
      */
-    fun create(repo: JsonValue, params: CommitCreateParams): CommitCreateResponse =
+    fun create(repo: String, params: CommitCreateParams): CommitCreateResponse =
         create(repo, params, RequestOptions.none())
 
     /** @see create */
     fun create(
-        repo: JsonValue,
+        repo: String,
         params: CommitCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CommitCreateResponse = create(params.toBuilder().repo(repo).build(), requestOptions)
@@ -62,12 +61,12 @@ interface CommitService {
      * - Less than 8 characters: Only check for tags
      * - 8 or more characters: Prioritize commit hash over tag, check both
      */
-    fun retrieve(commit: JsonValue, params: CommitRetrieveParams): CommitRetrieveResponse =
+    fun retrieve(commit: String, params: CommitRetrieveParams): CommitRetrieveResponse =
         retrieve(commit, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
-        commit: JsonValue,
+        commit: String,
         params: CommitRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CommitRetrieveResponse = retrieve(params.toBuilder().commit(commit).build(), requestOptions)
@@ -88,12 +87,12 @@ interface CommitService {
      * unauthenticated users can only access public repos. The include_stats parameter controls
      * whether download and view statistics are computed (defaults to true).
      */
-    fun list(repo: JsonValue, params: CommitListParams): CommitListPage =
+    fun list(repo: String, params: CommitListParams): CommitListPage =
         list(repo, params, RequestOptions.none())
 
     /** @see list */
     fun list(
-        repo: JsonValue,
+        repo: String,
         params: CommitListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CommitListPage = list(params.toBuilder().repo(repo).build(), requestOptions)
@@ -123,14 +122,14 @@ interface CommitService {
          */
         @MustBeClosed
         fun create(
-            repo: JsonValue,
+            repo: String,
             params: CommitCreateParams,
         ): HttpResponseFor<CommitCreateResponse> = create(repo, params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
-            repo: JsonValue,
+            repo: String,
             params: CommitCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<CommitCreateResponse> =
@@ -154,14 +153,14 @@ interface CommitService {
          */
         @MustBeClosed
         fun retrieve(
-            commit: JsonValue,
+            commit: String,
             params: CommitRetrieveParams,
         ): HttpResponseFor<CommitRetrieveResponse> = retrieve(commit, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
-            commit: JsonValue,
+            commit: String,
             params: CommitRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<CommitRetrieveResponse> =
@@ -184,13 +183,13 @@ interface CommitService {
          * as [CommitService.list].
          */
         @MustBeClosed
-        fun list(repo: JsonValue, params: CommitListParams): HttpResponseFor<CommitListPage> =
+        fun list(repo: String, params: CommitListParams): HttpResponseFor<CommitListPage> =
             list(repo, params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
-            repo: JsonValue,
+            repo: String,
             params: CommitListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<CommitListPage> =

@@ -2,7 +2,6 @@
 
 package com.langchain.smith.models.commits
 
-import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
@@ -21,9 +20,9 @@ import kotlin.jvm.optionals.getOrNull
  */
 class CommitRetrieveParams
 private constructor(
-    private val owner: JsonValue,
-    private val repo: JsonValue,
-    private val commit: JsonValue?,
+    private val owner: String,
+    private val repo: String,
+    private val commit: String?,
     private val getExamples: Boolean?,
     private val includeModel: Boolean?,
     private val isView: Boolean?,
@@ -31,11 +30,11 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    fun owner(): JsonValue = owner
+    fun owner(): String = owner
 
-    fun repo(): JsonValue = repo
+    fun repo(): String = repo
 
-    fun commit(): Optional<JsonValue> = Optional.ofNullable(commit)
+    fun commit(): Optional<String> = Optional.ofNullable(commit)
 
     fun getExamples(): Optional<Boolean> = Optional.ofNullable(getExamples)
 
@@ -68,9 +67,9 @@ private constructor(
     /** A builder for [CommitRetrieveParams]. */
     class Builder internal constructor() {
 
-        private var owner: JsonValue? = null
-        private var repo: JsonValue? = null
-        private var commit: JsonValue? = null
+        private var owner: String? = null
+        private var repo: String? = null
+        private var commit: String? = null
         private var getExamples: Boolean? = null
         private var includeModel: Boolean? = null
         private var isView: Boolean? = null
@@ -89,14 +88,14 @@ private constructor(
             additionalQueryParams = commitRetrieveParams.additionalQueryParams.toBuilder()
         }
 
-        fun owner(owner: JsonValue) = apply { this.owner = owner }
+        fun owner(owner: String) = apply { this.owner = owner }
 
-        fun repo(repo: JsonValue) = apply { this.repo = repo }
+        fun repo(repo: String) = apply { this.repo = repo }
 
-        fun commit(commit: JsonValue?) = apply { this.commit = commit }
+        fun commit(commit: String?) = apply { this.commit = commit }
 
         /** Alias for calling [Builder.commit] with `commit.orElse(null)`. */
-        fun commit(commit: Optional<JsonValue>) = commit(commit.getOrNull())
+        fun commit(commit: Optional<String>) = commit(commit.getOrNull())
 
         fun getExamples(getExamples: Boolean?) = apply { this.getExamples = getExamples }
 
@@ -260,9 +259,9 @@ private constructor(
 
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> owner.toString()
-            1 -> repo.toString()
-            2 -> commit?.toString() ?: ""
+            0 -> owner
+            1 -> repo
+            2 -> commit ?: ""
             else -> ""
         }
 

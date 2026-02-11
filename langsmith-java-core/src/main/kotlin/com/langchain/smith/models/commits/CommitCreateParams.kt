@@ -25,16 +25,16 @@ import kotlin.jvm.optionals.getOrNull
  */
 class CommitCreateParams
 private constructor(
-    private val owner: JsonValue,
-    private val repo: JsonValue?,
+    private val owner: String,
+    private val repo: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    fun owner(): JsonValue = owner
+    fun owner(): String = owner
 
-    fun repo(): Optional<JsonValue> = Optional.ofNullable(repo)
+    fun repo(): Optional<String> = Optional.ofNullable(repo)
 
     /**
      * This arbitrary value can be deserialized into a custom type using the `convert` method:
@@ -94,8 +94,8 @@ private constructor(
     /** A builder for [CommitCreateParams]. */
     class Builder internal constructor() {
 
-        private var owner: JsonValue? = null
-        private var repo: JsonValue? = null
+        private var owner: String? = null
+        private var repo: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -109,12 +109,12 @@ private constructor(
             additionalQueryParams = commitCreateParams.additionalQueryParams.toBuilder()
         }
 
-        fun owner(owner: JsonValue) = apply { this.owner = owner }
+        fun owner(owner: String) = apply { this.owner = owner }
 
-        fun repo(repo: JsonValue?) = apply { this.repo = repo }
+        fun repo(repo: String?) = apply { this.repo = repo }
 
         /** Alias for calling [Builder.repo] with `repo.orElse(null)`. */
-        fun repo(repo: Optional<JsonValue>) = repo(repo.getOrNull())
+        fun repo(repo: Optional<String>) = repo(repo.getOrNull())
 
         /**
          * Sets the entire request body.
@@ -291,8 +291,8 @@ private constructor(
 
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> owner.toString()
-            1 -> repo?.toString() ?: ""
+            0 -> owner
+            1 -> repo ?: ""
             else -> ""
         }
 

@@ -2,7 +2,6 @@
 
 package com.langchain.smith.models.commits
 
-import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
@@ -19,8 +18,8 @@ import kotlin.jvm.optionals.getOrNull
  */
 class CommitListParams
 private constructor(
-    private val owner: JsonValue,
-    private val repo: JsonValue?,
+    private val owner: String,
+    private val repo: String?,
     private val includeStats: Boolean?,
     private val limit: Long?,
     private val offset: Long?,
@@ -28,9 +27,9 @@ private constructor(
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    fun owner(): JsonValue = owner
+    fun owner(): String = owner
 
-    fun repo(): Optional<JsonValue> = Optional.ofNullable(repo)
+    fun repo(): Optional<String> = Optional.ofNullable(repo)
 
     /** IncludeStats determines whether to compute num_downloads and num_views */
     fun includeStats(): Optional<Boolean> = Optional.ofNullable(includeStats)
@@ -65,8 +64,8 @@ private constructor(
     /** A builder for [CommitListParams]. */
     class Builder internal constructor() {
 
-        private var owner: JsonValue? = null
-        private var repo: JsonValue? = null
+        private var owner: String? = null
+        private var repo: String? = null
         private var includeStats: Boolean? = null
         private var limit: Long? = null
         private var offset: Long? = null
@@ -84,12 +83,12 @@ private constructor(
             additionalQueryParams = commitListParams.additionalQueryParams.toBuilder()
         }
 
-        fun owner(owner: JsonValue) = apply { this.owner = owner }
+        fun owner(owner: String) = apply { this.owner = owner }
 
-        fun repo(repo: JsonValue?) = apply { this.repo = repo }
+        fun repo(repo: String?) = apply { this.repo = repo }
 
         /** Alias for calling [Builder.repo] with `repo.orElse(null)`. */
-        fun repo(repo: Optional<JsonValue>) = repo(repo.getOrNull())
+        fun repo(repo: Optional<String>) = repo(repo.getOrNull())
 
         /** IncludeStats determines whether to compute num_downloads and num_views */
         fun includeStats(includeStats: Boolean?) = apply { this.includeStats = includeStats }
@@ -254,8 +253,8 @@ private constructor(
 
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> owner.toString()
-            1 -> repo?.toString() ?: ""
+            0 -> owner
+            1 -> repo ?: ""
             else -> ""
         }
 

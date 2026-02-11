@@ -4,6 +4,7 @@ package com.langchain.smith.services.async
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.handlers.errorBodyHandler
 import com.langchain.smith.core.handlers.errorHandler
 import com.langchain.smith.core.handlers.jsonHandler
@@ -24,6 +25,7 @@ import com.langchain.smith.models.commits.CommitRetrieveParams
 import com.langchain.smith.models.commits.CommitRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
+import kotlin.jvm.optionals.getOrNull
 
 class CommitServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     CommitServiceAsync {
@@ -78,6 +80,9 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
             params: CommitCreateParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<CommitCreateResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("repo", params.repo().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -109,6 +114,9 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
             params: CommitRetrieveParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<CommitRetrieveResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("commit", params.commit().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -144,6 +152,9 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
             params: CommitListParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<CommitListPageAsync>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("repo", params.repo().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
