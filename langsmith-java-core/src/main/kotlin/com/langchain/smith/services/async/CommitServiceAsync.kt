@@ -3,7 +3,6 @@
 package com.langchain.smith.services.async
 
 import com.langchain.smith.core.ClientOptions
-import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.commits.CommitCreateParams
@@ -33,14 +32,12 @@ interface CommitServiceAsync {
      * Creates a new commit in a repository. Requires authentication and write access to the
      * repository.
      */
-    fun create(
-        repo: JsonValue,
-        params: CommitCreateParams,
-    ): CompletableFuture<CommitCreateResponse> = create(repo, params, RequestOptions.none())
+    fun create(repo: String, params: CommitCreateParams): CompletableFuture<CommitCreateResponse> =
+        create(repo, params, RequestOptions.none())
 
     /** @see create */
     fun create(
-        repo: JsonValue,
+        repo: String,
         params: CommitCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<CommitCreateResponse> =
@@ -66,13 +63,13 @@ interface CommitServiceAsync {
      * - 8 or more characters: Prioritize commit hash over tag, check both
      */
     fun retrieve(
-        commit: JsonValue,
+        commit: String,
         params: CommitRetrieveParams,
     ): CompletableFuture<CommitRetrieveResponse> = retrieve(commit, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
-        commit: JsonValue,
+        commit: String,
         params: CommitRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<CommitRetrieveResponse> =
@@ -94,12 +91,12 @@ interface CommitServiceAsync {
      * unauthenticated users can only access public repos. The include_stats parameter controls
      * whether download and view statistics are computed (defaults to true).
      */
-    fun list(repo: JsonValue, params: CommitListParams): CompletableFuture<CommitListPageAsync> =
+    fun list(repo: String, params: CommitListParams): CompletableFuture<CommitListPageAsync> =
         list(repo, params, RequestOptions.none())
 
     /** @see list */
     fun list(
-        repo: JsonValue,
+        repo: String,
         params: CommitListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<CommitListPageAsync> =
@@ -134,14 +131,14 @@ interface CommitServiceAsync {
          * as [CommitServiceAsync.create].
          */
         fun create(
-            repo: JsonValue,
+            repo: String,
             params: CommitCreateParams,
         ): CompletableFuture<HttpResponseFor<CommitCreateResponse>> =
             create(repo, params, RequestOptions.none())
 
         /** @see create */
         fun create(
-            repo: JsonValue,
+            repo: String,
             params: CommitCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<CommitCreateResponse>> =
@@ -164,14 +161,14 @@ interface CommitServiceAsync {
          * the same as [CommitServiceAsync.retrieve].
          */
         fun retrieve(
-            commit: JsonValue,
+            commit: String,
             params: CommitRetrieveParams,
         ): CompletableFuture<HttpResponseFor<CommitRetrieveResponse>> =
             retrieve(commit, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
-            commit: JsonValue,
+            commit: String,
             params: CommitRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<CommitRetrieveResponse>> =
@@ -194,14 +191,14 @@ interface CommitServiceAsync {
          * as [CommitServiceAsync.list].
          */
         fun list(
-            repo: JsonValue,
+            repo: String,
             params: CommitListParams,
         ): CompletableFuture<HttpResponseFor<CommitListPageAsync>> =
             list(repo, params, RequestOptions.none())
 
         /** @see list */
         fun list(
-            repo: JsonValue,
+            repo: String,
             params: CommitListParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<CommitListPageAsync>> =

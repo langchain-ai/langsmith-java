@@ -30,8 +30,8 @@ internal class CommitServiceAsyncTest {
         val commitFuture =
             commitServiceAsync.create(
                 CommitCreateParams.builder()
-                    .owner(JsonValue.from(mapOf<String, Any>()))
-                    .repo(JsonValue.from(mapOf<String, Any>()))
+                    .owner("owner")
+                    .repo("repo")
                     .manifest(JsonValue.from(mapOf<String, Any>()))
                     .parentCommit("parent_commit")
                     .skipWebhooks(JsonValue.from(mapOf<String, Any>()))
@@ -57,9 +57,9 @@ internal class CommitServiceAsyncTest {
         val commitFuture =
             commitServiceAsync.retrieve(
                 CommitRetrieveParams.builder()
-                    .owner(JsonValue.from(mapOf<String, Any>()))
-                    .repo(JsonValue.from(mapOf<String, Any>()))
-                    .commit(JsonValue.from(mapOf<String, Any>()))
+                    .owner("owner")
+                    .repo("repo")
+                    .commit("commit")
                     .getExamples(true)
                     .includeModel(true)
                     .isView(true)
@@ -83,12 +83,7 @@ internal class CommitServiceAsyncTest {
         val commitServiceAsync = client.commits()
 
         val pageFuture =
-            commitServiceAsync.list(
-                CommitListParams.builder()
-                    .owner(JsonValue.from(mapOf<String, Any>()))
-                    .repo(JsonValue.from(mapOf<String, Any>()))
-                    .build()
-            )
+            commitServiceAsync.list(CommitListParams.builder().owner("owner").repo("repo").build())
 
         val page = pageFuture.get()
         page.response().validate()

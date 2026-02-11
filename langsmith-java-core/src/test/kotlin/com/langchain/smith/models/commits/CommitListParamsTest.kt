@@ -2,7 +2,6 @@
 
 package com.langchain.smith.models.commits
 
-import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.http.QueryParams
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -12,8 +11,8 @@ internal class CommitListParamsTest {
     @Test
     fun create() {
         CommitListParams.builder()
-            .owner(JsonValue.from(mapOf<String, Any>()))
-            .repo(JsonValue.from(mapOf<String, Any>()))
+            .owner("owner")
+            .repo("repo")
             .includeStats(true)
             .limit(1L)
             .offset(0L)
@@ -22,14 +21,10 @@ internal class CommitListParamsTest {
 
     @Test
     fun pathParams() {
-        val params =
-            CommitListParams.builder()
-                .owner(JsonValue.from(mapOf<String, Any>()))
-                .repo(JsonValue.from(mapOf<String, Any>()))
-                .build()
+        val params = CommitListParams.builder().owner("owner").repo("repo").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("[object Object]")
-        assertThat(params._pathParam(1)).isEqualTo("[object Object]")
+        assertThat(params._pathParam(0)).isEqualTo("owner")
+        assertThat(params._pathParam(1)).isEqualTo("repo")
         // out-of-bound path param
         assertThat(params._pathParam(2)).isEqualTo("")
     }
@@ -38,8 +33,8 @@ internal class CommitListParamsTest {
     fun queryParams() {
         val params =
             CommitListParams.builder()
-                .owner(JsonValue.from(mapOf<String, Any>()))
-                .repo(JsonValue.from(mapOf<String, Any>()))
+                .owner("owner")
+                .repo("repo")
                 .includeStats(true)
                 .limit(1L)
                 .offset(0L)
@@ -59,11 +54,7 @@ internal class CommitListParamsTest {
 
     @Test
     fun queryParamsWithoutOptionalFields() {
-        val params =
-            CommitListParams.builder()
-                .owner(JsonValue.from(mapOf<String, Any>()))
-                .repo(JsonValue.from(mapOf<String, Any>()))
-                .build()
+        val params = CommitListParams.builder().owner("owner").repo("repo").build()
 
         val queryParams = params._queryParams()
 

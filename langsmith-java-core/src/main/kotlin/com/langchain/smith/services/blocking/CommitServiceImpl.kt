@@ -4,6 +4,7 @@ package com.langchain.smith.services.blocking
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.handlers.errorBodyHandler
 import com.langchain.smith.core.handlers.errorHandler
 import com.langchain.smith.core.handlers.jsonHandler
@@ -23,6 +24,7 @@ import com.langchain.smith.models.commits.CommitListParams
 import com.langchain.smith.models.commits.CommitRetrieveParams
 import com.langchain.smith.models.commits.CommitRetrieveResponse
 import java.util.function.Consumer
+import kotlin.jvm.optionals.getOrNull
 
 class CommitServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     CommitService {
@@ -74,6 +76,9 @@ class CommitServiceImpl internal constructor(private val clientOptions: ClientOp
             params: CommitCreateParams,
             requestOptions: RequestOptions,
         ): HttpResponseFor<CommitCreateResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("repo", params.repo().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -102,6 +107,9 @@ class CommitServiceImpl internal constructor(private val clientOptions: ClientOp
             params: CommitRetrieveParams,
             requestOptions: RequestOptions,
         ): HttpResponseFor<CommitRetrieveResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("commit", params.commit().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -134,6 +142,9 @@ class CommitServiceImpl internal constructor(private val clientOptions: ClientOp
             params: CommitListParams,
             requestOptions: RequestOptions,
         ): HttpResponseFor<CommitListPage> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("repo", params.repo().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
