@@ -30,8 +30,8 @@ internal class CommitServiceTest {
         val commit =
             commitService.create(
                 CommitCreateParams.builder()
-                    .owner(JsonValue.from(mapOf<String, Any>()))
-                    .repo(JsonValue.from(mapOf<String, Any>()))
+                    .owner("owner")
+                    .repo("repo")
                     .manifest(JsonValue.from(mapOf<String, Any>()))
                     .parentCommit("parent_commit")
                     .skipWebhooks(JsonValue.from(mapOf<String, Any>()))
@@ -56,9 +56,9 @@ internal class CommitServiceTest {
         val commit =
             commitService.retrieve(
                 CommitRetrieveParams.builder()
-                    .owner(JsonValue.from(mapOf<String, Any>()))
-                    .repo(JsonValue.from(mapOf<String, Any>()))
-                    .commit(JsonValue.from(mapOf<String, Any>()))
+                    .owner("owner")
+                    .repo("repo")
+                    .commit("commit")
                     .getExamples(true)
                     .includeModel(true)
                     .isView(true)
@@ -81,12 +81,7 @@ internal class CommitServiceTest {
         val commitService = client.commits()
 
         val page =
-            commitService.list(
-                CommitListParams.builder()
-                    .owner(JsonValue.from(mapOf<String, Any>()))
-                    .repo(JsonValue.from(mapOf<String, Any>()))
-                    .build()
-            )
+            commitService.list(CommitListParams.builder().owner("owner").repo("repo").build())
 
         page.response().validate()
     }

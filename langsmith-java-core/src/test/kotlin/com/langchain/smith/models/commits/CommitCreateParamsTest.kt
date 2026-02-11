@@ -11,8 +11,8 @@ internal class CommitCreateParamsTest {
     @Test
     fun create() {
         CommitCreateParams.builder()
-            .owner(JsonValue.from(mapOf<String, Any>()))
-            .repo(JsonValue.from(mapOf<String, Any>()))
+            .owner("owner")
+            .repo("repo")
             .manifest(JsonValue.from(mapOf<String, Any>()))
             .parentCommit("parent_commit")
             .skipWebhooks(JsonValue.from(mapOf<String, Any>()))
@@ -21,14 +21,10 @@ internal class CommitCreateParamsTest {
 
     @Test
     fun pathParams() {
-        val params =
-            CommitCreateParams.builder()
-                .owner(JsonValue.from(mapOf<String, Any>()))
-                .repo(JsonValue.from(mapOf<String, Any>()))
-                .build()
+        val params = CommitCreateParams.builder().owner("owner").repo("repo").build()
 
-        assertThat(params._pathParam(0)).isEqualTo("[object Object]")
-        assertThat(params._pathParam(1)).isEqualTo("[object Object]")
+        assertThat(params._pathParam(0)).isEqualTo("owner")
+        assertThat(params._pathParam(1)).isEqualTo("repo")
         // out-of-bound path param
         assertThat(params._pathParam(2)).isEqualTo("")
     }
@@ -37,8 +33,8 @@ internal class CommitCreateParamsTest {
     fun body() {
         val params =
             CommitCreateParams.builder()
-                .owner(JsonValue.from(mapOf<String, Any>()))
-                .repo(JsonValue.from(mapOf<String, Any>()))
+                .owner("owner")
+                .repo("repo")
                 .manifest(JsonValue.from(mapOf<String, Any>()))
                 .parentCommit("parent_commit")
                 .skipWebhooks(JsonValue.from(mapOf<String, Any>()))
@@ -53,11 +49,7 @@ internal class CommitCreateParamsTest {
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params =
-            CommitCreateParams.builder()
-                .owner(JsonValue.from(mapOf<String, Any>()))
-                .repo(JsonValue.from(mapOf<String, Any>()))
-                .build()
+        val params = CommitCreateParams.builder().owner("owner").repo("repo").build()
 
         val body = params._body()
     }
