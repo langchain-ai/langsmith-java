@@ -28,6 +28,7 @@ private constructor(
     private val clusters: JsonField<List<Cluster>>,
     private val name: JsonField<String>,
     private val status: JsonField<String>,
+    private val configId: JsonField<String>,
     private val endTime: JsonField<OffsetDateTime>,
     private val error: JsonField<String>,
     private val metadata: JsonField<Metadata>,
@@ -45,6 +46,7 @@ private constructor(
         clusters: JsonField<List<Cluster>> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("config_id") @ExcludeMissing configId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("end_time")
         @ExcludeMissing
         endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -60,6 +62,7 @@ private constructor(
         clusters,
         name,
         status,
+        configId,
         endTime,
         error,
         metadata,
@@ -92,6 +95,12 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun status(): String = status.getRequired("status")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun configId(): Optional<String> = configId.getOptional("config_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -158,6 +167,13 @@ private constructor(
      * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<String> = status
+
+    /**
+     * Returns the raw JSON value of [configId].
+     *
+     * Unlike [configId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("config_id") @ExcludeMissing fun _configId(): JsonField<String> = configId
 
     /**
      * Returns the raw JSON value of [endTime].
@@ -238,6 +254,7 @@ private constructor(
         private var clusters: JsonField<MutableList<Cluster>>? = null
         private var name: JsonField<String>? = null
         private var status: JsonField<String>? = null
+        private var configId: JsonField<String> = JsonMissing.of()
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var error: JsonField<String> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
@@ -252,6 +269,7 @@ private constructor(
             clusters = insightRetrieveJobResponse.clusters.map { it.toMutableList() }
             name = insightRetrieveJobResponse.name
             status = insightRetrieveJobResponse.status
+            configId = insightRetrieveJobResponse.configId
             endTime = insightRetrieveJobResponse.endTime
             error = insightRetrieveJobResponse.error
             metadata = insightRetrieveJobResponse.metadata
@@ -315,6 +333,19 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun status(status: JsonField<String>) = apply { this.status = status }
+
+        fun configId(configId: String?) = configId(JsonField.ofNullable(configId))
+
+        /** Alias for calling [Builder.configId] with `configId.orElse(null)`. */
+        fun configId(configId: Optional<String>) = configId(configId.getOrNull())
+
+        /**
+         * Sets [Builder.configId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.configId] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun configId(configId: JsonField<String>) = apply { this.configId = configId }
 
         fun endTime(endTime: OffsetDateTime?) = endTime(JsonField.ofNullable(endTime))
 
@@ -438,6 +469,7 @@ private constructor(
                 checkRequired("clusters", clusters).map { it.toImmutable() },
                 checkRequired("name", name),
                 checkRequired("status", status),
+                configId,
                 endTime,
                 error,
                 metadata,
@@ -459,6 +491,7 @@ private constructor(
         clusters().forEach { it.validate() }
         name()
         status()
+        configId()
         endTime()
         error()
         metadata().ifPresent { it.validate() }
@@ -487,6 +520,7 @@ private constructor(
             (clusters.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
+            (if (configId.asKnown().isPresent) 1 else 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (error.asKnown().isPresent) 1 else 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1896,6 +1930,7 @@ private constructor(
             clusters == other.clusters &&
             name == other.name &&
             status == other.status &&
+            configId == other.configId &&
             endTime == other.endTime &&
             error == other.error &&
             metadata == other.metadata &&
@@ -1911,6 +1946,7 @@ private constructor(
             clusters,
             name,
             status,
+            configId,
             endTime,
             error,
             metadata,
@@ -1924,5 +1960,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InsightRetrieveJobResponse{id=$id, clusters=$clusters, name=$name, status=$status, endTime=$endTime, error=$error, metadata=$metadata, report=$report, shape=$shape, startTime=$startTime, additionalProperties=$additionalProperties}"
+        "InsightRetrieveJobResponse{id=$id, clusters=$clusters, name=$name, status=$status, configId=$configId, endTime=$endTime, error=$error, metadata=$metadata, report=$report, shape=$shape, startTime=$startTime, additionalProperties=$additionalProperties}"
 }
