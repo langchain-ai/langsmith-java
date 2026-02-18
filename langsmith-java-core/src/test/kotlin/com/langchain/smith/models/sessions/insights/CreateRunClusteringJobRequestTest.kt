@@ -21,6 +21,7 @@ internal class CreateRunClusteringJobRequestTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .clusterModel("cluster_model")
                 .configId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .filter("filter")
@@ -35,6 +36,7 @@ internal class CreateRunClusteringJobRequestTest {
                 )
                 .sample(0.0)
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .summaryModel("summary_model")
                 .summaryPrompt("summary_prompt")
                 .userContext(
                     CreateRunClusteringJobRequest.UserContext.builder()
@@ -50,6 +52,7 @@ internal class CreateRunClusteringJobRequestTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+        assertThat(createRunClusteringJobRequest.clusterModel()).contains("cluster_model")
         assertThat(createRunClusteringJobRequest.configId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(createRunClusteringJobRequest.endTime())
@@ -69,6 +72,7 @@ internal class CreateRunClusteringJobRequestTest {
         assertThat(createRunClusteringJobRequest.sample()).contains(0.0)
         assertThat(createRunClusteringJobRequest.startTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(createRunClusteringJobRequest.summaryModel()).contains("summary_model")
         assertThat(createRunClusteringJobRequest.summaryPrompt()).contains("summary_prompt")
         assertThat(createRunClusteringJobRequest.userContext())
             .contains(
@@ -89,6 +93,7 @@ internal class CreateRunClusteringJobRequestTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .clusterModel("cluster_model")
                 .configId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .filter("filter")
@@ -103,6 +108,7 @@ internal class CreateRunClusteringJobRequestTest {
                 )
                 .sample(0.0)
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .summaryModel("summary_model")
                 .summaryPrompt("summary_prompt")
                 .userContext(
                     CreateRunClusteringJobRequest.UserContext.builder()

@@ -25,6 +25,7 @@ class CreateRunClusteringJobRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val attributeSchemas: JsonField<AttributeSchemas>,
+    private val clusterModel: JsonField<String>,
     private val configId: JsonField<String>,
     private val endTime: JsonField<OffsetDateTime>,
     private val filter: JsonField<String>,
@@ -35,6 +36,7 @@ private constructor(
     private val partitions: JsonField<Partitions>,
     private val sample: JsonField<Double>,
     private val startTime: JsonField<OffsetDateTime>,
+    private val summaryModel: JsonField<String>,
     private val summaryPrompt: JsonField<String>,
     private val userContext: JsonField<UserContext>,
     private val validateModelSecrets: JsonField<Boolean>,
@@ -46,6 +48,9 @@ private constructor(
         @JsonProperty("attribute_schemas")
         @ExcludeMissing
         attributeSchemas: JsonField<AttributeSchemas> = JsonMissing.of(),
+        @JsonProperty("cluster_model")
+        @ExcludeMissing
+        clusterModel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("config_id") @ExcludeMissing configId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("end_time")
         @ExcludeMissing
@@ -66,6 +71,9 @@ private constructor(
         @JsonProperty("start_time")
         @ExcludeMissing
         startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("summary_model")
+        @ExcludeMissing
+        summaryModel: JsonField<String> = JsonMissing.of(),
         @JsonProperty("summary_prompt")
         @ExcludeMissing
         summaryPrompt: JsonField<String> = JsonMissing.of(),
@@ -77,6 +85,7 @@ private constructor(
         validateModelSecrets: JsonField<Boolean> = JsonMissing.of(),
     ) : this(
         attributeSchemas,
+        clusterModel,
         configId,
         endTime,
         filter,
@@ -87,6 +96,7 @@ private constructor(
         partitions,
         sample,
         startTime,
+        summaryModel,
         summaryPrompt,
         userContext,
         validateModelSecrets,
@@ -99,6 +109,12 @@ private constructor(
      */
     fun attributeSchemas(): Optional<AttributeSchemas> =
         attributeSchemas.getOptional("attribute_schemas")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun clusterModel(): Optional<String> = clusterModel.getOptional("cluster_model")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -164,6 +180,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun summaryModel(): Optional<String> = summaryModel.getOptional("summary_model")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun summaryPrompt(): Optional<String> = summaryPrompt.getOptional("summary_prompt")
 
     /**
@@ -188,6 +210,15 @@ private constructor(
     @JsonProperty("attribute_schemas")
     @ExcludeMissing
     fun _attributeSchemas(): JsonField<AttributeSchemas> = attributeSchemas
+
+    /**
+     * Returns the raw JSON value of [clusterModel].
+     *
+     * Unlike [clusterModel], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("cluster_model")
+    @ExcludeMissing
+    fun _clusterModel(): JsonField<String> = clusterModel
 
     /**
      * Returns the raw JSON value of [configId].
@@ -264,6 +295,15 @@ private constructor(
     fun _startTime(): JsonField<OffsetDateTime> = startTime
 
     /**
+     * Returns the raw JSON value of [summaryModel].
+     *
+     * Unlike [summaryModel], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("summary_model")
+    @ExcludeMissing
+    fun _summaryModel(): JsonField<String> = summaryModel
+
+    /**
      * Returns the raw JSON value of [summaryPrompt].
      *
      * Unlike [summaryPrompt], this method doesn't throw if the JSON field has an unexpected type.
@@ -316,6 +356,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var attributeSchemas: JsonField<AttributeSchemas> = JsonMissing.of()
+        private var clusterModel: JsonField<String> = JsonMissing.of()
         private var configId: JsonField<String> = JsonMissing.of()
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var filter: JsonField<String> = JsonMissing.of()
@@ -326,6 +367,7 @@ private constructor(
         private var partitions: JsonField<Partitions> = JsonMissing.of()
         private var sample: JsonField<Double> = JsonMissing.of()
         private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var summaryModel: JsonField<String> = JsonMissing.of()
         private var summaryPrompt: JsonField<String> = JsonMissing.of()
         private var userContext: JsonField<UserContext> = JsonMissing.of()
         private var validateModelSecrets: JsonField<Boolean> = JsonMissing.of()
@@ -334,6 +376,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(createRunClusteringJobRequest: CreateRunClusteringJobRequest) = apply {
             attributeSchemas = createRunClusteringJobRequest.attributeSchemas
+            clusterModel = createRunClusteringJobRequest.clusterModel
             configId = createRunClusteringJobRequest.configId
             endTime = createRunClusteringJobRequest.endTime
             filter = createRunClusteringJobRequest.filter
@@ -344,6 +387,7 @@ private constructor(
             partitions = createRunClusteringJobRequest.partitions
             sample = createRunClusteringJobRequest.sample
             startTime = createRunClusteringJobRequest.startTime
+            summaryModel = createRunClusteringJobRequest.summaryModel
             summaryPrompt = createRunClusteringJobRequest.summaryPrompt
             userContext = createRunClusteringJobRequest.userContext
             validateModelSecrets = createRunClusteringJobRequest.validateModelSecrets
@@ -366,6 +410,22 @@ private constructor(
          */
         fun attributeSchemas(attributeSchemas: JsonField<AttributeSchemas>) = apply {
             this.attributeSchemas = attributeSchemas
+        }
+
+        fun clusterModel(clusterModel: String?) = clusterModel(JsonField.ofNullable(clusterModel))
+
+        /** Alias for calling [Builder.clusterModel] with `clusterModel.orElse(null)`. */
+        fun clusterModel(clusterModel: Optional<String>) = clusterModel(clusterModel.getOrNull())
+
+        /**
+         * Sets [Builder.clusterModel] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.clusterModel] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun clusterModel(clusterModel: JsonField<String>) = apply {
+            this.clusterModel = clusterModel
         }
 
         fun configId(configId: String?) = configId(JsonField.ofNullable(configId))
@@ -527,6 +587,22 @@ private constructor(
          */
         fun startTime(startTime: JsonField<OffsetDateTime>) = apply { this.startTime = startTime }
 
+        fun summaryModel(summaryModel: String?) = summaryModel(JsonField.ofNullable(summaryModel))
+
+        /** Alias for calling [Builder.summaryModel] with `summaryModel.orElse(null)`. */
+        fun summaryModel(summaryModel: Optional<String>) = summaryModel(summaryModel.getOrNull())
+
+        /**
+         * Sets [Builder.summaryModel] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.summaryModel] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun summaryModel(summaryModel: JsonField<String>) = apply {
+            this.summaryModel = summaryModel
+        }
+
         fun summaryPrompt(summaryPrompt: String?) =
             summaryPrompt(JsonField.ofNullable(summaryPrompt))
 
@@ -602,6 +678,7 @@ private constructor(
         fun build(): CreateRunClusteringJobRequest =
             CreateRunClusteringJobRequest(
                 attributeSchemas,
+                clusterModel,
                 configId,
                 endTime,
                 filter,
@@ -612,6 +689,7 @@ private constructor(
                 partitions,
                 sample,
                 startTime,
+                summaryModel,
                 summaryPrompt,
                 userContext,
                 validateModelSecrets,
@@ -627,6 +705,7 @@ private constructor(
         }
 
         attributeSchemas().ifPresent { it.validate() }
+        clusterModel()
         configId()
         endTime()
         filter()
@@ -637,6 +716,7 @@ private constructor(
         partitions().ifPresent { it.validate() }
         sample()
         startTime()
+        summaryModel()
         summaryPrompt()
         userContext().ifPresent { it.validate() }
         validateModelSecrets()
@@ -659,6 +739,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (attributeSchemas.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (clusterModel.asKnown().isPresent) 1 else 0) +
             (if (configId.asKnown().isPresent) 1 else 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (filter.asKnown().isPresent) 1 else 0) +
@@ -669,6 +750,7 @@ private constructor(
             (partitions.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sample.asKnown().isPresent) 1 else 0) +
             (if (startTime.asKnown().isPresent) 1 else 0) +
+            (if (summaryModel.asKnown().isPresent) 1 else 0) +
             (if (summaryPrompt.asKnown().isPresent) 1 else 0) +
             (userContext.asKnown().getOrNull()?.validity() ?: 0) +
             (if (validateModelSecrets.asKnown().isPresent) 1 else 0)
@@ -1104,6 +1186,7 @@ private constructor(
 
         return other is CreateRunClusteringJobRequest &&
             attributeSchemas == other.attributeSchemas &&
+            clusterModel == other.clusterModel &&
             configId == other.configId &&
             endTime == other.endTime &&
             filter == other.filter &&
@@ -1114,6 +1197,7 @@ private constructor(
             partitions == other.partitions &&
             sample == other.sample &&
             startTime == other.startTime &&
+            summaryModel == other.summaryModel &&
             summaryPrompt == other.summaryPrompt &&
             userContext == other.userContext &&
             validateModelSecrets == other.validateModelSecrets &&
@@ -1123,6 +1207,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             attributeSchemas,
+            clusterModel,
             configId,
             endTime,
             filter,
@@ -1133,6 +1218,7 @@ private constructor(
             partitions,
             sample,
             startTime,
+            summaryModel,
             summaryPrompt,
             userContext,
             validateModelSecrets,
@@ -1143,5 +1229,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateRunClusteringJobRequest{attributeSchemas=$attributeSchemas, configId=$configId, endTime=$endTime, filter=$filter, hierarchy=$hierarchy, lastNHours=$lastNHours, model=$model, name=$name, partitions=$partitions, sample=$sample, startTime=$startTime, summaryPrompt=$summaryPrompt, userContext=$userContext, validateModelSecrets=$validateModelSecrets, additionalProperties=$additionalProperties}"
+        "CreateRunClusteringJobRequest{attributeSchemas=$attributeSchemas, clusterModel=$clusterModel, configId=$configId, endTime=$endTime, filter=$filter, hierarchy=$hierarchy, lastNHours=$lastNHours, model=$model, name=$name, partitions=$partitions, sample=$sample, startTime=$startTime, summaryModel=$summaryModel, summaryPrompt=$summaryPrompt, userContext=$userContext, validateModelSecrets=$validateModelSecrets, additionalProperties=$additionalProperties}"
 }
