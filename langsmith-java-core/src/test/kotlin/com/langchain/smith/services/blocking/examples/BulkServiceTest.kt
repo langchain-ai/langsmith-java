@@ -29,35 +29,33 @@ internal class BulkServiceTest {
 
         val examples =
             bulkService.create(
-                BulkCreateParams.builder()
-                    .addBody(
-                        BulkCreateParams.Body.builder()
-                            .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .createdAt("created_at")
-                            .inputs(
-                                BulkCreateParams.Body.Inputs.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                    .build()
-                            )
-                            .metadata(
-                                BulkCreateParams.Body.Metadata.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                    .build()
-                            )
-                            .outputs(
-                                BulkCreateParams.Body.Outputs.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                    .build()
-                            )
-                            .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .splitOfStrings(listOf("string"))
-                            .useLegacyMessageFormat(true)
-                            .addUseSourceRunAttachment("string")
-                            .useSourceRunIo(true)
-                            .build()
-                    )
-                    .build()
+                listOf(
+                    BulkCreateParams.Body.builder()
+                        .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .createdAt("created_at")
+                        .inputs(
+                            BulkCreateParams.Body.Inputs.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .metadata(
+                            BulkCreateParams.Body.Metadata.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .outputs(
+                            BulkCreateParams.Body.Outputs.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .splitOfStrings(listOf("string"))
+                        .useLegacyMessageFormat(true)
+                        .addUseSourceRunAttachment("string")
+                        .useSourceRunIo(true)
+                        .build()
+                )
             )
 
         examples.forEach { it.validate() }
@@ -77,41 +75,39 @@ internal class BulkServiceTest {
 
         val response =
             bulkService.patchAll(
-                BulkPatchAllParams.builder()
-                    .addBody(
-                        BulkPatchAllParams.Body.builder()
-                            .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .attachmentsOperations(
-                                AttachmentsOperations.builder()
-                                    .rename(
-                                        AttachmentsOperations.Rename.builder()
-                                            .putAdditionalProperty("foo", JsonValue.from("string"))
-                                            .build()
-                                    )
-                                    .addRetain("string")
-                                    .build()
-                            )
-                            .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .inputs(
-                                BulkPatchAllParams.Body.Inputs.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                    .build()
-                            )
-                            .metadata(
-                                BulkPatchAllParams.Body.Metadata.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                    .build()
-                            )
-                            .outputs(
-                                BulkPatchAllParams.Body.Outputs.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                    .build()
-                            )
-                            .overwrite(true)
-                            .splitOfStrings(listOf("string"))
-                            .build()
-                    )
-                    .build()
+                listOf(
+                    BulkPatchAllParams.Body.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .attachmentsOperations(
+                            AttachmentsOperations.builder()
+                                .rename(
+                                    AttachmentsOperations.Rename.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                                        .build()
+                                )
+                                .addRetain("string")
+                                .build()
+                        )
+                        .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .inputs(
+                            BulkPatchAllParams.Body.Inputs.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .metadata(
+                            BulkPatchAllParams.Body.Metadata.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .outputs(
+                            BulkPatchAllParams.Body.Outputs.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .overwrite(true)
+                        .splitOfStrings(listOf("string"))
+                        .build()
+                )
             )
 
         response.validate()

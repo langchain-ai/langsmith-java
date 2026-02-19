@@ -6,6 +6,7 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.feedback.tokens.FeedbackIngestTokenCreateSchema
 import com.langchain.smith.models.feedback.tokens.FeedbackIngestTokenSchema
 import com.langchain.smith.models.feedback.tokens.TokenCreateParams
 import com.langchain.smith.models.feedback.tokens.TokenCreateResponse
@@ -39,6 +40,33 @@ interface TokenService {
         params: TokenCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): TokenCreateResponse
+
+    /** @see create */
+    fun create(
+        body: TokenCreateParams.Body,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): TokenCreateResponse = create(TokenCreateParams.builder().body(body).build(), requestOptions)
+
+    /** @see create */
+    fun create(body: TokenCreateParams.Body): TokenCreateResponse =
+        create(body, RequestOptions.none())
+
+    /** @see create */
+    fun create(
+        feedbackIngestTokenCreateSchema: FeedbackIngestTokenCreateSchema,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): TokenCreateResponse =
+        create(
+            TokenCreateParams.Body.ofFeedbackIngestTokenCreateSchema(
+                feedbackIngestTokenCreateSchema
+            ),
+            requestOptions,
+        )
+
+    /** @see create */
+    fun create(
+        feedbackIngestTokenCreateSchema: FeedbackIngestTokenCreateSchema
+    ): TokenCreateResponse = create(feedbackIngestTokenCreateSchema, RequestOptions.none())
 
     /** Create a new feedback with a token. */
     fun retrieve(token: String): TokenRetrieveResponse = retrieve(token, TokenRetrieveParams.none())
@@ -134,6 +162,39 @@ interface TokenService {
             params: TokenCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<TokenCreateResponse>
+
+        /** @see create */
+        @MustBeClosed
+        fun create(
+            body: TokenCreateParams.Body,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<TokenCreateResponse> =
+            create(TokenCreateParams.builder().body(body).build(), requestOptions)
+
+        /** @see create */
+        @MustBeClosed
+        fun create(body: TokenCreateParams.Body): HttpResponseFor<TokenCreateResponse> =
+            create(body, RequestOptions.none())
+
+        /** @see create */
+        @MustBeClosed
+        fun create(
+            feedbackIngestTokenCreateSchema: FeedbackIngestTokenCreateSchema,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<TokenCreateResponse> =
+            create(
+                TokenCreateParams.Body.ofFeedbackIngestTokenCreateSchema(
+                    feedbackIngestTokenCreateSchema
+                ),
+                requestOptions,
+            )
+
+        /** @see create */
+        @MustBeClosed
+        fun create(
+            feedbackIngestTokenCreateSchema: FeedbackIngestTokenCreateSchema
+        ): HttpResponseFor<TokenCreateResponse> =
+            create(feedbackIngestTokenCreateSchema, RequestOptions.none())
 
         /**
          * Returns a raw HTTP response for `get /api/v1/feedback/tokens/{token}`, but is otherwise
