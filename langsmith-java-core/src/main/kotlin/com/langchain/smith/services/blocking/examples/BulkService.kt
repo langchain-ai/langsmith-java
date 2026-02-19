@@ -35,6 +35,16 @@ interface BulkService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<Example>
 
+    /** @see create */
+    fun create(
+        body: List<BulkCreateParams.Body>,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): List<Example> = create(BulkCreateParams.builder().body(body).build(), requestOptions)
+
+    /** @see create */
+    fun create(body: List<BulkCreateParams.Body>): List<Example> =
+        create(body, RequestOptions.none())
+
     /**
      * Legacy update examples in bulk. For update involving attachments, use PATCH
      * /v1/platform/datasets/{dataset_id}/examples instead.
@@ -47,6 +57,17 @@ interface BulkService {
         params: BulkPatchAllParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): BulkPatchAllResponse
+
+    /** @see patchAll */
+    fun patchAll(
+        body: List<BulkPatchAllParams.Body>,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): BulkPatchAllResponse =
+        patchAll(BulkPatchAllParams.builder().body(body).build(), requestOptions)
+
+    /** @see patchAll */
+    fun patchAll(body: List<BulkPatchAllParams.Body>): BulkPatchAllResponse =
+        patchAll(body, RequestOptions.none())
 
     /** A view of [BulkService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -73,6 +94,19 @@ interface BulkService {
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<List<Example>>
 
+        /** @see create */
+        @MustBeClosed
+        fun create(
+            body: List<BulkCreateParams.Body>,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<List<Example>> =
+            create(BulkCreateParams.builder().body(body).build(), requestOptions)
+
+        /** @see create */
+        @MustBeClosed
+        fun create(body: List<BulkCreateParams.Body>): HttpResponseFor<List<Example>> =
+            create(body, RequestOptions.none())
+
         /**
          * Returns a raw HTTP response for `patch /api/v1/examples/bulk`, but is otherwise the same
          * as [BulkService.patchAll].
@@ -87,5 +121,18 @@ interface BulkService {
             params: BulkPatchAllParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<BulkPatchAllResponse>
+
+        /** @see patchAll */
+        @MustBeClosed
+        fun patchAll(
+            body: List<BulkPatchAllParams.Body>,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<BulkPatchAllResponse> =
+            patchAll(BulkPatchAllParams.builder().body(body).build(), requestOptions)
+
+        /** @see patchAll */
+        @MustBeClosed
+        fun patchAll(body: List<BulkPatchAllParams.Body>): HttpResponseFor<BulkPatchAllResponse> =
+            patchAll(body, RequestOptions.none())
     }
 }

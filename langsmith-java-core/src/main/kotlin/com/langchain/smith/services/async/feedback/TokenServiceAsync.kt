@@ -5,6 +5,7 @@ package com.langchain.smith.services.async.feedback
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.feedback.tokens.FeedbackIngestTokenCreateSchema
 import com.langchain.smith.models.feedback.tokens.FeedbackIngestTokenSchema
 import com.langchain.smith.models.feedback.tokens.TokenCreateParams
 import com.langchain.smith.models.feedback.tokens.TokenCreateResponse
@@ -39,6 +40,35 @@ interface TokenServiceAsync {
         params: TokenCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<TokenCreateResponse>
+
+    /** @see create */
+    fun create(
+        body: TokenCreateParams.Body,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<TokenCreateResponse> =
+        create(TokenCreateParams.builder().body(body).build(), requestOptions)
+
+    /** @see create */
+    fun create(body: TokenCreateParams.Body): CompletableFuture<TokenCreateResponse> =
+        create(body, RequestOptions.none())
+
+    /** @see create */
+    fun create(
+        feedbackIngestTokenCreateSchema: FeedbackIngestTokenCreateSchema,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<TokenCreateResponse> =
+        create(
+            TokenCreateParams.Body.ofFeedbackIngestTokenCreateSchema(
+                feedbackIngestTokenCreateSchema
+            ),
+            requestOptions,
+        )
+
+    /** @see create */
+    fun create(
+        feedbackIngestTokenCreateSchema: FeedbackIngestTokenCreateSchema
+    ): CompletableFuture<TokenCreateResponse> =
+        create(feedbackIngestTokenCreateSchema, RequestOptions.none())
 
     /** Create a new feedback with a token. */
     fun retrieve(token: String): CompletableFuture<TokenRetrieveResponse> =
@@ -146,6 +176,37 @@ interface TokenServiceAsync {
             params: TokenCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<TokenCreateResponse>>
+
+        /** @see create */
+        fun create(
+            body: TokenCreateParams.Body,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<TokenCreateResponse>> =
+            create(TokenCreateParams.builder().body(body).build(), requestOptions)
+
+        /** @see create */
+        fun create(
+            body: TokenCreateParams.Body
+        ): CompletableFuture<HttpResponseFor<TokenCreateResponse>> =
+            create(body, RequestOptions.none())
+
+        /** @see create */
+        fun create(
+            feedbackIngestTokenCreateSchema: FeedbackIngestTokenCreateSchema,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<TokenCreateResponse>> =
+            create(
+                TokenCreateParams.Body.ofFeedbackIngestTokenCreateSchema(
+                    feedbackIngestTokenCreateSchema
+                ),
+                requestOptions,
+            )
+
+        /** @see create */
+        fun create(
+            feedbackIngestTokenCreateSchema: FeedbackIngestTokenCreateSchema
+        ): CompletableFuture<HttpResponseFor<TokenCreateResponse>> =
+            create(feedbackIngestTokenCreateSchema, RequestOptions.none())
 
         /**
          * Returns a raw HTTP response for `get /api/v1/feedback/tokens/{token}`, but is otherwise
