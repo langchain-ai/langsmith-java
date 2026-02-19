@@ -6,7 +6,6 @@ import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.feedback.tokens.FeedbackIngestTokenCreateSchema
-import com.langchain.smith.models.feedback.tokens.TokenCreateParams
 import com.langchain.smith.models.feedback.tokens.TokenListParams
 import com.langchain.smith.models.feedback.tokens.TokenRetrieveParams
 import com.langchain.smith.models.feedback.tokens.TokenUpdateParams
@@ -33,32 +32,22 @@ internal class TokenServiceAsyncTest {
 
         val tokenFuture =
             tokenServiceAsync.create(
-                TokenCreateParams.builder()
-                    .body(
-                        FeedbackIngestTokenCreateSchema.builder()
-                            .feedbackKey("feedback_key")
-                            .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .expiresIn(
-                                TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                            )
-                            .feedbackConfig(
-                                FeedbackIngestTokenCreateSchema.FeedbackConfig.builder()
-                                    .type(
-                                        FeedbackIngestTokenCreateSchema.FeedbackConfig.Type
-                                            .CONTINUOUS
-                                    )
-                                    .addCategory(
-                                        FeedbackIngestTokenCreateSchema.FeedbackConfig.Category
-                                            .builder()
-                                            .value(0.0)
-                                            .label("x")
-                                            .build()
-                                    )
-                                    .max(0.0)
-                                    .min(0.0)
+                FeedbackIngestTokenCreateSchema.builder()
+                    .feedbackKey("feedback_key")
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .expiresAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .expiresIn(TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build())
+                    .feedbackConfig(
+                        FeedbackIngestTokenCreateSchema.FeedbackConfig.builder()
+                            .type(FeedbackIngestTokenCreateSchema.FeedbackConfig.Type.CONTINUOUS)
+                            .addCategory(
+                                FeedbackIngestTokenCreateSchema.FeedbackConfig.Category.builder()
+                                    .value(0.0)
+                                    .label("x")
                                     .build()
                             )
+                            .max(0.0)
+                            .min(0.0)
                             .build()
                     )
                     .build()

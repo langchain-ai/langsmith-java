@@ -36,6 +36,17 @@ interface BulkServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<List<Example>>
 
+    /** @see create */
+    fun create(
+        body: List<BulkCreateParams.Body>,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<List<Example>> =
+        create(BulkCreateParams.builder().body(body).build(), requestOptions)
+
+    /** @see create */
+    fun create(body: List<BulkCreateParams.Body>): CompletableFuture<List<Example>> =
+        create(body, RequestOptions.none())
+
     /**
      * Legacy update examples in bulk. For update involving attachments, use PATCH
      * /v1/platform/datasets/{dataset_id}/examples instead.
@@ -48,6 +59,17 @@ interface BulkServiceAsync {
         params: BulkPatchAllParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<BulkPatchAllResponse>
+
+    /** @see patchAll */
+    fun patchAll(
+        body: List<BulkPatchAllParams.Body>,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<BulkPatchAllResponse> =
+        patchAll(BulkPatchAllParams.builder().body(body).build(), requestOptions)
+
+    /** @see patchAll */
+    fun patchAll(body: List<BulkPatchAllParams.Body>): CompletableFuture<BulkPatchAllResponse> =
+        patchAll(body, RequestOptions.none())
 
     /** A view of [BulkServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -72,6 +94,18 @@ interface BulkServiceAsync {
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<List<Example>>>
 
+        /** @see create */
+        fun create(
+            body: List<BulkCreateParams.Body>,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<List<Example>>> =
+            create(BulkCreateParams.builder().body(body).build(), requestOptions)
+
+        /** @see create */
+        fun create(
+            body: List<BulkCreateParams.Body>
+        ): CompletableFuture<HttpResponseFor<List<Example>>> = create(body, RequestOptions.none())
+
         /**
          * Returns a raw HTTP response for `patch /api/v1/examples/bulk`, but is otherwise the same
          * as [BulkServiceAsync.patchAll].
@@ -86,5 +120,18 @@ interface BulkServiceAsync {
             params: BulkPatchAllParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<BulkPatchAllResponse>>
+
+        /** @see patchAll */
+        fun patchAll(
+            body: List<BulkPatchAllParams.Body>,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<BulkPatchAllResponse>> =
+            patchAll(BulkPatchAllParams.builder().body(body).build(), requestOptions)
+
+        /** @see patchAll */
+        fun patchAll(
+            body: List<BulkPatchAllParams.Body>
+        ): CompletableFuture<HttpResponseFor<BulkPatchAllResponse>> =
+            patchAll(body, RequestOptions.none())
     }
 }
