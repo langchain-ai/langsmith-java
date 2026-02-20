@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.1.0-alpha.23 (2026-02-20)
+
+Full Changelog: [v0.1.0-alpha.22...v0.1.0-alpha.23](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.22...v0.1.0-alpha.23)
+
+### Features
+
+* **api:** api update ([9485112](https://github.com/langchain-ai/langsmith-java/commit/948511234707031e0e375ded4ed51cd142d0dae1))
+* **api:** api update ([786edff](https://github.com/langchain-ai/langsmith-java/commit/786edfff5f8e200c20fb201d83daff8e0fe33b59))
+* **api:** api update ([3a6c191](https://github.com/langchain-ai/langsmith-java/commit/3a6c1911a5127afe550cc6ff0cbc2182e7e9cce4))
+* **api:** api update ([cd9f91d](https://github.com/langchain-ai/langsmith-java/commit/cd9f91d07e8e0c1c7d13f7a6a849856a9da19d90))
+* **api:** api update ([b344828](https://github.com/langchain-ai/langsmith-java/commit/b3448285414b13fe8081c7b7eae023e033ad6ad2))
+* **api:** api update ([2e0602a](https://github.com/langchain-ai/langsmith-java/commit/2e0602a9e218f3c9c435c7d1e254621d8f97f14b))
+* **api:** api update ([3b1e4c6](https://github.com/langchain-ai/langsmith-java/commit/3b1e4c61e3b8ff44f0415aa808e6a7f550a7834b))
+* **api:** api update ([703b77a](https://github.com/langchain-ai/langsmith-java/commit/703b77ac2c34ed600964d0c815b1fa759124756c))
+* **api:** api update ([7d0f1d4](https://github.com/langchain-ai/langsmith-java/commit/7d0f1d4e07b0bd50a92947124e2bd1b83b840605))
+* **api:** api update ([debadf0](https://github.com/langchain-ai/langsmith-java/commit/debadf0da6c073a569e1abea1c3b58fc8e33bcf4))
+* **api:** api update ([9ebd84f](https://github.com/langchain-ai/langsmith-java/commit/9ebd84fe982b0a0304d1fcb7da168df0c97a043f))
+* **api:** api update ([88bd850](https://github.com/langchain-ai/langsmith-java/commit/88bd85062b8c87a72f96d6fbac738963c1df562e))
+* **api:** api update ([af7bf93](https://github.com/langchain-ai/langsmith-java/commit/af7bf93c5b285d509484c5f8cb838583dd0ed7e8))
+* **api:** manual updates ([3f1d46e](https://github.com/langchain-ai/langsmith-java/commit/3f1d46e06a3616cb5fa22f3f89d13a0ff871c6c3))
+* **api:** manual updates ([2ac51c9](https://github.com/langchain-ai/langsmith-java/commit/2ac51c9075348a4fd8e38dace4911d8a6bee2000))
+* **api:** manual updates ([187c87f](https://github.com/langchain-ai/langsmith-java/commit/187c87f96a08b4c197b37232081c38797b8d59cc))
+* **api:** manual updates ([5e0db72](https://github.com/langchain-ai/langsmith-java/commit/5e0db72d55d10c512dc0b0d4997968d2382dc32d))
+* **api:** manual updates ([6bc9970](https://github.com/langchain-ai/langsmith-java/commit/6bc9970850b2ce9206eefa770c9e4e8164487745))
+* **client:** add connection pooling option ([9acbf93](https://github.com/langchain-ai/langsmith-java/commit/9acbf9334972d4ff5d00caa346e3907ded7d3a72))
+* **client:** add more convenience service method overloads ([fba86c8](https://github.com/langchain-ai/langsmith-java/commit/fba86c83fdbe3ad353ec9a5db065464ac0928e55))
+
+
+### Chores
+
+* **api:** minor updates ([5561ef0](https://github.com/langchain-ai/langsmith-java/commit/5561ef0a24492e78eab34609a48da09aa37496a1))
+* **ci:** upgrade `actions/github-script` ([f758afb](https://github.com/langchain-ai/langsmith-java/commit/f758afb6d78e7ac01b085403f89ec33dbb0caa6c))
+* **internal:** allow passing args to `./scripts/test` ([206af30](https://github.com/langchain-ai/langsmith-java/commit/206af3009b966f77ad4aec77a975b38ebafbbbde))
+* **internal:** make `OkHttp` constructor internal ([b55c1e8](https://github.com/langchain-ai/langsmith-java/commit/b55c1e8e15bbb1c370ab4d8b4713d37965b2f4db))
+* **internal:** remove mock server code ([f72c72d](https://github.com/langchain-ai/langsmith-java/commit/f72c72d36f8c390bfbcbd14cdf25cf25d8131a7f))
+* **internal:** update `TestServerExtension` comment ([c4956f5](https://github.com/langchain-ai/langsmith-java/commit/c4956f59bae794a6da689eb891ed329ad6bac082))
+* **internal:** upgrade AssertJ ([2535a3a](https://github.com/langchain-ai/langsmith-java/commit/2535a3ab58df98b740bee627f7fecd0f88adb05c))
+* refactor ([#90](https://github.com/langchain-ai/langsmith-java/issues/90)) ([1902c22](https://github.com/langchain-ai/langsmith-java/commit/1902c228ddd2b4ddcc5b741bf7c67f250ae9da06))
+* update mock server docs ([1704b40](https://github.com/langchain-ai/langsmith-java/commit/1704b408f7fe5af7ee8fa322f037a37749e22d05))
+
 ## 0.1.0-alpha.22 (2026-01-23)
 
 Full Changelog: [v0.1.0-alpha.21...v0.1.0-alpha.22](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.21...v0.1.0-alpha.22)
