@@ -6,8 +6,8 @@ import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.context.Context
 
 /**
- * Utility object for creating OpenTelemetry spans with Gen AI semantic conventions.
- * Provides helper methods to create spans for LLM, tool, retrieval, and chain operations.
+ * Utility object for creating OpenTelemetry spans with Gen AI semantic conventions. Provides helper
+ * methods to create spans for LLM, tool, retrieval, and chain operations.
  */
 object OtelSpanCreator {
 
@@ -41,7 +41,9 @@ object OtelSpanCreator {
 
     @JvmStatic
     fun setOutputMessages(span: Span, messagesJson: String?) {
-        messagesJson?.let { span.setAttribute(AttributeKey.stringKey("gen_ai.output.messages"), it) }
+        messagesJson?.let {
+            span.setAttribute(AttributeKey.stringKey("gen_ai.output.messages"), it)
+        }
     }
 
     @JvmStatic

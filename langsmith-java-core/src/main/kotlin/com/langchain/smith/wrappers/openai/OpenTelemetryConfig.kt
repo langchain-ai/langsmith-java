@@ -6,14 +6,14 @@ import io.opentelemetry.sdk.OpenTelemetrySdk
 import io.opentelemetry.sdk.common.CompletableResultCode
 import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SdkTracerProvider
+import io.opentelemetry.sdk.trace.data.SpanData
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
 import io.opentelemetry.sdk.trace.export.SpanExporter
-import io.opentelemetry.sdk.trace.data.SpanData
-import org.slf4j.LoggerFactory
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.TimeUnit
+import org.slf4j.LoggerFactory
 
 /**
  * Configuration utility for setting up OpenTelemetry to export traces to LangSmith.
@@ -41,14 +41,12 @@ object OpenTelemetryConfig {
         /** Batch export - best for production. */
         BATCH,
         /** Simple synchronous export on span.end() - best for testing. */
-        SIMPLE
+        SIMPLE,
     }
 
-    @JvmStatic
-    fun builder(): Builder = Builder()
+    @JvmStatic fun builder(): Builder = Builder()
 
-    @JvmStatic
-    fun flush(): Boolean = flush(5, TimeUnit.SECONDS)
+    @JvmStatic fun flush(): Boolean = flush(5, TimeUnit.SECONDS)
 
     @JvmStatic
     fun flush(timeout: Long, unit: TimeUnit): Boolean {
@@ -102,10 +100,17 @@ object OpenTelemetryConfig {
         private var maxBatchSize: Int = 512
 
         fun apiKey(apiKey: String) = apply { this.apiKey = apiKey }
+
         fun projectName(projectName: String?) = apply { this.projectName = projectName }
+
         fun serviceName(serviceName: String?) = apply { this.serviceName = serviceName }
+
         fun baseUrl(baseUrl: String?) = apply { this.baseUrl = baseUrl }
-        fun processorType(processorType: SpanProcessorType) = apply { this.processorType = processorType }
+
+        fun processorType(processorType: SpanProcessorType) = apply {
+            this.processorType = processorType
+        }
+
         fun maxBatchSize(maxBatchSize: Int) = apply { this.maxBatchSize = maxBatchSize }
 
         fun build(): io.opentelemetry.api.OpenTelemetry {
@@ -113,35 +118,44 @@ object OpenTelemetryConfig {
                 "LangSmith API key is required. Set it using apiKey() or LANGSMITH_API_KEY environment variable."
             }
             val endpointUrl = buildOtlpEndpoint(baseUrl)
-            val exporterBuilder = OtlpHttpSpanExporter.builder()
-                .setEndpoint(endpointUrl)
-                .addHeader("x-api-key", apiKey!!)
+            val exporterBuilder =
+                OtlpHttpSpanExporter.builder()
+                    .setEndpoint(endpointUrl)
+                    .addHeader("x-api-key", apiKey!!)
             if (!projectName.isNullOrEmpty()) {
                 exporterBuilder.addHeader("Langsmith-Project", projectName!!)
             }
             val spanExporter = exporterBuilder.build()
             val loggingExporter = LoggingSpanExporter(spanExporter)
-            val resource = Resource.getDefault().merge(
-                Resource.builder()
-                    .put("service.name", serviceName ?: "langsmith-java-otel-wrappers")
+            val resource =
+                Resource.getDefault()
+                    .merge(
+                        Resource.builder()
+                            .put("service.name", serviceName ?: "langsmith-java-otel-wrappers")
+                            .build()
+                    )
+            val spanProcessor =
+                when (processorType) {
+                    SpanProcessorType.SIMPLE -> SimpleSpanProcessor.create(loggingExporter)
+                    SpanProcessorType.BATCH ->
+                        BatchSpanProcessor.builder(loggingExporter)
+                            .setScheduleDelay(100, TimeUnit.MILLISECONDS)
+                            .setMaxExportBatchSize(maxBatchSize)
+                            .setExporterTimeout(5, TimeUnit.SECONDS)
+                            .build()
+                }
+            val tracerProvider =
+                SdkTracerProvider.builder()
+                    .addSpanProcessor(spanProcessor)
+                    .setResource(resource)
                     .build()
-            )
-            val spanProcessor = when (processorType) {
-                SpanProcessorType.SIMPLE -> SimpleSpanProcessor.create(loggingExporter)
-                SpanProcessorType.BATCH -> BatchSpanProcessor.builder(loggingExporter)
-                    .setScheduleDelay(100, TimeUnit.MILLISECONDS)
-                    .setMaxExportBatchSize(maxBatchSize)
-                    .setExporterTimeout(5, TimeUnit.SECONDS)
-                    .build()
-            }
-            val tracerProvider = SdkTracerProvider.builder()
-                .addSpanProcessor(spanProcessor)
-                .setResource(resource)
-                .build()
-            return OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal()
+            return OpenTelemetrySdk.builder()
+                .setTracerProvider(tracerProvider)
+                .buildAndRegisterGlobal()
         }
 
-        private fun buildOtlpEndpoint(baseUrl: String?): String = OpenTelemetryConfig.buildOtlpEndpoint(baseUrl)
+        private fun buildOtlpEndpoint(baseUrl: String?): String =
+            OpenTelemetryConfig.buildOtlpEndpoint(baseUrl)
     }
 
     private class LoggingSpanExporter(private val delegate: SpanExporter) : SpanExporter {
@@ -149,7 +163,9 @@ object OpenTelemetryConfig {
             if (DEBUG) {
                 logger.debug("[LangSmith] Exporting ${spans.size} span(s):")
                 for (span in spans) {
-                    logger.debug("  - ${span.name} (kind=${span.kind}, attributes=${span.attributes.size()})")
+                    logger.debug(
+                        "  - ${span.name} (kind=${span.kind}, attributes=${span.attributes.size()})"
+                    )
                 }
             }
             val result = delegate.export(spans)
@@ -157,12 +173,18 @@ object OpenTelemetryConfig {
                 try {
                     result.join(5, TimeUnit.SECONDS)
                     if (!result.isSuccess) {
-                        logger.error("[LangSmith ERROR] Failed to export ${spans.size} span(s) to LangSmith")
+                        logger.error(
+                            "[LangSmith ERROR] Failed to export ${spans.size} span(s) to LangSmith"
+                        )
                         logExportException(result)
                         for (span in spans) {
-                            logger.error("  - ${span.name} (traceId=${span.traceId}, spanId=${span.spanId})")
+                            logger.error(
+                                "  - ${span.name} (traceId=${span.traceId}, spanId=${span.spanId})"
+                            )
                         }
-                        logger.error("  This usually indicates a network error, authentication problem, or invalid span data")
+                        logger.error(
+                            "  This usually indicates a network error, authentication problem, or invalid span data"
+                        )
                         logger.error("  Check your LANGSMITH_API_KEY and network connectivity")
                     } else {
                         logger.debug("[LangSmith] Successfully exported ${spans.size} span(s)")
@@ -173,7 +195,9 @@ object OpenTelemetryConfig {
             } else {
                 result.whenComplete {
                     if (!result.isSuccess) {
-                        logger.error("[LangSmith ERROR] Failed to export ${spans.size} span(s) to LangSmith")
+                        logger.error(
+                            "[LangSmith ERROR] Failed to export ${spans.size} span(s) to LangSmith"
+                        )
                         logExportException(result)
                         logger.error("  Set LANGSMITH_DEBUG=true for more details")
                     }
@@ -198,8 +222,9 @@ object OpenTelemetryConfig {
         }
 
         companion object {
-            private val DEBUG = java.lang.Boolean.getBoolean("langsmith.debug") ||
-                "true".equals(System.getenv("LANGSMITH_DEBUG"), ignoreCase = true)
+            private val DEBUG =
+                java.lang.Boolean.getBoolean("langsmith.debug") ||
+                    "true".equals(System.getenv("LANGSMITH_DEBUG"), ignoreCase = true)
 
             private fun logExportException(result: CompletableResultCode) {
                 try {
@@ -214,7 +239,7 @@ object OpenTelemetryConfig {
                             logger.debug("  Stack trace:\n${sw}")
                         }
                     }
-                } catch (_: Exception) { }
+                } catch (_: Exception) {}
             }
         }
     }

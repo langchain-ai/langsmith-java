@@ -6,8 +6,8 @@ import io.opentelemetry.context.Scope
 import java.util.Optional
 
 /**
- * Immutable context for experiment metadata that will be automatically
- * attached to OpenTelemetry spans.
+ * Immutable context for experiment metadata that will be automatically attached to OpenTelemetry
+ * spans.
  *
  * When you set experiment context using this class, the wrapped OpenAI client will automatically
  * attach it to the spans it creates. Follows the OpenTelemetry Context pattern with immutable
@@ -47,7 +47,9 @@ class ExperimentContext private constructor(private val data: ExperimentData) {
     }
 
     fun getReferenceExampleId(): Optional<String> = Optional.ofNullable(data.referenceExampleId)
+
     fun getSessionId(): Optional<String> = Optional.ofNullable(data.sessionId)
+
     fun getMetadata(): Map<String, String> = data.metadata
 
     companion object {
@@ -77,10 +79,10 @@ class ExperimentContext private constructor(private val data: ExperimentData) {
         val metadata: Map<String, String>,
     ) {
         fun withReferenceExampleId(exampleId: String) = copy(referenceExampleId = exampleId)
+
         fun withSessionId(sessionId: String) = copy(sessionId = sessionId)
-        fun withMetadata(key: String, value: String) = copy(
-            metadata = metadata + (key to value)
-        )
+
+        fun withMetadata(key: String, value: String) = copy(metadata = metadata + (key to value))
 
         companion object {
             fun empty() = ExperimentData(null, null, emptyMap())

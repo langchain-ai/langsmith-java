@@ -1,6 +1,5 @@
 package com.langchain.smith.wrappers.openai
 
-import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanBuilder
 import io.opentelemetry.api.trace.SpanKind
@@ -12,13 +11,17 @@ internal object TracingUtils {
 
     fun getTracer(): Tracer {
         return try {
-            val tracer = io.opentelemetry.api.GlobalOpenTelemetry.get().getTracer(INSTRUMENTATION_NAME)
-            val debug = java.lang.Boolean.getBoolean("langsmith.debug") ||
-                "true".equals(System.getenv("LANGSMITH_DEBUG"), ignoreCase = true)
+            val tracer =
+                io.opentelemetry.api.GlobalOpenTelemetry.get().getTracer(INSTRUMENTATION_NAME)
+            val debug =
+                java.lang.Boolean.getBoolean("langsmith.debug") ||
+                    "true".equals(System.getenv("LANGSMITH_DEBUG"), ignoreCase = true)
             if (debug) {
                 val otel = io.opentelemetry.api.GlobalOpenTelemetry.get()
                 val isNoop = otel.javaClass.name.contains("Noop")
-                println("[TracingUtils] Tracer obtained: ${tracer.javaClass.name}, OpenTelemetry isNoop: $isNoop")
+                println(
+                    "[TracingUtils] Tracer obtained: ${tracer.javaClass.name}, OpenTelemetry isNoop: $isNoop"
+                )
             }
             tracer
         } catch (e: Exception) {
@@ -26,14 +29,20 @@ internal object TracingUtils {
         }
     }
 
-    fun createSpanBuilder(model: String?, operationType: String, spanKind: String? = "llm"): SpanBuilder {
+    fun createSpanBuilder(
+        model: String?,
+        operationType: String,
+        spanKind: String? = "llm",
+    ): SpanBuilder {
         val tracer = getTracer()
         val spanName = "$operationType ${model ?: "unknown"}"
-        val builder = tracer.spanBuilder(spanName)
-            .setSpanKind(SpanKind.CLIENT)
-            .setAttribute("gen_ai.system", "openai")
-            .setAttribute("gen_ai.operation.name", operationType)
-            .setAttribute("gen_ai.provider.name", "openai")
+        val builder =
+            tracer
+                .spanBuilder(spanName)
+                .setSpanKind(SpanKind.CLIENT)
+                .setAttribute("gen_ai.system", "openai")
+                .setAttribute("gen_ai.operation.name", operationType)
+                .setAttribute("gen_ai.provider.name", "openai")
         spanKind?.let { builder.setAttribute("langsmith.span.kind", it) }
         return builder
     }
@@ -56,7 +65,12 @@ internal object TracingUtils {
         messagesJson?.let { span.setAttribute("gen_ai.output.messages", it) }
     }
 
-    fun setResponseAttributes(span: Span, inputTokens: Long?, outputTokens: Long?, totalTokens: Long?) {
+    fun setResponseAttributes(
+        span: Span,
+        inputTokens: Long?,
+        outputTokens: Long?,
+        totalTokens: Long?,
+    ) {
         inputTokens?.let { span.setAttribute("gen_ai.usage.input_tokens", it) }
         outputTokens?.let { span.setAttribute("gen_ai.usage.output_tokens", it) }
         totalTokens?.let { span.setAttribute("gen_ai.usage.total_tokens", it) }
