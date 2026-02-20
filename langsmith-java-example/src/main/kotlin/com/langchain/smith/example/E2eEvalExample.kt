@@ -1,6 +1,8 @@
 package com.langchain.smith.example
 
 import com.langchain.smith.client.LangsmithClient
+import com.langchain.smith.example.util.buildDatasetUrl
+import com.langchain.smith.example.util.generateExampleId
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.datasets.DatasetCreateParams
@@ -86,7 +88,7 @@ fun main() {
     // Configure LangSmith client first (needed to create session)
     val langsmithClient: LangsmithClient = LangsmithOkHttpClient.fromEnv()
 
-    val datasetName = "Q&A Evaluation Dataset - Java Example"
+    val datasetName = "Q&A Evaluation Dataset - Kotlin Example"
     val experimentName = "E2eEvalExample-${OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"))}"
 
     // Define test cases with questions and expected answers
