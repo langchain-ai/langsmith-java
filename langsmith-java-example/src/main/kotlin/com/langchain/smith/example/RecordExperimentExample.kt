@@ -1,6 +1,9 @@
 package com.langchain.smith.example
 
 import com.langchain.smith.client.LangsmithClient
+import com.langchain.smith.example.util.buildDatasetUrl
+import com.langchain.smith.example.util.buildSessionUrl
+import com.langchain.smith.example.util.generateExampleId
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.datasets.Dataset
@@ -44,7 +47,7 @@ fun main() {
     // Configure client from environment variables
     val client: LangsmithClient = LangsmithOkHttpClient.fromEnv()
 
-    val datasetName = "Experiment Dataset - Java Example"
+    val datasetName = "Experiment Dataset - Kotlin Example"
     val experimentName = "My First Experiment - ${OffsetDateTime.now()}"
 
     println("=".repeat(60))

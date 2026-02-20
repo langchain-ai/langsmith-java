@@ -1,4 +1,4 @@
-package com.langchain.smith.example
+package com.langchain.smith.example.util
 
 import com.langchain.smith.models.datasets.Dataset
 import java.nio.charset.StandardCharsets

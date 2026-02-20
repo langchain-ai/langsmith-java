@@ -1,8 +1,8 @@
-# LangSmith Java Examples
+# LangSmith Examples
 
-This module contains runnable examples organized by feature:
-- **`otel/`** - OpenTelemetry tracing examples
-- **`prompt/`** - Prompt management examples
+This module contains runnable Kotlin examples organized by feature:
+- **`example/`** - SDK examples (ListRuns, Dataset, PromptManagement, RecordExperiment, E2eEval)
+- **`example/otel/`** - OpenTelemetry tracing examples
 
 ## Prerequisites
 
@@ -20,22 +20,7 @@ The `langchain.baseUrl` system property (or `LANGSMITH_ENDPOINT` environment var
 
 ## OpenTelemetry Tracing Examples
 
-Located in `src/main/java/com/langchain/smith/example/otel/`
-
-### Jaeger (Local)
-
-Send traces to local Jaeger instance.
-
-```bash
-# Start Jaeger
-docker run -d --name jaeger -p 4318:4318 -p 16686:16686 jaegertracing/all-in-one:latest
-
-# Run example
-./gradlew :langsmith-java-example:run -Pexample=OtelJaeger
-
-# View traces
-open http://localhost:16686
-```
+Located in `src/main/kotlin/com/langchain/smith/example/otel/`
 
 ### OpenAI + LangSmith (Real API Calls)
 
@@ -80,9 +65,9 @@ curl -X POST http://localhost:8080/api/chat \
 curl "http://localhost:8080/api/analyze?text=This%20is%20great"
 ```
 
-## Prompt Management Examples
+## Prompt Management Example
 
-Located in `src/main/java/com/langchain/smith/example/prompt/`
+Located in `src/main/kotlin/com/langchain/smith/example/`
 
 ### Prompt Management (Getting Started)
 

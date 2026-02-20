@@ -11,7 +11,7 @@ import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoWithLookups
 
 /**
- * Demonstrates how to manage prompts programmatically using the LangSmith Java
+ * Demonstrates how to manage prompts programmatically using the LangSmith
  * SDK.
  *
  * This example shows:
@@ -369,4 +369,3 @@ private fun extractPromptContent(manifestJson: JsonValue): String {
 
 private fun getOwnerFromEnv(): String =
     System.getenv("LANGSMITH_OWNER")?.takeIf { it.isNotEmpty() } ?: "-"
-

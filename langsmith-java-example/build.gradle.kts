@@ -1,12 +1,18 @@
 plugins {
-    id("langchain.java")
     application
     kotlin("jvm")
+    id("org.jetbrains.kotlin.plugin.spring") version "2.0.21"
     id("org.springframework.boot") version "2.7.18" apply false
 }
 
 repositories {
     mavenCentral()
+}
+
+// Align with Kotlin JVM target (Kotlin plugin applies Java plugin; keep targets consistent)
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
@@ -22,61 +28,58 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    // Allow using more modern APIs, like `List.of` and `Map.of`, in examples.
-    options.release.set(9)
-}
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_9)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
     }
 }
 
 application {
-    // Use `./gradlew :langsmith-java-example:run` to run `Main`
-    // Use `./gradlew :langsmith-java-example:run -Pexample=Something` to run `SomethingExample`
+    // Require -Pexample=Name to run an example (e.g. -Pexample=ListRuns, -Pexample=OtelLangSmith)
     mainClass = if (project.hasProperty("example")) {
-        val exampleName = project.property("example") as String
+        var exampleName = project.property("example") as String
+        val aliases = mapOf(
+            "OtelLangSmithSimple" to "OtelLangSmith",
+            "PromptManagmentExample" to "PromptManagement",
+            "PromptManagment" to "PromptManagement",
+        )
+        exampleName = aliases[exampleName] ?: exampleName
         val baseName = if (exampleName.endsWith("Example")) exampleName else "${exampleName}Example"
-        
-        // Search in multiple subdirectories: root, otel, prompt
         val searchPaths = listOf(
             "" to "com.langchain.smith.example",
-            "otel/" to "com.langchain.smith.example.otel",
-            "prompt/" to "com.langchain.smith.example.prompt"
+            "otel/" to "com.langchain.smith.example.otel"
         )
-        
         var foundPackage = ""
-        var isKotlin = false
-        
         for ((subdir, packageName) in searchPaths) {
-            val javaFile = file("src/main/java/com/langchain/smith/example/${subdir}${baseName}.java")
             val kotlinFile = file("src/main/kotlin/com/langchain/smith/example/${subdir}${baseName}.kt")
-            
-            if (javaFile.exists()) {
+            if (kotlinFile.exists()) {
                 foundPackage = packageName
-                isKotlin = false
-                break
-            } else if (kotlinFile.exists()) {
-                foundPackage = packageName
-                isKotlin = true
                 break
             }
         }
-        
         if (foundPackage.isNotEmpty()) {
-            "${foundPackage}.${baseName}${if (isKotlin) "Kt" else ""}"
+            "${foundPackage}.${baseName}Kt"
         } else {
-            // Default: assume Kotlin in root for backwards compatibility
-            "com.langchain.smith.example.${baseName}Kt"
+            throw GradleException(
+                "Example '$exampleName' not found. No ${baseName}.kt in " +
+                "src/main/kotlin/.../example/ or .../example/otel/. " +
+                "Use -Pexample=ListRuns, -Pexample=OtelLangSmith, -Pexample=OtelLangSmithSimple, -Pexample=OtelOpenAI, etc."
+            )
         }
     } else {
-        "Main"
+        "Main"  // placeholder; run task doFirst will require -Pexample=
     }
 }
 
-// Export stdin to examples for readln()
+// Export stdin to examples for readln(); require -Pexample= when running (configuration-cache safe: no project access in doFirst)
 tasks.named<JavaExec>("run") {
     standardInput = System.`in`
+    doFirst {
+        if (mainClass.get() == "Main") {
+            throw GradleException(
+                "Example module requires -Pexample=ExampleName. " +
+                "e.g. ./gradlew :langsmith-java-example:run -Pexample=ListRuns"
+            )
+        }
+    }
 }
