@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 
 internal class VersionServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =
@@ -26,7 +26,7 @@ internal class VersionServiceTest {
         page.items().forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveDiff() {
         val client =

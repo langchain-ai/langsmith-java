@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 internal class DatasetServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =
@@ -36,7 +36,7 @@ internal class DatasetServiceTest {
         datasets.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun listComparative() {
         val client =
@@ -52,7 +52,7 @@ internal class DatasetServiceTest {
         page.items().forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun listFeedback() {
         val client =
@@ -68,7 +68,7 @@ internal class DatasetServiceTest {
         page.items().forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun listSessions() {
         val client =
@@ -84,7 +84,7 @@ internal class DatasetServiceTest {
         page.items().forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveSessionsBulk() {
         val client =

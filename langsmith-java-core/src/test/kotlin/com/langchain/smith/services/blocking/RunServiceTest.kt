@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 internal class RunServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun ingestBatch() {
         val client =
@@ -139,7 +139,7 @@ internal class RunServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun query() {
         val client =

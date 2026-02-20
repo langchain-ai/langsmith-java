@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 
 internal class IndexServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -32,7 +32,7 @@ internal class IndexServiceAsyncTest {
         index.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun sync() {
         val client =

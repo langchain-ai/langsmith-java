@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 internal class CommitServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -37,7 +37,7 @@ internal class CommitServiceTest {
         commit.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client =
@@ -63,7 +63,7 @@ internal class CommitServiceTest {
         commit.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =

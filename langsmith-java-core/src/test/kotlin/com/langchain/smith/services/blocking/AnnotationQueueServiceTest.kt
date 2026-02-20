@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test
 
 internal class AnnotationQueueServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client =
@@ -35,7 +35,7 @@ internal class AnnotationQueueServiceTest {
         annotationQueue.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client =
@@ -85,7 +85,7 @@ internal class AnnotationQueueServiceTest {
         annotationQueue.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
         val client =
@@ -101,7 +101,7 @@ internal class AnnotationQueueServiceTest {
         annotationQueue.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun annotationQueues() {
         val client =
@@ -154,7 +154,7 @@ internal class AnnotationQueueServiceTest {
         annotationQueueSchema.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun createRunStatus() {
         val client =
@@ -177,7 +177,7 @@ internal class AnnotationQueueServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun export() {
         val client =
@@ -200,7 +200,7 @@ internal class AnnotationQueueServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun populate() {
         val client =
@@ -222,7 +222,7 @@ internal class AnnotationQueueServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveAnnotationQueues() {
         val client =
@@ -238,7 +238,7 @@ internal class AnnotationQueueServiceTest {
         page.items().forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveQueues() {
         val client =
@@ -255,7 +255,7 @@ internal class AnnotationQueueServiceTest {
         annotationQueueSchemata.forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveRun() {
         val client =
@@ -278,7 +278,7 @@ internal class AnnotationQueueServiceTest {
         runSchemaWithAnnotationQueueInfo.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveSize() {
         val client =
@@ -295,7 +295,7 @@ internal class AnnotationQueueServiceTest {
         annotationQueueSizeSchema.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveTotalArchived() {
         val client =
@@ -318,7 +318,7 @@ internal class AnnotationQueueServiceTest {
         annotationQueueSizeSchema.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveTotalSize() {
         val client =

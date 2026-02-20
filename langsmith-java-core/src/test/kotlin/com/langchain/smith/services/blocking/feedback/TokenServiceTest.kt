@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 
 internal class TokenServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -52,7 +52,7 @@ internal class TokenServiceTest {
         token.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client =
@@ -77,7 +77,7 @@ internal class TokenServiceTest {
         token.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client =
@@ -111,7 +111,7 @@ internal class TokenServiceTest {
         token.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =

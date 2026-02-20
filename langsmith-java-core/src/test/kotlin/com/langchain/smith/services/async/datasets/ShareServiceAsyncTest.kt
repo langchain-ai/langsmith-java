@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 
 internal class ShareServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -33,7 +33,7 @@ internal class ShareServiceAsyncTest {
         datasetShareSchema.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client =
@@ -52,7 +52,7 @@ internal class ShareServiceAsyncTest {
         unwrappedDatasetShareSchema?.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun deleteAll() {
         val client =

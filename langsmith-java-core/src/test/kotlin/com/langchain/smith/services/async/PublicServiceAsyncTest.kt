@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 internal class PublicServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveFeedbacks() {
         val client =
