@@ -101,9 +101,9 @@ fun main() {
         val manifestResponse = client.commits()
             .retrieve(
                 CommitRetrieveParams.builder()
-                    .owner(JsonValue.from(owner))
-                    .repo(JsonValue.from(promptName))
-                    .commit(JsonValue.from("latest"))
+                    .owner(owner)
+                    .repo(promptName)
+                    .commit("latest")
                     .build()
             )
 
@@ -295,9 +295,9 @@ private fun hasLatestCommit(client: LangsmithClient, promptName: String, owner: 
     return runCatching {
         client.commits().retrieve(
             CommitRetrieveParams.builder()
-                .owner(JsonValue.from(owner))
-                .repo(JsonValue.from(promptName))
-                .commit(JsonValue.from("latest"))
+                .owner(owner)
+                .repo(promptName)
+                .commit("latest")
                 .build()
         )
     }.isSuccess
@@ -312,7 +312,7 @@ private fun createCommit(
     client: LangsmithClient,
     promptName: String,
     owner: String,
-    parentCommit: String?
+    parentCommitHash: String?
 ): Boolean {
     println("3. Adding prompt content using client.commits().create()...")
     // Use the builder API - no need to know internal manifest structure
@@ -322,12 +322,12 @@ private fun createCommit(
         .inputVariables("topic")
         .build()
 
-    val params = CommitCreateParams.builder()
-        .owner(JsonValue.from(owner))
-        .repo(JsonValue.from(promptName))
+    val paramsBuilder = CommitCreateParams.builder()
+        .owner(owner)
+        .repo(promptName)
         .manifest(JsonValue.from(manifest))
-        .apply { parentCommit?.let { parentCommit(it) } }
-        .build()
+    parentCommitHash?.let { paramsBuilder.parentCommit(it) }
+    val params = paramsBuilder.build()
 
     return runCatching {
         client.commits().create(params)
