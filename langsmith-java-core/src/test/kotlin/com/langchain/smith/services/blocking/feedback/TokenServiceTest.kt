@@ -2,7 +2,6 @@
 
 package com.langchain.smith.services.blocking.feedback
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.feedback.tokens.FeedbackIngestTokenCreateSchema
@@ -13,9 +12,7 @@ import com.langchain.smith.models.sessions.TimedeltaInput
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class TokenServiceTest {
 
     @Disabled("Prism tests are disabled")
@@ -23,7 +20,6 @@ internal class TokenServiceTest {
     fun create() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -61,7 +57,6 @@ internal class TokenServiceTest {
     fun retrieve() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -87,7 +82,6 @@ internal class TokenServiceTest {
     fun update() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -122,7 +116,6 @@ internal class TokenServiceTest {
     fun list() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")

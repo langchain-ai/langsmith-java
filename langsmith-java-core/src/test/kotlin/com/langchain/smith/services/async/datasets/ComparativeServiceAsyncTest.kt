@@ -2,16 +2,13 @@
 
 package com.langchain.smith.services.async.datasets
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.datasets.comparative.ComparativeCreateParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class ComparativeServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
@@ -19,7 +16,6 @@ internal class ComparativeServiceAsyncTest {
     fun create() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -53,7 +49,6 @@ internal class ComparativeServiceAsyncTest {
     fun list() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -71,7 +66,6 @@ internal class ComparativeServiceAsyncTest {
     fun delete() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")

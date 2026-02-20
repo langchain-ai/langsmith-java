@@ -2,7 +2,6 @@
 
 package com.langchain.smith.services.blocking
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.AttachmentsOperations
@@ -15,9 +14,7 @@ import com.langchain.smith.models.examples.ExampleUploadFromCsvParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class ExampleServiceTest {
 
     @Disabled("Prism tests are disabled")
@@ -25,7 +22,6 @@ internal class ExampleServiceTest {
     fun create() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -69,7 +65,6 @@ internal class ExampleServiceTest {
     fun retrieve() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -93,7 +88,6 @@ internal class ExampleServiceTest {
     fun update() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -143,7 +137,6 @@ internal class ExampleServiceTest {
     fun list() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -160,7 +153,6 @@ internal class ExampleServiceTest {
     fun delete() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -177,7 +169,6 @@ internal class ExampleServiceTest {
     fun deleteAll() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -199,7 +190,6 @@ internal class ExampleServiceTest {
     fun retrieveCount() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -224,7 +214,6 @@ internal class ExampleServiceTest {
     fun uploadFromCsv() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
