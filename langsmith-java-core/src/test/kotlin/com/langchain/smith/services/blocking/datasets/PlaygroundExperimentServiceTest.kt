@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 internal class PlaygroundExperimentServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun batch() {
         val client =
@@ -81,7 +81,7 @@ internal class PlaygroundExperimentServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun stream() {
         val client =

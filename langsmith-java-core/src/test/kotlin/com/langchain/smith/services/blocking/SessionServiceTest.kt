@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 
 internal class SessionServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -51,7 +51,7 @@ internal class SessionServiceTest {
         tracerSessionWithoutVirtualFields.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client =
@@ -75,7 +75,7 @@ internal class SessionServiceTest {
         tracerSession.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client =
@@ -106,7 +106,7 @@ internal class SessionServiceTest {
         tracerSessionWithoutVirtualFields.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =
@@ -122,7 +122,7 @@ internal class SessionServiceTest {
         page.items().forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
         val client =
@@ -138,7 +138,7 @@ internal class SessionServiceTest {
         session.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun dashboard() {
         val client =

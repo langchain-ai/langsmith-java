@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
 
 internal class ExampleServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -61,7 +61,7 @@ internal class ExampleServiceAsyncTest {
         example.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client =
@@ -85,7 +85,7 @@ internal class ExampleServiceAsyncTest {
         example.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client =
@@ -135,7 +135,7 @@ internal class ExampleServiceAsyncTest {
         example.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =
@@ -152,7 +152,7 @@ internal class ExampleServiceAsyncTest {
         page.items().forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
         val client =
@@ -169,7 +169,7 @@ internal class ExampleServiceAsyncTest {
         example.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun deleteAll() {
         val client =
@@ -191,7 +191,7 @@ internal class ExampleServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveCount() {
         val client =
@@ -218,7 +218,7 @@ internal class ExampleServiceAsyncTest {
         val response = responseFuture.get()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun uploadFromCsv() {
         val client =

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 internal class RunServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -56,7 +56,7 @@ internal class RunServiceAsyncTest {
         unwrappedRun?.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delta() {
         val client =

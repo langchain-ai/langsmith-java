@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 internal class RunServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -36,7 +36,7 @@ internal class RunServiceTest {
         runs.forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client =
@@ -60,7 +60,7 @@ internal class RunServiceTest {
         run.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =
@@ -85,7 +85,7 @@ internal class RunServiceTest {
         runSchemaWithAnnotationQueueInfos.forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun deleteAll() {
         val client =
@@ -109,7 +109,7 @@ internal class RunServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun deleteQueue() {
         val client =

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 internal class RepoServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -38,7 +38,7 @@ internal class RepoServiceAsyncTest {
         createRepoResponse.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client =
@@ -58,7 +58,7 @@ internal class RepoServiceAsyncTest {
         getRepoResponse.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client =
@@ -86,7 +86,7 @@ internal class RepoServiceAsyncTest {
         createRepoResponse.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =
@@ -103,7 +103,7 @@ internal class RepoServiceAsyncTest {
         page.response().validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
         val client =
