@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 
 internal class InsightServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -70,7 +70,7 @@ internal class InsightServiceAsyncTest {
         insight.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client =
@@ -94,7 +94,7 @@ internal class InsightServiceAsyncTest {
         insight.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
         val client =
@@ -117,7 +117,7 @@ internal class InsightServiceAsyncTest {
         insight.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveJob() {
         val client =
@@ -140,7 +140,7 @@ internal class InsightServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveRuns() {
         val client =

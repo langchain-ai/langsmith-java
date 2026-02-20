@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 internal class BulkServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -58,7 +58,7 @@ internal class BulkServiceAsyncTest {
         examples.forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun patchAll() {
         val client =

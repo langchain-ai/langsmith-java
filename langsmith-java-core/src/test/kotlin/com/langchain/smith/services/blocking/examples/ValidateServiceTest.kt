@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 internal class ValidateServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -24,7 +24,7 @@ internal class ValidateServiceTest {
         exampleValidationResult.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun bulk() {
         val client =

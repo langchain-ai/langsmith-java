@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 
 internal class DatasetServiceTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun create() {
         val client =
@@ -71,7 +71,7 @@ internal class DatasetServiceTest {
         dataset.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieve() {
         val client =
@@ -87,7 +87,7 @@ internal class DatasetServiceTest {
         dataset.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun update() {
         val client =
@@ -159,7 +159,7 @@ internal class DatasetServiceTest {
         dataset.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun list() {
         val client =
@@ -175,7 +175,7 @@ internal class DatasetServiceTest {
         page.items().forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun delete() {
         val client =
@@ -191,7 +191,7 @@ internal class DatasetServiceTest {
         dataset.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun clone() {
         val client =
@@ -216,7 +216,7 @@ internal class DatasetServiceTest {
         response.forEach { it.validate() }
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveCsv() {
         val client =
@@ -238,7 +238,7 @@ internal class DatasetServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveJsonl() {
         val client =
@@ -260,7 +260,7 @@ internal class DatasetServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveOpenAI() {
         val client =
@@ -282,7 +282,7 @@ internal class DatasetServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveOpenAIFt() {
         val client =
@@ -304,7 +304,7 @@ internal class DatasetServiceTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun retrieveVersion() {
         val client =
@@ -327,7 +327,7 @@ internal class DatasetServiceTest {
         datasetVersion.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun updateTags() {
         val client =
@@ -350,7 +350,7 @@ internal class DatasetServiceTest {
         datasetVersion.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     fun upload() {
         val client =
