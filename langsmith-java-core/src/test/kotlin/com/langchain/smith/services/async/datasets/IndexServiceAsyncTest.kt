@@ -2,14 +2,11 @@
 
 package com.langchain.smith.services.async.datasets
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.models.datasets.index.IndexCreateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class IndexServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
@@ -17,7 +14,6 @@ internal class IndexServiceAsyncTest {
     fun create() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -41,7 +37,6 @@ internal class IndexServiceAsyncTest {
     fun sync() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")

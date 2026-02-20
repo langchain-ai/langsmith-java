@@ -2,7 +2,6 @@
 
 package com.langchain.smith.services.blocking.examples
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.AttachmentsOperations
@@ -10,9 +9,7 @@ import com.langchain.smith.models.examples.bulk.BulkCreateParams
 import com.langchain.smith.models.examples.bulk.BulkPatchAllParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class BulkServiceTest {
 
     @Disabled("Prism tests are disabled")
@@ -20,7 +17,6 @@ internal class BulkServiceTest {
     fun create() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -66,7 +62,6 @@ internal class BulkServiceTest {
     fun patchAll() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
