@@ -2,7 +2,6 @@
 
 package com.langchain.smith.services.blocking
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.datasets.DataType
@@ -20,9 +19,7 @@ import com.langchain.smith.models.datasets.DatasetUploadParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class DatasetServiceTest {
 
     @Disabled("Prism tests are disabled")
@@ -30,7 +27,6 @@ internal class DatasetServiceTest {
     fun create() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -80,7 +76,6 @@ internal class DatasetServiceTest {
     fun retrieve() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -97,7 +92,6 @@ internal class DatasetServiceTest {
     fun update() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -170,7 +164,6 @@ internal class DatasetServiceTest {
     fun list() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -187,7 +180,6 @@ internal class DatasetServiceTest {
     fun delete() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -204,7 +196,6 @@ internal class DatasetServiceTest {
     fun clone() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -230,7 +221,6 @@ internal class DatasetServiceTest {
     fun retrieveCsv() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -253,7 +243,6 @@ internal class DatasetServiceTest {
     fun retrieveJsonl() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -276,7 +265,6 @@ internal class DatasetServiceTest {
     fun retrieveOpenAI() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -299,7 +287,6 @@ internal class DatasetServiceTest {
     fun retrieveOpenAIFt() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -322,7 +309,6 @@ internal class DatasetServiceTest {
     fun retrieveVersion() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -346,7 +332,6 @@ internal class DatasetServiceTest {
     fun updateTags() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -370,7 +355,6 @@ internal class DatasetServiceTest {
     fun upload() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")

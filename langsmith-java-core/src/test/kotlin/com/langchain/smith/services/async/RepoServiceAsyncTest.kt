@@ -2,7 +2,6 @@
 
 package com.langchain.smith.services.async
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.models.repos.RepoCreateParams
 import com.langchain.smith.models.repos.RepoDeleteParams
@@ -10,9 +9,7 @@ import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class RepoServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
@@ -20,7 +17,6 @@ internal class RepoServiceAsyncTest {
     fun create() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -47,7 +43,6 @@ internal class RepoServiceAsyncTest {
     fun retrieve() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -68,7 +63,6 @@ internal class RepoServiceAsyncTest {
     fun update() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -97,7 +91,6 @@ internal class RepoServiceAsyncTest {
     fun list() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -115,7 +108,6 @@ internal class RepoServiceAsyncTest {
     fun delete() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")

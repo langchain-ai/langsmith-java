@@ -2,7 +2,6 @@
 
 package com.langchain.smith.services.blocking
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.annotationqueues.AnnotationQueueAnnotationQueuesParams
@@ -16,9 +15,7 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueUpdateParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class AnnotationQueueServiceTest {
 
     @Disabled("Prism tests are disabled")
@@ -26,7 +23,6 @@ internal class AnnotationQueueServiceTest {
     fun retrieve() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -44,7 +40,6 @@ internal class AnnotationQueueServiceTest {
     fun update() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -95,7 +90,6 @@ internal class AnnotationQueueServiceTest {
     fun delete() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -112,7 +106,6 @@ internal class AnnotationQueueServiceTest {
     fun annotationQueues() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -166,7 +159,6 @@ internal class AnnotationQueueServiceTest {
     fun createRunStatus() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -190,7 +182,6 @@ internal class AnnotationQueueServiceTest {
     fun export() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -214,7 +205,6 @@ internal class AnnotationQueueServiceTest {
     fun populate() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -237,7 +227,6 @@ internal class AnnotationQueueServiceTest {
     fun retrieveAnnotationQueues() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -254,7 +243,6 @@ internal class AnnotationQueueServiceTest {
     fun retrieveQueues() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -272,7 +260,6 @@ internal class AnnotationQueueServiceTest {
     fun retrieveRun() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -296,7 +283,6 @@ internal class AnnotationQueueServiceTest {
     fun retrieveSize() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -314,7 +300,6 @@ internal class AnnotationQueueServiceTest {
     fun retrieveTotalArchived() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -338,7 +323,6 @@ internal class AnnotationQueueServiceTest {
     fun retrieveTotalSize() {
         val client =
             LangsmithOkHttpClient.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")

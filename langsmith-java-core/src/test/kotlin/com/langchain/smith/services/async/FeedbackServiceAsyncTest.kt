@@ -2,7 +2,6 @@
 
 package com.langchain.smith.services.async
 
-import com.langchain.smith.TestServerExtension
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.feedback.AppFeedbackSource
@@ -12,9 +11,7 @@ import com.langchain.smith.models.feedback.FeedbackUpdateParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class FeedbackServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
@@ -22,7 +19,6 @@ internal class FeedbackServiceAsyncTest {
     fun create() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -91,7 +87,6 @@ internal class FeedbackServiceAsyncTest {
     fun retrieve() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -115,7 +110,6 @@ internal class FeedbackServiceAsyncTest {
     fun update() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -159,7 +153,6 @@ internal class FeedbackServiceAsyncTest {
     fun list() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
@@ -177,7 +170,6 @@ internal class FeedbackServiceAsyncTest {
     fun delete() {
         val client =
             LangsmithOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
                 .organizationId("My Organization ID")
