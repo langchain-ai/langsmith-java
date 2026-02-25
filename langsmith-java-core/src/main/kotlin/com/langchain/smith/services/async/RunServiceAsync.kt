@@ -5,10 +5,22 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunCreateParams
+import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
+import com.langchain.smith.models.runs.RunIngestMultipartParams
+import com.langchain.smith.models.runs.RunIngestMultipartResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
+import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunRetrieveResponse
+import com.langchain.smith.models.runs.RunUpdate2Params
+import com.langchain.smith.models.runs.RunUpdate2Response
+import com.langchain.smith.models.runs.RunUpdateParams
+import com.langchain.smith.models.runs.RunUpdateResponse
+import com.langchain.smith.services.async.runs.RuleServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -25,6 +37,91 @@ interface RunServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync
+
+    fun rules(): RuleServiceAsync
+
+    /**
+     * Queues a single run for ingestion. The request body must be a JSON-encoded run object that
+     * follows the Run schema.
+     */
+    fun create(params: RunCreateParams): CompletableFuture<RunCreateResponse> =
+        create(params, RequestOptions.none())
+
+    /** @see create */
+    fun create(
+        params: RunCreateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunCreateResponse>
+
+    /** @see create */
+    fun create(
+        run: Run,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunCreateResponse> =
+        create(RunCreateParams.builder().run(run).build(), requestOptions)
+
+    /** @see create */
+    fun create(run: Run): CompletableFuture<RunCreateResponse> = create(run, RequestOptions.none())
+
+    /** Get a specific run. */
+    fun retrieve(runId: String): CompletableFuture<RunRetrieveResponse> =
+        retrieve(runId, RunRetrieveParams.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        runId: String,
+        params: RunRetrieveParams = RunRetrieveParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunRetrieveResponse> =
+        retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see retrieve */
+    fun retrieve(
+        runId: String,
+        params: RunRetrieveParams = RunRetrieveParams.none(),
+    ): CompletableFuture<RunRetrieveResponse> = retrieve(runId, params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        params: RunRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunRetrieveResponse>
+
+    /** @see retrieve */
+    fun retrieve(params: RunRetrieveParams): CompletableFuture<RunRetrieveResponse> =
+        retrieve(params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        runId: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<RunRetrieveResponse> =
+        retrieve(runId, RunRetrieveParams.none(), requestOptions)
+
+    /**
+     * Updates a run identified by its ID. The body should contain only the fields to be changed;
+     * unknown fields are ignored.
+     */
+    fun update(runId: String, params: RunUpdateParams): CompletableFuture<RunUpdateResponse> =
+        update(runId, params, RequestOptions.none())
+
+    /** @see update */
+    fun update(
+        runId: String,
+        params: RunUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunUpdateResponse> =
+        update(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see update */
+    fun update(params: RunUpdateParams): CompletableFuture<RunUpdateResponse> =
+        update(params, RequestOptions.none())
+
+    /** @see update */
+    fun update(
+        params: RunUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunUpdateResponse>
 
     /**
      * Ingests a batch of runs in a single JSON payload. The payload must have `post` and/or `patch`
@@ -50,6 +147,41 @@ interface RunServiceAsync {
     fun ingestBatch(requestOptions: RequestOptions): CompletableFuture<RunIngestBatchResponse> =
         ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
+    /**
+     * Ingests multiple runs, feedback objects, and binary attachments in a single
+     * `multipart/form-data` request. **Part‑name pattern**: `<event>.<run_id>[.<field>]` where
+     * `event` ∈ {`post`, `patch`, `feedback`, `attachment`}.
+     * * `post|patch.<run_id>` – JSON run payload.
+     * * `post|patch.<run_id>.<field>` – out‑of‑band run data (`inputs`, `outputs`, `events`,
+     *   `error`, `extra`, `serialized`).
+     * * `feedback.<run_id>` – JSON feedback payload (must include `trace_id`).
+     * * `attachment.<run_id>.<filename>` – arbitrary binary attachment stored in S3. **Headers**:
+     *   every part must set `Content-Type` **and** either a `Content-Length` header or `length`
+     *   parameter. Per‑part `Content-Encoding` is **not** allowed; the top‑level request may be
+     *   `Content-Encoding: gzip` or `Content-Encoding: zstd`. **Best performance** for high‑volume
+     *   ingestion.
+     */
+    fun ingestMultipart(): CompletableFuture<RunIngestMultipartResponse> =
+        ingestMultipart(RunIngestMultipartParams.none())
+
+    /** @see ingestMultipart */
+    fun ingestMultipart(
+        params: RunIngestMultipartParams = RunIngestMultipartParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunIngestMultipartResponse>
+
+    /** @see ingestMultipart */
+    fun ingestMultipart(
+        params: RunIngestMultipartParams = RunIngestMultipartParams.none()
+    ): CompletableFuture<RunIngestMultipartResponse> =
+        ingestMultipart(params, RequestOptions.none())
+
+    /** @see ingestMultipart */
+    fun ingestMultipart(
+        requestOptions: RequestOptions
+    ): CompletableFuture<RunIngestMultipartResponse> =
+        ingestMultipart(RunIngestMultipartParams.none(), requestOptions)
+
     /** Query Runs */
     fun query(): CompletableFuture<RunQueryResponse> = query(RunQueryParams.none())
 
@@ -67,6 +199,41 @@ interface RunServiceAsync {
     fun query(requestOptions: RequestOptions): CompletableFuture<RunQueryResponse> =
         query(RunQueryParams.none(), requestOptions)
 
+    /** Update a run. */
+    fun update2(runId: String): CompletableFuture<RunUpdate2Response> =
+        update2(runId, RunUpdate2Params.none())
+
+    /** @see update2 */
+    fun update2(
+        runId: String,
+        params: RunUpdate2Params = RunUpdate2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunUpdate2Response> =
+        update2(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see update2 */
+    fun update2(
+        runId: String,
+        params: RunUpdate2Params = RunUpdate2Params.none(),
+    ): CompletableFuture<RunUpdate2Response> = update2(runId, params, RequestOptions.none())
+
+    /** @see update2 */
+    fun update2(
+        params: RunUpdate2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunUpdate2Response>
+
+    /** @see update2 */
+    fun update2(params: RunUpdate2Params): CompletableFuture<RunUpdate2Response> =
+        update2(params, RequestOptions.none())
+
+    /** @see update2 */
+    fun update2(
+        runId: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<RunUpdate2Response> =
+        update2(runId, RunUpdate2Params.none(), requestOptions)
+
     /** A view of [RunServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -76,6 +243,101 @@ interface RunServiceAsync {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync.WithRawResponse
+
+        fun rules(): RuleServiceAsync.WithRawResponse
+
+        /**
+         * Returns a raw HTTP response for `post /runs`, but is otherwise the same as
+         * [RunServiceAsync.create].
+         */
+        fun create(params: RunCreateParams): CompletableFuture<HttpResponseFor<RunCreateResponse>> =
+            create(params, RequestOptions.none())
+
+        /** @see create */
+        fun create(
+            params: RunCreateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunCreateResponse>>
+
+        /** @see create */
+        fun create(
+            run: Run,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunCreateResponse>> =
+            create(RunCreateParams.builder().run(run).build(), requestOptions)
+
+        /** @see create */
+        fun create(run: Run): CompletableFuture<HttpResponseFor<RunCreateResponse>> =
+            create(run, RequestOptions.none())
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
+         * [RunServiceAsync.retrieve].
+         */
+        fun retrieve(runId: String): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+            retrieve(runId, RunRetrieveParams.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            runId: String,
+            params: RunRetrieveParams = RunRetrieveParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+            retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see retrieve */
+        fun retrieve(
+            runId: String,
+            params: RunRetrieveParams = RunRetrieveParams.none(),
+        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+            retrieve(runId, params, RequestOptions.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            params: RunRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>>
+
+        /** @see retrieve */
+        fun retrieve(
+            params: RunRetrieveParams
+        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+            retrieve(params, RequestOptions.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            runId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+            retrieve(runId, RunRetrieveParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `patch /runs/{run_id}`, but is otherwise the same as
+         * [RunServiceAsync.update].
+         */
+        fun update(
+            runId: String,
+            params: RunUpdateParams,
+        ): CompletableFuture<HttpResponseFor<RunUpdateResponse>> =
+            update(runId, params, RequestOptions.none())
+
+        /** @see update */
+        fun update(
+            runId: String,
+            params: RunUpdateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunUpdateResponse>> =
+            update(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see update */
+        fun update(params: RunUpdateParams): CompletableFuture<HttpResponseFor<RunUpdateResponse>> =
+            update(params, RequestOptions.none())
+
+        /** @see update */
+        fun update(
+            params: RunUpdateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunUpdateResponse>>
 
         /**
          * Returns a raw HTTP response for `post /runs/batch`, but is otherwise the same as
@@ -103,6 +365,31 @@ interface RunServiceAsync {
             ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
         /**
+         * Returns a raw HTTP response for `post /runs/multipart`, but is otherwise the same as
+         * [RunServiceAsync.ingestMultipart].
+         */
+        fun ingestMultipart(): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>> =
+            ingestMultipart(RunIngestMultipartParams.none())
+
+        /** @see ingestMultipart */
+        fun ingestMultipart(
+            params: RunIngestMultipartParams = RunIngestMultipartParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>>
+
+        /** @see ingestMultipart */
+        fun ingestMultipart(
+            params: RunIngestMultipartParams = RunIngestMultipartParams.none()
+        ): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>> =
+            ingestMultipart(params, RequestOptions.none())
+
+        /** @see ingestMultipart */
+        fun ingestMultipart(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>> =
+            ingestMultipart(RunIngestMultipartParams.none(), requestOptions)
+
+        /**
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as
          * [RunServiceAsync.query].
          */
@@ -126,5 +413,46 @@ interface RunServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<RunQueryResponse>> =
             query(RunQueryParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `patch /api/v1/runs/{run_id}`, but is otherwise the same
+         * as [RunServiceAsync.update2].
+         */
+        fun update2(runId: String): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
+            update2(runId, RunUpdate2Params.none())
+
+        /** @see update2 */
+        fun update2(
+            runId: String,
+            params: RunUpdate2Params = RunUpdate2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
+            update2(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see update2 */
+        fun update2(
+            runId: String,
+            params: RunUpdate2Params = RunUpdate2Params.none(),
+        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
+            update2(runId, params, RequestOptions.none())
+
+        /** @see update2 */
+        fun update2(
+            params: RunUpdate2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>>
+
+        /** @see update2 */
+        fun update2(
+            params: RunUpdate2Params
+        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
+            update2(params, RequestOptions.none())
+
+        /** @see update2 */
+        fun update2(
+            runId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
+            update2(runId, RunUpdate2Params.none(), requestOptions)
     }
 }
