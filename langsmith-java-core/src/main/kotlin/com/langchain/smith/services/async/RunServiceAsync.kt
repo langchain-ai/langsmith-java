@@ -16,6 +16,9 @@ import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
 import com.langchain.smith.models.runs.RunRetrieveParams
 import com.langchain.smith.models.runs.RunSchema
+import com.langchain.smith.models.runs.RunStatsParams
+import com.langchain.smith.models.runs.RunStatsQueryParams
+import com.langchain.smith.models.runs.RunStatsResponse
 import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
@@ -195,6 +198,30 @@ interface RunServiceAsync {
     /** @see query */
     fun query(requestOptions: RequestOptions): CompletableFuture<RunQueryResponse> =
         query(RunQueryParams.none(), requestOptions)
+
+    /** Get all runs by query in body payload. */
+    fun stats(params: RunStatsParams): CompletableFuture<RunStatsResponse> =
+        stats(params, RequestOptions.none())
+
+    /** @see stats */
+    fun stats(
+        params: RunStatsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunStatsResponse>
+
+    /** @see stats */
+    fun stats(
+        runStatsQueryParams: RunStatsQueryParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunStatsResponse> =
+        stats(
+            RunStatsParams.builder().runStatsQueryParams(runStatsQueryParams).build(),
+            requestOptions,
+        )
+
+    /** @see stats */
+    fun stats(runStatsQueryParams: RunStatsQueryParams): CompletableFuture<RunStatsResponse> =
+        stats(runStatsQueryParams, RequestOptions.none())
 
     /** Update a run. */
     fun update2(runId: String): CompletableFuture<RunUpdate2Response> =
@@ -408,6 +435,35 @@ interface RunServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<RunQueryResponse>> =
             query(RunQueryParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/runs/stats`, but is otherwise the same as
+         * [RunServiceAsync.stats].
+         */
+        fun stats(params: RunStatsParams): CompletableFuture<HttpResponseFor<RunStatsResponse>> =
+            stats(params, RequestOptions.none())
+
+        /** @see stats */
+        fun stats(
+            params: RunStatsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunStatsResponse>>
+
+        /** @see stats */
+        fun stats(
+            runStatsQueryParams: RunStatsQueryParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunStatsResponse>> =
+            stats(
+                RunStatsParams.builder().runStatsQueryParams(runStatsQueryParams).build(),
+                requestOptions,
+            )
+
+        /** @see stats */
+        fun stats(
+            runStatsQueryParams: RunStatsQueryParams
+        ): CompletableFuture<HttpResponseFor<RunStatsResponse>> =
+            stats(runStatsQueryParams, RequestOptions.none())
 
         /**
          * Returns a raw HTTP response for `patch /api/v1/runs/{run_id}`, but is otherwise the same
