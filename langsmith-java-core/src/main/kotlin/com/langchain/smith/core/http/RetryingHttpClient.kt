@@ -1,3 +1,5 @@
+// File generated from our OpenAPI spec by Stainless.
+
 package com.langchain.smith.core.http
 
 import com.langchain.smith.core.DefaultSleeper
