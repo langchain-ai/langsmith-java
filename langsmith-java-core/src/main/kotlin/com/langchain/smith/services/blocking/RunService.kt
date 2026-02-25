@@ -6,10 +6,22 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunCreateParams
+import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
+import com.langchain.smith.models.runs.RunIngestMultipartParams
+import com.langchain.smith.models.runs.RunIngestMultipartResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
+import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunRetrieveResponse
+import com.langchain.smith.models.runs.RunUpdate2Params
+import com.langchain.smith.models.runs.RunUpdate2Response
+import com.langchain.smith.models.runs.RunUpdateParams
+import com.langchain.smith.models.runs.RunUpdateResponse
+import com.langchain.smith.services.blocking.runs.RuleService
 import java.util.function.Consumer
 
 interface RunService {
@@ -25,6 +37,82 @@ interface RunService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService
+
+    fun rules(): RuleService
+
+    /**
+     * Queues a single run for ingestion. The request body must be a JSON-encoded run object that
+     * follows the Run schema.
+     */
+    fun create(params: RunCreateParams): RunCreateResponse = create(params, RequestOptions.none())
+
+    /** @see create */
+    fun create(
+        params: RunCreateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunCreateResponse
+
+    /** @see create */
+    fun create(
+        run: Run,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunCreateResponse = create(RunCreateParams.builder().run(run).build(), requestOptions)
+
+    /** @see create */
+    fun create(run: Run): RunCreateResponse = create(run, RequestOptions.none())
+
+    /** Get a specific run. */
+    fun retrieve(runId: String): RunRetrieveResponse = retrieve(runId, RunRetrieveParams.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        runId: String,
+        params: RunRetrieveParams = RunRetrieveParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunRetrieveResponse = retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see retrieve */
+    fun retrieve(
+        runId: String,
+        params: RunRetrieveParams = RunRetrieveParams.none(),
+    ): RunRetrieveResponse = retrieve(runId, params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        params: RunRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunRetrieveResponse
+
+    /** @see retrieve */
+    fun retrieve(params: RunRetrieveParams): RunRetrieveResponse =
+        retrieve(params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(runId: String, requestOptions: RequestOptions): RunRetrieveResponse =
+        retrieve(runId, RunRetrieveParams.none(), requestOptions)
+
+    /**
+     * Updates a run identified by its ID. The body should contain only the fields to be changed;
+     * unknown fields are ignored.
+     */
+    fun update(runId: String, params: RunUpdateParams): RunUpdateResponse =
+        update(runId, params, RequestOptions.none())
+
+    /** @see update */
+    fun update(
+        runId: String,
+        params: RunUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunUpdateResponse = update(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see update */
+    fun update(params: RunUpdateParams): RunUpdateResponse = update(params, RequestOptions.none())
+
+    /** @see update */
+    fun update(
+        params: RunUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunUpdateResponse
 
     /**
      * Ingests a batch of runs in a single JSON payload. The payload must have `post` and/or `patch`
@@ -49,6 +137,38 @@ interface RunService {
     fun ingestBatch(requestOptions: RequestOptions): RunIngestBatchResponse =
         ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
+    /**
+     * Ingests multiple runs, feedback objects, and binary attachments in a single
+     * `multipart/form-data` request. **Part‑name pattern**: `<event>.<run_id>[.<field>]` where
+     * `event` ∈ {`post`, `patch`, `feedback`, `attachment`}.
+     * * `post|patch.<run_id>` – JSON run payload.
+     * * `post|patch.<run_id>.<field>` – out‑of‑band run data (`inputs`, `outputs`, `events`,
+     *   `error`, `extra`, `serialized`).
+     * * `feedback.<run_id>` – JSON feedback payload (must include `trace_id`).
+     * * `attachment.<run_id>.<filename>` – arbitrary binary attachment stored in S3. **Headers**:
+     *   every part must set `Content-Type` **and** either a `Content-Length` header or `length`
+     *   parameter. Per‑part `Content-Encoding` is **not** allowed; the top‑level request may be
+     *   `Content-Encoding: gzip` or `Content-Encoding: zstd`. **Best performance** for high‑volume
+     *   ingestion.
+     */
+    fun ingestMultipart(): RunIngestMultipartResponse =
+        ingestMultipart(RunIngestMultipartParams.none())
+
+    /** @see ingestMultipart */
+    fun ingestMultipart(
+        params: RunIngestMultipartParams = RunIngestMultipartParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunIngestMultipartResponse
+
+    /** @see ingestMultipart */
+    fun ingestMultipart(
+        params: RunIngestMultipartParams = RunIngestMultipartParams.none()
+    ): RunIngestMultipartResponse = ingestMultipart(params, RequestOptions.none())
+
+    /** @see ingestMultipart */
+    fun ingestMultipart(requestOptions: RequestOptions): RunIngestMultipartResponse =
+        ingestMultipart(RunIngestMultipartParams.none(), requestOptions)
+
     /** Query Runs */
     fun query(): RunQueryResponse = query(RunQueryParams.none())
 
@@ -66,6 +186,36 @@ interface RunService {
     fun query(requestOptions: RequestOptions): RunQueryResponse =
         query(RunQueryParams.none(), requestOptions)
 
+    /** Update a run. */
+    fun update2(runId: String): RunUpdate2Response = update2(runId, RunUpdate2Params.none())
+
+    /** @see update2 */
+    fun update2(
+        runId: String,
+        params: RunUpdate2Params = RunUpdate2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunUpdate2Response = update2(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see update2 */
+    fun update2(
+        runId: String,
+        params: RunUpdate2Params = RunUpdate2Params.none(),
+    ): RunUpdate2Response = update2(runId, params, RequestOptions.none())
+
+    /** @see update2 */
+    fun update2(
+        params: RunUpdate2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunUpdate2Response
+
+    /** @see update2 */
+    fun update2(params: RunUpdate2Params): RunUpdate2Response =
+        update2(params, RequestOptions.none())
+
+    /** @see update2 */
+    fun update2(runId: String, requestOptions: RequestOptions): RunUpdate2Response =
+        update2(runId, RunUpdate2Params.none(), requestOptions)
+
     /** A view of [RunService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -75,6 +225,109 @@ interface RunService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService.WithRawResponse
+
+        fun rules(): RuleService.WithRawResponse
+
+        /**
+         * Returns a raw HTTP response for `post /runs`, but is otherwise the same as
+         * [RunService.create].
+         */
+        @MustBeClosed
+        fun create(params: RunCreateParams): HttpResponseFor<RunCreateResponse> =
+            create(params, RequestOptions.none())
+
+        /** @see create */
+        @MustBeClosed
+        fun create(
+            params: RunCreateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunCreateResponse>
+
+        /** @see create */
+        @MustBeClosed
+        fun create(
+            run: Run,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunCreateResponse> =
+            create(RunCreateParams.builder().run(run).build(), requestOptions)
+
+        /** @see create */
+        @MustBeClosed
+        fun create(run: Run): HttpResponseFor<RunCreateResponse> =
+            create(run, RequestOptions.none())
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
+         * [RunService.retrieve].
+         */
+        @MustBeClosed
+        fun retrieve(runId: String): HttpResponseFor<RunRetrieveResponse> =
+            retrieve(runId, RunRetrieveParams.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            runId: String,
+            params: RunRetrieveParams = RunRetrieveParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunRetrieveResponse> =
+            retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            runId: String,
+            params: RunRetrieveParams = RunRetrieveParams.none(),
+        ): HttpResponseFor<RunRetrieveResponse> = retrieve(runId, params, RequestOptions.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            params: RunRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunRetrieveResponse>
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(params: RunRetrieveParams): HttpResponseFor<RunRetrieveResponse> =
+            retrieve(params, RequestOptions.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            runId: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<RunRetrieveResponse> =
+            retrieve(runId, RunRetrieveParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `patch /runs/{run_id}`, but is otherwise the same as
+         * [RunService.update].
+         */
+        @MustBeClosed
+        fun update(runId: String, params: RunUpdateParams): HttpResponseFor<RunUpdateResponse> =
+            update(runId, params, RequestOptions.none())
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            runId: String,
+            params: RunUpdateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunUpdateResponse> =
+            update(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see update */
+        @MustBeClosed
+        fun update(params: RunUpdateParams): HttpResponseFor<RunUpdateResponse> =
+            update(params, RequestOptions.none())
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            params: RunUpdateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunUpdateResponse>
 
         /**
          * Returns a raw HTTP response for `post /runs/batch`, but is otherwise the same as
@@ -103,6 +356,35 @@ interface RunService {
             ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
         /**
+         * Returns a raw HTTP response for `post /runs/multipart`, but is otherwise the same as
+         * [RunService.ingestMultipart].
+         */
+        @MustBeClosed
+        fun ingestMultipart(): HttpResponseFor<RunIngestMultipartResponse> =
+            ingestMultipart(RunIngestMultipartParams.none())
+
+        /** @see ingestMultipart */
+        @MustBeClosed
+        fun ingestMultipart(
+            params: RunIngestMultipartParams = RunIngestMultipartParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunIngestMultipartResponse>
+
+        /** @see ingestMultipart */
+        @MustBeClosed
+        fun ingestMultipart(
+            params: RunIngestMultipartParams = RunIngestMultipartParams.none()
+        ): HttpResponseFor<RunIngestMultipartResponse> =
+            ingestMultipart(params, RequestOptions.none())
+
+        /** @see ingestMultipart */
+        @MustBeClosed
+        fun ingestMultipart(
+            requestOptions: RequestOptions
+        ): HttpResponseFor<RunIngestMultipartResponse> =
+            ingestMultipart(RunIngestMultipartParams.none(), requestOptions)
+
+        /**
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as
          * [RunService.query].
          */
@@ -125,5 +407,49 @@ interface RunService {
         @MustBeClosed
         fun query(requestOptions: RequestOptions): HttpResponseFor<RunQueryResponse> =
             query(RunQueryParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `patch /api/v1/runs/{run_id}`, but is otherwise the same
+         * as [RunService.update2].
+         */
+        @MustBeClosed
+        fun update2(runId: String): HttpResponseFor<RunUpdate2Response> =
+            update2(runId, RunUpdate2Params.none())
+
+        /** @see update2 */
+        @MustBeClosed
+        fun update2(
+            runId: String,
+            params: RunUpdate2Params = RunUpdate2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunUpdate2Response> =
+            update2(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see update2 */
+        @MustBeClosed
+        fun update2(
+            runId: String,
+            params: RunUpdate2Params = RunUpdate2Params.none(),
+        ): HttpResponseFor<RunUpdate2Response> = update2(runId, params, RequestOptions.none())
+
+        /** @see update2 */
+        @MustBeClosed
+        fun update2(
+            params: RunUpdate2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunUpdate2Response>
+
+        /** @see update2 */
+        @MustBeClosed
+        fun update2(params: RunUpdate2Params): HttpResponseFor<RunUpdate2Response> =
+            update2(params, RequestOptions.none())
+
+        /** @see update2 */
+        @MustBeClosed
+        fun update2(
+            runId: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<RunUpdate2Response> =
+            update2(runId, RunUpdate2Params.none(), requestOptions)
     }
 }
