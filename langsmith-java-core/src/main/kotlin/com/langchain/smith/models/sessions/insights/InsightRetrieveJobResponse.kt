@@ -26,6 +26,7 @@ class InsightRetrieveJobResponse
 private constructor(
     private val id: JsonField<String>,
     private val clusters: JsonField<List<Cluster>>,
+    private val createdAt: JsonField<OffsetDateTime>,
     private val name: JsonField<String>,
     private val status: JsonField<String>,
     private val configId: JsonField<String>,
@@ -44,6 +45,9 @@ private constructor(
         @JsonProperty("clusters")
         @ExcludeMissing
         clusters: JsonField<List<Cluster>> = JsonMissing.of(),
+        @JsonProperty("created_at")
+        @ExcludeMissing
+        createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
         @JsonProperty("config_id") @ExcludeMissing configId: JsonField<String> = JsonMissing.of(),
@@ -60,6 +64,7 @@ private constructor(
     ) : this(
         id,
         clusters,
+        createdAt,
         name,
         status,
         configId,
@@ -83,6 +88,12 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun clusters(): List<Cluster> = clusters.getRequired("clusters")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun createdAt(): OffsetDateTime = createdAt.getRequired("created_at")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -153,6 +164,15 @@ private constructor(
      * Unlike [clusters], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("clusters") @ExcludeMissing fun _clusters(): JsonField<List<Cluster>> = clusters
+
+    /**
+     * Returns the raw JSON value of [createdAt].
+     *
+     * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("created_at")
+    @ExcludeMissing
+    fun _createdAt(): JsonField<OffsetDateTime> = createdAt
 
     /**
      * Returns the raw JSON value of [name].
@@ -240,6 +260,7 @@ private constructor(
          * ```java
          * .id()
          * .clusters()
+         * .createdAt()
          * .name()
          * .status()
          * ```
@@ -252,6 +273,7 @@ private constructor(
 
         private var id: JsonField<String>? = null
         private var clusters: JsonField<MutableList<Cluster>>? = null
+        private var createdAt: JsonField<OffsetDateTime>? = null
         private var name: JsonField<String>? = null
         private var status: JsonField<String>? = null
         private var configId: JsonField<String> = JsonMissing.of()
@@ -267,6 +289,7 @@ private constructor(
         internal fun from(insightRetrieveJobResponse: InsightRetrieveJobResponse) = apply {
             id = insightRetrieveJobResponse.id
             clusters = insightRetrieveJobResponse.clusters.map { it.toMutableList() }
+            createdAt = insightRetrieveJobResponse.createdAt
             name = insightRetrieveJobResponse.name
             status = insightRetrieveJobResponse.status
             configId = insightRetrieveJobResponse.configId
@@ -313,6 +336,17 @@ private constructor(
                     checkKnown("clusters", it).add(cluster)
                 }
         }
+
+        fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+
+        /**
+         * Sets [Builder.createdAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.createdAt] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
         fun name(name: String) = name(JsonField.of(name))
 
@@ -457,6 +491,7 @@ private constructor(
          * ```java
          * .id()
          * .clusters()
+         * .createdAt()
          * .name()
          * .status()
          * ```
@@ -467,6 +502,7 @@ private constructor(
             InsightRetrieveJobResponse(
                 checkRequired("id", id),
                 checkRequired("clusters", clusters).map { it.toImmutable() },
+                checkRequired("createdAt", createdAt),
                 checkRequired("name", name),
                 checkRequired("status", status),
                 configId,
@@ -489,6 +525,7 @@ private constructor(
 
         id()
         clusters().forEach { it.validate() }
+        createdAt()
         name()
         status()
         configId()
@@ -518,6 +555,7 @@ private constructor(
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
             (clusters.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (configId.asKnown().isPresent) 1 else 0) +
@@ -1928,6 +1966,7 @@ private constructor(
         return other is InsightRetrieveJobResponse &&
             id == other.id &&
             clusters == other.clusters &&
+            createdAt == other.createdAt &&
             name == other.name &&
             status == other.status &&
             configId == other.configId &&
@@ -1944,6 +1983,7 @@ private constructor(
         Objects.hash(
             id,
             clusters,
+            createdAt,
             name,
             status,
             configId,
@@ -1960,5 +2000,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InsightRetrieveJobResponse{id=$id, clusters=$clusters, name=$name, status=$status, configId=$configId, endTime=$endTime, error=$error, metadata=$metadata, report=$report, shape=$shape, startTime=$startTime, additionalProperties=$additionalProperties}"
+        "InsightRetrieveJobResponse{id=$id, clusters=$clusters, createdAt=$createdAt, name=$name, status=$status, configId=$configId, endTime=$endTime, error=$error, metadata=$metadata, report=$report, shape=$shape, startTime=$startTime, additionalProperties=$additionalProperties}"
 }
