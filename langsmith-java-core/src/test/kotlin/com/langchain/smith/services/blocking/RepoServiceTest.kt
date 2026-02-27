@@ -30,6 +30,7 @@ internal class RepoServiceTest {
                     .repoHandle("repo_handle")
                     .description("description")
                     .readme("readme")
+                    .repoType(RepoCreateParams.RepoType.PROMPT)
                     .addTag("string")
                     .build()
             )
