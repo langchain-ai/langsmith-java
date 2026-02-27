@@ -15,6 +15,7 @@ internal class RepoCreateParamsTest {
             .repoHandle("repo_handle")
             .description("description")
             .readme("readme")
+            .repoType(RepoCreateParams.RepoType.PROMPT)
             .addTag("string")
             .build()
     }
@@ -27,6 +28,7 @@ internal class RepoCreateParamsTest {
                 .repoHandle("repo_handle")
                 .description("description")
                 .readme("readme")
+                .repoType(RepoCreateParams.RepoType.PROMPT)
                 .addTag("string")
                 .build()
 
@@ -36,6 +38,7 @@ internal class RepoCreateParamsTest {
         assertThat(body.repoHandle()).isEqualTo("repo_handle")
         assertThat(body.description()).contains("description")
         assertThat(body.readme()).contains("readme")
+        assertThat(body.repoType()).contains(RepoCreateParams.RepoType.PROMPT)
         assertThat(body.tags().getOrNull()).containsExactly("string")
     }
 
