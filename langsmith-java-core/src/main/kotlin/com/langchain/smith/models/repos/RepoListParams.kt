@@ -23,6 +23,7 @@ private constructor(
     private val limit: Long?,
     private val offset: Long?,
     private val query: String?,
+    private val repoType: RepoType?,
     private val sortDirection: SortDirection?,
     private val sortField: SortField?,
     private val tagValueId: List<String>?,
@@ -47,6 +48,8 @@ private constructor(
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
     fun query(): Optional<String> = Optional.ofNullable(query)
+
+    fun repoType(): Optional<RepoType> = Optional.ofNullable(repoType)
 
     fun sortDirection(): Optional<SortDirection> = Optional.ofNullable(sortDirection)
 
@@ -91,6 +94,7 @@ private constructor(
         private var limit: Long? = null
         private var offset: Long? = null
         private var query: String? = null
+        private var repoType: RepoType? = null
         private var sortDirection: SortDirection? = null
         private var sortField: SortField? = null
         private var tagValueId: MutableList<String>? = null
@@ -111,6 +115,7 @@ private constructor(
             limit = repoListParams.limit
             offset = repoListParams.offset
             query = repoListParams.query
+            repoType = repoListParams.repoType
             sortDirection = repoListParams.sortDirection
             sortField = repoListParams.sortField
             tagValueId = repoListParams.tagValueId?.toMutableList()
@@ -174,6 +179,11 @@ private constructor(
 
         /** Alias for calling [Builder.query] with `query.orElse(null)`. */
         fun query(query: Optional<String>) = query(query.getOrNull())
+
+        fun repoType(repoType: RepoType?) = apply { this.repoType = repoType }
+
+        /** Alias for calling [Builder.repoType] with `repoType.orElse(null)`. */
+        fun repoType(repoType: Optional<RepoType>) = repoType(repoType.getOrNull())
 
         fun sortDirection(sortDirection: SortDirection?) = apply {
             this.sortDirection = sortDirection
@@ -373,6 +383,7 @@ private constructor(
                 limit,
                 offset,
                 query,
+                repoType,
                 sortDirection,
                 sortField,
                 tagValueId?.toImmutable(),
@@ -398,6 +409,7 @@ private constructor(
                 limit?.let { put("limit", it.toString()) }
                 offset?.let { put("offset", it.toString()) }
                 query?.let { put("query", it) }
+                repoType?.let { put("repo_type", it.toString()) }
                 sortDirection?.let { put("sort_direction", it.toString()) }
                 sortField?.let { put("sort_field", it.toString()) }
                 tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
@@ -666,6 +678,145 @@ private constructor(
             }
 
             return other is IsPublic && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
+    class RepoType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val PROMPT = of("prompt")
+
+            @JvmField val FILE = of("file")
+
+            @JvmField val AGENT = of("agent")
+
+            @JvmField val SKILL = of("skill")
+
+            @JvmStatic fun of(value: String) = RepoType(JsonField.of(value))
+        }
+
+        /** An enum containing [RepoType]'s known values. */
+        enum class Known {
+            PROMPT,
+            FILE,
+            AGENT,
+            SKILL,
+        }
+
+        /**
+         * An enum containing [RepoType]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [RepoType] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            PROMPT,
+            FILE,
+            AGENT,
+            SKILL,
+            /** An enum member indicating that [RepoType] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                PROMPT -> Value.PROMPT
+                FILE -> Value.FILE
+                AGENT -> Value.AGENT
+                SKILL -> Value.SKILL
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                PROMPT -> Known.PROMPT
+                FILE -> Known.FILE
+                AGENT -> Known.AGENT
+                SKILL -> Known.SKILL
+                else -> throw LangChainInvalidDataException("Unknown RepoType: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): RepoType = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is RepoType && value == other.value
         }
 
         override fun hashCode() = value.hashCode()
@@ -963,6 +1114,7 @@ private constructor(
             limit == other.limit &&
             offset == other.offset &&
             query == other.query &&
+            repoType == other.repoType &&
             sortDirection == other.sortDirection &&
             sortField == other.sortField &&
             tagValueId == other.tagValueId &&
@@ -984,6 +1136,7 @@ private constructor(
             limit,
             offset,
             query,
+            repoType,
             sortDirection,
             sortField,
             tagValueId,
@@ -998,5 +1151,5 @@ private constructor(
         )
 
     override fun toString() =
-        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, sortDirection=$sortDirection, sortField=$sortField, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, repoType=$repoType, sortDirection=$sortDirection, sortField=$sortField, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
