@@ -87,8 +87,6 @@ Located in `src/main/kotlin/com/langchain/smith/example/`
 
 This example follows the [LangSmith Prompt Management docs](https://docs.langchain.com/langsmith/manage-prompts-programmatically) and uses the SDK directly.
 
-```
-
 **Additional features:**
 - Use prompts with OpenAI to generate responses
 - Update prompt metadata and descriptions
