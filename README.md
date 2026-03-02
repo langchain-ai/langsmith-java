@@ -274,7 +274,7 @@ ExampleUploadFromCsvParams params = ExampleUploadFromCsvParams.builder()
 List<Example> examples = client.examples().uploadFromCsv(params);
 ```
 
-Note that when passing a non-`Path` its filename is unknown so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
+Note that when passing a non-`Path`, its filename is unknown, so it will not be included in the request. To manually set a filename, pass a [`MultipartField`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/Values.kt):
 
 ```java
 import com.langchain.smith.core.MultipartField;
