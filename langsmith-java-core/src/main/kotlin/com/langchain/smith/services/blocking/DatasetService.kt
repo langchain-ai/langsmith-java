@@ -32,7 +32,6 @@ import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
 import com.langchain.smith.services.blocking.datasets.ExperimentService
 import com.langchain.smith.services.blocking.datasets.GroupService
-import com.langchain.smith.services.blocking.datasets.IndexService
 import com.langchain.smith.services.blocking.datasets.PlaygroundExperimentService
 import com.langchain.smith.services.blocking.datasets.RunService
 import com.langchain.smith.services.blocking.datasets.ShareService
@@ -67,8 +66,6 @@ interface DatasetService {
     fun comparative(): ComparativeService
 
     fun splits(): SplitService
-
-    fun index(): IndexService
 
     fun playgroundExperiment(): PlaygroundExperimentService
 
@@ -423,8 +420,6 @@ interface DatasetService {
         fun comparative(): ComparativeService.WithRawResponse
 
         fun splits(): SplitService.WithRawResponse
-
-        fun index(): IndexService.WithRawResponse
 
         fun playgroundExperiment(): PlaygroundExperimentService.WithRawResponse
 

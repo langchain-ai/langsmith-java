@@ -46,8 +46,6 @@ import com.langchain.smith.services.async.datasets.ExperimentServiceAsync
 import com.langchain.smith.services.async.datasets.ExperimentServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.GroupServiceAsync
 import com.langchain.smith.services.async.datasets.GroupServiceAsyncImpl
-import com.langchain.smith.services.async.datasets.IndexServiceAsync
-import com.langchain.smith.services.async.datasets.IndexServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.PlaygroundExperimentServiceAsync
 import com.langchain.smith.services.async.datasets.PlaygroundExperimentServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.RunServiceAsync
@@ -87,8 +85,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     private val splits: SplitServiceAsync by lazy { SplitServiceAsyncImpl(clientOptions) }
 
-    private val index: IndexServiceAsync by lazy { IndexServiceAsyncImpl(clientOptions) }
-
     private val playgroundExperiment: PlaygroundExperimentServiceAsync by lazy {
         PlaygroundExperimentServiceAsyncImpl(clientOptions)
     }
@@ -111,8 +107,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun comparative(): ComparativeServiceAsync = comparative
 
     override fun splits(): SplitServiceAsync = splits
-
-    override fun index(): IndexServiceAsync = index
 
     override fun playgroundExperiment(): PlaygroundExperimentServiceAsync = playgroundExperiment
 
@@ -241,10 +235,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
             SplitServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val index: IndexServiceAsync.WithRawResponse by lazy {
-            IndexServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val playgroundExperiment: PlaygroundExperimentServiceAsync.WithRawResponse by lazy {
             PlaygroundExperimentServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -269,8 +259,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         override fun comparative(): ComparativeServiceAsync.WithRawResponse = comparative
 
         override fun splits(): SplitServiceAsync.WithRawResponse = splits
-
-        override fun index(): IndexServiceAsync.WithRawResponse = index
 
         override fun playgroundExperiment(): PlaygroundExperimentServiceAsync.WithRawResponse =
             playgroundExperiment
