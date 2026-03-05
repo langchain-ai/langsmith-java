@@ -9,7 +9,9 @@ import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestMultipartParams
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunTypeEnum
 import com.langchain.smith.models.runs.RunUpdateParams
+import com.langchain.smith.models.runs.RunsFilterDataSourceTypeEnum
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -96,7 +98,7 @@ internal class RunServiceTest {
                 .build()
         val runService = client.runs()
 
-        val run =
+        val runSchema =
             runService.retrieve(
                 RunRetrieveParams.builder()
                     .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -108,7 +110,7 @@ internal class RunServiceTest {
                     .build()
             )
 
-        run.validate()
+        runSchema.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -353,7 +355,7 @@ internal class RunServiceTest {
                 RunQueryParams.builder()
                     .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .cursor("cursor")
-                    .dataSourceType(RunQueryParams.DataSourceType.CURRENT)
+                    .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
                     .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .error(true)
                     .executionOrder(1L)
@@ -364,7 +366,7 @@ internal class RunServiceTest {
                     .parentRun("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .query("query")
                     .addReferenceExample("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .runType(RunQueryParams.RunType.TOOL)
+                    .runType(RunTypeEnum.TOOL)
                     .searchFilter("search_filter")
                     .addSelect(RunQueryParams.Select.ID)
                     .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
