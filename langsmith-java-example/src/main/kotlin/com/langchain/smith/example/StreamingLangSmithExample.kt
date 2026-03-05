@@ -11,7 +11,7 @@ import kotlin.system.exitProcess
 /**
  * Example: Stream chat completions and send traces to LangSmith.
  *
- * - Creates a streaming chat completion request ("Count from 1 to 10", max tokens 50, temperature 0)
+ * - Creates a streaming chat completion request 
  * - Consumes the full stream (all chunks until done), accumulates content, counts chunks
  * - Closes the stream so the span is ended and completion/usage are written
  * - Flushes traces to LangSmith
@@ -74,7 +74,7 @@ fun main() {
     val client = WrappedOpenAIClient.fromEnv()
 
 
-    val prompt = "Count from 1 to 10"
+    val prompt = "Count from 1 to 20"
     println("Prompt: \"$prompt\"")
     println("Streamed reply: ")
 
@@ -85,7 +85,7 @@ fun main() {
         val params = ChatCompletionCreateParams.builder()
             .model(ChatModel.GPT_4O_MINI)
             .addUserMessage(prompt)
-            .maxCompletionTokens(50)
+            .maxCompletionTokens(100)
             .temperature(0.0)
             .build()
 

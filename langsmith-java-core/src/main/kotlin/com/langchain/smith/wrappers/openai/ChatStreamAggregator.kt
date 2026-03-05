@@ -7,8 +7,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Aggregates streaming chat completion chunks to produce gen_ai.completion and gen_ai.usage
- * attributes on the span when the stream is closed (mirrors Go SDK PR #27 behavior).
+ * Aggregates streaming chat completion chunks to produce gen_ai.completion ({"messages":[...]} JSON
  */
 internal class ChatStreamAggregator {
     private val content = StringBuilder()
@@ -51,15 +50,17 @@ internal class ChatStreamAggregator {
 
     fun applyToSpan(span: Span) {
         val completionJson = buildCompletionJson()
-        if (completionJson != null) {
-            span.setAttribute(AttributeKey.stringKey("gen_ai.completion"), completionJson)
-        }
+        span.setAttribute(
+            AttributeKey.stringKey("gen_ai.completion"),
+            "{\"messages\":${completionJson?.let { "[$it]" } ?: "[]"}}",
+        )
         if (inputTokens != null || outputTokens != null || totalTokens != null) {
             TracingUtils.setResponseAttributes(span, inputTokens, outputTokens, totalTokens)
         }
         TracingUtils.setResponseMetadata(span, responseModel, finishReason)
     }
 
+    /** Builds assistant message JSON object (role, content, tool_calls) for {"messages":[...]}. */
     private fun buildCompletionJson(): String? {
         val hasContent = content.isNotEmpty()
         val toolCallsList =

@@ -17,9 +17,10 @@ internal object TracingUtils {
         model: String?,
         operationType: String,
         spanKind: String? = "llm",
+        customSpanName: String? = null,
     ): SpanBuilder {
         val tracer = getTracer()
-        val spanName = "$operationType ${model ?: "unknown"}"
+        val spanName = customSpanName ?: "$operationType ${model ?: "unknown"}"
         val builder =
             tracer
                 .spanBuilder(spanName)

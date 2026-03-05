@@ -83,9 +83,10 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                         result.choices().firstOrNull()?.finishReason()?.toString() ?: "stop"
                     TracingUtils.setResponseMetadata(span, responseModel, finishReason)
                     formatOutputMessages(result).let { TracingUtils.setOutputMessages(span, it) }
-                    extractCompletionFromResult(result)
-                        ?.takeIf { it.isNotEmpty() }
-                        ?.let { span.setAttribute(AttributeKey.stringKey("gen_ai.completion"), it) }
+                    span.setAttribute(
+                        AttributeKey.stringKey("gen_ai.completion"),
+                        "{\"messages\":${formatOutputMessages(result)}}",
+                    )
                     result.usage().ifPresent { usage ->
                         TracingUtils.setResponseAttributes(
                             span,
@@ -428,7 +429,9 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             requestOptions: RequestOptions?,
         ): StreamResponse<ChatCompletionChunk> {
             val model = params.model()?.toString()
-            val span = TracingUtils.createSpanBuilder(model, "chat").startSpan()
+            val span =
+                TracingUtils.createSpanBuilder(model, "chat", customSpanName = "OpenAI streaming")
+                    .startSpan()
             try {
                 span.makeCurrent().use {
                     setExperimentContextAttributes(span)
