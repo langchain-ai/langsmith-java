@@ -11,6 +11,8 @@ import io.opentelemetry.sdk.trace.data.SpanData
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor
 import io.opentelemetry.sdk.trace.export.SpanExporter
+import java.io.PrintWriter
+import java.io.StringWriter
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
 
@@ -83,12 +85,7 @@ object OpenTelemetryConfig {
     }
 
     private fun buildOtlpEndpoint(baseUrl: String?): String {
-        val base =
-            (baseUrl?.takeIf { it.isNotBlank() }
-                    ?: System.getenv("LANGSMITH_ENDPOINT")?.takeIf { it.isNotBlank() }
-                    ?: DEFAULT_BASE_URL)
-                .trim()
-                .removeSuffix("/")
+        val base = (baseUrl?.takeIf { it.isNotBlank() } ?: DEFAULT_BASE_URL).trim().removeSuffix("/")
         return base + OTLP_TRACES_PATH
     }
 
@@ -186,41 +183,82 @@ object OpenTelemetryConfig {
 
     private class LoggingSpanExporter(private val delegate: SpanExporter) : SpanExporter {
         override fun export(spans: Collection<SpanData>): CompletableResultCode {
+            if (DEBUG) {
+                logger.debug("[LangSmith] Exporting ${spans.size} span(s):")
+                for (span in spans) {
+                    logger.debug(
+                        "  - ${span.name} (kind=${span.kind}, attributes=${span.attributes.size()})"
+                    )
+                }
+            }
             val result = delegate.export(spans)
             // Always wait for export to complete so flush/shutdown don't run before the HTTP
-            // request
-            // finishes. Without this, shutdown can abort in-flight exports and traces are lost.
+            // request finishes. Without this, shutdown can abort in-flight exports and traces are lost.
             try {
                 result.join(5, TimeUnit.SECONDS)
             } catch (e: Exception) {
-                logger.error("[LangSmith] Exception waiting for export result", e)
+                if (DEBUG) logger.error("[LangSmith ERROR] Exception waiting for export result", e)
+                else logger.error("[LangSmith] Exception waiting for export result", e)
             }
             if (!result.isSuccess) {
-                logger.error("[LangSmith] Failed to export ${spans.size} span(s) to LangSmith")
+                logger.error("[LangSmith ERROR] Failed to export ${spans.size} span(s) to LangSmith")
                 logExportException(result)
+                if (DEBUG) {
+                    for (span in spans) {
+                        logger.error(
+                            "  - ${span.name} (traceId=${span.traceId}, spanId=${span.spanId})"
+                        )
+                    }
+                    logger.error(
+                        "  This usually indicates a network error, authentication problem, or invalid span data"
+                    )
+                    logger.error("  Check your LANGSMITH_API_KEY and network connectivity")
+                } else {
+                    logger.error("  Set LANGSMITH_DEBUG=true for more details")
+                }
+            } else if (DEBUG) {
+                logger.debug("[LangSmith] Successfully exported ${spans.size} span(s)")
             }
             return result
         }
 
         override fun flush(): CompletableResultCode {
+            if (DEBUG) logger.debug("[LangSmith] Flushing spans...")
             val result = delegate.flush()
             result.whenComplete {
-                if (!result.isSuccess) logger.error("[LangSmith] Failed to flush spans")
+                if (!result.isSuccess) logger.error("[LangSmith ERROR] Failed to flush spans")
+                else if (DEBUG) logger.debug("[LangSmith] Flush completed successfully")
             }
             return result
         }
 
-        override fun shutdown(): CompletableResultCode = delegate.shutdown()
+        override fun shutdown(): CompletableResultCode {
+            if (DEBUG) logger.debug("[LangSmith] Shutting down span exporter...")
+            return delegate.shutdown()
+        }
 
-        private fun logExportException(result: CompletableResultCode) {
-            try {
-                val getExceptionMethod = result.javaClass.getMethod("getException")
-                val exception = getExceptionMethod.invoke(result) as? Throwable
-                if (exception != null) {
-                    logger.error("  Error: ${exception.message}")
-                    exception.cause?.let { logger.error("  Caused by: ${it.message}") }
-                }
-            } catch (_: Exception) {}
+        companion object {
+            private val logger =
+                LoggerFactory.getLogger(LoggingSpanExporter::class.java)
+            private val DEBUG =
+                java.lang.Boolean.getBoolean("langsmith.debug") ||
+                    "true".equals(System.getenv("LANGSMITH_DEBUG"), ignoreCase = true)
+
+            private fun logExportException(result: CompletableResultCode) {
+                try {
+                    val getExceptionMethod = result.javaClass.getMethod("getException")
+                    val exception = getExceptionMethod.invoke(result) as? Throwable
+                    if (exception != null) {
+                        logger.error("  Error: ${exception.message}")
+                        exception.cause?.let { logger.error("  Caused by: ${it.message}") }
+                        if (DEBUG) {
+                            val sw = StringWriter()
+                            exception.printStackTrace(PrintWriter(sw))
+                            logger.debug("  Stack trace:\n${sw}")
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
         }
     }
 }

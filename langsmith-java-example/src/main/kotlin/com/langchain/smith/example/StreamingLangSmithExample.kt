@@ -24,29 +24,13 @@ import kotlin.system.exitProcess
  * - `OPENAI_API_KEY`: Your OpenAI API key
  * - `LANGSMITH_API_KEY`: Your LangSmith API key
  * - `LANGSMITH_PROJECT`: (optional) LangSmith project name; defaults to "default"
- * - `LANGSMITH_ENDPOINT`: (optional) LangSmith API base URL; defaults to production. Use
- *   `https://beta.api.smith.langchain.com` for beta; view those traces at https://beta.smith.langchain.com
+ * - `LANGSMITH_ENDPOINT`: (optional) LangSmith API base URL; defaults to https://api.smith.langchain.com
  *
  * ## Running
  * ```bash
- * export OPENAI_API_KEY=your_openai_key
- * export LANGSMITH_API_KEY=your_langsmith_key
- * export LANGSMITH_PROJECT=my-project   # optional
- * export LANGSMITH_ENDPOINT=https://beta.api.smith.langchain.com   # optional, for beta
  * ./gradlew :langsmith-java-example:run -Pexample=StreamingLangSmith
  * ```
  */
-
-/** Maps LangSmith API base URL to the UI base URL where traces are viewed (e.g. beta API -> beta UI). */
-private fun traceViewBaseUrl(apiBaseUrl: String): String {
-    val base = apiBaseUrl.trim().removeSuffix("/")
-    return when {
-        base.startsWith("https://beta.api.smith.langchain.com") -> "https://beta.smith.langchain.com"
-        base.startsWith("http") && "smith.langchain.com" in base -> "https://smith.langchain.com"
-        else -> "https://smith.langchain.com"
-    }
-}
-
 fun main() {
     println("=== Streaming Chat + LangSmith Traces Example ===\n")
 
@@ -67,11 +51,9 @@ fun main() {
     val projectName = System.getenv("LANGSMITH_PROJECT") ?: "default"
 
     val traceEndpoint = System.getenv("LANGSMITH_ENDPOINT") ?: OpenTelemetryConfig.DEFAULT_BASE_URL
-    val viewTracesBaseUrl = traceViewBaseUrl(traceEndpoint)
     println("Configuration:")
     println("  LangSmith project: $projectName")
     println("  Trace endpoint: $traceEndpoint/otel/v1/traces")
-    println("  View traces at: $viewTracesBaseUrl")
     println()
 
     try {
@@ -148,7 +130,7 @@ fun main() {
     val flushed = OpenTelemetryConfig.flush(10, TimeUnit.SECONDS)
     OpenTelemetryConfig.shutdown()
     if (flushed) {
-        println("✓ Flush completed. View traces: $viewTracesBaseUrl/projects/$projectName")
+        println("✓ Flush completed. View traces: https://smith.langchain.com/projects/$projectName")
         println("  (If you don't see traces, set LANGSMITH_DEBUG=true and run again to see export errors.)")
     } else {
         System.err.println("✗ Warning: Flush may not have completed. Set LANGSMITH_DEBUG=true to see export errors.")
