@@ -6,6 +6,7 @@ import com.openai.core.http.StreamResponse
 import com.openai.models.chat.completions.ChatCompletion
 import com.openai.models.chat.completions.ChatCompletionChunk
 import com.openai.models.chat.completions.ChatCompletionCreateParams
+import com.openai.models.chat.completions.ChatCompletionStreamOptions
 import com.openai.models.chat.completions.StructuredChatCompletion
 import com.openai.models.chat.completions.StructuredChatCompletionCreateParams
 import com.openai.services.blocking.ChatService
@@ -14,7 +15,8 @@ import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.Span
 import java.util.function.Consumer
 import java.util.regex.Pattern
-import org.slf4j.LoggerFactory
+import java.util.stream.Stream
+import kotlin.jvm.optionals.getOrNull
 
 /** Wrapped ChatService that adds OpenTelemetry tracing to chat completion operations. */
 internal class WrappedChatService(private val delegate: ChatService) : ChatService {
@@ -29,9 +31,6 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
 
     private class WrappedChatCompletionService(private val delegate: ChatCompletionService) :
         ChatCompletionService {
-        companion object {
-            private val logger = LoggerFactory.getLogger(WrappedChatCompletionService::class.java)
-        }
 
         override fun withRawResponse() = delegate.withRawResponse()
 
@@ -54,14 +53,6 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
         ): ChatCompletion {
             val model = params.model()?.toString()
             val span = TracingUtils.createSpanBuilder(model, "chat").startSpan()
-            if (logger.isDebugEnabled) {
-                logger.debug(
-                    "[WrappedChatService] Created span: {}, isRecording: {}, traceId: {}",
-                    span.spanContext.spanId,
-                    span.isRecording,
-                    span.spanContext.traceId,
-                )
-            }
             try {
                 span.makeCurrent().use {
                     setExperimentContextAttributes(span)
@@ -72,10 +63,18 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                         params.topP().orElse(null),
                         params.maxCompletionTokens().orElse(null),
                     )
-                    formatInputMessages(params).let { TracingUtils.setInputMessages(span, it) }
-                    extractPromptFromParams(params)
-                        ?.takeIf { it.isNotEmpty() }
-                        ?.let { span.setAttribute(AttributeKey.stringKey("gen_ai.prompt"), it) }
+                    val promptTextNonStream =
+                        extractPromptFromParams(params)?.takeIf { it.isNotEmpty() }
+                    promptTextNonStream?.let {
+                        span.setAttribute(AttributeKey.stringKey("gen_ai.prompt"), it)
+                    }
+                    val inputMessagesNonStream =
+                        if (promptTextNonStream != null) {
+                            buildGenAiInputMessages(promptTextNonStream)
+                        } else {
+                            formatInputMessages(params)
+                        }
+                    TracingUtils.setInputMessages(span, inputMessagesNonStream)
                     val result =
                         if (requestOptions == null) delegate.create(params)
                         else delegate.create(params, requestOptions)
@@ -101,8 +100,6 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 TracingUtils.recordException(span, e)
                 throw e
             } finally {
-                if (logger.isDebugEnabled)
-                    logger.debug("[WrappedChatService] Ending span: {}", span.spanContext.spanId)
                 span.end()
             }
         }
@@ -127,11 +124,6 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
 
         private fun formatInputMessages(params: ChatCompletionCreateParams): String {
             if (params.messages().isEmpty()) return "[]"
-            if (logger.isDebugEnabled)
-                logger.debug(
-                    "[formatInputMessages] Processing {} message(s)",
-                    params.messages().size,
-                )
             val json = StringBuilder("[")
             var first = true
             for (messageParam in params.messages()) {
@@ -331,25 +323,18 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
 
         private fun extractPromptFromParams(params: ChatCompletionCreateParams): String? {
             for (messageParam in params.messages()) {
-                try {
-                    if (
-                        messageParam.javaClass.getMethod("isUser").invoke(messageParam) as Boolean
-                    ) {
-                        val userMessage =
-                            messageParam.javaClass.getMethod("asUser").invoke(messageParam)
-                        val content = userMessage.javaClass.getMethod("content").invoke(userMessage)
-                        when (content) {
-                            is String -> return content
-                            is List<*> ->
-                                if (content.isNotEmpty())
-                                    (content[0] as? String)?.let {
-                                        return it
-                                    }
-                        }
-                    }
-                } catch (_: Exception) {}
+                if (messageParam.isUser()) {
+                    val userMessage = messageParam.asUser()
+                    val text = userMessage.content().text().getOrNull()
+                    if (!text.isNullOrEmpty()) return text
+                }
             }
             return null
+        }
+
+        private fun buildGenAiInputMessages(promptText: String): String {
+            val escaped = TracingUtils.escapeJsonString(promptText)
+            return "[{\"role\":\"user\",\"parts\":[{\"type\":\"text\",\"content\":\"$escaped\"}]}]"
         }
 
         private fun extractCompletionFromResult(result: ChatCompletion): String? =
@@ -381,7 +366,15 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                             raw.topP().orElse(null),
                             raw.maxCompletionTokens().orElse(null),
                         )
-                        formatInputMessages(raw).let { TracingUtils.setInputMessages(span, it) }
+                        val promptStructured =
+                            extractPromptFromParams(raw)?.takeIf { it.isNotEmpty() }
+                        val inputStructured =
+                            if (promptStructured != null) {
+                                buildGenAiInputMessages(promptStructured)
+                            } else {
+                                formatInputMessages(raw)
+                            }
+                        TracingUtils.setInputMessages(span, inputStructured)
                     }
                     val result =
                         if (requestOptions == null) delegate.create(params)
@@ -414,6 +407,22 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             requestOptions: RequestOptions,
         ): StreamResponse<ChatCompletionChunk> = createStreamingChat(params, requestOptions)
 
+        /**
+         * Ensures the request asks for usage in the stream so we get token counts in the final
+         * chunk. Without stream_options.include_usage=true the API does not send usage and traces
+         * lack token metadata.
+         */
+        private fun ensureStreamIncludeUsage(
+            params: ChatCompletionCreateParams
+        ): ChatCompletionCreateParams {
+            val existing = params.streamOptions().orElse(null)
+            if (existing != null && existing.includeUsage().orElse(false)) return params
+            val streamOptsBuilder = ChatCompletionStreamOptions.builder().includeUsage(true)
+            existing?.includeObfuscation()?.ifPresent { streamOptsBuilder.includeObfuscation(it) }
+            val newOpts = streamOptsBuilder.build()
+            return params.toBuilder().streamOptions(newOpts).build()
+        }
+
         private fun createStreamingChat(
             params: ChatCompletionCreateParams,
             requestOptions: RequestOptions?,
@@ -431,15 +440,28 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                         params.topP().orElse(null),
                         params.maxCompletionTokens().orElse(null),
                     )
-                    formatInputMessages(params).let { TracingUtils.setInputMessages(span, it) }
-                    return if (requestOptions == null) delegate.createStreaming(params)
-                    else delegate.createStreaming(params, requestOptions!!)
+                    val promptText = extractPromptFromParams(params)?.takeIf { it.isNotEmpty() }
+                    promptText?.let {
+                        span.setAttribute(AttributeKey.stringKey("gen_ai.prompt"), it)
+                    }
+                    val inputMessages =
+                        if (promptText != null) {
+                            buildGenAiInputMessages(promptText)
+                        } else {
+                            formatInputMessages(params)
+                        }
+                    TracingUtils.setInputMessages(span, inputMessages)
+                    val aggregator = ChatStreamAggregator()
+                    val paramsWithUsage = ensureStreamIncludeUsage(params)
+                    val delegateStream =
+                        if (requestOptions == null) delegate.createStreaming(paramsWithUsage)
+                        else delegate.createStreaming(paramsWithUsage, requestOptions!!)
+                    return TracedChatStreamResponse(span, aggregator, delegateStream)
                 }
             } catch (e: Exception) {
                 TracingUtils.recordException(span, e)
-                throw e
-            } finally {
                 span.end()
+                throw e
             }
         }
 
@@ -522,5 +544,35 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             params: com.openai.models.chat.completions.ChatCompletionDeleteParams,
             requestOptions: RequestOptions,
         ) = delegate.delete(params, requestOptions)
+    }
+}
+
+private class TracedChatStreamResponse(
+    private val span: Span,
+    private val aggregator: ChatStreamAggregator,
+    private val delegate: StreamResponse<ChatCompletionChunk>,
+) : StreamResponse<ChatCompletionChunk> {
+
+    @Volatile private var closed = false
+
+    override fun stream(): Stream<ChatCompletionChunk> =
+        delegate.stream().map { chunk ->
+            aggregator.addChunk(chunk)
+            chunk
+        }
+
+    override fun close() {
+        if (closed) return
+        closed = true
+        try {
+            aggregator.applyToSpan(span)
+        } finally {
+            span.end()
+            try {
+                delegate.close()
+            } catch (_: Exception) {
+                // Already ended span; ensure delegate is closed best-effort
+            }
+        }
     }
 }
