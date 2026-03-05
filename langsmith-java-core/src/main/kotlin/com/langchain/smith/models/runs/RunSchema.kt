@@ -22,14 +22,14 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Run schema. */
-class RunRetrieveResponse
+class RunSchema
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
     private val appPath: JsonField<String>,
     private val dottedOrder: JsonField<String>,
     private val name: JsonField<String>,
-    private val runType: JsonField<RunType>,
+    private val runType: JsonField<RunTypeEnum>,
     private val sessionId: JsonField<String>,
     private val status: JsonField<String>,
     private val traceId: JsonField<String>,
@@ -91,7 +91,9 @@ private constructor(
         @ExcludeMissing
         dottedOrder: JsonField<String> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("run_type") @ExcludeMissing runType: JsonField<RunType> = JsonMissing.of(),
+        @JsonProperty("run_type")
+        @ExcludeMissing
+        runType: JsonField<RunTypeEnum> = JsonMissing.of(),
         @JsonProperty("session_id") @ExcludeMissing sessionId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
         @JsonProperty("trace_id") @ExcludeMissing traceId: JsonField<String> = JsonMissing.of(),
@@ -305,7 +307,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun runType(): RunType = runType.getRequired("run_type")
+    fun runType(): RunTypeEnum = runType.getRequired("run_type")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -652,7 +654,7 @@ private constructor(
      *
      * Unlike [runType], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("run_type") @ExcludeMissing fun _runType(): JsonField<RunType> = runType
+    @JsonProperty("run_type") @ExcludeMissing fun _runType(): JsonField<RunTypeEnum> = runType
 
     /**
      * Returns the raw JSON value of [sessionId].
@@ -1088,7 +1090,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [RunRetrieveResponse].
+         * Returns a mutable builder for constructing an instance of [RunSchema].
          *
          * The following fields are required:
          * ```java
@@ -1105,14 +1107,14 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [RunRetrieveResponse]. */
+    /** A builder for [RunSchema]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String>? = null
         private var appPath: JsonField<String>? = null
         private var dottedOrder: JsonField<String>? = null
         private var name: JsonField<String>? = null
-        private var runType: JsonField<RunType>? = null
+        private var runType: JsonField<RunTypeEnum>? = null
         private var sessionId: JsonField<String>? = null
         private var status: JsonField<String>? = null
         private var traceId: JsonField<String>? = null
@@ -1166,63 +1168,63 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(runRetrieveResponse: RunRetrieveResponse) = apply {
-            id = runRetrieveResponse.id
-            appPath = runRetrieveResponse.appPath
-            dottedOrder = runRetrieveResponse.dottedOrder
-            name = runRetrieveResponse.name
-            runType = runRetrieveResponse.runType
-            sessionId = runRetrieveResponse.sessionId
-            status = runRetrieveResponse.status
-            traceId = runRetrieveResponse.traceId
-            childRunIds = runRetrieveResponse.childRunIds.map { it.toMutableList() }
-            completionCost = runRetrieveResponse.completionCost
-            completionCostDetails = runRetrieveResponse.completionCostDetails
-            completionTokenDetails = runRetrieveResponse.completionTokenDetails
-            completionTokens = runRetrieveResponse.completionTokens
-            directChildRunIds = runRetrieveResponse.directChildRunIds.map { it.toMutableList() }
-            endTime = runRetrieveResponse.endTime
-            error = runRetrieveResponse.error
-            events = runRetrieveResponse.events.map { it.toMutableList() }
-            executionOrder = runRetrieveResponse.executionOrder
-            extra = runRetrieveResponse.extra
-            feedbackStats = runRetrieveResponse.feedbackStats
-            firstTokenTime = runRetrieveResponse.firstTokenTime
-            inDataset = runRetrieveResponse.inDataset
-            inputs = runRetrieveResponse.inputs
-            inputsPreview = runRetrieveResponse.inputsPreview
-            inputsS3Urls = runRetrieveResponse.inputsS3Urls
-            lastQueuedAt = runRetrieveResponse.lastQueuedAt
-            manifestId = runRetrieveResponse.manifestId
-            manifestS3Id = runRetrieveResponse.manifestS3Id
-            messages = runRetrieveResponse.messages.map { it.toMutableList() }
-            outputs = runRetrieveResponse.outputs
-            outputsPreview = runRetrieveResponse.outputsPreview
-            outputsS3Urls = runRetrieveResponse.outputsS3Urls
-            parentRunId = runRetrieveResponse.parentRunId
-            parentRunIds = runRetrieveResponse.parentRunIds.map { it.toMutableList() }
-            priceModelId = runRetrieveResponse.priceModelId
-            promptCost = runRetrieveResponse.promptCost
-            promptCostDetails = runRetrieveResponse.promptCostDetails
-            promptTokenDetails = runRetrieveResponse.promptTokenDetails
-            promptTokens = runRetrieveResponse.promptTokens
-            referenceDatasetId = runRetrieveResponse.referenceDatasetId
-            referenceExampleId = runRetrieveResponse.referenceExampleId
-            s3Urls = runRetrieveResponse.s3Urls
-            serialized = runRetrieveResponse.serialized
-            shareToken = runRetrieveResponse.shareToken
-            startTime = runRetrieveResponse.startTime
-            tags = runRetrieveResponse.tags.map { it.toMutableList() }
-            threadId = runRetrieveResponse.threadId
-            totalCost = runRetrieveResponse.totalCost
-            totalTokens = runRetrieveResponse.totalTokens
-            traceFirstReceivedAt = runRetrieveResponse.traceFirstReceivedAt
-            traceMaxStartTime = runRetrieveResponse.traceMaxStartTime
-            traceMinStartTime = runRetrieveResponse.traceMinStartTime
-            traceTier = runRetrieveResponse.traceTier
-            traceUpgrade = runRetrieveResponse.traceUpgrade
-            ttlSeconds = runRetrieveResponse.ttlSeconds
-            additionalProperties = runRetrieveResponse.additionalProperties.toMutableMap()
+        internal fun from(runSchema: RunSchema) = apply {
+            id = runSchema.id
+            appPath = runSchema.appPath
+            dottedOrder = runSchema.dottedOrder
+            name = runSchema.name
+            runType = runSchema.runType
+            sessionId = runSchema.sessionId
+            status = runSchema.status
+            traceId = runSchema.traceId
+            childRunIds = runSchema.childRunIds.map { it.toMutableList() }
+            completionCost = runSchema.completionCost
+            completionCostDetails = runSchema.completionCostDetails
+            completionTokenDetails = runSchema.completionTokenDetails
+            completionTokens = runSchema.completionTokens
+            directChildRunIds = runSchema.directChildRunIds.map { it.toMutableList() }
+            endTime = runSchema.endTime
+            error = runSchema.error
+            events = runSchema.events.map { it.toMutableList() }
+            executionOrder = runSchema.executionOrder
+            extra = runSchema.extra
+            feedbackStats = runSchema.feedbackStats
+            firstTokenTime = runSchema.firstTokenTime
+            inDataset = runSchema.inDataset
+            inputs = runSchema.inputs
+            inputsPreview = runSchema.inputsPreview
+            inputsS3Urls = runSchema.inputsS3Urls
+            lastQueuedAt = runSchema.lastQueuedAt
+            manifestId = runSchema.manifestId
+            manifestS3Id = runSchema.manifestS3Id
+            messages = runSchema.messages.map { it.toMutableList() }
+            outputs = runSchema.outputs
+            outputsPreview = runSchema.outputsPreview
+            outputsS3Urls = runSchema.outputsS3Urls
+            parentRunId = runSchema.parentRunId
+            parentRunIds = runSchema.parentRunIds.map { it.toMutableList() }
+            priceModelId = runSchema.priceModelId
+            promptCost = runSchema.promptCost
+            promptCostDetails = runSchema.promptCostDetails
+            promptTokenDetails = runSchema.promptTokenDetails
+            promptTokens = runSchema.promptTokens
+            referenceDatasetId = runSchema.referenceDatasetId
+            referenceExampleId = runSchema.referenceExampleId
+            s3Urls = runSchema.s3Urls
+            serialized = runSchema.serialized
+            shareToken = runSchema.shareToken
+            startTime = runSchema.startTime
+            tags = runSchema.tags.map { it.toMutableList() }
+            threadId = runSchema.threadId
+            totalCost = runSchema.totalCost
+            totalTokens = runSchema.totalTokens
+            traceFirstReceivedAt = runSchema.traceFirstReceivedAt
+            traceMaxStartTime = runSchema.traceMaxStartTime
+            traceMinStartTime = runSchema.traceMinStartTime
+            traceTier = runSchema.traceTier
+            traceUpgrade = runSchema.traceUpgrade
+            ttlSeconds = runSchema.ttlSeconds
+            additionalProperties = runSchema.additionalProperties.toMutableMap()
         }
 
         fun id(id: String) = id(JsonField.of(id))
@@ -1267,15 +1269,16 @@ private constructor(
         fun name(name: JsonField<String>) = apply { this.name = name }
 
         /** Enum for run types. */
-        fun runType(runType: RunType) = runType(JsonField.of(runType))
+        fun runType(runType: RunTypeEnum) = runType(JsonField.of(runType))
 
         /**
          * Sets [Builder.runType] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.runType] with a well-typed [RunType] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.runType] with a well-typed [RunTypeEnum] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun runType(runType: JsonField<RunType>) = apply { this.runType = runType }
+        fun runType(runType: JsonField<RunTypeEnum>) = apply { this.runType = runType }
 
         fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
 
@@ -2155,7 +2158,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [RunRetrieveResponse].
+         * Returns an immutable instance of [RunSchema].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -2173,8 +2176,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): RunRetrieveResponse =
-            RunRetrieveResponse(
+        fun build(): RunSchema =
+            RunSchema(
                 checkRequired("id", id),
                 checkRequired("appPath", appPath),
                 checkRequired("dottedOrder", dottedOrder),
@@ -2236,7 +2239,7 @@ private constructor(
 
     private var validated: Boolean = false
 
-    fun validate(): RunRetrieveResponse = apply {
+    fun validate(): RunSchema = apply {
         if (validated) {
             return@apply
         }
@@ -2369,164 +2372,6 @@ private constructor(
             (traceTier.asKnown().getOrNull()?.validity() ?: 0) +
             (if (traceUpgrade.asKnown().isPresent) 1 else 0) +
             (if (ttlSeconds.asKnown().isPresent) 1 else 0)
-
-    /** Enum for run types. */
-    class RunType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
-
-        /**
-         * Returns this class instance's raw value.
-         *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
-         */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-        companion object {
-
-            @JvmField val TOOL = of("tool")
-
-            @JvmField val CHAIN = of("chain")
-
-            @JvmField val LLM = of("llm")
-
-            @JvmField val RETRIEVER = of("retriever")
-
-            @JvmField val EMBEDDING = of("embedding")
-
-            @JvmField val PROMPT = of("prompt")
-
-            @JvmField val PARSER = of("parser")
-
-            @JvmStatic fun of(value: String) = RunType(JsonField.of(value))
-        }
-
-        /** An enum containing [RunType]'s known values. */
-        enum class Known {
-            TOOL,
-            CHAIN,
-            LLM,
-            RETRIEVER,
-            EMBEDDING,
-            PROMPT,
-            PARSER,
-        }
-
-        /**
-         * An enum containing [RunType]'s known values, as well as an [_UNKNOWN] member.
-         *
-         * An instance of [RunType] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
-         * - It was constructed with an arbitrary value using the [of] method.
-         */
-        enum class Value {
-            TOOL,
-            CHAIN,
-            LLM,
-            RETRIEVER,
-            EMBEDDING,
-            PROMPT,
-            PARSER,
-            /** An enum member indicating that [RunType] was instantiated with an unknown value. */
-            _UNKNOWN,
-        }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
-         *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
-         */
-        fun value(): Value =
-            when (this) {
-                TOOL -> Value.TOOL
-                CHAIN -> Value.CHAIN
-                LLM -> Value.LLM
-                RETRIEVER -> Value.RETRIEVER
-                EMBEDDING -> Value.EMBEDDING
-                PROMPT -> Value.PROMPT
-                PARSER -> Value.PARSER
-                else -> Value._UNKNOWN
-            }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value.
-         *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value is a not a known
-         *   member.
-         */
-        fun known(): Known =
-            when (this) {
-                TOOL -> Known.TOOL
-                CHAIN -> Known.CHAIN
-                LLM -> Known.LLM
-                RETRIEVER -> Known.RETRIEVER
-                EMBEDDING -> Known.EMBEDDING
-                PROMPT -> Known.PROMPT
-                PARSER -> Known.PARSER
-                else -> throw LangChainInvalidDataException("Unknown RunType: $value")
-            }
-
-        /**
-         * Returns this class instance's primitive wire representation.
-         *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
-         */
-        fun asString(): String =
-            _value().asString().orElseThrow {
-                LangChainInvalidDataException("Value is not a String")
-            }
-
-        private var validated: Boolean = false
-
-        fun validate(): RunType = apply {
-            if (validated) {
-                return@apply
-            }
-
-            known()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is RunType && value == other.value
-        }
-
-        override fun hashCode() = value.hashCode()
-
-        override fun toString() = value.toString()
-    }
 
     class CompletionCostDetails
     @JsonCreator
@@ -4058,7 +3903,7 @@ private constructor(
             return true
         }
 
-        return other is RunRetrieveResponse &&
+        return other is RunSchema &&
             id == other.id &&
             appPath == other.appPath &&
             dottedOrder == other.dottedOrder &&
@@ -4181,5 +4026,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunRetrieveResponse{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, childRunIds=$childRunIds, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, manifestId=$manifestId, manifestS3Id=$manifestS3Id, messages=$messages, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
+        "RunSchema{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, childRunIds=$childRunIds, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, manifestId=$manifestId, manifestS3Id=$manifestS3Id, messages=$messages, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
 }

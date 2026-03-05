@@ -16,7 +16,7 @@ import com.langchain.smith.models.runs.RunIngestMultipartResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
 import com.langchain.smith.models.runs.RunRetrieveParams
-import com.langchain.smith.models.runs.RunRetrieveResponse
+import com.langchain.smith.models.runs.RunSchema
 import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
@@ -62,33 +62,30 @@ interface RunService {
     fun create(run: Run): RunCreateResponse = create(run, RequestOptions.none())
 
     /** Get a specific run. */
-    fun retrieve(runId: String): RunRetrieveResponse = retrieve(runId, RunRetrieveParams.none())
+    fun retrieve(runId: String): RunSchema = retrieve(runId, RunRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         runId: String,
         params: RunRetrieveParams = RunRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): RunRetrieveResponse = retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+    ): RunSchema = retrieve(params.toBuilder().runId(runId).build(), requestOptions)
 
     /** @see retrieve */
-    fun retrieve(
-        runId: String,
-        params: RunRetrieveParams = RunRetrieveParams.none(),
-    ): RunRetrieveResponse = retrieve(runId, params, RequestOptions.none())
+    fun retrieve(runId: String, params: RunRetrieveParams = RunRetrieveParams.none()): RunSchema =
+        retrieve(runId, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: RunRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): RunRetrieveResponse
+    ): RunSchema
 
     /** @see retrieve */
-    fun retrieve(params: RunRetrieveParams): RunRetrieveResponse =
-        retrieve(params, RequestOptions.none())
+    fun retrieve(params: RunRetrieveParams): RunSchema = retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(runId: String, requestOptions: RequestOptions): RunRetrieveResponse =
+    fun retrieve(runId: String, requestOptions: RequestOptions): RunSchema =
         retrieve(runId, RunRetrieveParams.none(), requestOptions)
 
     /**
@@ -261,7 +258,7 @@ interface RunService {
          * [RunService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(runId: String): HttpResponseFor<RunRetrieveResponse> =
+        fun retrieve(runId: String): HttpResponseFor<RunSchema> =
             retrieve(runId, RunRetrieveParams.none())
 
         /** @see retrieve */
@@ -270,7 +267,7 @@ interface RunService {
             runId: String,
             params: RunRetrieveParams = RunRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RunRetrieveResponse> =
+        ): HttpResponseFor<RunSchema> =
             retrieve(params.toBuilder().runId(runId).build(), requestOptions)
 
         /** @see retrieve */
@@ -278,26 +275,23 @@ interface RunService {
         fun retrieve(
             runId: String,
             params: RunRetrieveParams = RunRetrieveParams.none(),
-        ): HttpResponseFor<RunRetrieveResponse> = retrieve(runId, params, RequestOptions.none())
+        ): HttpResponseFor<RunSchema> = retrieve(runId, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: RunRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RunRetrieveResponse>
+        ): HttpResponseFor<RunSchema>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: RunRetrieveParams): HttpResponseFor<RunRetrieveResponse> =
+        fun retrieve(params: RunRetrieveParams): HttpResponseFor<RunSchema> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(
-            runId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<RunRetrieveResponse> =
+        fun retrieve(runId: String, requestOptions: RequestOptions): HttpResponseFor<RunSchema> =
             retrieve(runId, RunRetrieveParams.none(), requestOptions)
 
         /**
