@@ -15,7 +15,7 @@ import com.langchain.smith.models.runs.RunIngestMultipartResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
 import com.langchain.smith.models.runs.RunRetrieveParams
-import com.langchain.smith.models.runs.RunRetrieveResponse
+import com.langchain.smith.models.runs.RunSchema
 import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
@@ -64,7 +64,7 @@ interface RunServiceAsync {
     fun create(run: Run): CompletableFuture<RunCreateResponse> = create(run, RequestOptions.none())
 
     /** Get a specific run. */
-    fun retrieve(runId: String): CompletableFuture<RunRetrieveResponse> =
+    fun retrieve(runId: String): CompletableFuture<RunSchema> =
         retrieve(runId, RunRetrieveParams.none())
 
     /** @see retrieve */
@@ -72,30 +72,27 @@ interface RunServiceAsync {
         runId: String,
         params: RunRetrieveParams = RunRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RunRetrieveResponse> =
+    ): CompletableFuture<RunSchema> =
         retrieve(params.toBuilder().runId(runId).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         runId: String,
         params: RunRetrieveParams = RunRetrieveParams.none(),
-    ): CompletableFuture<RunRetrieveResponse> = retrieve(runId, params, RequestOptions.none())
+    ): CompletableFuture<RunSchema> = retrieve(runId, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: RunRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RunRetrieveResponse>
+    ): CompletableFuture<RunSchema>
 
     /** @see retrieve */
-    fun retrieve(params: RunRetrieveParams): CompletableFuture<RunRetrieveResponse> =
+    fun retrieve(params: RunRetrieveParams): CompletableFuture<RunSchema> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(
-        runId: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<RunRetrieveResponse> =
+    fun retrieve(runId: String, requestOptions: RequestOptions): CompletableFuture<RunSchema> =
         retrieve(runId, RunRetrieveParams.none(), requestOptions)
 
     /**
@@ -274,7 +271,7 @@ interface RunServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
          * [RunServiceAsync.retrieve].
          */
-        fun retrieve(runId: String): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+        fun retrieve(runId: String): CompletableFuture<HttpResponseFor<RunSchema>> =
             retrieve(runId, RunRetrieveParams.none())
 
         /** @see retrieve */
@@ -282,33 +279,31 @@ interface RunServiceAsync {
             runId: String,
             params: RunRetrieveParams = RunRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
             retrieve(params.toBuilder().runId(runId).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
             runId: String,
             params: RunRetrieveParams = RunRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
             retrieve(runId, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: RunRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>>
+        ): CompletableFuture<HttpResponseFor<RunSchema>>
 
         /** @see retrieve */
-        fun retrieve(
-            params: RunRetrieveParams
-        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+        fun retrieve(params: RunRetrieveParams): CompletableFuture<HttpResponseFor<RunSchema>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             runId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RunRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
             retrieve(runId, RunRetrieveParams.none(), requestOptions)
 
         /**

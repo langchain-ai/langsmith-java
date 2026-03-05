@@ -49,7 +49,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun dataSourceType(): Optional<DataSourceType> = body.dataSourceType()
+    fun dataSourceType(): Optional<RunsFilterDataSourceTypeEnum> = body.dataSourceType()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -119,7 +119,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun runType(): Optional<RunType> = body.runType()
+    fun runType(): Optional<RunTypeEnum> = body.runType()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -200,7 +200,7 @@ private constructor(
      *
      * Unlike [dataSourceType], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _dataSourceType(): JsonField<DataSourceType> = body._dataSourceType()
+    fun _dataSourceType(): JsonField<RunsFilterDataSourceTypeEnum> = body._dataSourceType()
 
     /**
      * Returns the raw JSON value of [endTime].
@@ -278,7 +278,7 @@ private constructor(
      *
      * Unlike [runType], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _runType(): JsonField<RunType> = body._runType()
+    fun _runType(): JsonField<RunTypeEnum> = body._runType()
 
     /**
      * Returns the raw JSON value of [searchFilter].
@@ -431,22 +431,22 @@ private constructor(
         fun cursor(cursor: JsonField<String>) = apply { body.cursor(cursor) }
 
         /** Enum for run data source types. */
-        fun dataSourceType(dataSourceType: DataSourceType?) = apply {
+        fun dataSourceType(dataSourceType: RunsFilterDataSourceTypeEnum?) = apply {
             body.dataSourceType(dataSourceType)
         }
 
         /** Alias for calling [Builder.dataSourceType] with `dataSourceType.orElse(null)`. */
-        fun dataSourceType(dataSourceType: Optional<DataSourceType>) =
+        fun dataSourceType(dataSourceType: Optional<RunsFilterDataSourceTypeEnum>) =
             dataSourceType(dataSourceType.getOrNull())
 
         /**
          * Sets [Builder.dataSourceType] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.dataSourceType] with a well-typed [DataSourceType] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.dataSourceType] with a well-typed
+         * [RunsFilterDataSourceTypeEnum] value instead. This method is primarily for setting the
+         * field to an undocumented or not yet supported value.
          */
-        fun dataSourceType(dataSourceType: JsonField<DataSourceType>) = apply {
+        fun dataSourceType(dataSourceType: JsonField<RunsFilterDataSourceTypeEnum>) = apply {
             body.dataSourceType(dataSourceType)
         }
 
@@ -618,18 +618,19 @@ private constructor(
         }
 
         /** Enum for run types. */
-        fun runType(runType: RunType?) = apply { body.runType(runType) }
+        fun runType(runType: RunTypeEnum?) = apply { body.runType(runType) }
 
         /** Alias for calling [Builder.runType] with `runType.orElse(null)`. */
-        fun runType(runType: Optional<RunType>) = runType(runType.getOrNull())
+        fun runType(runType: Optional<RunTypeEnum>) = runType(runType.getOrNull())
 
         /**
          * Sets [Builder.runType] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.runType] with a well-typed [RunType] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.runType] with a well-typed [RunTypeEnum] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun runType(runType: JsonField<RunType>) = apply { body.runType(runType) }
+        fun runType(runType: JsonField<RunTypeEnum>) = apply { body.runType(runType) }
 
         fun searchFilter(searchFilter: String?) = apply { body.searchFilter(searchFilter) }
 
@@ -931,7 +932,7 @@ private constructor(
     private constructor(
         private val id: JsonField<List<String>>,
         private val cursor: JsonField<String>,
-        private val dataSourceType: JsonField<DataSourceType>,
+        private val dataSourceType: JsonField<RunsFilterDataSourceTypeEnum>,
         private val endTime: JsonField<OffsetDateTime>,
         private val error: JsonField<Boolean>,
         private val executionOrder: JsonField<Long>,
@@ -942,7 +943,7 @@ private constructor(
         private val parentRun: JsonField<String>,
         private val query: JsonField<String>,
         private val referenceExample: JsonField<List<String>>,
-        private val runType: JsonField<RunType>,
+        private val runType: JsonField<RunTypeEnum>,
         private val searchFilter: JsonField<String>,
         private val select: JsonField<List<Select>>,
         private val session: JsonField<List<String>>,
@@ -962,7 +963,7 @@ private constructor(
             @JsonProperty("cursor") @ExcludeMissing cursor: JsonField<String> = JsonMissing.of(),
             @JsonProperty("data_source_type")
             @ExcludeMissing
-            dataSourceType: JsonField<DataSourceType> = JsonMissing.of(),
+            dataSourceType: JsonField<RunsFilterDataSourceTypeEnum> = JsonMissing.of(),
             @JsonProperty("end_time")
             @ExcludeMissing
             endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -983,7 +984,7 @@ private constructor(
             referenceExample: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("run_type")
             @ExcludeMissing
-            runType: JsonField<RunType> = JsonMissing.of(),
+            runType: JsonField<RunTypeEnum> = JsonMissing.of(),
             @JsonProperty("search_filter")
             @ExcludeMissing
             searchFilter: JsonField<String> = JsonMissing.of(),
@@ -1058,7 +1059,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun dataSourceType(): Optional<DataSourceType> =
+        fun dataSourceType(): Optional<RunsFilterDataSourceTypeEnum> =
             dataSourceType.getOptional("data_source_type")
 
         /**
@@ -1130,7 +1131,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun runType(): Optional<RunType> = runType.getOptional("run_type")
+        fun runType(): Optional<RunTypeEnum> = runType.getOptional("run_type")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1215,7 +1216,7 @@ private constructor(
          */
         @JsonProperty("data_source_type")
         @ExcludeMissing
-        fun _dataSourceType(): JsonField<DataSourceType> = dataSourceType
+        fun _dataSourceType(): JsonField<RunsFilterDataSourceTypeEnum> = dataSourceType
 
         /**
          * Returns the raw JSON value of [endTime].
@@ -1300,7 +1301,7 @@ private constructor(
          *
          * Unlike [runType], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("run_type") @ExcludeMissing fun _runType(): JsonField<RunType> = runType
+        @JsonProperty("run_type") @ExcludeMissing fun _runType(): JsonField<RunTypeEnum> = runType
 
         /**
          * Returns the raw JSON value of [searchFilter].
@@ -1413,7 +1414,7 @@ private constructor(
 
             private var id: JsonField<MutableList<String>>? = null
             private var cursor: JsonField<String> = JsonMissing.of()
-            private var dataSourceType: JsonField<DataSourceType> = JsonMissing.of()
+            private var dataSourceType: JsonField<RunsFilterDataSourceTypeEnum> = JsonMissing.of()
             private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var error: JsonField<Boolean> = JsonMissing.of()
             private var executionOrder: JsonField<Long> = JsonMissing.of()
@@ -1424,7 +1425,7 @@ private constructor(
             private var parentRun: JsonField<String> = JsonMissing.of()
             private var query: JsonField<String> = JsonMissing.of()
             private var referenceExample: JsonField<MutableList<String>>? = null
-            private var runType: JsonField<RunType> = JsonMissing.of()
+            private var runType: JsonField<RunTypeEnum> = JsonMissing.of()
             private var searchFilter: JsonField<String> = JsonMissing.of()
             private var select: JsonField<MutableList<Select>>? = null
             private var session: JsonField<MutableList<String>>? = null
@@ -1505,21 +1506,21 @@ private constructor(
             fun cursor(cursor: JsonField<String>) = apply { this.cursor = cursor }
 
             /** Enum for run data source types. */
-            fun dataSourceType(dataSourceType: DataSourceType?) =
+            fun dataSourceType(dataSourceType: RunsFilterDataSourceTypeEnum?) =
                 dataSourceType(JsonField.ofNullable(dataSourceType))
 
             /** Alias for calling [Builder.dataSourceType] with `dataSourceType.orElse(null)`. */
-            fun dataSourceType(dataSourceType: Optional<DataSourceType>) =
+            fun dataSourceType(dataSourceType: Optional<RunsFilterDataSourceTypeEnum>) =
                 dataSourceType(dataSourceType.getOrNull())
 
             /**
              * Sets [Builder.dataSourceType] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.dataSourceType] with a well-typed [DataSourceType]
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
+             * You should usually call [Builder.dataSourceType] with a well-typed
+             * [RunsFilterDataSourceTypeEnum] value instead. This method is primarily for setting
+             * the field to an undocumented or not yet supported value.
              */
-            fun dataSourceType(dataSourceType: JsonField<DataSourceType>) = apply {
+            fun dataSourceType(dataSourceType: JsonField<RunsFilterDataSourceTypeEnum>) = apply {
                 this.dataSourceType = dataSourceType
             }
 
@@ -1702,19 +1703,19 @@ private constructor(
             }
 
             /** Enum for run types. */
-            fun runType(runType: RunType?) = runType(JsonField.ofNullable(runType))
+            fun runType(runType: RunTypeEnum?) = runType(JsonField.ofNullable(runType))
 
             /** Alias for calling [Builder.runType] with `runType.orElse(null)`. */
-            fun runType(runType: Optional<RunType>) = runType(runType.getOrNull())
+            fun runType(runType: Optional<RunTypeEnum>) = runType(runType.getOrNull())
 
             /**
              * Sets [Builder.runType] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.runType] with a well-typed [RunType] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.runType] with a well-typed [RunTypeEnum] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun runType(runType: JsonField<RunType>) = apply { this.runType = runType }
+            fun runType(runType: JsonField<RunTypeEnum>) = apply { this.runType = runType }
 
             fun searchFilter(searchFilter: String?) =
                 searchFilter(JsonField.ofNullable(searchFilter))
@@ -2098,156 +2099,6 @@ private constructor(
             "Body{id=$id, cursor=$cursor, dataSourceType=$dataSourceType, endTime=$endTime, error=$error, executionOrder=$executionOrder, filter=$filter, isRoot=$isRoot, limit=$limit, order=$order, parentRun=$parentRun, query=$query, referenceExample=$referenceExample, runType=$runType, searchFilter=$searchFilter, select=$select, session=$session, skipPagination=$skipPagination, skipPrevCursor=$skipPrevCursor, startTime=$startTime, trace=$trace, traceFilter=$traceFilter, treeFilter=$treeFilter, useExperimentalSearch=$useExperimentalSearch, additionalProperties=$additionalProperties}"
     }
 
-    /** Enum for run data source types. */
-    class DataSourceType @JsonCreator private constructor(private val value: JsonField<String>) :
-        Enum {
-
-        /**
-         * Returns this class instance's raw value.
-         *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
-         */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-        companion object {
-
-            @JvmField val CURRENT = of("current")
-
-            @JvmField val HISTORICAL = of("historical")
-
-            @JvmField val LITE = of("lite")
-
-            @JvmField val ROOT_LITE = of("root_lite")
-
-            @JvmField val RUNS_FEEDBACKS_RMT_WIDE = of("runs_feedbacks_rmt_wide")
-
-            @JvmStatic fun of(value: String) = DataSourceType(JsonField.of(value))
-        }
-
-        /** An enum containing [DataSourceType]'s known values. */
-        enum class Known {
-            CURRENT,
-            HISTORICAL,
-            LITE,
-            ROOT_LITE,
-            RUNS_FEEDBACKS_RMT_WIDE,
-        }
-
-        /**
-         * An enum containing [DataSourceType]'s known values, as well as an [_UNKNOWN] member.
-         *
-         * An instance of [DataSourceType] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
-         * - It was constructed with an arbitrary value using the [of] method.
-         */
-        enum class Value {
-            CURRENT,
-            HISTORICAL,
-            LITE,
-            ROOT_LITE,
-            RUNS_FEEDBACKS_RMT_WIDE,
-            /**
-             * An enum member indicating that [DataSourceType] was instantiated with an unknown
-             * value.
-             */
-            _UNKNOWN,
-        }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
-         *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
-         */
-        fun value(): Value =
-            when (this) {
-                CURRENT -> Value.CURRENT
-                HISTORICAL -> Value.HISTORICAL
-                LITE -> Value.LITE
-                ROOT_LITE -> Value.ROOT_LITE
-                RUNS_FEEDBACKS_RMT_WIDE -> Value.RUNS_FEEDBACKS_RMT_WIDE
-                else -> Value._UNKNOWN
-            }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value.
-         *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value is a not a known
-         *   member.
-         */
-        fun known(): Known =
-            when (this) {
-                CURRENT -> Known.CURRENT
-                HISTORICAL -> Known.HISTORICAL
-                LITE -> Known.LITE
-                ROOT_LITE -> Known.ROOT_LITE
-                RUNS_FEEDBACKS_RMT_WIDE -> Known.RUNS_FEEDBACKS_RMT_WIDE
-                else -> throw LangChainInvalidDataException("Unknown DataSourceType: $value")
-            }
-
-        /**
-         * Returns this class instance's primitive wire representation.
-         *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
-         */
-        fun asString(): String =
-            _value().asString().orElseThrow {
-                LangChainInvalidDataException("Value is not a String")
-            }
-
-        private var validated: Boolean = false
-
-        fun validate(): DataSourceType = apply {
-            if (validated) {
-                return@apply
-            }
-
-            known()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is DataSourceType && value == other.value
-        }
-
-        override fun hashCode() = value.hashCode()
-
-        override fun toString() = value.toString()
-    }
-
     /** Enum for run start date order. */
     class Order @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -2369,164 +2220,6 @@ private constructor(
             }
 
             return other is Order && value == other.value
-        }
-
-        override fun hashCode() = value.hashCode()
-
-        override fun toString() = value.toString()
-    }
-
-    /** Enum for run types. */
-    class RunType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
-
-        /**
-         * Returns this class instance's raw value.
-         *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
-         */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-        companion object {
-
-            @JvmField val TOOL = of("tool")
-
-            @JvmField val CHAIN = of("chain")
-
-            @JvmField val LLM = of("llm")
-
-            @JvmField val RETRIEVER = of("retriever")
-
-            @JvmField val EMBEDDING = of("embedding")
-
-            @JvmField val PROMPT = of("prompt")
-
-            @JvmField val PARSER = of("parser")
-
-            @JvmStatic fun of(value: String) = RunType(JsonField.of(value))
-        }
-
-        /** An enum containing [RunType]'s known values. */
-        enum class Known {
-            TOOL,
-            CHAIN,
-            LLM,
-            RETRIEVER,
-            EMBEDDING,
-            PROMPT,
-            PARSER,
-        }
-
-        /**
-         * An enum containing [RunType]'s known values, as well as an [_UNKNOWN] member.
-         *
-         * An instance of [RunType] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
-         * - It was constructed with an arbitrary value using the [of] method.
-         */
-        enum class Value {
-            TOOL,
-            CHAIN,
-            LLM,
-            RETRIEVER,
-            EMBEDDING,
-            PROMPT,
-            PARSER,
-            /** An enum member indicating that [RunType] was instantiated with an unknown value. */
-            _UNKNOWN,
-        }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
-         *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
-         */
-        fun value(): Value =
-            when (this) {
-                TOOL -> Value.TOOL
-                CHAIN -> Value.CHAIN
-                LLM -> Value.LLM
-                RETRIEVER -> Value.RETRIEVER
-                EMBEDDING -> Value.EMBEDDING
-                PROMPT -> Value.PROMPT
-                PARSER -> Value.PARSER
-                else -> Value._UNKNOWN
-            }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value.
-         *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value is a not a known
-         *   member.
-         */
-        fun known(): Known =
-            when (this) {
-                TOOL -> Known.TOOL
-                CHAIN -> Known.CHAIN
-                LLM -> Known.LLM
-                RETRIEVER -> Known.RETRIEVER
-                EMBEDDING -> Known.EMBEDDING
-                PROMPT -> Known.PROMPT
-                PARSER -> Known.PARSER
-                else -> throw LangChainInvalidDataException("Unknown RunType: $value")
-            }
-
-        /**
-         * Returns this class instance's primitive wire representation.
-         *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
-         */
-        fun asString(): String =
-            _value().asString().orElseThrow {
-                LangChainInvalidDataException("Value is not a String")
-            }
-
-        private var validated: Boolean = false
-
-        fun validate(): RunType = apply {
-            if (validated) {
-                return@apply
-            }
-
-            known()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is RunType && value == other.value
         }
 
         override fun hashCode() = value.hashCode()

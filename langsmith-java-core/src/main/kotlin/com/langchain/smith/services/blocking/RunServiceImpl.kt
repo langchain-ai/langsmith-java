@@ -26,7 +26,7 @@ import com.langchain.smith.models.runs.RunIngestMultipartResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
 import com.langchain.smith.models.runs.RunRetrieveParams
-import com.langchain.smith.models.runs.RunRetrieveResponse
+import com.langchain.smith.models.runs.RunSchema
 import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
@@ -58,10 +58,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         // post /runs
         withRawResponse().create(params, requestOptions).parse()
 
-    override fun retrieve(
-        params: RunRetrieveParams,
-        requestOptions: RequestOptions,
-    ): RunRetrieveResponse =
+    override fun retrieve(params: RunRetrieveParams, requestOptions: RequestOptions): RunSchema =
         // get /api/v1/runs/{run_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
@@ -144,13 +141,13 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val retrieveHandler: Handler<RunRetrieveResponse> =
-            jsonHandler<RunRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<RunSchema> =
+            jsonHandler<RunSchema>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: RunRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<RunRetrieveResponse> {
+        ): HttpResponseFor<RunSchema> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("runId", params.runId().getOrNull())
