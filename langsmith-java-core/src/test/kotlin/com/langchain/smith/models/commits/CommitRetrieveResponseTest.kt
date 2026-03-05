@@ -26,6 +26,8 @@ internal class CommitRetrieveResponseTest {
                         .build()
                 )
                 .manifest(JsonValue.from(mapOf<String, Any>()))
+                .modelConfig(JsonValue.from(mapOf<String, Any>()))
+                .modelProvider("model_provider")
                 .build()
 
         assertThat(commitRetrieveResponse.commitHash()).contains("commit_hash")
@@ -41,6 +43,9 @@ internal class CommitRetrieveResponseTest {
             )
         assertThat(commitRetrieveResponse._manifest())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(commitRetrieveResponse._modelConfig())
+            .isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(commitRetrieveResponse.modelProvider()).contains("model_provider")
     }
 
     @Test
@@ -59,6 +64,8 @@ internal class CommitRetrieveResponseTest {
                         .build()
                 )
                 .manifest(JsonValue.from(mapOf<String, Any>()))
+                .modelConfig(JsonValue.from(mapOf<String, Any>()))
+                .modelProvider("model_provider")
                 .build()
 
         val roundtrippedCommitRetrieveResponse =
