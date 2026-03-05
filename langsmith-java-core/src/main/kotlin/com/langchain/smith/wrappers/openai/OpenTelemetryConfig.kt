@@ -85,7 +85,8 @@ object OpenTelemetryConfig {
     }
 
     private fun buildOtlpEndpoint(baseUrl: String?): String {
-        val base = (baseUrl?.takeIf { it.isNotBlank() } ?: DEFAULT_BASE_URL).trim().removeSuffix("/")
+        val base =
+            (baseUrl?.takeIf { it.isNotBlank() } ?: DEFAULT_BASE_URL).trim().removeSuffix("/")
         return base + OTLP_TRACES_PATH
     }
 
@@ -193,7 +194,8 @@ object OpenTelemetryConfig {
             }
             val result = delegate.export(spans)
             // Always wait for export to complete so flush/shutdown don't run before the HTTP
-            // request finishes. Without this, shutdown can abort in-flight exports and traces are lost.
+            // request finishes. Without this, shutdown can abort in-flight exports and traces are
+            // lost.
             try {
                 result.join(5, TimeUnit.SECONDS)
             } catch (e: Exception) {
@@ -201,7 +203,9 @@ object OpenTelemetryConfig {
                 else logger.error("[LangSmith] Exception waiting for export result", e)
             }
             if (!result.isSuccess) {
-                logger.error("[LangSmith ERROR] Failed to export ${spans.size} span(s) to LangSmith")
+                logger.error(
+                    "[LangSmith ERROR] Failed to export ${spans.size} span(s) to LangSmith"
+                )
                 logExportException(result)
                 if (DEBUG) {
                     for (span in spans) {
@@ -238,8 +242,7 @@ object OpenTelemetryConfig {
         }
 
         companion object {
-            private val logger =
-                LoggerFactory.getLogger(LoggingSpanExporter::class.java)
+            private val logger = LoggerFactory.getLogger(LoggingSpanExporter::class.java)
             private val DEBUG =
                 java.lang.Boolean.getBoolean("langsmith.debug") ||
                     "true".equals(System.getenv("LANGSMITH_DEBUG"), ignoreCase = true)
