@@ -46,8 +46,6 @@ import com.langchain.smith.services.blocking.datasets.ExperimentService
 import com.langchain.smith.services.blocking.datasets.ExperimentServiceImpl
 import com.langchain.smith.services.blocking.datasets.GroupService
 import com.langchain.smith.services.blocking.datasets.GroupServiceImpl
-import com.langchain.smith.services.blocking.datasets.IndexService
-import com.langchain.smith.services.blocking.datasets.IndexServiceImpl
 import com.langchain.smith.services.blocking.datasets.PlaygroundExperimentService
 import com.langchain.smith.services.blocking.datasets.PlaygroundExperimentServiceImpl
 import com.langchain.smith.services.blocking.datasets.RunService
@@ -82,8 +80,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     private val splits: SplitService by lazy { SplitServiceImpl(clientOptions) }
 
-    private val index: IndexService by lazy { IndexServiceImpl(clientOptions) }
-
     private val playgroundExperiment: PlaygroundExperimentService by lazy {
         PlaygroundExperimentServiceImpl(clientOptions)
     }
@@ -106,8 +102,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
     override fun comparative(): ComparativeService = comparative
 
     override fun splits(): SplitService = splits
-
-    override fun index(): IndexService = index
 
     override fun playgroundExperiment(): PlaygroundExperimentService = playgroundExperiment
 
@@ -224,10 +218,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             SplitServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val index: IndexService.WithRawResponse by lazy {
-            IndexServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         private val playgroundExperiment: PlaygroundExperimentService.WithRawResponse by lazy {
             PlaygroundExperimentServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -252,8 +242,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         override fun comparative(): ComparativeService.WithRawResponse = comparative
 
         override fun splits(): SplitService.WithRawResponse = splits
-
-        override fun index(): IndexService.WithRawResponse = index
 
         override fun playgroundExperiment(): PlaygroundExperimentService.WithRawResponse =
             playgroundExperiment
