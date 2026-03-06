@@ -6,8 +6,8 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
 import com.langchain.smith.models.datasets.runs.RunCreateParams
-import com.langchain.smith.models.datasets.runs.RunCreateResponse
 import com.langchain.smith.models.datasets.runs.RunDeltaParams
 import com.langchain.smith.models.datasets.runs.SessionFeedbackDelta
 import java.util.Optional
@@ -31,7 +31,7 @@ interface RunService {
      * Fetch examples for a dataset, and fetch the runs for each example if they are associated with
      * the given session_ids.
      */
-    fun create(datasetId: String, params: RunCreateParams): Optional<RunCreateResponse> =
+    fun create(datasetId: String, params: RunCreateParams): Optional<List<ExampleWithRunsCh>> =
         create(datasetId, params, RequestOptions.none())
 
     /** @see create */
@@ -39,18 +39,18 @@ interface RunService {
         datasetId: String,
         params: RunCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Optional<RunCreateResponse> =
+    ): Optional<List<ExampleWithRunsCh>> =
         create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
     /** @see create */
-    fun create(params: RunCreateParams): Optional<RunCreateResponse> =
+    fun create(params: RunCreateParams): Optional<List<ExampleWithRunsCh>> =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Optional<RunCreateResponse>
+    ): Optional<List<ExampleWithRunsCh>>
 
     /**
      * Fetch the number of regressions/improvements for each example in a dataset, between
@@ -93,7 +93,7 @@ interface RunService {
         fun create(
             datasetId: String,
             params: RunCreateParams,
-        ): HttpResponseFor<Optional<RunCreateResponse>> =
+        ): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> =
             create(datasetId, params, RequestOptions.none())
 
         /** @see create */
@@ -102,12 +102,12 @@ interface RunService {
             datasetId: String,
             params: RunCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Optional<RunCreateResponse>> =
+        ): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> =
             create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
         /** @see create */
         @MustBeClosed
-        fun create(params: RunCreateParams): HttpResponseFor<Optional<RunCreateResponse>> =
+        fun create(params: RunCreateParams): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> =
             create(params, RequestOptions.none())
 
         /** @see create */
@@ -115,7 +115,7 @@ interface RunService {
         fun create(
             params: RunCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Optional<RunCreateResponse>>
+        ): HttpResponseFor<Optional<List<ExampleWithRunsCh>>>
 
         /**
          * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/runs/delta`, but is
