@@ -79,6 +79,7 @@ internal class RepoServiceAsyncTest {
                     .isArchived(true)
                     .isPublic(true)
                     .readme("readme")
+                    .restrictedMode(true)
                     .addTag("string")
                     .build()
             )
