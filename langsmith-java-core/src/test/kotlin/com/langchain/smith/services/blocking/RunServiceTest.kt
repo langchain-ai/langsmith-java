@@ -329,12 +329,12 @@ internal class RunServiceTest {
         val response =
             runService.ingestMultipart(
                 RunIngestMultipartParams.builder()
-                    .attachmentRunIdFilename("some content".byteInputStream())
-                    .feedbackRunId("some content".byteInputStream())
-                    .patchRunId("some content".byteInputStream())
-                    .patchRunIdOutputs("some content".byteInputStream())
-                    .postRunId("some content".byteInputStream())
-                    .postRunIdInputs("some content".byteInputStream())
+                    .attachmentRunIdFilename("Example data".byteInputStream())
+                    .feedbackRunId("Example data".byteInputStream())
+                    .patchRunId("Example data".byteInputStream())
+                    .patchRunIdOutputs("Example data".byteInputStream())
+                    .postRunId("Example data".byteInputStream())
+                    .postRunIdInputs("Example data".byteInputStream())
                     .build()
             )
 

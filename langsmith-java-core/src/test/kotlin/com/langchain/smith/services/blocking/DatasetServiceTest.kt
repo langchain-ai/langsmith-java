@@ -364,7 +364,7 @@ internal class DatasetServiceTest {
         val dataset =
             datasetService.upload(
                 DatasetUploadParams.builder()
-                    .file("some content".byteInputStream())
+                    .file("Example data".byteInputStream())
                     .addInputKey("string")
                     .dataType(DataType.KV)
                     .description("description")

@@ -12,7 +12,7 @@ internal class DatasetUploadParamsTest {
     @Test
     fun create() {
         DatasetUploadParams.builder()
-            .file("some content".byteInputStream())
+            .file("Example data".byteInputStream())
             .addInputKey("string")
             .dataType(DataType.KV)
             .description("description")
@@ -32,7 +32,7 @@ internal class DatasetUploadParamsTest {
     fun body() {
         val params =
             DatasetUploadParams.builder()
-                .file("some content".byteInputStream())
+                .file("Example data".byteInputStream())
                 .addInputKey("string")
                 .dataType(DataType.KV)
                 .description("description")
@@ -59,7 +59,7 @@ internal class DatasetUploadParamsTest {
             )
             .isEqualTo(
                 mapOf(
-                        "file" to MultipartField.of("some content".byteInputStream()),
+                        "file" to MultipartField.of("Example data".byteInputStream()),
                         "input_keys" to MultipartField.of(listOf("string")),
                         "data_type" to MultipartField.of(DataType.KV),
                         "description" to MultipartField.of("description"),
@@ -84,7 +84,7 @@ internal class DatasetUploadParamsTest {
     fun bodyWithoutOptionalFields() {
         val params =
             DatasetUploadParams.builder()
-                .file("some content".byteInputStream())
+                .file("Example data".byteInputStream())
                 .addInputKey("string")
                 .build()
 
@@ -100,7 +100,7 @@ internal class DatasetUploadParamsTest {
             )
             .isEqualTo(
                 mapOf(
-                        "file" to MultipartField.of("some content".byteInputStream()),
+                        "file" to MultipartField.of("Example data".byteInputStream()),
                         "input_keys" to MultipartField.of(listOf("string")),
                     )
                     .mapValues { (_, field) ->
