@@ -13,7 +13,7 @@ internal class ExampleUploadFromCsvParamsTest {
     fun create() {
         ExampleUploadFromCsvParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .file("some content".byteInputStream())
+            .file("Example data".byteInputStream())
             .addInputKey("string")
             .addMetadataKey("string")
             .addOutputKey("string")
@@ -25,7 +25,7 @@ internal class ExampleUploadFromCsvParamsTest {
         val params =
             ExampleUploadFromCsvParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .file("some content".byteInputStream())
+                .file("Example data".byteInputStream())
                 .addInputKey("string")
                 .build()
 
@@ -39,7 +39,7 @@ internal class ExampleUploadFromCsvParamsTest {
         val params =
             ExampleUploadFromCsvParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .file("some content".byteInputStream())
+                .file("Example data".byteInputStream())
                 .addInputKey("string")
                 .addMetadataKey("string")
                 .addOutputKey("string")
@@ -57,7 +57,7 @@ internal class ExampleUploadFromCsvParamsTest {
             )
             .isEqualTo(
                 mapOf(
-                        "file" to MultipartField.of("some content".byteInputStream()),
+                        "file" to MultipartField.of("Example data".byteInputStream()),
                         "input_keys" to MultipartField.of(listOf("string")),
                         "metadata_keys" to MultipartField.of(listOf("string")),
                         "output_keys" to MultipartField.of(listOf("string")),
@@ -73,7 +73,7 @@ internal class ExampleUploadFromCsvParamsTest {
         val params =
             ExampleUploadFromCsvParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .file("some content".byteInputStream())
+                .file("Example data".byteInputStream())
                 .addInputKey("string")
                 .build()
 
@@ -89,7 +89,7 @@ internal class ExampleUploadFromCsvParamsTest {
             )
             .isEqualTo(
                 mapOf(
-                        "file" to MultipartField.of("some content".byteInputStream()),
+                        "file" to MultipartField.of("Example data".byteInputStream()),
                         "input_keys" to MultipartField.of(listOf("string")),
                     )
                     .mapValues { (_, field) ->

@@ -12,12 +12,12 @@ internal class RunIngestMultipartParamsTest {
     @Test
     fun create() {
         RunIngestMultipartParams.builder()
-            .attachmentRunIdFilename("some content".byteInputStream())
-            .feedbackRunId("some content".byteInputStream())
-            .patchRunId("some content".byteInputStream())
-            .patchRunIdOutputs("some content".byteInputStream())
-            .postRunId("some content".byteInputStream())
-            .postRunIdInputs("some content".byteInputStream())
+            .attachmentRunIdFilename("Example data".byteInputStream())
+            .feedbackRunId("Example data".byteInputStream())
+            .patchRunId("Example data".byteInputStream())
+            .patchRunIdOutputs("Example data".byteInputStream())
+            .postRunId("Example data".byteInputStream())
+            .postRunIdInputs("Example data".byteInputStream())
             .build()
     }
 
@@ -25,12 +25,12 @@ internal class RunIngestMultipartParamsTest {
     fun body() {
         val params =
             RunIngestMultipartParams.builder()
-                .attachmentRunIdFilename("some content".byteInputStream())
-                .feedbackRunId("some content".byteInputStream())
-                .patchRunId("some content".byteInputStream())
-                .patchRunIdOutputs("some content".byteInputStream())
-                .postRunId("some content".byteInputStream())
-                .postRunIdInputs("some content".byteInputStream())
+                .attachmentRunIdFilename("Example data".byteInputStream())
+                .feedbackRunId("Example data".byteInputStream())
+                .patchRunId("Example data".byteInputStream())
+                .patchRunIdOutputs("Example data".byteInputStream())
+                .postRunId("Example data".byteInputStream())
+                .postRunIdInputs("Example data".byteInputStream())
                 .build()
 
         val body = params._body()
@@ -46,14 +46,14 @@ internal class RunIngestMultipartParamsTest {
             .isEqualTo(
                 mapOf(
                         "attachment.{run_id}.{filename}" to
-                            MultipartField.of("some content".byteInputStream()),
-                        "feedback.{run_id}" to MultipartField.of("some content".byteInputStream()),
-                        "patch.{run_id}" to MultipartField.of("some content".byteInputStream()),
+                            MultipartField.of("Example data".byteInputStream()),
+                        "feedback.{run_id}" to MultipartField.of("Example data".byteInputStream()),
+                        "patch.{run_id}" to MultipartField.of("Example data".byteInputStream()),
                         "patch.{run_id}.outputs" to
-                            MultipartField.of("some content".byteInputStream()),
-                        "post.{run_id}" to MultipartField.of("some content".byteInputStream()),
+                            MultipartField.of("Example data".byteInputStream()),
+                        "post.{run_id}" to MultipartField.of("Example data".byteInputStream()),
                         "post.{run_id}.inputs" to
-                            MultipartField.of("some content".byteInputStream()),
+                            MultipartField.of("Example data".byteInputStream()),
                     )
                     .mapValues { (_, field) ->
                         field.map { (it as? ByteArray)?.inputStream() ?: it }
