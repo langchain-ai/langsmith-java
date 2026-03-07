@@ -17,6 +17,7 @@ internal class RepoUpdateParamsTest {
             .isArchived(true)
             .isPublic(true)
             .readme("readme")
+            .restrictedMode(true)
             .addTag("string")
             .build()
     }
@@ -41,6 +42,7 @@ internal class RepoUpdateParamsTest {
                 .isArchived(true)
                 .isPublic(true)
                 .readme("readme")
+                .restrictedMode(true)
                 .addTag("string")
                 .build()
 
@@ -50,6 +52,7 @@ internal class RepoUpdateParamsTest {
         assertThat(body.isArchived()).contains(true)
         assertThat(body.isPublic()).contains(true)
         assertThat(body.readme()).contains("readme")
+        assertThat(body.restrictedMode()).contains(true)
         assertThat(body.tags().getOrNull()).containsExactly("string")
     }
 
