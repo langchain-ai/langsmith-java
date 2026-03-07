@@ -224,7 +224,7 @@ internal class ExampleServiceTest {
             exampleService.uploadFromCsv(
                 ExampleUploadFromCsvParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .file("some content".byteInputStream())
+                    .file("Example data".byteInputStream())
                     .addInputKey("string")
                     .addMetadataKey("string")
                     .addOutputKey("string")
