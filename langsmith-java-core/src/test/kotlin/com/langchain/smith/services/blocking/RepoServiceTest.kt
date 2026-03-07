@@ -75,6 +75,7 @@ internal class RepoServiceTest {
                     .isArchived(true)
                     .isPublic(true)
                     .readme("readme")
+                    .restrictedMode(true)
                     .addTag("string")
                     .build()
             )

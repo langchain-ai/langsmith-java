@@ -50,6 +50,7 @@ private constructor(
     private val originalRepoFullName: JsonField<String>,
     private val originalRepoId: JsonField<String>,
     private val readme: JsonField<String>,
+    private val restrictedMode: JsonField<Boolean>,
     private val upstreamRepoFullName: JsonField<String>,
     private val upstreamRepoId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -105,6 +106,9 @@ private constructor(
         @ExcludeMissing
         originalRepoId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("readme") @ExcludeMissing readme: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("restricted_mode")
+        @ExcludeMissing
+        restrictedMode: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("upstream_repo_full_name")
         @ExcludeMissing
         upstreamRepoFullName: JsonField<String> = JsonMissing.of(),
@@ -136,6 +140,7 @@ private constructor(
         originalRepoFullName,
         originalRepoId,
         readme,
+        restrictedMode,
         upstreamRepoFullName,
         upstreamRepoId,
         mutableMapOf(),
@@ -288,6 +293,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun readme(): Optional<String> = readme.getOptional("readme")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun restrictedMode(): Optional<Boolean> = restrictedMode.getOptional("restricted_mode")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -491,6 +502,15 @@ private constructor(
     @JsonProperty("readme") @ExcludeMissing fun _readme(): JsonField<String> = readme
 
     /**
+     * Returns the raw JSON value of [restrictedMode].
+     *
+     * Unlike [restrictedMode], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("restricted_mode")
+    @ExcludeMissing
+    fun _restrictedMode(): JsonField<Boolean> = restrictedMode
+
+    /**
      * Returns the raw JSON value of [upstreamRepoFullName].
      *
      * Unlike [upstreamRepoFullName], this method doesn't throw if the JSON field has an unexpected
@@ -575,6 +595,7 @@ private constructor(
         private var originalRepoFullName: JsonField<String> = JsonMissing.of()
         private var originalRepoId: JsonField<String> = JsonMissing.of()
         private var readme: JsonField<String> = JsonMissing.of()
+        private var restrictedMode: JsonField<Boolean> = JsonMissing.of()
         private var upstreamRepoFullName: JsonField<String> = JsonMissing.of()
         private var upstreamRepoId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -605,6 +626,7 @@ private constructor(
             originalRepoFullName = repoWithLookups.originalRepoFullName
             originalRepoId = repoWithLookups.originalRepoId
             readme = repoWithLookups.readme
+            restrictedMode = repoWithLookups.restrictedMode
             upstreamRepoFullName = repoWithLookups.upstreamRepoFullName
             upstreamRepoId = repoWithLookups.upstreamRepoId
             additionalProperties = repoWithLookups.additionalProperties.toMutableMap()
@@ -952,6 +974,19 @@ private constructor(
          */
         fun readme(readme: JsonField<String>) = apply { this.readme = readme }
 
+        fun restrictedMode(restrictedMode: Boolean) = restrictedMode(JsonField.of(restrictedMode))
+
+        /**
+         * Sets [Builder.restrictedMode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.restrictedMode] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun restrictedMode(restrictedMode: JsonField<Boolean>) = apply {
+            this.restrictedMode = restrictedMode
+        }
+
         fun upstreamRepoFullName(upstreamRepoFullName: String?) =
             upstreamRepoFullName(JsonField.ofNullable(upstreamRepoFullName))
 
@@ -1062,6 +1097,7 @@ private constructor(
                 originalRepoFullName,
                 originalRepoId,
                 readme,
+                restrictedMode,
                 upstreamRepoFullName,
                 upstreamRepoId,
                 additionalProperties.toMutableMap(),
@@ -1099,6 +1135,7 @@ private constructor(
         originalRepoFullName()
         originalRepoId()
         readme()
+        restrictedMode()
         upstreamRepoFullName()
         upstreamRepoId()
         validated = true
@@ -1143,6 +1180,7 @@ private constructor(
             (if (originalRepoFullName.asKnown().isPresent) 1 else 0) +
             (if (originalRepoId.asKnown().isPresent) 1 else 0) +
             (if (readme.asKnown().isPresent) 1 else 0) +
+            (if (restrictedMode.asKnown().isPresent) 1 else 0) +
             (if (upstreamRepoFullName.asKnown().isPresent) 1 else 0) +
             (if (upstreamRepoId.asKnown().isPresent) 1 else 0)
 
@@ -1315,6 +1353,7 @@ private constructor(
             originalRepoFullName == other.originalRepoFullName &&
             originalRepoId == other.originalRepoId &&
             readme == other.readme &&
+            restrictedMode == other.restrictedMode &&
             upstreamRepoFullName == other.upstreamRepoFullName &&
             upstreamRepoId == other.upstreamRepoId &&
             additionalProperties == other.additionalProperties
@@ -1346,6 +1385,7 @@ private constructor(
             originalRepoFullName,
             originalRepoId,
             readme,
+            restrictedMode,
             upstreamRepoFullName,
             upstreamRepoId,
             additionalProperties,
@@ -1355,5 +1395,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RepoWithLookups{id=$id, createdAt=$createdAt, fullName=$fullName, isArchived=$isArchived, isPublic=$isPublic, numCommits=$numCommits, numDownloads=$numDownloads, numLikes=$numLikes, numViews=$numViews, owner=$owner, repoHandle=$repoHandle, repoType=$repoType, tags=$tags, tenantId=$tenantId, updatedAt=$updatedAt, commitTags=$commitTags, createdBy=$createdBy, description=$description, lastCommitHash=$lastCommitHash, latestCommitManifest=$latestCommitManifest, likedByAuthUser=$likedByAuthUser, originalRepoFullName=$originalRepoFullName, originalRepoId=$originalRepoId, readme=$readme, upstreamRepoFullName=$upstreamRepoFullName, upstreamRepoId=$upstreamRepoId, additionalProperties=$additionalProperties}"
+        "RepoWithLookups{id=$id, createdAt=$createdAt, fullName=$fullName, isArchived=$isArchived, isPublic=$isPublic, numCommits=$numCommits, numDownloads=$numDownloads, numLikes=$numLikes, numViews=$numViews, owner=$owner, repoHandle=$repoHandle, repoType=$repoType, tags=$tags, tenantId=$tenantId, updatedAt=$updatedAt, commitTags=$commitTags, createdBy=$createdBy, description=$description, lastCommitHash=$lastCommitHash, latestCommitManifest=$latestCommitManifest, likedByAuthUser=$likedByAuthUser, originalRepoFullName=$originalRepoFullName, originalRepoId=$originalRepoId, readme=$readme, restrictedMode=$restrictedMode, upstreamRepoFullName=$upstreamRepoFullName, upstreamRepoId=$upstreamRepoId, additionalProperties=$additionalProperties}"
 }
