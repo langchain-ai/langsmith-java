@@ -3,6 +3,7 @@ package com.langchain.smith.wrappers.openai
 import com.openai.core.ClientOptions
 import com.openai.core.RequestOptions
 import com.openai.core.http.StreamResponse
+import com.openai.helpers.ChatCompletionAccumulator
 import com.openai.models.chat.completions.ChatCompletion
 import com.openai.models.chat.completions.ChatCompletionChunk
 import com.openai.models.chat.completions.ChatCompletionCreateParams
@@ -68,33 +69,11 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                     promptTextNonStream?.let {
                         span.setAttribute(AttributeKey.stringKey("gen_ai.prompt"), it)
                     }
-                    val inputMessagesNonStream =
-                        if (promptTextNonStream != null) {
-                            buildGenAiInputMessages(promptTextNonStream)
-                        } else {
-                            formatInputMessages(params)
-                        }
-                    TracingUtils.setInputMessages(span, inputMessagesNonStream)
+                    TracingUtils.setInputMessages(span, formatInputMessages(params))
                     val result =
                         if (requestOptions == null) delegate.create(params)
                         else delegate.create(params, requestOptions)
-                    val responseModel = result.model()
-                    val finishReason =
-                        result.choices().firstOrNull()?.finishReason()?.toString() ?: "stop"
-                    TracingUtils.setResponseMetadata(span, responseModel, finishReason)
-                    formatOutputMessages(result).let { TracingUtils.setOutputMessages(span, it) }
-                    span.setAttribute(
-                        AttributeKey.stringKey("gen_ai.completion"),
-                        "{\"messages\":${formatOutputMessages(result)}}",
-                    )
-                    result.usage().ifPresent { usage ->
-                        TracingUtils.setResponseAttributes(
-                            span,
-                            usage.promptTokens().toLong(),
-                            usage.completionTokens().toLong(),
-                            usage.totalTokens().toLong(),
-                        )
-                    }
+                    applyChatCompletionToSpan(span, result)
                     return result
                 }
             } catch (e: Exception) {
@@ -102,6 +81,27 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 throw e
             } finally {
                 span.end()
+            }
+        }
+
+        /** Applies completion output, gen_ai.completion JSON, and usage to the span (shared by non-streaming and streaming). */
+        private fun applyChatCompletionToSpan(span: Span, completion: ChatCompletion) {
+            formatOutputMessages(completion).let { TracingUtils.setOutputMessages(span, it) }
+            span.setAttribute(
+                AttributeKey.stringKey("gen_ai.completion"),
+                "{\"messages\":${formatOutputMessages(completion)}}",
+            )
+            val responseModel = completion.model()
+            val finishReason =
+                completion.choices().firstOrNull()?.finishReason()?.toString() ?: "stop"
+            TracingUtils.setResponseMetadata(span, responseModel, finishReason)
+            completion.usage().ifPresent { usage ->
+                TracingUtils.setResponseAttributes(
+                    span,
+                    usage.promptTokens().toLong(),
+                    usage.completionTokens().toLong(),
+                    usage.totalTokens().toLong(),
+                )
             }
         }
 
@@ -217,15 +217,19 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 if (content == null) {
                     content = extractContentFromToString(messageParam.toString(), role)
                 }
-                if (role != null) json.append("\"role\":\"").append(role).append("\"")
+                // OTel GenAI schema: messages have "role" and "parts" array (LangSmith expects this)
+                val outRole = role ?: "user"
+                json.append("\"role\":\"").append(outRole).append("\"")
+                json.append(",\"parts\":[")
                 if (content != null) {
-                    if (role != null) json.append(",")
-                    json
-                        .append("\"content\":\"")
-                        .append(TracingUtils.escapeJsonString(content))
-                        .append("\"")
+                    val partType = if (role == "tool") "tool_call_response" else "text"
+                    val partKey = if (role == "tool") "response" else "content"
+                    json.append("{\"type\":\"").append(partType).append("\",\"")
+                    json.append(partKey).append("\":\"")
+                    json.append(TracingUtils.escapeJsonString(content))
+                    json.append("\"}")
                 }
-                json.append("}")
+                json.append("]}")
             }
             json.append("]")
             return json.toString()
@@ -275,6 +279,7 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             return null
         }
 
+        /** OTel GenAI schema: each message has role, parts array, and finish_reason (output). */
         private fun formatOutputMessages(completion: ChatCompletion): String {
             if (completion.choices().isEmpty()) return "[]"
             val json = StringBuilder("[")
@@ -283,40 +288,35 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 if (!first) json.append(",")
                 first = false
                 val message = choice.message()
-                json.append("{\"role\":\"assistant\"")
-                message.content().ifPresent {
-                    json
-                        .append(",\"content\":\"")
-                        .append(TracingUtils.escapeJsonString(it))
-                        .append("\"")
+                val finishReason =
+                    choice.finishReason()?.toString()?.lowercase() ?: "stop"
+                json.append("{\"role\":\"assistant\",\"parts\":[")
+                var partFirst = true
+                message.content().ifPresent { content ->
+                    if (!partFirst) json.append(",")
+                    partFirst = false
+                    json.append("{\"type\":\"text\",\"content\":\"")
+                    json.append(TracingUtils.escapeJsonString(content))
+                    json.append("\"}")
                 }
                 message.toolCalls().ifPresent { toolCalls ->
-                    if (toolCalls.isNotEmpty()) {
-                        json.append(",\"tool_calls\":[")
-                        var firstTc = true
-                        for (toolCall in toolCalls) {
-                            if (!toolCall.isFunction()) continue
-                            if (!firstTc) json.append(",")
-                            firstTc = false
-                            val fn = toolCall.asFunction()
-                            json
-                                .append("{\"id\":\"")
-                                .append(TracingUtils.escapeJsonString(fn.id()))
-                                .append("\"")
-                            json.append(",\"type\":\"function\"")
-                            json
-                                .append(",\"function\":{\"name\":\"")
-                                .append(TracingUtils.escapeJsonString(fn.function().name()))
-                            json
-                                .append("\",\"arguments\":\"")
-                                .append(TracingUtils.escapeJsonString(fn.function().arguments()))
-                                .append("\"}")
-                            json.append("}")
-                        }
-                        json.append("]")
+                    for (toolCall in toolCalls) {
+                        if (!toolCall.isFunction()) continue
+                        if (!partFirst) json.append(",")
+                        partFirst = false
+                        val fn = toolCall.asFunction()
+                        json.append("{\"type\":\"tool_call\",\"id\":\"")
+                        json.append(TracingUtils.escapeJsonString(fn.id()))
+                        json.append("\",\"name\":\"")
+                        json.append(TracingUtils.escapeJsonString(fn.function().name()))
+                        json.append("\",\"arguments\":\"")
+                        json.append(TracingUtils.escapeJsonString(fn.function().arguments()))
+                        json.append("\"}")
                     }
                 }
-                json.append("}")
+                json.append("],\"finish_reason\":\"")
+                    .append(TracingUtils.escapeJsonString(finishReason))
+                    .append("\"}")
             }
             json.append("]")
             return json.toString()
@@ -332,14 +332,6 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             }
             return null
         }
-
-        private fun buildGenAiInputMessages(promptText: String): String {
-            val escaped = TracingUtils.escapeJsonString(promptText)
-            return "[{\"role\":\"user\",\"parts\":[{\"type\":\"text\",\"content\":\"$escaped\"}]}]"
-        }
-
-        private fun extractCompletionFromResult(result: ChatCompletion): String? =
-            result.choices().firstOrNull()?.message()?.content()?.orElse(null)
 
         override fun <T : Any> create(
             params: StructuredChatCompletionCreateParams<T>
@@ -369,13 +361,10 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                         )
                         val promptStructured =
                             extractPromptFromParams(raw)?.takeIf { it.isNotEmpty() }
-                        val inputStructured =
-                            if (promptStructured != null) {
-                                buildGenAiInputMessages(promptStructured)
-                            } else {
-                                formatInputMessages(raw)
-                            }
-                        TracingUtils.setInputMessages(span, inputStructured)
+                        promptStructured?.let {
+                            span.setAttribute(AttributeKey.stringKey("gen_ai.prompt"), it)
+                        }
+                        TracingUtils.setInputMessages(span, formatInputMessages(raw))
                     }
                     val result =
                         if (requestOptions == null) delegate.create(params)
@@ -429,9 +418,7 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             requestOptions: RequestOptions?,
         ): StreamResponse<ChatCompletionChunk> {
             val model = params.model()?.toString()
-            val span =
-                TracingUtils.createSpanBuilder(model, "chat", customSpanName = "OpenAI streaming")
-                    .startSpan()
+            val span = TracingUtils.createSpanBuilder(model, "chat").startSpan()
             try {
                 span.makeCurrent().use {
                     setExperimentContextAttributes(span)
@@ -447,19 +434,19 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                     promptText?.let {
                         span.setAttribute(AttributeKey.stringKey("gen_ai.prompt"), it)
                     }
-                    val inputMessages =
-                        if (promptText != null) {
-                            buildGenAiInputMessages(promptText)
-                        } else {
-                            formatInputMessages(params)
-                        }
-                    TracingUtils.setInputMessages(span, inputMessages)
-                    val aggregator = ChatStreamAggregator()
+                    TracingUtils.setInputMessages(span, formatInputMessages(params))
+                    val accumulator = ChatCompletionAccumulator.create()
                     val paramsWithUsage = ensureStreamIncludeUsage(params)
+                    val startNanos = System.nanoTime()
                     val delegateStream =
                         if (requestOptions == null) delegate.createStreaming(paramsWithUsage)
                         else delegate.createStreaming(paramsWithUsage, requestOptions!!)
-                    return TracedChatStreamResponse(span, aggregator, delegateStream)
+                    return TracedChatStreamResponse(
+                        span,
+                        accumulator,
+                        delegateStream,
+                        startNanos,
+                    ) { s, c -> c?.let { applyChatCompletionToSpan(s, it) } }
                 }
             } catch (e: Exception) {
                 TracingUtils.recordException(span, e)
@@ -552,15 +539,31 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
 
 private class TracedChatStreamResponse(
     private val span: Span,
-    private val aggregator: ChatStreamAggregator,
+    private val accumulator: ChatCompletionAccumulator,
     private val delegate: StreamResponse<ChatCompletionChunk>,
+    private val startNanos: Long,
+    private val onComplete: (Span, ChatCompletion?) -> Unit,
 ) : StreamResponse<ChatCompletionChunk> {
 
     @Volatile private var closed = false
+    @Volatile private var timeToFirstTokenSet = false
 
     override fun stream(): Stream<ChatCompletionChunk> =
         delegate.stream().map { chunk ->
-            aggregator.addChunk(chunk)
+            if (!timeToFirstTokenSet) {
+                val hasContent =
+                    chunk.choices().isNotEmpty() &&
+                        chunk.choices()[0].delta().content().getOrNull()?.isNotEmpty() == true
+                if (hasContent) {
+                    val ttftMs = (System.nanoTime() - startNanos) / 1_000_000
+                    span.setAttribute(
+                        AttributeKey.longKey("gen_ai.usage.time_to_first_token_ms"),
+                        ttftMs,
+                    )
+                    timeToFirstTokenSet = true
+                }
+            }
+            accumulator.accumulate(chunk)
             chunk
         }
 
@@ -568,7 +571,12 @@ private class TracedChatStreamResponse(
         if (closed) return
         closed = true
         try {
-            aggregator.applyToSpan(span)
+            try {
+                val completion = accumulator.chatCompletion()
+                onComplete(span, completion)
+            } catch (_: IllegalStateException) {
+                // Stream closed before a complete response
+            }
         } finally {
             span.end()
             try {
