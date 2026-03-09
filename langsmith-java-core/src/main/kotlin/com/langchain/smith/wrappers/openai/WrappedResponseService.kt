@@ -3,6 +3,7 @@ package com.langchain.smith.wrappers.openai
 import com.openai.core.ClientOptions
 import com.openai.core.RequestOptions
 import com.openai.core.http.StreamResponse
+import com.openai.helpers.ResponseAccumulator
 import com.openai.models.responses.Response
 import com.openai.models.responses.ResponseCreateParams
 import com.openai.models.responses.ResponseStreamEvent
@@ -12,6 +13,8 @@ import com.openai.services.blocking.ResponseService
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.Span
 import java.util.function.Consumer
+import java.util.stream.Stream
+import kotlin.jvm.optionals.getOrNull
 
 /** Wrapped ResponseService that adds OpenTelemetry tracing to response operations. */
 internal class WrappedResponseService(private val delegate: ResponseService) : ResponseService {
@@ -175,18 +178,20 @@ internal class WrappedResponseService(private val delegate: ResponseService) : R
                         null,
                     )
                 }
-                return when {
-                    params == null && requestOptions == null -> delegate.createStreaming()
-                    params == null -> delegate.createStreaming(requestOptions!!)
-                    requestOptions == null -> delegate.createStreaming(params)
-                    else -> delegate.createStreaming(params, requestOptions)
-                }
+                val accumulator = ResponseAccumulator.create()
+                val delegateStream =
+                    when {
+                        params == null && requestOptions == null -> delegate.createStreaming()
+                        params == null -> delegate.createStreaming(requestOptions!!)
+                        requestOptions == null -> delegate.createStreaming(params)
+                        else -> delegate.createStreaming(params, requestOptions)
+                    }
+                return TracedResponseStreamResponse(span, accumulator, delegateStream)
             }
         } catch (e: Exception) {
             TracingUtils.recordException(span, e)
-            throw e
-        } finally {
             span.end()
+            throw e
         }
     }
 
@@ -222,16 +227,18 @@ internal class WrappedResponseService(private val delegate: ResponseService) : R
                         null,
                     )
                 }
-                return when {
-                    requestOptions == null -> delegate.createStreaming(params!!)
-                    else -> delegate.createStreaming(params!!, requestOptions)
-                }
+                val accumulator = ResponseAccumulator.create()
+                val delegateStream =
+                    when {
+                        requestOptions == null -> delegate.createStreaming(params!!)
+                        else -> delegate.createStreaming(params!!, requestOptions)
+                    }
+                return TracedResponseStreamResponse(span, accumulator, delegateStream)
             }
         } catch (e: Exception) {
             TracingUtils.recordException(span, e)
-            throw e
-        } finally {
             span.end()
+            throw e
         }
     }
 
@@ -348,4 +355,60 @@ internal class WrappedResponseService(private val delegate: ResponseService) : R
         params: com.openai.models.responses.ResponseCancelParams,
         requestOptions: RequestOptions,
     ) = delegate.cancel(params, requestOptions)
+}
+
+/**
+ * Wraps a streaming Responses API stream so that completion/usage are applied to the span from the
+ * response.completed (or terminal) event, and the span is ended when the stream is closed.
+ */
+private class TracedResponseStreamResponse(
+    private val span: Span,
+    private val accumulator: ResponseAccumulator,
+    private val delegate: StreamResponse<ResponseStreamEvent>,
+) : StreamResponse<ResponseStreamEvent> {
+
+    @Volatile private var closed = false
+
+    override fun stream(): Stream<ResponseStreamEvent> =
+        delegate.stream().map { event ->
+            try {
+                accumulator.accumulate(event)
+            } catch (_: IllegalStateException) {
+                // Terminal event already accumulated; ignore duplicate or late events
+            }
+            event
+        }
+
+    override fun close() {
+        if (closed) return
+        closed = true
+        try {
+            try {
+                val resp = accumulator.response()
+                resp.usage().ifPresent { u ->
+                    TracingUtils.setResponseAttributes(
+                        span,
+                        u.inputTokens().toLong(),
+                        u.outputTokens().toLong(),
+                        u.totalTokens().toLong(),
+                    )
+                }
+                resp.status().getOrNull()?.let {
+                    span.setAttribute(
+                        AttributeKey.stringKey("gen_ai.response.status"),
+                        it.toString(),
+                    )
+                }
+            } catch (_: IllegalStateException) {
+                // Stream closed before a terminal event (completed/incomplete/failed)
+            }
+        } finally {
+            span.end()
+            try {
+                delegate.close()
+            } catch (_: Exception) {
+                // Already ended span; ensure delegate is closed best-effort
+            }
+        }
+    }
 }
