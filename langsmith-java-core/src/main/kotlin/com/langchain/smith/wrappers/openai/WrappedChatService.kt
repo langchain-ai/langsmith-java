@@ -292,8 +292,7 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 if (!first) json.append(",")
                 first = false
                 val message = choice.message()
-                val finishReason =
-                    choice.finishReason()?.toString()?.lowercase() ?: "stop"
+                val finishReason = choice.finishReason()?.toString()?.lowercase() ?: "stop"
                 json.append("{\"role\":\"assistant\",\"parts\":[")
                 var partFirst = true
                 message.content().ifPresent { content ->
