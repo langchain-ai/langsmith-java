@@ -87,8 +87,10 @@ object OpenTelemetryConfig {
     private fun buildOtlpEndpoint(baseUrl: String?): String {
         val base =
             (baseUrl?.takeIf { it.isNotBlank() }
-                ?: System.getenv("LANGSMITH_ENDPOINT")?.takeIf { it.isNotBlank() }
-                ?: DEFAULT_BASE_URL).trim().removeSuffix("/")
+                    ?: System.getenv("LANGSMITH_ENDPOINT")?.takeIf { it.isNotBlank() }
+                    ?: DEFAULT_BASE_URL)
+                .trim()
+                .removeSuffix("/")
         return base + OTLP_TRACES_PATH
     }
 

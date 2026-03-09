@@ -84,7 +84,10 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             }
         }
 
-        /** Applies completion output, gen_ai.completion JSON, and usage to the span (shared by non-streaming and streaming). */
+        /**
+         * Applies completion output, gen_ai.completion JSON, and usage to the span (shared by
+         * non-streaming and streaming).
+         */
         private fun applyChatCompletionToSpan(span: Span, completion: ChatCompletion) {
             formatOutputMessages(completion).let { TracingUtils.setOutputMessages(span, it) }
             span.setAttribute(
@@ -93,7 +96,8 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             )
             val responseModel = completion.model()
             val finishReason =
-                completion.choices().firstOrNull()?.finishReason()?.toString() ?: "stop"
+                completion.choices().firstOrNull()?.finishReason()?.getOrNull()?.toString()
+                    ?: "stop"
             TracingUtils.setResponseMetadata(span, responseModel, finishReason)
             completion.usage().ifPresent { usage ->
                 TracingUtils.setResponseAttributes(
@@ -217,7 +221,8 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 if (content == null) {
                     content = extractContentFromToString(messageParam.toString(), role)
                 }
-                // OTel GenAI schema: messages have "role" and "parts" array (LangSmith expects this)
+                // OTel GenAI schema: messages have "role" and "parts" array (LangSmith expects
+                // this)
                 val outRole = role ?: "user"
                 json.append("\"role\":\"").append(outRole).append("\"")
                 json.append(",\"parts\":[")
@@ -289,7 +294,7 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 first = false
                 val message = choice.message()
                 val finishReason =
-                    choice.finishReason()?.toString()?.lowercase() ?: "stop"
+                    choice.finishReason().getOrNull()?.toString()?.lowercase() ?: "stop"
                 json.append("{\"role\":\"assistant\",\"parts\":[")
                 var partFirst = true
                 message.content().ifPresent { content ->
@@ -314,7 +319,8 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                         json.append("\"}")
                     }
                 }
-                json.append("],\"finish_reason\":\"")
+                json
+                    .append("],\"finish_reason\":\"")
                     .append(TracingUtils.escapeJsonString(finishReason))
                     .append("\"}")
             }
@@ -446,7 +452,9 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                         accumulator,
                         delegateStream,
                         startNanos,
-                    ) { s, c -> c?.let { applyChatCompletionToSpan(s, it) } }
+                    ) { s, c ->
+                        c?.let { applyChatCompletionToSpan(s, it) }
+                    }
                 }
             } catch (e: Exception) {
                 TracingUtils.recordException(span, e)
