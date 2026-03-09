@@ -1,5 +1,6 @@
 package com.langchain.smith.wrappers.openai
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.SpanBuilder
@@ -9,6 +10,7 @@ import io.opentelemetry.api.trace.Tracer
 /** Internal utility for OpenTelemetry span creation and management. */
 internal object TracingUtils {
     private const val INSTRUMENTATION_NAME = "langsmith-java-otel-wrappers"
+    private val jsonMapper = ObjectMapper()
 
     fun getTracer(): Tracer =
         io.opentelemetry.api.GlobalOpenTelemetry.get().getTracer(INSTRUMENTATION_NAME)
@@ -17,10 +19,9 @@ internal object TracingUtils {
         model: String?,
         operationType: String,
         spanKind: String? = "llm",
-        customSpanName: String? = null,
     ): SpanBuilder {
         val tracer = getTracer()
-        val spanName = customSpanName ?: "$operationType ${model ?: "unknown"}"
+        val spanName = "$operationType ${model ?: "unknown"}"
         val builder =
             tracer
                 .spanBuilder(spanName)
@@ -85,10 +86,5 @@ internal object TracingUtils {
         span.setAttribute(AttributeKey.booleanKey("error"), true)
     }
 
-    fun escapeJsonString(str: String?): String =
-        str?.replace("\\", "\\\\")
-            ?.replace("\"", "\\\"")
-            ?.replace("\n", "\\n")
-            ?.replace("\r", "\\r")
-            ?.replace("\t", "\\t") ?: ""
+    fun writeJson(value: Any): String = jsonMapper.writeValueAsString(value)
 }

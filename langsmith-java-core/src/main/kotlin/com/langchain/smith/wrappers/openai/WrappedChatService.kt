@@ -128,12 +128,8 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
 
         private fun formatInputMessages(params: ChatCompletionCreateParams): String {
             if (params.messages().isEmpty()) return "[]"
-            val json = StringBuilder("[")
-            var first = true
+            val messages = mutableListOf<Map<String, Any>>()
             for (messageParam in params.messages()) {
-                if (!first) json.append(",")
-                first = false
-                json.append("{")
                 var role: String? = null
                 var content: String? = null
                 try {
@@ -220,23 +216,18 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 if (content == null) {
                     content = extractContentFromToString(messageParam.toString(), role)
                 }
-                // OTel GenAI schema: messages have "role" and "parts" array (LangSmith expects
-                // this)
                 val outRole = role ?: "user"
-                json.append("\"role\":\"").append(outRole).append("\"")
-                json.append(",\"parts\":[")
-                if (content != null) {
-                    val partType = if (role == "tool") "tool_call_response" else "text"
-                    val partKey = if (role == "tool") "response" else "content"
-                    json.append("{\"type\":\"").append(partType).append("\",\"")
-                    json.append(partKey).append("\":\"")
-                    json.append(TracingUtils.escapeJsonString(content))
-                    json.append("\"}")
-                }
-                json.append("]}")
+                val partType = if (role == "tool") "tool_call_response" else "text"
+                val partKey = if (role == "tool") "response" else "content"
+                val parts =
+                    if (content != null) {
+                        listOf(mapOf("type" to partType, partKey to content))
+                    } else {
+                        emptyList<Map<String, String>>()
+                    }
+                messages.add(mapOf("role" to outRole, "parts" to parts))
             }
-            json.append("]")
-            return json.toString()
+            return TracingUtils.writeJson(messages)
         }
 
         private fun extractContentFromToString(messageStr: String, role: String?): String? {
@@ -286,44 +277,31 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
         /** OTel GenAI schema: each message has role, parts array, and finish_reason (output). */
         private fun formatOutputMessages(completion: ChatCompletion): String {
             if (completion.choices().isEmpty()) return "[]"
-            val json = StringBuilder("[")
-            var first = true
-            for (choice in completion.choices()) {
-                if (!first) json.append(",")
-                first = false
-                val message = choice.message()
-                val finishReason = choice.finishReason()?.toString()?.lowercase() ?: "stop"
-                json.append("{\"role\":\"assistant\",\"parts\":[")
-                var partFirst = true
-                message.content().ifPresent { content ->
-                    if (!partFirst) json.append(",")
-                    partFirst = false
-                    json.append("{\"type\":\"text\",\"content\":\"")
-                    json.append(TracingUtils.escapeJsonString(content))
-                    json.append("\"}")
-                }
-                message.toolCalls().ifPresent { toolCalls ->
-                    for (toolCall in toolCalls) {
-                        if (!toolCall.isFunction()) continue
-                        if (!partFirst) json.append(",")
-                        partFirst = false
-                        val fn = toolCall.asFunction()
-                        json.append("{\"type\":\"tool_call\",\"id\":\"")
-                        json.append(TracingUtils.escapeJsonString(fn.id()))
-                        json.append("\",\"name\":\"")
-                        json.append(TracingUtils.escapeJsonString(fn.function().name()))
-                        json.append("\",\"arguments\":\"")
-                        json.append(TracingUtils.escapeJsonString(fn.function().arguments()))
-                        json.append("\"}")
+            val choices =
+                completion.choices().map { choice ->
+                    val message = choice.message()
+                    val finishReason = choice.finishReason()?.toString()?.lowercase() ?: "stop"
+                    val parts = mutableListOf<Map<String, String>>()
+                    message.content().ifPresent { content ->
+                        parts.add(mapOf("type" to "text", "content" to content))
                     }
+                    message.toolCalls().ifPresent { toolCalls ->
+                        for (toolCall in toolCalls) {
+                            if (!toolCall.isFunction()) continue
+                            val fn = toolCall.asFunction()
+                            parts.add(
+                                mapOf(
+                                    "type" to "tool_call",
+                                    "id" to fn.id(),
+                                    "name" to fn.function().name(),
+                                    "arguments" to fn.function().arguments(),
+                                )
+                            )
+                        }
+                    }
+                    mapOf("role" to "assistant", "parts" to parts, "finish_reason" to finishReason)
                 }
-                json
-                    .append("],\"finish_reason\":\"")
-                    .append(TracingUtils.escapeJsonString(finishReason))
-                    .append("\"}")
-            }
-            json.append("]")
-            return json.toString()
+            return TracingUtils.writeJson(choices)
         }
 
         private fun extractPromptFromParams(params: ChatCompletionCreateParams): String? {
