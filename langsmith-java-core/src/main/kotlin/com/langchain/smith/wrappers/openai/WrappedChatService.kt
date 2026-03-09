@@ -96,8 +96,7 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
             )
             val responseModel = completion.model()
             val finishReason =
-                completion.choices().firstOrNull()?.finishReason()?.getOrNull()?.toString()
-                    ?: "stop"
+                completion.choices().firstOrNull()?.finishReason()?.toString() ?: "stop"
             TracingUtils.setResponseMetadata(span, responseModel, finishReason)
             completion.usage().ifPresent { usage ->
                 TracingUtils.setResponseAttributes(
@@ -294,7 +293,7 @@ internal class WrappedChatService(private val delegate: ChatService) : ChatServi
                 first = false
                 val message = choice.message()
                 val finishReason =
-                    choice.finishReason().getOrNull()?.toString()?.lowercase() ?: "stop"
+                    choice.finishReason()?.toString()?.lowercase() ?: "stop"
                 json.append("{\"role\":\"assistant\",\"parts\":[")
                 var partFirst = true
                 message.content().ifPresent { content ->
