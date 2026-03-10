@@ -41,6 +41,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun includeAnnotatorDetail(): Optional<Boolean> = body.includeAnnotatorDetail()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun startTime(): Optional<OffsetDateTime> = body.startTime()
 
     /**
@@ -49,6 +55,14 @@ private constructor(
      * Unlike [endTime], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _endTime(): JsonField<OffsetDateTime> = body._endTime()
+
+    /**
+     * Returns the raw JSON value of [includeAnnotatorDetail].
+     *
+     * Unlike [includeAnnotatorDetail], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    fun _includeAnnotatorDetail(): JsonField<Boolean> = body._includeAnnotatorDetail()
 
     /**
      * Returns the raw JSON value of [startTime].
@@ -104,6 +118,7 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [endTime]
+         * - [includeAnnotatorDetail]
          * - [startTime]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -121,6 +136,21 @@ private constructor(
          * supported value.
          */
         fun endTime(endTime: JsonField<OffsetDateTime>) = apply { body.endTime(endTime) }
+
+        fun includeAnnotatorDetail(includeAnnotatorDetail: Boolean) = apply {
+            body.includeAnnotatorDetail(includeAnnotatorDetail)
+        }
+
+        /**
+         * Sets [Builder.includeAnnotatorDetail] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.includeAnnotatorDetail] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun includeAnnotatorDetail(includeAnnotatorDetail: JsonField<Boolean>) = apply {
+            body.includeAnnotatorDetail(includeAnnotatorDetail)
+        }
 
         fun startTime(startTime: OffsetDateTime?) = apply { body.startTime(startTime) }
 
@@ -284,6 +314,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val endTime: JsonField<OffsetDateTime>,
+        private val includeAnnotatorDetail: JsonField<Boolean>,
         private val startTime: JsonField<OffsetDateTime>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -293,16 +324,26 @@ private constructor(
             @JsonProperty("end_time")
             @ExcludeMissing
             endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("include_annotator_detail")
+            @ExcludeMissing
+            includeAnnotatorDetail: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("start_time")
             @ExcludeMissing
             startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
-        ) : this(endTime, startTime, mutableMapOf())
+        ) : this(endTime, includeAnnotatorDetail, startTime, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun endTime(): Optional<OffsetDateTime> = endTime.getOptional("end_time")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun includeAnnotatorDetail(): Optional<Boolean> =
+            includeAnnotatorDetail.getOptional("include_annotator_detail")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -318,6 +359,16 @@ private constructor(
         @JsonProperty("end_time")
         @ExcludeMissing
         fun _endTime(): JsonField<OffsetDateTime> = endTime
+
+        /**
+         * Returns the raw JSON value of [includeAnnotatorDetail].
+         *
+         * Unlike [includeAnnotatorDetail], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("include_annotator_detail")
+        @ExcludeMissing
+        fun _includeAnnotatorDetail(): JsonField<Boolean> = includeAnnotatorDetail
 
         /**
          * Returns the raw JSON value of [startTime].
@@ -350,12 +401,14 @@ private constructor(
         class Builder internal constructor() {
 
             private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var includeAnnotatorDetail: JsonField<Boolean> = JsonMissing.of()
             private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 endTime = body.endTime
+                includeAnnotatorDetail = body.includeAnnotatorDetail
                 startTime = body.startTime
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -373,6 +426,20 @@ private constructor(
              * supported value.
              */
             fun endTime(endTime: JsonField<OffsetDateTime>) = apply { this.endTime = endTime }
+
+            fun includeAnnotatorDetail(includeAnnotatorDetail: Boolean) =
+                includeAnnotatorDetail(JsonField.of(includeAnnotatorDetail))
+
+            /**
+             * Sets [Builder.includeAnnotatorDetail] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.includeAnnotatorDetail] with a well-typed [Boolean]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun includeAnnotatorDetail(includeAnnotatorDetail: JsonField<Boolean>) = apply {
+                this.includeAnnotatorDetail = includeAnnotatorDetail
+            }
 
             fun startTime(startTime: OffsetDateTime?) = startTime(JsonField.ofNullable(startTime))
 
@@ -414,7 +481,13 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Body = Body(endTime, startTime, additionalProperties.toMutableMap())
+            fun build(): Body =
+                Body(
+                    endTime,
+                    includeAnnotatorDetail,
+                    startTime,
+                    additionalProperties.toMutableMap(),
+                )
         }
 
         private var validated: Boolean = false
@@ -425,6 +498,7 @@ private constructor(
             }
 
             endTime()
+            includeAnnotatorDetail()
             startTime()
             validated = true
         }
@@ -446,6 +520,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (endTime.asKnown().isPresent) 1 else 0) +
+                (if (includeAnnotatorDetail.asKnown().isPresent) 1 else 0) +
                 (if (startTime.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -455,16 +530,19 @@ private constructor(
 
             return other is Body &&
                 endTime == other.endTime &&
+                includeAnnotatorDetail == other.includeAnnotatorDetail &&
                 startTime == other.startTime &&
                 additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy { Objects.hash(endTime, startTime, additionalProperties) }
+        private val hashCode: Int by lazy {
+            Objects.hash(endTime, includeAnnotatorDetail, startTime, additionalProperties)
+        }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{endTime=$endTime, startTime=$startTime, additionalProperties=$additionalProperties}"
+            "Body{endTime=$endTime, includeAnnotatorDetail=$includeAnnotatorDetail, startTime=$startTime, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
