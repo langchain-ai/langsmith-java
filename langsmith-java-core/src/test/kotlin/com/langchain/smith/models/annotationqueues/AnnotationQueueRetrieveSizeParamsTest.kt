@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.annotationqueues
 
+import com.langchain.smith.core.http.QueryParams
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -11,6 +12,7 @@ internal class AnnotationQueueRetrieveSizeParamsTest {
     fun create() {
         AnnotationQueueRetrieveSizeParams.builder()
             .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .status(AnnotationQueueRetrieveSizeParams.Status.NEEDS_MY_REVIEW)
             .build()
     }
 
@@ -24,5 +26,31 @@ internal class AnnotationQueueRetrieveSizeParamsTest {
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
+    }
+
+    @Test
+    fun queryParams() {
+        val params =
+            AnnotationQueueRetrieveSizeParams.builder()
+                .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .status(AnnotationQueueRetrieveSizeParams.Status.NEEDS_MY_REVIEW)
+                .build()
+
+        val queryParams = params._queryParams()
+
+        assertThat(queryParams)
+            .isEqualTo(QueryParams.builder().put("status", "needs_my_review").build())
+    }
+
+    @Test
+    fun queryParamsWithoutOptionalFields() {
+        val params =
+            AnnotationQueueRetrieveSizeParams.builder()
+                .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .build()
+
+        val queryParams = params._queryParams()
+
+        assertThat(queryParams).isEqualTo(QueryParams.builder().build())
     }
 }
