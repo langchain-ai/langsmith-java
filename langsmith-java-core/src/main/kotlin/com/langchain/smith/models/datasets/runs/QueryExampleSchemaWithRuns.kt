@@ -26,6 +26,7 @@ private constructor(
     private val comparativeExperimentId: JsonField<String>,
     private val exampleIds: JsonField<List<String>>,
     private val filters: JsonField<Filters>,
+    private val includeAnnotatorDetail: JsonField<Boolean>,
     private val limit: JsonField<Long>,
     private val offset: JsonField<Long>,
     private val preview: JsonField<Boolean>,
@@ -46,6 +47,9 @@ private constructor(
         @ExcludeMissing
         exampleIds: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("filters") @ExcludeMissing filters: JsonField<Filters> = JsonMissing.of(),
+        @JsonProperty("include_annotator_detail")
+        @ExcludeMissing
+        includeAnnotatorDetail: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("limit") @ExcludeMissing limit: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("offset") @ExcludeMissing offset: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("preview") @ExcludeMissing preview: JsonField<Boolean> = JsonMissing.of(),
@@ -58,6 +62,7 @@ private constructor(
         comparativeExperimentId,
         exampleIds,
         filters,
+        includeAnnotatorDetail,
         limit,
         offset,
         preview,
@@ -90,6 +95,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun filters(): Optional<Filters> = filters.getOptional("filters")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun includeAnnotatorDetail(): Optional<Boolean> =
+        includeAnnotatorDetail.getOptional("include_annotator_detail")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -156,6 +168,16 @@ private constructor(
      * Unlike [filters], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("filters") @ExcludeMissing fun _filters(): JsonField<Filters> = filters
+
+    /**
+     * Returns the raw JSON value of [includeAnnotatorDetail].
+     *
+     * Unlike [includeAnnotatorDetail], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("include_annotator_detail")
+    @ExcludeMissing
+    fun _includeAnnotatorDetail(): JsonField<Boolean> = includeAnnotatorDetail
 
     /**
      * Returns the raw JSON value of [limit].
@@ -226,6 +248,7 @@ private constructor(
         private var comparativeExperimentId: JsonField<String> = JsonMissing.of()
         private var exampleIds: JsonField<MutableList<String>>? = null
         private var filters: JsonField<Filters> = JsonMissing.of()
+        private var includeAnnotatorDetail: JsonField<Boolean> = JsonMissing.of()
         private var limit: JsonField<Long> = JsonMissing.of()
         private var offset: JsonField<Long> = JsonMissing.of()
         private var preview: JsonField<Boolean> = JsonMissing.of()
@@ -239,6 +262,7 @@ private constructor(
             comparativeExperimentId = queryExampleSchemaWithRuns.comparativeExperimentId
             exampleIds = queryExampleSchemaWithRuns.exampleIds.map { it.toMutableList() }
             filters = queryExampleSchemaWithRuns.filters
+            includeAnnotatorDetail = queryExampleSchemaWithRuns.includeAnnotatorDetail
             limit = queryExampleSchemaWithRuns.limit
             offset = queryExampleSchemaWithRuns.offset
             preview = queryExampleSchemaWithRuns.preview
@@ -333,6 +357,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun filters(filters: JsonField<Filters>) = apply { this.filters = filters }
+
+        fun includeAnnotatorDetail(includeAnnotatorDetail: Boolean) =
+            includeAnnotatorDetail(JsonField.of(includeAnnotatorDetail))
+
+        /**
+         * Sets [Builder.includeAnnotatorDetail] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.includeAnnotatorDetail] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun includeAnnotatorDetail(includeAnnotatorDetail: JsonField<Boolean>) = apply {
+            this.includeAnnotatorDetail = includeAnnotatorDetail
+        }
 
         fun limit(limit: Long) = limit(JsonField.of(limit))
 
@@ -429,6 +467,7 @@ private constructor(
                 comparativeExperimentId,
                 (exampleIds ?: JsonMissing.of()).map { it.toImmutable() },
                 filters,
+                includeAnnotatorDetail,
                 limit,
                 offset,
                 preview,
@@ -449,6 +488,7 @@ private constructor(
         comparativeExperimentId()
         exampleIds()
         filters().ifPresent { it.validate() }
+        includeAnnotatorDetail()
         limit()
         offset()
         preview()
@@ -476,6 +516,7 @@ private constructor(
             (if (comparativeExperimentId.asKnown().isPresent) 1 else 0) +
             (exampleIds.asKnown().getOrNull()?.size ?: 0) +
             (filters.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (includeAnnotatorDetail.asKnown().isPresent) 1 else 0) +
             (if (limit.asKnown().isPresent) 1 else 0) +
             (if (offset.asKnown().isPresent) 1 else 0) +
             (if (preview.asKnown().isPresent) 1 else 0) +
@@ -591,6 +632,7 @@ private constructor(
             comparativeExperimentId == other.comparativeExperimentId &&
             exampleIds == other.exampleIds &&
             filters == other.filters &&
+            includeAnnotatorDetail == other.includeAnnotatorDetail &&
             limit == other.limit &&
             offset == other.offset &&
             preview == other.preview &&
@@ -605,6 +647,7 @@ private constructor(
             comparativeExperimentId,
             exampleIds,
             filters,
+            includeAnnotatorDetail,
             limit,
             offset,
             preview,
@@ -617,5 +660,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "QueryExampleSchemaWithRuns{sessionIds=$sessionIds, comparativeExperimentId=$comparativeExperimentId, exampleIds=$exampleIds, filters=$filters, limit=$limit, offset=$offset, preview=$preview, sortParams=$sortParams, stream=$stream, additionalProperties=$additionalProperties}"
+        "QueryExampleSchemaWithRuns{sessionIds=$sessionIds, comparativeExperimentId=$comparativeExperimentId, exampleIds=$exampleIds, filters=$filters, includeAnnotatorDetail=$includeAnnotatorDetail, limit=$limit, offset=$offset, preview=$preview, sortParams=$sortParams, stream=$stream, additionalProperties=$additionalProperties}"
 }
