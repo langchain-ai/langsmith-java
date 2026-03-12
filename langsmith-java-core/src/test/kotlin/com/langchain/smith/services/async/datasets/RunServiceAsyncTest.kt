@@ -38,6 +38,7 @@ internal class RunServiceAsyncTest {
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )
+                    .includeAnnotatorDetail(true)
                     .limit(1L)
                     .offset(0L)
                     .preview(true)
