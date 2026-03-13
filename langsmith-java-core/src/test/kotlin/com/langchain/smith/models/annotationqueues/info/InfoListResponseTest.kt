@@ -32,6 +32,7 @@ internal class InfoListResponseTest {
                         .customerName("customer_name")
                         .build()
                 )
+                .gitSha("git_sha")
                 .instanceFlags(
                     InfoListResponse.InstanceFlags.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -59,6 +60,7 @@ internal class InfoListResponseTest {
                     .customerName("customer_name")
                     .build()
             )
+        assertThat(infoListResponse.gitSha()).contains("git_sha")
         assertThat(infoListResponse.instanceFlags())
             .contains(
                 InfoListResponse.InstanceFlags.builder()
@@ -91,6 +93,7 @@ internal class InfoListResponseTest {
                         .customerName("customer_name")
                         .build()
                 )
+                .gitSha("git_sha")
                 .instanceFlags(
                     InfoListResponse.InstanceFlags.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
