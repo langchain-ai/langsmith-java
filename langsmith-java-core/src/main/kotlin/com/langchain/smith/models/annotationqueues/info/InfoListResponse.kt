@@ -26,6 +26,7 @@ private constructor(
     private val version: JsonField<String>,
     private val batchIngestConfig: JsonField<BatchIngestConfig>,
     private val customerInfo: JsonField<CustomerInfo>,
+    private val gitSha: JsonField<String>,
     private val instanceFlags: JsonField<InstanceFlags>,
     private val licenseExpirationTime: JsonField<OffsetDateTime>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -40,6 +41,7 @@ private constructor(
         @JsonProperty("customer_info")
         @ExcludeMissing
         customerInfo: JsonField<CustomerInfo> = JsonMissing.of(),
+        @JsonProperty("git_sha") @ExcludeMissing gitSha: JsonField<String> = JsonMissing.of(),
         @JsonProperty("instance_flags")
         @ExcludeMissing
         instanceFlags: JsonField<InstanceFlags> = JsonMissing.of(),
@@ -50,6 +52,7 @@ private constructor(
         version,
         batchIngestConfig,
         customerInfo,
+        gitSha,
         instanceFlags,
         licenseExpirationTime,
         mutableMapOf(),
@@ -77,6 +80,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun customerInfo(): Optional<CustomerInfo> = customerInfo.getOptional("customer_info")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun gitSha(): Optional<String> = gitSha.getOptional("git_sha")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -116,6 +125,13 @@ private constructor(
     @JsonProperty("customer_info")
     @ExcludeMissing
     fun _customerInfo(): JsonField<CustomerInfo> = customerInfo
+
+    /**
+     * Returns the raw JSON value of [gitSha].
+     *
+     * Unlike [gitSha], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("git_sha") @ExcludeMissing fun _gitSha(): JsonField<String> = gitSha
 
     /**
      * Returns the raw JSON value of [instanceFlags].
@@ -167,6 +183,7 @@ private constructor(
         private var version: JsonField<String>? = null
         private var batchIngestConfig: JsonField<BatchIngestConfig> = JsonMissing.of()
         private var customerInfo: JsonField<CustomerInfo> = JsonMissing.of()
+        private var gitSha: JsonField<String> = JsonMissing.of()
         private var instanceFlags: JsonField<InstanceFlags> = JsonMissing.of()
         private var licenseExpirationTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -176,6 +193,7 @@ private constructor(
             version = infoListResponse.version
             batchIngestConfig = infoListResponse.batchIngestConfig
             customerInfo = infoListResponse.customerInfo
+            gitSha = infoListResponse.gitSha
             instanceFlags = infoListResponse.instanceFlags
             licenseExpirationTime = infoListResponse.licenseExpirationTime
             additionalProperties = infoListResponse.additionalProperties.toMutableMap()
@@ -224,6 +242,19 @@ private constructor(
         fun customerInfo(customerInfo: JsonField<CustomerInfo>) = apply {
             this.customerInfo = customerInfo
         }
+
+        fun gitSha(gitSha: String?) = gitSha(JsonField.ofNullable(gitSha))
+
+        /** Alias for calling [Builder.gitSha] with `gitSha.orElse(null)`. */
+        fun gitSha(gitSha: Optional<String>) = gitSha(gitSha.getOrNull())
+
+        /**
+         * Sets [Builder.gitSha] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.gitSha] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun gitSha(gitSha: JsonField<String>) = apply { this.gitSha = gitSha }
 
         fun instanceFlags(instanceFlags: InstanceFlags) = instanceFlags(JsonField.of(instanceFlags))
 
@@ -295,6 +326,7 @@ private constructor(
                 checkRequired("version", version),
                 batchIngestConfig,
                 customerInfo,
+                gitSha,
                 instanceFlags,
                 licenseExpirationTime,
                 additionalProperties.toMutableMap(),
@@ -311,6 +343,7 @@ private constructor(
         version()
         batchIngestConfig().ifPresent { it.validate() }
         customerInfo().ifPresent { it.validate() }
+        gitSha()
         instanceFlags().ifPresent { it.validate() }
         licenseExpirationTime()
         validated = true
@@ -334,6 +367,7 @@ private constructor(
         (if (version.asKnown().isPresent) 1 else 0) +
             (batchIngestConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (customerInfo.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (gitSha.asKnown().isPresent) 1 else 0) +
             (instanceFlags.asKnown().getOrNull()?.validity() ?: 0) +
             (if (licenseExpirationTime.asKnown().isPresent) 1 else 0)
 
@@ -1019,6 +1053,7 @@ private constructor(
             version == other.version &&
             batchIngestConfig == other.batchIngestConfig &&
             customerInfo == other.customerInfo &&
+            gitSha == other.gitSha &&
             instanceFlags == other.instanceFlags &&
             licenseExpirationTime == other.licenseExpirationTime &&
             additionalProperties == other.additionalProperties
@@ -1029,6 +1064,7 @@ private constructor(
             version,
             batchIngestConfig,
             customerInfo,
+            gitSha,
             instanceFlags,
             licenseExpirationTime,
             additionalProperties,
@@ -1038,5 +1074,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InfoListResponse{version=$version, batchIngestConfig=$batchIngestConfig, customerInfo=$customerInfo, instanceFlags=$instanceFlags, licenseExpirationTime=$licenseExpirationTime, additionalProperties=$additionalProperties}"
+        "InfoListResponse{version=$version, batchIngestConfig=$batchIngestConfig, customerInfo=$customerInfo, gitSha=$gitSha, instanceFlags=$instanceFlags, licenseExpirationTime=$licenseExpirationTime, additionalProperties=$additionalProperties}"
 }
