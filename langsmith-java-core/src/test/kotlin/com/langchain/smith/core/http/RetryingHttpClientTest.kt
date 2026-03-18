@@ -395,14 +395,14 @@ internal class RetryingHttpClientTest {
         // All retries exhausted; the last 503 response is returned.
         assertThat(response.statusCode()).isEqualTo(503)
         verify(4, postRequestedFor(urlPathEqualTo("/something")))
-        // Exponential backoff with jitter: backoff = min(0.5 * 2^(retries-1), 8) * jitter where
+        // Exponential backoff with jitter: backoff = min(0.5 * 2^(retries-1), 16) * jitter where
         // jitter is in [0.75, 1.0].
         assertThat(sleeper.durations).hasSize(3)
         // retries=1: 0.5s * [0.75, 1.0]
         assertThat(sleeper.durations[0]).isBetween(Duration.ofMillis(375), Duration.ofMillis(500))
-        // retries=2: 1.0s * [0.75, 1.0]
+        // retries=2: 1s * [0.75, 1.0]
         assertThat(sleeper.durations[1]).isBetween(Duration.ofMillis(750), Duration.ofMillis(1000))
-        // retries=3: 2.0s * [0.75, 1.0]
+        // retries=3: 2s * [0.75, 1.0]
         assertThat(sleeper.durations[2]).isBetween(Duration.ofMillis(1500), Duration.ofMillis(2000))
         assertNoResponseLeaks()
     }
@@ -412,7 +412,7 @@ internal class RetryingHttpClientTest {
     fun execute_withExponentialBackoffCap(async: Boolean) {
         stubFor(post(urlPathEqualTo("/something")).willReturn(serviceUnavailable()))
         val sleeper = RecordingSleeper()
-        val retryingClient = retryingHttpClientBuilder(sleeper).maxRetries(6).build()
+        val retryingClient = retryingHttpClientBuilder(sleeper).maxRetries(7).build()
 
         val response =
             retryingClient.execute(
@@ -425,12 +425,14 @@ internal class RetryingHttpClientTest {
             )
 
         assertThat(response.statusCode()).isEqualTo(503)
-        verify(7, postRequestedFor(urlPathEqualTo("/something")))
-        assertThat(sleeper.durations).hasSize(6)
-        // retries=5: min(0.5 * 2^4, 8) = 8.0s * [0.75, 1.0]
-        assertThat(sleeper.durations[4]).isBetween(Duration.ofMillis(6000), Duration.ofMillis(8000))
-        // retries=6: min(0.5 * 2^5, 8) = min(16, 8) = 8.0s * [0.75, 1.0] (capped)
-        assertThat(sleeper.durations[5]).isBetween(Duration.ofMillis(6000), Duration.ofMillis(8000))
+        verify(8, postRequestedFor(urlPathEqualTo("/something")))
+        assertThat(sleeper.durations).hasSize(7)
+        // retries=6: backoff hits the 16s cap * [0.75, 1.0]
+        assertThat(sleeper.durations[5])
+            .isBetween(Duration.ofMillis(12000), Duration.ofMillis(16000))
+        // retries=7: still capped at 16s * [0.75, 1.0]
+        assertThat(sleeper.durations[6])
+            .isBetween(Duration.ofMillis(12000), Duration.ofMillis(16000))
         assertNoResponseLeaks()
     }
 
