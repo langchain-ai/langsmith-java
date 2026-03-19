@@ -30,6 +30,7 @@ private constructor(
     private val endTime: JsonField<OffsetDateTime>,
     private val filter: JsonField<String>,
     private val hierarchy: JsonField<List<Long>>,
+    private val isScheduled: JsonField<Boolean>,
     private val lastNHours: JsonField<Long>,
     private val model: JsonField<Model>,
     private val name: JsonField<String>,
@@ -59,6 +60,9 @@ private constructor(
         @JsonProperty("hierarchy")
         @ExcludeMissing
         hierarchy: JsonField<List<Long>> = JsonMissing.of(),
+        @JsonProperty("is_scheduled")
+        @ExcludeMissing
+        isScheduled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("last_n_hours")
         @ExcludeMissing
         lastNHours: JsonField<Long> = JsonMissing.of(),
@@ -90,6 +94,7 @@ private constructor(
         endTime,
         filter,
         hierarchy,
+        isScheduled,
         lastNHours,
         model,
         name,
@@ -139,6 +144,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun hierarchy(): Optional<List<Long>> = hierarchy.getOptional("hierarchy")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isScheduled(): Optional<Boolean> = isScheduled.getOptional("is_scheduled")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -247,6 +258,15 @@ private constructor(
      * Unlike [hierarchy], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("hierarchy") @ExcludeMissing fun _hierarchy(): JsonField<List<Long>> = hierarchy
+
+    /**
+     * Returns the raw JSON value of [isScheduled].
+     *
+     * Unlike [isScheduled], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_scheduled")
+    @ExcludeMissing
+    fun _isScheduled(): JsonField<Boolean> = isScheduled
 
     /**
      * Returns the raw JSON value of [lastNHours].
@@ -361,6 +381,7 @@ private constructor(
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var filter: JsonField<String> = JsonMissing.of()
         private var hierarchy: JsonField<MutableList<Long>>? = null
+        private var isScheduled: JsonField<Boolean> = JsonMissing.of()
         private var lastNHours: JsonField<Long> = JsonMissing.of()
         private var model: JsonField<Model> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
@@ -381,6 +402,7 @@ private constructor(
             endTime = createRunClusteringJobRequest.endTime
             filter = createRunClusteringJobRequest.filter
             hierarchy = createRunClusteringJobRequest.hierarchy.map { it.toMutableList() }
+            isScheduled = createRunClusteringJobRequest.isScheduled
             lastNHours = createRunClusteringJobRequest.lastNHours
             model = createRunClusteringJobRequest.model
             name = createRunClusteringJobRequest.name
@@ -495,6 +517,17 @@ private constructor(
                     checkKnown("hierarchy", it).add(hierarchy)
                 }
         }
+
+        fun isScheduled(isScheduled: Boolean) = isScheduled(JsonField.of(isScheduled))
+
+        /**
+         * Sets [Builder.isScheduled] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isScheduled] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isScheduled(isScheduled: JsonField<Boolean>) = apply { this.isScheduled = isScheduled }
 
         fun lastNHours(lastNHours: Long?) = lastNHours(JsonField.ofNullable(lastNHours))
 
@@ -683,6 +716,7 @@ private constructor(
                 endTime,
                 filter,
                 (hierarchy ?: JsonMissing.of()).map { it.toImmutable() },
+                isScheduled,
                 lastNHours,
                 model,
                 name,
@@ -710,6 +744,7 @@ private constructor(
         endTime()
         filter()
         hierarchy()
+        isScheduled()
         lastNHours()
         model().ifPresent { it.validate() }
         name()
@@ -744,6 +779,7 @@ private constructor(
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (filter.asKnown().isPresent) 1 else 0) +
             (hierarchy.asKnown().getOrNull()?.size ?: 0) +
+            (if (isScheduled.asKnown().isPresent) 1 else 0) +
             (if (lastNHours.asKnown().isPresent) 1 else 0) +
             (model.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
@@ -1191,6 +1227,7 @@ private constructor(
             endTime == other.endTime &&
             filter == other.filter &&
             hierarchy == other.hierarchy &&
+            isScheduled == other.isScheduled &&
             lastNHours == other.lastNHours &&
             model == other.model &&
             name == other.name &&
@@ -1212,6 +1249,7 @@ private constructor(
             endTime,
             filter,
             hierarchy,
+            isScheduled,
             lastNHours,
             model,
             name,
@@ -1229,5 +1267,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateRunClusteringJobRequest{attributeSchemas=$attributeSchemas, clusterModel=$clusterModel, configId=$configId, endTime=$endTime, filter=$filter, hierarchy=$hierarchy, lastNHours=$lastNHours, model=$model, name=$name, partitions=$partitions, sample=$sample, startTime=$startTime, summaryModel=$summaryModel, summaryPrompt=$summaryPrompt, userContext=$userContext, validateModelSecrets=$validateModelSecrets, additionalProperties=$additionalProperties}"
+        "CreateRunClusteringJobRequest{attributeSchemas=$attributeSchemas, clusterModel=$clusterModel, configId=$configId, endTime=$endTime, filter=$filter, hierarchy=$hierarchy, isScheduled=$isScheduled, lastNHours=$lastNHours, model=$model, name=$name, partitions=$partitions, sample=$sample, startTime=$startTime, summaryModel=$summaryModel, summaryPrompt=$summaryPrompt, userContext=$userContext, validateModelSecrets=$validateModelSecrets, additionalProperties=$additionalProperties}"
 }
