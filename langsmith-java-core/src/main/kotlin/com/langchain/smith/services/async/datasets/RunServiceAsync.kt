@@ -5,8 +5,8 @@ package com.langchain.smith.services.async.datasets
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
 import com.langchain.smith.models.datasets.runs.RunCreateParams
-import com.langchain.smith.models.datasets.runs.RunCreateResponse
 import com.langchain.smith.models.datasets.runs.RunDeltaParams
 import com.langchain.smith.models.datasets.runs.SessionFeedbackDelta
 import java.util.Optional
@@ -34,7 +34,7 @@ interface RunServiceAsync {
     fun create(
         datasetId: String,
         params: RunCreateParams,
-    ): CompletableFuture<Optional<RunCreateResponse>> =
+    ): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
         create(datasetId, params, RequestOptions.none())
 
     /** @see create */
@@ -42,18 +42,18 @@ interface RunServiceAsync {
         datasetId: String,
         params: RunCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Optional<RunCreateResponse>> =
+    ): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
         create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
     /** @see create */
-    fun create(params: RunCreateParams): CompletableFuture<Optional<RunCreateResponse>> =
+    fun create(params: RunCreateParams): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Optional<RunCreateResponse>>
+    ): CompletableFuture<Optional<List<ExampleWithRunsCh>>>
 
     /**
      * Fetch the number of regressions/improvements for each example in a dataset, between
@@ -97,7 +97,7 @@ interface RunServiceAsync {
         fun create(
             datasetId: String,
             params: RunCreateParams,
-        ): CompletableFuture<HttpResponseFor<Optional<RunCreateResponse>>> =
+        ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>> =
             create(datasetId, params, RequestOptions.none())
 
         /** @see create */
@@ -105,20 +105,20 @@ interface RunServiceAsync {
             datasetId: String,
             params: RunCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<Optional<RunCreateResponse>>> =
+        ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>> =
             create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
         /** @see create */
         fun create(
             params: RunCreateParams
-        ): CompletableFuture<HttpResponseFor<Optional<RunCreateResponse>>> =
+        ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
             params: RunCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<Optional<RunCreateResponse>>>
+        ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>>
 
         /**
          * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/runs/delta`, but is

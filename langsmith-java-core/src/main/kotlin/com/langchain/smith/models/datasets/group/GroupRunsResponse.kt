@@ -219,7 +219,7 @@ private constructor(
      * - latency_p50, latency_p99: aggregate latency stats across sessions
      * - feedback_stats: weighted average feedback across sessions
      *
-     * Additional aggregate stats (from ExampleWithRunsGroup):
+     * Additional aggregate stats:
      * - prompt_tokens, completion_tokens: separate token counts
      * - prompt_cost, completion_cost: separate costs
      * - error_rate: average error rate
