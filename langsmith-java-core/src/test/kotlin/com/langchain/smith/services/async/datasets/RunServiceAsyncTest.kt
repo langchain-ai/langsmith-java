@@ -25,7 +25,7 @@ internal class RunServiceAsyncTest {
                 .build()
         val runServiceAsync = client.datasets().runs()
 
-        val runFuture =
+        val exampleWithRunsChesFuture =
             runServiceAsync.create(
                 RunCreateParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -51,9 +51,9 @@ internal class RunServiceAsyncTest {
                     .build()
             )
 
-        val run = runFuture.get()
-        val unwrappedRun = run.getOrNull()
-        unwrappedRun?.validate()
+        val exampleWithRunsChes = exampleWithRunsChesFuture.get()
+        val unwrappedExampleWithRunsChes = exampleWithRunsChes.getOrNull()
+        unwrappedExampleWithRunsChes?.forEach { it.validate() }
     }
 
     @Disabled("Mock server tests are disabled")
