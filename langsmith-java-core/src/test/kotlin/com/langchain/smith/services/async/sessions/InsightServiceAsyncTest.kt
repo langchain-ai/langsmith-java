@@ -43,6 +43,7 @@ internal class InsightServiceAsyncTest {
                             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .filter("filter")
                             .addHierarchy(0L)
+                            .isScheduled(true)
                             .lastNHours(0L)
                             .model(CreateRunClusteringJobRequest.Model.OPENAI)
                             .name("name")
