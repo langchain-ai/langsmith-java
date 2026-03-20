@@ -6,7 +6,6 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
-import com.langchain.smith.models.runs.RunIngestMultipartParams
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunRetrieveParams
 import com.langchain.smith.models.runs.RunStatsQueryParams
@@ -312,33 +311,6 @@ internal class RunServiceAsyncTest {
                             .traceId("trace_id")
                             .build()
                     )
-                    .build()
-            )
-
-        val response = responseFuture.get()
-        response.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
-    fun ingestMultipart() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val runServiceAsync = client.runs()
-
-        val responseFuture =
-            runServiceAsync.ingestMultipart(
-                RunIngestMultipartParams.builder()
-                    .attachmentRunIdFilename("Example data".byteInputStream())
-                    .feedbackRunId("Example data".byteInputStream())
-                    .patchRunId("Example data".byteInputStream())
-                    .patchRunIdOutputs("Example data".byteInputStream())
-                    .postRunId("Example data".byteInputStream())
-                    .postRunIdInputs("Example data".byteInputStream())
                     .build()
             )
 

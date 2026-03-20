@@ -10,8 +10,6 @@ import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
-import com.langchain.smith.models.runs.RunIngestMultipartParams
-import com.langchain.smith.models.runs.RunIngestMultipartResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
 import com.langchain.smith.models.runs.RunRetrieveParams
@@ -146,41 +144,6 @@ interface RunServiceAsync {
     /** @see ingestBatch */
     fun ingestBatch(requestOptions: RequestOptions): CompletableFuture<RunIngestBatchResponse> =
         ingestBatch(RunIngestBatchParams.none(), requestOptions)
-
-    /**
-     * Ingests multiple runs, feedback objects, and binary attachments in a single
-     * `multipart/form-data` request. **Part‑name pattern**: `<event>.<run_id>[.<field>]` where
-     * `event` ∈ {`post`, `patch`, `feedback`, `attachment`}.
-     * * `post|patch.<run_id>` – JSON run payload.
-     * * `post|patch.<run_id>.<field>` – out‑of‑band run data (`inputs`, `outputs`, `events`,
-     *   `error`, `extra`, `serialized`).
-     * * `feedback.<run_id>` – JSON feedback payload (must include `trace_id`).
-     * * `attachment.<run_id>.<filename>` – arbitrary binary attachment stored in S3. **Headers**:
-     *   every part must set `Content-Type` **and** either a `Content-Length` header or `length`
-     *   parameter. Per‑part `Content-Encoding` is **not** allowed; the top‑level request may be
-     *   `Content-Encoding: gzip` or `Content-Encoding: zstd`. **Best performance** for high‑volume
-     *   ingestion.
-     */
-    fun ingestMultipart(): CompletableFuture<RunIngestMultipartResponse> =
-        ingestMultipart(RunIngestMultipartParams.none())
-
-    /** @see ingestMultipart */
-    fun ingestMultipart(
-        params: RunIngestMultipartParams = RunIngestMultipartParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RunIngestMultipartResponse>
-
-    /** @see ingestMultipart */
-    fun ingestMultipart(
-        params: RunIngestMultipartParams = RunIngestMultipartParams.none()
-    ): CompletableFuture<RunIngestMultipartResponse> =
-        ingestMultipart(params, RequestOptions.none())
-
-    /** @see ingestMultipart */
-    fun ingestMultipart(
-        requestOptions: RequestOptions
-    ): CompletableFuture<RunIngestMultipartResponse> =
-        ingestMultipart(RunIngestMultipartParams.none(), requestOptions)
 
     /** Query Runs */
     fun query(): CompletableFuture<RunQueryResponse> = query(RunQueryParams.none())
@@ -385,31 +348,6 @@ interface RunServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<RunIngestBatchResponse>> =
             ingestBatch(RunIngestBatchParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `post /runs/multipart`, but is otherwise the same as
-         * [RunServiceAsync.ingestMultipart].
-         */
-        fun ingestMultipart(): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>> =
-            ingestMultipart(RunIngestMultipartParams.none())
-
-        /** @see ingestMultipart */
-        fun ingestMultipart(
-            params: RunIngestMultipartParams = RunIngestMultipartParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>>
-
-        /** @see ingestMultipart */
-        fun ingestMultipart(
-            params: RunIngestMultipartParams = RunIngestMultipartParams.none()
-        ): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>> =
-            ingestMultipart(params, RequestOptions.none())
-
-        /** @see ingestMultipart */
-        fun ingestMultipart(
-            requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>> =
-            ingestMultipart(RunIngestMultipartParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as

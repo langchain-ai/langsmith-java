@@ -14,15 +14,12 @@ import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
-import com.langchain.smith.core.http.multipartFormData
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
-import com.langchain.smith.models.runs.RunIngestMultipartParams
-import com.langchain.smith.models.runs.RunIngestMultipartResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
 import com.langchain.smith.models.runs.RunRetrieveParams
@@ -82,13 +79,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<RunIngestBatchResponse> =
         // post /runs/batch
         withRawResponse().ingestBatch(params, requestOptions).thenApply { it.parse() }
-
-    override fun ingestMultipart(
-        params: RunIngestMultipartParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<RunIngestMultipartResponse> =
-        // post /runs/multipart
-        withRawResponse().ingestMultipart(params, requestOptions).thenApply { it.parse() }
 
     override fun query(
         params: RunQueryParams,
@@ -250,37 +240,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                     errorHandler.handle(response).parseable {
                         response
                             .use { ingestBatchHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val ingestMultipartHandler: Handler<RunIngestMultipartResponse> =
-            jsonHandler<RunIngestMultipartResponse>(clientOptions.jsonMapper)
-
-        override fun ingestMultipart(
-            params: RunIngestMultipartParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RunIngestMultipartResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs", "multipart")
-                    .body(multipartFormData(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { ingestMultipartHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

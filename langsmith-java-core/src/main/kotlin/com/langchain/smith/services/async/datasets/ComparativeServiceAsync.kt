@@ -9,8 +9,6 @@ import com.langchain.smith.models.datasets.comparative.ComparativeCreateParams
 import com.langchain.smith.models.datasets.comparative.ComparativeCreateResponse
 import com.langchain.smith.models.datasets.comparative.ComparativeDeleteParams
 import com.langchain.smith.models.datasets.comparative.ComparativeDeleteResponse
-import com.langchain.smith.models.datasets.comparative.ComparativeListPageAsync
-import com.langchain.smith.models.datasets.comparative.ComparativeListParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -37,41 +35,6 @@ interface ComparativeServiceAsync {
         params: ComparativeCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ComparativeCreateResponse>
-
-    /** Get all comparative experiments for a given dataset. */
-    fun list(datasetId: String): CompletableFuture<ComparativeListPageAsync> =
-        list(datasetId, ComparativeListParams.none())
-
-    /** @see list */
-    fun list(
-        datasetId: String,
-        params: ComparativeListParams = ComparativeListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ComparativeListPageAsync> =
-        list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-    /** @see list */
-    fun list(
-        datasetId: String,
-        params: ComparativeListParams = ComparativeListParams.none(),
-    ): CompletableFuture<ComparativeListPageAsync> = list(datasetId, params, RequestOptions.none())
-
-    /** @see list */
-    fun list(
-        params: ComparativeListParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ComparativeListPageAsync>
-
-    /** @see list */
-    fun list(params: ComparativeListParams): CompletableFuture<ComparativeListPageAsync> =
-        list(params, RequestOptions.none())
-
-    /** @see list */
-    fun list(
-        datasetId: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<ComparativeListPageAsync> =
-        list(datasetId, ComparativeListParams.none(), requestOptions)
 
     /** Delete a specific comparative experiment. */
     fun delete(comparativeExperimentId: String): CompletableFuture<ComparativeDeleteResponse> =
@@ -141,47 +104,6 @@ interface ComparativeServiceAsync {
             params: ComparativeCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<ComparativeCreateResponse>>
-
-        /**
-         * Returns a raw HTTP response for `get /api/v1/datasets/{dataset_id}/comparative`, but is
-         * otherwise the same as [ComparativeServiceAsync.list].
-         */
-        fun list(datasetId: String): CompletableFuture<HttpResponseFor<ComparativeListPageAsync>> =
-            list(datasetId, ComparativeListParams.none())
-
-        /** @see list */
-        fun list(
-            datasetId: String,
-            params: ComparativeListParams = ComparativeListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ComparativeListPageAsync>> =
-            list(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-        /** @see list */
-        fun list(
-            datasetId: String,
-            params: ComparativeListParams = ComparativeListParams.none(),
-        ): CompletableFuture<HttpResponseFor<ComparativeListPageAsync>> =
-            list(datasetId, params, RequestOptions.none())
-
-        /** @see list */
-        fun list(
-            params: ComparativeListParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ComparativeListPageAsync>>
-
-        /** @see list */
-        fun list(
-            params: ComparativeListParams
-        ): CompletableFuture<HttpResponseFor<ComparativeListPageAsync>> =
-            list(params, RequestOptions.none())
-
-        /** @see list */
-        fun list(
-            datasetId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ComparativeListPageAsync>> =
-            list(datasetId, ComparativeListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete
