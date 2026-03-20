@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Read method count from .stats.yml
         id: read_method_count
@@ -39,7 +39,7 @@ jobs:
           echo "method_count=$METHOD_COUNT" >> $GITHUB_OUTPUT
 
       - name: Fail if method count exceeds threshold
-        uses: actions/github-script@v6
+        uses: actions/github-script@v8
         with:
           script: |
             const methodCount = parseInt('${{ steps.read_method_count.outputs.method_count }}');
