@@ -14,15 +14,12 @@ import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
-import com.langchain.smith.core.http.multipartFormData
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
-import com.langchain.smith.models.runs.RunIngestMultipartParams
-import com.langchain.smith.models.runs.RunIngestMultipartResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
 import com.langchain.smith.models.runs.RunRetrieveParams
@@ -77,13 +74,6 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     ): RunIngestBatchResponse =
         // post /runs/batch
         withRawResponse().ingestBatch(params, requestOptions).parse()
-
-    override fun ingestMultipart(
-        params: RunIngestMultipartParams,
-        requestOptions: RequestOptions,
-    ): RunIngestMultipartResponse =
-        // post /runs/multipart
-        withRawResponse().ingestMultipart(params, requestOptions).parse()
 
     override fun query(params: RunQueryParams, requestOptions: RequestOptions): RunQueryResponse =
         // post /api/v1/runs/query
@@ -228,34 +218,6 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             return errorHandler.handle(response).parseable {
                 response
                     .use { ingestBatchHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val ingestMultipartHandler: Handler<RunIngestMultipartResponse> =
-            jsonHandler<RunIngestMultipartResponse>(clientOptions.jsonMapper)
-
-        override fun ingestMultipart(
-            params: RunIngestMultipartParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<RunIngestMultipartResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs", "multipart")
-                    .body(multipartFormData(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { ingestMultipartHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

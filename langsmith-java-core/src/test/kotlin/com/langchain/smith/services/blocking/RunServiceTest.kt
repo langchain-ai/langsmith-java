@@ -6,7 +6,6 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
-import com.langchain.smith.models.runs.RunIngestMultipartParams
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunRetrieveParams
 import com.langchain.smith.models.runs.RunStatsQueryParams
@@ -309,32 +308,6 @@ internal class RunServiceTest {
                             .traceId("trace_id")
                             .build()
                     )
-                    .build()
-            )
-
-        response.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
-    fun ingestMultipart() {
-        val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
-        val runService = client.runs()
-
-        val response =
-            runService.ingestMultipart(
-                RunIngestMultipartParams.builder()
-                    .attachmentRunIdFilename("Example data".byteInputStream())
-                    .feedbackRunId("Example data".byteInputStream())
-                    .patchRunId("Example data".byteInputStream())
-                    .patchRunIdOutputs("Example data".byteInputStream())
-                    .postRunId("Example data".byteInputStream())
-                    .postRunIdInputs("Example data".byteInputStream())
                     .build()
             )
 
