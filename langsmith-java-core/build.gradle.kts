@@ -42,6 +42,9 @@ dependencies {
     // SLF4J for logging (API only - consumers choose implementation)
     api("org.slf4j:slf4j-api:2.0.17")
 
+    // Anthropic SDK (for integration tests)
+    testImplementation("com.anthropic:anthropic-java:2.9.0")
+
     testImplementation(kotlin("test"))
     // Simple logging for tests only
     testImplementation("org.slf4j:slf4j-simple:2.0.17")
