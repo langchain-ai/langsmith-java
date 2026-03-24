@@ -12,13 +12,14 @@ package com.langchain.smith.prompts
  * @see Prompt
  */
 class PromptMessage
-private constructor(
+internal constructor(
     /** The role of this message. */
     val role: Role,
     /**
      * The template string for this message.
      *
-     * May contain `{variable_name}` placeholders that can be substituted via [Prompt.invoke].
+     * May contain variable placeholders that can be substituted via [Prompt.invoke]. The syntax
+     * depends on [templateFormat]: f-string uses `{variable}`, mustache uses `{{variable}}`.
      */
     val template: String,
     /**
@@ -34,6 +35,12 @@ private constructor(
      * system/human/ai/tool set.
      */
     val customRole: String? = null,
+    /**
+     * The template format — `"f-string"` (default) or `"mustache"`.
+     *
+     * f-string templates use `{variable}` syntax. Mustache templates use `{{variable}}` syntax.
+     */
+    val templateFormat: String = "f-string",
 ) {
 
     /** The role of a prompt message. */
@@ -103,8 +110,12 @@ private constructor(
     fun isPlaceholder(): Boolean = role == Role.PLACEHOLDER
 
     /**
-     * Formats this message template by substituting `{variable}` placeholders with the given
-     * values. Values are converted to strings via [Any.toString].
+     * Formats this message template by substituting variable placeholders with the given values.
+     * Values are converted to strings via [Any.toString].
+     *
+     * The substitution syntax depends on [templateFormat]:
+     * - `"f-string"` (default): `{variable}` placeholders
+     * - `"mustache"`: `{{variable}}` placeholders
      *
      * Placeholder messages are not formatted (they are expanded separately).
      *
@@ -113,11 +124,7 @@ private constructor(
      */
     fun format(variables: Map<String, Any>): String {
         if (isPlaceholder()) return template
-        var result = template
-        for ((key, value) in variables) {
-            result = result.replace("{$key}", value.toString())
-        }
-        return result
+        return TemplateFormatter.format(template, variables, templateFormat)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -126,7 +133,8 @@ private constructor(
         return role == other.role &&
             template == other.template &&
             toolCallId == other.toolCallId &&
-            customRole == other.customRole
+            customRole == other.customRole &&
+            templateFormat == other.templateFormat
     }
 
     override fun hashCode(): Int {
@@ -134,6 +142,7 @@ private constructor(
         result = 31 * result + template.hashCode()
         result = 31 * result + (toolCallId?.hashCode() ?: 0)
         result = 31 * result + (customRole?.hashCode() ?: 0)
+        result = 31 * result + templateFormat.hashCode()
         return result
     }
 
@@ -141,6 +150,7 @@ private constructor(
         val extras = buildList {
             if (toolCallId != null) add("toolCallId=$toolCallId")
             if (customRole != null) add("customRole=$customRole")
+            if (templateFormat != "f-string") add("templateFormat=$templateFormat")
         }
         val suffix = if (extras.isNotEmpty()) ", ${extras.joinToString()}" else ""
         return "PromptMessage{role=$role, template=$template$suffix}"
@@ -197,11 +207,17 @@ private constructor(
         fun of(role: Role, template: String): PromptMessage = PromptMessage(role, template)
 
         /**
-         * Creates a copy of the given message with a new template string, preserving [toolCallId]
-         * and [customRole].
+         * Creates a copy of the given message with a new template string, preserving [toolCallId],
+         * [customRole], and [templateFormat].
          */
         @JvmStatic
         internal fun withTemplate(source: PromptMessage, newTemplate: String): PromptMessage =
-            PromptMessage(source.role, newTemplate, source.toolCallId, source.customRole)
+            PromptMessage(
+                source.role,
+                newTemplate,
+                source.toolCallId,
+                source.customRole,
+                source.templateFormat,
+            )
     }
 }

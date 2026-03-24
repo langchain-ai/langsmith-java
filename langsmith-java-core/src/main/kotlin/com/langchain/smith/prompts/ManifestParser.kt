@@ -40,7 +40,9 @@ internal object ManifestParser {
         return when {
             id.any { it.contains("StructuredPrompt") } -> parseStructuredPrompt(kwargs)
 
-            id.any { it.contains("ChatPromptTemplate") } -> parseChatPromptTemplate(kwargs)
+            id.any { it.contains("ChatPromptTemplate") } ->
+                if (hasSchemaField(kwargs)) parseStructuredPrompt(kwargs)
+                else parseChatPromptTemplate(kwargs)
 
             id.any { it.contains("PromptTemplate") } -> parsePromptTemplate(kwargs)
 
@@ -105,6 +107,9 @@ internal object ManifestParser {
         return PromptMessages(listOf(PromptMessage.human(template)), inputVariables)
     }
 
+    /** Holds a parsed template string and its format. */
+    private data class TemplateInfo(val template: String, val templateFormat: String = "f-string")
+
     private fun parseMessageTemplate(msgObj: Map<String, JsonValue>): PromptMessage? {
         val id = extractId(msgObj)
         val kwargs = extractKwargs(msgObj)
@@ -119,46 +124,51 @@ internal object ManifestParser {
         val role = PromptMessage.Role.fromLangchainClassName(className)
 
         // The template can be directly in kwargs, or nested in a "prompt" sub-object
-        val template = extractTemplate(kwargs) ?: return null
+        val info = extractTemplate(kwargs) ?: return null
 
         // Handle ToolMessagePromptTemplate — has a tool_call_id
         if (role == PromptMessage.Role.TOOL) {
             val toolCallId = kwargs["tool_call_id"]?.asString()?.orElse(null)
-            return if (toolCallId != null) {
-                PromptMessage.tool(template, toolCallId)
-            } else {
-                PromptMessage.of(role, template)
-            }
+            return PromptMessage(
+                role,
+                info.template,
+                toolCallId = toolCallId,
+                templateFormat = info.templateFormat,
+            )
         }
 
         // Handle ChatMessagePromptTemplate — has a custom role string
         if (role == PromptMessage.Role.CHAT) {
             val customRole = kwargs["role"]?.asString()?.orElse(null)
-            return if (customRole != null) {
-                PromptMessage.chat(template, customRole)
-            } else {
-                PromptMessage.of(role, template)
-            }
+            return PromptMessage(
+                role,
+                info.template,
+                customRole = customRole,
+                templateFormat = info.templateFormat,
+            )
         }
 
-        return PromptMessage.of(role, template)
+        return PromptMessage(role, info.template, templateFormat = info.templateFormat)
     }
 
     /**
-     * Extracts the template string from kwargs. Handles two formats:
-     * 1. Direct template: `kwargs.template = "..."`
-     * 2. Nested prompt: `kwargs.prompt.kwargs.template = "..."`
+     * Extracts the template string and format from kwargs. Handles two layouts:
+     * 1. Direct: `kwargs.template` + `kwargs.template_format`
+     * 2. Nested: `kwargs.prompt.kwargs.template` + `kwargs.prompt.kwargs.template_format`
      */
-    private fun extractTemplate(kwargs: Map<String, JsonValue>): String? {
+    private fun extractTemplate(kwargs: Map<String, JsonValue>): TemplateInfo? {
         // Check for direct template
-        kwargs["template"]?.asString()?.orElse(null)?.let {
-            return it
+        kwargs["template"]?.asString()?.orElse(null)?.let { tmpl ->
+            val fmt = kwargs["template_format"]?.asString()?.orElse(null) ?: "f-string"
+            return TemplateInfo(tmpl, fmt)
         }
 
         // Check for nested prompt object
         val prompt = kwargs["prompt"]?.asObject()?.orElse(null) ?: return null
         val promptKwargs = extractKwargs(prompt)
-        return promptKwargs["template"]?.asString()?.orElse(null)
+        val tmpl = promptKwargs["template"]?.asString()?.orElse(null) ?: return null
+        val fmt = promptKwargs["template_format"]?.asString()?.orElse(null) ?: "f-string"
+        return TemplateInfo(tmpl, fmt)
     }
 
     /** Extracts the `id` field as a list of strings. */
@@ -190,7 +200,6 @@ internal object ManifestParser {
      *
      * @return the output schema as a `Map<String, Any?>`, or `null` if not present
      */
-    @Suppress("UNCHECKED_CAST")
     private fun extractOutputSchema(kwargs: Map<String, JsonValue>): Map<String, Any?>? {
         val schemaValue = kwargs["schema_"] ?: kwargs["schema"] ?: return null
         return jsonValueToMap(schemaValue)
@@ -200,7 +209,6 @@ internal object ManifestParser {
      * Recursively converts a [JsonValue] to a plain `Map<String, Any?>` / `List` / scalar structure
      * suitable for inclusion in API payloads.
      */
-    @Suppress("UNCHECKED_CAST")
     private fun jsonValueToMap(value: JsonValue): Map<String, Any?>? {
         val obj = value.asObject().orElse(null) ?: return null
         return obj.mapValues { (_, v) -> jsonValueToPlain(v) }

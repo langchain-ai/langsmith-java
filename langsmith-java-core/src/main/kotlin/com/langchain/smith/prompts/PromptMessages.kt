@@ -1,6 +1,37 @@
 package com.langchain.smith.prompts
 
 /**
+ * Recursively adds `"additionalProperties": false` to every object-type schema node. Both OpenAI
+ * and Anthropic structured outputs require this.
+ */
+internal fun strictSchemaForStructuredOutput(schema: Map<String, Any?>): Map<String, Any?> {
+    val result = schema.toMutableMap()
+    if (result["type"] == "object") {
+        result["additionalProperties"] = false
+        val properties = result["properties"]
+        if (properties is Map<*, *>) {
+            result["properties"] =
+                properties.entries.associate { (k, v) ->
+                    val key = k as? String ?: k.toString()
+                    val value =
+                        if (v is Map<*, *>) {
+                            // Recurse into nested property schemas
+                            val nested =
+                                v.entries.associate { (nk, nv) ->
+                                    (nk as? String ?: nk.toString()) to nv
+                                }
+                            strictSchemaForStructuredOutput(nested)
+                        } else {
+                            v
+                        }
+                    key to value
+                }
+        }
+    }
+    return result
+}
+
+/**
  * Internal representation of parsed prompt messages from a LangChain manifest.
  *
  * This is not part of the public API. Users interact with [Prompt] (before formatting) and
@@ -17,7 +48,6 @@ internal class PromptMessages(
 
     fun hasOutputSchema(): Boolean = outputSchema != null
 
-    @Suppress("UNCHECKED_CAST")
     fun format(variables: Map<String, Any>): PromptMessages {
         val formatted = mutableListOf<PromptMessage>()
         for (msg in messages) {
@@ -86,15 +116,14 @@ internal class PromptMessages(
  * directly to the OpenAI Java SDK.
  *
  * @property messages the messages as maps with `"role"` and `"content"` keys
- * @property responseFormat the `response_format` parameter for OpenAI structured outputs, or `null`
- *   if this is not a structured prompt.
+ * @property outputSchema the raw JSON Schema for structured output, or `null`
  */
 data class OpenAiPayload(
     val messages: List<Map<String, String>>,
-    val responseFormat: Map<String, Any?>? = null,
+    val outputSchema: Map<String, Any?>? = null,
 ) {
-    /** Returns `true` if this payload includes a structured output response format. */
-    fun hasResponseFormat(): Boolean = responseFormat != null
+    /** Returns `true` if this payload includes a structured output schema. */
+    fun hasOutputSchema(): Boolean = outputSchema != null
 
     /**
      * Converts this payload to a typed OpenAI [ChatCompletionCreateParams.Builder] with messages
@@ -158,36 +187,28 @@ data class OpenAiPayload(
                     )
             }
         }
-        if (responseFormat != null) {
-            @Suppress("UNCHECKED_CAST")
-            val jsonSchemaMap = responseFormat["json_schema"] as? Map<String, Any?>
-            if (jsonSchemaMap != null) {
-                val schemaName = jsonSchemaMap["name"] as? String ?: "structured_output"
-                val strict = jsonSchemaMap["strict"] as? Boolean ?: true
-                @Suppress("UNCHECKED_CAST")
-                val schemaObj = jsonSchemaMap["schema"] as? Map<String, Any?>
-
-                val schemaBuilder =
-                    com.openai.models.ResponseFormatJsonSchema.JsonSchema.Schema.builder()
-                schemaObj?.forEach { (k, v) ->
-                    schemaBuilder.putAdditionalProperty(k, com.openai.core.JsonValue.from(v))
-                }
-
-                builder.responseFormat(
-                    com.openai.models.chat.completions.ChatCompletionCreateParams.ResponseFormat
-                        .ofJsonSchema(
-                            com.openai.models.ResponseFormatJsonSchema.builder()
-                                .jsonSchema(
-                                    com.openai.models.ResponseFormatJsonSchema.JsonSchema.builder()
-                                        .name(schemaName)
-                                        .strict(strict)
-                                        .schema(schemaBuilder.build())
-                                        .build()
-                                )
-                                .build()
-                        )
-                )
+        if (outputSchema != null) {
+            val schemaName = (outputSchema["title"] as? String) ?: "structured_output"
+            val strictSchema = strictSchemaForStructuredOutput(outputSchema)
+            val schemaBuilder =
+                com.openai.models.ResponseFormatJsonSchema.JsonSchema.Schema.builder()
+            strictSchema.forEach { (k, v) ->
+                schemaBuilder.putAdditionalProperty(k, com.openai.core.JsonValue.from(v))
             }
+            builder.responseFormat(
+                com.openai.models.chat.completions.ChatCompletionCreateParams.ResponseFormat
+                    .ofJsonSchema(
+                        com.openai.models.ResponseFormatJsonSchema.builder()
+                            .jsonSchema(
+                                com.openai.models.ResponseFormatJsonSchema.JsonSchema.builder()
+                                    .name(schemaName)
+                                    .strict(true)
+                                    .schema(schemaBuilder.build())
+                                    .build()
+                            )
+                            .build()
+                    )
+            )
         }
         return builder
     }
@@ -196,21 +217,92 @@ data class OpenAiPayload(
 /**
  * The result of converting a [PromptValue] to Anthropic API format via [convertPromptToAnthropic].
  *
+ * Use [toAnthropicParams] to get a typed [MessageCreateParams.Builder] that can be passed directly
+ * to the Anthropic Java SDK. Requires `com.anthropic:anthropic-java` as a dependency.
+ *
  * Anthropic requires system messages to be passed separately from the messages array. For
- * structured prompts, a tool definition is included that can be passed to the `tools` parameter,
- * with `tool_choice: {"type": "any"}` to force tool use.
+ * structured prompts, the [outputSchema] is included and [toAnthropicParams] will automatically
+ * configure tool use.
  *
  * @property system the concatenated system message text (empty string if no system messages)
  * @property messages the non-system messages as maps with `"role"` and `"content"` keys
- * @property tool the Anthropic tool definition for structured output, or `null` if this is not a
- *   structured prompt. When present, pass this in the `tools` array and set `tool_choice` to
- *   `{"type": "any"}`.
+ * @property outputSchema the raw JSON Schema for structured output, or `null`
  */
 data class AnthropicPayload(
     val system: String,
     val messages: List<Map<String, String>>,
-    val tool: Map<String, Any?>? = null,
+    val outputSchema: Map<String, Any?>? = null,
 ) {
-    /** Returns `true` if this payload includes a structured output tool definition. */
-    fun hasTool(): Boolean = tool != null
+    /** Returns `true` if this payload includes a structured output schema. */
+    fun hasOutputSchema(): Boolean = outputSchema != null
+
+    /**
+     * Converts this payload to a typed Anthropic [MessageCreateParams.Builder] with system,
+     * messages, and (if structured) output config already set.
+     *
+     * Call `.model(...)` and any other options on the returned builder, then `.build()`.
+     *
+     * Requires `com.anthropic:anthropic-java` (>= 2.18.0) as a dependency.
+     *
+     * ```java
+     * AnthropicPayload anthropic = convertPromptToAnthropic(formattedPrompt);
+     * Message message = anthropicClient.messages().create(
+     *     anthropic.toAnthropicParams()
+     *         .model(Model.CLAUDE_HAIKU_4_5_20251001)
+     *         .maxTokens(1024)
+     *         .build()
+     * );
+     * ```
+     */
+    fun toAnthropicParams(): com.anthropic.models.messages.MessageCreateParams.Builder {
+        val builder =
+            try {
+                com.anthropic.models.messages.MessageCreateParams.builder()
+            } catch (e: NoClassDefFoundError) {
+                throw IllegalStateException(
+                    "Anthropic SDK not found. Add com.anthropic:anthropic-java to your dependencies.",
+                    e,
+                )
+            }
+
+        if (system.isNotEmpty()) {
+            builder.system(system)
+        }
+
+        for (msg in messages) {
+            val role = msg["role"] ?: continue
+            val content = msg["content"] ?: ""
+            val messageRole =
+                when (role) {
+                    "user" -> com.anthropic.models.messages.MessageParam.Role.USER
+                    "assistant" -> com.anthropic.models.messages.MessageParam.Role.ASSISTANT
+                    else -> continue
+                }
+            builder.addMessage(
+                com.anthropic.models.messages.MessageParam.builder()
+                    .role(messageRole)
+                    .content(content)
+                    .build()
+            )
+        }
+
+        if (outputSchema != null) {
+            val strictSchema = strictSchemaForStructuredOutput(outputSchema)
+            val schemaBuilder = com.anthropic.models.messages.JsonOutputFormat.Schema.builder()
+            strictSchema.forEach { (k, v) ->
+                schemaBuilder.putAdditionalProperty(k, com.anthropic.core.JsonValue.from(v))
+            }
+            builder.outputConfig(
+                com.anthropic.models.messages.OutputConfig.builder()
+                    .format(
+                        com.anthropic.models.messages.JsonOutputFormat.builder()
+                            .schema(schemaBuilder.build())
+                            .build()
+                    )
+                    .build()
+            )
+        }
+
+        return builder
+    }
 }

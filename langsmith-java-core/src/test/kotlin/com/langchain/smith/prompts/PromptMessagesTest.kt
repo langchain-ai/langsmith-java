@@ -43,6 +43,97 @@ internal class PromptMessagesTest {
         assertThat(result.messages[0].template).isEqualTo("Hello Alice, topic is {topic}")
     }
 
+    @Test
+    fun formatMustacheTemplate() {
+        // Mustache templates use {{variable}} syntax
+        val prompt =
+            Prompt.of(
+                listOf(
+                    PromptMessage(
+                        PromptMessage.Role.SYSTEM,
+                        "You are a {{personality}} assistant.",
+                        templateFormat = "mustache",
+                    ),
+                    PromptMessage(
+                        PromptMessage.Role.HUMAN,
+                        "Tell me about {{topic}}",
+                        templateFormat = "mustache",
+                    ),
+                ),
+                listOf("personality", "topic"),
+            )
+
+        val result = prompt.invoke(mapOf("personality" to "funny", "topic" to "cats"))
+
+        assertThat(result.messages[0].template).isEqualTo("You are a funny assistant.")
+        assertThat(result.messages[1].template).isEqualTo("Tell me about cats")
+    }
+
+    @Test
+    fun formatFStringDoesNotCascade() {
+        // If a value contains {braces}, it should NOT trigger another substitution
+        val prompt = Prompt.of(listOf(PromptMessage.human("Value is: {x}")), listOf("x"))
+
+        val result = prompt.invoke(mapOf("x" to "{y}", "y" to "WRONG"))
+
+        assertThat(result.messages[0].template).isEqualTo("Value is: {y}")
+    }
+
+    @Test
+    fun parseMustacheManifest() {
+        // A manifest with template_format = "mustache" should be parsed and formatted correctly
+        val manifest =
+            mapOf(
+                "lc" to 1,
+                "type" to "constructor",
+                "id" to listOf("langchain_core", "prompts", "chat", "ChatPromptTemplate"),
+                "kwargs" to
+                    mapOf(
+                        "input_variables" to listOf("name"),
+                        "messages" to
+                            listOf(
+                                mapOf(
+                                    "lc" to 1,
+                                    "type" to "constructor",
+                                    "id" to
+                                        listOf(
+                                            "langchain_core",
+                                            "prompts",
+                                            "chat",
+                                            "HumanMessagePromptTemplate",
+                                        ),
+                                    "kwargs" to
+                                        mapOf(
+                                            "prompt" to
+                                                mapOf(
+                                                    "lc" to 1,
+                                                    "type" to "constructor",
+                                                    "id" to
+                                                        listOf(
+                                                            "langchain_core",
+                                                            "prompts",
+                                                            "prompt",
+                                                            "PromptTemplate",
+                                                        ),
+                                                    "kwargs" to
+                                                        mapOf(
+                                                            "template" to "Hello {{name}}!",
+                                                            "template_format" to "mustache",
+                                                        ),
+                                                )
+                                        ),
+                                )
+                            ),
+                    ),
+            )
+
+        val parsed = ManifestParser.parse(com.langchain.smith.core.JsonValue.from(manifest))
+        val prompt = Prompt.of(parsed.messages, parsed.inputVariables)
+
+        val result = prompt.invoke(mapOf("name" to "Alice"))
+        assertThat(result.messages[0].template).isEqualTo("Hello Alice!")
+    }
+
     // --- convertPromptToOpenAI ---
 
     @Test
@@ -201,8 +292,8 @@ internal class PromptMessagesTest {
         val pv = prompt.invoke()
         val payload = convertPromptToOpenAI(pv)
 
-        assertThat(payload.hasResponseFormat()).isFalse()
-        assertThat(payload.responseFormat).isNull()
+        assertThat(payload.hasOutputSchema()).isFalse()
+        assertThat(payload.outputSchema).isNull()
         assertThat(payload.messages).hasSize(2)
         assertThat(payload.messages[0])
             .isEqualTo(mapOf("role" to "system", "content" to "You are helpful."))
@@ -225,33 +316,9 @@ internal class PromptMessagesTest {
         val pv = prompt.invoke()
         val payload = convertPromptToOpenAI(pv)
 
-        assertThat(payload.hasResponseFormat()).isTrue()
+        assertThat(payload.hasOutputSchema()).isTrue()
         assertThat(payload.messages).hasSize(2)
-
-        val responseFormat = payload.responseFormat!!
-        assertThat(responseFormat["type"]).isEqualTo("json_schema")
-
-        val jsonSchema = responseFormat["json_schema"] as Map<String, Any?>
-        assertThat(jsonSchema["name"]).isEqualTo("JokeResponse")
-        assertThat(jsonSchema["strict"]).isEqualTo(true)
-        assertThat(jsonSchema["schema"]).isEqualTo(sampleSchema)
-    }
-
-    @Test
-    @Suppress("UNCHECKED_CAST")
-    fun toOpenAiPayload_schemaWithoutTitle() {
-        val schemaNoTitle =
-            mapOf<String, Any?>(
-                "type" to "object",
-                "properties" to mapOf("name" to mapOf("type" to "string")),
-            )
-        val prompt = Prompt.of(listOf(PromptMessage.human("Extract")), emptyList(), schemaNoTitle)
-
-        val pv = prompt.invoke()
-        val payload = convertPromptToOpenAI(pv)
-
-        val jsonSchema = payload.responseFormat!!["json_schema"] as Map<String, Any?>
-        assertThat(jsonSchema["name"]).isEqualTo("structured_output")
+        assertThat(payload.outputSchema).isEqualTo(sampleSchema)
     }
 
     @Test
@@ -270,14 +337,10 @@ internal class PromptMessagesTest {
         val pv = prompt.invoke()
         val payload = convertPromptToAnthropic(pv)
 
-        assertThat(payload.hasTool()).isTrue()
+        assertThat(payload.hasOutputSchema()).isTrue()
         assertThat(payload.system).isEqualTo("You tell jokes.")
         assertThat(payload.messages).hasSize(1)
-
-        val tool = payload.tool!!
-        assertThat(tool["name"]).isEqualTo("JokeResponse")
-        assertThat(tool["description"]).isEqualTo("A structured joke response.")
-        assertThat(tool["input_schema"]).isEqualTo(sampleSchema)
+        assertThat(payload.outputSchema).isEqualTo(sampleSchema)
     }
 
     @Test
@@ -287,28 +350,8 @@ internal class PromptMessagesTest {
         val pv = prompt.invoke()
         val payload = convertPromptToAnthropic(pv)
 
-        assertThat(payload.hasTool()).isFalse()
-        assertThat(payload.tool).isNull()
-    }
-
-    @Test
-    @Suppress("UNCHECKED_CAST")
-    fun toAnthropicPayload_schemaWithoutDescription() {
-        val schemaNoDesc =
-            mapOf<String, Any?>(
-                "title" to "MyTool",
-                "type" to "object",
-                "properties" to mapOf("x" to mapOf("type" to "string")),
-            )
-        val prompt = Prompt.of(listOf(PromptMessage.human("Do it")), emptyList(), schemaNoDesc)
-
-        val pv = prompt.invoke()
-        val payload = convertPromptToAnthropic(pv)
-
-        val tool = payload.tool!!
-        assertThat(tool["name"]).isEqualTo("MyTool")
-        assertThat(tool["description"])
-            .isEqualTo("Respond with structured output matching the schema.")
+        assertThat(payload.hasOutputSchema()).isFalse()
+        assertThat(payload.outputSchema).isNull()
     }
 
     // --- End-to-end tests ---
@@ -360,21 +403,19 @@ internal class PromptMessagesTest {
 
         val pv = prompt.invoke(mapOf("text" to "Alice is 30"))
 
-        // OpenAI: should have response_format with json_schema
+        // OpenAI: should have output schema
         val openAi = convertPromptToOpenAI(pv)
-        assertThat(openAi.hasResponseFormat()).isTrue()
+        assertThat(openAi.hasOutputSchema()).isTrue()
         assertThat(openAi.messages).hasSize(2)
-        val jsonSchema = openAi.responseFormat!!["json_schema"] as Map<String, Any?>
-        assertThat(jsonSchema["name"]).isEqualTo("JokeResponse")
-        assertThat(jsonSchema["strict"]).isEqualTo(true)
+        assertThat(openAi.outputSchema!!["title"]).isEqualTo("JokeResponse")
 
-        // Anthropic: should have tool definition
+        // Anthropic: should have output schema
         val anthropic = convertPromptToAnthropic(pv)
-        assertThat(anthropic.hasTool()).isTrue()
+        assertThat(anthropic.hasOutputSchema()).isTrue()
         assertThat(anthropic.system).isEqualTo("You extract structured data.")
         assertThat(anthropic.messages).hasSize(1)
         assertThat(anthropic.messages[0]["content"]).isEqualTo("Extract info from: Alice is 30")
-        assertThat(anthropic.tool!!["name"]).isEqualTo("JokeResponse")
+        assertThat(anthropic.outputSchema!!["title"]).isEqualTo("JokeResponse")
     }
 
     // --- Tool, MessagesPlaceholder, and ChatMessage tests ---

@@ -53,15 +53,7 @@ fun convertPromptToOpenAI(promptValue: PromptValue): OpenAiPayload {
             }
             base.toMap()
         }
-    val responseFormat =
-        pm.outputSchema?.let { schema ->
-            val schemaName = (schema["title"] as? String) ?: "structured_output"
-            mapOf<String, Any?>(
-                "type" to "json_schema",
-                "json_schema" to mapOf("name" to schemaName, "strict" to true, "schema" to schema),
-            )
-        }
-    return OpenAiPayload(messages, responseFormat)
+    return OpenAiPayload(messages, pm.outputSchema)
 }
 
 /**
@@ -99,7 +91,7 @@ fun convertPromptToOpenAI(promptValue: PromptValue): OpenAiPayload {
  *
  * val prompt = promptClient.pull("my-org/joke-generator")
  * val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
- * val (messages, system) = convertPromptToAnthropic(formattedPrompt)
+ * val (system, messages) = convertPromptToAnthropic(formattedPrompt)
  * ```
  *
  * @param promptValue the formatted prompt value from [Prompt.invoke]
@@ -128,17 +120,5 @@ fun convertPromptToAnthropic(promptValue: PromptValue): AnthropicPayload {
                 }
             mapOf("role" to role, "content" to msg.template)
         }
-    val tool =
-        pm.outputSchema?.let { schema ->
-            val toolName = (schema["title"] as? String) ?: "structured_output"
-            val description =
-                (schema["description"] as? String)
-                    ?: "Respond with structured output matching the schema."
-            mapOf<String, Any?>(
-                "name" to toolName,
-                "description" to description,
-                "input_schema" to schema,
-            )
-        }
-    return AnthropicPayload(system, messages, tool)
+    return AnthropicPayload(system, messages, pm.outputSchema)
 }

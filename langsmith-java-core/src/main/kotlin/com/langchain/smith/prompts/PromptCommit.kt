@@ -59,6 +59,7 @@ private constructor(
     companion object {
 
         @JvmStatic
+        @JvmOverloads
         fun of(
             owner: String,
             repo: String,

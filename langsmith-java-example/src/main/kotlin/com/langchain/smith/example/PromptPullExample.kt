@@ -71,8 +71,8 @@ fun main() {
         for (msg in openAi.messages) {
             println("     {role: \"${msg["role"]}\", content: \"${msg["content"]}\"}")
         }
-        if (openAi.hasResponseFormat()) {
-            println("   ✓ response_format (structured output): ${openAi.responseFormat}")
+        if (openAi.hasOutputSchema()) {
+            println("   ✓ Structured output schema: ${openAi.outputSchema}")
         }
         println()
         println("   // Use with the OpenAI Java SDK:")
@@ -80,9 +80,10 @@ fun main() {
         println("   // ChatCompletionCreateParams.Builder params = ChatCompletionCreateParams.builder()")
         println("   //     .model(\"gpt-4.1-mini\")")
         println("   //     .messages(openAi.getMessages());  // add messages")
-        println("   // if (openAi.hasResponseFormat()) {")
-        println("   //     params.responseFormat(openAi.getResponseFormat());")
-        println("   // }")
+        println("   // Or use toOpenAiParams() for typed SDK integration:")
+        println("   // ChatCompletion completion = openai.chat().completions().create(")
+        println("   //     openAi.toOpenAiParams().model(ChatModel.GPT_4_1_MINI).build());")
+        println("   // // Structured output schema is automatically included")
         println()
 
         // -------------------------------------------------------
@@ -95,8 +96,8 @@ fun main() {
         for (msg in anthropic.messages) {
             println("     {role: \"${msg["role"]}\", content: \"${msg["content"]}\"}")
         }
-        if (anthropic.hasTool()) {
-            println("   ✓ Tool (structured output): ${anthropic.tool}")
+        if (anthropic.hasOutputSchema()) {
+            println("   ✓ Structured output schema: ${anthropic.outputSchema}")
         }
         println()
         println("   // Use with the Anthropic Java SDK:")

@@ -28,12 +28,11 @@ internal class ConvertersTest {
         assertThat(result.messages[0])
             .isEqualTo(mapOf("role" to "system", "content" to "You are helpful."))
         assertThat(result.messages[1]).isEqualTo(mapOf("role" to "user", "content" to "Hello"))
-        assertThat(result.hasResponseFormat()).isFalse()
-        assertThat(result.responseFormat).isNull()
+        assertThat(result.hasOutputSchema()).isFalse()
+        assertThat(result.outputSchema).isNull()
     }
 
     @Test
-    @Suppress("UNCHECKED_CAST")
     fun convertToOpenAI_withStructuredOutput() {
         val schema =
             mapOf<String, Any?>(
@@ -49,12 +48,8 @@ internal class ConvertersTest {
 
         val result = convertPromptToOpenAI(pv)
 
-        assertThat(result.hasResponseFormat()).isTrue()
-        assertThat(result.responseFormat!!["type"]).isEqualTo("json_schema")
-        val jsonSchema = result.responseFormat!!["json_schema"] as Map<String, Any?>
-        assertThat(jsonSchema["name"]).isEqualTo("MySchema")
-        assertThat(jsonSchema["strict"]).isEqualTo(true)
-        assertThat(jsonSchema["schema"]).isEqualTo(schema)
+        assertThat(result.hasOutputSchema()).isTrue()
+        assertThat(result.outputSchema).isEqualTo(schema)
     }
 
     // --- convertPromptToAnthropic ---
@@ -78,7 +73,7 @@ internal class ConvertersTest {
         assertThat(result.messages[0]).isEqualTo(mapOf("role" to "user", "content" to "Hello"))
         assertThat(result.messages[1]).isEqualTo(mapOf("role" to "assistant", "content" to "Hi!"))
         assertThat(result.messages[2]).isEqualTo(mapOf("role" to "user", "content" to "Question"))
-        assertThat(result.hasTool()).isFalse()
+        assertThat(result.hasOutputSchema()).isFalse()
     }
 
     @Test
@@ -103,16 +98,13 @@ internal class ConvertersTest {
 
         assertThat(result.system).isEqualTo("Extract data.")
         assertThat(result.messages).hasSize(1)
-        assertThat(result.hasTool()).isTrue()
-        assertThat(result.tool!!["name"]).isEqualTo("MyTool")
-        assertThat(result.tool!!["description"]).isEqualTo("Extracts info.")
-        assertThat(result.tool!!["input_schema"]).isEqualTo(schema)
+        assertThat(result.hasOutputSchema()).isTrue()
+        assertThat(result.outputSchema).isEqualTo(schema)
     }
 
     // --- End-to-end flow test ---
 
     @Test
-    @Suppress("UNCHECKED_CAST")
     fun endToEnd_pullInvokeConvert() {
         // Simulate the full DX: Prompt → invoke → convert
         val schema =
@@ -142,17 +134,16 @@ internal class ConvertersTest {
         assertThat(openAi.messages).hasSize(2)
         assertThat(openAi.messages[0]["content"]).isEqualTo("You tell jokes.")
         assertThat(openAi.messages[1]["content"]).isEqualTo("Tell me a joke about cats")
-        assertThat(openAi.hasResponseFormat()).isTrue()
-        val jsonSchema = openAi.responseFormat!!["json_schema"] as Map<String, Any?>
-        assertThat(jsonSchema["name"]).isEqualTo("JokeResponse")
+        assertThat(openAi.hasOutputSchema()).isTrue()
+        assertThat(openAi.outputSchema!!["title"]).isEqualTo("JokeResponse")
 
         // Anthropic
         val anthropic = convertPromptToAnthropic(formattedPrompt)
         assertThat(anthropic.system).isEqualTo("You tell jokes.")
         assertThat(anthropic.messages).hasSize(1)
         assertThat(anthropic.messages[0]["content"]).isEqualTo("Tell me a joke about cats")
-        assertThat(anthropic.hasTool()).isTrue()
-        assertThat(anthropic.tool!!["name"]).isEqualTo("JokeResponse")
+        assertThat(anthropic.hasOutputSchema()).isTrue()
+        assertThat(anthropic.outputSchema!!["title"]).isEqualTo("JokeResponse")
     }
 
     @Test
@@ -170,11 +161,11 @@ internal class ConvertersTest {
 
         val openAi = convertPromptToOpenAI(formattedPrompt)
         assertThat(openAi.messages[1]["content"]).isEqualTo("Tell me about dogs")
-        assertThat(openAi.hasResponseFormat()).isFalse()
+        assertThat(openAi.hasOutputSchema()).isFalse()
 
         val anthropic = convertPromptToAnthropic(formattedPrompt)
         assertThat(anthropic.system).isEqualTo("You are helpful.")
         assertThat(anthropic.messages[0]["content"]).isEqualTo("Tell me about dogs")
-        assertThat(anthropic.hasTool()).isFalse()
+        assertThat(anthropic.hasOutputSchema()).isFalse()
     }
 }
