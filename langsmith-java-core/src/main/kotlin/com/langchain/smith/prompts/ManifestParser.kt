@@ -6,9 +6,8 @@ import com.langchain.smith.core.JsonValue
  * Parses LangChain-serialized prompt manifests into typed [PromptMessages] objects.
  *
  * The LangSmith hub stores prompts in LangChain's serialization format, which uses a nested
- * structure with `lc`, `type`, `id`, and `kwargs` fields. This parser understands that
- * format and extracts the messages, input variables, and (for structured prompts) the
- * output schema.
+ * structure with `lc`, `type`, `id`, and `kwargs` fields. This parser understands that format and
+ * extracts the messages, input variables, and (for structured prompts) the output schema.
  *
  * Supported manifest types:
  * - `ChatPromptTemplate` — a chat prompt with multiple message templates
@@ -27,9 +26,10 @@ internal object ManifestParser {
      * @throws IllegalArgumentException if the manifest format is not recognized
      */
     fun parse(manifest: JsonValue): PromptMessages {
-        val obj = manifest.asObject().orElseThrow {
-            IllegalArgumentException("Manifest must be a JSON object")
-        }
+        val obj =
+            manifest.asObject().orElseThrow {
+                IllegalArgumentException("Manifest must be a JSON object")
+            }
         return parseNode(obj)
     }
 
@@ -38,14 +38,11 @@ internal object ManifestParser {
         val kwargs = extractKwargs(obj)
 
         return when {
-            id.any { it.contains("StructuredPrompt") } ->
-                parseStructuredPrompt(kwargs)
+            id.any { it.contains("StructuredPrompt") } -> parseStructuredPrompt(kwargs)
 
-            id.any { it.contains("ChatPromptTemplate") } ->
-                parseChatPromptTemplate(kwargs)
+            id.any { it.contains("ChatPromptTemplate") } -> parseChatPromptTemplate(kwargs)
 
-            id.any { it.contains("PromptTemplate") } ->
-                parsePromptTemplate(kwargs)
+            id.any { it.contains("PromptTemplate") } -> parsePromptTemplate(kwargs)
 
             else ->
                 // Try to detect type from kwargs structure
@@ -58,7 +55,7 @@ internal object ManifestParser {
                 } else {
                     throw IllegalArgumentException(
                         "Unrecognized manifest type. Expected ChatPromptTemplate, " +
-                                "StructuredPrompt, or PromptTemplate, got id=$id"
+                            "StructuredPrompt, or PromptTemplate, got id=$id"
                     )
                 }
         }
@@ -68,27 +65,30 @@ internal object ManifestParser {
         kwargs: Map<String, JsonValue>,
         outputSchema: Map<String, Any?>? = null,
     ): PromptMessages {
-        val messagesValue = kwargs["messages"]
-            ?: throw IllegalArgumentException("ChatPromptTemplate missing 'messages' in kwargs")
+        val messagesValue =
+            kwargs["messages"]
+                ?: throw IllegalArgumentException("ChatPromptTemplate missing 'messages' in kwargs")
 
-        val messagesList = messagesValue.asArray().orElseThrow {
-            IllegalArgumentException("'messages' must be a JSON array")
-        }
+        val messagesList =
+            messagesValue.asArray().orElseThrow {
+                IllegalArgumentException("'messages' must be a JSON array")
+            }
 
         val inputVariables = extractInputVariables(kwargs)
 
-        val messages = messagesList.mapNotNull { msgValue ->
-            val msgObj = msgValue.asObject().orElse(null) ?: return@mapNotNull null
-            parseMessageTemplate(msgObj)
-        }
+        val messages =
+            messagesList.mapNotNull { msgValue ->
+                val msgObj = msgValue.asObject().orElse(null) ?: return@mapNotNull null
+                parseMessageTemplate(msgObj)
+            }
 
         return PromptMessages(messages, inputVariables, outputSchema)
     }
 
     /**
-     * Parses a `StructuredPrompt` manifest. This is like a `ChatPromptTemplate` but with
-     * an additional `schema_` (or `schema`) field containing a JSON Schema object that
-     * defines the expected structured output.
+     * Parses a `StructuredPrompt` manifest. This is like a `ChatPromptTemplate` but with an
+     * additional `schema_` (or `schema`) field containing a JSON Schema object that defines the
+     * expected structured output.
      */
     private fun parseStructuredPrompt(kwargs: Map<String, JsonValue>): PromptMessages {
         val outputSchema = extractOutputSchema(kwargs)
@@ -96,41 +96,64 @@ internal object ManifestParser {
     }
 
     private fun parsePromptTemplate(kwargs: Map<String, JsonValue>): PromptMessages {
-        val template = kwargs["template"]?.asString()?.orElse(null)
-            ?: throw IllegalArgumentException("PromptTemplate missing 'template' in kwargs")
+        val template =
+            kwargs["template"]?.asString()?.orElse(null)
+                ?: throw IllegalArgumentException("PromptTemplate missing 'template' in kwargs")
 
         val inputVariables = extractInputVariables(kwargs)
 
-        return PromptMessages(
-            listOf(PromptMessage.human(template)),
-            inputVariables,
-        )
+        return PromptMessages(listOf(PromptMessage.human(template)), inputVariables)
     }
 
     private fun parseMessageTemplate(msgObj: Map<String, JsonValue>): PromptMessage? {
         val id = extractId(msgObj)
         val kwargs = extractKwargs(msgObj)
-
-        // Determine the role from the id field
         val className = id.lastOrNull() ?: ""
+
+        // Handle MessagesPlaceholder — a slot for runtime message injection
+        if (className.contains("MessagesPlaceholder") || className.contains("Placeholder")) {
+            val variableName = kwargs["variable_name"]?.asString()?.orElse(null) ?: return null
+            return PromptMessage.placeholder(variableName)
+        }
+
         val role = PromptMessage.Role.fromLangchainClassName(className)
 
         // The template can be directly in kwargs, or nested in a "prompt" sub-object
-        val template = extractTemplate(kwargs)
-            ?: return null
+        val template = extractTemplate(kwargs) ?: return null
+
+        // Handle ToolMessagePromptTemplate — has a tool_call_id
+        if (role == PromptMessage.Role.TOOL) {
+            val toolCallId = kwargs["tool_call_id"]?.asString()?.orElse(null)
+            return if (toolCallId != null) {
+                PromptMessage.tool(template, toolCallId)
+            } else {
+                PromptMessage.of(role, template)
+            }
+        }
+
+        // Handle ChatMessagePromptTemplate — has a custom role string
+        if (role == PromptMessage.Role.CHAT) {
+            val customRole = kwargs["role"]?.asString()?.orElse(null)
+            return if (customRole != null) {
+                PromptMessage.chat(template, customRole)
+            } else {
+                PromptMessage.of(role, template)
+            }
+        }
 
         return PromptMessage.of(role, template)
     }
 
     /**
      * Extracts the template string from kwargs. Handles two formats:
-     *
      * 1. Direct template: `kwargs.template = "..."`
      * 2. Nested prompt: `kwargs.prompt.kwargs.template = "..."`
      */
     private fun extractTemplate(kwargs: Map<String, JsonValue>): String? {
         // Check for direct template
-        kwargs["template"]?.asString()?.orElse(null)?.let { return it }
+        kwargs["template"]?.asString()?.orElse(null)?.let {
+            return it
+        }
 
         // Check for nested prompt object
         val prompt = kwargs["prompt"]?.asObject()?.orElse(null) ?: return null
@@ -161,10 +184,9 @@ internal object ManifestParser {
     /**
      * Extracts the output schema from kwargs.
      *
-     * StructuredPrompt manifests store the schema under `schema_` (Python-style, to avoid
-     * collision with the `schema` JSON Schema keyword) or `schema`. The value is a JSON
-     * Schema object, which may itself be a LangChain-serialized object or a plain JSON
-     * Schema.
+     * StructuredPrompt manifests store the schema under `schema_` (Python-style, to avoid collision
+     * with the `schema` JSON Schema keyword) or `schema`. The value is a JSON Schema object, which
+     * may itself be a LangChain-serialized object or a plain JSON Schema.
      *
      * @return the output schema as a `Map<String, Any?>`, or `null` if not present
      */
@@ -175,8 +197,8 @@ internal object ManifestParser {
     }
 
     /**
-     * Recursively converts a [JsonValue] to a plain `Map<String, Any?>` / `List` / scalar
-     * structure suitable for inclusion in API payloads.
+     * Recursively converts a [JsonValue] to a plain `Map<String, Any?>` / `List` / scalar structure
+     * suitable for inclusion in API payloads.
      */
     @Suppress("UNCHECKED_CAST")
     private fun jsonValueToMap(value: JsonValue): Map<String, Any?>? {
@@ -189,5 +211,8 @@ internal object ManifestParser {
             ?: value.asNumber().map { it as Any }.orElse(null)
             ?: value.asBoolean().map { it as Any }.orElse(null)
             ?: value.asArray().map { list -> list.map { jsonValueToPlain(it) } as Any }.orElse(null)
-            ?: value.asObject().map { map -> map.mapValues { (_, v) -> jsonValueToPlain(v) } as Any }.orElse(null)
+            ?: value
+                .asObject()
+                .map { map -> map.mapValues { (_, v) -> jsonValueToPlain(v) } as Any }
+                .orElse(null)
 }

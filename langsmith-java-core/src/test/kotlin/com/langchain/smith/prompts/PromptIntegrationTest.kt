@@ -7,27 +7,22 @@ import com.anthropic.models.messages.Message
 import com.anthropic.models.messages.MessageCreateParams
 import com.anthropic.models.messages.MessageParam
 import com.anthropic.models.messages.Model
-import com.anthropic.models.messages.TextBlockParam
-import com.anthropic.models.messages.ContentBlockParam
+import com.anthropic.models.messages.Tool
+import com.anthropic.models.messages.ToolChoiceAny
+import com.anthropic.models.messages.ToolUnion
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.openai.client.OpenAIClient
 import com.openai.client.okhttp.OpenAIOkHttpClient
 import com.openai.models.ChatModel
 import com.openai.models.chat.completions.ChatCompletion
-import com.openai.models.chat.completions.ChatCompletionCreateParams
-import com.openai.models.chat.completions.ChatCompletionMessageParam
-import com.openai.models.chat.completions.ChatCompletionSystemMessageParam
-import com.openai.models.chat.completions.ChatCompletionUserMessageParam
-import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assumptions.assumeTrue
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 /**
- * Integration tests that pull a real prompt from LangSmith and send it to
- * the OpenAI and Anthropic APIs using their official Java SDKs.
+ * Integration tests that pull a real prompt from LangSmith and send it to the OpenAI and Anthropic
+ * APIs using their official Java SDKs.
  *
  * These tests require the following environment variables:
  * - `LANGSMITH_API_KEY` — LangSmith API key
@@ -49,51 +44,16 @@ internal class PromptIntegrationTest {
     private val anthropicApiKey = System.getenv("ANTHROPIC_API_KEY")
 
     /**
-     * Helper: Builds OpenAI ChatCompletionCreateParams from an OpenAiPayload.
-     */
-    private fun buildOpenAiParams(
-        payload: OpenAiPayload,
-        model: ChatModel = ChatModel.GPT_4_1_MINI,
-    ): ChatCompletionCreateParams {
-        val builder = ChatCompletionCreateParams.builder().model(model)
-
-        for (msg in payload.messages) {
-            val role = msg["role"] ?: continue
-            val content = msg["content"] ?: ""
-            when (role) {
-                "system" -> builder.addMessage(
-                    ChatCompletionMessageParam.ofSystem(
-                        ChatCompletionSystemMessageParam.builder().content(content).build()
-                    )
-                )
-
-                "user" -> builder.addMessage(
-                    ChatCompletionMessageParam.ofUser(
-                        ChatCompletionUserMessageParam.builder().content(content).build()
-                    )
-                )
-
-                "assistant" -> builder.addMessage(
-                    ChatCompletionMessageParam.ofAssistant(
-                        ChatCompletionAssistantMessageParam.builder().content(content).build()
-                    )
-                )
-            }
-        }
-
-        return builder.maxCompletionTokens(256).build()
-    }
-
-    /**
-     * Helper: Builds Anthropic MessageCreateParams from an AnthropicPayload.
+     * Helper: Builds typed Anthropic MessageCreateParams from an AnthropicPayload.
+     *
+     * This lives in the test because the Anthropic SDK is a test-only dependency. If Anthropic
+     * becomes a prod dependency, this could move to `AnthropicPayload`.
      */
     private fun buildAnthropicParams(
         payload: AnthropicPayload,
         model: Model = Model.CLAUDE_HAIKU_4_5_20251001,
     ): MessageCreateParams {
-        val builder = MessageCreateParams.builder()
-            .model(model)
-            .maxTokens(256)
+        val builder = MessageCreateParams.builder().model(model).maxTokens(256)
 
         if (payload.system.isNotEmpty()) {
             builder.system(payload.system)
@@ -102,52 +62,79 @@ internal class PromptIntegrationTest {
         for (msg in payload.messages) {
             val role = msg["role"] ?: continue
             val content = msg["content"] ?: ""
-            val messageRole = when (role) {
-                "user" -> MessageParam.Role.USER
-                "assistant" -> MessageParam.Role.ASSISTANT
-                else -> continue
+            val messageRole =
+                when (role) {
+                    "user" -> MessageParam.Role.USER
+                    "assistant" -> MessageParam.Role.ASSISTANT
+                    else -> continue
+                }
+            builder.addMessage(MessageParam.builder().role(messageRole).content(content).build())
+        }
+
+        // Add tool definition if this is a structured prompt
+        if (payload.hasTool()) {
+            val toolMap = payload.tool!!
+            val toolName = toolMap["name"] as? String ?: "structured_output"
+            val toolDescription = toolMap["description"] as? String ?: ""
+
+            @Suppress("UNCHECKED_CAST")
+            val inputSchemaMap = toolMap["input_schema"] as? Map<String, Any?>
+
+            val inputSchemaBuilder =
+                Tool.InputSchema.builder().type(com.anthropic.core.JsonValue.from("object"))
+            if (inputSchemaMap != null) {
+                val properties = inputSchemaMap["properties"]
+                if (properties != null) {
+                    inputSchemaBuilder.properties(com.anthropic.core.JsonValue.from(properties))
+                }
+                @Suppress("UNCHECKED_CAST")
+                val required = inputSchemaMap["required"] as? List<String>
+                if (required != null) {
+                    inputSchemaBuilder.required(required)
+                }
             }
-            builder.addMessage(
-                MessageParam.builder()
-                    .role(messageRole)
-                    .content(content)
-                    .build()
+
+            builder.addTool(
+                ToolUnion.ofTool(
+                    Tool.builder()
+                        .name(toolName)
+                        .description(toolDescription)
+                        .inputSchema(inputSchemaBuilder.build())
+                        .build()
+                )
             )
+            builder.toolChoice(ToolChoiceAny.builder().build())
         }
 
         return builder.build()
     }
 
     // -------------------------------------------------------
-    // OpenAI integration test
+    // OpenAI integration test — uses toOpenAiParams()
     // -------------------------------------------------------
 
     @Test
     fun openAi_pullAndInvokePrompt() {
         assumeTrue(
             !langsmithApiKey.isNullOrBlank() && !openaiApiKey.isNullOrBlank(),
-            "Skipping: LANGSMITH_API_KEY and OPENAI_API_KEY must be set"
+            "Skipping: LANGSMITH_API_KEY and OPENAI_API_KEY must be set",
         )
 
-        // 1. Pull prompt from LangSmith
         val langsmith = LangsmithOkHttpClient.fromEnv()
         val promptClient = PromptClient.create(langsmith)
+
+        // Pull → invoke → convert → typed SDK params in one chain
         val prompt = promptClient.pull("joke-generator")
-
-        // 2. Invoke with variables
         val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
-        assertThat(formattedPrompt.messages).isNotEmpty()
+        val openAi = convertPromptToOpenAI(formattedPrompt)
 
-        // 3. Convert to OpenAI format
-        val openAiPayload = convertPromptToOpenAI(formattedPrompt)
-        assertThat(openAiPayload.messages).isNotEmpty()
+        // toOpenAiParams() gives a typed builder — just add model and build
+        val params =
+            openAi.toOpenAiParams().model(ChatModel.GPT_4_1_MINI).maxCompletionTokens(256).build()
 
-        // 4. Build typed OpenAI SDK params and call the API
         val openai: OpenAIClient = OpenAIOkHttpClient.fromEnv()
-        val params = buildOpenAiParams(openAiPayload)
         val completion: ChatCompletion = openai.chat().completions().create(params)
 
-        // 5. Verify we got a response
         val responseText = completion.choices()[0].message().content().orElse("")
         assertThat(responseText).isNotBlank()
         println("[OpenAI] Response: $responseText")
@@ -163,32 +150,26 @@ internal class PromptIntegrationTest {
     fun anthropic_pullAndInvokePrompt() {
         assumeTrue(
             !langsmithApiKey.isNullOrBlank() && !anthropicApiKey.isNullOrBlank(),
-            "Skipping: LANGSMITH_API_KEY and ANTHROPIC_API_KEY must be set"
+            "Skipping: LANGSMITH_API_KEY and ANTHROPIC_API_KEY must be set",
         )
 
-        // 1. Pull prompt from LangSmith
         val langsmith = LangsmithOkHttpClient.fromEnv()
         val promptClient = PromptClient.create(langsmith)
+
         val prompt = promptClient.pull("joke-generator")
-
-        // 2. Invoke with variables
         val formattedPrompt = prompt.invoke(mapOf("topic" to "dogs"))
-        assertThat(formattedPrompt.messages).isNotEmpty()
-
-        // 3. Convert to Anthropic format
         val anthropicPayload = convertPromptToAnthropic(formattedPrompt)
-        assertThat(anthropicPayload.messages).isNotEmpty()
 
-        // 4. Build typed Anthropic SDK params and call the API
         val anthropic: AnthropicClient = AnthropicOkHttpClient.fromEnv()
         val params = buildAnthropicParams(anthropicPayload)
         val message: Message = anthropic.messages().create(params)
 
-        // 5. Verify we got a response
-        val responseText = message.content()
-            .filterIsInstance<ContentBlock>()
-            .filter { it.isText() }
-            .joinToString("") { it.asText().text() }
+        val responseText =
+            message
+                .content()
+                .filterIsInstance<ContentBlock>()
+                .filter { it.isText() }
+                .joinToString("") { it.asText().text() }
         assertThat(responseText).isNotBlank()
         println("[Anthropic] Response: $responseText")
 

@@ -7,13 +7,14 @@ internal class PromptTest {
 
     @Test
     fun invokeFormatsVariables() {
-        val prompt = Prompt.of(
-            listOf(
-                PromptMessage.system("You are a {personality} assistant."),
-                PromptMessage.human("Tell me about {topic}"),
-            ),
-            listOf("personality", "topic"),
-        )
+        val prompt =
+            Prompt.of(
+                listOf(
+                    PromptMessage.system("You are a {personality} assistant."),
+                    PromptMessage.human("Tell me about {topic}"),
+                ),
+                listOf("personality", "topic"),
+            )
 
         val result = prompt.invoke(mapOf("personality" to "funny", "topic" to "cats"))
 
@@ -24,9 +25,7 @@ internal class PromptTest {
 
     @Test
     fun invokeNoArgs() {
-        val prompt = Prompt.of(
-            listOf(PromptMessage.human("Hello world")),
-        )
+        val prompt = Prompt.of(listOf(PromptMessage.human("Hello world")))
 
         val result = prompt.invoke()
 
@@ -36,26 +35,21 @@ internal class PromptTest {
 
     @Test
     fun inputVariables() {
-        val prompt = Prompt.of(
-            listOf(PromptMessage.human("Hello {name}")),
-            listOf("name"),
-        )
+        val prompt = Prompt.of(listOf(PromptMessage.human("Hello {name}")), listOf("name"))
 
         assertThat(prompt.inputVariables).containsExactly("name")
     }
 
     @Test
     fun outputSchemaPreserved() {
-        val schema = mapOf<String, Any?>(
-            "title" to "Response",
-            "type" to "object",
-            "properties" to mapOf("answer" to mapOf("type" to "string")),
-        )
-        val prompt = Prompt.of(
-            listOf(PromptMessage.human("Extract: {text}")),
-            listOf("text"),
-            schema,
-        )
+        val schema =
+            mapOf<String, Any?>(
+                "title" to "Response",
+                "type" to "object",
+                "properties" to mapOf("answer" to mapOf("type" to "string")),
+            )
+        val prompt =
+            Prompt.of(listOf(PromptMessage.human("Extract: {text}")), listOf("text"), schema)
 
         assertThat(prompt.hasOutputSchema()).isTrue()
         assertThat(prompt.outputSchema).isEqualTo(schema)
@@ -67,9 +61,7 @@ internal class PromptTest {
 
     @Test
     fun noOutputSchema() {
-        val prompt = Prompt.of(
-            listOf(PromptMessage.human("Hello")),
-        )
+        val prompt = Prompt.of(listOf(PromptMessage.human("Hello")))
 
         assertThat(prompt.hasOutputSchema()).isFalse()
         assertThat(prompt.outputSchema).isNull()

@@ -11,6 +11,7 @@ package com.langchain.smith.prompts
  *   parameter for OpenAI's structured outputs feature; `null` otherwise
  *
  * ## Example (Java)
+ *
  * ```java
  * import static com.langchain.smith.prompts.PromptConverters.convertPromptToOpenAI;
  *
@@ -24,6 +25,7 @@ package com.langchain.smith.prompts
  * ```
  *
  * ## Example (Kotlin)
+ *
  * ```kotlin
  * import com.langchain.smith.prompts.convertPromptToOpenAI
  *
@@ -39,20 +41,26 @@ package com.langchain.smith.prompts
  */
 fun convertPromptToOpenAI(promptValue: PromptValue): OpenAiPayload {
     val pm = promptValue.promptMessages
-    val messages = pm.messages.map { msg ->
-        mapOf("role" to msg.role.openAiRole, "content" to msg.template)
-    }
-    val responseFormat = pm.outputSchema?.let { schema ->
-        val schemaName = (schema["title"] as? String) ?: "structured_output"
-        mapOf<String, Any?>(
-            "type" to "json_schema",
-            "json_schema" to mapOf(
-                "name" to schemaName,
-                "strict" to true,
-                "schema" to schema,
-            ),
-        )
-    }
+    val messages =
+        pm.messages.map { msg ->
+            val base =
+                mutableMapOf<String, String>(
+                    "role" to msg.effectiveOpenAiRole(),
+                    "content" to msg.template,
+                )
+            if (msg.toolCallId != null) {
+                base["tool_call_id"] = msg.toolCallId
+            }
+            base.toMap()
+        }
+    val responseFormat =
+        pm.outputSchema?.let { schema ->
+            val schemaName = (schema["title"] as? String) ?: "structured_output"
+            mapOf<String, Any?>(
+                "type" to "json_schema",
+                "json_schema" to mapOf("name" to schemaName, "strict" to true, "schema" to schema),
+            )
+        }
     return OpenAiPayload(messages, responseFormat)
 }
 
@@ -60,14 +68,15 @@ fun convertPromptToOpenAI(promptValue: PromptValue): OpenAiPayload {
  * Converts a formatted [PromptValue] to Anthropic messages API format.
  *
  * Returns an [AnthropicPayload] containing:
- * - `system` — the concatenated system message text (extracted from messages, since
- *   Anthropic requires system messages as a separate top-level parameter)
- * - `messages` — a list of `{role, content}` maps for the Anthropic messages parameter
- *   (system messages excluded)
- * - `tool` — if the prompt has a structured output schema, an Anthropic tool definition
- *   that can be passed in the `tools` array; `null` otherwise
+ * - `system` — the concatenated system message text (extracted from messages, since Anthropic
+ *   requires system messages as a separate top-level parameter)
+ * - `messages` — a list of `{role, content}` maps for the Anthropic messages parameter (system
+ *   messages excluded)
+ * - `tool` — if the prompt has a structured output schema, an Anthropic tool definition that can be
+ *   passed in the `tools` array; `null` otherwise
  *
  * ## Example (Java)
+ *
  * ```java
  * import static com.langchain.smith.prompts.PromptConverters.convertPromptToAnthropic;
  *
@@ -84,6 +93,7 @@ fun convertPromptToOpenAI(promptValue: PromptValue): OpenAiPayload {
  * ```
  *
  * ## Example (Kotlin)
+ *
  * ```kotlin
  * import com.langchain.smith.prompts.convertPromptToAnthropic
  *
@@ -103,18 +113,32 @@ fun convertPromptToAnthropic(promptValue: PromptValue): AnthropicPayload {
     val nonSystemMessages = pm.messages.filter { it.role != PromptMessage.Role.SYSTEM }
 
     val system = systemMessages.joinToString("\n") { it.template }
-    val messages = nonSystemMessages.map { msg ->
-        mapOf("role" to msg.role.anthropicRole, "content" to msg.template)
-    }
-    val tool = pm.outputSchema?.let { schema ->
-        val toolName = (schema["title"] as? String) ?: "structured_output"
-        val description = (schema["description"] as? String)
-            ?: "Respond with structured output matching the schema."
-        mapOf<String, Any?>(
-            "name" to toolName,
-            "description" to description,
-            "input_schema" to schema,
-        )
-    }
+    val messages =
+        nonSystemMessages.map { msg ->
+            val role =
+                when (msg.role) {
+                    PromptMessage.Role.HUMAN -> "user"
+                    PromptMessage.Role.AI -> "assistant"
+                    PromptMessage.Role.TOOL ->
+                        "user" // Anthropic doesn't have tool role in messages
+                    PromptMessage.Role.CHAT -> msg.customRole ?: "user"
+                    PromptMessage.Role.SYSTEM -> "user" // shouldn't happen — filtered above
+                    PromptMessage.Role.PLACEHOLDER ->
+                        "user" // shouldn't happen — expanded by invoke()
+                }
+            mapOf("role" to role, "content" to msg.template)
+        }
+    val tool =
+        pm.outputSchema?.let { schema ->
+            val toolName = (schema["title"] as? String) ?: "structured_output"
+            val description =
+                (schema["description"] as? String)
+                    ?: "Respond with structured output matching the schema."
+            mapOf<String, Any?>(
+                "name" to toolName,
+                "description" to description,
+                "input_schema" to schema,
+            )
+        }
     return AnthropicPayload(system, messages, tool)
 }

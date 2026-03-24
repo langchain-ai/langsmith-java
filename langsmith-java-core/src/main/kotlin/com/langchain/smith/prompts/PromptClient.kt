@@ -6,8 +6,8 @@ import com.langchain.smith.models.commits.CommitRetrieveParams
 /**
  * A high-level client for pulling prompts from the LangSmith hub.
  *
- * This wraps the lower-level [LangsmithClient.commits] service and provides a convenient
- * interface that mirrors the Python and TypeScript SDKs' prompt pulling experience.
+ * This wraps the lower-level [LangsmithClient.commits] service and provides a convenient interface
+ * that mirrors the Python and TypeScript SDKs' prompt pulling experience.
  *
  * ## Quick start (Java)
  *
@@ -44,19 +44,16 @@ import com.langchain.smith.models.commits.CommitRetrieveParams
  * @see convertPromptToOpenAI
  * @see convertPromptToAnthropic
  */
-class PromptClient
-private constructor(
-    private val client: LangsmithClient,
-) {
+class PromptClient private constructor(private val client: LangsmithClient) {
 
     /**
-     * Pulls a prompt from the LangSmith hub and returns a [Prompt] that can be
-     * invoked with input variables.
+     * Pulls a prompt from the LangSmith hub and returns a [Prompt] that can be invoked with input
+     * variables.
      *
-     * This is the primary method for working with prompts. The returned [Prompt]
-     * has an [invoke][Prompt.invoke] method that formats the prompt with variable
-     * values, producing a [PromptValue] that can be converted to provider-specific
-     * formats using [convertPromptToOpenAI] or [convertPromptToAnthropic].
+     * This is the primary method for working with prompts. The returned [Prompt] has an
+     * [invoke][Prompt.invoke] method that formats the prompt with variable values, producing a
+     * [PromptValue] that can be converted to provider-specific formats using
+     * [convertPromptToOpenAI] or [convertPromptToAnthropic].
      *
      * ```java
      * Prompt prompt = promptClient.pull("my-org/joke-generator");
@@ -65,15 +62,12 @@ private constructor(
      * ```
      *
      * @param promptIdentifier the prompt identifier (e.g., `"owner/name"`, `"name"`,
-     *     `"owner/name:commit_hash"`)
+     *   `"owner/name:commit_hash"`)
      * @param includeModel whether to include model configuration in the response
      * @return a [Prompt] that can be invoked with variables
      */
     @JvmOverloads
-    fun pull(
-        promptIdentifier: String,
-        includeModel: Boolean = false,
-    ): Prompt {
+    fun pull(promptIdentifier: String, includeModel: Boolean = false): Prompt {
         val commit = pullPromptCommit(promptIdentifier, includeModel)
         return Prompt.fromCommit(commit)
     }
@@ -81,27 +75,25 @@ private constructor(
     /**
      * Pulls the raw prompt commit from the LangSmith hub.
      *
-     * This is the lower-level method that returns the raw [PromptCommit] with the
-     * manifest JSON and commit metadata. Most users should prefer [pull] instead.
+     * This is the lower-level method that returns the raw [PromptCommit] with the manifest JSON and
+     * commit metadata. Most users should prefer [pull] instead.
      *
      * @param promptIdentifier the prompt identifier (e.g., `"owner/name"`, `"name"`,
-     *     `"owner/name:commit_hash"`)
+     *   `"owner/name:commit_hash"`)
      * @param includeModel whether to include model configuration in the response
      * @return the raw prompt commit
      */
     @JvmOverloads
-    fun pullPromptCommit(
-        promptIdentifier: String,
-        includeModel: Boolean = false,
-    ): PromptCommit {
+    fun pullPromptCommit(promptIdentifier: String, includeModel: Boolean = false): PromptCommit {
         val (owner, repo, commit) = parsePromptIdentifier(promptIdentifier)
 
-        val params = CommitRetrieveParams.builder()
-            .owner(owner)
-            .repo(repo)
-            .commit(commit)
-            .includeModel(includeModel)
-            .build()
+        val params =
+            CommitRetrieveParams.builder()
+                .owner(owner)
+                .repo(repo)
+                .commit(commit)
+                .includeModel(includeModel)
+                .build()
 
         val response = client.commits().retrieve(params)
 
@@ -122,16 +114,15 @@ private constructor(
          * @param client the LangSmith API client
          * @return a new prompt client
          */
-        @JvmStatic
-        fun create(client: LangsmithClient): PromptClient = PromptClient(client)
+        @JvmStatic fun create(client: LangsmithClient): PromptClient = PromptClient(client)
 
         /**
          * Parses a prompt identifier string into its component parts.
          *
          * Supported formats:
-         * - `"name"` → `("–", "name", "latest")`
+         * - `"name"` → `("-", "name", "latest")`
          * - `"owner/name"` → `("owner", "name", "latest")`
-         * - `"name:commit"` → `("–", "name", "commit")`
+         * - `"name:commit"` → `("-", "name", "commit")`
          * - `"owner/name:commit"` → `("owner", "name", "commit")`
          *
          * @param identifier the prompt identifier string
@@ -145,36 +136,38 @@ private constructor(
             val trimmed = identifier.trim()
 
             // Split off commit/tag from the end (after ':')
-            val (nameAndOwner, commit) = if (':' in trimmed) {
-                val colonIdx = trimmed.lastIndexOf(':')
-                val namePart = trimmed.substring(0, colonIdx)
-                val commitPart = trimmed.substring(colonIdx + 1)
-                require(commitPart.isNotBlank()) {
-                    "Commit/tag after ':' must not be blank in identifier: $identifier"
+            val (nameAndOwner, commit) =
+                if (':' in trimmed) {
+                    val colonIdx = trimmed.lastIndexOf(':')
+                    val namePart = trimmed.substring(0, colonIdx)
+                    val commitPart = trimmed.substring(colonIdx + 1)
+                    require(commitPart.isNotBlank()) {
+                        "Commit/tag after ':' must not be blank in identifier: $identifier"
+                    }
+                    namePart to commitPart
+                } else {
+                    trimmed to "latest"
                 }
-                namePart to commitPart
-            } else {
-                trimmed to "latest"
-            }
 
             // Split owner and repo name (on '/')
-            val (owner, repo) = if ('/' in nameAndOwner) {
-                val slashIdx = nameAndOwner.indexOf('/')
-                val ownerPart = nameAndOwner.substring(0, slashIdx)
-                val repoPart = nameAndOwner.substring(slashIdx + 1)
-                require(ownerPart.isNotBlank()) {
-                    "Owner must not be blank in identifier: $identifier"
+            val (owner, repo) =
+                if ('/' in nameAndOwner) {
+                    val slashIdx = nameAndOwner.indexOf('/')
+                    val ownerPart = nameAndOwner.substring(0, slashIdx)
+                    val repoPart = nameAndOwner.substring(slashIdx + 1)
+                    require(ownerPart.isNotBlank()) {
+                        "Owner must not be blank in identifier: $identifier"
+                    }
+                    require(repoPart.isNotBlank()) {
+                        "Repo name must not be blank in identifier: $identifier"
+                    }
+                    require('/' !in repoPart) {
+                        "Identifier must have at most one '/' separator: $identifier"
+                    }
+                    ownerPart to repoPart
+                } else {
+                    "-" to nameAndOwner
                 }
-                require(repoPart.isNotBlank()) {
-                    "Repo name must not be blank in identifier: $identifier"
-                }
-                require('/' !in repoPart) {
-                    "Identifier must have at most one '/' separator: $identifier"
-                }
-                ownerPart to repoPart
-            } else {
-                "-" to nameAndOwner
-            }
 
             return PromptIdentifier(owner, repo, commit)
         }
@@ -188,8 +181,4 @@ private constructor(
  * @property repo the repository handle (prompt name)
  * @property commit the commit hash, tag, or `"latest"`
  */
-data class PromptIdentifier(
-    val owner: String,
-    val repo: String,
-    val commit: String,
-)
+data class PromptIdentifier(val owner: String, val repo: String, val commit: String)

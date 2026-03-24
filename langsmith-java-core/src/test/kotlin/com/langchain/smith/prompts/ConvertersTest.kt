@@ -17,17 +17,16 @@ internal class ConvertersTest {
 
     @Test
     fun convertToOpenAI_basicMessages() {
-        val pv = makePromptValue(
-            listOf(
-                PromptMessage.system("You are helpful."),
-                PromptMessage.human("Hello"),
+        val pv =
+            makePromptValue(
+                listOf(PromptMessage.system("You are helpful."), PromptMessage.human("Hello"))
             )
-        )
 
         val result = convertPromptToOpenAI(pv)
 
         assertThat(result.messages).hasSize(2)
-        assertThat(result.messages[0]).isEqualTo(mapOf("role" to "system", "content" to "You are helpful."))
+        assertThat(result.messages[0])
+            .isEqualTo(mapOf("role" to "system", "content" to "You are helpful."))
         assertThat(result.messages[1]).isEqualTo(mapOf("role" to "user", "content" to "Hello"))
         assertThat(result.hasResponseFormat()).isFalse()
         assertThat(result.responseFormat).isNull()
@@ -36,15 +35,17 @@ internal class ConvertersTest {
     @Test
     @Suppress("UNCHECKED_CAST")
     fun convertToOpenAI_withStructuredOutput() {
-        val schema = mapOf<String, Any?>(
-            "title" to "MySchema",
-            "type" to "object",
-            "properties" to mapOf("name" to mapOf("type" to "string")),
-        )
-        val pv = makePromptValue(
-            listOf(PromptMessage.human("Extract from: text")),
-            outputSchema = schema,
-        )
+        val schema =
+            mapOf<String, Any?>(
+                "title" to "MySchema",
+                "type" to "object",
+                "properties" to mapOf("name" to mapOf("type" to "string")),
+            )
+        val pv =
+            makePromptValue(
+                listOf(PromptMessage.human("Extract from: text")),
+                outputSchema = schema,
+            )
 
         val result = convertPromptToOpenAI(pv)
 
@@ -60,14 +61,15 @@ internal class ConvertersTest {
 
     @Test
     fun convertToAnthropic_extractsSystem() {
-        val pv = makePromptValue(
-            listOf(
-                PromptMessage.system("Be helpful."),
-                PromptMessage.human("Hello"),
-                PromptMessage.ai("Hi!"),
-                PromptMessage.human("Question"),
+        val pv =
+            makePromptValue(
+                listOf(
+                    PromptMessage.system("Be helpful."),
+                    PromptMessage.human("Hello"),
+                    PromptMessage.ai("Hi!"),
+                    PromptMessage.human("Question"),
+                )
             )
-        )
 
         val result = convertPromptToAnthropic(pv)
 
@@ -81,19 +83,21 @@ internal class ConvertersTest {
 
     @Test
     fun convertToAnthropic_withStructuredOutput() {
-        val schema = mapOf<String, Any?>(
-            "title" to "MyTool",
-            "description" to "Extracts info.",
-            "type" to "object",
-            "properties" to mapOf("name" to mapOf("type" to "string")),
-        )
-        val pv = makePromptValue(
-            listOf(
-                PromptMessage.system("Extract data."),
-                PromptMessage.human("Extract from: text"),
-            ),
-            outputSchema = schema,
-        )
+        val schema =
+            mapOf<String, Any?>(
+                "title" to "MyTool",
+                "description" to "Extracts info.",
+                "type" to "object",
+                "properties" to mapOf("name" to mapOf("type" to "string")),
+            )
+        val pv =
+            makePromptValue(
+                listOf(
+                    PromptMessage.system("Extract data."),
+                    PromptMessage.human("Extract from: text"),
+                ),
+                outputSchema = schema,
+            )
 
         val result = convertPromptToAnthropic(pv)
 
@@ -111,22 +115,25 @@ internal class ConvertersTest {
     @Suppress("UNCHECKED_CAST")
     fun endToEnd_pullInvokeConvert() {
         // Simulate the full DX: Prompt → invoke → convert
-        val schema = mapOf<String, Any?>(
-            "title" to "JokeResponse",
-            "type" to "object",
-            "properties" to mapOf(
-                "setup" to mapOf("type" to "string"),
-                "punchline" to mapOf("type" to "string"),
-            ),
-        )
-        val prompt = Prompt.of(
-            listOf(
-                PromptMessage.system("You tell jokes."),
-                PromptMessage.human("Tell me a joke about {topic}"),
-            ),
-            listOf("topic"),
-            schema,
-        )
+        val schema =
+            mapOf<String, Any?>(
+                "title" to "JokeResponse",
+                "type" to "object",
+                "properties" to
+                    mapOf(
+                        "setup" to mapOf("type" to "string"),
+                        "punchline" to mapOf("type" to "string"),
+                    ),
+            )
+        val prompt =
+            Prompt.of(
+                listOf(
+                    PromptMessage.system("You tell jokes."),
+                    PromptMessage.human("Tell me a joke about {topic}"),
+                ),
+                listOf("topic"),
+                schema,
+            )
 
         val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
 
@@ -150,13 +157,14 @@ internal class ConvertersTest {
 
     @Test
     fun endToEnd_regularPromptNoSchema() {
-        val prompt = Prompt.of(
-            listOf(
-                PromptMessage.system("You are helpful."),
-                PromptMessage.human("Tell me about {topic}"),
-            ),
-            listOf("topic"),
-        )
+        val prompt =
+            Prompt.of(
+                listOf(
+                    PromptMessage.system("You are helpful."),
+                    PromptMessage.human("Tell me about {topic}"),
+                ),
+                listOf("topic"),
+            )
 
         val formattedPrompt = prompt.invoke(mapOf("topic" to "dogs"))
 

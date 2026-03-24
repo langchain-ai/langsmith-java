@@ -6,12 +6,11 @@ import com.langchain.smith.models.commits.CommitRetrieveResponse
 /**
  * Represents a pulled prompt commit from the LangSmith hub.
  *
- * This is the low-level result of calling [PromptClient.pullPromptCommit]. It contains
- * the raw manifest (the LangChain-serialized prompt definition) along with metadata
- * about the commit.
+ * This is the low-level result of calling [PromptClient.pullPromptCommit]. It contains the raw
+ * manifest (the LangChain-serialized prompt definition) along with metadata about the commit.
  *
- * Most users should prefer [PromptClient.pull], which returns a [Prompt] that can be
- * invoked directly.
+ * Most users should prefer [PromptClient.pull], which returns a [Prompt] that can be invoked
+ * directly.
  *
  * @see PromptClient.pull
  * @see PromptClient.pullPromptCommit
@@ -44,9 +43,7 @@ private constructor(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is PromptCommit) return false
-        return owner == other.owner &&
-                repo == other.repo &&
-                commitHash == other.commitHash
+        return owner == other.owner && repo == other.repo && commitHash == other.commitHash
     }
 
     override fun hashCode(): Int {
