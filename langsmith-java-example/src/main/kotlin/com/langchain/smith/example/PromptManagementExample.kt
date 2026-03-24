@@ -275,23 +275,17 @@ private fun getMessageType(message: Map<String, Any>): String {
  * Finds a prompt by exact repo handle match.
  */
 private fun findPrompt(client: LangsmithClient, promptName: String): java.util.Optional<RepoWithLookups> {
-    // Check both private and public repos to avoid 409 on create
-    for (isPublic in listOf(RepoListParams.IsPublic.FALSE, RepoListParams.IsPublic.TRUE)) {
-        val existingRepos = client.repos()
-            .list(
-                RepoListParams.builder()
-                    .query(promptName)
-                    .isPublic(isPublic)
-                    .build()
-            )
+    val existingRepos = client.repos()
+        .list(
+            RepoListParams.builder()
+                .query(promptName)
+                .isPublic(RepoListParams.IsPublic.FALSE)
+                .build()
+        )
 
-        val match = existingRepos.repos().stream()
-            .filter { it.repoHandle() == promptName }
-            .findFirst()
-
-        if (match.isPresent) return match
-    }
-    return java.util.Optional.empty()
+    return existingRepos.repos().stream()
+        .filter { it.repoHandle() == promptName }
+        .findFirst()
 }
 
 /**
