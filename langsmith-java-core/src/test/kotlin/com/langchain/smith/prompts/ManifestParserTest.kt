@@ -501,6 +501,228 @@ internal class ManifestParserTest {
         assertThat(result.messages[0].customRole).isNull()
     }
 
+    // --- Real-world playground manifest ---
+
+    @Test
+    fun parsePlaygroundManifestWithAllFeatures() {
+        // Exact manifest from LangSmith playground: StructuredPrompt with mustache,
+        // AI message, MessagesPlaceholder, and a raw ToolMessage (not a template)
+        val manifest =
+            mapOf(
+                "lc" to 1,
+                "type" to "constructor",
+                "id" to listOf("langchain_core", "prompts", "structured", "StructuredPrompt"),
+                "kwargs" to
+                    mapOf(
+                        "messages" to
+                            listOf(
+                                mapOf(
+                                    "lc" to 1,
+                                    "type" to "constructor",
+                                    "id" to
+                                        listOf(
+                                            "langchain",
+                                            "prompts",
+                                            "chat",
+                                            "SystemMessagePromptTemplate",
+                                        ),
+                                    "kwargs" to
+                                        mapOf(
+                                            "prompt" to
+                                                mapOf(
+                                                    "lc" to 1,
+                                                    "type" to "constructor",
+                                                    "id" to
+                                                        listOf(
+                                                            "langchain",
+                                                            "prompts",
+                                                            "prompt",
+                                                            "PromptTemplate",
+                                                        ),
+                                                    "kwargs" to
+                                                        mapOf(
+                                                            "input_variables" to
+                                                                emptyList<String>(),
+                                                            "template_format" to "mustache",
+                                                            "template" to "You are a chatbot.",
+                                                        ),
+                                                )
+                                        ),
+                                ),
+                                mapOf(
+                                    "lc" to 1,
+                                    "type" to "constructor",
+                                    "id" to
+                                        listOf(
+                                            "langchain",
+                                            "prompts",
+                                            "chat",
+                                            "HumanMessagePromptTemplate",
+                                        ),
+                                    "kwargs" to
+                                        mapOf(
+                                            "prompt" to
+                                                mapOf(
+                                                    "lc" to 1,
+                                                    "type" to "constructor",
+                                                    "id" to
+                                                        listOf(
+                                                            "langchain",
+                                                            "prompts",
+                                                            "prompt",
+                                                            "PromptTemplate",
+                                                        ),
+                                                    "kwargs" to
+                                                        mapOf(
+                                                            "input_variables" to listOf("question"),
+                                                            "template_format" to "mustache",
+                                                            "template" to "{{question}}",
+                                                        ),
+                                                )
+                                        ),
+                                ),
+                                mapOf(
+                                    "lc" to 1,
+                                    "type" to "constructor",
+                                    "id" to
+                                        listOf(
+                                            "langchain",
+                                            "prompts",
+                                            "chat",
+                                            "AIMessagePromptTemplate",
+                                        ),
+                                    "kwargs" to
+                                        mapOf(
+                                            "prompt" to
+                                                mapOf(
+                                                    "lc" to 1,
+                                                    "type" to "constructor",
+                                                    "id" to
+                                                        listOf(
+                                                            "langchain",
+                                                            "prompts",
+                                                            "prompt",
+                                                            "PromptTemplate",
+                                                        ),
+                                                    "kwargs" to
+                                                        mapOf(
+                                                            "input_variables" to
+                                                                emptyList<String>(),
+                                                            "template_format" to "mustache",
+                                                            "template" to "ee",
+                                                        ),
+                                                )
+                                        ),
+                                ),
+                                mapOf(
+                                    "lc" to 1,
+                                    "type" to "constructor",
+                                    "id" to
+                                        listOf(
+                                            "langchain_core",
+                                            "prompts",
+                                            "chat",
+                                            "MessagesPlaceholder",
+                                        ),
+                                    "kwargs" to mapOf("variable_name" to "foo"),
+                                ),
+                                mapOf(
+                                    "lc" to 1,
+                                    "type" to "constructor",
+                                    "id" to listOf("langchain_core", "messages", "ToolMessage"),
+                                    "kwargs" to
+                                        mapOf(
+                                            "content" to """{"haha":"ha"}""",
+                                            "tool_call_id" to "333",
+                                            "name" to "112",
+                                            "additional_kwargs" to emptyMap<String, Any>(),
+                                            "response_metadata" to emptyMap<String, Any>(),
+                                        ),
+                                ),
+                            ),
+                        "input_variables" to listOf("question", "foo"),
+                        "template_format" to "mustache",
+                        "schema_" to
+                            mapOf(
+                                "title" to "extract",
+                                "description" to "Extract information from the user's response.",
+                                "type" to "object",
+                                "properties" to
+                                    mapOf(
+                                        "correctness" to
+                                            mapOf(
+                                                "type" to "boolean",
+                                                "description" to
+                                                    "Is the submission correct, accurate, and factual?",
+                                            )
+                                    ),
+                                "required" to listOf("correctness"),
+                            ),
+                    ),
+            )
+
+        val result = ManifestParser.parse(JsonValue.from(manifest))
+
+        // 5 messages: system, human, ai, placeholder, tool
+        assertThat(result.messages).hasSize(5)
+
+        // System message (mustache, no variables)
+        assertThat(result.messages[0].role).isEqualTo(PromptMessage.Role.SYSTEM)
+        assertThat(result.messages[0].template).isEqualTo("You are a chatbot.")
+        assertThat(result.messages[0].templateFormat).isEqualTo("mustache")
+
+        // Human message (mustache with variable)
+        assertThat(result.messages[1].role).isEqualTo(PromptMessage.Role.HUMAN)
+        assertThat(result.messages[1].template).isEqualTo("{{question}}")
+        assertThat(result.messages[1].templateFormat).isEqualTo("mustache")
+
+        // AI message
+        assertThat(result.messages[2].role).isEqualTo(PromptMessage.Role.AI)
+        assertThat(result.messages[2].template).isEqualTo("ee")
+
+        // MessagesPlaceholder
+        assertThat(result.messages[3].isPlaceholder()).isTrue()
+        assertThat(result.messages[3].template).isEqualTo("foo")
+
+        // Raw ToolMessage (not a prompt template — uses "content" field)
+        assertThat(result.messages[4].role).isEqualTo(PromptMessage.Role.TOOL)
+        assertThat(result.messages[4].template).isEqualTo("""{"haha":"ha"}""")
+        assertThat(result.messages[4].toolCallId).isEqualTo("333")
+
+        // Structured output schema
+        assertThat(result.hasOutputSchema()).isTrue()
+        assertThat(result.outputSchema!!["title"]).isEqualTo("extract")
+
+        // Input variables
+        assertThat(result.inputVariables).containsExactly("question", "foo")
+
+        // End-to-end: invoke with variables and expand placeholder
+        val prompt = Prompt.of(result.messages, result.inputVariables, result.outputSchema)
+        val formatted =
+            prompt.invoke(
+                mapOf(
+                    "question" to "Is 2+2=4?",
+                    "foo" to
+                        listOf(
+                            PromptMessage.human("prior message"),
+                            PromptMessage.ai("prior response"),
+                        ),
+                )
+            )
+
+        // Placeholder expanded: system, human, ai, human(prior), ai(prior), tool = 6 messages
+        assertThat(formatted.messages).hasSize(6)
+        assertThat(formatted.messages[0].template).isEqualTo("You are a chatbot.")
+        assertThat(formatted.messages[1].template).isEqualTo("Is 2+2=4?") // mustache substituted
+        assertThat(formatted.messages[2].template).isEqualTo("ee")
+        assertThat(formatted.messages[3].template)
+            .isEqualTo("prior message") // expanded from placeholder
+        assertThat(formatted.messages[4].template).isEqualTo("prior response")
+        assertThat(formatted.messages[5].template)
+            .isEqualTo("""{"haha":"ha"}""") // tool message preserved
+        assertThat(formatted.hasOutputSchema()).isTrue()
+    }
+
     @Test
     fun parseInvalidManifestThrows() {
         assertThatThrownBy { ManifestParser.parse(JsonValue.from("not an object")) }

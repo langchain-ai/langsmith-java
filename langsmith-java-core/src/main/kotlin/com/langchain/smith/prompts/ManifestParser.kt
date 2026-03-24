@@ -123,17 +123,22 @@ internal object ManifestParser {
 
         val role = PromptMessage.Role.fromLangchainClassName(className)
 
-        // The template can be directly in kwargs, or nested in a "prompt" sub-object
-        val info = extractTemplate(kwargs) ?: return null
+        // The template can be:
+        // 1. Nested in a "prompt" sub-object (PromptTemplate pattern)
+        // 2. Direct "template" field in kwargs
+        // 3. Direct "content" field in kwargs (raw message objects like ToolMessage)
+        val info = extractTemplate(kwargs)
+        val content = info?.template ?: kwargs["content"]?.asString()?.orElse(null) ?: return null
+        val templateFormat = info?.templateFormat ?: "f-string"
 
-        // Handle ToolMessagePromptTemplate — has a tool_call_id
+        // Handle ToolMessage / ToolMessagePromptTemplate — has a tool_call_id
         if (role == PromptMessage.Role.TOOL) {
             val toolCallId = kwargs["tool_call_id"]?.asString()?.orElse(null)
             return PromptMessage(
                 role,
-                info.template,
+                content,
                 toolCallId = toolCallId,
-                templateFormat = info.templateFormat,
+                templateFormat = templateFormat,
             )
         }
 
@@ -142,13 +147,13 @@ internal object ManifestParser {
             val customRole = kwargs["role"]?.asString()?.orElse(null)
             return PromptMessage(
                 role,
-                info.template,
+                content,
                 customRole = customRole,
-                templateFormat = info.templateFormat,
+                templateFormat = templateFormat,
             )
         }
 
-        return PromptMessage(role, info.template, templateFormat = info.templateFormat)
+        return PromptMessage(role, content, templateFormat = templateFormat)
     }
 
     /**
