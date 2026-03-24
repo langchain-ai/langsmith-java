@@ -57,9 +57,9 @@ class PromptValue internal constructor(internal val promptMessages: PromptMessag
     override fun hashCode(): Int = promptMessages.hashCode()
 
     override fun toString(): String {
-        val msgs = messages.joinToString(", ") { "${it.role}: ${it.template}" }
+        val msgs = messages.joinToString(", ") { it.toString() }
         return "PromptValue{messages=[$msgs]" +
-            (if (hasOutputSchema()) ", hasOutputSchema=true" else "") +
+            (if (hasOutputSchema()) ", outputSchema=${outputSchema!!["title"] ?: "..."}" else "") +
             "}"
     }
 }

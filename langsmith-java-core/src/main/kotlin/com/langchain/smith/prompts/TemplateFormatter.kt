@@ -13,8 +13,11 @@ import com.samskivert.mustache.Mustache
  */
 internal object TemplateFormatter {
 
-    /** Matches `{variable_name}` placeholders in f-string templates. */
-    private val F_STRING_PATTERN = Regex("\\{([^}]+)\\}")
+    /**
+     * Matches f-string tokens: escaped braces (`{{`, `}}`) or variable placeholders (`{name}`).
+     * Escaped braces are matched first so they aren't treated as variables.
+     */
+    private val F_STRING_PATTERN = Regex("\\{\\{|\\}\\}|\\{([^}]+)\\}")
 
     /** The jmustache compiler, configured to not HTML-escape values. */
     private val MUSTACHE_COMPILER: Mustache.Compiler =
@@ -39,14 +42,23 @@ internal object TemplateFormatter {
         }
 
     /**
-     * Formats an f-string template. Uses single-pass regex replacement to avoid cascading
-     * substitutions (e.g., if a value itself contains `{other_var}`).
+     * Formats an f-string template. Handles:
+     * - `{variable}` — substituted from the variables map
+     * - `{{` — literal `{`
+     * - `}}` — literal `}`
+     *
+     * Uses single-pass regex replacement to avoid cascading substitutions.
      */
     private fun formatFString(template: String, variables: Map<String, Any>): String =
         F_STRING_PATTERN.replace(template) { match ->
-            val key = match.groupValues[1]
-            val value = variables[key]
-            value?.toString() ?: match.value
+            when (match.value) {
+                "{{" -> "{"
+                "}}" -> "}"
+                else -> {
+                    val key = match.groupValues[1]
+                    variables[key]?.toString() ?: match.value
+                }
+            }
         }
 
     /** Formats a mustache template using jmustache. */

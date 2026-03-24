@@ -147,13 +147,13 @@ internal constructor(
     }
 
     override fun toString(): String {
+        val roleName = customRole ?: role.name.lowercase()
         val extras = buildList {
             if (toolCallId != null) add("toolCallId=$toolCallId")
-            if (customRole != null) add("customRole=$customRole")
             if (templateFormat != "f-string") add("templateFormat=$templateFormat")
         }
-        val suffix = if (extras.isNotEmpty()) ", ${extras.joinToString()}" else ""
-        return "PromptMessage{role=$role, template=$template$suffix}"
+        val suffix = if (extras.isNotEmpty()) " (${extras.joinToString()})" else ""
+        return "$roleName: \"$template\"$suffix"
     }
 
     companion object {

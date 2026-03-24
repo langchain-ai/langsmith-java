@@ -94,11 +94,14 @@ internal constructor(
      */
     fun invoke(): PromptValue = invoke(emptyMap())
 
-    override fun toString(): String =
-        "Prompt{inputVariables=$inputVariables" +
+    override fun toString(): String {
+        val msgs = promptMessages.messages.joinToString(", ") { it.toString() }
+        return "Prompt{messages=[$msgs]" +
+            (if (inputVariables.isNotEmpty()) ", inputVariables=$inputVariables" else "") +
             (if (commitHash != null) ", commitHash=$commitHash" else "") +
-            (if (hasOutputSchema()) ", hasOutputSchema=true" else "") +
+            (if (hasOutputSchema()) ", outputSchema=${outputSchema!!["title"] ?: "..."}" else "") +
             "}"
+    }
 
     companion object {
 

@@ -80,6 +80,17 @@ internal class PromptMessagesTest {
     }
 
     @Test
+    fun formatFStringEscapedBraces() {
+        // {{ and }} are literal braces, not variable references
+        val prompt =
+            Prompt.of(listOf(PromptMessage.human("Use {{braces}} and {name} here")), listOf("name"))
+
+        val result = prompt.invoke(mapOf("name" to "Alice"))
+
+        assertThat(result.messages[0].template).isEqualTo("Use {braces} and Alice here")
+    }
+
+    @Test
     fun parseMustacheManifest() {
         // A manifest with template_format = "mustache" should be parsed and formatted correctly
         val manifest =
