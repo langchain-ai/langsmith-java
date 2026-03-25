@@ -16,8 +16,8 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
 import com.langchain.smith.models.datasets.runs.RunCreateParams
-import com.langchain.smith.models.datasets.runs.RunCreateResponse
 import com.langchain.smith.models.datasets.runs.RunDeltaParams
 import com.langchain.smith.models.datasets.runs.SessionFeedbackDelta
 import java.util.Optional
@@ -38,7 +38,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     override fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions,
-    ): Optional<RunCreateResponse> =
+    ): Optional<List<ExampleWithRunsCh>> =
         // post /api/v1/datasets/{dataset_id}/runs
         withRawResponse().create(params, requestOptions).parse()
 
@@ -62,13 +62,13 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<Optional<RunCreateResponse>> =
-            jsonHandler<Optional<RunCreateResponse>>(clientOptions.jsonMapper)
+        private val createHandler: Handler<Optional<List<ExampleWithRunsCh>>> =
+            jsonHandler<Optional<List<ExampleWithRunsCh>>>(clientOptions.jsonMapper)
 
         override fun create(
             params: RunCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<Optional<RunCreateResponse>> {
+        ): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -87,7 +87,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                     .use { createHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
-                            it.ifPresent { it.validate() }
+                            it.ifPresent { it.forEach { it.validate() } }
                         }
                     }
             }

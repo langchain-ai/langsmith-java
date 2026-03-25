@@ -33,7 +33,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         else
             clientOptions
                 .toBuilder()
-                .putHeader("User-Agent", "${javaClass.simpleName}/Java ${getPackageVersion()}")
+                .putHeader("User-Agent", "langsmith-java/${getPackageVersion()}")
                 .build()
 
     // Pass the original clientOptions so that this client sets its own User-Agent.

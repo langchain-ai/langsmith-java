@@ -23,6 +23,7 @@ private constructor(
     private val includeStats: Boolean?,
     private val limit: Long?,
     private val offset: Long?,
+    private val tag: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -39,6 +40,9 @@ private constructor(
 
     /** Offset is the pagination offset */
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
+
+    /** Tag filters commits to only those with a specific tag (e.g. "production", "staging") */
+    fun tag(): Optional<String> = Optional.ofNullable(tag)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -69,6 +73,7 @@ private constructor(
         private var includeStats: Boolean? = null
         private var limit: Long? = null
         private var offset: Long? = null
+        private var tag: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -79,6 +84,7 @@ private constructor(
             includeStats = commitListParams.includeStats
             limit = commitListParams.limit
             offset = commitListParams.offset
+            tag = commitListParams.tag
             additionalHeaders = commitListParams.additionalHeaders.toBuilder()
             additionalQueryParams = commitListParams.additionalQueryParams.toBuilder()
         }
@@ -128,6 +134,12 @@ private constructor(
 
         /** Alias for calling [Builder.offset] with `offset.orElse(null)`. */
         fun offset(offset: Optional<Long>) = offset(offset.getOrNull())
+
+        /** Tag filters commits to only those with a specific tag (e.g. "production", "staging") */
+        fun tag(tag: String?) = apply { this.tag = tag }
+
+        /** Alias for calling [Builder.tag] with `tag.orElse(null)`. */
+        fun tag(tag: Optional<String>) = tag(tag.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -246,6 +258,7 @@ private constructor(
                 includeStats,
                 limit,
                 offset,
+                tag,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -266,6 +279,7 @@ private constructor(
                 includeStats?.let { put("include_stats", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 offset?.let { put("offset", it.toString()) }
+                tag?.let { put("tag", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -281,6 +295,7 @@ private constructor(
             includeStats == other.includeStats &&
             limit == other.limit &&
             offset == other.offset &&
+            tag == other.tag &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -292,10 +307,11 @@ private constructor(
             includeStats,
             limit,
             offset,
+            tag,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "CommitListParams{owner=$owner, repo=$repo, includeStats=$includeStats, limit=$limit, offset=$offset, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CommitListParams{owner=$owner, repo=$repo, includeStats=$includeStats, limit=$limit, offset=$offset, tag=$tag, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

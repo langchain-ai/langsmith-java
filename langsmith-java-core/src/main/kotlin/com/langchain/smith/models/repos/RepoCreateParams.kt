@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
@@ -58,6 +59,18 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun repoType(): Optional<RepoType> = body.repoType()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun restrictedMode(): Optional<Boolean> = body.restrictedMode()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun tags(): Optional<List<String>> = body.tags()
 
     /**
@@ -87,6 +100,20 @@ private constructor(
      * Unlike [readme], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _readme(): JsonField<String> = body._readme()
+
+    /**
+     * Returns the raw JSON value of [repoType].
+     *
+     * Unlike [repoType], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _repoType(): JsonField<RepoType> = body._repoType()
+
+    /**
+     * Returns the raw JSON value of [restrictedMode].
+     *
+     * Unlike [restrictedMode], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _restrictedMode(): JsonField<Boolean> = body._restrictedMode()
 
     /**
      * Returns the raw JSON value of [tags].
@@ -142,7 +169,7 @@ private constructor(
          * - [repoHandle]
          * - [description]
          * - [readme]
-         * - [tags]
+         * - [repoType]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -195,6 +222,41 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun readme(readme: JsonField<String>) = apply { body.readme(readme) }
+
+        fun repoType(repoType: RepoType) = apply { body.repoType(repoType) }
+
+        /**
+         * Sets [Builder.repoType] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.repoType] with a well-typed [RepoType] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun repoType(repoType: JsonField<RepoType>) = apply { body.repoType(repoType) }
+
+        fun restrictedMode(restrictedMode: Boolean?) = apply { body.restrictedMode(restrictedMode) }
+
+        /**
+         * Alias for [Builder.restrictedMode].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun restrictedMode(restrictedMode: Boolean) = restrictedMode(restrictedMode as Boolean?)
+
+        /** Alias for calling [Builder.restrictedMode] with `restrictedMode.orElse(null)`. */
+        fun restrictedMode(restrictedMode: Optional<Boolean>) =
+            restrictedMode(restrictedMode.getOrNull())
+
+        /**
+         * Sets [Builder.restrictedMode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.restrictedMode] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun restrictedMode(restrictedMode: JsonField<Boolean>) = apply {
+            body.restrictedMode(restrictedMode)
+        }
 
         fun tags(tags: List<String>?) = apply { body.tags(tags) }
 
@@ -365,6 +427,8 @@ private constructor(
         private val repoHandle: JsonField<String>,
         private val description: JsonField<String>,
         private val readme: JsonField<String>,
+        private val repoType: JsonField<RepoType>,
+        private val restrictedMode: JsonField<Boolean>,
         private val tags: JsonField<List<String>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -381,8 +445,23 @@ private constructor(
             @ExcludeMissing
             description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("readme") @ExcludeMissing readme: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("repo_type")
+            @ExcludeMissing
+            repoType: JsonField<RepoType> = JsonMissing.of(),
+            @JsonProperty("restricted_mode")
+            @ExcludeMissing
+            restrictedMode: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("tags") @ExcludeMissing tags: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(isPublic, repoHandle, description, readme, tags, mutableMapOf())
+        ) : this(
+            isPublic,
+            repoHandle,
+            description,
+            readme,
+            repoType,
+            restrictedMode,
+            tags,
+            mutableMapOf(),
+        )
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -407,6 +486,18 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun readme(): Optional<String> = readme.getOptional("readme")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun repoType(): Optional<RepoType> = repoType.getOptional("repo_type")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun restrictedMode(): Optional<Boolean> = restrictedMode.getOptional("restricted_mode")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -445,6 +536,23 @@ private constructor(
          * Unlike [readme], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("readme") @ExcludeMissing fun _readme(): JsonField<String> = readme
+
+        /**
+         * Returns the raw JSON value of [repoType].
+         *
+         * Unlike [repoType], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("repo_type") @ExcludeMissing fun _repoType(): JsonField<RepoType> = repoType
+
+        /**
+         * Returns the raw JSON value of [restrictedMode].
+         *
+         * Unlike [restrictedMode], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("restricted_mode")
+        @ExcludeMissing
+        fun _restrictedMode(): JsonField<Boolean> = restrictedMode
 
         /**
          * Returns the raw JSON value of [tags].
@@ -486,6 +594,8 @@ private constructor(
             private var repoHandle: JsonField<String>? = null
             private var description: JsonField<String> = JsonMissing.of()
             private var readme: JsonField<String> = JsonMissing.of()
+            private var repoType: JsonField<RepoType> = JsonMissing.of()
+            private var restrictedMode: JsonField<Boolean> = JsonMissing.of()
             private var tags: JsonField<MutableList<String>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -495,6 +605,8 @@ private constructor(
                 repoHandle = body.repoHandle
                 description = body.description
                 readme = body.readme
+                repoType = body.repoType
+                restrictedMode = body.restrictedMode
                 tags = body.tags.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -550,6 +662,42 @@ private constructor(
              * supported value.
              */
             fun readme(readme: JsonField<String>) = apply { this.readme = readme }
+
+            fun repoType(repoType: RepoType) = repoType(JsonField.of(repoType))
+
+            /**
+             * Sets [Builder.repoType] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.repoType] with a well-typed [RepoType] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun repoType(repoType: JsonField<RepoType>) = apply { this.repoType = repoType }
+
+            fun restrictedMode(restrictedMode: Boolean?) =
+                restrictedMode(JsonField.ofNullable(restrictedMode))
+
+            /**
+             * Alias for [Builder.restrictedMode].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun restrictedMode(restrictedMode: Boolean) = restrictedMode(restrictedMode as Boolean?)
+
+            /** Alias for calling [Builder.restrictedMode] with `restrictedMode.orElse(null)`. */
+            fun restrictedMode(restrictedMode: Optional<Boolean>) =
+                restrictedMode(restrictedMode.getOrNull())
+
+            /**
+             * Sets [Builder.restrictedMode] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.restrictedMode] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun restrictedMode(restrictedMode: JsonField<Boolean>) = apply {
+                this.restrictedMode = restrictedMode
+            }
 
             fun tags(tags: List<String>?) = tags(JsonField.ofNullable(tags))
 
@@ -615,6 +763,8 @@ private constructor(
                     checkRequired("repoHandle", repoHandle),
                     description,
                     readme,
+                    repoType,
+                    restrictedMode,
                     (tags ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -631,6 +781,8 @@ private constructor(
             repoHandle()
             description()
             readme()
+            repoType().ifPresent { it.validate() }
+            restrictedMode()
             tags()
             validated = true
         }
@@ -655,6 +807,8 @@ private constructor(
                 (if (repoHandle.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (readme.asKnown().isPresent) 1 else 0) +
+                (repoType.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (restrictedMode.asKnown().isPresent) 1 else 0) +
                 (tags.asKnown().getOrNull()?.size ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -667,18 +821,168 @@ private constructor(
                 repoHandle == other.repoHandle &&
                 description == other.description &&
                 readme == other.readme &&
+                repoType == other.repoType &&
+                restrictedMode == other.restrictedMode &&
                 tags == other.tags &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(isPublic, repoHandle, description, readme, tags, additionalProperties)
+            Objects.hash(
+                isPublic,
+                repoHandle,
+                description,
+                readme,
+                repoType,
+                restrictedMode,
+                tags,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{isPublic=$isPublic, repoHandle=$repoHandle, description=$description, readme=$readme, tags=$tags, additionalProperties=$additionalProperties}"
+            "Body{isPublic=$isPublic, repoHandle=$repoHandle, description=$description, readme=$readme, repoType=$repoType, restrictedMode=$restrictedMode, tags=$tags, additionalProperties=$additionalProperties}"
+    }
+
+    class RepoType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val PROMPT = of("prompt")
+
+            @JvmField val FILE = of("file")
+
+            @JvmField val AGENT = of("agent")
+
+            @JvmField val SKILL = of("skill")
+
+            @JvmStatic fun of(value: String) = RepoType(JsonField.of(value))
+        }
+
+        /** An enum containing [RepoType]'s known values. */
+        enum class Known {
+            PROMPT,
+            FILE,
+            AGENT,
+            SKILL,
+        }
+
+        /**
+         * An enum containing [RepoType]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [RepoType] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            PROMPT,
+            FILE,
+            AGENT,
+            SKILL,
+            /** An enum member indicating that [RepoType] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                PROMPT -> Value.PROMPT
+                FILE -> Value.FILE
+                AGENT -> Value.AGENT
+                SKILL -> Value.SKILL
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                PROMPT -> Known.PROMPT
+                FILE -> Known.FILE
+                AGENT -> Known.AGENT
+                SKILL -> Known.SKILL
+                else -> throw LangChainInvalidDataException("Unknown RepoType: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): RepoType = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is RepoType && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
     }
 
     override fun equals(other: Any?): Boolean {

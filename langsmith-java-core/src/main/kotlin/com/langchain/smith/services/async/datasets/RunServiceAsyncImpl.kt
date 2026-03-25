@@ -16,8 +16,8 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
 import com.langchain.smith.models.datasets.runs.RunCreateParams
-import com.langchain.smith.models.datasets.runs.RunCreateResponse
 import com.langchain.smith.models.datasets.runs.RunDeltaParams
 import com.langchain.smith.models.datasets.runs.SessionFeedbackDelta
 import java.util.Optional
@@ -40,7 +40,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<Optional<RunCreateResponse>> =
+    ): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
         // post /api/v1/datasets/{dataset_id}/runs
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
@@ -64,13 +64,13 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<Optional<RunCreateResponse>> =
-            jsonHandler<Optional<RunCreateResponse>>(clientOptions.jsonMapper)
+        private val createHandler: Handler<Optional<List<ExampleWithRunsCh>>> =
+            jsonHandler<Optional<List<ExampleWithRunsCh>>>(clientOptions.jsonMapper)
 
         override fun create(
             params: RunCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<Optional<RunCreateResponse>>> {
+        ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -91,7 +91,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                             .use { createHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
-                                    it.ifPresent { it.validate() }
+                                    it.ifPresent { it.forEach { it.validate() } }
                                 }
                             }
                     }

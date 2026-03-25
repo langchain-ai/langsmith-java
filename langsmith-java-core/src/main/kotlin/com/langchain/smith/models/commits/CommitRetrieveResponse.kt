@@ -24,6 +24,8 @@ private constructor(
     private val commitHash: JsonField<String>,
     private val examples: JsonField<List<Example>>,
     private val manifest: JsonValue,
+    private val modelConfig: JsonValue,
+    private val modelProvider: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -36,7 +38,11 @@ private constructor(
         @ExcludeMissing
         examples: JsonField<List<Example>> = JsonMissing.of(),
         @JsonProperty("manifest") @ExcludeMissing manifest: JsonValue = JsonMissing.of(),
-    ) : this(commitHash, examples, manifest, mutableMapOf())
+        @JsonProperty("model_config") @ExcludeMissing modelConfig: JsonValue = JsonMissing.of(),
+        @JsonProperty("model_provider")
+        @ExcludeMissing
+        modelProvider: JsonField<String> = JsonMissing.of(),
+    ) : this(commitHash, examples, manifest, modelConfig, modelProvider, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -59,6 +65,20 @@ private constructor(
     @JsonProperty("manifest") @ExcludeMissing fun _manifest(): JsonValue = manifest
 
     /**
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = commitRetrieveResponse.modelConfig().convert(MyClass.class);
+     * ```
+     */
+    @JsonProperty("model_config") @ExcludeMissing fun _modelConfig(): JsonValue = modelConfig
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun modelProvider(): Optional<String> = modelProvider.getOptional("model_provider")
+
+    /**
      * Returns the raw JSON value of [commitHash].
      *
      * Unlike [commitHash], this method doesn't throw if the JSON field has an unexpected type.
@@ -71,6 +91,15 @@ private constructor(
      * Unlike [examples], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("examples") @ExcludeMissing fun _examples(): JsonField<List<Example>> = examples
+
+    /**
+     * Returns the raw JSON value of [modelProvider].
+     *
+     * Unlike [modelProvider], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("model_provider")
+    @ExcludeMissing
+    fun _modelProvider(): JsonField<String> = modelProvider
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -96,6 +125,8 @@ private constructor(
         private var commitHash: JsonField<String> = JsonMissing.of()
         private var examples: JsonField<MutableList<Example>>? = null
         private var manifest: JsonValue = JsonMissing.of()
+        private var modelConfig: JsonValue = JsonMissing.of()
+        private var modelProvider: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -103,6 +134,8 @@ private constructor(
             commitHash = commitRetrieveResponse.commitHash
             examples = commitRetrieveResponse.examples.map { it.toMutableList() }
             manifest = commitRetrieveResponse.manifest
+            modelConfig = commitRetrieveResponse.modelConfig
+            modelProvider = commitRetrieveResponse.modelProvider
             additionalProperties = commitRetrieveResponse.additionalProperties.toMutableMap()
         }
 
@@ -144,6 +177,21 @@ private constructor(
 
         fun manifest(manifest: JsonValue) = apply { this.manifest = manifest }
 
+        fun modelConfig(modelConfig: JsonValue) = apply { this.modelConfig = modelConfig }
+
+        fun modelProvider(modelProvider: String) = modelProvider(JsonField.of(modelProvider))
+
+        /**
+         * Sets [Builder.modelProvider] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.modelProvider] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun modelProvider(modelProvider: JsonField<String>) = apply {
+            this.modelProvider = modelProvider
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -173,6 +221,8 @@ private constructor(
                 commitHash,
                 (examples ?: JsonMissing.of()).map { it.toImmutable() },
                 manifest,
+                modelConfig,
+                modelProvider,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -186,6 +236,7 @@ private constructor(
 
         commitHash()
         examples().ifPresent { it.forEach { it.validate() } }
+        modelProvider()
         validated = true
     }
 
@@ -205,7 +256,8 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (commitHash.asKnown().isPresent) 1 else 0) +
-            (examples.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+            (examples.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (modelProvider.asKnown().isPresent) 1 else 0)
 
     class Example
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -462,15 +514,24 @@ private constructor(
             commitHash == other.commitHash &&
             examples == other.examples &&
             manifest == other.manifest &&
+            modelConfig == other.modelConfig &&
+            modelProvider == other.modelProvider &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(commitHash, examples, manifest, additionalProperties)
+        Objects.hash(
+            commitHash,
+            examples,
+            manifest,
+            modelConfig,
+            modelProvider,
+            additionalProperties,
+        )
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CommitRetrieveResponse{commitHash=$commitHash, examples=$examples, manifest=$manifest, additionalProperties=$additionalProperties}"
+        "CommitRetrieveResponse{commitHash=$commitHash, examples=$examples, manifest=$manifest, modelConfig=$modelConfig, modelProvider=$modelProvider, additionalProperties=$additionalProperties}"
 }

@@ -4,6 +4,7 @@ package com.langchain.smith.services.blocking
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.handlers.errorBodyHandler
 import com.langchain.smith.core.handlers.errorHandler
 import com.langchain.smith.core.handlers.jsonHandler
@@ -15,11 +16,24 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.runs.RunCreateParams
+import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunQueryResponse
+import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunSchema
+import com.langchain.smith.models.runs.RunStatsParams
+import com.langchain.smith.models.runs.RunStatsResponse
+import com.langchain.smith.models.runs.RunUpdate2Params
+import com.langchain.smith.models.runs.RunUpdate2Response
+import com.langchain.smith.models.runs.RunUpdateParams
+import com.langchain.smith.models.runs.RunUpdateResponse
+import com.langchain.smith.services.blocking.runs.RuleService
+import com.langchain.smith.services.blocking.runs.RuleServiceImpl
 import java.util.function.Consumer
+import kotlin.jvm.optionals.getOrNull
 
 class RunServiceImpl internal constructor(private val clientOptions: ClientOptions) : RunService {
 
@@ -27,10 +41,32 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         WithRawResponseImpl(clientOptions)
     }
 
+    private val rules: RuleService by lazy { RuleServiceImpl(clientOptions) }
+
     override fun withRawResponse(): RunService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
         RunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun rules(): RuleService = rules
+
+    override fun create(
+        params: RunCreateParams,
+        requestOptions: RequestOptions,
+    ): RunCreateResponse =
+        // post /runs
+        withRawResponse().create(params, requestOptions).parse()
+
+    override fun retrieve(params: RunRetrieveParams, requestOptions: RequestOptions): RunSchema =
+        // get /api/v1/runs/{run_id}
+        withRawResponse().retrieve(params, requestOptions).parse()
+
+    override fun update(
+        params: RunUpdateParams,
+        requestOptions: RequestOptions,
+    ): RunUpdateResponse =
+        // patch /runs/{run_id}
+        withRawResponse().update(params, requestOptions).parse()
 
     override fun ingestBatch(
         params: RunIngestBatchParams,
@@ -43,11 +79,26 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         // post /api/v1/runs/query
         withRawResponse().query(params, requestOptions).parse()
 
+    override fun stats(params: RunStatsParams, requestOptions: RequestOptions): RunStatsResponse =
+        // post /api/v1/runs/stats
+        withRawResponse().stats(params, requestOptions).parse()
+
+    override fun update2(
+        params: RunUpdate2Params,
+        requestOptions: RequestOptions,
+    ): RunUpdate2Response =
+        // patch /api/v1/runs/{run_id}
+        withRawResponse().update2(params, requestOptions).parse()
+
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        private val rules: RuleService.WithRawResponse by lazy {
+            RuleServiceImpl.WithRawResponseImpl(clientOptions)
+        }
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
@@ -55,6 +106,97 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             RunServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun rules(): RuleService.WithRawResponse = rules
+
+        private val createHandler: Handler<RunCreateResponse> =
+            jsonHandler<RunCreateResponse>(clientOptions.jsonMapper)
+
+        override fun create(
+            params: RunCreateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<RunCreateResponse> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("runs")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { createHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val retrieveHandler: Handler<RunSchema> =
+            jsonHandler<RunSchema>(clientOptions.jsonMapper)
+
+        override fun retrieve(
+            params: RunRetrieveParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<RunSchema> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("runId", params.runId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "runs", params._pathParam(0))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { retrieveHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val updateHandler: Handler<RunUpdateResponse> =
+            jsonHandler<RunUpdateResponse>(clientOptions.jsonMapper)
+
+        override fun update(
+            params: RunUpdateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<RunUpdateResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("runId", params.runId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("runs", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { updateHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
 
         private val ingestBatchHandler: Handler<RunIngestBatchResponse> =
             jsonHandler<RunIngestBatchResponse>(clientOptions.jsonMapper)
@@ -104,6 +246,65 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             return errorHandler.handle(response).parseable {
                 response
                     .use { queryHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val statsHandler: Handler<RunStatsResponse> =
+            jsonHandler<RunStatsResponse>(clientOptions.jsonMapper)
+
+        override fun stats(
+            params: RunStatsParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<RunStatsResponse> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "runs", "stats")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { statsHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val update2Handler: Handler<RunUpdate2Response> =
+            jsonHandler<RunUpdate2Response>(clientOptions.jsonMapper)
+
+        override fun update2(
+            params: RunUpdate2Params,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<RunUpdate2Response> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("runId", params.runId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "runs", params._pathParam(0))
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { update2Handler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

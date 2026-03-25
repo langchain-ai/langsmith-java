@@ -16,6 +16,7 @@ internal class CommitListParamsTest {
             .includeStats(true)
             .limit(1L)
             .offset(0L)
+            .tag("tag")
             .build()
     }
 
@@ -38,6 +39,7 @@ internal class CommitListParamsTest {
                 .includeStats(true)
                 .limit(1L)
                 .offset(0L)
+                .tag("tag")
                 .build()
 
         val queryParams = params._queryParams()
@@ -48,6 +50,7 @@ internal class CommitListParamsTest {
                     .put("include_stats", "true")
                     .put("limit", "1")
                     .put("offset", "0")
+                    .put("tag", "tag")
                     .build()
             )
     }

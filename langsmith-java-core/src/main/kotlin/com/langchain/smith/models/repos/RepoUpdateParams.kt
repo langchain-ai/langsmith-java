@@ -64,6 +64,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun restrictedMode(): Optional<Boolean> = body.restrictedMode()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun tags(): Optional<List<String>> = body.tags()
 
     /**
@@ -93,6 +99,13 @@ private constructor(
      * Unlike [readme], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _readme(): JsonField<String> = body._readme()
+
+    /**
+     * Returns the raw JSON value of [restrictedMode].
+     *
+     * Unlike [restrictedMode], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _restrictedMode(): JsonField<Boolean> = body._restrictedMode()
 
     /**
      * Returns the raw JSON value of [tags].
@@ -158,7 +171,7 @@ private constructor(
          * - [isArchived]
          * - [isPublic]
          * - [readme]
-         * - [tags]
+         * - [restrictedMode]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -231,6 +244,30 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun readme(readme: JsonField<String>) = apply { body.readme(readme) }
+
+        fun restrictedMode(restrictedMode: Boolean?) = apply { body.restrictedMode(restrictedMode) }
+
+        /**
+         * Alias for [Builder.restrictedMode].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun restrictedMode(restrictedMode: Boolean) = restrictedMode(restrictedMode as Boolean?)
+
+        /** Alias for calling [Builder.restrictedMode] with `restrictedMode.orElse(null)`. */
+        fun restrictedMode(restrictedMode: Optional<Boolean>) =
+            restrictedMode(restrictedMode.getOrNull())
+
+        /**
+         * Sets [Builder.restrictedMode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.restrictedMode] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun restrictedMode(restrictedMode: JsonField<Boolean>) = apply {
+            body.restrictedMode(restrictedMode)
+        }
 
         fun tags(tags: List<String>?) = apply { body.tags(tags) }
 
@@ -413,6 +450,7 @@ private constructor(
         private val isArchived: JsonField<Boolean>,
         private val isPublic: JsonField<Boolean>,
         private val readme: JsonField<String>,
+        private val restrictedMode: JsonField<Boolean>,
         private val tags: JsonField<List<String>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -429,8 +467,11 @@ private constructor(
             @ExcludeMissing
             isPublic: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("readme") @ExcludeMissing readme: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("restricted_mode")
+            @ExcludeMissing
+            restrictedMode: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("tags") @ExcludeMissing tags: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(description, isArchived, isPublic, readme, tags, mutableMapOf())
+        ) : this(description, isArchived, isPublic, readme, restrictedMode, tags, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -455,6 +496,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun readme(): Optional<String> = readme.getOptional("readme")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun restrictedMode(): Optional<Boolean> = restrictedMode.getOptional("restricted_mode")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -495,6 +542,16 @@ private constructor(
         @JsonProperty("readme") @ExcludeMissing fun _readme(): JsonField<String> = readme
 
         /**
+         * Returns the raw JSON value of [restrictedMode].
+         *
+         * Unlike [restrictedMode], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("restricted_mode")
+        @ExcludeMissing
+        fun _restrictedMode(): JsonField<Boolean> = restrictedMode
+
+        /**
          * Returns the raw JSON value of [tags].
          *
          * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
@@ -526,6 +583,7 @@ private constructor(
             private var isArchived: JsonField<Boolean> = JsonMissing.of()
             private var isPublic: JsonField<Boolean> = JsonMissing.of()
             private var readme: JsonField<String> = JsonMissing.of()
+            private var restrictedMode: JsonField<Boolean> = JsonMissing.of()
             private var tags: JsonField<MutableList<String>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -535,6 +593,7 @@ private constructor(
                 isArchived = body.isArchived
                 isPublic = body.isPublic
                 readme = body.readme
+                restrictedMode = body.restrictedMode
                 tags = body.tags.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -611,6 +670,31 @@ private constructor(
              */
             fun readme(readme: JsonField<String>) = apply { this.readme = readme }
 
+            fun restrictedMode(restrictedMode: Boolean?) =
+                restrictedMode(JsonField.ofNullable(restrictedMode))
+
+            /**
+             * Alias for [Builder.restrictedMode].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun restrictedMode(restrictedMode: Boolean) = restrictedMode(restrictedMode as Boolean?)
+
+            /** Alias for calling [Builder.restrictedMode] with `restrictedMode.orElse(null)`. */
+            fun restrictedMode(restrictedMode: Optional<Boolean>) =
+                restrictedMode(restrictedMode.getOrNull())
+
+            /**
+             * Sets [Builder.restrictedMode] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.restrictedMode] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun restrictedMode(restrictedMode: JsonField<Boolean>) = apply {
+                this.restrictedMode = restrictedMode
+            }
+
             fun tags(tags: List<String>?) = tags(JsonField.ofNullable(tags))
 
             /** Alias for calling [Builder.tags] with `tags.orElse(null)`. */
@@ -667,6 +751,7 @@ private constructor(
                     isArchived,
                     isPublic,
                     readme,
+                    restrictedMode,
                     (tags ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -683,6 +768,7 @@ private constructor(
             isArchived()
             isPublic()
             readme()
+            restrictedMode()
             tags()
             validated = true
         }
@@ -707,6 +793,7 @@ private constructor(
                 (if (isArchived.asKnown().isPresent) 1 else 0) +
                 (if (isPublic.asKnown().isPresent) 1 else 0) +
                 (if (readme.asKnown().isPresent) 1 else 0) +
+                (if (restrictedMode.asKnown().isPresent) 1 else 0) +
                 (tags.asKnown().getOrNull()?.size ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -719,18 +806,27 @@ private constructor(
                 isArchived == other.isArchived &&
                 isPublic == other.isPublic &&
                 readme == other.readme &&
+                restrictedMode == other.restrictedMode &&
                 tags == other.tags &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(description, isArchived, isPublic, readme, tags, additionalProperties)
+            Objects.hash(
+                description,
+                isArchived,
+                isPublic,
+                readme,
+                restrictedMode,
+                tags,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{description=$description, isArchived=$isArchived, isPublic=$isPublic, readme=$readme, tags=$tags, additionalProperties=$additionalProperties}"
+            "Body{description=$description, isArchived=$isArchived, isPublic=$isPublic, readme=$readme, restrictedMode=$restrictedMode, tags=$tags, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

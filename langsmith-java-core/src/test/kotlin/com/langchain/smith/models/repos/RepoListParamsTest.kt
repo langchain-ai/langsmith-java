@@ -17,6 +17,7 @@ internal class RepoListParamsTest {
             .limit(1L)
             .offset(0L)
             .query("query")
+            .repoType(RepoListParams.RepoType.PROMPT)
             .sortDirection(RepoListParams.SortDirection.ASC)
             .sortField(RepoListParams.SortField.NUM_LIKES)
             .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -39,6 +40,7 @@ internal class RepoListParamsTest {
                 .limit(1L)
                 .offset(0L)
                 .query("query")
+                .repoType(RepoListParams.RepoType.PROMPT)
                 .sortDirection(RepoListParams.SortDirection.ASC)
                 .sortField(RepoListParams.SortField.NUM_LIKES)
                 .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -61,6 +63,7 @@ internal class RepoListParamsTest {
                     .put("limit", "1")
                     .put("offset", "0")
                     .put("query", "query")
+                    .put("repo_type", "prompt")
                     .put("sort_direction", "asc")
                     .put("sort_field", "num_likes")
                     .put(

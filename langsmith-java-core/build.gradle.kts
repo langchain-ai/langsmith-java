@@ -55,8 +55,16 @@ dependencies {
     // OpenAI SDK (for OpenTelemetry wrappers)
     api("com.openai:openai-java:4.6.1")
 
+    // Mustache template engine (for prompt template formatting)
+    implementation("com.samskivert:jmustache:1.16")
+
     // SLF4J for logging (API only - consumers choose implementation)
     api("org.slf4j:slf4j-api:2.0.17")
+
+    // Anthropic SDK — optional peer dependency for prompt conversion.
+    // Users who call AnthropicPayload.toAnthropicParams() must add this to their own dependencies.
+    compileOnly("com.anthropic:anthropic-java:2.18.0")
+    testImplementation("com.anthropic:anthropic-java:2.18.0")
 
     testImplementation(kotlin("test"))
     // Simple logging for tests only

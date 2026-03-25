@@ -16,6 +16,7 @@ internal class RunListParamsTest {
             .includeStats(true)
             .limit(1L)
             .offset(0L)
+            .status(RunListParams.Status.NEEDS_MY_REVIEW)
             .build()
     }
 
@@ -37,6 +38,7 @@ internal class RunListParamsTest {
                 .includeStats(true)
                 .limit(1L)
                 .offset(0L)
+                .status(RunListParams.Status.NEEDS_MY_REVIEW)
                 .build()
 
         val queryParams = params._queryParams()
@@ -48,6 +50,7 @@ internal class RunListParamsTest {
                     .put("include_stats", "true")
                     .put("limit", "1")
                     .put("offset", "0")
+                    .put("status", "needs_my_review")
                     .build()
             )
     }

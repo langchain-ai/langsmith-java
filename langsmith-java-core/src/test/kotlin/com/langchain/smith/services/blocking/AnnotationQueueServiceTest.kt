@@ -9,6 +9,7 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueCreateRunStatu
 import com.langchain.smith.models.annotationqueues.AnnotationQueueExportParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueuePopulateParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveRunParams
+import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveSizeParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRetrieveTotalArchivedParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueRubricItemSchema
 import com.langchain.smith.models.annotationqueues.AnnotationQueueUpdateParams
@@ -193,6 +194,7 @@ internal class AnnotationQueueServiceTest {
                 AnnotationQueueExportParams.builder()
                     .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .includeAnnotatorDetail(true)
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .build()
             )
@@ -290,7 +292,12 @@ internal class AnnotationQueueServiceTest {
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueueSizeSchema =
-            annotationQueueService.retrieveSize("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            annotationQueueService.retrieveSize(
+                AnnotationQueueRetrieveSizeParams.builder()
+                    .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .status(AnnotationQueueRetrieveSizeParams.Status.NEEDS_MY_REVIEW)
+                    .build()
+            )
 
         annotationQueueSizeSchema.validate()
     }

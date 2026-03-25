@@ -20,9 +20,6 @@ import com.langchain.smith.models.datasets.comparative.ComparativeCreateParams
 import com.langchain.smith.models.datasets.comparative.ComparativeCreateResponse
 import com.langchain.smith.models.datasets.comparative.ComparativeDeleteParams
 import com.langchain.smith.models.datasets.comparative.ComparativeDeleteResponse
-import com.langchain.smith.models.datasets.comparative.ComparativeListPageAsync
-import com.langchain.smith.models.datasets.comparative.ComparativeListParams
-import com.langchain.smith.models.datasets.comparative.ComparativeListResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -45,13 +42,6 @@ class ComparativeServiceAsyncImpl internal constructor(private val clientOptions
     ): CompletableFuture<ComparativeCreateResponse> =
         // post /api/v1/datasets/comparative
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
-
-    override fun list(
-        params: ComparativeListParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<ComparativeListPageAsync> =
-        // get /api/v1/datasets/{dataset_id}/comparative
-        withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
         params: ComparativeDeleteParams,
@@ -99,47 +89,6 @@ class ComparativeServiceAsyncImpl internal constructor(private val clientOptions
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
-                            }
-                    }
-                }
-        }
-
-        private val listHandler: Handler<List<ComparativeListResponse>> =
-            jsonHandler<List<ComparativeListResponse>>(clientOptions.jsonMapper)
-
-        override fun list(
-            params: ComparativeListParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ComparativeListPageAsync>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "comparative")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { listHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.forEach { it.validate() }
-                                }
-                            }
-                            .let {
-                                ComparativeListPageAsync.builder()
-                                    .service(ComparativeServiceAsyncImpl(clientOptions))
-                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
-                                    .params(params)
-                                    .items(it)
-                                    .build()
                             }
                     }
                 }

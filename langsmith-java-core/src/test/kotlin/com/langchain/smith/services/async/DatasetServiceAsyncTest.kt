@@ -376,7 +376,7 @@ internal class DatasetServiceAsyncTest {
         val datasetFuture =
             datasetServiceAsync.upload(
                 DatasetUploadParams.builder()
-                    .file("some content".byteInputStream())
+                    .file("Example data".byteInputStream())
                     .addInputKey("string")
                     .dataType(DataType.KV)
                     .description("description")

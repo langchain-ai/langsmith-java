@@ -6,8 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.datasets.runs.ExampleWithRuns
-import com.langchain.smith.models.datasets.runs.RunCreateResponse
+import com.langchain.smith.models.runs.RunStatsResponse
 import com.langchain.smith.models.sessions.CustomChartsSection
 import com.langchain.smith.models.sessions.SessionSortableColumns
 import java.time.OffsetDateTime
@@ -236,169 +235,73 @@ internal class ProGuardCompatibilityTest {
     }
 
     @Test
-    fun runCreateResponseRoundtrip() {
+    fun runStatsResponseRoundtrip() {
         val jsonMapper = jsonMapper()
-        val runCreateResponse =
-            RunCreateResponse.ofExamplesWithRuns(
-                listOf(
-                    ExampleWithRuns.builder()
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .inputs(
-                            ExampleWithRuns.Inputs.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .name("name")
-                        .addRun(
-                            ExampleWithRuns.Run.builder()
-                                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .appPath("app_path")
-                                .dottedOrder("dotted_order")
-                                .name("name")
-                                .runType(ExampleWithRuns.Run.RunType.TOOL)
-                                .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .status("status")
-                                .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .addChildRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .completionCost("completion_cost")
-                                .completionCostDetails(
-                                    ExampleWithRuns.Run.CompletionCostDetails.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("string"))
-                                        .build()
-                                )
-                                .completionTokenDetails(
-                                    ExampleWithRuns.Run.CompletionTokenDetails.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from(0))
-                                        .build()
-                                )
-                                .completionTokens(0L)
-                                .addDirectChildRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .error("error")
-                                .addEvent(
-                                    ExampleWithRuns.Run.Event.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .executionOrder(1L)
-                                .extra(
-                                    ExampleWithRuns.Run.Extra.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .feedbackStats(
-                                    ExampleWithRuns.Run.FeedbackStats.builder()
-                                        .putAdditionalProperty(
-                                            "foo",
-                                            JsonValue.from(mapOf("foo" to "bar")),
-                                        )
-                                        .build()
-                                )
-                                .firstTokenTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .inDataset(true)
-                                .inputs(
-                                    ExampleWithRuns.Run.Inputs.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .inputsPreview("inputs_preview")
-                                .inputsS3Urls(
-                                    ExampleWithRuns.Run.InputsS3Urls.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .lastQueuedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .manifestId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .manifestS3Id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .addMessage(
-                                    ExampleWithRuns.Run.Message.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .outputs(
-                                    ExampleWithRuns.Run.Outputs.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .outputsPreview("outputs_preview")
-                                .outputsS3Urls(
-                                    ExampleWithRuns.Run.OutputsS3Urls.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .parentRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .addParentRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .priceModelId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .promptCost("prompt_cost")
-                                .promptCostDetails(
-                                    ExampleWithRuns.Run.PromptCostDetails.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("string"))
-                                        .build()
-                                )
-                                .promptTokenDetails(
-                                    ExampleWithRuns.Run.PromptTokenDetails.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from(0))
-                                        .build()
-                                )
-                                .promptTokens(0L)
-                                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .referenceExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .s3Urls(
-                                    ExampleWithRuns.Run.S3Urls.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .serialized(
-                                    ExampleWithRuns.Run.Serialized.builder()
-                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                        .build()
-                                )
-                                .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .addTag("string")
-                                .threadId("thread_id")
-                                .totalCost("total_cost")
-                                .totalTokens(0L)
-                                .traceFirstReceivedAt(
-                                    OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                )
-                                .traceMaxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .traceMinStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .traceTier(ExampleWithRuns.Run.TraceTier.LONGLIVED)
-                                .traceUpgrade(true)
-                                .ttlSeconds(0L)
-                                .build()
-                        )
-                        .attachmentUrls(
-                            ExampleWithRuns.AttachmentUrls.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .metadata(
-                            ExampleWithRuns.Metadata.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .outputs(
-                            ExampleWithRuns.Outputs.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .build()
-                )
+        val runStatsResponse =
+            RunStatsResponse.ofRunStats(
+                RunStatsResponse.RunStats.builder()
+                    .completionCost("completion_cost")
+                    .completionCostDetails(
+                        RunStatsResponse.RunStats.CompletionCostDetails.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .completionTokenDetails(
+                        RunStatsResponse.RunStats.CompletionTokenDetails.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .completionTokens(0L)
+                    .completionTokensP50(0L)
+                    .completionTokensP99(0L)
+                    .costP50("cost_p50")
+                    .costP99("cost_p99")
+                    .errorRate(0.0)
+                    .feedbackStats(
+                        RunStatsResponse.RunStats.FeedbackStats.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .firstTokenP50(0.0)
+                    .firstTokenP99(0.0)
+                    .lastRunStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .latencyP50(0.0)
+                    .latencyP99(0.0)
+                    .medianTokens(0L)
+                    .promptCost("prompt_cost")
+                    .promptCostDetails(
+                        RunStatsResponse.RunStats.PromptCostDetails.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .promptTokenDetails(
+                        RunStatsResponse.RunStats.PromptTokenDetails.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .promptTokens(0L)
+                    .promptTokensP50(0L)
+                    .promptTokensP99(0L)
+                    .runCount(0L)
+                    .addRunFacet(
+                        RunStatsResponse.RunStats.RunFacet.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .build()
+                    )
+                    .streamingRate(0.0)
+                    .tokensP99(0L)
+                    .totalCost("total_cost")
+                    .totalTokens(0L)
+                    .build()
             )
 
-        val roundtrippedRunCreateResponse =
+        val roundtrippedRunStatsResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(runCreateResponse),
-                jacksonTypeRef<RunCreateResponse>(),
+                jsonMapper.writeValueAsString(runStatsResponse),
+                jacksonTypeRef<RunStatsResponse>(),
             )
 
-        assertThat(roundtrippedRunCreateResponse).isEqualTo(runCreateResponse)
+        assertThat(roundtrippedRunStatsResponse).isEqualTo(runStatsResponse)
     }
 
     @Test

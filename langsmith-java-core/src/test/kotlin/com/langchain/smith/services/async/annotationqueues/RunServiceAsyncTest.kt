@@ -81,6 +81,7 @@ internal class RunServiceAsyncTest {
                     .includeStats(true)
                     .limit(1L)
                     .offset(0L)
+                    .status(RunListParams.Status.NEEDS_MY_REVIEW)
                     .build()
             )
 
