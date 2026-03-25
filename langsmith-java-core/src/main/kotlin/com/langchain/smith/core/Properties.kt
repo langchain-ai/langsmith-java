@@ -49,8 +49,7 @@ fun getPackageVersion(): String {
         props.getProperty("version")?.let {
             return it
         }
-    } catch (_: Exception) {
-    }
+    } catch (_: Exception) {}
     return LangsmithClient::class.java.`package`.implementationVersion ?: "unknown"
 }
 
