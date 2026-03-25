@@ -64,44 +64,23 @@ internal class PromptMessages(
     fun hasOutputSchema(): Boolean = outputSchema != null
 
     fun format(variables: Map<String, Any>): PromptMessages {
-        val formatted = mutableListOf<PromptMessage>()
-        for (msg in messages) {
-            if (msg.isPlaceholder()) {
-                // Expand placeholder: look up the variable and inject messages
-                val value = variables[msg.template]
-                if (value is List<*>) {
-                    for (item in value) {
-                        when (item) {
-                            is PromptMessage -> formatted.add(item)
-                            is Map<*, *> -> {
-                                // Support Map<String, String> with "role" and "content" keys
-                                val role = (item["role"] as? String) ?: continue
-                                val content = (item["content"] as? String) ?: continue
-                                val parsedRole =
-                                    when (role) {
-                                        "system" -> PromptMessage.Role.SYSTEM
-                                        "user",
-                                        "human" -> PromptMessage.Role.HUMAN
-                                        "assistant",
-                                        "ai" -> PromptMessage.Role.AI
-                                        "tool" -> PromptMessage.Role.TOOL
-                                        else -> PromptMessage.Role.CHAT
-                                    }
-                                if (parsedRole == PromptMessage.Role.CHAT) {
-                                    formatted.add(PromptMessage.chat(content, role))
-                                } else {
-                                    formatted.add(PromptMessage.of(parsedRole, content))
-                                }
-                            }
-                        }
-                    }
+        val formatted =
+            messages.flatMap { msg ->
+                if (msg.isPlaceholder()) {
+                    expandPlaceholder(msg, variables)
+                } else {
+                    listOf(PromptMessage.withTemplate(msg, msg.format(variables)))
                 }
-                // If variable not found or not a list, the placeholder is silently dropped
-            } else {
-                formatted.add(PromptMessage.withTemplate(msg, msg.format(variables)))
             }
-        }
         return PromptMessages(formatted, inputVariables, outputSchema)
+    }
+
+    private fun expandPlaceholder(
+        msg: PromptMessage,
+        variables: Map<String, Any>,
+    ): List<PromptMessage> {
+        val items = variables[msg.template] as? List<*> ?: return emptyList()
+        return items.mapNotNull(::toPromptMessage)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -122,4 +101,25 @@ internal class PromptMessages(
     override fun toString(): String =
         "PromptMessages{messages=$messages, inputVariables=$inputVariables" +
             if (outputSchema != null) ", outputSchema=$outputSchema}" else "}"
+}
+
+private fun toPromptMessage(value: Any?): PromptMessage? =
+    when (value) {
+        is PromptMessage -> value
+        is Map<*, *> -> value.toPromptMessage()
+        else -> null
+    }
+
+private fun Map<*, *>.toPromptMessage(): PromptMessage? {
+    val role = this["role"] as? String ?: return null
+    val content = this["content"] as? String ?: return null
+    return when (role) {
+        "system" -> PromptMessage.system(content)
+        "user",
+        "human" -> PromptMessage.human(content)
+        "assistant",
+        "ai" -> PromptMessage.ai(content)
+        "tool" -> PromptMessage.tool(content, this["tool_call_id"] as? String ?: "")
+        else -> PromptMessage.chat(content, role)
+    }
 }

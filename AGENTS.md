@@ -2,6 +2,46 @@
 
 Code conventions and patterns for this project, learned from review feedback.
 
+## Code structure
+
+### Break up complex functions with helpers
+
+When a function has deeply nested logic or multiple concerns, extract helpers. Use `flatMap` + small named functions instead of imperative loops with nested `when`/`if`:
+
+```kotlin
+// Good
+fun format(variables: Map<String, Any>): PromptMessages {
+    val formatted = messages.flatMap { msg ->
+        if (msg.isPlaceholder()) expandPlaceholder(msg, variables)
+        else listOf(PromptMessage.withTemplate(msg, msg.format(variables)))
+    }
+    return PromptMessages(formatted, inputVariables, outputSchema)
+}
+
+private fun expandPlaceholder(msg: PromptMessage, variables: Map<String, Any>): List<PromptMessage> {
+    val items = variables[msg.template] as? List<*> ?: return emptyList()
+    return items.mapNotNull(::toPromptMessage)
+}
+
+// Bad — deeply nested imperative loop
+fun format(variables: Map<String, Any>): PromptMessages {
+    val formatted = mutableListOf<PromptMessage>()
+    for (msg in messages) {
+        if (msg.isPlaceholder()) {
+            val value = variables[msg.template]
+            if (value is List<*>) {
+                for (item in value) {
+                    when (item) {
+                        is PromptMessage -> formatted.add(item)
+                        is Map<*, *> -> { /* 15 more lines */ }
+                    }
+                }
+            }
+        } else { ... }
+    }
+}
+```
+
 ## Kotlin idioms
 
 ### Use `buildMap` / `buildList` instead of mutable + convert
