@@ -32,7 +32,7 @@ jobs:
           cache: gradle
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Run lints
         run: ./scripts/lint
@@ -59,7 +59,7 @@ jobs:
           cache: gradle
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build SDK
         run: ./scripts/build
