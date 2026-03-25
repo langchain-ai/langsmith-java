@@ -3,7 +3,25 @@ updates:
   - package-ecosystem: gradle
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      major:
+        patterns:
+          - "*"
+        update-types:
+          - major
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: docker
+    directory: /.devcontainer
+    schedule:
+      interval: monthly
     groups:
       all-dependencies:
         patterns:
@@ -13,9 +31,17 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
     groups:
-      all-actions:
+      minor-and-patch:
         patterns:
           - "*"
+        update-types:
+          - minor
+          - patch
+      major:
+        patterns:
+          - "*"
+        update-types:
+          - major
     open-pull-requests-limit: 5
