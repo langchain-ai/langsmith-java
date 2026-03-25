@@ -39,10 +39,14 @@ fun getOsVersion(): String = System.getProperty("os.version", "unknown")
 fun getPackageVersion(): String {
     try {
         val props = java.util.Properties()
-        LangsmithClient::class.java.classLoader
+        LangsmithClient::class
+            .java
+            .classLoader
             .getResourceAsStream("com/langchain/smith/version.properties")
             ?.use { props.load(it) }
-        props.getProperty("version")?.let { return it }
+        props.getProperty("version")?.let {
+            return it
+        }
     } catch (_: Exception) {}
     return LangsmithClient::class.java.`package`.implementationVersion ?: "unknown"
 }
