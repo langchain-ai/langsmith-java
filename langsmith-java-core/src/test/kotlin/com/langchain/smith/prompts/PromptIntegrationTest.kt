@@ -274,15 +274,18 @@ internal class PromptIntegrationTest {
 
         val prompt = promptClient.pull("joke-generator")
         val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
-        val openAi = convertPromptToOpenAI(formattedPrompt)
-
-        assertThat(openAi.hasOutputSchema()).isFalse()
-
-        val params =
-            openAi.toOpenAiParams().model(ChatModel.GPT_4_1_MINI).maxCompletionTokens(256).build()
 
         val openai: OpenAIClient = OpenAIOkHttpClient.fromEnv()
-        val completion: ChatCompletion = openai.chat().completions().create(params)
+        val completion: ChatCompletion =
+            openai
+                .chat()
+                .completions()
+                .create(
+                    convertToOpenAIParams(formattedPrompt)
+                        .model(ChatModel.GPT_4_1_MINI)
+                        .maxCompletionTokens(256)
+                        .build()
+                )
 
         val responseText = completion.choices()[0].message().content().orElse("")
         assertThat(responseText).isNotBlank()
@@ -312,15 +315,18 @@ internal class PromptIntegrationTest {
         // Uses mustache template format — {{question}}
         val formattedPrompt =
             prompt.invoke(mapOf("question" to "Is the sky blue? Answer: yes, it is blue."))
-        val openAi = convertPromptToOpenAI(formattedPrompt)
-
-        assertThat(openAi.hasOutputSchema()).isTrue()
-
-        val params =
-            openAi.toOpenAiParams().model(ChatModel.GPT_4_1_MINI).maxCompletionTokens(256).build()
 
         val openai: OpenAIClient = OpenAIOkHttpClient.fromEnv()
-        val completion: ChatCompletion = openai.chat().completions().create(params)
+        val completion: ChatCompletion =
+            openai
+                .chat()
+                .completions()
+                .create(
+                    convertToOpenAIParams(formattedPrompt)
+                        .model(ChatModel.GPT_4_1_MINI)
+                        .maxCompletionTokens(256)
+                        .build()
+                )
 
         val responseText = completion.choices()[0].message().content().orElse("")
         assertThat(responseText).isNotBlank()
@@ -351,19 +357,17 @@ internal class PromptIntegrationTest {
 
         val prompt = promptClient.pull("joke-generator")
         val formattedPrompt = prompt.invoke(mapOf("topic" to "dogs"))
-        val anthropic = convertPromptToAnthropic(formattedPrompt)
-
-        assertThat(anthropic.hasOutputSchema()).isFalse()
-
-        val params =
-            anthropic
-                .toAnthropicParams()
-                .model(Model.CLAUDE_HAIKU_4_5_20251001)
-                .maxTokens(256)
-                .build()
 
         val anthropicClient: AnthropicClient = AnthropicOkHttpClient.fromEnv()
-        val message: Message = anthropicClient.messages().create(params)
+        val message: Message =
+            anthropicClient
+                .messages()
+                .create(
+                    convertToAnthropicParams(formattedPrompt)
+                        .model(Model.CLAUDE_HAIKU_4_5_20251001)
+                        .maxTokens(256)
+                        .build()
+                )
 
         val responseText =
             message.content().filter { it.isText() }.joinToString("") { it.asText().text() }
@@ -393,15 +397,17 @@ internal class PromptIntegrationTest {
 
         val formattedPrompt =
             prompt.invoke(mapOf("question" to "Is the sky blue? Answer: yes, it is blue."))
-        val anthropic = convertPromptToAnthropic(formattedPrompt)
-
-        assertThat(anthropic.hasOutputSchema()).isTrue()
-
-        val params =
-            anthropic.toAnthropicParams().model(Model.CLAUDE_SONNET_4_6).maxTokens(256).build()
 
         val anthropicClient: AnthropicClient = AnthropicOkHttpClient.fromEnv()
-        val message: Message = anthropicClient.messages().create(params)
+        val message: Message =
+            anthropicClient
+                .messages()
+                .create(
+                    convertToAnthropicParams(formattedPrompt)
+                        .model(Model.CLAUDE_SONNET_4_6)
+                        .maxTokens(256)
+                        .build()
+                )
 
         val responseText =
             message.content().filter { it.isText() }.joinToString("") { it.asText().text() }

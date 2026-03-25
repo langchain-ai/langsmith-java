@@ -7,8 +7,8 @@ import com.langchain.smith.core.JsonValue
  *
  * This is the primary object returned by [PromptClient.pull]. It wraps a parsed prompt manifest and
  * provides an [invoke] method to format the prompt with variable values, producing a [PromptValue]
- * that can then be converted to provider-specific formats using [convertPromptToOpenAI] or
- * [convertPromptToAnthropic].
+ * that can then be converted to provider-specific formats using [convertToOpenAIParams] or
+ * [convertToAnthropicParams].
  *
  * ## Example (Java)
  *
@@ -19,10 +19,10 @@ import com.langchain.smith.core.JsonValue
  * PromptValue formattedPrompt = prompt.invoke(Map.of("topic", "cats"));
  *
  * // Convert to OpenAI format
- * OpenAiPayload openAi = convertPromptToOpenAI(formattedPrompt);
+ * OpenAiPayload openAi = convertToOpenAIParams(formattedPrompt);
  *
  * // Convert to Anthropic format
- * AnthropicPayload anthropic = convertPromptToAnthropic(formattedPrompt);
+ * AnthropicPayload anthropic = convertToAnthropicParams(formattedPrompt);
  * ```
  *
  * ## Example (Kotlin)
@@ -30,13 +30,13 @@ import com.langchain.smith.core.JsonValue
  * ```kotlin
  * val prompt = promptClient.pull("my-org/joke-generator")
  * val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
- * val (messages, system) = convertPromptToAnthropic(formattedPrompt)
+ * val (messages, system) = convertToAnthropicParams(formattedPrompt)
  * ```
  *
  * @see PromptClient.pull
  * @see PromptValue
- * @see convertPromptToOpenAI
- * @see convertPromptToAnthropic
+ * @see convertToOpenAIParams
+ * @see convertToAnthropicParams
  */
 class Prompt
 internal constructor(
@@ -95,12 +95,13 @@ internal constructor(
     fun invoke(): PromptValue = invoke(emptyMap())
 
     override fun toString(): String {
-        val msgs = promptMessages.messages.joinToString(", ") { it.toString() }
-        return "Prompt{messages=[$msgs]" +
-            (if (inputVariables.isNotEmpty()) ", inputVariables=$inputVariables" else "") +
-            (if (commitHash != null) ", commitHash=$commitHash" else "") +
-            (if (hasOutputSchema()) ", outputSchema=${outputSchema!!["title"] ?: "..."}" else "") +
-            "}"
+        val parts = buildList {
+            add("messages=[${promptMessages.messages.joinToString(", ")}]")
+            if (inputVariables.isNotEmpty()) add("inputVariables=$inputVariables")
+            commitHash?.let { add("commitHash=$it") }
+            outputSchema?.let { add("outputSchema=${it["title"] ?: "..."}") }
+        }
+        return "Prompt{${parts.joinToString(", ")}}"
     }
 
     companion object {

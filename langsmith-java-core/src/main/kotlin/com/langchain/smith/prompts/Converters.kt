@@ -3,122 +3,220 @@
 package com.langchain.smith.prompts
 
 /**
- * Converts a formatted [PromptValue] to OpenAI chat completion API format.
+ * Converts a formatted [PromptValue] to a typed OpenAI [ChatCompletionCreateParams.Builder].
  *
- * Returns an [OpenAiPayload] containing:
- * - `messages` — a list of `{role, content}` maps ready for the OpenAI messages parameter
- * - `responseFormat` — if the prompt has a structured output schema, the `response_format`
- *   parameter for OpenAI's structured outputs feature; `null` otherwise
+ * The returned builder has messages (and structured output response format, if applicable) already
+ * set. Call `.model(...)` and any other options, then `.build()`.
  *
  * ## Example (Java)
  *
  * ```java
- * import static com.langchain.smith.prompts.PromptConverters.convertPromptToOpenAI;
+ * import static com.langchain.smith.prompts.PromptConverters.convertToOpenAIParams;
  *
  * Prompt prompt = promptClient.pull("my-org/joke-generator");
  * PromptValue formattedPrompt = prompt.invoke(Map.of("topic", "cats"));
- * OpenAiPayload openAi = convertPromptToOpenAI(formattedPrompt);
  *
- * // Use with OpenAI Java SDK
- * OpenAIClient openai = OpenAIOkHttpClient.fromEnv();
- * // openai.chat().completions().create(params) using openAi.messages and openAi.responseFormat
+ * ChatCompletion completion = openai.chat().completions().create(
+ *     convertToOpenAIParams(formattedPrompt)
+ *         .model(ChatModel.GPT_4_1_MINI)
+ *         .build());
  * ```
  *
  * ## Example (Kotlin)
  *
  * ```kotlin
- * import com.langchain.smith.prompts.convertPromptToOpenAI
+ * import com.langchain.smith.prompts.convertToOpenAIParams
  *
- * val prompt = promptClient.pull("my-org/joke-generator")
- * val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
- * val openAi = convertPromptToOpenAI(formattedPrompt)
+ * val completion = openai.chat().completions().create(
+ *     convertToOpenAIParams(formattedPrompt)
+ *         .model(ChatModel.GPT_4_1_MINI)
+ *         .build())
  * ```
  *
  * @param promptValue the formatted prompt value from [Prompt.invoke]
- * @return an [OpenAiPayload] with messages and optional response format
+ * @param strictStructuredOutput whether to enable strict schema validation for structured outputs.
+ *   Defaults to `true`, which guarantees the response matches the schema exactly but requires
+ *   `additionalProperties: false` on all object nodes (injected automatically).
+ * @return a [ChatCompletionCreateParams.Builder] with messages and response format set
  * @see Prompt.invoke
- * @see OpenAiPayload
  */
-fun convertPromptToOpenAI(promptValue: PromptValue): OpenAiPayload {
+@JvmOverloads
+fun convertToOpenAIParams(
+    promptValue: PromptValue,
+    strictStructuredOutput: Boolean = true,
+): com.openai.models.chat.completions.ChatCompletionCreateParams.Builder {
     val pm = promptValue.promptMessages
-    val messages =
-        pm.messages.map { msg ->
-            val base =
-                mutableMapOf<String, String>(
-                    "role" to msg.effectiveOpenAiRole(),
-                    "content" to msg.template,
+    val builder = com.openai.models.chat.completions.ChatCompletionCreateParams.builder()
+
+    for (msg in pm.messages) {
+        when (msg.role) {
+            PromptMessage.Role.SYSTEM ->
+                builder.addMessage(
+                    com.openai.models.chat.completions.ChatCompletionMessageParam.ofSystem(
+                        com.openai.models.chat.completions.ChatCompletionSystemMessageParam
+                            .builder()
+                            .content(msg.template)
+                            .build()
+                    )
                 )
-            if (msg.toolCallId != null) {
-                base["tool_call_id"] = msg.toolCallId
+            PromptMessage.Role.AI ->
+                builder.addMessage(
+                    com.openai.models.chat.completions.ChatCompletionMessageParam.ofAssistant(
+                        com.openai.models.chat.completions.ChatCompletionAssistantMessageParam
+                            .builder()
+                            .content(msg.template)
+                            .build()
+                    )
+                )
+            PromptMessage.Role.TOOL -> {
+                builder.addMessage(
+                    com.openai.models.chat.completions.ChatCompletionMessageParam.ofTool(
+                        com.openai.models.chat.completions.ChatCompletionToolMessageParam.builder()
+                            .toolCallId(msg.toolCallId ?: "")
+                            .content(msg.template)
+                            .build()
+                    )
+                )
             }
-            base.toMap()
+            else ->
+                builder.addMessage(
+                    com.openai.models.chat.completions.ChatCompletionMessageParam.ofUser(
+                        com.openai.models.chat.completions.ChatCompletionUserMessageParam.builder()
+                            .content(msg.template)
+                            .build()
+                    )
+                )
         }
-    return OpenAiPayload(messages, pm.outputSchema)
+    }
+
+    val outputSchema = pm.outputSchema
+    if (outputSchema != null) {
+        val schemaName = (outputSchema["title"] as? String) ?: "structured_output"
+        val resolvedSchema =
+            if (strictStructuredOutput) strictSchemaForStructuredOutput(outputSchema)
+            else outputSchema
+        val schemaBuilder = com.openai.models.ResponseFormatJsonSchema.JsonSchema.Schema.builder()
+        resolvedSchema.forEach { (k, v) ->
+            schemaBuilder.putAdditionalProperty(k, com.openai.core.JsonValue.from(v))
+        }
+        builder.responseFormat(
+            com.openai.models.chat.completions.ChatCompletionCreateParams.ResponseFormat
+                .ofJsonSchema(
+                    com.openai.models.ResponseFormatJsonSchema.builder()
+                        .jsonSchema(
+                            com.openai.models.ResponseFormatJsonSchema.JsonSchema.builder()
+                                .name(schemaName)
+                                .strict(strictStructuredOutput)
+                                .schema(schemaBuilder.build())
+                                .build()
+                        )
+                        .build()
+                )
+        )
+    }
+
+    return builder
 }
 
 /**
- * Converts a formatted [PromptValue] to Anthropic messages API format.
+ * Converts a formatted [PromptValue] to a typed Anthropic [MessageCreateParams.Builder].
  *
- * Returns an [AnthropicPayload] containing:
- * - `system` — the concatenated system message text (extracted from messages, since Anthropic
- *   requires system messages as a separate top-level parameter)
- * - `messages` — a list of `{role, content}` maps for the Anthropic messages parameter (system
- *   messages excluded)
- * - `tool` — if the prompt has a structured output schema, an Anthropic tool definition that can be
- *   passed in the `tools` array; `null` otherwise
+ * The returned builder has system message, messages, and structured output config (if applicable)
+ * already set. Call `.model(...)`, `.maxTokens(...)`, and any other options, then `.build()`.
+ *
+ * Requires `com.anthropic:anthropic-java` (>= 2.18.0) as a dependency.
  *
  * ## Example (Java)
  *
  * ```java
- * import static com.langchain.smith.prompts.PromptConverters.convertPromptToAnthropic;
+ * import static com.langchain.smith.prompts.PromptConverters.convertToAnthropicParams;
  *
  * Prompt prompt = promptClient.pull("my-org/joke-generator");
  * PromptValue formattedPrompt = prompt.invoke(Map.of("topic", "cats"));
- * AnthropicPayload anthropic = convertPromptToAnthropic(formattedPrompt);
  *
- * // Use with Anthropic Java SDK
- * AnthropicClient client = AnthropicOkHttpClient.fromEnv();
- * // client.messages().create(...) using:
- * //   anthropic.system   → system parameter
- * //   anthropic.messages → messages parameter
- * //   anthropic.tool     → tools parameter (if structured prompt)
+ * Message message = anthropic.messages().create(
+ *     convertToAnthropicParams(formattedPrompt)
+ *         .model(Model.CLAUDE_SONNET_4_6)
+ *         .maxTokens(1024)
+ *         .build());
  * ```
  *
  * ## Example (Kotlin)
  *
  * ```kotlin
- * import com.langchain.smith.prompts.convertPromptToAnthropic
+ * import com.langchain.smith.prompts.convertToAnthropicParams
  *
- * val prompt = promptClient.pull("my-org/joke-generator")
- * val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
- * val (system, messages) = convertPromptToAnthropic(formattedPrompt)
+ * val message = anthropic.messages().create(
+ *     convertToAnthropicParams(formattedPrompt)
+ *         .model(Model.CLAUDE_SONNET_4_6)
+ *         .maxTokens(1024)
+ *         .build())
  * ```
  *
  * @param promptValue the formatted prompt value from [Prompt.invoke]
- * @return an [AnthropicPayload] with system, messages, and optional tool
+ * @param strictStructuredOutput whether to inject `additionalProperties: false` into the schema.
+ *   Defaults to `true`, which is required by Anthropic's `output_config` schemas.
+ * @return a [MessageCreateParams.Builder] with system, messages, and output config set
  * @see Prompt.invoke
- * @see AnthropicPayload
  */
-fun convertPromptToAnthropic(promptValue: PromptValue): AnthropicPayload {
+@JvmOverloads
+fun convertToAnthropicParams(
+    promptValue: PromptValue,
+    strictStructuredOutput: Boolean = true,
+): com.anthropic.models.messages.MessageCreateParams.Builder {
     val pm = promptValue.promptMessages
-    val systemMessages = pm.messages.filter { it.role == PromptMessage.Role.SYSTEM }
-    val nonSystemMessages = pm.messages.filter { it.role != PromptMessage.Role.SYSTEM }
+    val builder =
+        try {
+            com.anthropic.models.messages.MessageCreateParams.builder()
+        } catch (e: NoClassDefFoundError) {
+            throw IllegalStateException(
+                "Anthropic SDK not found. Add com.anthropic:anthropic-java to your dependencies.",
+                e,
+            )
+        }
+
+    val (systemMessages, nonSystemMessages) =
+        pm.messages.partition { it.role == PromptMessage.Role.SYSTEM }
 
     val system = systemMessages.joinToString("\n") { it.template }
-    val messages =
-        nonSystemMessages.map { msg ->
-            val role =
-                when (msg.role) {
-                    PromptMessage.Role.HUMAN -> "user"
-                    PromptMessage.Role.AI -> "assistant"
-                    PromptMessage.Role.TOOL ->
-                        "user" // Anthropic doesn't have tool role in messages
-                    PromptMessage.Role.CHAT -> msg.customRole ?: "user"
-                    PromptMessage.Role.SYSTEM -> "user" // shouldn't happen — filtered above
-                    PromptMessage.Role.PLACEHOLDER ->
-                        "user" // shouldn't happen — expanded by invoke()
-                }
-            mapOf("role" to role, "content" to msg.template)
+    if (system.isNotEmpty()) {
+        builder.system(system)
+    }
+
+    for (msg in nonSystemMessages) {
+        val role =
+            when (msg.role) {
+                PromptMessage.Role.HUMAN -> com.anthropic.models.messages.MessageParam.Role.USER
+                PromptMessage.Role.AI -> com.anthropic.models.messages.MessageParam.Role.ASSISTANT
+                else -> com.anthropic.models.messages.MessageParam.Role.USER
+            }
+        builder.addMessage(
+            com.anthropic.models.messages.MessageParam.builder()
+                .role(role)
+                .content(msg.template)
+                .build()
+        )
+    }
+
+    val outputSchema = pm.outputSchema
+    if (outputSchema != null) {
+        val resolvedSchema =
+            if (strictStructuredOutput) strictSchemaForStructuredOutput(outputSchema)
+            else outputSchema
+        val schemaBuilder = com.anthropic.models.messages.JsonOutputFormat.Schema.builder()
+        resolvedSchema.forEach { (k, v) ->
+            schemaBuilder.putAdditionalProperty(k, com.anthropic.core.JsonValue.from(v))
         }
-    return AnthropicPayload(system, messages, pm.outputSchema)
+        builder.outputConfig(
+            com.anthropic.models.messages.OutputConfig.builder()
+                .format(
+                    com.anthropic.models.messages.JsonOutputFormat.builder()
+                        .schema(schemaBuilder.build())
+                        .build()
+                )
+                .build()
+        )
+    }
+
+    return builder
 }

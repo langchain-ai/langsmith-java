@@ -5,7 +5,7 @@ package com.langchain.smith.prompts
  *
  * A `PromptValue` holds the formatted messages (with variables substituted) and any structured
  * output schema from the original prompt. It is the input to the conversion functions
- * [convertPromptToOpenAI] and [convertPromptToAnthropic].
+ * [convertToOpenAIParams] and [convertToAnthropicParams].
  *
  * This is analogous to LangChain's `ChatPromptValue` — it represents a fully-resolved prompt ready
  * to be sent to a model provider.
@@ -22,13 +22,13 @@ package com.langchain.smith.prompts
  * }
  *
  * // Convert to provider format
- * OpenAiPayload openAi = convertPromptToOpenAI(formatted);
- * AnthropicPayload anthropic = convertPromptToAnthropic(formatted);
+ * OpenAiPayload openAi = convertToOpenAIParams(formatted);
+ * AnthropicPayload anthropic = convertToAnthropicParams(formatted);
  * ```
  *
  * @see Prompt.invoke
- * @see convertPromptToOpenAI
- * @see convertPromptToAnthropic
+ * @see convertToOpenAIParams
+ * @see convertToAnthropicParams
  */
 class PromptValue internal constructor(internal val promptMessages: PromptMessages) {
 
@@ -57,9 +57,10 @@ class PromptValue internal constructor(internal val promptMessages: PromptMessag
     override fun hashCode(): Int = promptMessages.hashCode()
 
     override fun toString(): String {
-        val msgs = messages.joinToString(", ") { it.toString() }
-        return "PromptValue{messages=[$msgs]" +
-            (if (hasOutputSchema()) ", outputSchema=${outputSchema!!["title"] ?: "..."}" else "") +
-            "}"
+        val parts = buildList {
+            add("messages=[${messages.joinToString(", ")}]")
+            outputSchema?.let { add("outputSchema=${it["title"] ?: "..."}") }
+        }
+        return "PromptValue{${parts.joinToString(", ")}}"
     }
 }

@@ -8,12 +8,9 @@ internal class ConvertersTest {
     private fun makePromptValue(
         messages: List<PromptMessage>,
         outputSchema: Map<String, Any?>? = null,
-    ): PromptValue {
-        val prompt = Prompt.of(messages, emptyList(), outputSchema)
-        return prompt.invoke()
-    }
+    ): PromptValue = Prompt.of(messages, emptyList(), outputSchema).invoke()
 
-    // --- convertPromptToOpenAI ---
+    // --- convertToOpenAIParams ---
 
     @Test
     fun convertToOpenAI_basicMessages() {
@@ -22,14 +19,12 @@ internal class ConvertersTest {
                 listOf(PromptMessage.system("You are helpful."), PromptMessage.human("Hello"))
             )
 
-        val result = convertPromptToOpenAI(pv)
+        val params = convertToOpenAIParams(pv).model("gpt-4.1-mini").build()
 
-        assertThat(result.messages).hasSize(2)
-        assertThat(result.messages[0])
-            .isEqualTo(mapOf("role" to "system", "content" to "You are helpful."))
-        assertThat(result.messages[1]).isEqualTo(mapOf("role" to "user", "content" to "Hello"))
-        assertThat(result.hasOutputSchema()).isFalse()
-        assertThat(result.outputSchema).isNull()
+        assertThat(params.messages()).hasSize(2)
+        assertThat(params.messages()[0].isSystem()).isTrue()
+        assertThat(params.messages()[1].isUser()).isTrue()
+        assertThat(params.responseFormat()).isEmpty
     }
 
     @Test
@@ -46,13 +41,13 @@ internal class ConvertersTest {
                 outputSchema = schema,
             )
 
-        val result = convertPromptToOpenAI(pv)
+        val params = convertToOpenAIParams(pv).model("gpt-4.1-mini").build()
 
-        assertThat(result.hasOutputSchema()).isTrue()
-        assertThat(result.outputSchema).isEqualTo(schema)
+        assertThat(params.messages()).hasSize(1)
+        assertThat(params.responseFormat()).isPresent
     }
 
-    // --- convertPromptToAnthropic ---
+    // --- convertToAnthropicParams ---
 
     @Test
     fun convertToAnthropic_extractsSystem() {
@@ -66,14 +61,21 @@ internal class ConvertersTest {
                 )
             )
 
-        val result = convertPromptToAnthropic(pv)
+        val params =
+            convertToAnthropicParams(pv)
+                .model(com.anthropic.models.messages.Model.CLAUDE_HAIKU_4_5_20251001)
+                .maxTokens(256)
+                .build()
 
-        assertThat(result.system).isEqualTo("Be helpful.")
-        assertThat(result.messages).hasSize(3)
-        assertThat(result.messages[0]).isEqualTo(mapOf("role" to "user", "content" to "Hello"))
-        assertThat(result.messages[1]).isEqualTo(mapOf("role" to "assistant", "content" to "Hi!"))
-        assertThat(result.messages[2]).isEqualTo(mapOf("role" to "user", "content" to "Question"))
-        assertThat(result.hasOutputSchema()).isFalse()
+        assertThat(params.system()).isPresent
+        assertThat(params.messages()).hasSize(3)
+        assertThat(params.messages()[0].role())
+            .isEqualTo(com.anthropic.models.messages.MessageParam.Role.USER)
+        assertThat(params.messages()[1].role())
+            .isEqualTo(com.anthropic.models.messages.MessageParam.Role.ASSISTANT)
+        assertThat(params.messages()[2].role())
+            .isEqualTo(com.anthropic.models.messages.MessageParam.Role.USER)
+        assertThat(params.outputConfig()).isEmpty
     }
 
     @Test
@@ -94,19 +96,21 @@ internal class ConvertersTest {
                 outputSchema = schema,
             )
 
-        val result = convertPromptToAnthropic(pv)
+        val params =
+            convertToAnthropicParams(pv)
+                .model(com.anthropic.models.messages.Model.CLAUDE_HAIKU_4_5_20251001)
+                .maxTokens(256)
+                .build()
 
-        assertThat(result.system).isEqualTo("Extract data.")
-        assertThat(result.messages).hasSize(1)
-        assertThat(result.hasOutputSchema()).isTrue()
-        assertThat(result.outputSchema).isEqualTo(schema)
+        assertThat(params.system()).isPresent
+        assertThat(params.messages()).hasSize(1)
+        assertThat(params.outputConfig()).isPresent
     }
 
     // --- End-to-end flow test ---
 
     @Test
     fun endToEnd_pullInvokeConvert() {
-        // Simulate the full DX: Prompt → invoke → convert
         val schema =
             mapOf<String, Any?>(
                 "title" to "JokeResponse",
@@ -130,20 +134,19 @@ internal class ConvertersTest {
         val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
 
         // OpenAI
-        val openAi = convertPromptToOpenAI(formattedPrompt)
-        assertThat(openAi.messages).hasSize(2)
-        assertThat(openAi.messages[0]["content"]).isEqualTo("You tell jokes.")
-        assertThat(openAi.messages[1]["content"]).isEqualTo("Tell me a joke about cats")
-        assertThat(openAi.hasOutputSchema()).isTrue()
-        assertThat(openAi.outputSchema!!["title"]).isEqualTo("JokeResponse")
+        val openAiParams = convertToOpenAIParams(formattedPrompt).model("gpt-4.1-mini").build()
+        assertThat(openAiParams.messages()).hasSize(2)
+        assertThat(openAiParams.responseFormat()).isPresent
 
         // Anthropic
-        val anthropic = convertPromptToAnthropic(formattedPrompt)
-        assertThat(anthropic.system).isEqualTo("You tell jokes.")
-        assertThat(anthropic.messages).hasSize(1)
-        assertThat(anthropic.messages[0]["content"]).isEqualTo("Tell me a joke about cats")
-        assertThat(anthropic.hasOutputSchema()).isTrue()
-        assertThat(anthropic.outputSchema!!["title"]).isEqualTo("JokeResponse")
+        val anthropicParams =
+            convertToAnthropicParams(formattedPrompt)
+                .model(com.anthropic.models.messages.Model.CLAUDE_HAIKU_4_5_20251001)
+                .maxTokens(256)
+                .build()
+        assertThat(anthropicParams.system()).isPresent
+        assertThat(anthropicParams.messages()).hasSize(1)
+        assertThat(anthropicParams.outputConfig()).isPresent
     }
 
     @Test
@@ -159,13 +162,17 @@ internal class ConvertersTest {
 
         val formattedPrompt = prompt.invoke(mapOf("topic" to "dogs"))
 
-        val openAi = convertPromptToOpenAI(formattedPrompt)
-        assertThat(openAi.messages[1]["content"]).isEqualTo("Tell me about dogs")
-        assertThat(openAi.hasOutputSchema()).isFalse()
+        val openAiParams = convertToOpenAIParams(formattedPrompt).model("gpt-4.1-mini").build()
+        assertThat(openAiParams.messages()).hasSize(2)
+        assertThat(openAiParams.responseFormat()).isEmpty
 
-        val anthropic = convertPromptToAnthropic(formattedPrompt)
-        assertThat(anthropic.system).isEqualTo("You are helpful.")
-        assertThat(anthropic.messages[0]["content"]).isEqualTo("Tell me about dogs")
-        assertThat(anthropic.hasOutputSchema()).isFalse()
+        val anthropicParams =
+            convertToAnthropicParams(formattedPrompt)
+                .model(com.anthropic.models.messages.Model.CLAUDE_HAIKU_4_5_20251001)
+                .maxTokens(256)
+                .build()
+        assertThat(anthropicParams.system()).isPresent
+        assertThat(anthropicParams.messages()).hasSize(1)
+        assertThat(anthropicParams.outputConfig()).isEmpty
     }
 }

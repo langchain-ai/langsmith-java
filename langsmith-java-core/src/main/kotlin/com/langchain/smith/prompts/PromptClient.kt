@@ -14,8 +14,8 @@ import com.langchain.smith.models.commits.CommitRetrieveParams
  * ```java
  * import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
  * import com.langchain.smith.prompts.PromptClient;
- * import static com.langchain.smith.prompts.PromptConverters.convertPromptToOpenAI;
- * import static com.langchain.smith.prompts.PromptConverters.convertPromptToAnthropic;
+ * import static com.langchain.smith.prompts.PromptConverters.convertToOpenAIParams;
+ * import static com.langchain.smith.prompts.PromptConverters.convertToAnthropicParams;
  *
  * LangsmithClient client = LangsmithOkHttpClient.fromEnv();
  * PromptClient promptClient = PromptClient.create(client);
@@ -25,10 +25,10 @@ import com.langchain.smith.models.commits.CommitRetrieveParams
  * PromptValue formattedPrompt = prompt.invoke(Map.of("topic", "cats"));
  *
  * // Convert to OpenAI format
- * OpenAiPayload openAi = convertPromptToOpenAI(formattedPrompt);
+ * OpenAiPayload openAi = convertToOpenAIParams(formattedPrompt);
  *
  * // Convert to Anthropic format
- * AnthropicPayload anthropic = convertPromptToAnthropic(formattedPrompt);
+ * AnthropicPayload anthropic = convertToAnthropicParams(formattedPrompt);
  * ```
  *
  * ## Prompt identifier format
@@ -41,8 +41,8 @@ import com.langchain.smith.models.commits.CommitRetrieveParams
  *
  * @see Prompt
  * @see PromptValue
- * @see convertPromptToOpenAI
- * @see convertPromptToAnthropic
+ * @see convertToOpenAIParams
+ * @see convertToAnthropicParams
  */
 class PromptClient private constructor(private val client: LangsmithClient) {
 
@@ -53,12 +53,12 @@ class PromptClient private constructor(private val client: LangsmithClient) {
      * This is the primary method for working with prompts. The returned [Prompt] has an
      * [invoke][Prompt.invoke] method that formats the prompt with variable values, producing a
      * [PromptValue] that can be converted to provider-specific formats using
-     * [convertPromptToOpenAI] or [convertPromptToAnthropic].
+     * [convertToOpenAIParams] or [convertToAnthropicParams].
      *
      * ```java
      * Prompt prompt = promptClient.pull("my-org/joke-generator");
      * PromptValue formatted = prompt.invoke(Map.of("topic", "cats"));
-     * OpenAiPayload openAi = convertPromptToOpenAI(formatted);
+     * OpenAiPayload openAi = convertToOpenAIParams(formatted);
      * ```
      *
      * @param promptIdentifier the prompt identifier (e.g., `"owner/name"`, `"name"`,
