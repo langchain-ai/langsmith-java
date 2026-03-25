@@ -189,6 +189,146 @@ internal class PromptMessagesTest {
         assertThat(result.messages[0].template).isEqualTo("Tell me about cats")
     }
 
+    // --- strictSchemaForStructuredOutput ---
+
+    @Test
+    @Suppress("UNCHECKED_CAST")
+    fun strictSchema_addsAdditionalPropertiesToNestedObjects() {
+        val schema =
+            mapOf<String, Any?>(
+                "type" to "object",
+                "properties" to
+                    mapOf(
+                        "name" to mapOf("type" to "string"),
+                        "address" to
+                            mapOf(
+                                "type" to "object",
+                                "properties" to mapOf("street" to mapOf("type" to "string")),
+                            ),
+                    ),
+            )
+
+        val result = strictSchemaForStructuredOutput(schema)
+
+        // Top-level object
+        assertThat(result["additionalProperties"]).isEqualTo(false)
+        // Nested object in properties
+        val address = (result["properties"] as Map<String, Any?>)["address"] as Map<String, Any?>
+        assertThat(address["additionalProperties"]).isEqualTo(false)
+    }
+
+    @Test
+    @Suppress("UNCHECKED_CAST")
+    fun strictSchema_recursesIntoArrayItems() {
+        val schema =
+            mapOf<String, Any?>(
+                "type" to "object",
+                "properties" to
+                    mapOf(
+                        "people" to
+                            mapOf(
+                                "type" to "array",
+                                "items" to
+                                    mapOf(
+                                        "type" to "object",
+                                        "properties" to mapOf("name" to mapOf("type" to "string")),
+                                    ),
+                            )
+                    ),
+            )
+
+        val result = strictSchemaForStructuredOutput(schema)
+
+        // The object inside array items should also get additionalProperties: false
+        val people = (result["properties"] as Map<String, Any?>)["people"] as Map<String, Any?>
+        val items = people["items"] as Map<String, Any?>
+        assertThat(items["additionalProperties"]).isEqualTo(false)
+    }
+
+    @Test
+    @Suppress("UNCHECKED_CAST")
+    fun strictSchema_recursesIntoAnyOf() {
+        val schema =
+            mapOf<String, Any?>(
+                "anyOf" to
+                    listOf(
+                        mapOf(
+                            "type" to "object",
+                            "properties" to mapOf("a" to mapOf("type" to "string")),
+                        ),
+                        mapOf("type" to "string"),
+                    )
+            )
+
+        val result = strictSchemaForStructuredOutput(schema)
+
+        val anyOf = result["anyOf"] as List<Map<String, Any?>>
+        assertThat(anyOf[0]["additionalProperties"]).isEqualTo(false)
+        // String type should not have additionalProperties
+        assertThat(anyOf[1]).doesNotContainKey("additionalProperties")
+    }
+
+    @Test
+    @Suppress("UNCHECKED_CAST")
+    fun strictSchema_handlesUnionTypeWithObject() {
+        // type can be a list like ["string", "object"]
+        val schema =
+            mapOf<String, Any?>(
+                "type" to "object",
+                "properties" to
+                    mapOf(
+                        "items" to
+                            mapOf(
+                                "type" to "array",
+                                "items" to
+                                    mapOf(
+                                        "type" to listOf("string", "object"),
+                                        "properties" to mapOf("foo" to mapOf("type" to "string")),
+                                        "required" to listOf("foo"),
+                                    ),
+                            )
+                    ),
+            )
+
+        val result = strictSchemaForStructuredOutput(schema)
+
+        val items = (result["properties"] as Map<String, Any?>)["items"] as Map<String, Any?>
+        val arrayItems = items["items"] as Map<String, Any?>
+        assertThat(arrayItems["additionalProperties"]).isEqualTo(false)
+    }
+
+    @Test
+    fun strictSchema_handlesUnionTypeAtTopLevel() {
+        val schema =
+            mapOf<String, Any?>(
+                "type" to listOf("string", "object"),
+                "properties" to mapOf("name" to mapOf("type" to "string")),
+            )
+
+        val result = strictSchemaForStructuredOutput(schema)
+
+        assertThat(result["additionalProperties"]).isEqualTo(false)
+    }
+
+    @Test
+    fun strictSchema_ignoresUnionTypeWithoutObject() {
+        val schema = mapOf<String, Any?>("type" to listOf("string", "number"))
+
+        val result = strictSchemaForStructuredOutput(schema)
+
+        assertThat(result).doesNotContainKey("additionalProperties")
+    }
+
+    @Test
+    fun strictSchema_leavesNonObjectSchemasAlone() {
+        val schema = mapOf<String, Any?>("type" to "string")
+
+        val result = strictSchemaForStructuredOutput(schema)
+
+        assertThat(result).doesNotContainKey("additionalProperties")
+        assertThat(result["type"]).isEqualTo("string")
+    }
+
     // --- Tool, MessagesPlaceholder, and ChatMessage tests ---
 
     @Test

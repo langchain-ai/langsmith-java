@@ -1,9 +1,12 @@
 package com.langchain.smith.prompts
 
 /**
- * Injects `"additionalProperties": false` into every object node in a JSON Schema. This is required
- * when using strict mode for structured outputs — OpenAI requires it when `strict: true` is set,
- * and Anthropic requires it for `output_config` schemas.
+ * Injects `"additionalProperties": false` into every object node in a JSON Schema tree. This is
+ * required when using strict mode for structured outputs — OpenAI requires it when `strict: true`
+ * is set, and Anthropic requires it for `output_config` schemas.
+ *
+ * Recursion covers all schema locations where objects can appear: `properties`, `items`, `anyOf`,
+ * `oneOf`, `allOf`, `$defs`, and any other nested map or list-of-maps structure.
  *
  * We enable strict mode by default because it guarantees the response matches the schema exactly.
  *
@@ -14,36 +17,41 @@ package com.langchain.smith.prompts
  */
 internal fun strictSchemaForStructuredOutput(schema: Map<String, Any?>): Map<String, Any?> =
     buildMap {
-        putAll(schema)
-        if (schema["type"] == "object") {
-            put("additionalProperties", false)
-            val properties = schema["properties"]
-            if (properties is Map<*, *>) {
-                put(
-                    "properties",
-                    buildMap {
-                        for ((key, value) in properties) {
-                            val k = key?.toString() ?: continue
-                            // Each property value is itself a schema — recurse if it's a map
-                            put(
-                                k,
-                                if (value is Map<*, *>) {
-                                    val nested =
-                                        buildMap<String, Any?> {
-                                            for ((nk, nv) in value) {
-                                                put(nk?.toString() ?: continue, nv)
-                                            }
-                                        }
-                                    strictSchemaForStructuredOutput(nested)
-                                } else {
-                                    value
-                                },
-                            )
-                        }
-                    },
-                )
-            }
+        for ((key, value) in schema) {
+            put(key, strictifyValue(value))
         }
+        if (isObjectType(schema["type"])) {
+            put("additionalProperties", false)
+        }
+    }
+
+/**
+ * Checks if a schema type is or includes "object". Handles both `"object"` and `["string",
+ * "object"]`.
+ */
+private fun isObjectType(type: Any?): Boolean =
+    when (type) {
+        is String -> type == "object"
+        is List<*> -> type.any { it == "object" }
+        else -> false
+    }
+
+/**
+ * Recursively processes a value within a JSON Schema, applying strict mode to any nested schemas.
+ */
+private fun strictifyValue(value: Any?): Any? =
+    when (value) {
+        is Map<*, *> -> {
+            val mapWithStringKeys =
+                buildMap<String, Any?> {
+                    for ((k, v) in value) {
+                        put(k?.toString() ?: continue, v)
+                    }
+                }
+            strictSchemaForStructuredOutput(mapWithStringKeys)
+        }
+        is List<*> -> value.map { strictifyValue(it) }
+        else -> value
     }
 
 /**
