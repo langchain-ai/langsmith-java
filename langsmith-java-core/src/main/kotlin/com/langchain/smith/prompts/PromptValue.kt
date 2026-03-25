@@ -22,8 +22,8 @@ package com.langchain.smith.prompts
  * }
  *
  * // Convert to provider format
- * OpenAiPayload openAi = convertToOpenAIParams(formatted);
- * AnthropicPayload anthropic = convertToAnthropicParams(formatted);
+ * ChatCompletion completion = openai.chat().completions().create(
+ *     convertToOpenAIParams(formatted).model(ChatModel.GPT_4_1_MINI).build());
  * ```
  *
  * @see Prompt.invoke

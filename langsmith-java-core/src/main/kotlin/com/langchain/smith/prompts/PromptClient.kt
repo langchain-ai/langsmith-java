@@ -19,16 +19,13 @@ import com.langchain.smith.models.commits.CommitRetrieveParams
  *
  * LangsmithClient client = LangsmithOkHttpClient.fromEnv();
  * PromptClient promptClient = PromptClient.create(client);
- *
- * // Pull and invoke a prompt
  * Prompt prompt = promptClient.pull("my-org/joke-generator");
  * PromptValue formattedPrompt = prompt.invoke(Map.of("topic", "cats"));
  *
- * // Convert to OpenAI format
- * OpenAiPayload openAi = convertToOpenAIParams(formattedPrompt);
- *
- * // Convert to Anthropic format
- * AnthropicPayload anthropic = convertToAnthropicParams(formattedPrompt);
+ * ChatCompletion completion = openai.chat().completions().create(
+ *     convertToOpenAIParams(formattedPrompt)
+ *         .model(ChatModel.GPT_4_1_MINI)
+ *         .build());
  * ```
  *
  * ## Prompt identifier format
@@ -58,7 +55,8 @@ class PromptClient private constructor(private val client: LangsmithClient) {
      * ```java
      * Prompt prompt = promptClient.pull("my-org/joke-generator");
      * PromptValue formatted = prompt.invoke(Map.of("topic", "cats"));
-     * OpenAiPayload openAi = convertToOpenAIParams(formatted);
+     * ChatCompletion completion = openai.chat().completions().create(
+     *     convertToOpenAIParams(formatted).model(ChatModel.GPT_4_1_MINI).build());
      * ```
      *
      * @param promptIdentifier the prompt identifier (e.g., `"owner/name"`, `"name"`,

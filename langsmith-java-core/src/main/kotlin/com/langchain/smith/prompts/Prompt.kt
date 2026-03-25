@@ -15,22 +15,20 @@ import com.langchain.smith.core.JsonValue
  * ```java
  * PromptClient promptClient = PromptClient.create(langsmithClient);
  * Prompt prompt = promptClient.pull("my-org/joke-generator");
- *
  * PromptValue formattedPrompt = prompt.invoke(Map.of("topic", "cats"));
  *
- * // Convert to OpenAI format
- * OpenAiPayload openAi = convertToOpenAIParams(formattedPrompt);
+ * // OpenAI
+ * ChatCompletion completion = openai.chat().completions().create(
+ *     convertToOpenAIParams(formattedPrompt)
+ *         .model(ChatModel.GPT_4_1_MINI)
+ *         .build());
  *
- * // Convert to Anthropic format
- * AnthropicPayload anthropic = convertToAnthropicParams(formattedPrompt);
- * ```
- *
- * ## Example (Kotlin)
- *
- * ```kotlin
- * val prompt = promptClient.pull("my-org/joke-generator")
- * val formattedPrompt = prompt.invoke(mapOf("topic" to "cats"))
- * val (messages, system) = convertToAnthropicParams(formattedPrompt)
+ * // Anthropic
+ * Message message = anthropic.messages().create(
+ *     convertToAnthropicParams(formattedPrompt)
+ *         .model(Model.CLAUDE_SONNET_4_6)
+ *         .maxTokens(1024)
+ *         .build());
  * ```
  *
  * @see PromptClient.pull
