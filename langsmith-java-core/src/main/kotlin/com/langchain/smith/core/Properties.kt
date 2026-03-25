@@ -3,6 +3,9 @@
 package com.langchain.smith.core
 
 import com.langchain.smith.client.LangsmithClient
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("com.langchain.smith.core.Properties")
 
 fun getOsArch(): String {
     val osArch = System.getProperty("os.arch")
@@ -49,7 +52,9 @@ fun getPackageVersion(): String {
         props.getProperty("version")?.let {
             return it
         }
-    } catch (_: Exception) {}
+    } catch (e: Exception) {
+        logger.debug("Failed to read version from version.properties", e)
+    }
     return LangsmithClient::class.java.`package`.implementationVersion ?: "unknown"
 }
 
