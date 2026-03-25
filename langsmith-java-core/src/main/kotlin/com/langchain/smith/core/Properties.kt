@@ -53,7 +53,7 @@ fun getPackageVersion(): String {
             return it
         }
     } catch (e: Exception) {
-        logger.debug("Failed to read version from version.properties", e)
+        logger.warn("Failed to read version from version.properties", e)
     }
     return LangsmithClient::class.java.`package`.implementationVersion ?: "unknown"
 }
