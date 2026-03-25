@@ -98,9 +98,14 @@ internal class PromptMessages(
         return result
     }
 
-    override fun toString(): String =
-        "PromptMessages{messages=$messages, inputVariables=$inputVariables" +
-            if (outputSchema != null) ", outputSchema=$outputSchema}" else "}"
+    override fun toString(): String {
+        val parts = buildList {
+            add("messages=$messages")
+            if (inputVariables.isNotEmpty()) add("inputVariables=$inputVariables")
+            outputSchema?.let { add("outputSchema=${it["title"] ?: "..."}") }
+        }
+        return "PromptMessages{${parts.joinToString(", ")}}"
+    }
 }
 
 private fun toPromptMessage(value: Any?): PromptMessage? =
