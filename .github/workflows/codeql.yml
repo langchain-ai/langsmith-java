@@ -28,7 +28,7 @@ jobs:
             8
             21
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4

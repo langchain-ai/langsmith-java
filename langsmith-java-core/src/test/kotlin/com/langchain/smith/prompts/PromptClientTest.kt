@@ -8,7 +8,12 @@ import org.junit.jupiter.params.provider.MethodSource
 
 internal class PromptClientTest {
 
-    data class Case(val identifier: String, val owner: String, val repo: String, val commit: String)
+    data class Case(
+        val identifier: String,
+        val owner: String,
+        val repo: String,
+        val commit: String,
+    )
 
     data class ErrorCase(val identifier: String, val expectedMessage: String)
 
