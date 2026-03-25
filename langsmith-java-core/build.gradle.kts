@@ -3,6 +3,22 @@ plugins {
     id("langchain.publish")
 }
 
+val generateVersionProperties by tasks.registering {
+    val outputDir = layout.buildDirectory.dir("generated/resources/version")
+    val projectVersion = provider { project.version.toString() }
+    outputs.dir(outputDir)
+    inputs.property("version", projectVersion)
+    doLast {
+        val dir = outputDir.get().asFile.resolve("com/langchain/smith")
+        dir.mkdirs()
+        dir.resolve("version.properties").writeText("version=${projectVersion.get()}\n")
+    }
+}
+
+sourceSets.main {
+    resources.srcDir(generateVersionProperties)
+}
+
 configurations.all {
     resolutionStrategy {
         // Compile and test against a lower Jackson version to ensure we're compatible with it. Note that
@@ -29,13 +45,13 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2")
     implementation("org.apache.httpcomponents.core5:httpcore5:5.2.4")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
-    
+
     // OpenTelemetry dependencies
     api("io.opentelemetry:opentelemetry-api:1.32.0")
     api("io.opentelemetry:opentelemetry-sdk:1.32.0")
     api("io.opentelemetry:opentelemetry-exporter-otlp:1.32.0")
     api("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
-    
+
     // OpenAI SDK (for OpenTelemetry wrappers)
     api("com.openai:openai-java:4.6.1")
 

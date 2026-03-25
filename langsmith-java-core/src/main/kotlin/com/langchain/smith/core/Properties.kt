@@ -12,8 +12,10 @@ fun getOsArch(): String {
         "i386",
         "x32",
         "x86" -> "x32"
+
         "amd64",
         "x86_64" -> "x64"
+
         "arm" -> "arm"
         "aarch64" -> "arm64"
         else -> "other:$osArch"
@@ -36,7 +38,16 @@ fun getOsName(): String {
 
 fun getOsVersion(): String = System.getProperty("os.version", "unknown") ?: "unknown"
 
-fun getPackageVersion(): String =
-    LangsmithClient::class.java.`package`?.implementationVersion ?: "unknown"
+fun getPackageVersion(): String {
+    try {
+        val props = java.util.Properties()
+        LangsmithClient::class.java.classLoader
+            .getResourceAsStream("com/langchain/smith/version.properties")
+            ?.use { props.load(it) }
+        props.getProperty("version")?.let { return it }
+    } catch (_: Exception) {
+    }
+    return LangsmithClient::class.java.`package`.implementationVersion ?: "unknown"
+}
 
 fun getJavaVersion(): String = System.getProperty("java.version", "unknown") ?: "unknown"
