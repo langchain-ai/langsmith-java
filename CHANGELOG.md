@@ -1,57 +1,5 @@
 # Changelog
 
-## 0.1.0-alpha.24 (2026-03-25)
-
-Full Changelog: [v0.1.0-alpha.23...v0.1.0-alpha.24](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.23...v0.1.0-alpha.24)
-
-### Features
-
-* **api:** api update ([8e94d9d](https://github.com/langchain-ai/langsmith-java/commit/8e94d9dc65dfacd3f238e88631623a1338edec2e))
-* **api:** api update ([3288052](https://github.com/langchain-ai/langsmith-java/commit/32880529fe17d465d20ee922894a9e1af3351edd))
-* **api:** api update ([a4e3e5c](https://github.com/langchain-ai/langsmith-java/commit/a4e3e5cb858e66a9409ac162f04660c514cc24df))
-* **api:** api update ([ff16250](https://github.com/langchain-ai/langsmith-java/commit/ff162506f81ad1616567c9119ded36c1a344c774))
-* **api:** api update ([ef7c7a7](https://github.com/langchain-ai/langsmith-java/commit/ef7c7a798786b073e403d994ee2a9367d4db59ee))
-* **api:** api update ([643c7b1](https://github.com/langchain-ai/langsmith-java/commit/643c7b121acd874a72c36e80fbd6d8d4aa772319))
-* **api:** api update ([4b9c97d](https://github.com/langchain-ai/langsmith-java/commit/4b9c97d873492f919885fc1e394d1819fbedd09a))
-* **api:** api update ([ea4e843](https://github.com/langchain-ai/langsmith-java/commit/ea4e843eea1709113fd259659c2cc85fd6317fa5))
-* **api:** api update ([74d2131](https://github.com/langchain-ai/langsmith-java/commit/74d213181b7a2398fa8852235de5a1123ff0a7fe))
-* **api:** api update ([2708533](https://github.com/langchain-ai/langsmith-java/commit/27085335b36f0ecb249a3bd079f96d8d9fad6c1f))
-* **api:** api update ([8f48677](https://github.com/langchain-ai/langsmith-java/commit/8f48677e5ca0dfd9c9e9bc248c204863f233542a))
-* **api:** api update ([c11821f](https://github.com/langchain-ai/langsmith-java/commit/c11821f56ba08939568332468a1e9376c78e6372))
-* **api:** api update ([44fe8b3](https://github.com/langchain-ai/langsmith-java/commit/44fe8b31986af7ae7ac489c0a59335afb8021f9f))
-* **api:** api update ([d11c759](https://github.com/langchain-ai/langsmith-java/commit/d11c759b1cf0d360f07aa0807f554c36f3262b14))
-* **api:** manual updates ([09f1302](https://github.com/langchain-ai/langsmith-java/commit/09f1302329d0fcd9082bc52b2381271aabd71bab))
-* **api:** manual updates ([dbed70a](https://github.com/langchain-ai/langsmith-java/commit/dbed70af760f0e807626650a2a7d6ecb8d30f0ad))
-* **api:** manual updates ([48e2ca2](https://github.com/langchain-ai/langsmith-java/commit/48e2ca294bd412398290777db3ef14655ed47b1c))
-* **api:** manual updates ([d8ac870](https://github.com/langchain-ai/langsmith-java/commit/d8ac87089db42004a53e880f419dcf6749c60817))
-* **api:** manual updates ([bdb35f0](https://github.com/langchain-ai/langsmith-java/commit/bdb35f01f6374860fe6fa3c83f6f102f22590b23))
-
-
-### Bug Fixes
-
-* **client:** allow updating header/query affecting fields in `toBuilder()` ([5069881](https://github.com/langchain-ai/langsmith-java/commit/5069881aebcffc8ea2058de667a7af33efc15ec3))
-* **client:** incorrect `Retry-After` parsing ([b607264](https://github.com/langchain-ai/langsmith-java/commit/b607264e2c7e10374f5d79d922c6850208b6f839))
-* fix streaming in java sdk ([#95](https://github.com/langchain-ai/langsmith-java/issues/95)) ([76da93f](https://github.com/langchain-ai/langsmith-java/commit/76da93f2c0c3a0466feee196243a214e8642b303))
-
-
-### Chores
-
-* align user agent format ([#96](https://github.com/langchain-ai/langsmith-java/issues/96)) ([5cf06d6](https://github.com/langchain-ai/langsmith-java/commit/5cf06d612963f01b49d6f62117226d948e004046))
-* **ci:** skip lint on metadata-only changes ([4c1197c](https://github.com/langchain-ai/langsmith-java/commit/4c1197ce483f317defed85f81d3ec3f5053f68d3))
-* **ci:** skip uploading artifacts on stainless-internal branches ([c994122](https://github.com/langchain-ai/langsmith-java/commit/c994122d8c4eea78bb8a942b0ed1db58e6338e1e))
-* **deps:** bump the all-actions group with 5 updates ([#92](https://github.com/langchain-ai/langsmith-java/issues/92)) ([3a1a72f](https://github.com/langchain-ai/langsmith-java/commit/3a1a72f5595393a437a8ddf1acc69bb44529b0e8))
-* drop apache dependency ([75ca9d7](https://github.com/langchain-ai/langsmith-java/commit/75ca9d71b49bad02bdbd66141f693204b296a9ec))
-* **internal:** bump ktfmt ([d9a4a39](https://github.com/langchain-ai/langsmith-java/commit/d9a4a396ad92c9f33c5922dabc00a8ba2451199b))
-* **internal:** bump palantir-java-format ([576ebd2](https://github.com/langchain-ai/langsmith-java/commit/576ebd2a02613c632dd1e00ba9c606df99de8f37))
-* **internal:** codegen related update ([29d55b0](https://github.com/langchain-ai/langsmith-java/commit/29d55b0ee9f40c2d327f1c08a714ccd9cad1384b))
-* **internal:** expand imports ([4c7542f](https://github.com/langchain-ai/langsmith-java/commit/4c7542f4525b43d8fc2adcd7d084a080581b5c48))
-* **internal:** tweak CI branches ([b7cecc1](https://github.com/langchain-ai/langsmith-java/commit/b7cecc1caa774426df72acd5734a2c29a96a3e60))
-* **internal:** update gitignore ([d0df3fa](https://github.com/langchain-ai/langsmith-java/commit/d0df3fa13a923514d9d3c66d5d96b4fa1fea4a22))
-* **internal:** update retry delay tests ([a9c7999](https://github.com/langchain-ai/langsmith-java/commit/a9c7999f55bc12c2d1bac268ce3a2ca5bbd58dc5))
-* make `Properties` more resilient to `null` ([47c70f9](https://github.com/langchain-ai/langsmith-java/commit/47c70f91d5ec941fafc08a81baabf946602076c9))
-* remove old test ([#97](https://github.com/langchain-ai/langsmith-java/issues/97)) ([79d708b](https://github.com/langchain-ai/langsmith-java/commit/79d708b935ba234c50d10980a7fef8ad12c58f61))
-* update placeholder string ([be1baa7](https://github.com/langchain-ai/langsmith-java/commit/be1baa704ad8ebe899fbf8e4003f706fbc3d3f73))
-
 ## 0.1.0-alpha.23 (2026-02-20)
 
 Full Changelog: [v0.1.0-alpha.22...v0.1.0-alpha.23](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.22...v0.1.0-alpha.23)
