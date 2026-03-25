@@ -10,7 +10,7 @@ import kotlin.jvm.optionals.getOrNull
 
 class UnauthorizedException
 private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    LangChainServiceException("401: $body", cause) {
+    LangChainServiceException(formatMessage(401, body), cause) {
 
     override fun statusCode(): Int = 401
 
