@@ -36,7 +36,15 @@ fun getOsName(): String {
 
 fun getOsVersion(): String = System.getProperty("os.version", "unknown")
 
-fun getPackageVersion(): String =
-    LangsmithClient::class.java.`package`.implementationVersion ?: "unknown"
+fun getPackageVersion(): String {
+    try {
+        val props = java.util.Properties()
+        LangsmithClient::class.java.classLoader
+            .getResourceAsStream("com/langchain/smith/version.properties")
+            ?.use { props.load(it) }
+        props.getProperty("version")?.let { return it }
+    } catch (_: Exception) {}
+    return LangsmithClient::class.java.`package`.implementationVersion ?: "unknown"
+}
 
 fun getJavaVersion(): String = System.getProperty("java.version", "unknown")
