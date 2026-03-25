@@ -1,6 +1,5 @@
 package com.langchain.smith.tracing
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.getJavaVersion
@@ -13,10 +12,14 @@ import java.time.format.DateTimeFormatter
 import java.util.UUID
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import java.util.function.BiFunction
 import java.util.function.Function
 import java.util.function.Supplier
 import kotlin.reflect.KFunction
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("com.langchain.smith.tracing.Traceable")
 
 /** The type of run being traced, which maps to run_type in LangSmith. */
 enum class RunType(internal val value: String) {
@@ -30,55 +33,49 @@ enum class RunType(internal val value: String) {
     RETRIEVER("retriever"),
 }
 
-private val jsonMapper = ObjectMapper()
-private val CURRENT_RUN = ThreadLocal<RunTree?>()
+private val CURRENT_RUN = RunContext.create()
 private val ISO_FORMAT =
     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'").withZone(ZoneOffset.UTC)
 
-private fun serializeToJson(value: Any?): String =
-    when (value) {
-        null -> "{}"
-        is String -> jsonMapper.writeValueAsString(mapOf("output" to value))
-        is Map<*, *> -> jsonMapper.writeValueAsString(value)
-        else ->
-            try {
-                jsonMapper.writeValueAsString(value)
-            } catch (_: Exception) {
-                jsonMapper.writeValueAsString(mapOf("output" to value.toString()))
-            }
-    }
-
 private fun nowIso(): String = ISO_FORMAT.format(Instant.now())
 
+private val DOTTED_ORDER_STRIP = Regex("[-:.]")
+
 private fun dottedOrder(time: String, id: String): String =
-    time.replace(Regex("[-:.]"), "") + id
+    time.replace(DOTTED_ORDER_STRIP, "") + id
 
 /**
- * Internal representation of a run in the trace tree. Tracks IDs, timing, parent-child
- * relationships, and posts itself to LangSmith when complete.
+ * Checks whether LangSmith tracing is enabled.
+ *
+ * Returns `true` when any of the following environment variables is set to `"true"` (
+ * case-insensitive):
+ * - `LANGSMITH_TRACING_V2`
+ * - `LANGSMITH_TRACING`
+ * - `LANGCHAIN_TRACING_V2`
+ * - `LANGCHAIN_TRACING`
+ *
+ * The corresponding Java system properties (`langsmith.tracing`, `langsmith.tracingV2`, etc.) are
+ * also checked and take precedence.
  */
-internal class RunTree(
-    val id: String,
-    val traceId: String,
-    val dottedOrder: String,
-    val parentRunId: String?,
-    val name: String,
-    val runType: RunType,
-    val startTime: String,
-    val projectName: String,
-    var inputs: Map<String, Any?>?,
-    var outputs: Map<String, Any?>?,
-    var error: String?,
-    var endTime: String?,
-    val metadata: Map<String, String>?,
-    val tags: List<String>?,
-)
+fun isTracingEnabled(): Boolean {
+    val envVars =
+        listOf(
+            "LANGSMITH_TRACING_V2" to "langsmith.tracingV2",
+            "LANGSMITH_TRACING" to "langsmith.tracing",
+            "LANGCHAIN_TRACING_V2" to "langchain.tracingV2",
+            "LANGCHAIN_TRACING" to "langchain.tracing",
+        )
+    return envVars.any { (env, prop) ->
+        System.getProperty(prop)?.equals("true", ignoreCase = true) == true ||
+            System.getenv(env)?.equals("true", ignoreCase = true) == true
+    }
+}
 
 /**
  * Configuration for a traced run.
  *
- * @property name the name of the run, displayed in LangSmith. If not set, the name is inferred
- *   from the function reference (e.g. `::myFunction` becomes `"myFunction"`), or defaults to
+ * @property name the name of the run, displayed in LangSmith. If not set, the name is inferred from
+ *   the function reference (e.g. `::myFunction` becomes `"myFunction"`), or defaults to
  *   `"<lambda>"` for anonymous functions.
  * @property runType the type of run (defaults to [RunType.CHAIN])
  * @property metadata optional metadata to attach to the run
@@ -89,7 +86,7 @@ data class TraceConfig
 constructor(
     val name: String? = null,
     val runType: RunType = RunType.CHAIN,
-    val metadata: Map<String, String>? = null,
+    val metadata: Map<String, Any>? = null,
     val tags: List<String>? = null,
 )
 
@@ -103,13 +100,40 @@ private const val DEFAULT_RUN_NAME = "<lambda>"
 
 /** Resolves the run name from the config and the function being wrapped. */
 private fun resolveName(config: TraceConfig, block: Any?): String {
-    config.name?.let { return it }
+    config.name?.let {
+        return it
+    }
     if (block is KFunction<*>) return block.name
     return DEFAULT_RUN_NAME
 }
 
 /**
  * Configures tracing for the current thread. Must be called before using [traceable].
+ *
+ * Tracing is only active when [tracingEnabled] is `true`. By default this is determined by the
+ * `LANGSMITH_TRACING` / `LANGCHAIN_TRACING` environment variables (see [isTracingEnabled]). When
+ * tracing is disabled, [traceable] wrappers still execute the underlying function but skip all
+ * LangSmith communication, so there is zero overhead.
+ *
+ * `TracingContext` implements [AutoCloseable]. Call [close] (or use Kotlin `use {}` / Java
+ * try-with-resources) to wait for pending background posts and shut down the thread pool.
+ *
+ * ## Async / multi-thread usage
+ *
+ * Run context is automatically propagated to nested synchronous calls. On Java 21+, `ScopedValue`
+ * is used, which also propagates context into child tasks forked via `StructuredTaskScope`. On
+ * older JVMs a `ThreadLocal` is used as a fallback.
+ *
+ * **Neither mechanism automatically propagates context across unstructured async boundaries** such
+ * as `CompletableFuture.supplyAsync`, `ExecutorService.submit`, or Kotlin coroutines. For those
+ * cases, capture the current run with [getCurrentRun] and restore it on the new thread with
+ * [withParent]:
+ * ```kotlin
+ * val run = tracing.getCurrentRun()
+ * CompletableFuture.supplyAsync {
+ *     tracing.withParent(run) { tracedChild("input") }
+ * }
+ * ```
  *
  * ## Example (Kotlin)
  *
@@ -123,20 +147,26 @@ private fun resolveName(config: TraceConfig, block: Any?): String {
  * val traced = tracing.traceable(::answerQuestion)  // run name = "answerQuestion"
  * val result = traced("What is the meaning of life?")
  *
- * // Or provide explicit config:
- * val traced2 = tracing.traceable(::answerQuestion, TraceConfig(name = "my-qa-chain"))
+ * // Access the current run inside a traced function:
+ * val traced2 = tracing.traceable({ _: Unit ->
+ *     val run = tracing.getCurrentRun()
+ *     println("Run ID: ${run?.id}")
+ *     "done"
+ * })
+ *
+ * tracing.close() // flush pending runs
  * ```
  *
  * ## Example (Java)
  *
  * ```java
  * LangsmithClient langsmith = LangsmithOkHttpClient.fromEnv();
- * TracingContext tracing = new TracingContext(langsmith, "my-project");
- *
- * Function<String, String> traced = tracing.traceable(
- *     (Function<String, String>) q -> "42",
- *     new TraceConfig("answer-question"));
- * String result = traced.apply("What is the meaning of life?");
+ * try (TracingContext tracing = new TracingContext(langsmith, "my-project")) {
+ *     Function<String, String> traced = tracing.traceable(
+ *         (Function<String, String>) q -> "42",
+ *         new TraceConfig("answer-question"));
+ *     String result = traced.apply("What is the meaning of life?");
+ * } // pending runs are flushed on close
  * ```
  */
 class TracingContext
@@ -146,7 +176,90 @@ constructor(
     private val projectName: String =
         System.getenv("LANGSMITH_PROJECT")?.takeIf { it.isNotBlank() } ?: "default",
     private val executor: ExecutorService = Executors.newCachedThreadPool(),
-) {
+    private val tracingEnabled: Boolean = isTracingEnabled(),
+) : AutoCloseable {
+
+    /**
+     * Returns the [RunTree] for the currently-executing traced function on this thread, or `null`
+     * if there is no active run (e.g. called outside a [traceable] wrapper, or tracing is
+     * disabled).
+     *
+     * The returned [RunTree] is mutable — you can add entries to [RunTree.metadata] or
+     * [RunTree.extra] and they will be included when the run is posted to LangSmith.
+     *
+     * To propagate context across async boundaries, pass the returned [RunTree] to [withParent] on
+     * the new thread.
+     *
+     * @see withParent
+     */
+    fun getCurrentRun(): RunTree? = CURRENT_RUN.get()
+
+    /**
+     * Executes [block] with [parent] as the current run on this thread. Traced functions called
+     * inside [block] will become children of [parent].
+     *
+     * Use this to propagate context across async boundaries where the run context is not
+     * automatically inherited (e.g. `CompletableFuture`, `ExecutorService`, coroutines).
+     *
+     * ```kotlin
+     * val parent = tracing.getCurrentRun()
+     * CompletableFuture.supplyAsync {
+     *     tracing.withParent(parent) {
+     *         // child runs created here will be nested under parent
+     *         tracedChild("input")
+     *     }
+     * }
+     * ```
+     *
+     * @param parent the run to set as the current parent, or `null` to clear the context
+     * @param block the code to execute with the given parent context
+     * @return the result of [block]
+     */
+    @JvmSynthetic
+    fun <T> withParent(parent: RunTree?, block: () -> T): T = CURRENT_RUN.runWith(parent, block)
+
+    /**
+     * Executes [block] with [parent] as the current run on this thread (Java-friendly overload).
+     *
+     * @see withParent
+     */
+    fun <T> withParent(parent: RunTree?, block: java.util.concurrent.Callable<T>): T =
+        CURRENT_RUN.runWith(parent) { block.call() }
+
+    /**
+     * Blocks until all pending background run posts and patches have completed, or the timeout
+     * elapses. Does **not** shut down the executor — new traced calls can still be made afterwards.
+     *
+     * @param timeout maximum time to wait
+     * @param unit time unit for [timeout]
+     * @return `true` if all pending work completed within the timeout
+     */
+    @JvmOverloads
+    fun awaitPendingRuns(timeout: Long = 30, unit: TimeUnit = TimeUnit.SECONDS): Boolean {
+        // Submit a sentinel task and wait for it — when it completes, all previously submitted
+        // tasks have finished because the executor processes tasks in submission order.
+        val sentinel = executor.submit {}
+        return try {
+            sentinel.get(timeout, unit)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    /**
+     * Waits for pending runs to flush (up to 30 seconds) and shuts down the background executor.
+     *
+     * After calling [close], traced functions will still execute their underlying logic but will no
+     * longer post runs to LangSmith.
+     */
+    override fun close() {
+        executor.shutdown()
+        if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+            logger.warn("Timed out waiting for pending LangSmith runs to flush; some may be lost")
+            executor.shutdownNow()
+        }
+    }
 
     // ---- 0-arg overloads ----
 
@@ -175,7 +288,8 @@ constructor(
      * parent-child relationship in LangSmith.
      *
      * The input to the returned function is automatically serialized as the run's inputs. If the
-     * input is a [Map], its entries are used directly; otherwise it is recorded as `{"input": ...}`.
+     * input is a [Map], its entries are used directly; otherwise it is recorded as `{"input":
+     * ...}`.
      *
      * @param block the function to wrap
      * @param config tracing configuration (run name, type, metadata, tags)
@@ -192,7 +306,10 @@ constructor(
 
     /** Wraps a 1-arg function with LangSmith tracing (Java [Function]). */
     @JvmOverloads
-    fun <I, O> traceable(block: Function<I, O>, config: TraceConfig = TraceConfig()): Function<I, O> {
+    fun <I, O> traceable(
+        block: Function<I, O>,
+        config: TraceConfig = TraceConfig(),
+    ): Function<I, O> {
         val traced = traceable({ i: I -> block.apply(i) }, config)
         return Function { traced(it) }
     }
@@ -250,17 +367,32 @@ constructor(
     /**
      * Converts a function input to a map suitable for recording as run inputs.
      *
-     * If the input is already a [Map], its entries are used directly. Otherwise the input is
-     * wrapped as `{"input": value}`.
+     * If the input is a [Map] with all [String] keys, its entries are used directly. Otherwise the
+     * input is wrapped as `{"input": value}`.
      */
     private fun toInputMap(input: Any?): Map<String, Any?> =
-        when (input) {
-            is Map<*, *> -> {
-                @Suppress("UNCHECKED_CAST")
-                input as Map<String, Any?>
-            }
-            else -> mapOf("input" to input)
+        toStringKeyedMap(input) ?: mapOf("input" to input)
+
+    private fun toOutputMap(output: Any?): Map<String, Any?> =
+        when (output) {
+            null -> mapOf("output" to null)
+            is RunTree -> mapOf("output" to output.toString())
+            else -> toStringKeyedMap(output) ?: mapOf("output" to output)
         }
+
+    /**
+     * Returns the map with its entries if [value] is a [Map] whose keys are all [String]s, or
+     * `null` otherwise.
+     */
+    private fun toStringKeyedMap(value: Any?): Map<String, Any?>? {
+        if (value !is Map<*, *>) return null
+        val result = mutableMapOf<String, Any?>()
+        for ((k, v) in value) {
+            if (k !is String) return null
+            result[k] = v
+        }
+        return result
+    }
 
     /** Core tracing logic shared by all overloads. */
     private fun <T> executeTraced(
@@ -268,9 +400,12 @@ constructor(
         inputs: Map<String, Any?>?,
         block: () -> T,
     ): T {
+        if (!tracingEnabled) {
+            return block()
+        }
+
         val name = config.name ?: DEFAULT_RUN_NAME
         val runType = config.runType
-        val metadata = config.metadata
         val tags = config.tags
         val parentRun = CURRENT_RUN.get()
         val runId = UUID.randomUUID().toString()
@@ -280,6 +415,9 @@ constructor(
         val myDottedOrder =
             if (parentDottedOrder != null) "$parentDottedOrder.${dottedOrder(startTime, runId)}"
             else dottedOrder(startTime, runId)
+
+        val mergedMetadata = mutableMapOf<String, Any>()
+        config.metadata?.let { mergedMetadata.putAll(it) }
 
         val run =
             RunTree(
@@ -295,32 +433,25 @@ constructor(
                 outputs = null,
                 error = null,
                 endTime = null,
-                metadata = metadata,
+                metadata = mergedMetadata,
                 tags = tags,
+                extra = mutableMapOf(),
             )
 
-        CURRENT_RUN.set(run)
         postRun(run)
-        try {
-            val result = block()
-            run.endTime = nowIso()
-            run.outputs =
-                when (result) {
-                    is Map<*, *> -> {
-                        @Suppress("UNCHECKED_CAST") (result as Map<String, Any?>)
-                    }
-                    null -> mapOf("output" to null)
-                    else -> mapOf("output" to result)
-                }
-            patchRun(run)
-            return result
-        } catch (e: Throwable) {
-            run.endTime = nowIso()
-            run.error = e.stackTraceToString()
-            patchRun(run)
-            throw e
-        } finally {
-            CURRENT_RUN.set(parentRun)
+        return CURRENT_RUN.runWith(run) {
+            try {
+                val result = block()
+                run.endTime = nowIso()
+                run.outputs = toOutputMap(result)
+                patchRun(run)
+                result
+            } catch (e: Throwable) {
+                run.endTime = nowIso()
+                run.error = e.stackTraceToString()
+                patchRun(run)
+                throw e
+            }
         }
     }
 
@@ -329,33 +460,39 @@ constructor(
      */
     private fun postRun(run: RunTree) {
         val runData = buildRunData(run)
-        executor.submit {
-            try {
-                client.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
-            } catch (e: Exception) {
-                System.err.println("[LangSmith] Failed to post run '${run.name}': ${e.message}")
-            }
+        submitSafely(run.name) {
+            client.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
         }
     }
 
     /** Patches a run in LangSmith in the background (updates with outputs, end time, error). */
     private fun patchRun(run: RunTree) {
         val runData = buildRunData(run)
-        executor.submit {
-            try {
-                client.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
-            } catch (e: Exception) {
-                System.err.println("[LangSmith] Failed to patch run '${run.name}': ${e.message}")
-            }
+        submitSafely(run.name) {
+            client.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
         }
     }
 
-    private fun toJsonValueMap(data: Any?): Map<String, JsonValue> {
-        val json = serializeToJson(data)
-        @Suppress("UNCHECKED_CAST")
-        val map = jsonMapper.readValue(json, Map::class.java) as Map<String, Any?>
-        return map.mapValues { JsonValue.from(it.value) }
+    /**
+     * Submits work to the background executor, handling both execution errors and
+     * [java.util.concurrent.RejectedExecutionException] (e.g. after [close] has been called).
+     */
+    private fun submitSafely(runName: String, block: () -> Unit) {
+        try {
+            executor.submit {
+                try {
+                    block()
+                } catch (e: Exception) {
+                    logger.warn("Failed to send run '$runName'", e)
+                }
+            }
+        } catch (e: java.util.concurrent.RejectedExecutionException) {
+            logger.warn("Executor is shut down; dropping run '$runName'")
+        }
     }
+
+    private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
+        data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()
 
     private val runtimeMetadata: Map<String, JsonValue> by lazy {
         mapOf(
@@ -366,9 +503,7 @@ constructor(
         )
     }
 
-    private fun buildRuntimeMetadata(
-        userMetadata: Map<String, String>?,
-    ): Map<String, JsonValue> =
+    private fun buildRuntimeMetadata(userMetadata: Map<String, Any>?): Map<String, JsonValue> =
         if (userMetadata.isNullOrEmpty()) {
             runtimeMetadata
         } else {
@@ -396,6 +531,11 @@ constructor(
                 )
                 .extra(
                     Run.Extra.builder()
+                        .apply {
+                            run.extra.forEach { (k, v) ->
+                                putAdditionalProperty(k, JsonValue.from(v))
+                            }
+                        }
                         .putAdditionalProperty(
                             "metadata",
                             JsonValue.from(buildRuntimeMetadata(run.metadata)),

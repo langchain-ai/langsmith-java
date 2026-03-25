@@ -1,6 +1,7 @@
 package com.langchain.smith.tracing
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import kotlin.jvm.optionals.getOrNull
 
 /**
  * Integration tests for [TracingContext] that post real runs to LangSmith.
@@ -33,7 +33,8 @@ internal class TraceableTest {
             "Skipping: LANGSMITH_API_KEY must be set",
         )
         val client = LangsmithOkHttpClient.fromEnv()
-        tracing = TracingContext(client, projectName = "traceable-java-tests")
+        tracing =
+            TracingContext(client, projectName = "traceable-java-tests", tracingEnabled = true)
     }
 
     enum class SimpleTraceTestCase(
@@ -172,8 +173,7 @@ internal class TraceableTest {
         val result = agent(mapOf("question" to "What is 2+2?"))
         println("[Traceable+OpenAI] Result: $result")
 
-        // Give background threads time to post runs
-        Thread.sleep(2000)
+        tracing.awaitPendingRuns()
     }
 
     @Test
@@ -208,9 +208,7 @@ internal class TraceableTest {
 
         val agent =
             tracing.traceable(
-                { input: Map<String, Any?> ->
-                    callOpenAiResponses(input["question"] as String)
-                },
+                { input: Map<String, Any?> -> callOpenAiResponses(input["question"] as String) },
                 TraceConfig("openai-responses-agent"),
             )
 
@@ -219,7 +217,103 @@ internal class TraceableTest {
         assertThat(result).containsIgnoringCase("Paris")
         println("[Traceable+OpenAI Responses] Result: $result")
 
-        // Give background threads time to post runs
-        Thread.sleep(2000)
+        tracing.awaitPendingRuns()
+    }
+
+    @Test
+    fun getCurrentRun_returnsRunTree() {
+        var capturedRun: RunTree? = null
+        val traced =
+            tracing.traceable(
+                { _: Unit ->
+                    capturedRun = tracing.getCurrentRun()
+                    "done"
+                },
+                TraceConfig("get-run-test"),
+            )
+        traced(Unit)
+        assertThat(capturedRun).isNotNull
+        assertThat(capturedRun!!.id).isNotBlank()
+        assertThat(capturedRun!!.traceId).isNotBlank()
+        assertThat(capturedRun!!.name).isEqualTo("get-run-test")
+        assertThat(capturedRun!!.parentRunId).isNull()
+        tracing.awaitPendingRuns()
+    }
+
+    @Test
+    fun getCurrentRun_nestedRunHasParent() {
+        var parentRun: RunTree? = null
+        var childRun: RunTree? = null
+        val child =
+            tracing.traceable(
+                { _: Unit ->
+                    childRun = tracing.getCurrentRun()
+                    "child"
+                },
+                TraceConfig("child"),
+            )
+        val parent =
+            tracing.traceable(
+                { _: Unit ->
+                    parentRun = tracing.getCurrentRun()
+                    child(Unit)
+                },
+                TraceConfig("parent"),
+            )
+        parent(Unit)
+        assertThat(parentRun).isNotNull
+        assertThat(childRun).isNotNull
+        assertThat(childRun!!.parentRunId).isEqualTo(parentRun!!.id)
+        assertThat(childRun!!.traceId).isEqualTo(parentRun!!.traceId)
+        tracing.awaitPendingRuns()
+    }
+
+    @Test
+    fun getCurrentRun_canMutateMetadata() {
+        var capturedRun: RunTree? = null
+        val traced =
+            tracing.traceable(
+                { _: Unit ->
+                    val run = tracing.getCurrentRun()!!
+                    run.metadata["custom_key"] = "custom_value"
+                    run.metadata["numeric"] = 42
+                    capturedRun = run
+                    "done"
+                },
+                TraceConfig("metadata-mutation-test", metadata = mapOf("initial" to "value")),
+            )
+        traced(Unit)
+        assertThat(capturedRun).isNotNull
+        assertThat(capturedRun!!.metadata)
+            .containsEntry("initial", "value")
+            .containsEntry("custom_key", "custom_value")
+            .containsEntry("numeric", 42)
+        tracing.awaitPendingRuns()
+    }
+
+    @Test
+    fun getCurrentRun_canMutateExtra() {
+        var capturedRun: RunTree? = null
+        val traced =
+            tracing.traceable(
+                { _: Unit ->
+                    val run = tracing.getCurrentRun()!!
+                    run.extra["custom_data"] = mapOf("nested" to true)
+                    capturedRun = run
+                    "done"
+                },
+                TraceConfig("extra-mutation-test"),
+            )
+        traced(Unit)
+        assertThat(capturedRun).isNotNull
+        @Suppress("UNCHECKED_CAST")
+        val customData = capturedRun!!.extra["custom_data"] as Map<String, Any>
+        assertThat(customData).containsEntry("nested", true)
+        tracing.awaitPendingRuns()
+    }
+
+    @Test
+    fun getCurrentRun_outsideTracedFunction() {
+        assertThat(tracing.getCurrentRun()).isNull()
     }
 }
