@@ -10,7 +10,7 @@ import kotlin.jvm.optionals.getOrNull
 
 class BadRequestException
 private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    LangChainServiceException("400: $body", cause) {
+    LangChainServiceException(formatMessage(400, body), cause) {
 
     override fun statusCode(): Int = 400
 
