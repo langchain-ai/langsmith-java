@@ -14,7 +14,7 @@ private constructor(
     private val headers: Headers,
     private val body: JsonValue,
     cause: Throwable?,
-) : LangChainServiceException("$statusCode: $body", cause) {
+) : LangChainServiceException(formatMessage(statusCode, body), cause) {
 
     override fun statusCode(): Int = statusCode
 
