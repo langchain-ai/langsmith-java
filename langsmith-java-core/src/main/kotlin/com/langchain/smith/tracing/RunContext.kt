@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
  * On Java 21+ this uses `ScopedValue`, which propagates into child tasks forked via
  * `StructuredTaskScope`. On older JVMs it falls back to [ThreadLocal]. Neither mechanism
  * automatically propagates across unstructured async boundaries like `CompletableFuture` or
- * `ExecutorService` — use [RunTree.withParent] for those cases.
+ * `ExecutorService` — use [withParent] for those cases.
  */
 internal interface RunContext {
     /** Returns the current [RunTree], or `null` if there is no active run on this thread. */

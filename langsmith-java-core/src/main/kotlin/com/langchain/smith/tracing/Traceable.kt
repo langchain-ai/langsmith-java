@@ -8,11 +8,7 @@ import com.langchain.smith.core.getJavaVersion
 import com.langchain.smith.core.getPackageVersion
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
-import java.security.SecureRandom
 import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.util.UUID
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.BiFunction
@@ -59,53 +55,100 @@ class RunType private constructor(internal val value: String) {
 }
 
 internal val CURRENT_RUN = RunContext.create()
-internal val ISO_FORMAT: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'").withZone(ZoneOffset.UTC)
 
-private fun nowIso(): String = ISO_FORMAT.format(Instant.now())
+@Volatile private var userDefaultClient: LangsmithClient? = null
 
-internal val DOTTED_ORDER_STRIP = Regex("[-:.]")
+private val defaultClient: LangsmithClient? by lazy { userDefaultClient ?: createClientFromEnv() }
 
-private val secureRandom = SecureRandom()
+private fun createClientFromEnv(): LangsmithClient? =
+    try {
+        val clazz = Class.forName("com.langchain.smith.client.okhttp.LangsmithOkHttpClient")
+        val fromEnv = clazz.getMethod("fromEnv")
+        fromEnv.invoke(null) as? LangsmithClient
+    } catch (e: Exception) {
+        logger.debug("Could not create default LangSmith client from environment", e)
+        null
+    }
+
+// ---------------------------------------------------------------------------
+// Top-level tracing functions
+// ---------------------------------------------------------------------------
 
 /**
- * Generates a UUIDv7 from the given [Instant] — time-ordered with millisecond precision and random
- * lower bits.
+ * Returns the [RunTree] for the currently-executing traced function on this thread, or `null` if
+ * there is no active run (e.g. called outside a [traceable] wrapper, or tracing is disabled).
  *
- * Layout (RFC 9562):
- * - bits 0-47: Unix timestamp in milliseconds (48 bits)
- * - bits 48-51: version `0111` (4 bits)
- * - bits 52-63: rand_a (12 random bits)
- * - bits 64-65: variant `10` (2 bits)
- * - bits 66-127: rand_b (62 random bits)
+ * The returned [RunTree] is mutable — you can add entries to [RunTree.metadata] or [RunTree.extra]
+ * and they will be included when the run is posted to LangSmith.
+ *
+ * To propagate context across async boundaries, pass the returned [RunTree] to [withParent] on the
+ * new thread.
+ *
+ * @see withParent
+ * @see traceable
  */
-internal fun uuidv7(time: Instant): String {
-    val timestamp = time.toEpochMilli()
-    val randomBytes = ByteArray(10) // 80 bits; we use 74 (12 + 62)
-    secureRandom.nextBytes(randomBytes)
+fun getCurrentRunTree(): RunTree? = CURRENT_RUN.get()
 
-    val msb =
-        ((timestamp and 0xFFFFFFFFFFFFL) shl 16) or // bits 0-47: timestamp
-            0x7000L or // bits 48-51: version 7
-            ((randomBytes[0].toLong() and 0x0F) shl 8) or // bits 52-55: rand_a high
-            (randomBytes[1].toLong() and 0xFF) // bits 56-63: rand_a low
-
-    val lsb =
-        (0x2L shl 62) or // bits 64-65: variant 10
-            ((randomBytes[2].toLong() and 0x3F) shl 56) or // bits 66-71: rand_b
-            ((randomBytes[3].toLong() and 0xFF) shl 48) or
-            ((randomBytes[4].toLong() and 0xFF) shl 40) or
-            ((randomBytes[5].toLong() and 0xFF) shl 32) or
-            ((randomBytes[6].toLong() and 0xFF) shl 24) or
-            ((randomBytes[7].toLong() and 0xFF) shl 16) or
-            ((randomBytes[8].toLong() and 0xFF) shl 8) or
-            (randomBytes[9].toLong() and 0xFF)
-
-    return UUID(msb, lsb).toString()
+/**
+ * Sets the default [LangsmithClient] used by [traceable] when no client is provided in
+ * [TraceConfig] and there is no parent run to inherit from.
+ *
+ * This is typically called once at application startup:
+ * ```kotlin
+ * setDefaultClient(LangsmithOkHttpClient.fromEnv())
+ * ```
+ *
+ * If not set explicitly, a default client is created automatically via reflection when tracing is
+ * enabled and `LangsmithOkHttpClient` is on the classpath.
+ *
+ * @see TraceConfig.client
+ */
+fun setDefaultClient(client: LangsmithClient) {
+    userDefaultClient = client
 }
 
-internal fun dottedOrder(time: String, id: String): String =
-    time.replace(DOTTED_ORDER_STRIP, "") + id
+/**
+ * Executes [block] with [parent] as the current run on this thread. Traced functions called inside
+ * [block] will become children of [parent].
+ *
+ * Use this to propagate context across async boundaries where the run context is not automatically
+ * inherited (e.g. `CompletableFuture`, `ExecutorService`, coroutines).
+ *
+ * On Java 21+, `ScopedValue` is used for context storage, which also propagates into child tasks
+ * forked via `StructuredTaskScope`. On older JVMs a `ThreadLocal` is used as a fallback. **Neither
+ * mechanism automatically propagates context across unstructured async boundaries** — use this
+ * method for those cases.
+ *
+ * ```kotlin
+ * val parent = getCurrentRunTree()
+ * CompletableFuture.supplyAsync {
+ *     withParent(parent) {
+ *         tracedChild("input")
+ *     }
+ * }
+ * ```
+ *
+ * @param parent the run to set as the current parent, or `null` to clear the context
+ * @param block the code to execute with the given parent context
+ * @return the result of [block]
+ * @see getCurrentRunTree
+ */
+@JvmSynthetic
+fun <T> withParent(parent: RunTree?, block: () -> T): T = CURRENT_RUN.runWith(parent, block)
+
+/**
+ * Executes [block] with [parent] as the current run on this thread (Java-friendly overload).
+ *
+ * @see withParent
+ */
+fun <T> withParent(parent: RunTree?, block: java.util.concurrent.Callable<T>): T =
+    CURRENT_RUN.runWith(parent) { block.call() }
+
+/**
+ * Returns the default [LangsmithClient], resolving in order: user-set default, then auto-created
+ * from environment via reflection. Returns `null` if neither is available.
+ */
+internal fun resolveDefaultClient(): LangsmithClient? = defaultClient
 
 /**
  * Checks whether LangSmith tracing is enabled.
@@ -134,8 +177,8 @@ fun isTracingEnabled(): Boolean {
     }
 }
 
-internal val DEFAULT_PROJECT_NAME: String by lazy {
-    System.getenv("LANGSMITH_PROJECT")?.takeIf { it.isNotBlank() } ?: "default"
+internal val DEFAULT_PROJECT_NAME: String? by lazy {
+    System.getenv("LANGSMITH_PROJECT")?.takeIf { it.isNotBlank() }
 }
 
 internal val DEFAULT_EXECUTOR: ExecutorService by lazy { Executors.newCachedThreadPool() }
@@ -346,7 +389,7 @@ fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
  * @return a traced wrapper around [block]
  * @see TraceConfig
  * @see RunTree.getCurrent
- * @see RunTree.withParent
+ * @see withParent
  */
 @JvmSynthetic
 fun <I, O> traceable(block: (I) -> O, config: TraceConfig): (I) -> O {
@@ -436,12 +479,12 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
 
     val run =
         if (parentRun != null) {
-            parentRun.createChild(config, inputs)
+            parentRun.createChild(config).also { it.inputs = inputs }
         } else {
             // Root run — resolve client and create the tree.
             val client =
                 config.client
-                    ?: RunTree.getDefaultClient()
+                    ?: resolveDefaultClient()
                     ?: throw IllegalStateException(
                         "No LangSmith client available. Either pass a client in TraceConfig, " +
                             "call RunTree.setDefaultClient(), or ensure LangsmithOkHttpClient " +
@@ -457,7 +500,7 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
             RunTree(
                 id = runId,
                 traceId = runId,
-                dottedOrder = dottedOrder(startTime, runId),
+                dottedOrder = dottedOrderSegment(startTime, runId),
                 parentRunId = null,
                 name = config.name ?: DEFAULT_RUN_NAME,
                 runType = config.runType,
@@ -493,17 +536,25 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
     }
 }
 
+// TODO: Delegate background posting to the client's own executor/queue once background run
+//  processing is implemented there. Currently we manage our own executor and submit individual
+//  ingestBatch calls per run, which means no batching and no client-level flush/shutdown.
 private fun postRun(run: RunTree) {
+    val client = run.client ?: return
+    val executor = run.executor ?: DEFAULT_EXECUTOR
     val runData = buildRunData(run)
-    submitSafely(run.executor, run.name) {
-        run.client.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
+    submitSafely(executor, run.name) {
+        client.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
     }
 }
 
+// TODO: Same as postRun — should delegate to the client once available.
 private fun patchRun(run: RunTree) {
+    val client = run.client ?: return
+    val executor = run.executor ?: DEFAULT_EXECUTOR
     val runData = buildRunData(run)
-    submitSafely(run.executor, run.name) {
-        run.client.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
+    submitSafely(executor, run.name) {
+        client.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
     }
 }
 
@@ -552,7 +603,7 @@ private fun buildRunData(run: RunTree): Run {
             .name(run.name)
             .runType(Run.RunType.of(run.runType.value))
             .startTime(run.startTime)
-            .sessionName(run.projectName)
+            .apply { run.projectName?.let { sessionName(it) } }
             .tags(run.tags)
             .inputs(
                 Run.Inputs.builder().putAllAdditionalProperties(toJsonValueMap(run.inputs)).build()

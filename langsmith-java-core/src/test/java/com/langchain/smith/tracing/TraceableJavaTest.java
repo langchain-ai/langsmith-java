@@ -89,8 +89,8 @@ class TraceableJavaTest {
 
     @Test
     void getCurrentRun_insideTracedFunction() {
-        Function<String, RunTree> traced =
-                Tracing.traceable((Function<String, RunTree>) input -> RunTree.getCurrent(), config("get-run-test"));
+        Function<String, RunTree> traced = Tracing.traceable(
+                (Function<String, RunTree>) input -> Tracing.getCurrentRunTree(), config("get-run-test"));
         RunTree run = traced.apply("hello");
         assertThat(run).isNotNull();
         assertThat(run.getId()).isNotBlank();
@@ -103,7 +103,7 @@ class TraceableJavaTest {
     void getCurrentRun_canMutateMetadata() {
         Function<String, String> traced = Tracing.traceable(
                 (Function<String, String>) input -> {
-                    RunTree run = RunTree.getCurrent();
+                    RunTree run = Tracing.getCurrentRunTree();
                     run.getMetadata().put("java_key", "java_value");
                     return "done";
                 },
@@ -113,7 +113,7 @@ class TraceableJavaTest {
 
     @Test
     void getCurrentRun_outsideTracedFunction() {
-        assertThat(RunTree.getCurrent()).isNull();
+        assertThat(Tracing.getCurrentRunTree()).isNull();
     }
 
     // ---- tracingEnabled ----
@@ -137,7 +137,7 @@ class TraceableJavaTest {
                 .tracingEnabled(false)
                 .build();
         Function<String, RunTree> traced =
-                Tracing.traceable((Function<String, RunTree>) input -> RunTree.getCurrent(), disabled);
+                Tracing.traceable((Function<String, RunTree>) input -> Tracing.getCurrentRunTree(), disabled);
         assertThat(traced.apply("hello")).isNull();
     }
 }

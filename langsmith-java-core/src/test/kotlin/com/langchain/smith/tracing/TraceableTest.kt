@@ -224,7 +224,7 @@ internal class TraceableTest {
         val traced =
             traceable(
                 { _: Unit ->
-                    capturedRun = RunTree.getCurrent()
+                    capturedRun = getCurrentRunTree()
                     "done"
                 },
                 config("get-run-test"),
@@ -245,7 +245,7 @@ internal class TraceableTest {
         val child =
             traceable(
                 { _: Unit ->
-                    childRun = RunTree.getCurrent()
+                    childRun = getCurrentRunTree()
                     "child"
                 },
                 config("child"),
@@ -253,7 +253,7 @@ internal class TraceableTest {
         val parent =
             traceable(
                 { _: Unit ->
-                    parentRun = RunTree.getCurrent()
+                    parentRun = getCurrentRunTree()
                     child(Unit)
                 },
                 config("parent"),
@@ -272,7 +272,7 @@ internal class TraceableTest {
         val traced =
             traceable(
                 { _: Unit ->
-                    val run = RunTree.getCurrent()!!
+                    val run = getCurrentRunTree()!!
                     run.metadata["custom_key"] = "custom_value"
                     run.metadata["numeric"] = 42
                     capturedRun = run
@@ -295,7 +295,7 @@ internal class TraceableTest {
         val traced =
             traceable(
                 { _: Unit ->
-                    val run = RunTree.getCurrent()!!
+                    val run = getCurrentRunTree()!!
                     run.extra["custom_data"] = mapOf("nested" to true)
                     capturedRun = run
                     "done"
@@ -312,6 +312,6 @@ internal class TraceableTest {
 
     @Test
     fun getCurrentRun_outsideTracedFunction() {
-        assertThat(RunTree.getCurrent()).isNull()
+        assertThat(getCurrentRunTree()).isNull()
     }
 }

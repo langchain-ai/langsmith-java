@@ -1,14 +1,13 @@
 package com.langchain.smith.tracing
 
 import com.langchain.smith.client.LangsmithClient
-import java.util.concurrent.Executors
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 
 /**
- * Unit tests for [traceable] input/output serialization. Uses a mock client so no API key is
- * required.
+ * Unit tests for [traceable] input/output serialization, config inheritance, and [createChild].
+ * Uses a mock client so no API key is required.
  */
 internal class TraceableUnitTest {
 
@@ -17,229 +16,173 @@ internal class TraceableUnitTest {
     private fun config(name: String) =
         TraceConfig(name = name, client = client, tracingEnabled = true)
 
-    // ---- String input wrapping ----
+    // ---- Helpers ----
 
-    @Test
-    fun stringInput_wrappedAsInputKey() {
-        var capturedInputs: Map<String, Any?>? = null
+    /** Traces a 1-arg function, invokes it, and returns the captured [RunTree]. */
+    private fun <I> traceAndCapture(input: I, name: String = "test"): RunTree {
+        var run: RunTree? = null
         val traced =
             traceable(
-                { input: String ->
-                    capturedInputs = RunTree.getCurrent()?.inputs
+                { _: I ->
+                    run = getCurrentRunTree()
                     "result"
                 },
-                config("string-input"),
+                config(name),
             )
-        traced("hello")
-        assertThat(capturedInputs).isEqualTo(mapOf("inputs" to "hello"))
+        traced(input)
+        return run!!
+    }
+
+    /** Traces a function returning [output], invokes it, and returns the captured [RunTree]. */
+    private fun <O> traceWithOutput(output: O, name: String = "test"): RunTree {
+        var run: RunTree? = null
+        val traced =
+            traceable(
+                { _: Unit ->
+                    run = getCurrentRunTree()
+                    output
+                },
+                config(name),
+            )
+        traced(Unit)
+        return run!!
+    }
+
+    /**
+     * Runs a parent→child nesting where the child uses [childConfig] and returns the child's
+     * captured [RunTree].
+     */
+    private fun traceChild(childConfig: TraceConfig): RunTree {
+        var childRun: RunTree? = null
+        val child =
+            traceable(
+                { _: Unit ->
+                    childRun = getCurrentRunTree()
+                    "child"
+                },
+                childConfig,
+            )
+        val parent = traceable({ _: Unit -> child(Unit) }, config("parent"))
+        parent(Unit)
+        return childRun!!
+    }
+
+    private fun rootRun(
+        name: String = "parent",
+        metadata: Map<String, Any> = emptyMap(),
+        tags: List<String> = emptyList(),
+        projectName: String = "test-project",
+    ) =
+        RunTree(
+            name = name,
+            metadata = metadata.toMutableMap(),
+            tags = tags.toMutableList(),
+            projectName = projectName,
+            client = client,
+        )
+
+    // ---- Input serialization ----
+
+    @Test
+    fun stringInput_wrappedAsInputsKey() {
+        assertThat(traceAndCapture("hello").inputs).isEqualTo(mapOf("inputs" to "hello"))
     }
 
     @Test
-    fun intInput_wrappedAsInputKey() {
-        var capturedInputs: Map<String, Any?>? = null
-        val traced =
-            traceable(
-                { input: Int ->
-                    capturedInputs = RunTree.getCurrent()?.inputs
-                    "result"
-                },
-                config("int-input"),
-            )
-        traced(42)
-        assertThat(capturedInputs).isEqualTo(mapOf("inputs" to 42))
+    fun intInput_wrappedAsInputsKey() {
+        assertThat(traceAndCapture(42).inputs).isEqualTo(mapOf("inputs" to 42))
     }
 
     @Test
-    fun listInput_wrappedAsInputKey() {
-        var capturedInputs: Map<String, Any?>? = null
-        val traced =
-            traceable(
-                { input: List<String> ->
-                    capturedInputs = RunTree.getCurrent()?.inputs
-                    "result"
-                },
-                config("list-input"),
-            )
-        traced(listOf("a", "b"))
-        assertThat(capturedInputs).isEqualTo(mapOf("inputs" to listOf("a", "b")))
+    fun listInput_wrappedAsInputsKey() {
+        assertThat(traceAndCapture(listOf("a", "b")).inputs)
+            .isEqualTo(mapOf("inputs" to listOf("a", "b")))
     }
 
     @Test
     fun mapInput_usedDirectly() {
-        var capturedInputs: Map<String, Any?>? = null
-        val traced =
-            traceable(
-                { input: Map<String, Any?> ->
-                    capturedInputs = RunTree.getCurrent()?.inputs
-                    "result"
-                },
-                config("map-input"),
-            )
-        traced(mapOf("question" to "hello", "context" to "world"))
-        assertThat(capturedInputs).isEqualTo(mapOf("question" to "hello", "context" to "world"))
+        val input = mapOf("question" to "hello", "context" to "world")
+        assertThat(traceAndCapture(input).inputs).isEqualTo(input)
     }
 
     @Test
-    fun mapWithNonStringKeys_wrappedAsInputKey() {
-        var capturedInputs: Map<String, Any?>? = null
-        val traced =
-            traceable(
-                { input: Map<Int, String> ->
-                    capturedInputs = RunTree.getCurrent()?.inputs
-                    "result"
-                },
-                config("non-string-key-input"),
-            )
-        traced(mapOf(1 to "a", 2 to "b"))
-        assertThat(capturedInputs).containsKey("inputs")
+    fun mapWithNonStringKeys_wrappedAsInputsKey() {
+        assertThat(traceAndCapture(mapOf(1 to "a", 2 to "b")).inputs).containsKey("inputs")
     }
-
-    // ---- String output wrapping ----
-
-    @Test
-    fun stringOutput_wrappedAsOutputKey() {
-        var childRun: RunTree? = null
-        val traced =
-            traceable(
-                { _: Unit ->
-                    childRun = RunTree.getCurrent()
-                    "hello world"
-                },
-                config("string-output"),
-            )
-        traced(Unit)
-        assertThat(childRun).isNotNull
-        assertThat(childRun!!.outputs).isEqualTo(mapOf("outputs" to "hello world"))
-    }
-
-    @Test
-    fun intOutput_wrappedAsOutputKey() {
-        var childRun: RunTree? = null
-        val traced =
-            traceable(
-                { _: Unit ->
-                    childRun = RunTree.getCurrent()
-                    42
-                },
-                config("int-output"),
-            )
-        traced(Unit)
-        assertThat(childRun!!.outputs).isEqualTo(mapOf("outputs" to 42))
-    }
-
-    @Test
-    fun nullOutput_wrappedAsOutputKey() {
-        var childRun: RunTree? = null
-        val traced =
-            traceable(
-                { _: Unit ->
-                    childRun = RunTree.getCurrent()
-                    null
-                },
-                config("null-output"),
-            )
-        traced(Unit)
-        assertThat(childRun!!.outputs).isEqualTo(mapOf("outputs" to null))
-    }
-
-    @Test
-    fun mapOutput_usedDirectly() {
-        var childRun: RunTree? = null
-        val traced =
-            traceable(
-                { _: Unit ->
-                    childRun = RunTree.getCurrent()
-                    mapOf("answer" to "42", "confidence" to 0.95)
-                },
-                config("map-output"),
-            )
-        traced(Unit)
-        assertThat(childRun!!.outputs).isEqualTo(mapOf("answer" to "42", "confidence" to 0.95))
-    }
-
-    @Test
-    fun listOutput_wrappedAsOutputKey() {
-        var childRun: RunTree? = null
-        val traced =
-            traceable(
-                { _: Unit ->
-                    childRun = RunTree.getCurrent()
-                    listOf("a", "b", "c")
-                },
-                config("list-output"),
-            )
-        traced(Unit)
-        assertThat(childRun!!.outputs).isEqualTo(mapOf("outputs" to listOf("a", "b", "c")))
-    }
-
-    // ---- 0-arg input ----
 
     @Test
     fun zeroArgInput_emptyMap() {
         var capturedInputs: Map<String, Any?>? = null
         val block: () -> String = {
-            capturedInputs = RunTree.getCurrent()?.inputs
+            capturedInputs = getCurrentRunTree()?.inputs
             "result"
         }
-        val traced = traceable(block, config("zero-arg-input"))
-        traced()
+        traceable(block, config("zero-arg"))()
         assertThat(capturedInputs).isEqualTo(emptyMap<String, Any?>())
     }
 
-    // ---- Multi-arg input ----
-
     @Test
-    fun twoArgInput_wrappedAsI1I2() {
+    fun twoArgInput_wrappedAsArgs() {
         var capturedInputs: Map<String, Any?>? = null
-        val traced =
-            traceable(
-                { a: String, b: Int ->
-                    capturedInputs = RunTree.getCurrent()?.inputs
-                    "result"
-                },
-                config("two-arg-input"),
-            )
-        traced("hello", 42)
+        traceable(
+            { a: String, b: Int ->
+                capturedInputs = getCurrentRunTree()?.inputs
+                "result"
+            },
+            config("two-arg"),
+        )("hello", 42)
         assertThat(capturedInputs).isEqualTo(mapOf("args" to listOf("hello", 42)))
     }
 
     @Test
-    fun threeArgInput_wrappedAsI1I2I3() {
+    fun threeArgInput_wrappedAsArgs() {
         var capturedInputs: Map<String, Any?>? = null
-        val traced =
-            traceable(
-                { a: String, b: Int, c: Boolean ->
-                    capturedInputs = RunTree.getCurrent()?.inputs
-                    "result"
-                },
-                config("three-arg-input"),
-            )
-        traced("hello", 42, true)
+        traceable(
+            { a: String, b: Int, c: Boolean ->
+                capturedInputs = getCurrentRunTree()?.inputs
+                "result"
+            },
+            config("three-arg"),
+        )("hello", 42, true)
         assertThat(capturedInputs).isEqualTo(mapOf("args" to listOf("hello", 42, true)))
     }
 
-    // ---- Config inheritance ----
+    // ---- Output serialization ----
+
+    @Test
+    fun stringOutput_wrappedAsOutputsKey() {
+        assertThat(traceWithOutput("hello world").outputs)
+            .isEqualTo(mapOf("outputs" to "hello world"))
+    }
+
+    @Test
+    fun intOutput_wrappedAsOutputsKey() {
+        assertThat(traceWithOutput(42).outputs).isEqualTo(mapOf("outputs" to 42))
+    }
+
+    @Test
+    fun nullOutput_wrappedAsOutputsKey() {
+        assertThat(traceWithOutput(null).outputs).isEqualTo(mapOf("outputs" to null))
+    }
+
+    @Test
+    fun mapOutput_usedDirectly() {
+        val output = mapOf("answer" to "42", "confidence" to 0.95)
+        assertThat(traceWithOutput(output).outputs).isEqualTo(output)
+    }
+
+    @Test
+    fun listOutput_wrappedAsOutputsKey() {
+        assertThat(traceWithOutput(listOf("a", "b", "c")).outputs)
+            .isEqualTo(mapOf("outputs" to listOf("a", "b", "c")))
+    }
+
+    // ---- Config inheritance via traceable ----
 
     @Test
     fun childInheritsClientFromParent() {
-        var childRun: RunTree? = null
-        val child =
-            traceable(
-                { _: Unit ->
-                    childRun = RunTree.getCurrent()
-                    "child"
-                },
-                TraceConfig("child"), // no client — should inherit
-            )
-        val parent =
-            traceable(
-                { _: Unit -> child(Unit) },
-                config("parent"), // has client
-            )
-        parent(Unit)
-        assertThat(childRun).isNotNull
-        // Child inherited the client — run was created successfully (would have thrown otherwise)
-        assertThat(childRun!!.name).isEqualTo("child")
+        val childRun = traceChild(TraceConfig("child"))
+        assertThat(childRun.name).isEqualTo("child")
     }
 
     @Test
@@ -248,10 +191,10 @@ internal class TraceableUnitTest {
         val child =
             traceable(
                 { _: Unit ->
-                    childRun = RunTree.getCurrent()
+                    childRun = getCurrentRunTree()
                     "child"
                 },
-                TraceConfig("child"), // no projectName — should inherit
+                TraceConfig("child"),
             )
         val parent =
             traceable(
@@ -264,7 +207,6 @@ internal class TraceableUnitTest {
                 ),
             )
         parent(Unit)
-        assertThat(childRun).isNotNull
         assertThat(childRun!!.projectName).isEqualTo("inherited-project")
     }
 
@@ -274,7 +216,7 @@ internal class TraceableUnitTest {
         val child =
             traceable(
                 { _: Unit ->
-                    childRun = RunTree.getCurrent()
+                    childRun = getCurrentRunTree()
                     "child"
                 },
                 TraceConfig("child", projectName = "child-project"),
@@ -290,78 +232,23 @@ internal class TraceableUnitTest {
                 ),
             )
         parent(Unit)
-        assertThat(childRun).isNotNull
         assertThat(childRun!!.projectName).isEqualTo("child-project")
     }
 
     @Test
     fun childInheritsTracingEnabledFromParent() {
-        var childRun: RunTree? = null
-        val child =
-            traceable(
-                { _: Unit ->
-                    childRun = RunTree.getCurrent()
-                    "child"
-                },
-                TraceConfig("child"), // no tracingEnabled — should inherit true from parent
-            )
-        val parent = traceable({ _: Unit -> child(Unit) }, config("parent"))
-        parent(Unit)
-        // If tracing was inherited as enabled, the child run tree should exist
-        assertThat(childRun).isNotNull
+        val childRun = traceChild(TraceConfig("child"))
+        assertThat(childRun.name).isEqualTo("child")
     }
 
     @Test
     fun childCanDisableTracing() {
-        var childRun: RunTree? = null
-        val child =
-            traceable(
-                { _: Unit ->
-                    childRun = RunTree.getCurrent()
-                    "child"
-                },
-                TraceConfig("child", tracingEnabled = false), // explicitly disabled
-            )
-        val parent = traceable({ _: Unit -> child(Unit) }, config("parent"))
-        parent(Unit)
-        // Child disabled tracing — no new run is created, so getCurrent() still returns the
-        // parent's run (not a child run).
-        assertThat(childRun).isNotNull
-        assertThat(childRun!!.name).isEqualTo("parent")
+        val childRun = traceChild(TraceConfig("child", tracingEnabled = false))
+        // Child disabled tracing — no new run is created, so getCurrentRunTree() returns parent.
+        assertThat(childRun.name).isEqualTo("parent")
     }
 
     // ---- createChild ----
-
-    private fun rootRun(
-        name: String = "parent",
-        metadata: Map<String, Any> = emptyMap(),
-        tags: List<String> = emptyList(),
-        projectName: String = "test-project",
-    ): RunTree {
-        val now = java.time.Instant.now()
-        val id = uuidv7(now)
-        val startTime = ISO_FORMAT.format(now)
-        return RunTree(
-            id = id,
-            traceId = id,
-            dottedOrder = dottedOrder(startTime, id),
-            parentRunId = null,
-            name = name,
-            runType = RunType.CHAIN,
-            startTime = startTime,
-            projectName = projectName,
-            inputs = null,
-            outputs = null,
-            error = null,
-            endTime = null,
-            metadata = metadata.toMutableMap(),
-            tags = tags.toMutableList(),
-            extra = mutableMapOf(),
-            client = client,
-            executor = Executors.newCachedThreadPool(),
-            tracingEnabled = true,
-        )
-    }
 
     @Test
     fun createChild_inheritsTraceId() {
@@ -373,43 +260,42 @@ internal class TraceableUnitTest {
     @Test
     fun createChild_setsParentRunId() {
         val parent = rootRun()
-        val child = parent.createChild(TraceConfig("child"))
-        assertThat(child.parentRunId).isEqualTo(parent.id)
+        assertThat(parent.createChild(TraceConfig("child")).parentRunId).isEqualTo(parent.id)
     }
 
     @Test
     fun createChild_extendsDottedOrder() {
         val parent = rootRun()
-        val child = parent.createChild(TraceConfig("child"))
-        assertThat(child.dottedOrder).startsWith(parent.dottedOrder + ".")
+        assertThat(parent.createChild(TraceConfig("child")).dottedOrder)
+            .startsWith(parent.dottedOrder + ".")
     }
 
     @Test
     fun createChild_inheritsProjectName() {
         val parent = rootRun(projectName = "inherited-project")
-        val child = parent.createChild(TraceConfig("child"))
-        assertThat(child.projectName).isEqualTo("inherited-project")
+        assertThat(parent.createChild(TraceConfig("child")).projectName)
+            .isEqualTo("inherited-project")
     }
 
     @Test
     fun createChild_overridesProjectName() {
         val parent = rootRun(projectName = "parent-project")
-        val child = parent.createChild(TraceConfig("child", projectName = "child-project"))
-        assertThat(child.projectName).isEqualTo("child-project")
+        assertThat(
+                parent.createChild(TraceConfig("child", projectName = "child-project")).projectName
+            )
+            .isEqualTo("child-project")
     }
 
     @Test
     fun createChild_inheritsClient() {
         val parent = rootRun()
-        val child = parent.createChild(TraceConfig("child"))
-        assertThat(child.client).isSameAs(parent.client)
+        assertThat(parent.createChild(TraceConfig("child")).client).isSameAs(parent.client)
     }
 
     @Test
     fun createChild_overridesClient() {
-        val parent = rootRun()
         val otherClient: LangsmithClient = mock()
-        val child = parent.createChild(TraceConfig("child", client = otherClient))
+        val child = rootRun().createChild(TraceConfig("child", client = otherClient))
         assertThat(child.client).isSameAs(otherClient)
     }
 
@@ -421,50 +307,38 @@ internal class TraceableUnitTest {
                 TraceConfig("child", metadata = mapOf("shared" to "child", "child_only" to "yes"))
             )
         assertThat(child.metadata)
-            .containsEntry("shared", "child") // child wins
-            .containsEntry("parent_only", "yes") // inherited
-            .containsEntry("child_only", "yes") // child's own
+            .containsEntry("shared", "child")
+            .containsEntry("parent_only", "yes")
+            .containsEntry("child_only", "yes")
     }
 
     @Test
     fun createChild_inheritsMetadata_whenChildHasNone() {
         val parent = rootRun(metadata = mapOf("key" to "value"))
-        val child = parent.createChild(TraceConfig("child"))
-        assertThat(child.metadata).containsEntry("key", "value")
+        assertThat(parent.createChild(TraceConfig("child")).metadata).containsEntry("key", "value")
     }
 
     @Test
     fun createChild_mergesTags() {
         val parent = rootRun(tags = listOf("parent-tag"))
-        val child = parent.createChild(TraceConfig("child", tags = listOf("child-tag")))
-        assertThat(child.tags).containsExactly("parent-tag", "child-tag")
+        assertThat(parent.createChild(TraceConfig("child", tags = listOf("child-tag"))).tags)
+            .containsExactly("parent-tag", "child-tag")
     }
 
     @Test
     fun createChild_inheritsTags_whenChildHasNone() {
         val parent = rootRun(tags = listOf("parent-tag"))
-        val child = parent.createChild(TraceConfig("child"))
-        assertThat(child.tags).containsExactly("parent-tag")
-    }
-
-    @Test
-    fun createChild_setsInputs() {
-        val parent = rootRun()
-        val child = parent.createChild(TraceConfig("child"), mapOf("question" to "hello"))
-        assertThat(child.inputs).isEqualTo(mapOf("question" to "hello"))
+        assertThat(parent.createChild(TraceConfig("child")).tags).containsExactly("parent-tag")
     }
 
     @Test
     fun createChild_defaultsInputsToNull() {
-        val parent = rootRun()
-        val child = parent.createChild(TraceConfig("child"))
-        assertThat(child.inputs).isNull()
+        assertThat(rootRun().createChild(TraceConfig("child")).inputs).isNull()
     }
 
     @Test
     fun createChild_setsNameAndRunType() {
-        val parent = rootRun()
-        val child = parent.createChild(TraceConfig("my-tool", runType = RunType.TOOL))
+        val child = rootRun().createChild(TraceConfig("my-tool", runType = RunType.TOOL))
         assertThat(child.name).isEqualTo("my-tool")
         assertThat(child.runType).isEqualTo(RunType.TOOL)
     }
@@ -480,8 +354,7 @@ internal class TraceableUnitTest {
 
     @Test
     fun createChild_startsWithEmptyOutputsAndNoError() {
-        val parent = rootRun()
-        val child = parent.createChild(TraceConfig("child"))
+        val child = rootRun().createChild(TraceConfig("child"))
         assertThat(child.outputs).isNull()
         assertThat(child.error).isNull()
         assertThat(child.endTime).isNull()

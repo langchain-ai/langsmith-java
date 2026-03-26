@@ -2,75 +2,75 @@ package com.langchain.smith.tracing
 
 import com.langchain.smith.client.LangsmithClient
 import java.time.Instant
-import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
-import org.slf4j.LoggerFactory
-
-private val logger = LoggerFactory.getLogger(RunTree::class.java)
 
 /**
  * Represents a run in the trace tree.
  *
- * Use the static methods on the [companion object][Companion] to access the current run, set a
- * default client, or propagate context across async boundaries.
- *
+ * Can be created manually, via [traceable], or via [createChild]:
  * ```kotlin
+ * // Via traceable (most common)
  * val traced = traceable({ input: String ->
- *     val run = RunTree.getCurrent()!!
+ *     val run = getCurrentRunTree()!!
  *     run.metadata["my_key"] = "my_value"
- *     run.extra["custom_field"] = mapOf("nested" to true)
  *     "result"
  * }, TraceConfig("my-run"))
+ *
+ * // Manual creation
+ * val run = RunTree(name = "my-run", runType = RunType.LLM, client = myClient)
+ * ```
+ * ```java
+ * // Java — via builder
+ * RunTree run = RunTree.builder()
+ *     .name("my-run")
+ *     .runType(RunType.LLM)
+ *     .client(client)
+ *     .build();
  * ```
  */
 class RunTree
-internal constructor(
-    /** The unique identifier of this run. */
-    val id: String,
-    /** The trace ID shared by all runs in the same trace tree. */
-    val traceId: String,
-    /**
-     * The dotted order string that encodes the full path from the root run to this run, used for
-     * ordering.
-     */
-    val dottedOrder: String,
-    /** The run ID of the parent, or `null` if this is a root run. */
-    val parentRunId: String?,
+constructor(
     /** The display name of this run. */
-    val name: String,
+    val name: String = "<lambda>",
     /** The type of run (chain, llm, tool, retriever). */
-    val runType: RunType,
-    /** ISO-8601 start time of this run. */
-    val startTime: String,
-    /** The LangSmith project name this run is posted to. */
-    val projectName: String,
-    /** The run's input data. Mutate to override what is sent to LangSmith. */
-    var inputs: Map<String, Any?>?,
-    /** The run's output data. Set automatically when the traced function returns. */
-    var outputs: Map<String, Any?>?,
-    /** Error string if the traced function threw. Set automatically. */
-    var error: String?,
-    /** ISO-8601 end time. Set automatically when the traced function completes. */
-    var endTime: String?,
-    /**
-     * Mutable metadata attached to this run. Add entries during execution and they will be included
-     * when the run is posted to LangSmith.
-     */
-    val metadata: MutableMap<String, Any>,
-    /** Mutable tags for filtering in LangSmith. Add entries during execution. */
-    val tags: MutableList<String>,
-    /**
-     * Mutable extra data attached to this run. Add entries during execution and they will be
-     * included when the run is posted to LangSmith.
-     */
-    val extra: MutableMap<String, Any>,
+    val runType: RunType = RunType.CHAIN,
+    /** The run's input data. */
+    var inputs: Map<String, Any?>? = null,
+    /** The run's output data. */
+    var outputs: Map<String, Any?>? = null,
+    /** Error string if the run failed. */
+    var error: String? = null,
+    /** Mutable metadata attached to this run. */
+    val metadata: MutableMap<String, Any> = mutableMapOf(),
+    /** Mutable tags for filtering in LangSmith. */
+    val tags: MutableList<String> = mutableListOf(),
+    /** Mutable extra data attached to this run. */
+    val extra: MutableMap<String, Any> = mutableMapOf(),
+    /** The LangSmith project name, or `null` for the server default. */
+    val projectName: String? = null,
     /** The client used to post this run. Inherited by child runs. */
-    @get:JvmSynthetic internal val client: LangsmithClient,
+    @get:JvmSynthetic internal val client: LangsmithClient? = null,
     /** The executor used for background posting. Inherited by child runs. */
-    @get:JvmSynthetic internal val executor: ExecutorService,
+    @get:JvmSynthetic internal val executor: ExecutorService? = null,
     /** Whether tracing is enabled. Inherited by child runs. */
-    @get:JvmSynthetic internal val tracingEnabled: Boolean,
+    @get:JvmSynthetic internal val tracingEnabled: Boolean = true,
+    /** The unique identifier of this run. Auto-generated UUIDv7 if not provided. */
+    val id: String = defaultId(),
+    /** The trace ID shared by all runs in the same trace tree. Defaults to [id] for root runs. */
+    val traceId: String = id,
+    /** ISO-8601 start time of this run. Auto-generated if not provided. */
+    val startTime: String = defaultStartTime(),
+    /**
+     * The dotted order string that encodes the full path from the root run to this run. Defaults to
+     * a segment derived from [startTime] and [id].
+     */
+    val dottedOrder: String = dottedOrderSegment(startTime, id),
+    /** The run ID of the parent, or `null` if this is a root run. */
+    val parentRunId: String? = null,
+    /** ISO-8601 end time. Set when the run completes. */
+    var endTime: String? = null,
 ) {
+
     /**
      * Creates a child [RunTree] under this run. The child inherits [client], [projectName],
      * [executor], and [tracingEnabled] from this run. Per-run fields from [config] (name, runType,
@@ -78,15 +78,13 @@ internal constructor(
      * takes precedence.
      *
      * @param config per-run configuration for the child
-     * @param inputs the child's input data
      * @return a new [RunTree] that is a child of this run
      */
-    @JvmOverloads
-    fun createChild(config: TraceConfig, inputs: Map<String, Any?>? = null): RunTree {
+    fun createChild(config: TraceConfig): RunTree {
         val now = Instant.now()
         val childId = uuidv7(now)
         val childStartTime = ISO_FORMAT.format(now)
-        val childDottedOrder = "$dottedOrder.${dottedOrder(childStartTime, childId)}"
+        val childDottedOrder = "$dottedOrder.${dottedOrderSegment(childStartTime, childId)}"
 
         // Merge metadata: parent metadata first, child config metadata on top.
         val mergedMetadata = mutableMapOf<String, Any>()
@@ -106,13 +104,8 @@ internal constructor(
             runType = config.runType,
             startTime = childStartTime,
             projectName = config.projectName ?: projectName,
-            inputs = inputs,
-            outputs = null,
-            error = null,
-            endTime = null,
             metadata = mergedMetadata,
             tags = mergedTags,
-            extra = mutableMapOf(),
             client = config.client ?: client,
             executor = config.executor ?: executor,
             tracingEnabled = config.tracingEnabled ?: tracingEnabled,
@@ -120,98 +113,150 @@ internal constructor(
     }
 
     override fun toString(): String =
-        "RunTree{id=$id, traceId=$traceId, name=$name, parentRunId=$parentRunId}"
+        buildList {
+                add("id=$id")
+                add("traceId=$traceId")
+                add("name=$name")
+                add("runType=$runType")
+                add("startTime=$startTime")
+                projectName?.let { add("projectName=$it") }
+                parentRunId?.let { add("parentRunId=$it") }
+                add("dottedOrder=$dottedOrder")
+                inputs?.let { add("inputs=$it") }
+                outputs?.let { add("outputs=$it") }
+                error?.let { add("error=$it") }
+                endTime?.let { add("endTime=$it") }
+                if (metadata.isNotEmpty()) add("metadata=$metadata")
+                if (tags.isNotEmpty()) add("tags=$tags")
+                if (extra.isNotEmpty()) add("extra=$extra")
+            }
+            .joinToString(", ", "RunTree{", "}")
 
     companion object {
-        @Volatile private var userDefaultClient: LangsmithClient? = null
+        /** Creates a new [Builder] for constructing a [RunTree]. */
+        @JvmStatic fun builder() = Builder()
 
-        private val defaultClient: LangsmithClient? by lazy {
-            userDefaultClient ?: createClientFromEnv()
-        }
+        private fun defaultId(): String = uuidv7(Instant.now())
 
-        /**
-         * Returns the [RunTree] for the currently-executing traced function on this thread, or
-         * `null` if there is no active run (e.g. called outside a [traceable] wrapper, or tracing
-         * is disabled).
-         *
-         * The returned [RunTree] is mutable — you can add entries to [RunTree.metadata] or
-         * [RunTree.extra] and they will be included when the run is posted to LangSmith.
-         *
-         * To propagate context across async boundaries, pass the returned [RunTree] to
-         * [RunTree.withParent] on the new thread.
-         *
-         * @see RunTree.withParent
-         * @see traceable
-         */
-        @JvmStatic fun getCurrent(): RunTree? = CURRENT_RUN.get()
+        private fun defaultStartTime(): String = ISO_FORMAT.format(Instant.now())
+    }
 
-        /**
-         * Sets the default [LangsmithClient] used by [traceable] when no client is provided in
-         * [TraceConfig] and there is no parent run to inherit from.
-         *
-         * This is typically called once at application startup:
-         * ```kotlin
-         * RunTree.setDefaultClient(LangsmithOkHttpClient.fromEnv())
-         * ```
-         *
-         * If not set explicitly, a default client is created automatically via reflection when
-         * tracing is enabled and `LangsmithOkHttpClient` is on the classpath.
-         *
-         * @see TraceConfig.client
-         */
-        @JvmStatic
-        fun setDefaultClient(client: LangsmithClient) {
-            userDefaultClient = client
-        }
+    /** Returns a new [Builder] pre-populated with the values from this run. */
+    fun toBuilder() = Builder().from(this)
 
-        /**
-         * Returns the default [LangsmithClient], resolving in order: user-set default, then
-         * auto-created from environment via reflection. Returns `null` if neither is available.
-         */
-        @JvmSynthetic internal fun getDefaultClient(): LangsmithClient? = defaultClient
+    /**
+     * A builder for [RunTree].
+     *
+     * ```java
+     * RunTree run = RunTree.builder()
+     *     .name("my-run")
+     *     .runType(RunType.LLM)
+     *     .client(client)
+     *     .inputs(Map.of("question", "hello"))
+     *     .build();
+     * ```
+     */
+    class Builder internal constructor() {
+        private var name: String = "<lambda>"
+        private var runType: RunType = RunType.CHAIN
+        private var inputs: Map<String, Any?>? = null
+        private var outputs: Map<String, Any?>? = null
+        private var error: String? = null
+        private var metadata: MutableMap<String, Any> = mutableMapOf()
+        private var tags: MutableList<String> = mutableListOf()
+        private var extra: MutableMap<String, Any> = mutableMapOf()
+        private var projectName: String? = null
+        private var client: LangsmithClient? = null
+        private var executor: ExecutorService? = null
+        private var tracingEnabled: Boolean = true
+        private var id: String? = null
+        private var traceId: String? = null
+        private var startTime: String? = null
+        private var dottedOrder: String? = null
+        private var parentRunId: String? = null
+        private var endTime: String? = null
 
-        /**
-         * Executes [block] with [parent] as the current run on this thread. Traced functions called
-         * inside [block] will become children of [parent].
-         *
-         * Use this to propagate context across async boundaries where the run context is not
-         * automatically inherited (e.g. `CompletableFuture`, `ExecutorService`, coroutines).
-         *
-         * On Java 21+, `ScopedValue` is used for context storage, which also propagates into child
-         * tasks forked via `StructuredTaskScope`. On older JVMs a `ThreadLocal` is used as a
-         * fallback. **Neither mechanism automatically propagates context across unstructured async
-         * boundaries** — use this method for those cases.
-         *
-         * ```kotlin
-         * val parent = RunTree.getCurrent()
-         * CompletableFuture.supplyAsync {
-         *     RunTree.withParent(parent) {
-         *         tracedChild("input")
-         *     }
-         * }
-         * ```
-         *
-         * @param parent the run to set as the current parent, or `null` to clear the context
-         * @param block the code to execute with the given parent context
-         * @return the result of [block]
-         * @see getCurrent
-         */
-        @JvmStatic
-        fun <T> withParent(parent: RunTree?, block: Callable<T>): T =
-            CURRENT_RUN.runWith(parent) { block.call() }
-
-        /** Kotlin-friendly overload of [withParent]. */
         @JvmSynthetic
-        fun <T> withParent(parent: RunTree?, block: () -> T): T = CURRENT_RUN.runWith(parent, block)
+        internal fun from(run: RunTree) = apply {
+            name = run.name
+            runType = run.runType
+            inputs = run.inputs
+            outputs = run.outputs
+            error = run.error
+            metadata = run.metadata.toMutableMap()
+            tags = run.tags.toMutableList()
+            extra = run.extra.toMutableMap()
+            projectName = run.projectName
+            client = run.client
+            executor = run.executor
+            tracingEnabled = run.tracingEnabled
+            id = run.id
+            traceId = run.traceId
+            startTime = run.startTime
+            dottedOrder = run.dottedOrder
+            parentRunId = run.parentRunId
+            endTime = run.endTime
+        }
 
-        private fun createClientFromEnv(): LangsmithClient? =
-            try {
-                val clazz = Class.forName("com.langchain.smith.client.okhttp.LangsmithOkHttpClient")
-                val fromEnv = clazz.getMethod("fromEnv")
-                fromEnv.invoke(null) as? LangsmithClient
-            } catch (e: Exception) {
-                logger.debug("Could not create default LangSmith client from environment", e)
-                null
-            }
+        fun name(name: String) = apply { this.name = name }
+
+        fun runType(runType: RunType) = apply { this.runType = runType }
+
+        fun inputs(inputs: Map<String, Any?>) = apply { this.inputs = inputs }
+
+        fun outputs(outputs: Map<String, Any?>) = apply { this.outputs = outputs }
+
+        fun error(error: String) = apply { this.error = error }
+
+        fun metadata(metadata: Map<String, Any>) = apply { this.metadata = metadata.toMutableMap() }
+
+        fun tags(tags: List<String>) = apply { this.tags = tags.toMutableList() }
+
+        fun extra(extra: Map<String, Any>) = apply { this.extra = extra.toMutableMap() }
+
+        fun projectName(projectName: String) = apply { this.projectName = projectName }
+
+        fun client(client: LangsmithClient) = apply { this.client = client }
+
+        fun executor(executor: ExecutorService) = apply { this.executor = executor }
+
+        fun tracingEnabled(tracingEnabled: Boolean) = apply { this.tracingEnabled = tracingEnabled }
+
+        fun id(id: String) = apply { this.id = id }
+
+        fun traceId(traceId: String) = apply { this.traceId = traceId }
+
+        fun startTime(startTime: String) = apply { this.startTime = startTime }
+
+        fun dottedOrder(dottedOrder: String) = apply { this.dottedOrder = dottedOrder }
+
+        fun parentRunId(parentRunId: String) = apply { this.parentRunId = parentRunId }
+
+        fun endTime(endTime: String) = apply { this.endTime = endTime }
+
+        fun build(): RunTree {
+            val resolvedId = id ?: defaultId()
+            val resolvedStartTime = startTime ?: defaultStartTime()
+            return RunTree(
+                name = name,
+                runType = runType,
+                inputs = inputs,
+                outputs = outputs,
+                error = error,
+                metadata = metadata,
+                tags = tags,
+                extra = extra,
+                projectName = projectName,
+                client = client,
+                executor = executor,
+                tracingEnabled = tracingEnabled,
+                id = resolvedId,
+                traceId = traceId ?: resolvedId,
+                startTime = resolvedStartTime,
+                dottedOrder = dottedOrder ?: dottedOrderSegment(resolvedStartTime, resolvedId),
+                parentRunId = parentRunId,
+                endTime = endTime,
+            )
+        }
     }
 }
