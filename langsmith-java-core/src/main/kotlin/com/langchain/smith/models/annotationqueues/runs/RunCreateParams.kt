@@ -432,7 +432,7 @@ private constructor(
             }
         }
 
-        /** Schema for adding a run to an annotation queue with optional metadata. */
+        /** Deprecated: use plain UUID list or AddRunToQueueByKeyRequest instead. */
         class AnnotationQueueRunAddSchema
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
@@ -470,36 +470,41 @@ private constructor(
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
-            fun runId(): String = runId.getRequired("run_id")
+            @Deprecated("deprecated") fun runId(): String = runId.getRequired("run_id")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
+            @Deprecated("deprecated")
             fun parentRunId(): Optional<String> = parentRunId.getOptional("parent_run_id")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
+            @Deprecated("deprecated")
             fun sessionId(): Optional<String> = sessionId.getOptional("session_id")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
+            @Deprecated("deprecated")
             fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
+            @Deprecated("deprecated")
             fun traceId(): Optional<String> = traceId.getOptional("trace_id")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
+            @Deprecated("deprecated")
             fun traceTier(): Optional<TraceTier> = traceTier.getOptional("trace_tier")
 
             /**
@@ -507,7 +512,10 @@ private constructor(
              *
              * Unlike [runId], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("run_id") @ExcludeMissing fun _runId(): JsonField<String> = runId
+            @Deprecated("deprecated")
+            @JsonProperty("run_id")
+            @ExcludeMissing
+            fun _runId(): JsonField<String> = runId
 
             /**
              * Returns the raw JSON value of [parentRunId].
@@ -515,6 +523,7 @@ private constructor(
              * Unlike [parentRunId], this method doesn't throw if the JSON field has an unexpected
              * type.
              */
+            @Deprecated("deprecated")
             @JsonProperty("parent_run_id")
             @ExcludeMissing
             fun _parentRunId(): JsonField<String> = parentRunId
@@ -525,6 +534,7 @@ private constructor(
              * Unlike [sessionId], this method doesn't throw if the JSON field has an unexpected
              * type.
              */
+            @Deprecated("deprecated")
             @JsonProperty("session_id")
             @ExcludeMissing
             fun _sessionId(): JsonField<String> = sessionId
@@ -535,6 +545,7 @@ private constructor(
              * Unlike [startTime], this method doesn't throw if the JSON field has an unexpected
              * type.
              */
+            @Deprecated("deprecated")
             @JsonProperty("start_time")
             @ExcludeMissing
             fun _startTime(): JsonField<OffsetDateTime> = startTime
@@ -544,7 +555,10 @@ private constructor(
              *
              * Unlike [traceId], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("trace_id") @ExcludeMissing fun _traceId(): JsonField<String> = traceId
+            @Deprecated("deprecated")
+            @JsonProperty("trace_id")
+            @ExcludeMissing
+            fun _traceId(): JsonField<String> = traceId
 
             /**
              * Returns the raw JSON value of [traceTier].
@@ -552,6 +566,7 @@ private constructor(
              * Unlike [traceTier], this method doesn't throw if the JSON field has an unexpected
              * type.
              */
+            @Deprecated("deprecated")
             @JsonProperty("trace_tier")
             @ExcludeMissing
             fun _traceTier(): JsonField<TraceTier> = traceTier
@@ -606,7 +621,7 @@ private constructor(
                             annotationQueueRunAddSchema.additionalProperties.toMutableMap()
                     }
 
-                fun runId(runId: String) = runId(JsonField.of(runId))
+                @Deprecated("deprecated") fun runId(runId: String) = runId(JsonField.of(runId))
 
                 /**
                  * Sets [Builder.runId] to an arbitrary JSON value.
@@ -615,12 +630,15 @@ private constructor(
                  * This method is primarily for setting the field to an undocumented or not yet
                  * supported value.
                  */
+                @Deprecated("deprecated")
                 fun runId(runId: JsonField<String>) = apply { this.runId = runId }
 
+                @Deprecated("deprecated")
                 fun parentRunId(parentRunId: String?) =
                     parentRunId(JsonField.ofNullable(parentRunId))
 
                 /** Alias for calling [Builder.parentRunId] with `parentRunId.orElse(null)`. */
+                @Deprecated("deprecated")
                 fun parentRunId(parentRunId: Optional<String>) =
                     parentRunId(parentRunId.getOrNull())
 
@@ -631,13 +649,16 @@ private constructor(
                  * instead. This method is primarily for setting the field to an undocumented or not
                  * yet supported value.
                  */
+                @Deprecated("deprecated")
                 fun parentRunId(parentRunId: JsonField<String>) = apply {
                     this.parentRunId = parentRunId
                 }
 
+                @Deprecated("deprecated")
                 fun sessionId(sessionId: String?) = sessionId(JsonField.ofNullable(sessionId))
 
                 /** Alias for calling [Builder.sessionId] with `sessionId.orElse(null)`. */
+                @Deprecated("deprecated")
                 fun sessionId(sessionId: Optional<String>) = sessionId(sessionId.getOrNull())
 
                 /**
@@ -647,12 +668,15 @@ private constructor(
                  * instead. This method is primarily for setting the field to an undocumented or not
                  * yet supported value.
                  */
+                @Deprecated("deprecated")
                 fun sessionId(sessionId: JsonField<String>) = apply { this.sessionId = sessionId }
 
+                @Deprecated("deprecated")
                 fun startTime(startTime: OffsetDateTime?) =
                     startTime(JsonField.ofNullable(startTime))
 
                 /** Alias for calling [Builder.startTime] with `startTime.orElse(null)`. */
+                @Deprecated("deprecated")
                 fun startTime(startTime: Optional<OffsetDateTime>) =
                     startTime(startTime.getOrNull())
 
@@ -663,13 +687,16 @@ private constructor(
                  * value instead. This method is primarily for setting the field to an undocumented
                  * or not yet supported value.
                  */
+                @Deprecated("deprecated")
                 fun startTime(startTime: JsonField<OffsetDateTime>) = apply {
                     this.startTime = startTime
                 }
 
+                @Deprecated("deprecated")
                 fun traceId(traceId: String?) = traceId(JsonField.ofNullable(traceId))
 
                 /** Alias for calling [Builder.traceId] with `traceId.orElse(null)`. */
+                @Deprecated("deprecated")
                 fun traceId(traceId: Optional<String>) = traceId(traceId.getOrNull())
 
                 /**
@@ -679,11 +706,14 @@ private constructor(
                  * instead. This method is primarily for setting the field to an undocumented or not
                  * yet supported value.
                  */
+                @Deprecated("deprecated")
                 fun traceId(traceId: JsonField<String>) = apply { this.traceId = traceId }
 
+                @Deprecated("deprecated")
                 fun traceTier(traceTier: TraceTier?) = traceTier(JsonField.ofNullable(traceTier))
 
                 /** Alias for calling [Builder.traceTier] with `traceTier.orElse(null)`. */
+                @Deprecated("deprecated")
                 fun traceTier(traceTier: Optional<TraceTier>) = traceTier(traceTier.getOrNull())
 
                 /**
@@ -693,6 +723,7 @@ private constructor(
                  * instead. This method is primarily for setting the field to an undocumented or not
                  * yet supported value.
                  */
+                @Deprecated("deprecated")
                 fun traceTier(traceTier: JsonField<TraceTier>) = apply {
                     this.traceTier = traceTier
                 }
@@ -782,6 +813,7 @@ private constructor(
                     (if (traceId.asKnown().isPresent) 1 else 0) +
                     (traceTier.asKnown().getOrNull()?.validity() ?: 0)
 
+            @Deprecated("deprecated")
             class TraceTier @JsonCreator private constructor(private val value: JsonField<String>) :
                 Enum {
 
