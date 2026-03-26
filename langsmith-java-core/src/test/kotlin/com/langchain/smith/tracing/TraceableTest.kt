@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 /**
- * Integration tests for [TracingContext] that post real runs to LangSmith.
+ * Integration tests for [traceable] that post real runs to LangSmith.
  *
  * Requires `LANGSMITH_API_KEY` to be set. Tests are skipped if the key is missing.
  *

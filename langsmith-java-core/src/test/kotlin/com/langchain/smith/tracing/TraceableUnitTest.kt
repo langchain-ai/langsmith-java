@@ -238,7 +238,8 @@ internal class TraceableUnitTest {
             )
         parent(Unit)
         assertThat(childRun).isNotNull
-        assertThat(childRun!!.projectName).isEqualTo(childRun!!.projectName)
+        // Child inherited the client — run was created successfully (would have thrown otherwise)
+        assertThat(childRun!!.name).isEqualTo("child")
     }
 
     @Test

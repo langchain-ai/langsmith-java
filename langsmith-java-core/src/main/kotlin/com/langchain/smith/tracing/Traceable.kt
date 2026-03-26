@@ -27,10 +27,13 @@ private val logger = LoggerFactory.getLogger("com.langchain.smith.tracing.Tracea
 enum class RunType(internal val value: String) {
     /** A chain/pipeline/workflow step. */
     CHAIN("chain"),
+
     /** An LLM call. */
     LLM("llm"),
+
     /** A tool/function invocation. */
     TOOL("tool"),
+
     /** A retrieval operation. */
     RETRIEVER("retriever"),
 }
