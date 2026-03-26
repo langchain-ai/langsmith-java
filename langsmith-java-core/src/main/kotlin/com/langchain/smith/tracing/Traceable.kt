@@ -58,7 +58,7 @@ internal val CURRENT_RUN = RunContext.create()
 
 @Volatile private var userDefaultClient: LangsmithClient? = null
 
-private val defaultClient: LangsmithClient? by lazy { userDefaultClient ?: createClientFromEnv() }
+private val autoClient: LangsmithClient? by lazy { createClientFromEnv() }
 
 private fun createClientFromEnv(): LangsmithClient? =
     try {
@@ -148,7 +148,7 @@ fun <T> withParent(parent: RunTree?, block: java.util.concurrent.Callable<T>): T
  * Returns the default [LangsmithClient], resolving in order: user-set default, then auto-created
  * from environment via reflection. Returns `null` if neither is available.
  */
-internal fun resolveDefaultClient(): LangsmithClient? = defaultClient
+internal fun resolveDefaultClient(): LangsmithClient? = userDefaultClient ?: autoClient
 
 /**
  * Checks whether LangSmith tracing is enabled.
