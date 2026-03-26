@@ -314,4 +314,9 @@ internal class TraceableTest {
     fun getCurrentRun_outsideTracedFunction() {
         assertThat(getCurrentRunTree()).isNull()
     }
+
+    // TODO: Add agent loop with OpenAI tool calling integration test once
+    //  the OpenAI SDK dependency is bumped (requires updating OTel wrappers
+    //  for new abstract members). The tool calling API (`addTool`, `arguments()`,
+    //  `contentAsJson`) requires OpenAI Java SDK 4.10+.
 }

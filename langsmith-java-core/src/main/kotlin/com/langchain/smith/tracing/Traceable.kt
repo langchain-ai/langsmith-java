@@ -202,8 +202,7 @@ internal val DEFAULT_EXECUTOR: ExecutorService by lazy { Executors.newCachedThre
  * var step2 = Tracing.traceable(..., base.toBuilder().name("step-2").runType(RunType.LLM).build());
  * ```
  */
-class TraceConfig
-constructor(
+class TraceConfig(
     /** The name of the run, displayed in LangSmith. */
     val name: String? = null,
     /** The LangSmith client used to post runs. Required at the root; inherited by children. */
@@ -443,14 +442,34 @@ fun <I1, I2, I3, O> traceable(
 // Internal implementation
 // ---------------------------------------------------------------------------
 
+/**
+ * Converts a value to a JSON-safe representation. Primitives, maps, and lists pass through. Other
+ * objects fall back to [toString].
+ *
+ * For best tracing results, pass [Map] inputs/outputs to [traceable]. Typed SDK objects (e.g.
+ * `ChatCompletionCreateParams`) should be converted to maps by the caller — use
+ * `processInputs`/`processOutputs` callbacks (when available) or manual conversion.
+ */
+private fun serializeValue(value: Any?): Any? =
+    when (value) {
+        null,
+        is String,
+        is Number,
+        is Boolean -> value
+
+        is Map<*, *>,
+        is List<*> -> value
+
+        else -> value.toString()
+    }
+
 private fun toInputMap(input: Any?): Map<String, Any?> =
-    toStringKeyedMap(input) ?: mapOf("inputs" to input)
+    toStringKeyedMap(input) ?: mapOf("inputs" to serializeValue(input))
 
 private fun toOutputMap(output: Any?): Map<String, Any?> =
     when (output) {
         null -> mapOf("outputs" to null)
-        is RunTree -> mapOf("outputs" to output.toString())
-        else -> toStringKeyedMap(output) ?: mapOf("outputs" to output)
+        else -> toStringKeyedMap(output) ?: mapOf("outputs" to serializeValue(output))
     }
 
 private fun toStringKeyedMap(value: Any?): Map<String, Any?>? {
