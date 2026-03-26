@@ -24,6 +24,7 @@ private constructor(
     private val repo: String,
     private val commit: String?,
     private val getExamples: Boolean?,
+    private val include: String?,
     private val includeModel: Boolean?,
     private val isView: Boolean?,
     private val additionalHeaders: Headers,
@@ -38,6 +39,10 @@ private constructor(
 
     fun getExamples(): Optional<Boolean> = Optional.ofNullable(getExamples)
 
+    /** Comma-separated list of optional fields: "model", "is_draft" */
+    fun include(): Optional<String> = Optional.ofNullable(include)
+
+    /** Deprecated: use Include instead */
     fun includeModel(): Optional<Boolean> = Optional.ofNullable(includeModel)
 
     fun isView(): Optional<Boolean> = Optional.ofNullable(isView)
@@ -71,6 +76,7 @@ private constructor(
         private var repo: String? = null
         private var commit: String? = null
         private var getExamples: Boolean? = null
+        private var include: String? = null
         private var includeModel: Boolean? = null
         private var isView: Boolean? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
@@ -82,6 +88,7 @@ private constructor(
             repo = commitRetrieveParams.repo
             commit = commitRetrieveParams.commit
             getExamples = commitRetrieveParams.getExamples
+            include = commitRetrieveParams.include
             includeModel = commitRetrieveParams.includeModel
             isView = commitRetrieveParams.isView
             additionalHeaders = commitRetrieveParams.additionalHeaders.toBuilder()
@@ -109,6 +116,13 @@ private constructor(
         /** Alias for calling [Builder.getExamples] with `getExamples.orElse(null)`. */
         fun getExamples(getExamples: Optional<Boolean>) = getExamples(getExamples.getOrNull())
 
+        /** Comma-separated list of optional fields: "model", "is_draft" */
+        fun include(include: String?) = apply { this.include = include }
+
+        /** Alias for calling [Builder.include] with `include.orElse(null)`. */
+        fun include(include: Optional<String>) = include(include.getOrNull())
+
+        /** Deprecated: use Include instead */
         fun includeModel(includeModel: Boolean?) = apply { this.includeModel = includeModel }
 
         /**
@@ -250,6 +264,7 @@ private constructor(
                 checkRequired("repo", repo),
                 commit,
                 getExamples,
+                include,
                 includeModel,
                 isView,
                 additionalHeaders.build(),
@@ -271,6 +286,7 @@ private constructor(
         QueryParams.builder()
             .apply {
                 getExamples?.let { put("get_examples", it.toString()) }
+                include?.let { put("include", it) }
                 includeModel?.let { put("include_model", it.toString()) }
                 isView?.let { put("is_view", it.toString()) }
                 putAll(additionalQueryParams)
@@ -287,6 +303,7 @@ private constructor(
             repo == other.repo &&
             commit == other.commit &&
             getExamples == other.getExamples &&
+            include == other.include &&
             includeModel == other.includeModel &&
             isView == other.isView &&
             additionalHeaders == other.additionalHeaders &&
@@ -299,6 +316,7 @@ private constructor(
             repo,
             commit,
             getExamples,
+            include,
             includeModel,
             isView,
             additionalHeaders,
@@ -306,5 +324,5 @@ private constructor(
         )
 
     override fun toString() =
-        "CommitRetrieveParams{owner=$owner, repo=$repo, commit=$commit, getExamples=$getExamples, includeModel=$includeModel, isView=$isView, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CommitRetrieveParams{owner=$owner, repo=$repo, commit=$commit, getExamples=$getExamples, include=$include, includeModel=$includeModel, isView=$isView, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

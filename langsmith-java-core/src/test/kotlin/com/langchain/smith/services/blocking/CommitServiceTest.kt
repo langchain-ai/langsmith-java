@@ -55,6 +55,7 @@ internal class CommitServiceTest {
                     .repo("repo")
                     .commit("commit")
                     .getExamples(true)
+                    .include("include")
                     .includeModel(true)
                     .isView(true)
                     .build()
