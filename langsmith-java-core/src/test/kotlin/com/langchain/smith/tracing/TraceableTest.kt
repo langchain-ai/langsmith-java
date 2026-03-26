@@ -1,6 +1,20 @@
 package com.langchain.smith.tracing
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import com.openai.client.okhttp.OpenAIOkHttpClient
+import com.openai.core.JsonValue
+import com.openai.models.ChatModel
+import com.openai.models.FunctionDefinition
+import com.openai.models.FunctionParameters
+import com.openai.models.chat.completions.ChatCompletion
+import com.openai.models.chat.completions.ChatCompletionCreateParams
+import com.openai.models.chat.completions.ChatCompletionFunctionTool
+import com.openai.models.chat.completions.ChatCompletionMessage
+import com.openai.models.chat.completions.ChatCompletionMessageParam
+import com.openai.models.chat.completions.ChatCompletionToolMessageParam
+import java.util.function.Function as JFunction
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -8,6 +22,91 @@ import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+
+private val testJsonMapper = jacksonObjectMapper()
+
+private fun toJsonMap(value: Any): Map<String, Any?> =
+    testJsonMapper.convertValue(value, object : TypeReference<Map<String, Any?>>() {})
+
+private fun weatherTool(): ChatCompletionFunctionTool =
+    ChatCompletionFunctionTool.builder()
+        .function(
+            FunctionDefinition.builder()
+                .name("get_weather")
+                .description("Get the weather for a location")
+                .parameters(
+                    FunctionParameters.builder()
+                        .putAdditionalProperty("type", JsonValue.from("object"))
+                        .putAdditionalProperty(
+                            "properties",
+                            JsonValue.from(
+                                mapOf(
+                                    "location" to mapOf(
+                                        "type" to "string",
+                                        "description" to "City and state, e.g. San Francisco, CA",
+                                    )
+                                )
+                            ),
+                        )
+                        .putAdditionalProperty("required", JsonValue.from(listOf("location")))
+                        .build()
+                )
+                .build()
+        )
+        .build()
+
+private fun buildToolLoopParams(messages: List<ChatCompletionMessageParam>): ChatCompletionCreateParams =
+    ChatCompletionCreateParams.builder()
+        .model(ChatModel.GPT_4_1_MINI)
+        .messages(messages)
+        .addTool(weatherTool())
+        .maxCompletionTokens(150)
+        .build()
+
+private fun toolLoopInputMap(params: ChatCompletionCreateParams): Map<String, Any?> =
+    mapOf(
+        "model" to params.model().toString(),
+        "messages" to params.messages().map { toJsonMap(it) },
+        "tools" to params.tools().getOrNull()?.map { toJsonMap(it) },
+    )
+
+private fun toolLoopOutputMap(completion: ChatCompletion): Map<String, Any?> =
+    mapOf(
+        "id" to completion.id(),
+        "model" to completion.model().toString(),
+        "choices" to completion.choices().map { choice ->
+            mapOf(
+                "finish_reason" to choice.finishReason().toString(),
+                "message" to toJsonMap(choice.message()),
+            )
+        },
+    )
+
+private fun userMessage(content: String): ChatCompletionMessageParam =
+    ChatCompletionMessageParam.ofUser(
+        com.openai.models.chat.completions.ChatCompletionUserMessageParam.builder()
+            .content(content)
+            .build()
+    )
+
+private fun assistantMessage(message: ChatCompletionMessage): ChatCompletionMessageParam =
+    ChatCompletionMessageParam.ofAssistant(message.toParam())
+
+private fun toolMessage(toolCallId: String, result: Map<String, Any?>): ChatCompletionMessageParam =
+    ChatCompletionMessageParam.ofTool(
+        ChatCompletionToolMessageParam.builder().toolCallId(toolCallId).contentAsJson(result).build()
+    )
+
+private fun toolResult(argumentsJson: String): Map<String, Any?> =
+    mapOf(
+        "tool" to "get_weather",
+        "arguments_json" to argumentsJson,
+        "location" to "San Francisco, CA",
+        "forecast" to "sunny",
+        "temperature_f" to 72,
+    )
+
+private fun finalContent(message: ChatCompletionMessage): String = message.content().getOrNull() ?: ""
 
 /**
  * Integration tests for [traceable] that post real runs to LangSmith.
@@ -32,7 +131,7 @@ internal class TraceableTest {
         runType: RunType = RunType.CHAIN,
         metadata: Map<String, Any>? = null,
         tags: List<String>? = null,
-    ) =
+    ): TraceConfig<Any?, Any?> =
         TraceConfig(
             name = name,
             client = client,
@@ -128,49 +227,85 @@ internal class TraceableTest {
     }
 
     @Test
-    fun traceableWithOpenAiCall() {
+    fun traceableWithOpenAiToolLoop_usesProcessInputsAndOutputs() {
         assumeTrue(
             !System.getenv("OPENAI_API_KEY").isNullOrBlank(),
             "Skipping: OPENAI_API_KEY must be set",
         )
 
-        val openai = com.openai.client.okhttp.OpenAIOkHttpClient.fromEnv()
+        val openai = OpenAIOkHttpClient.fromEnv()
+        var capturedLlmRun: RunTree? = null
+        var capturedAgentRun: RunTree? = null
 
         val callOpenAi =
             traceable(
-                { question: String ->
-                    val completion =
-                        openai
-                            .chat()
-                            .completions()
-                            .create(
-                                com.openai.models.chat.completions.ChatCompletionCreateParams
-                                    .builder()
-                                    .model(com.openai.models.ChatModel.GPT_4_1_MINI)
-                                    .addUserMessage("$question Answer in one word.")
-                                    .maxCompletionTokens(10)
-                                    .build()
-                            )
-                    completion.choices()[0].message().content().orElse("")
+                { params: ChatCompletionCreateParams ->
+                    capturedLlmRun = getCurrentRunTree()
+                    openai.chat().completions().create(params)
                 },
-                config("call-openai", runType = RunType.LLM),
+                TraceConfig<ChatCompletionCreateParams, ChatCompletion>(
+                    name = "call-openai-tool-loop",
+                    client = client,
+                    runType = RunType.LLM,
+                    projectName = "traceable-java-tests",
+                    tracingEnabled = true,
+                    processInputs = JFunction(::toolLoopInputMap),
+                    processOutputs = JFunction(::toolLoopOutputMap),
+                ),
             )
 
-        val formatAnswer =
-            traceable({ answer: String -> "The answer is: $answer" }, config("format-answer"))
+        val executeTool =
+            traceable(
+                { argumentsJson: String -> toolResult(argumentsJson) },
+                config("get_weather", runType = RunType.TOOL),
+            )
 
         val agent =
             traceable(
-                { input: Map<String, Any?> ->
-                    val answer = callOpenAi(input["question"] as String)
-                    formatAnswer(answer)
+                { question: String ->
+                    capturedAgentRun = getCurrentRunTree()
+                    val messages = mutableListOf<ChatCompletionMessageParam>()
+                    messages += userMessage("$question Use the get_weather tool and then answer succinctly.")
+
+                    repeat(3) {
+                        val completion = callOpenAi(buildToolLoopParams(messages))
+                        val message = completion.choices()[0].message()
+                        val toolCalls = message.toolCalls().getOrNull().orEmpty()
+
+                        if (toolCalls.isEmpty()) {
+                            return@traceable finalContent(message)
+                        }
+
+                        messages += assistantMessage(message)
+                        toolCalls.forEach { toolCall ->
+                            val fn = toolCall.asFunction()
+                            val result = executeTool(fn.function().arguments())
+                            messages += toolMessage(fn.id(), result)
+                        }
+                    }
+
+                    error("Model did not finish tool loop in time")
                 },
-                config("openai-agent"),
+                TraceConfig<String, String>(
+                    name = "openai-tool-loop-agent",
+                    client = client,
+                    projectName = "traceable-java-tests",
+                    tracingEnabled = true,
+                    processInputs = JFunction { question -> mapOf("question" to question) },
+                    processOutputs = JFunction { answer -> mapOf("answer" to answer) },
+                ),
             )
 
-        val result = agent(mapOf("question" to "What is 2+2?"))
-        println("[Traceable+OpenAI] Result: $result")
+        val result = agent("What is the weather in San Francisco?")
+        assertThat(result).isNotBlank()
+        assertThat(capturedAgentRun).isNotNull
+        assertThat(capturedAgentRun!!.inputs).isEqualTo(mapOf("question" to "What is the weather in San Francisco?"))
+        assertThat(capturedAgentRun!!.outputs).isEqualTo(mapOf("answer" to result))
+        assertThat(capturedLlmRun).isNotNull
+        assertThat(capturedLlmRun!!.inputs).containsKeys("model", "messages", "tools")
+        assertThat(capturedLlmRun!!.outputs).containsKeys("id", "model", "choices")
 
+        println("[Traceable+OpenAI Tool Loop] Result: $result")
         awaitPendingRuns()
     }
 

@@ -36,8 +36,7 @@ private val logger = LoggerFactory.getLogger(RunTree::class.java)
  *     .build();
  * ```
  */
-class RunTree
-constructor(
+class RunTree(
     /** The display name of this run. */
     val name: String = "<lambda>",
     /** The type of run (chain, llm, tool, retriever). */
@@ -88,7 +87,7 @@ constructor(
      * @param config per-run configuration for the child
      * @return a new [RunTree] that is a child of this run
      */
-    fun createChild(config: TraceConfig): RunTree {
+    fun createChild(config: TraceConfig<*, *>): RunTree {
         val now = Instant.now()
         val childId = uuidv7(now)
         val childStartTime = ISO_FORMAT.format(now)
