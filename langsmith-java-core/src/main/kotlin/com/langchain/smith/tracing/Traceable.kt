@@ -3,11 +3,6 @@
 package com.langchain.smith.tracing
 
 import com.langchain.smith.client.LangsmithClient
-import com.langchain.smith.core.JsonValue
-import com.langchain.smith.core.getJavaVersion
-import com.langchain.smith.core.getPackageVersion
-import com.langchain.smith.models.runs.Run
-import com.langchain.smith.models.runs.RunIngestBatchParams
 import java.time.Instant
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -519,115 +514,19 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
             )
         }
 
-    postRun(run)
+    run.postRun()
     return CURRENT_RUN.runWith(run) {
         try {
             val result = block()
             run.endTime = nowIso()
             run.outputs = toOutputMap(result)
-            patchRun(run)
+            run.patchRun()
             result
         } catch (e: Throwable) {
             run.endTime = nowIso()
             run.error = e.stackTraceToString()
-            patchRun(run)
+            run.patchRun()
             throw e
         }
     }
-}
-
-// TODO: Delegate background posting to the client's own executor/queue once background run
-//  processing is implemented there. Currently we manage our own executor and submit individual
-//  ingestBatch calls per run, which means no batching and no client-level flush/shutdown.
-private fun postRun(run: RunTree) {
-    val client = run.client ?: return
-    val executor = run.executor ?: DEFAULT_EXECUTOR
-    val runData = buildRunData(run)
-    submitSafely(executor, run.name) {
-        client.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
-    }
-}
-
-// TODO: Same as postRun — should delegate to the client once available.
-private fun patchRun(run: RunTree) {
-    val client = run.client ?: return
-    val executor = run.executor ?: DEFAULT_EXECUTOR
-    val runData = buildRunData(run)
-    submitSafely(executor, run.name) {
-        client.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
-    }
-}
-
-private fun submitSafely(executor: ExecutorService, runName: String, block: () -> Unit) {
-    try {
-        executor.submit {
-            try {
-                block()
-            } catch (e: Exception) {
-                logger.warn("Failed to send run '$runName'", e)
-            }
-        }
-    } catch (e: java.util.concurrent.RejectedExecutionException) {
-        logger.warn("Executor is shut down; dropping run '$runName'")
-    }
-}
-
-private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
-    data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()
-
-private val runtimeMetadata: Map<String, JsonValue> by lazy {
-    mapOf(
-        "runtime" to JsonValue.from("java"),
-        "runtime_version" to JsonValue.from(getJavaVersion()),
-        "sdk" to JsonValue.from("langsmith-java"),
-        "sdk_version" to JsonValue.from(getPackageVersion()),
-    )
-}
-
-private fun buildRuntimeMetadata(userMetadata: Map<String, Any>?): Map<String, JsonValue> =
-    if (userMetadata.isNullOrEmpty()) {
-        runtimeMetadata
-    } else {
-        buildMap {
-            putAll(runtimeMetadata)
-            userMetadata.forEach { (k, v) -> put(k, JsonValue.from(v)) }
-        }
-    }
-
-private fun buildRunData(run: RunTree): Run {
-    val builder =
-        Run.builder()
-            .id(run.id)
-            .traceId(run.traceId)
-            .dottedOrder(run.dottedOrder)
-            .name(run.name)
-            .runType(Run.RunType.of(run.runType.value))
-            .startTime(run.startTime)
-            .apply { run.projectName?.let { sessionName(it) } }
-            .tags(run.tags)
-            .inputs(
-                Run.Inputs.builder().putAllAdditionalProperties(toJsonValueMap(run.inputs)).build()
-            )
-            .extra(
-                Run.Extra.builder()
-                    .apply {
-                        run.extra.forEach { (k, v) -> putAdditionalProperty(k, JsonValue.from(v)) }
-                    }
-                    .putAdditionalProperty(
-                        "metadata",
-                        JsonValue.from(buildRuntimeMetadata(run.metadata)),
-                    )
-                    .build()
-            )
-
-    run.endTime?.let { builder.endTime(it) }
-    run.error?.let { builder.error(it) }
-    run.parentRunId?.let { builder.parentRunId(it) }
-    run.outputs?.let {
-        builder.outputs(
-            Run.Outputs.builder().putAllAdditionalProperties(toJsonValueMap(it)).build()
-        )
-    }
-
-    return builder.build()
 }

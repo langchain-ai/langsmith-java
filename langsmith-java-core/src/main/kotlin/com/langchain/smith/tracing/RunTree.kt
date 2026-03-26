@@ -1,8 +1,16 @@
 package com.langchain.smith.tracing
 
 import com.langchain.smith.client.LangsmithClient
+import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.getJavaVersion
+import com.langchain.smith.core.getPackageVersion
+import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngestBatchParams
 import java.time.Instant
 import java.util.concurrent.ExecutorService
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger(RunTree::class.java)
 
 /**
  * Represents a run in the trace tree.
@@ -110,6 +118,71 @@ constructor(
             executor = config.executor ?: executor,
             tracingEnabled = config.tracingEnabled ?: tracingEnabled,
         )
+    }
+
+    // TODO: Delegate background posting to the client's own executor/queue once background run
+    //  processing is implemented there. Currently we manage our own executor and submit individual
+    //  ingestBatch calls per run, which means no batching and no client-level flush/shutdown.
+
+    /** Posts this run to LangSmith in the background (creates the run with inputs + start time). */
+    fun postRun() {
+        val c = client ?: return
+        val e = executor ?: DEFAULT_EXECUTOR
+        val runData = buildRunData()
+        submitSafely(e, name) {
+            c.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
+        }
+    }
+
+    /** Patches this run in LangSmith in the background (updates with outputs, end time, error). */
+    fun patchRun() {
+        val c = client ?: return
+        val e = executor ?: DEFAULT_EXECUTOR
+        val runData = buildRunData()
+        submitSafely(e, name) {
+            c.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
+        }
+    }
+
+    /** Builds the [Run] data object for posting/patching to the LangSmith API. */
+    fun buildRunData(): Run {
+        val builder =
+            Run.builder()
+                .id(id)
+                .traceId(traceId)
+                .dottedOrder(dottedOrder)
+                .name(name)
+                .runType(Run.RunType.of(runType.value))
+                .startTime(startTime)
+                .apply { this@RunTree.projectName?.let { sessionName(it) } }
+                .tags(tags)
+                .inputs(
+                    Run.Inputs.builder().putAllAdditionalProperties(toJsonValueMap(inputs)).build()
+                )
+                .extra(
+                    Run.Extra.builder()
+                        .apply {
+                            this@RunTree.extra.forEach { (k, v) ->
+                                putAdditionalProperty(k, JsonValue.from(v))
+                            }
+                        }
+                        .putAdditionalProperty(
+                            "metadata",
+                            JsonValue.from(buildRuntimeMetadata(metadata)),
+                        )
+                        .build()
+                )
+
+        endTime?.let { builder.endTime(it) }
+        error?.let { builder.error(it) }
+        parentRunId?.let { builder.parentRunId(it) }
+        outputs?.let {
+            builder.outputs(
+                Run.Outputs.builder().putAllAdditionalProperties(toJsonValueMap(it)).build()
+            )
+        }
+
+        return builder.build()
     }
 
     override fun toString(): String =
@@ -260,3 +333,43 @@ constructor(
         }
     }
 }
+
+// ---------------------------------------------------------------------------
+// Private helpers for RunTree posting
+// ---------------------------------------------------------------------------
+
+private fun submitSafely(executor: ExecutorService, runName: String, block: () -> Unit) {
+    try {
+        executor.submit {
+            try {
+                block()
+            } catch (e: Exception) {
+                logger.warn("Failed to send run '$runName'", e)
+            }
+        }
+    } catch (e: java.util.concurrent.RejectedExecutionException) {
+        logger.warn("Executor is shut down; dropping run '$runName'")
+    }
+}
+
+private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
+    data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()
+
+private val runtimeMetadata: Map<String, JsonValue> by lazy {
+    mapOf(
+        "runtime" to JsonValue.from("java"),
+        "runtime_version" to JsonValue.from(getJavaVersion()),
+        "sdk" to JsonValue.from("langsmith-java"),
+        "sdk_version" to JsonValue.from(getPackageVersion()),
+    )
+}
+
+private fun buildRuntimeMetadata(userMetadata: Map<String, Any>?): Map<String, JsonValue> =
+    if (userMetadata.isNullOrEmpty()) {
+        runtimeMetadata
+    } else {
+        buildMap {
+            putAll(runtimeMetadata)
+            userMetadata.forEach { (k, v) -> put(k, JsonValue.from(v)) }
+        }
+    }
