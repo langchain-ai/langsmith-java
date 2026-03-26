@@ -4,6 +4,7 @@ package com.langchain.smith.tracing
 
 import com.langchain.smith.client.LangsmithClient
 import java.time.Instant
+import java.util.ServiceLoader
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.function.BiFunction
@@ -57,17 +58,11 @@ private val autoClient: LangsmithClient? by lazy { createClientFromEnv() }
 
 private fun createClientFromEnv(): LangsmithClient? =
     try {
-        val clazz = Class.forName("com.langchain.smith.client.okhttp.LangsmithOkHttpClient")
-        val fromEnv = clazz.getMethod("fromEnv")
-        fromEnv.invoke(null) as? LangsmithClient
+        ServiceLoader.load(LangsmithClientProvider::class.java).firstOrNull()?.createClient()
     } catch (e: Exception) {
         logger.debug("Could not create default LangSmith client from environment", e)
         null
     }
-
-// ---------------------------------------------------------------------------
-// Top-level tracing functions
-// ---------------------------------------------------------------------------
 
 /**
  * Returns the [RunTree] for the currently-executing traced function on this thread, or `null` if
@@ -334,10 +329,6 @@ private fun resolveName(config: TraceConfig, block: Any?): String {
     return DEFAULT_RUN_NAME
 }
 
-// ---------------------------------------------------------------------------
-// traceable overloads
-// ---------------------------------------------------------------------------
-
 /**
  * Wraps a no-arg function with LangSmith tracing (Kotlin).
  *
@@ -454,14 +445,6 @@ fun <I1, I2, I3, O> traceable(
     return TriFunction { i1, i2, i3 -> traced(i1, i2, i3) }
 }
 
-// ---------------------------------------------------------------------------
-// Java-friendly aliases
-// ---------------------------------------------------------------------------
-// These bypass overload-resolution ambiguity between Kotlin function types
-// and java.util.function types. Java users can call Tracing.traceFunction(...)
-// instead of needing a cast: Tracing.traceable((Function<I, O>) ..., config).
-// Kotlin users should prefer `traceable(...)` directly.
-
 /**
  * Wraps a no-arg [Supplier] with LangSmith tracing.
  *
@@ -551,10 +534,6 @@ fun <I1, I2, I3, O> traceTriFunction(
     block: TriFunction<I1, I2, I3, O>,
     config: TraceConfig,
 ): TriFunction<I1, I2, I3, O> = traceable(block, config)
-
-// ---------------------------------------------------------------------------
-// Internal implementation
-// ---------------------------------------------------------------------------
 
 /**
  * Converts a value to a JSON-safe representation. Primitives, maps, and lists pass through. Other

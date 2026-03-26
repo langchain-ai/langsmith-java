@@ -131,6 +131,23 @@ class TraceableJavaTest {
         assertThat(traced.apply("world")).isEqualTo("hello world");
     }
 
+    // ---- withParent (Runnable) ----
+
+    @Test
+    void withParent_runnableOverload() {
+        Function<String, String> outer = Tracing.traceFunction(
+                input -> {
+                    RunTree parent = Tracing.getCurrentRunTree();
+                    // Fire-and-forget: no "return null" needed
+                    Tracing.withParent(parent, () -> {
+                        assertThat(Tracing.getCurrentRunTree()).isSameAs(parent);
+                    });
+                    return "ok";
+                },
+                config("runnable-parent-test"));
+        assertThat(outer.apply("hello")).isEqualTo("ok");
+    }
+
     @Test
     void tracingDisabled_getCurrentRunReturnsNull() {
         TraceConfig disabled = TraceConfig.builder()
