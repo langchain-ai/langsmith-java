@@ -196,10 +196,9 @@ internal val DEFAULT_EXECUTOR: ExecutorService by lazy { Executors.newCachedThre
 /**
  * Configuration for a traced run.
  *
- * At the root of a trace, [client] must be provided (or set via [RunTree.setDefaultClient]). Child
- * runs inherit [client], [projectName], [executor], and [tracingEnabled] from their parent
- * automatically — you only need to specify per-run fields like [name], [runType], [metadata], and
- * [tags].
+ * At the root of a trace, [client] must be provided (or set via [setDefaultClient]). Child runs
+ * inherit [client], [projectName], [executor], and [tracingEnabled] from their parent automatically
+ * — you only need to specify per-run fields like [name], [runType], [metadata], and [tags].
  *
  * `TraceConfig` is immutable and safe to reuse. Create a base config and derive per-run configs
  * with [toBuilder]:
@@ -594,7 +593,7 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
                     ?: resolveDefaultClient()
                     ?: throw IllegalStateException(
                         "No LangSmith client available. Either pass a client in TraceConfig, " +
-                            "call RunTree.setDefaultClient(), or ensure LangsmithOkHttpClient " +
+                            "call Tracing.setDefaultClient(), or ensure LangsmithOkHttpClient " +
                             "is on the classpath with LANGSMITH_API_KEY set."
                     )
             val now = Instant.now()
