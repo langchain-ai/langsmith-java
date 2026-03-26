@@ -5,7 +5,6 @@ import java.util.UUID
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-/** Tests for the [uuidv7] utility. */
 internal class Uuidv7Test {
 
     @Test
