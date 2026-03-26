@@ -38,7 +38,7 @@ class TraceableJavaTest {
 
     @Test
     void zeroArgSupplier() {
-        Supplier<String> traced = Traceable.traceable(() -> "constant", config("zero-arg"));
+        Supplier<String> traced = Tracing.traceable(() -> "constant", config("zero-arg"));
         assertThat(traced.get()).isEqualTo("constant");
     }
 
@@ -46,13 +46,13 @@ class TraceableJavaTest {
 
     @Test
     void oneArgWithConfig() {
-        Function<String, String> traced = Traceable.traceable(this::greet, config("custom-name"));
+        Function<String, String> traced = Tracing.traceable(this::greet, config("custom-name"));
         assertThat(traced.apply("world")).isEqualTo("hello world");
     }
 
     @Test
     void oneArgInlineLambda() {
-        Function<String, String> traced = Traceable.traceable(input -> "hello " + input, config("my-lambda"));
+        Function<String, String> traced = Tracing.traceable(input -> "hello " + input, config("my-lambda"));
         assertThat(traced.apply("world")).isEqualTo("hello world");
     }
 
@@ -60,14 +60,13 @@ class TraceableJavaTest {
 
     @Test
     void twoArgMethodReference() {
-        BiFunction<String, String, String> traced = Traceable.traceable(this::combine, config("two-arg"));
+        BiFunction<String, String, String> traced = Tracing.traceable(this::combine, config("two-arg"));
         assertThat(traced.apply("hello", "world")).isEqualTo("hello world");
     }
 
     @Test
     void twoArgLambda() {
-        BiFunction<String, String, String> traced =
-                Traceable.traceable((a, b) -> a + " " + b, config("two-arg-lambda"));
+        BiFunction<String, String, String> traced = Tracing.traceable((a, b) -> a + " " + b, config("two-arg-lambda"));
         assertThat(traced.apply("hello", "world")).isEqualTo("hello world");
     }
 
@@ -75,14 +74,14 @@ class TraceableJavaTest {
 
     @Test
     void threeArgMethodReference() {
-        TriFunction<String, String, String, String> traced = Traceable.traceable(this::combine3, config("three-arg"));
+        TriFunction<String, String, String, String> traced = Tracing.traceable(this::combine3, config("three-arg"));
         assertThat(traced.apply("a", "b", "c")).isEqualTo("a b c");
     }
 
     @Test
     void threeArgLambda() {
         TriFunction<String, String, String, String> traced =
-                Traceable.traceable((a, b, c) -> a + " " + b + " " + c, config("three-arg-lambda"));
+                Tracing.traceable((a, b, c) -> a + " " + b + " " + c, config("three-arg-lambda"));
         assertThat(traced.apply("a", "b", "c")).isEqualTo("a b c");
     }
 
@@ -91,7 +90,7 @@ class TraceableJavaTest {
     @Test
     void getCurrentRun_insideTracedFunction() {
         Function<String, RunTree> traced =
-                Traceable.traceable((Function<String, RunTree>) input -> RunTree.getCurrent(), config("get-run-test"));
+                Tracing.traceable((Function<String, RunTree>) input -> RunTree.getCurrent(), config("get-run-test"));
         RunTree run = traced.apply("hello");
         assertThat(run).isNotNull();
         assertThat(run.getId()).isNotBlank();
@@ -102,7 +101,7 @@ class TraceableJavaTest {
 
     @Test
     void getCurrentRun_canMutateMetadata() {
-        Function<String, String> traced = Traceable.traceable(
+        Function<String, String> traced = Tracing.traceable(
                 (Function<String, String>) input -> {
                     RunTree run = RunTree.getCurrent();
                     run.getMetadata().put("java_key", "java_value");
@@ -126,7 +125,7 @@ class TraceableJavaTest {
                 .client(client)
                 .tracingEnabled(false)
                 .build();
-        Function<String, String> traced = Traceable.traceable(input -> "hello " + input, disabled);
+        Function<String, String> traced = Tracing.traceable(input -> "hello " + input, disabled);
         assertThat(traced.apply("world")).isEqualTo("hello world");
     }
 
@@ -138,7 +137,7 @@ class TraceableJavaTest {
                 .tracingEnabled(false)
                 .build();
         Function<String, RunTree> traced =
-                Traceable.traceable((Function<String, RunTree>) input -> RunTree.getCurrent(), disabled);
+                Tracing.traceable((Function<String, RunTree>) input -> RunTree.getCurrent(), disabled);
         assertThat(traced.apply("hello")).isNull();
     }
 }

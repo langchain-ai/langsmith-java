@@ -1,4 +1,4 @@
-@file:JvmName("Traceable")
+@file:JvmName("Tracing")
 
 package com.langchain.smith.tracing
 
@@ -23,19 +23,39 @@ import org.slf4j.LoggerFactory
 
 private val logger = LoggerFactory.getLogger("com.langchain.smith.tracing.Traceable")
 
-/** The type of run being traced, which maps to run_type in LangSmith. */
-enum class RunType(internal val value: String) {
-    /** A chain/pipeline/workflow step. */
-    CHAIN("chain"),
+/**
+ * The type of run being traced, which maps to `run_type` in LangSmith.
+ *
+ * Use the predefined constants ([CHAIN], [LLM], [TOOL], [RETRIEVER]) or create a custom type with
+ * [of]:
+ * ```kotlin
+ * val custom = RunType.of("embedding")
+ * ```
+ */
+class RunType private constructor(internal val value: String) {
+    companion object {
+        /** A chain/pipeline/workflow step. */
+        @JvmField val CHAIN = RunType("chain")
 
-    /** An LLM call. */
-    LLM("llm"),
+        /** An LLM call. */
+        @JvmField val LLM = RunType("llm")
 
-    /** A tool/function invocation. */
-    TOOL("tool"),
+        /** A tool/function invocation. */
+        @JvmField val TOOL = RunType("tool")
 
-    /** A retrieval operation. */
-    RETRIEVER("retriever"),
+        /** A retrieval operation. */
+        @JvmField val RETRIEVER = RunType("retriever")
+
+        /** Creates a [RunType] from an arbitrary string value. */
+        @JvmStatic fun of(value: String) = RunType(value)
+    }
+
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is RunType && value == other.value)
+
+    override fun hashCode(): Int = value.hashCode()
+
+    override fun toString(): String = "RunType{$value}"
 }
 
 internal val CURRENT_RUN = RunContext.create()
@@ -129,46 +149,38 @@ internal val DEFAULT_EXECUTOR: ExecutorService by lazy { Executors.newCachedThre
  * [tags].
  *
  * `TraceConfig` is immutable and safe to reuse. Create a base config and derive per-run configs
- * with [copy] (Kotlin) or [toBuilder] (Java):
+ * with [toBuilder]:
  * ```kotlin
- * val base = TraceConfig(client = client, projectName = "my-project")
- * val step1 = traceable({ ... }, base.copy(name = "step-1"))
- * val step2 = traceable({ ... }, base.copy(name = "step-2", runType = RunType.LLM))
+ * val base = TraceConfig.builder().client(client).projectName("my-project").build()
+ * val step1 = traceable({ ... }, base.toBuilder().name("step-1").build())
+ * val step2 = traceable({ ... }, base.toBuilder().name("step-2").runType(RunType.LLM).build())
  * ```
  * ```java
  * TraceConfig base = TraceConfig.builder()
  *     .client(client)
  *     .projectName("my-project")
  *     .build();
- * var step1 = Traceable.traceable(..., base.toBuilder().name("step-1").build());
- * var step2 = Traceable.traceable(..., base.toBuilder().name("step-2").runType(RunType.LLM).build());
+ * var step1 = Tracing.traceable(..., base.toBuilder().name("step-1").build());
+ * var step2 = Tracing.traceable(..., base.toBuilder().name("step-2").runType(RunType.LLM).build());
  * ```
- *
- * @property name the name of the run, displayed in LangSmith. If not set, the name is inferred from
- *   the function reference (e.g. `::myFunction` becomes `"myFunction"`), or defaults to
- *   `"<lambda>"` for anonymous functions.
- * @property client the LangSmith client used to post runs. Required at the root; inherited by
- *   children.
- * @property runType the type of run (defaults to [RunType.CHAIN])
- * @property metadata optional metadata to attach to the run
- * @property tags optional tags for filtering in LangSmith
- * @property projectName the LangSmith project name. Defaults to `LANGSMITH_PROJECT` env var, or
- *   `"default"`. Inherited by children.
- * @property executor the [ExecutorService] for background run posting. Defaults to a shared cached
- *   thread pool. Inherited by children.
- * @property tracingEnabled whether tracing is active. Defaults to [isTracingEnabled]. Inherited by
- *   children.
  */
-data class TraceConfig
-@JvmOverloads
+class TraceConfig
 constructor(
+    /** The name of the run, displayed in LangSmith. */
     val name: String? = null,
+    /** The LangSmith client used to post runs. Required at the root; inherited by children. */
     val client: LangsmithClient? = null,
+    /** The type of run (defaults to [RunType.CHAIN]). */
     val runType: RunType = RunType.CHAIN,
+    /** Optional metadata to attach to the run. */
     val metadata: Map<String, Any>? = null,
+    /** Optional tags for filtering in LangSmith. */
     val tags: List<String>? = null,
+    /** The LangSmith project name. Inherited by children. */
     val projectName: String? = null,
+    /** The [ExecutorService] for background run posting. Inherited by children. */
     val executor: ExecutorService? = null,
+    /** Whether tracing is active. Inherited by children. */
     val tracingEnabled: Boolean? = null,
 ) {
     companion object {
@@ -286,13 +298,13 @@ private fun resolveName(config: TraceConfig, block: Any?): String {
  */
 @JvmSynthetic
 fun <O> traceable(block: () -> O, config: TraceConfig): () -> O {
-    val resolvedConfig = config.copy(name = resolveName(config, block))
+    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
     return { executeTraced(resolvedConfig, emptyMap()) { block() } }
 }
 
 /** Wraps a no-arg function with LangSmith tracing (Java [Supplier]). */
 fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
-    val resolvedConfig = config.copy(name = resolveName(config, block))
+    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
     return Supplier { executeTraced(resolvedConfig, emptyMap()) { block.get() } }
 }
 
@@ -323,7 +335,7 @@ fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
  *
  * ```java
  * LangsmithClient client = LangsmithOkHttpClient.fromEnv();
- * Function<String, String> traced = Traceable.traceable(
+ * Function<String, String> traced = Tracing.traceable(
  *     (Function<String, String>) q -> "42",
  *     TraceConfig.builder().name("answer-question").client(client).build());
  * String result = traced.apply("What is the meaning of life?");
@@ -338,7 +350,7 @@ fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
  */
 @JvmSynthetic
 fun <I, O> traceable(block: (I) -> O, config: TraceConfig): (I) -> O {
-    val resolvedConfig = config.copy(name = resolveName(config, block))
+    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
     return { input ->
         val inputs = toInputMap(input)
         executeTraced(resolvedConfig, inputs) { block(input) }
@@ -354,7 +366,7 @@ fun <I, O> traceable(block: Function<I, O>, config: TraceConfig): Function<I, O>
 /** Wraps a 2-arg function with LangSmith tracing (Kotlin). */
 @JvmSynthetic
 fun <I1, I2, O> traceable(block: (I1, I2) -> O, config: TraceConfig): (I1, I2) -> O {
-    val resolvedConfig = config.copy(name = resolveName(config, block))
+    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
     return { i1, i2 ->
         val inputs = mapOf("args" to listOf(i1, i2))
         executeTraced(resolvedConfig, inputs) { block(i1, i2) }
@@ -373,7 +385,7 @@ fun <I1, I2, O> traceable(
 /** Wraps a 3-arg function with LangSmith tracing (Kotlin). */
 @JvmSynthetic
 fun <I1, I2, I3, O> traceable(block: (I1, I2, I3) -> O, config: TraceConfig): (I1, I2, I3) -> O {
-    val resolvedConfig = config.copy(name = resolveName(config, block))
+    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
     return { i1, i2, i3 ->
         val inputs = mapOf("args" to listOf(i1, i2, i3))
         executeTraced(resolvedConfig, inputs) { block(i1, i2, i3) }
