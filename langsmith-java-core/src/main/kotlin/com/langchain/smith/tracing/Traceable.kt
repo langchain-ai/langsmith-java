@@ -1,3 +1,5 @@
+@file:JvmName("Traceable")
+
 package com.langchain.smith.tracing
 
 import com.langchain.smith.client.LangsmithClient
@@ -6,13 +8,13 @@ import com.langchain.smith.core.getJavaVersion
 import com.langchain.smith.core.getPackageVersion
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
+import java.security.SecureRandom
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import java.util.function.BiFunction
 import java.util.function.Function
 import java.util.function.Supplier
@@ -33,15 +35,53 @@ enum class RunType(internal val value: String) {
     RETRIEVER("retriever"),
 }
 
-private val CURRENT_RUN = RunContext.create()
-private val ISO_FORMAT =
+internal val CURRENT_RUN = RunContext.create()
+internal val ISO_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'").withZone(ZoneOffset.UTC)
 
 private fun nowIso(): String = ISO_FORMAT.format(Instant.now())
 
-private val DOTTED_ORDER_STRIP = Regex("[-:.]")
+internal val DOTTED_ORDER_STRIP = Regex("[-:.]")
 
-private fun dottedOrder(time: String, id: String): String =
+private val secureRandom = SecureRandom()
+
+/**
+ * Generates a UUIDv7 from the given [Instant] — time-ordered with millisecond precision and random
+ * lower bits.
+ *
+ * Layout (RFC 9562):
+ * - bits 0-47: Unix timestamp in milliseconds (48 bits)
+ * - bits 48-51: version `0111` (4 bits)
+ * - bits 52-63: rand_a (12 random bits)
+ * - bits 64-65: variant `10` (2 bits)
+ * - bits 66-127: rand_b (62 random bits)
+ */
+internal fun uuidv7(time: Instant): String {
+    val timestamp = time.toEpochMilli()
+    val randomBytes = ByteArray(10) // 80 bits; we use 74 (12 + 62)
+    secureRandom.nextBytes(randomBytes)
+
+    val msb =
+        ((timestamp and 0xFFFFFFFFFFFFL) shl 16) or // bits 0-47: timestamp
+            0x7000L or // bits 48-51: version 7
+            ((randomBytes[0].toLong() and 0x0F) shl 8) or // bits 52-55: rand_a high
+            (randomBytes[1].toLong() and 0xFF) // bits 56-63: rand_a low
+
+    val lsb =
+        (0x2L shl 62) or // bits 64-65: variant 10
+            ((randomBytes[2].toLong() and 0x3F) shl 56) or // bits 66-71: rand_b
+            ((randomBytes[3].toLong() and 0xFF) shl 48) or
+            ((randomBytes[4].toLong() and 0xFF) shl 40) or
+            ((randomBytes[5].toLong() and 0xFF) shl 32) or
+            ((randomBytes[6].toLong() and 0xFF) shl 24) or
+            ((randomBytes[7].toLong() and 0xFF) shl 16) or
+            ((randomBytes[8].toLong() and 0xFF) shl 8) or
+            (randomBytes[9].toLong() and 0xFF)
+
+    return UUID(msb, lsb).toString()
+}
+
+internal fun dottedOrder(time: String, id: String): String =
     time.replace(DOTTED_ORDER_STRIP, "") + id
 
 /**
@@ -71,24 +111,145 @@ fun isTracingEnabled(): Boolean {
     }
 }
 
+internal val DEFAULT_PROJECT_NAME: String by lazy {
+    System.getenv("LANGSMITH_PROJECT")?.takeIf { it.isNotBlank() } ?: "default"
+}
+
+internal val DEFAULT_EXECUTOR: ExecutorService by lazy { Executors.newCachedThreadPool() }
+
 /**
  * Configuration for a traced run.
+ *
+ * At the root of a trace, [client] must be provided (or set via [RunTree.setDefaultClient]). Child
+ * runs inherit [client], [projectName], [executor], and [tracingEnabled] from their parent
+ * automatically — you only need to specify per-run fields like [name], [runType], [metadata], and
+ * [tags].
+ *
+ * `TraceConfig` is immutable and safe to reuse. Create a base config and derive per-run configs
+ * with [copy] (Kotlin) or [toBuilder] (Java):
+ * ```kotlin
+ * val base = TraceConfig(client = client, projectName = "my-project")
+ * val step1 = traceable({ ... }, base.copy(name = "step-1"))
+ * val step2 = traceable({ ... }, base.copy(name = "step-2", runType = RunType.LLM))
+ * ```
+ * ```java
+ * TraceConfig base = TraceConfig.builder()
+ *     .client(client)
+ *     .projectName("my-project")
+ *     .build();
+ * var step1 = Traceable.traceable(..., base.toBuilder().name("step-1").build());
+ * var step2 = Traceable.traceable(..., base.toBuilder().name("step-2").runType(RunType.LLM).build());
+ * ```
  *
  * @property name the name of the run, displayed in LangSmith. If not set, the name is inferred from
  *   the function reference (e.g. `::myFunction` becomes `"myFunction"`), or defaults to
  *   `"<lambda>"` for anonymous functions.
+ * @property client the LangSmith client used to post runs. Required at the root; inherited by
+ *   children.
  * @property runType the type of run (defaults to [RunType.CHAIN])
  * @property metadata optional metadata to attach to the run
  * @property tags optional tags for filtering in LangSmith
+ * @property projectName the LangSmith project name. Defaults to `LANGSMITH_PROJECT` env var, or
+ *   `"default"`. Inherited by children.
+ * @property executor the [ExecutorService] for background run posting. Defaults to a shared cached
+ *   thread pool. Inherited by children.
+ * @property tracingEnabled whether tracing is active. Defaults to [isTracingEnabled]. Inherited by
+ *   children.
  */
 data class TraceConfig
 @JvmOverloads
 constructor(
     val name: String? = null,
+    val client: LangsmithClient? = null,
     val runType: RunType = RunType.CHAIN,
     val metadata: Map<String, Any>? = null,
     val tags: List<String>? = null,
-)
+    val projectName: String? = null,
+    val executor: ExecutorService? = null,
+    val tracingEnabled: Boolean? = null,
+) {
+    companion object {
+        /** Creates a new [Builder] for constructing a [TraceConfig]. */
+        @JvmStatic fun builder() = Builder()
+    }
+
+    /** Returns a new [Builder] pre-populated with the values from this config. */
+    fun toBuilder() = Builder().from(this)
+
+    /**
+     * A builder for [TraceConfig].
+     *
+     * ```java
+     * TraceConfig config = TraceConfig.builder()
+     *     .name("my-run")
+     *     .client(LangsmithOkHttpClient.fromEnv())
+     *     .runType(RunType.LLM)
+     *     .metadata(Map.of("version", "1.0"))
+     *     .tags(List.of("prod"))
+     *     .projectName("my-project")
+     *     .build();
+     * ```
+     */
+    class Builder internal constructor() {
+        private var name: String? = null
+        private var client: LangsmithClient? = null
+        private var runType: RunType = RunType.CHAIN
+        private var metadata: Map<String, Any>? = null
+        private var tags: List<String>? = null
+        private var projectName: String? = null
+        private var executor: ExecutorService? = null
+        private var tracingEnabled: Boolean? = null
+
+        @JvmSynthetic
+        internal fun from(config: TraceConfig) = apply {
+            name = config.name
+            client = config.client
+            runType = config.runType
+            metadata = config.metadata
+            tags = config.tags
+            projectName = config.projectName
+            executor = config.executor
+            tracingEnabled = config.tracingEnabled
+        }
+
+        /** The name of the run, displayed in LangSmith. */
+        fun name(name: String) = apply { this.name = name }
+
+        /** The LangSmith client used to post runs. Required at the root of a trace. */
+        fun client(client: LangsmithClient) = apply { this.client = client }
+
+        /** The type of run (defaults to [RunType.CHAIN]). */
+        fun runType(runType: RunType) = apply { this.runType = runType }
+
+        /** Metadata to attach to the run. */
+        fun metadata(metadata: Map<String, Any>) = apply { this.metadata = metadata }
+
+        /** Tags for filtering in LangSmith. */
+        fun tags(tags: List<String>) = apply { this.tags = tags }
+
+        /** The LangSmith project name. Inherited by children if not set. */
+        fun projectName(projectName: String) = apply { this.projectName = projectName }
+
+        /** The [ExecutorService] for background run posting. Inherited by children if not set. */
+        fun executor(executor: ExecutorService) = apply { this.executor = executor }
+
+        /** Whether tracing is active. Inherited by children if not set. */
+        fun tracingEnabled(tracingEnabled: Boolean) = apply { this.tracingEnabled = tracingEnabled }
+
+        /** Builds the [TraceConfig]. */
+        fun build() =
+            TraceConfig(
+                name = name,
+                client = client,
+                runType = runType,
+                metadata = metadata,
+                tags = tags,
+                projectName = projectName,
+                executor = executor,
+                tracingEnabled = tracingEnabled,
+            )
+    }
+}
 
 /** A function that accepts three arguments and produces a result. */
 @FunctionalInterface
@@ -107,451 +268,300 @@ private fun resolveName(config: TraceConfig, block: Any?): String {
     return DEFAULT_RUN_NAME
 }
 
+// ---------------------------------------------------------------------------
+// traceable overloads
+// ---------------------------------------------------------------------------
+
 /**
- * Configures tracing for the current thread. Must be called before using [traceable].
+ * Wraps a no-arg function with LangSmith tracing (Kotlin).
  *
- * Tracing is only active when [tracingEnabled] is `true`. By default this is determined by the
- * `LANGSMITH_TRACING` / `LANGCHAIN_TRACING` environment variables (see [isTracingEnabled]). When
- * tracing is disabled, [traceable] wrappers still execute the underlying function but skip all
- * LangSmith communication, so there is zero overhead.
- *
- * `TracingContext` implements [AutoCloseable]. Call [close] (or use Kotlin `use {}` / Java
- * try-with-resources) to wait for pending background posts and shut down the thread pool.
- *
- * ## Async / multi-thread usage
- *
- * Run context is automatically propagated to nested synchronous calls. On Java 21+, `ScopedValue`
- * is used, which also propagates context into child tasks forked via `StructuredTaskScope`. On
- * older JVMs a `ThreadLocal` is used as a fallback.
- *
- * **Neither mechanism automatically propagates context across unstructured async boundaries** such
- * as `CompletableFuture.supplyAsync`, `ExecutorService.submit`, or Kotlin coroutines. For those
- * cases, capture the current run with [getCurrentRun] and restore it on the new thread with
- * [withParent]:
  * ```kotlin
- * val run = tracing.getCurrentRun()
- * CompletableFuture.supplyAsync {
- *     tracing.withParent(run) { tracedChild("input") }
- * }
+ * val client = LangsmithOkHttpClient.fromEnv()
+ * val traced = traceable({ "hello" }, TraceConfig("greet", client = client))
+ * val result = traced()
  * ```
+ */
+@JvmSynthetic
+fun <O> traceable(block: () -> O, config: TraceConfig): () -> O {
+    val resolvedConfig = config.copy(name = resolveName(config, block))
+    return { executeTraced(resolvedConfig, emptyMap()) { block() } }
+}
+
+/** Wraps a no-arg function with LangSmith tracing (Java [Supplier]). */
+fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
+    val resolvedConfig = config.copy(name = resolveName(config, block))
+    return Supplier { executeTraced(resolvedConfig, emptyMap()) { block.get() } }
+}
+
+/**
+ * Wraps a 1-arg function with LangSmith tracing.
+ *
+ * Returns a new function with the same signature that, when called, creates a traced run, records
+ * the input, executes the original function, and records the output.
+ *
+ * Runs nest automatically — calling a traced function inside another traced function creates a
+ * parent-child relationship in LangSmith.
+ *
+ * The input to the returned function is automatically serialized as the run's inputs. If the input
+ * is a [Map] with string keys, its entries are used directly; otherwise it is recorded as
+ * `{"inputs": ...}`.
  *
  * ## Example (Kotlin)
  *
  * ```kotlin
- * val langsmith = LangsmithOkHttpClient.fromEnv()
- * val tracing = TracingContext(langsmith, projectName = "my-project")
+ * val client = LangsmithOkHttpClient.fromEnv()
  *
- * // Wrap an existing function — name is inferred from the reference.
  * fun answerQuestion(question: String): String = "42"
- *
- * val traced = tracing.traceable(::answerQuestion)  // run name = "answerQuestion"
+ * val traced = traceable(::answerQuestion, TraceConfig(client = client))
  * val result = traced("What is the meaning of life?")
- *
- * // Access the current run inside a traced function:
- * val traced2 = tracing.traceable({ _: Unit ->
- *     val run = tracing.getCurrentRun()
- *     println("Run ID: ${run?.id}")
- *     "done"
- * })
- *
- * tracing.close() // flush pending runs
  * ```
  *
  * ## Example (Java)
  *
  * ```java
- * LangsmithClient langsmith = LangsmithOkHttpClient.fromEnv();
- * try (TracingContext tracing = new TracingContext(langsmith, "my-project")) {
- *     Function<String, String> traced = tracing.traceable(
- *         (Function<String, String>) q -> "42",
- *         new TraceConfig("answer-question"));
- *     String result = traced.apply("What is the meaning of life?");
- * } // pending runs are flushed on close
+ * LangsmithClient client = LangsmithOkHttpClient.fromEnv();
+ * Function<String, String> traced = Traceable.traceable(
+ *     (Function<String, String>) q -> "42",
+ *     TraceConfig.builder().name("answer-question").client(client).build());
+ * String result = traced.apply("What is the meaning of life?");
  * ```
+ *
+ * @param block the function to wrap
+ * @param config tracing configuration (client, run name, type, metadata, tags, project)
+ * @return a traced wrapper around [block]
+ * @see TraceConfig
+ * @see RunTree.getCurrent
+ * @see RunTree.withParent
  */
-class TracingContext
-@JvmOverloads
-constructor(
-    private val client: LangsmithClient,
-    private val projectName: String =
-        System.getenv("LANGSMITH_PROJECT")?.takeIf { it.isNotBlank() } ?: "default",
-    private val executor: ExecutorService = Executors.newCachedThreadPool(),
-    private val tracingEnabled: Boolean = isTracingEnabled(),
-) : AutoCloseable {
+@JvmSynthetic
+fun <I, O> traceable(block: (I) -> O, config: TraceConfig): (I) -> O {
+    val resolvedConfig = config.copy(name = resolveName(config, block))
+    return { input ->
+        val inputs = toInputMap(input)
+        executeTraced(resolvedConfig, inputs) { block(input) }
+    }
+}
 
-    /**
-     * Returns the [RunTree] for the currently-executing traced function on this thread, or `null`
-     * if there is no active run (e.g. called outside a [traceable] wrapper, or tracing is
-     * disabled).
-     *
-     * The returned [RunTree] is mutable — you can add entries to [RunTree.metadata] or
-     * [RunTree.extra] and they will be included when the run is posted to LangSmith.
-     *
-     * To propagate context across async boundaries, pass the returned [RunTree] to [withParent] on
-     * the new thread.
-     *
-     * @see withParent
-     */
-    fun getCurrentRun(): RunTree? = CURRENT_RUN.get()
+/** Wraps a 1-arg function with LangSmith tracing (Java [Function]). */
+fun <I, O> traceable(block: Function<I, O>, config: TraceConfig): Function<I, O> {
+    val traced = traceable({ i: I -> block.apply(i) }, config)
+    return Function { traced(it) }
+}
 
-    /**
-     * Executes [block] with [parent] as the current run on this thread. Traced functions called
-     * inside [block] will become children of [parent].
-     *
-     * Use this to propagate context across async boundaries where the run context is not
-     * automatically inherited (e.g. `CompletableFuture`, `ExecutorService`, coroutines).
-     *
-     * ```kotlin
-     * val parent = tracing.getCurrentRun()
-     * CompletableFuture.supplyAsync {
-     *     tracing.withParent(parent) {
-     *         // child runs created here will be nested under parent
-     *         tracedChild("input")
-     *     }
-     * }
-     * ```
-     *
-     * @param parent the run to set as the current parent, or `null` to clear the context
-     * @param block the code to execute with the given parent context
-     * @return the result of [block]
-     */
-    @JvmSynthetic
-    fun <T> withParent(parent: RunTree?, block: () -> T): T = CURRENT_RUN.runWith(parent, block)
+/** Wraps a 2-arg function with LangSmith tracing (Kotlin). */
+@JvmSynthetic
+fun <I1, I2, O> traceable(block: (I1, I2) -> O, config: TraceConfig): (I1, I2) -> O {
+    val resolvedConfig = config.copy(name = resolveName(config, block))
+    return { i1, i2 ->
+        val inputs = mapOf("args" to listOf(i1, i2))
+        executeTraced(resolvedConfig, inputs) { block(i1, i2) }
+    }
+}
 
-    /**
-     * Executes [block] with [parent] as the current run on this thread (Java-friendly overload).
-     *
-     * @see withParent
-     */
-    fun <T> withParent(parent: RunTree?, block: java.util.concurrent.Callable<T>): T =
-        CURRENT_RUN.runWith(parent) { block.call() }
+/** Wraps a 2-arg function with LangSmith tracing (Java [BiFunction]). */
+fun <I1, I2, O> traceable(
+    block: BiFunction<I1, I2, O>,
+    config: TraceConfig,
+): BiFunction<I1, I2, O> {
+    val traced = traceable({ i1: I1, i2: I2 -> block.apply(i1, i2) }, config)
+    return BiFunction { i1, i2 -> traced(i1, i2) }
+}
 
-    /**
-     * Blocks until all pending background run posts and patches have completed, or the timeout
-     * elapses. Does **not** shut down the executor — new traced calls can still be made afterwards.
-     *
-     * @param timeout maximum time to wait
-     * @param unit time unit for [timeout]
-     * @return `true` if all pending work completed within the timeout
-     */
-    @JvmOverloads
-    fun awaitPendingRuns(timeout: Long = 30, unit: TimeUnit = TimeUnit.SECONDS): Boolean {
-        // Submit a sentinel task and wait for it — when it completes, all previously submitted
-        // tasks have finished because the executor processes tasks in submission order.
-        val sentinel = executor.submit {}
-        return try {
-            sentinel.get(timeout, unit)
-            true
-        } catch (_: Exception) {
-            false
-        }
+/** Wraps a 3-arg function with LangSmith tracing (Kotlin). */
+@JvmSynthetic
+fun <I1, I2, I3, O> traceable(block: (I1, I2, I3) -> O, config: TraceConfig): (I1, I2, I3) -> O {
+    val resolvedConfig = config.copy(name = resolveName(config, block))
+    return { i1, i2, i3 ->
+        val inputs = mapOf("args" to listOf(i1, i2, i3))
+        executeTraced(resolvedConfig, inputs) { block(i1, i2, i3) }
+    }
+}
+
+/** Wraps a 3-arg function with LangSmith tracing (Java [TriFunction]). */
+fun <I1, I2, I3, O> traceable(
+    block: TriFunction<I1, I2, I3, O>,
+    config: TraceConfig,
+): TriFunction<I1, I2, I3, O> {
+    val traced = traceable({ i1: I1, i2: I2, i3: I3 -> block.apply(i1, i2, i3) }, config)
+    return TriFunction { i1, i2, i3 -> traced(i1, i2, i3) }
+}
+
+// ---------------------------------------------------------------------------
+// Internal implementation
+// ---------------------------------------------------------------------------
+
+private fun toInputMap(input: Any?): Map<String, Any?> =
+    toStringKeyedMap(input) ?: mapOf("inputs" to input)
+
+private fun toOutputMap(output: Any?): Map<String, Any?> =
+    when (output) {
+        null -> mapOf("outputs" to null)
+        is RunTree -> mapOf("outputs" to output.toString())
+        else -> toStringKeyedMap(output) ?: mapOf("outputs" to output)
     }
 
-    /**
-     * Waits for pending runs to flush (up to 30 seconds) and shuts down the background executor.
-     *
-     * After calling [close], traced functions will still execute their underlying logic but will no
-     * longer post runs to LangSmith.
-     */
-    override fun close() {
-        executor.shutdown()
-        if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
-            logger.warn("Timed out waiting for pending LangSmith runs to flush; some may be lost")
-            executor.shutdownNow()
-        }
+private fun toStringKeyedMap(value: Any?): Map<String, Any?>? {
+    if (value !is Map<*, *>) return null
+    val result = mutableMapOf<String, Any?>()
+    for ((k, v) in value) {
+        if (k !is String) return null
+        result[k] = v
+    }
+    return result
+}
+
+private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, block: () -> T): T {
+    val parentRun = CURRENT_RUN.get()
+
+    // Merge config: child config wins, then parent, then defaults.
+    val tracingEnabled = config.tracingEnabled ?: parentRun?.tracingEnabled ?: isTracingEnabled()
+    if (!tracingEnabled) {
+        return block()
     }
 
-    // ---- 0-arg overloads ----
+    val run =
+        if (parentRun != null) {
+            parentRun.createChild(config, inputs)
+        } else {
+            // Root run — resolve client and create the tree.
+            val client =
+                config.client
+                    ?: RunTree.getDefaultClient()
+                    ?: throw IllegalStateException(
+                        "No LangSmith client available. Either pass a client in TraceConfig, " +
+                            "call RunTree.setDefaultClient(), or ensure LangsmithOkHttpClient " +
+                            "is on the classpath with LANGSMITH_API_KEY set."
+                    )
+            val now = Instant.now()
+            val runId = uuidv7(now)
+            val startTime = ISO_FORMAT.format(now)
 
-    /** Wraps a no-arg function with LangSmith tracing (Kotlin). */
-    @JvmSynthetic
-    fun <O> traceable(block: () -> O, config: TraceConfig = TraceConfig()): () -> O {
-        val resolvedConfig = config.copy(name = resolveName(config, block))
-        return { executeTraced(resolvedConfig, emptyMap()) { block() } }
-    }
+            val mergedMetadata = mutableMapOf<String, Any>()
+            config.metadata?.let { mergedMetadata.putAll(it) }
 
-    /** Wraps a no-arg function with LangSmith tracing (Java [Supplier]). */
-    @JvmOverloads
-    fun <O> traceable(block: Supplier<O>, config: TraceConfig = TraceConfig()): Supplier<O> {
-        val resolvedConfig = config.copy(name = resolveName(config, block))
-        return Supplier { executeTraced(resolvedConfig, emptyMap()) { block.get() } }
-    }
-
-    // ---- 1-arg overloads ----
-
-    /**
-     * Wraps a function with LangSmith tracing. Returns a new function with the same signature that,
-     * when called, creates a traced run, records the input, executes the original function, and
-     * records the output.
-     *
-     * Runs nest automatically — calling a traced function inside another traced function creates a
-     * parent-child relationship in LangSmith.
-     *
-     * The input to the returned function is automatically serialized as the run's inputs. If the
-     * input is a [Map], its entries are used directly; otherwise it is recorded as `{"input":
-     * ...}`.
-     *
-     * @param block the function to wrap
-     * @param config tracing configuration (run name, type, metadata, tags)
-     * @return a traced wrapper around [block]
-     */
-    @JvmSynthetic
-    fun <I, O> traceable(block: (I) -> O, config: TraceConfig = TraceConfig()): (I) -> O {
-        val resolvedConfig = config.copy(name = resolveName(config, block))
-        return { input ->
-            val inputs = toInputMap(input)
-            executeTraced(resolvedConfig, inputs) { block(input) }
-        }
-    }
-
-    /** Wraps a 1-arg function with LangSmith tracing (Java [Function]). */
-    @JvmOverloads
-    fun <I, O> traceable(
-        block: Function<I, O>,
-        config: TraceConfig = TraceConfig(),
-    ): Function<I, O> {
-        val traced = traceable({ i: I -> block.apply(i) }, config)
-        return Function { traced(it) }
-    }
-
-    // ---- 2-arg overloads ----
-
-    /** Wraps a 2-arg function with LangSmith tracing (Kotlin). */
-    @JvmSynthetic
-    fun <I1, I2, O> traceable(
-        block: (I1, I2) -> O,
-        config: TraceConfig = TraceConfig(),
-    ): (I1, I2) -> O {
-        val resolvedConfig = config.copy(name = resolveName(config, block))
-        return { i1, i2 ->
-            val inputs = mapOf("i1" to i1, "i2" to i2)
-            executeTraced(resolvedConfig, inputs) { block(i1, i2) }
-        }
-    }
-
-    /** Wraps a 2-arg function with LangSmith tracing (Java [BiFunction]). */
-    @JvmOverloads
-    fun <I1, I2, O> traceable(
-        block: BiFunction<I1, I2, O>,
-        config: TraceConfig = TraceConfig(),
-    ): BiFunction<I1, I2, O> {
-        val traced = traceable({ i1: I1, i2: I2 -> block.apply(i1, i2) }, config)
-        return BiFunction { i1, i2 -> traced(i1, i2) }
-    }
-
-    // ---- 3-arg overloads ----
-
-    /** Wraps a 3-arg function with LangSmith tracing (Kotlin). */
-    @JvmSynthetic
-    fun <I1, I2, I3, O> traceable(
-        block: (I1, I2, I3) -> O,
-        config: TraceConfig = TraceConfig(),
-    ): (I1, I2, I3) -> O {
-        val resolvedConfig = config.copy(name = resolveName(config, block))
-        return { i1, i2, i3 ->
-            val inputs = mapOf("i1" to i1, "i2" to i2, "i3" to i3)
-            executeTraced(resolvedConfig, inputs) { block(i1, i2, i3) }
-        }
-    }
-
-    /** Wraps a 3-arg function with LangSmith tracing (Java [TriFunction]). */
-    @JvmOverloads
-    fun <I1, I2, I3, O> traceable(
-        block: TriFunction<I1, I2, I3, O>,
-        config: TraceConfig = TraceConfig(),
-    ): TriFunction<I1, I2, I3, O> {
-        val traced = traceable({ i1: I1, i2: I2, i3: I3 -> block.apply(i1, i2, i3) }, config)
-        return TriFunction { i1, i2, i3 -> traced(i1, i2, i3) }
-    }
-
-    /**
-     * Converts a function input to a map suitable for recording as run inputs.
-     *
-     * If the input is a [Map] with all [String] keys, its entries are used directly. Otherwise the
-     * input is wrapped as `{"input": value}`.
-     */
-    private fun toInputMap(input: Any?): Map<String, Any?> =
-        toStringKeyedMap(input) ?: mapOf("input" to input)
-
-    private fun toOutputMap(output: Any?): Map<String, Any?> =
-        when (output) {
-            null -> mapOf("output" to null)
-            is RunTree -> mapOf("output" to output.toString())
-            else -> toStringKeyedMap(output) ?: mapOf("output" to output)
-        }
-
-    /**
-     * Returns the map with its entries if [value] is a [Map] whose keys are all [String]s, or
-     * `null` otherwise.
-     */
-    private fun toStringKeyedMap(value: Any?): Map<String, Any?>? {
-        if (value !is Map<*, *>) return null
-        val result = mutableMapOf<String, Any?>()
-        for ((k, v) in value) {
-            if (k !is String) return null
-            result[k] = v
-        }
-        return result
-    }
-
-    /** Core tracing logic shared by all overloads. */
-    private fun <T> executeTraced(
-        config: TraceConfig,
-        inputs: Map<String, Any?>?,
-        block: () -> T,
-    ): T {
-        if (!tracingEnabled) {
-            return block()
-        }
-
-        val name = config.name ?: DEFAULT_RUN_NAME
-        val runType = config.runType
-        val tags = config.tags
-        val parentRun = CURRENT_RUN.get()
-        val runId = UUID.randomUUID().toString()
-        val startTime = nowIso()
-        val traceId = parentRun?.traceId ?: runId
-        val parentDottedOrder = parentRun?.dottedOrder
-        val myDottedOrder =
-            if (parentDottedOrder != null) "$parentDottedOrder.${dottedOrder(startTime, runId)}"
-            else dottedOrder(startTime, runId)
-
-        val mergedMetadata = mutableMapOf<String, Any>()
-        config.metadata?.let { mergedMetadata.putAll(it) }
-
-        val run =
             RunTree(
                 id = runId,
-                traceId = traceId,
-                dottedOrder = myDottedOrder,
-                parentRunId = parentRun?.id,
-                name = name,
-                runType = runType,
+                traceId = runId,
+                dottedOrder = dottedOrder(startTime, runId),
+                parentRunId = null,
+                name = config.name ?: DEFAULT_RUN_NAME,
+                runType = config.runType,
                 startTime = startTime,
-                projectName = projectName,
+                projectName = config.projectName ?: DEFAULT_PROJECT_NAME,
                 inputs = inputs,
                 outputs = null,
                 error = null,
                 endTime = null,
                 metadata = mergedMetadata,
-                tags = tags,
+                tags = config.tags?.toMutableList() ?: mutableListOf(),
                 extra = mutableMapOf(),
+                client = client,
+                executor = config.executor ?: DEFAULT_EXECUTOR,
+                tracingEnabled = tracingEnabled,
+            )
+        }
+
+    postRun(run)
+    return CURRENT_RUN.runWith(run) {
+        try {
+            val result = block()
+            run.endTime = nowIso()
+            run.outputs = toOutputMap(result)
+            patchRun(run)
+            result
+        } catch (e: Throwable) {
+            run.endTime = nowIso()
+            run.error = e.stackTraceToString()
+            patchRun(run)
+            throw e
+        }
+    }
+}
+
+private fun postRun(run: RunTree) {
+    val runData = buildRunData(run)
+    submitSafely(run.executor, run.name) {
+        run.client.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
+    }
+}
+
+private fun patchRun(run: RunTree) {
+    val runData = buildRunData(run)
+    submitSafely(run.executor, run.name) {
+        run.client.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
+    }
+}
+
+private fun submitSafely(executor: ExecutorService, runName: String, block: () -> Unit) {
+    try {
+        executor.submit {
+            try {
+                block()
+            } catch (e: Exception) {
+                logger.warn("Failed to send run '$runName'", e)
+            }
+        }
+    } catch (e: java.util.concurrent.RejectedExecutionException) {
+        logger.warn("Executor is shut down; dropping run '$runName'")
+    }
+}
+
+private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
+    data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()
+
+private val runtimeMetadata: Map<String, JsonValue> by lazy {
+    mapOf(
+        "runtime" to JsonValue.from("java"),
+        "runtime_version" to JsonValue.from(getJavaVersion()),
+        "sdk" to JsonValue.from("langsmith-java"),
+        "sdk_version" to JsonValue.from(getPackageVersion()),
+    )
+}
+
+private fun buildRuntimeMetadata(userMetadata: Map<String, Any>?): Map<String, JsonValue> =
+    if (userMetadata.isNullOrEmpty()) {
+        runtimeMetadata
+    } else {
+        buildMap {
+            putAll(runtimeMetadata)
+            userMetadata.forEach { (k, v) -> put(k, JsonValue.from(v)) }
+        }
+    }
+
+private fun buildRunData(run: RunTree): Run {
+    val builder =
+        Run.builder()
+            .id(run.id)
+            .traceId(run.traceId)
+            .dottedOrder(run.dottedOrder)
+            .name(run.name)
+            .runType(Run.RunType.of(run.runType.value))
+            .startTime(run.startTime)
+            .sessionName(run.projectName)
+            .tags(run.tags)
+            .inputs(
+                Run.Inputs.builder().putAllAdditionalProperties(toJsonValueMap(run.inputs)).build()
+            )
+            .extra(
+                Run.Extra.builder()
+                    .apply {
+                        run.extra.forEach { (k, v) -> putAdditionalProperty(k, JsonValue.from(v)) }
+                    }
+                    .putAdditionalProperty(
+                        "metadata",
+                        JsonValue.from(buildRuntimeMetadata(run.metadata)),
+                    )
+                    .build()
             )
 
-        postRun(run)
-        return CURRENT_RUN.runWith(run) {
-            try {
-                val result = block()
-                run.endTime = nowIso()
-                run.outputs = toOutputMap(result)
-                patchRun(run)
-                result
-            } catch (e: Throwable) {
-                run.endTime = nowIso()
-                run.error = e.stackTraceToString()
-                patchRun(run)
-                throw e
-            }
-        }
-    }
-
-    /**
-     * Posts a new run to LangSmith in the background (creates the run with inputs + start time).
-     */
-    private fun postRun(run: RunTree) {
-        val runData = buildRunData(run)
-        submitSafely(run.name) {
-            client.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
-        }
-    }
-
-    /** Patches a run in LangSmith in the background (updates with outputs, end time, error). */
-    private fun patchRun(run: RunTree) {
-        val runData = buildRunData(run)
-        submitSafely(run.name) {
-            client.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
-        }
-    }
-
-    /**
-     * Submits work to the background executor, handling both execution errors and
-     * [java.util.concurrent.RejectedExecutionException] (e.g. after [close] has been called).
-     */
-    private fun submitSafely(runName: String, block: () -> Unit) {
-        try {
-            executor.submit {
-                try {
-                    block()
-                } catch (e: Exception) {
-                    logger.warn("Failed to send run '$runName'", e)
-                }
-            }
-        } catch (e: java.util.concurrent.RejectedExecutionException) {
-            logger.warn("Executor is shut down; dropping run '$runName'")
-        }
-    }
-
-    private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
-        data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()
-
-    private val runtimeMetadata: Map<String, JsonValue> by lazy {
-        mapOf(
-            "runtime" to JsonValue.from("java"),
-            "runtime_version" to JsonValue.from(getJavaVersion()),
-            "sdk" to JsonValue.from("langsmith-java"),
-            "sdk_version" to JsonValue.from(getPackageVersion()),
+    run.endTime?.let { builder.endTime(it) }
+    run.error?.let { builder.error(it) }
+    run.parentRunId?.let { builder.parentRunId(it) }
+    run.outputs?.let {
+        builder.outputs(
+            Run.Outputs.builder().putAllAdditionalProperties(toJsonValueMap(it)).build()
         )
     }
 
-    private fun buildRuntimeMetadata(userMetadata: Map<String, Any>?): Map<String, JsonValue> =
-        if (userMetadata.isNullOrEmpty()) {
-            runtimeMetadata
-        } else {
-            buildMap {
-                putAll(runtimeMetadata)
-                userMetadata.forEach { (k, v) -> put(k, JsonValue.from(v)) }
-            }
-        }
-
-    private fun buildRunData(run: RunTree): Run {
-        val builder =
-            Run.builder()
-                .id(run.id)
-                .traceId(run.traceId)
-                .dottedOrder(run.dottedOrder)
-                .name(run.name)
-                .runType(Run.RunType.of(run.runType.value))
-                .startTime(run.startTime)
-                .sessionName(run.projectName)
-                .tags(run.tags ?: emptyList())
-                .inputs(
-                    Run.Inputs.builder()
-                        .putAllAdditionalProperties(toJsonValueMap(run.inputs))
-                        .build()
-                )
-                .extra(
-                    Run.Extra.builder()
-                        .apply {
-                            run.extra.forEach { (k, v) ->
-                                putAdditionalProperty(k, JsonValue.from(v))
-                            }
-                        }
-                        .putAdditionalProperty(
-                            "metadata",
-                            JsonValue.from(buildRuntimeMetadata(run.metadata)),
-                        )
-                        .build()
-                )
-
-        run.endTime?.let { builder.endTime(it) }
-        run.error?.let { builder.error(it) }
-        run.parentRunId?.let { builder.parentRunId(it) }
-        run.outputs?.let {
-            builder.outputs(
-                Run.Outputs.builder().putAllAdditionalProperties(toJsonValueMap(it)).build()
-            )
-        }
-
-        return builder.build()
-    }
+    return builder.build()
 }
