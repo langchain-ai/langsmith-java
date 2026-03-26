@@ -15,6 +15,7 @@ internal class CommitRetrieveParamsTest {
             .repo("repo")
             .commit("commit")
             .getExamples(true)
+            .include("include")
             .includeModel(true)
             .isView(true)
             .build()
@@ -40,6 +41,7 @@ internal class CommitRetrieveParamsTest {
                 .repo("repo")
                 .commit("commit")
                 .getExamples(true)
+                .include("include")
                 .includeModel(true)
                 .isView(true)
                 .build()
@@ -50,6 +52,7 @@ internal class CommitRetrieveParamsTest {
             .isEqualTo(
                 QueryParams.builder()
                     .put("get_examples", "true")
+                    .put("include", "include")
                     .put("include_model", "true")
                     .put("is_view", "true")
                     .build()

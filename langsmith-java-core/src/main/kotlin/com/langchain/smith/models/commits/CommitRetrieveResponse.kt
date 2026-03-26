@@ -23,6 +23,7 @@ class CommitRetrieveResponse
 private constructor(
     private val commitHash: JsonField<String>,
     private val examples: JsonField<List<Example>>,
+    private val isDraft: JsonField<Boolean>,
     private val manifest: JsonValue,
     private val modelConfig: JsonValue,
     private val modelProvider: JsonField<String>,
@@ -37,12 +38,13 @@ private constructor(
         @JsonProperty("examples")
         @ExcludeMissing
         examples: JsonField<List<Example>> = JsonMissing.of(),
+        @JsonProperty("is_draft") @ExcludeMissing isDraft: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("manifest") @ExcludeMissing manifest: JsonValue = JsonMissing.of(),
         @JsonProperty("model_config") @ExcludeMissing modelConfig: JsonValue = JsonMissing.of(),
         @JsonProperty("model_provider")
         @ExcludeMissing
         modelProvider: JsonField<String> = JsonMissing.of(),
-    ) : this(commitHash, examples, manifest, modelConfig, modelProvider, mutableMapOf())
+    ) : this(commitHash, examples, isDraft, manifest, modelConfig, modelProvider, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -55,6 +57,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun examples(): Optional<List<Example>> = examples.getOptional("examples")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isDraft(): Optional<Boolean> = isDraft.getOptional("is_draft")
 
     /**
      * This arbitrary value can be deserialized into a custom type using the `convert` method:
@@ -93,6 +101,13 @@ private constructor(
     @JsonProperty("examples") @ExcludeMissing fun _examples(): JsonField<List<Example>> = examples
 
     /**
+     * Returns the raw JSON value of [isDraft].
+     *
+     * Unlike [isDraft], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_draft") @ExcludeMissing fun _isDraft(): JsonField<Boolean> = isDraft
+
+    /**
      * Returns the raw JSON value of [modelProvider].
      *
      * Unlike [modelProvider], this method doesn't throw if the JSON field has an unexpected type.
@@ -124,6 +139,7 @@ private constructor(
 
         private var commitHash: JsonField<String> = JsonMissing.of()
         private var examples: JsonField<MutableList<Example>>? = null
+        private var isDraft: JsonField<Boolean> = JsonMissing.of()
         private var manifest: JsonValue = JsonMissing.of()
         private var modelConfig: JsonValue = JsonMissing.of()
         private var modelProvider: JsonField<String> = JsonMissing.of()
@@ -133,6 +149,7 @@ private constructor(
         internal fun from(commitRetrieveResponse: CommitRetrieveResponse) = apply {
             commitHash = commitRetrieveResponse.commitHash
             examples = commitRetrieveResponse.examples.map { it.toMutableList() }
+            isDraft = commitRetrieveResponse.isDraft
             manifest = commitRetrieveResponse.manifest
             modelConfig = commitRetrieveResponse.modelConfig
             modelProvider = commitRetrieveResponse.modelProvider
@@ -174,6 +191,16 @@ private constructor(
                     checkKnown("examples", it).add(example)
                 }
         }
+
+        fun isDraft(isDraft: Boolean) = isDraft(JsonField.of(isDraft))
+
+        /**
+         * Sets [Builder.isDraft] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isDraft] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun isDraft(isDraft: JsonField<Boolean>) = apply { this.isDraft = isDraft }
 
         fun manifest(manifest: JsonValue) = apply { this.manifest = manifest }
 
@@ -220,6 +247,7 @@ private constructor(
             CommitRetrieveResponse(
                 commitHash,
                 (examples ?: JsonMissing.of()).map { it.toImmutable() },
+                isDraft,
                 manifest,
                 modelConfig,
                 modelProvider,
@@ -236,6 +264,7 @@ private constructor(
 
         commitHash()
         examples().ifPresent { it.forEach { it.validate() } }
+        isDraft()
         modelProvider()
         validated = true
     }
@@ -257,6 +286,7 @@ private constructor(
     internal fun validity(): Int =
         (if (commitHash.asKnown().isPresent) 1 else 0) +
             (examples.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (isDraft.asKnown().isPresent) 1 else 0) +
             (if (modelProvider.asKnown().isPresent) 1 else 0)
 
     class Example
@@ -513,6 +543,7 @@ private constructor(
         return other is CommitRetrieveResponse &&
             commitHash == other.commitHash &&
             examples == other.examples &&
+            isDraft == other.isDraft &&
             manifest == other.manifest &&
             modelConfig == other.modelConfig &&
             modelProvider == other.modelProvider &&
@@ -523,6 +554,7 @@ private constructor(
         Objects.hash(
             commitHash,
             examples,
+            isDraft,
             manifest,
             modelConfig,
             modelProvider,
@@ -533,5 +565,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CommitRetrieveResponse{commitHash=$commitHash, examples=$examples, manifest=$manifest, modelConfig=$modelConfig, modelProvider=$modelProvider, additionalProperties=$additionalProperties}"
+        "CommitRetrieveResponse{commitHash=$commitHash, examples=$examples, isDraft=$isDraft, manifest=$manifest, modelConfig=$modelConfig, modelProvider=$modelProvider, additionalProperties=$additionalProperties}"
 }
