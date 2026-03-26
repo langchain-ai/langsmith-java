@@ -134,10 +134,30 @@ fun <T> withParent(parent: RunTree?, block: () -> T): T = CURRENT_RUN.runWith(pa
 /**
  * Executes [block] with [parent] as the current run on this thread (Java-friendly overload).
  *
+ * ```java
+ * RunTree parent = Tracing.getCurrentRunTree();
+ * CompletableFuture.supplyAsync(() ->
+ *     Tracing.withParent(parent, () -> tracedChild.apply("input")));
+ * ```
+ *
  * @see withParent
  */
 fun <T> withParent(parent: RunTree?, block: java.util.concurrent.Callable<T>): T =
     CURRENT_RUN.runWith(parent) { block.call() }
+
+/**
+ * Executes [block] with [parent] as the current run on this thread (fire-and-forget overload).
+ *
+ * Use this for void-returning tasks where [Callable] would require an awkward `return null`:
+ * ```java
+ * RunTree parent = Tracing.getCurrentRunTree();
+ * executor.execute(() -> Tracing.withParent(parent, () -> tracedChild.apply("input")));
+ * ```
+ *
+ * @see withParent
+ */
+fun withParent(parent: RunTree?, block: Runnable): Unit =
+    CURRENT_RUN.runWith(parent) { block.run() }
 
 /**
  * Returns the default [LangsmithClient], resolving in order: user-set default, then auto-created
@@ -198,8 +218,8 @@ internal val DEFAULT_EXECUTOR: ExecutorService by lazy { Executors.newCachedThre
  *     .client(client)
  *     .projectName("my-project")
  *     .build();
- * var step1 = Tracing.traceable(..., base.toBuilder().name("step-1").build());
- * var step2 = Tracing.traceable(..., base.toBuilder().name("step-2").runType(RunType.LLM).build());
+ * var step1 = Tracing.traceFunction(..., base.toBuilder().name("step-1").build());
+ * var step2 = Tracing.traceFunction(..., base.toBuilder().name("step-2").runType(RunType.LLM).build());
  * ```
  */
 class TraceConfig(
@@ -303,12 +323,6 @@ class TraceConfig(
     }
 }
 
-/** A function that accepts three arguments and produces a result. */
-@FunctionalInterface
-fun interface TriFunction<I1, I2, I3, O> {
-    fun apply(i1: I1, i2: I2, i3: I3): O
-}
-
 private const val DEFAULT_RUN_NAME = "<lambda>"
 
 /** Resolves the run name from the config and the function being wrapped. */
@@ -370,10 +384,11 @@ fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
  *
  * ## Example (Java)
  *
+ * Java users should prefer [traceFunction] to avoid overload-resolution ambiguity:
  * ```java
  * LangsmithClient client = LangsmithOkHttpClient.fromEnv();
- * Function<String, String> traced = Tracing.traceable(
- *     (Function<String, String>) q -> "42",
+ * Function<String, String> traced = Tracing.traceFunction(
+ *     q -> "42",
  *     TraceConfig.builder().name("answer-question").client(client).build());
  * String result = traced.apply("What is the meaning of life?");
  * ```
@@ -381,6 +396,7 @@ fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
  * @param block the function to wrap
  * @param config tracing configuration (client, run name, type, metadata, tags, project)
  * @return a traced wrapper around [block]
+ * @see traceFunction
  * @see TraceConfig
  * @see RunTree.getCurrent
  * @see withParent
@@ -437,6 +453,104 @@ fun <I1, I2, I3, O> traceable(
     val traced = traceable({ i1: I1, i2: I2, i3: I3 -> block.apply(i1, i2, i3) }, config)
     return TriFunction { i1, i2, i3 -> traced(i1, i2, i3) }
 }
+
+// ---------------------------------------------------------------------------
+// Java-friendly aliases
+// ---------------------------------------------------------------------------
+// These bypass overload-resolution ambiguity between Kotlin function types
+// and java.util.function types. Java users can call Tracing.traceFunction(...)
+// instead of needing a cast: Tracing.traceable((Function<I, O>) ..., config).
+// Kotlin users should prefer `traceable(...)` directly.
+
+/**
+ * Wraps a no-arg [Supplier] with LangSmith tracing.
+ *
+ * This is the recommended entry point for Java callers (0-arg). It avoids the overload-resolution
+ * ambiguity that can occur with [traceable] when Kotlin function types are on the classpath. Kotlin
+ * callers should prefer [traceable] directly.
+ *
+ * ```java
+ * TraceConfig config = TraceConfig.builder()
+ *     .name("fetch-answer")
+ *     .client(LangsmithOkHttpClient.fromEnv())
+ *     .build();
+ * Supplier<String> traced = Tracing.traceSupplier(() -> "42", config);
+ * String result = traced.get();
+ * ```
+ *
+ * @see traceable
+ */
+fun <O> traceSupplier(block: Supplier<O>, config: TraceConfig): Supplier<O> =
+    traceable(block, config)
+
+/**
+ * Wraps a 1-arg [Function] with LangSmith tracing.
+ *
+ * This is the recommended entry point for Java callers (1-arg). It avoids the overload-resolution
+ * ambiguity that can occur with [traceable] when Kotlin function types are on the classpath. Kotlin
+ * callers should prefer [traceable] directly.
+ *
+ * ```java
+ * TraceConfig config = TraceConfig.builder()
+ *     .name("answer-question")
+ *     .client(LangsmithOkHttpClient.fromEnv())
+ *     .build();
+ * Function<String, String> traced = Tracing.traceFunction(q -> "42", config);
+ * String result = traced.apply("What is the meaning of life?");
+ * ```
+ *
+ * @see traceable
+ */
+fun <I, O> traceFunction(block: Function<I, O>, config: TraceConfig): Function<I, O> =
+    traceable(block, config)
+
+/**
+ * Wraps a 2-arg [BiFunction] with LangSmith tracing.
+ *
+ * This is the recommended entry point for Java callers (2-arg). It avoids the overload-resolution
+ * ambiguity that can occur with [traceable] when Kotlin function types are on the classpath. Kotlin
+ * callers should prefer [traceable] directly.
+ *
+ * ```java
+ * TraceConfig config = TraceConfig.builder()
+ *     .name("combine")
+ *     .client(LangsmithOkHttpClient.fromEnv())
+ *     .build();
+ * BiFunction<String, String, String> traced =
+ *     Tracing.traceBiFunction((a, b) -> a + " " + b, config);
+ * String result = traced.apply("hello", "world");
+ * ```
+ *
+ * @see traceable
+ */
+fun <I1, I2, O> traceBiFunction(
+    block: BiFunction<I1, I2, O>,
+    config: TraceConfig,
+): BiFunction<I1, I2, O> = traceable(block, config)
+
+/**
+ * Wraps a 3-arg [TriFunction] with LangSmith tracing.
+ *
+ * This is the recommended entry point for Java callers (3-arg). It avoids the overload-resolution
+ * ambiguity that can occur with [traceable] when Kotlin function types are on the classpath. Kotlin
+ * callers should prefer [traceable] directly.
+ *
+ * ```java
+ * TraceConfig config = TraceConfig.builder()
+ *     .name("combine3")
+ *     .client(LangsmithOkHttpClient.fromEnv())
+ *     .build();
+ * TriFunction<String, String, String, String> traced =
+ *     Tracing.traceTriFunction((a, b, c) -> a + " " + b + " " + c, config);
+ * String result = traced.apply("a", "b", "c");
+ * ```
+ *
+ * @see traceable
+ */
+fun <I1, I2, I3, O> traceTriFunction(
+    block: TriFunction<I1, I2, I3, O>,
+    config: TraceConfig,
+): TriFunction<I1, I2, I3, O> = traceable(block, config)
 
 // ---------------------------------------------------------------------------
 // Internal implementation
