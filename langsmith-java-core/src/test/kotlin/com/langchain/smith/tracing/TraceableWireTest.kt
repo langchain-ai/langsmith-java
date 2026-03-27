@@ -17,8 +17,27 @@ internal class TraceableWireTest {
 
     private val client: LangsmithClient = mock()
 
-    private fun config(name: String) =
+    private fun config(name: String): TraceConfig =
         TraceConfig(name = name, client = client, tracingEnabled = true)
+
+    private fun cfg(
+        name: String,
+        client: LangsmithClient? = null,
+        runType: RunType = RunType.CHAIN,
+        metadata: Map<String, Any>? = null,
+        tags: List<String>? = null,
+        projectName: String? = null,
+        tracingEnabled: Boolean? = null,
+    ): TraceConfig =
+        TraceConfig(
+            name = name,
+            client = client,
+            runType = runType,
+            metadata = metadata,
+            tags = tags,
+            projectName = projectName,
+            tracingEnabled = tracingEnabled,
+        )
 
     // ---- Basic tracing ----
 
@@ -52,7 +71,7 @@ internal class TraceableWireTest {
                     run = getCurrentRunTree()
                     "result"
                 },
-                TraceConfig(
+                cfg(
                     "wire-test",
                     client = client,
                     tracingEnabled = true,
@@ -94,7 +113,7 @@ internal class TraceableWireTest {
                     child1Run = getCurrentRunTree()
                     "c1"
                 },
-                TraceConfig("child-1"),
+                cfg("child-1"),
             )
         val child2 =
             traceable(
@@ -102,7 +121,7 @@ internal class TraceableWireTest {
                     child2Run = getCurrentRunTree()
                     "c2"
                 },
-                TraceConfig("child-2"),
+                cfg("child-2"),
             )
         val parent =
             traceable(
@@ -136,7 +155,7 @@ internal class TraceableWireTest {
                     l3 = getCurrentRunTree()
                     "deep"
                 },
-                TraceConfig("level-3"),
+                cfg("level-3"),
             )
         val level2 =
             traceable(
@@ -144,7 +163,7 @@ internal class TraceableWireTest {
                     l2 = getCurrentRunTree()
                     level3(Unit)
                 },
-                TraceConfig("level-2"),
+                cfg("level-2"),
             )
         val level1 =
             traceable(
@@ -171,7 +190,7 @@ internal class TraceableWireTest {
                     childRun = getCurrentRunTree()
                     "child"
                 },
-                TraceConfig("child"),
+                cfg("child"),
             )
         val parent = traceable({ _: Unit -> child(Unit) }, config("parent"))
         parent(Unit)
@@ -213,7 +232,7 @@ internal class TraceableWireTest {
         val traced =
             traceable(
                 { input: Int -> input * 2 },
-                TraceConfig("error-test", client = errorClient, tracingEnabled = true),
+                cfg("error-test", client = errorClient, tracingEnabled = true),
             )
 
         val result = traced(5)
@@ -255,7 +274,7 @@ internal class TraceableWireTest {
                     childRun = getCurrentRunTree()
                     "child-result"
                 },
-                TraceConfig("child"),
+                cfg("child"),
             )
         val parent =
             traceable(
@@ -283,7 +302,7 @@ internal class TraceableWireTest {
                     run!!.metadata["dynamic"] = "added"
                     "ok"
                 },
-                TraceConfig(
+                cfg(
                     "meta-test",
                     client = client,
                     tracingEnabled = true,
@@ -310,12 +329,7 @@ internal class TraceableWireTest {
                     run!!.tags.add("dynamic-tag")
                     "ok"
                 },
-                TraceConfig(
-                    "tag-test",
-                    client = client,
-                    tracingEnabled = true,
-                    tags = listOf("static-tag"),
-                ),
+                cfg("tag-test", client = client, tracingEnabled = true, tags = listOf("static-tag")),
             )
         traced(Unit)
 
@@ -334,7 +348,7 @@ internal class TraceableWireTest {
                     run = getCurrentRunTree()
                     "ok"
                 },
-                TraceConfig("disabled", client = client, tracingEnabled = false),
+                cfg("disabled", client = client, tracingEnabled = false),
             )
         val result = traced(Unit)
 
@@ -371,17 +385,12 @@ internal class TraceableWireTest {
                     childRun = getCurrentRunTree()
                     "child"
                 },
-                TraceConfig("child"),
+                cfg("child"),
             )
         val parent =
             traceable(
                 { _: Unit -> child(Unit) },
-                TraceConfig(
-                    "parent",
-                    client = client,
-                    tracingEnabled = true,
-                    projectName = "my-project",
-                ),
+                cfg("parent", client = client, tracingEnabled = true, projectName = "my-project"),
             )
         parent(Unit)
 

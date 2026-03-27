@@ -233,6 +233,27 @@ class TraceConfig(
     val executor: ExecutorService? = null,
     /** Whether tracing is active. Inherited by children. */
     val tracingEnabled: Boolean? = null,
+    /**
+     * Optional typed processors for transforming inputs/outputs before they are recorded on a run.
+     *
+     * When set, the processors in [TraceProcessIO] replace the default input/output serialization.
+     * The generic type parameters on [TraceProcessIO] control what the processor callbacks receive
+     * — see [TraceProcessIO] for details.
+     *
+     * ```java
+     * TraceProcessIO process = TraceProcessIO.<String, MyResponse>builder()
+     *     .processInputs(input -> Map.of("query", input))
+     *     .processOutputs(resp -> Map.of("answer", resp.getText()))
+     *     .build();
+     * TraceConfig config = TraceConfig.builder()
+     *     .name("my-run")
+     *     .processTracedIO(process)
+     *     .build();
+     * ```
+     *
+     * @see TraceProcessIO
+     */
+    val processTracedIO: TraceProcessIO<*, *>? = null,
 ) {
     companion object {
         /** Creates a new [Builder] for constructing a [TraceConfig]. */
@@ -250,9 +271,6 @@ class TraceConfig(
      *     .name("my-run")
      *     .client(LangsmithOkHttpClient.fromEnv())
      *     .runType(RunType.LLM)
-     *     .metadata(Map.of("version", "1.0"))
-     *     .tags(List.of("prod"))
-     *     .projectName("my-project")
      *     .build();
      * ```
      */
@@ -265,6 +283,7 @@ class TraceConfig(
         private var projectName: String? = null
         private var executor: ExecutorService? = null
         private var tracingEnabled: Boolean? = null
+        private var processTracedIO: TraceProcessIO<*, *>? = null
 
         @JvmSynthetic
         internal fun from(config: TraceConfig) = apply {
@@ -276,6 +295,7 @@ class TraceConfig(
             projectName = config.projectName
             executor = config.executor
             tracingEnabled = config.tracingEnabled
+            processTracedIO = config.processTracedIO
         }
 
         /** The name of the run, displayed in LangSmith. */
@@ -302,6 +322,16 @@ class TraceConfig(
         /** Whether tracing is active. Inherited by children if not set. */
         fun tracingEnabled(tracingEnabled: Boolean) = apply { this.tracingEnabled = tracingEnabled }
 
+        /**
+         * Typed processors for transforming inputs/outputs before they are recorded.
+         *
+         * @see TraceConfig.processTracedIO
+         * @see TraceProcessIO
+         */
+        fun processTracedIO(processTracedIO: TraceProcessIO<*, *>) = apply {
+            this.processTracedIO = processTracedIO
+        }
+
         /** Builds the [TraceConfig]. */
         fun build() =
             TraceConfig(
@@ -313,11 +343,20 @@ class TraceConfig(
                 projectName = projectName,
                 executor = executor,
                 tracingEnabled = tracingEnabled,
+                processTracedIO = processTracedIO,
             )
     }
 }
 
 private const val DEFAULT_RUN_NAME = "<lambda>"
+
+/** Applies processInputs from the config, or returns null if not set. */
+private fun applyProcessInputs(config: TraceConfig, value: Any?): Map<String, Any?>? =
+    config.processTracedIO?.inputsFn?.apply(value)
+
+/** Applies processOutputs from the config, or returns null if not set. */
+private fun applyProcessOutputs(config: TraceConfig, value: Any?): Map<String, Any?>? =
+    config.processTracedIO?.outputsFn?.apply(value)
 
 /** Resolves the run name from the config and the function being wrapped. */
 private fun resolveName(config: TraceConfig, block: Any?): String {
@@ -326,6 +365,12 @@ private fun resolveName(config: TraceConfig, block: Any?): String {
     }
     if (block is KFunction<*>) return block.name
     return DEFAULT_RUN_NAME
+}
+
+/** Creates a copy of [config] with the resolved name set. */
+private fun resolveConfig(config: TraceConfig, block: Any?): TraceConfig {
+    val name = resolveName(config, block)
+    return if (name == config.name) config else config.toBuilder().name(name).build()
 }
 
 /**
@@ -339,14 +384,22 @@ private fun resolveName(config: TraceConfig, block: Any?): String {
  */
 @JvmSynthetic
 fun <O> traceable(block: () -> O, config: TraceConfig): () -> O {
-    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
-    return { executeTraced(resolvedConfig, emptyMap()) { block() } }
+    val resolvedConfig = resolveConfig(config, block)
+    return {
+        val packed = emptyMap<String, Any?>()
+        val serializedInputs = applyProcessInputs(resolvedConfig, packed) ?: packed
+        executeTraced(resolvedConfig, serializedInputs) { block() }
+    }
 }
 
 /** Wraps a no-arg function with LangSmith tracing (Java [Supplier]). */
 fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
-    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
-    return Supplier { executeTraced(resolvedConfig, emptyMap()) { block.get() } }
+    val resolvedConfig = resolveConfig(config, block)
+    return Supplier {
+        val packed = emptyMap<String, Any?>()
+        val serializedInputs = applyProcessInputs(resolvedConfig, packed) ?: packed
+        executeTraced(resolvedConfig, serializedInputs) { block.get() }
+    }
 }
 
 /**
@@ -393,10 +446,10 @@ fun <O> traceable(block: Supplier<O>, config: TraceConfig): Supplier<O> {
  */
 @JvmSynthetic
 fun <I, O> traceable(block: (I) -> O, config: TraceConfig): (I) -> O {
-    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
+    val resolvedConfig = resolveConfig(config, block)
     return { input ->
-        val inputs = toInputMap(input)
-        executeTraced(resolvedConfig, inputs) { block(input) }
+        val serializedInputs = applyProcessInputs(resolvedConfig, input) ?: toInputMap(input)
+        executeTraced(resolvedConfig, serializedInputs) { block(input) }
     }
 }
 
@@ -409,10 +462,11 @@ fun <I, O> traceable(block: Function<I, O>, config: TraceConfig): Function<I, O>
 /** Wraps a 2-arg function with LangSmith tracing (Kotlin). */
 @JvmSynthetic
 fun <I1, I2, O> traceable(block: (I1, I2) -> O, config: TraceConfig): (I1, I2) -> O {
-    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
+    val resolvedConfig = resolveConfig(config, block)
     return { i1, i2 ->
-        val inputs = mapOf("args" to listOf(i1, i2))
-        executeTraced(resolvedConfig, inputs) { block(i1, i2) }
+        val packed = mapOf<String, Any?>("args" to listOf(i1, i2))
+        val serializedInputs = applyProcessInputs(resolvedConfig, packed) ?: packed
+        executeTraced(resolvedConfig, serializedInputs) { block(i1, i2) }
     }
 }
 
@@ -428,10 +482,11 @@ fun <I1, I2, O> traceable(
 /** Wraps a 3-arg function with LangSmith tracing (Kotlin). */
 @JvmSynthetic
 fun <I1, I2, I3, O> traceable(block: (I1, I2, I3) -> O, config: TraceConfig): (I1, I2, I3) -> O {
-    val resolvedConfig = config.toBuilder().name(resolveName(config, block)).build()
+    val resolvedConfig = resolveConfig(config, block)
     return { i1, i2, i3 ->
-        val inputs = mapOf("args" to listOf(i1, i2, i3))
-        executeTraced(resolvedConfig, inputs) { block(i1, i2, i3) }
+        val packed = mapOf<String, Any?>("args" to listOf(i1, i2, i3))
+        val serializedInputs = applyProcessInputs(resolvedConfig, packed) ?: packed
+        executeTraced(resolvedConfig, serializedInputs) { block(i1, i2, i3) }
     }
 }
 
@@ -540,7 +595,7 @@ fun <I1, I2, I3, O> traceTriFunction(
  *
  * For best tracing results, pass [Map] inputs/outputs to [traceable]. Typed SDK objects (e.g.
  * `ChatCompletionCreateParams`) should be converted to maps by the caller — use
- * `processInputs`/`processOutputs` callbacks (when available) or manual conversion.
+ * [TraceConfig.processTracedIO] callbacks or manual conversion.
  */
 private fun serializeValue(value: Any?): Any? =
     when (value) {
@@ -630,7 +685,7 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
         try {
             val result = block()
             run.endTime = nowIso()
-            run.outputs = toOutputMap(result)
+            run.outputs = applyProcessOutputs(config, result) ?: toOutputMap(result)
             run.patchRun()
             result
         } catch (e: Throwable) {

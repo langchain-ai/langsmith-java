@@ -3,6 +3,7 @@ package com.langchain.smith.tracing;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.langchain.smith.client.LangsmithClient;
+import java.util.Collections;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -157,5 +158,51 @@ class TraceableJavaTest {
                 .build();
         Function<String, RunTree> traced = Tracing.traceFunction(input -> Tracing.getCurrentRunTree(), disabled);
         assertThat(traced.apply("hello")).isNull();
+    }
+
+    // ---- processInputs / processOutputs ----
+
+    @Test
+    void processInputs_viaProcessTracedIO() {
+        TraceConfig cfg = TraceConfig.builder()
+                .name("process-inputs-test")
+                .client(client)
+                .tracingEnabled(true)
+                .processTracedIO(TraceProcessIO.<String, RunTree>builder()
+                        .processInputs(input -> Collections.singletonMap("query", input))
+                        .build())
+                .build();
+        Function<String, RunTree> traced = Tracing.traceFunction(input -> Tracing.getCurrentRunTree(), cfg);
+        RunTree run = traced.apply("hello");
+        assertThat(run.getInputs()).containsEntry("query", "hello");
+    }
+
+    @Test
+    void processOutputs_viaProcessTracedIO() {
+        TraceConfig cfg = TraceConfig.builder()
+                .name("process-outputs-test")
+                .client(client)
+                .tracingEnabled(true)
+                .processTracedIO(TraceProcessIO.<String, String>builder()
+                        .processOutputs(output -> Collections.singletonMap("answer", output))
+                        .build())
+                .build();
+        Function<String, String> traced = Tracing.traceFunction(input -> "result", cfg);
+        traced.apply("hello");
+    }
+
+    @Test
+    void processInputsAndOutputs_together() {
+        TraceConfig cfg = TraceConfig.builder()
+                .name("both-processors")
+                .client(client)
+                .tracingEnabled(true)
+                .processTracedIO(TraceProcessIO.<String, String>builder()
+                        .processInputs(input -> Collections.singletonMap("q", input))
+                        .processOutputs(output -> Collections.singletonMap("a", output))
+                        .build())
+                .build();
+        Function<String, String> traced = Tracing.traceFunction(input -> "answer", cfg);
+        assertThat(traced.apply("question")).isEqualTo("answer");
     }
 }
