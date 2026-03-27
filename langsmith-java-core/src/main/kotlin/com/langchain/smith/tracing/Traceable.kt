@@ -370,19 +370,7 @@ private fun resolveName(config: TraceConfig, block: Any?): String {
 /** Creates a copy of [config] with the resolved name set. */
 private fun resolveConfig(config: TraceConfig, block: Any?): TraceConfig {
     val name = resolveName(config, block)
-    return if (name == config.name) config
-    else
-        TraceConfig(
-            name = name,
-            client = config.client,
-            runType = config.runType,
-            metadata = config.metadata,
-            tags = config.tags,
-            projectName = config.projectName,
-            executor = config.executor,
-            tracingEnabled = config.tracingEnabled,
-            processTracedIO = config.processTracedIO,
-        )
+    return if (name == config.name) config else config.toBuilder().name(name).build()
 }
 
 /**
@@ -607,7 +595,7 @@ fun <I1, I2, I3, O> traceTriFunction(
  *
  * For best tracing results, pass [Map] inputs/outputs to [traceable]. Typed SDK objects (e.g.
  * `ChatCompletionCreateParams`) should be converted to maps by the caller — use
- * [TraceConfig.processInputs]/[TraceConfig.processOutputs] callbacks or manual conversion.
+ * [TraceConfig.processTracedIO] callbacks or manual conversion.
  */
 private fun serializeValue(value: Any?): Any? =
     when (value) {
