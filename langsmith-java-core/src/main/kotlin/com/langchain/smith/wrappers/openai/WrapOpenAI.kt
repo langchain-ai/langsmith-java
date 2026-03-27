@@ -84,12 +84,7 @@ private class TracedChatCompletionService(
 
     private val processIO =
         TraceProcessIO<ChatCompletionCreateParams, ChatCompletion>(
-            processInputs =
-                Function { params ->
-                    val map = chatParamsToMap(params)
-                    setInvocationParams(map, useResponsesApi = false)
-                    map
-                },
+            processInputs = Function { params -> chatParamsToMap(params) },
             processOutputs =
                 Function { completion -> processChatCompletionOutput(toMap(completion)) },
         )
@@ -98,9 +93,7 @@ private class TracedChatCompletionService(
         TraceProcessIO<Pair<ChatCompletionCreateParams, RequestOptions>, ChatCompletion>(
             processInputs =
                 Function { (params, opts) ->
-                    val map = chatParamsToMap(params) + ("request_options" to toGenericMap(opts))
-                    setInvocationParams(chatParamsToMap(params), useResponsesApi = false)
-                    map
+                    chatParamsToMap(params) + ("request_options" to toGenericMap(opts))
                 },
             processOutputs =
                 Function { completion -> processChatCompletionOutput(toMap(completion)) },
@@ -108,7 +101,10 @@ private class TracedChatCompletionService(
 
     private val oneArgTraced =
         traceable(
-            Function<ChatCompletionCreateParams, ChatCompletion> { delegate.create(it) },
+            Function<ChatCompletionCreateParams, ChatCompletion> {
+                setInvocationParams(chatParamsToMap(it), useResponsesApi = false)
+                delegate.create(it)
+            },
             config
                 .toBuilder()
                 .name("ChatOpenAI")
@@ -124,6 +120,7 @@ private class TracedChatCompletionService(
                 RequestOptions,
                 ChatCompletion,
             > { params, opts ->
+                setInvocationParams(chatParamsToMap(params), useResponsesApi = false)
                 delegate.create(params, opts)
             },
             config
@@ -150,12 +147,7 @@ private class TracedResponseService(
 
     private val processIO =
         TraceProcessIO<ResponseCreateParams, Response>(
-            processInputs =
-                Function { params ->
-                    val map = responseParamsToMap(params)
-                    setInvocationParams(map, useResponsesApi = true)
-                    map
-                },
+            processInputs = Function { params -> responseParamsToMap(params) },
             processOutputs = Function { response -> processChatCompletionOutput(toMap(response)) },
         )
 
@@ -163,17 +155,17 @@ private class TracedResponseService(
         TraceProcessIO<Pair<ResponseCreateParams, RequestOptions>, Response>(
             processInputs =
                 Function { (params, opts) ->
-                    val map =
-                        responseParamsToMap(params) + ("request_options" to toGenericMap(opts))
-                    setInvocationParams(responseParamsToMap(params), useResponsesApi = true)
-                    map
+                    responseParamsToMap(params) + ("request_options" to toGenericMap(opts))
                 },
             processOutputs = Function { response -> processChatCompletionOutput(toMap(response)) },
         )
 
     private val oneArgTraced =
         traceable(
-            Function<ResponseCreateParams, Response> { delegate.create(it) },
+            Function<ResponseCreateParams, Response> {
+                setInvocationParams(responseParamsToMap(it), useResponsesApi = true)
+                delegate.create(it)
+            },
             config
                 .toBuilder()
                 .name("ChatOpenAI")
@@ -187,6 +179,7 @@ private class TracedResponseService(
             java.util.function.BiFunction<ResponseCreateParams, RequestOptions, Response> {
                 params,
                 opts ->
+                setInvocationParams(responseParamsToMap(params), useResponsesApi = true)
                 delegate.create(params, opts)
             },
             config
