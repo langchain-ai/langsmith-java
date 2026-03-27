@@ -8,9 +8,13 @@ import java.util.function.Function
  * Typed processors for transforming inputs and outputs before they are recorded on a traced run.
  *
  * The type parameters describe what the processors receive:
- * - [PI] — the type passed to [inputs]. For 1-arg traced functions this is the raw input type; for
- *   0/2/3-arg functions this is `Map<String, Any?>` (the packed representation).
- * - [PO] — the type passed to [outputs]. This is always the raw output type of the traced function.
+ * - [PI] — the type passed to `processInputs`. Depends on the arity of the traced function:
+ *     - **1-arg** ([traceFunction]): the raw input type (e.g. `String`)
+ *     - **0-arg** ([traceSupplier]): `Map<String, Any?>` (empty map)
+ *     - **2-arg** ([traceBiFunction]): `Pair<I1, I2>`
+ *     - **3-arg** ([traceTriFunction]): `Triple<I1, I2, I3>`
+ * - [PO] — the type passed to `processOutputs`. This is always the raw output type of the traced
+ *   function.
  *
  * When [inputs] is set, it replaces the default input serialization entirely. Same for [outputs].
  *
