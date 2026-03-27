@@ -246,8 +246,7 @@ internal class TracingUtilsTest {
         assertThat(run.metadata["ls_max_tokens"]).isEqualTo(100)
         assertThat(run.metadata["ls_stop"]).isEqualTo(listOf("END"))
 
-        @Suppress("UNCHECKED_CAST")
-        val invocationParams = run.metadata["ls_invocation_params"] as Map<String, Any?>
+        val invocationParams = run.metadata["ls_invocation_params"] as Map<*, *>
         assertThat(invocationParams["frequency_penalty"]).isEqualTo(0.1)
         assertThat(invocationParams["top_p"]).isEqualTo(0.9)
         assertThat(invocationParams["seed"]).isEqualTo(42)
@@ -306,8 +305,7 @@ internal class TracingUtilsTest {
             )
         }
 
-        @Suppress("UNCHECKED_CAST")
-        val invocationParams = run.metadata["ls_invocation_params"] as Map<String, Any?>
+        val invocationParams = run.metadata["ls_invocation_params"] as Map<*, *>
         assertThat(invocationParams["use_responses_api"]).isEqualTo(true)
         assertThat(invocationParams["reasoning_effort"]).isEqualTo("high")
     }
