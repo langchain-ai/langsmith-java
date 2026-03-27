@@ -37,6 +37,7 @@ private constructor(
     private val traceId: JsonField<String>,
     private val addedAt: JsonField<OffsetDateTime>,
     private val childRunIds: JsonField<List<String>>,
+    private val completedCount: JsonField<Long>,
     private val completionCost: JsonField<String>,
     private val completionCostDetails: JsonField<CompletionCostDetails>,
     private val completionTokenDetails: JsonField<CompletionTokenDetails>,
@@ -71,6 +72,7 @@ private constructor(
     private val promptTokens: JsonField<Long>,
     private val referenceDatasetId: JsonField<String>,
     private val referenceExampleId: JsonField<String>,
+    private val reservationCount: JsonField<Long>,
     private val s3Urls: JsonField<S3Urls>,
     private val serialized: JsonField<Serialized>,
     private val shareToken: JsonField<String>,
@@ -111,6 +113,9 @@ private constructor(
         @JsonProperty("child_run_ids")
         @ExcludeMissing
         childRunIds: JsonField<List<String>> = JsonMissing.of(),
+        @JsonProperty("completed_count")
+        @ExcludeMissing
+        completedCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("completion_cost")
         @ExcludeMissing
         completionCost: JsonField<String> = JsonMissing.of(),
@@ -203,6 +208,9 @@ private constructor(
         @JsonProperty("reference_example_id")
         @ExcludeMissing
         referenceExampleId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("reservation_count")
+        @ExcludeMissing
+        reservationCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("s3_urls") @ExcludeMissing s3Urls: JsonField<S3Urls> = JsonMissing.of(),
         @JsonProperty("serialized")
         @ExcludeMissing
@@ -247,6 +255,7 @@ private constructor(
         traceId,
         addedAt,
         childRunIds,
+        completedCount,
         completionCost,
         completionCostDetails,
         completionTokenDetails,
@@ -281,6 +290,7 @@ private constructor(
         promptTokens,
         referenceDatasetId,
         referenceExampleId,
+        reservationCount,
         s3Urls,
         serialized,
         shareToken,
@@ -365,6 +375,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun childRunIds(): Optional<List<String>> = childRunIds.getOptional("child_run_ids")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun completedCount(): Optional<Long> = completedCount.getOptional("completed_count")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -583,6 +599,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun reservationCount(): Optional<Long> = reservationCount.getOptional("reservation_count")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun s3Urls(): Optional<S3Urls> = s3Urls.getOptional("s3_urls")
 
     /**
@@ -746,6 +768,15 @@ private constructor(
     @JsonProperty("child_run_ids")
     @ExcludeMissing
     fun _childRunIds(): JsonField<List<String>> = childRunIds
+
+    /**
+     * Returns the raw JSON value of [completedCount].
+     *
+     * Unlike [completedCount], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("completed_count")
+    @ExcludeMissing
+    fun _completedCount(): JsonField<Long> = completedCount
 
     /**
      * Returns the raw JSON value of [completionCost].
@@ -1044,6 +1075,16 @@ private constructor(
     fun _referenceExampleId(): JsonField<String> = referenceExampleId
 
     /**
+     * Returns the raw JSON value of [reservationCount].
+     *
+     * Unlike [reservationCount], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("reservation_count")
+    @ExcludeMissing
+    fun _reservationCount(): JsonField<Long> = reservationCount
+
+    /**
      * Returns the raw JSON value of [s3Urls].
      *
      * Unlike [s3Urls], this method doesn't throw if the JSON field has an unexpected type.
@@ -1204,6 +1245,7 @@ private constructor(
         private var traceId: JsonField<String>? = null
         private var addedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var childRunIds: JsonField<MutableList<String>>? = null
+        private var completedCount: JsonField<Long> = JsonMissing.of()
         private var completionCost: JsonField<String> = JsonMissing.of()
         private var completionCostDetails: JsonField<CompletionCostDetails> = JsonMissing.of()
         private var completionTokenDetails: JsonField<CompletionTokenDetails> = JsonMissing.of()
@@ -1238,6 +1280,7 @@ private constructor(
         private var promptTokens: JsonField<Long> = JsonMissing.of()
         private var referenceDatasetId: JsonField<String> = JsonMissing.of()
         private var referenceExampleId: JsonField<String> = JsonMissing.of()
+        private var reservationCount: JsonField<Long> = JsonMissing.of()
         private var s3Urls: JsonField<S3Urls> = JsonMissing.of()
         private var serialized: JsonField<Serialized> = JsonMissing.of()
         private var shareToken: JsonField<String> = JsonMissing.of()
@@ -1269,6 +1312,7 @@ private constructor(
                 addedAt = runSchemaWithAnnotationQueueInfo.addedAt
                 childRunIds =
                     runSchemaWithAnnotationQueueInfo.childRunIds.map { it.toMutableList() }
+                completedCount = runSchemaWithAnnotationQueueInfo.completedCount
                 completionCost = runSchemaWithAnnotationQueueInfo.completionCost
                 completionCostDetails = runSchemaWithAnnotationQueueInfo.completionCostDetails
                 completionTokenDetails = runSchemaWithAnnotationQueueInfo.completionTokenDetails
@@ -1305,6 +1349,7 @@ private constructor(
                 promptTokens = runSchemaWithAnnotationQueueInfo.promptTokens
                 referenceDatasetId = runSchemaWithAnnotationQueueInfo.referenceDatasetId
                 referenceExampleId = runSchemaWithAnnotationQueueInfo.referenceExampleId
+                reservationCount = runSchemaWithAnnotationQueueInfo.reservationCount
                 s3Urls = runSchemaWithAnnotationQueueInfo.s3Urls
                 serialized = runSchemaWithAnnotationQueueInfo.serialized
                 shareToken = runSchemaWithAnnotationQueueInfo.shareToken
@@ -1458,6 +1503,19 @@ private constructor(
                 (childRunIds ?: JsonField.of(mutableListOf())).also {
                     checkKnown("childRunIds", it).add(childRunId)
                 }
+        }
+
+        fun completedCount(completedCount: Long) = completedCount(JsonField.of(completedCount))
+
+        /**
+         * Sets [Builder.completedCount] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.completedCount] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun completedCount(completedCount: JsonField<Long>) = apply {
+            this.completedCount = completedCount
         }
 
         fun completionCost(completionCost: String?) =
@@ -2076,6 +2134,20 @@ private constructor(
             this.referenceExampleId = referenceExampleId
         }
 
+        fun reservationCount(reservationCount: Long) =
+            reservationCount(JsonField.of(reservationCount))
+
+        /**
+         * Sets [Builder.reservationCount] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.reservationCount] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun reservationCount(reservationCount: JsonField<Long>) = apply {
+            this.reservationCount = reservationCount
+        }
+
         fun s3Urls(s3Urls: S3Urls?) = s3Urls(JsonField.ofNullable(s3Urls))
 
         /** Alias for calling [Builder.s3Urls] with `s3Urls.orElse(null)`. */
@@ -2347,6 +2419,7 @@ private constructor(
                 checkRequired("traceId", traceId),
                 addedAt,
                 (childRunIds ?: JsonMissing.of()).map { it.toImmutable() },
+                completedCount,
                 completionCost,
                 completionCostDetails,
                 completionTokenDetails,
@@ -2381,6 +2454,7 @@ private constructor(
                 promptTokens,
                 referenceDatasetId,
                 referenceExampleId,
+                reservationCount,
                 s3Urls,
                 serialized,
                 shareToken,
@@ -2417,6 +2491,7 @@ private constructor(
         traceId()
         addedAt()
         childRunIds()
+        completedCount()
         completionCost()
         completionCostDetails().ifPresent { it.validate() }
         completionTokenDetails().ifPresent { it.validate() }
@@ -2451,6 +2526,7 @@ private constructor(
         promptTokens()
         referenceDatasetId()
         referenceExampleId()
+        reservationCount()
         s3Urls().ifPresent { it.validate() }
         serialized().ifPresent { it.validate() }
         shareToken()
@@ -2494,6 +2570,7 @@ private constructor(
             (if (traceId.asKnown().isPresent) 1 else 0) +
             (if (addedAt.asKnown().isPresent) 1 else 0) +
             (childRunIds.asKnown().getOrNull()?.size ?: 0) +
+            (if (completedCount.asKnown().isPresent) 1 else 0) +
             (if (completionCost.asKnown().isPresent) 1 else 0) +
             (completionCostDetails.asKnown().getOrNull()?.validity() ?: 0) +
             (completionTokenDetails.asKnown().getOrNull()?.validity() ?: 0) +
@@ -2528,6 +2605,7 @@ private constructor(
             (if (promptTokens.asKnown().isPresent) 1 else 0) +
             (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
             (if (referenceExampleId.asKnown().isPresent) 1 else 0) +
+            (if (reservationCount.asKnown().isPresent) 1 else 0) +
             (s3Urls.asKnown().getOrNull()?.validity() ?: 0) +
             (serialized.asKnown().getOrNull()?.validity() ?: 0) +
             (if (shareToken.asKnown().isPresent) 1 else 0) +
@@ -4085,6 +4163,7 @@ private constructor(
             traceId == other.traceId &&
             addedAt == other.addedAt &&
             childRunIds == other.childRunIds &&
+            completedCount == other.completedCount &&
             completionCost == other.completionCost &&
             completionCostDetails == other.completionCostDetails &&
             completionTokenDetails == other.completionTokenDetails &&
@@ -4119,6 +4198,7 @@ private constructor(
             promptTokens == other.promptTokens &&
             referenceDatasetId == other.referenceDatasetId &&
             referenceExampleId == other.referenceExampleId &&
+            reservationCount == other.reservationCount &&
             s3Urls == other.s3Urls &&
             serialized == other.serialized &&
             shareToken == other.shareToken &&
@@ -4149,6 +4229,7 @@ private constructor(
             traceId,
             addedAt,
             childRunIds,
+            completedCount,
             completionCost,
             completionCostDetails,
             completionTokenDetails,
@@ -4183,6 +4264,7 @@ private constructor(
             promptTokens,
             referenceDatasetId,
             referenceExampleId,
+            reservationCount,
             s3Urls,
             serialized,
             shareToken,
@@ -4204,5 +4286,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunSchemaWithAnnotationQueueInfo{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, queueRunId=$queueRunId, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, addedAt=$addedAt, childRunIds=$childRunIds, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, effectiveAddedAt=$effectiveAddedAt, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, lastReviewedTime=$lastReviewedTime, manifestId=$manifestId, manifestS3Id=$manifestS3Id, messages=$messages, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
+        "RunSchemaWithAnnotationQueueInfo{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, queueRunId=$queueRunId, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, addedAt=$addedAt, childRunIds=$childRunIds, completedCount=$completedCount, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, effectiveAddedAt=$effectiveAddedAt, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, lastReviewedTime=$lastReviewedTime, manifestId=$manifestId, manifestS3Id=$manifestS3Id, messages=$messages, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, reservationCount=$reservationCount, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
 }
