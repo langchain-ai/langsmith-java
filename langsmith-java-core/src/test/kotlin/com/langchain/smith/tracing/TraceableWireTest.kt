@@ -17,7 +17,7 @@ internal class TraceableWireTest {
 
     private val client: LangsmithClient = mock()
 
-    private fun config(name: String): TraceConfig<Any?, Any?> =
+    private fun config(name: String): TraceConfig =
         TraceConfig(name = name, client = client, tracingEnabled = true)
 
     private fun cfg(
@@ -28,7 +28,7 @@ internal class TraceableWireTest {
         tags: List<String>? = null,
         projectName: String? = null,
         tracingEnabled: Boolean? = null,
-    ): TraceConfig<Any?, Any?> =
+    ): TraceConfig =
         TraceConfig(
             name = name,
             client = client,

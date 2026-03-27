@@ -14,7 +14,7 @@ internal class TraceableUnitTest {
 
     private val client: LangsmithClient = mock()
 
-    private fun config(name: String): TraceConfig<Any?, Any?> =
+    private fun config(name: String): TraceConfig =
         TraceConfig(name = name, client = client, tracingEnabled = true)
 
     /** Shorthand for creating a [TraceConfig] without processors in tests. */
@@ -26,7 +26,7 @@ internal class TraceableUnitTest {
         tags: List<String>? = null,
         projectName: String? = null,
         tracingEnabled: Boolean? = null,
-    ): TraceConfig<Any?, Any?> =
+    ): TraceConfig =
         TraceConfig(
             name = name,
             client = client,
@@ -73,7 +73,7 @@ internal class TraceableUnitTest {
      * Runs a parent→child nesting where the child uses [childConfig] and returns the child's
      * captured [RunTree].
      */
-    private fun traceChild(childConfig: TraceConfig<Any?, Any?>): RunTree {
+    private fun traceChild(childConfig: TraceConfig): RunTree {
         var childRun: RunTree? = null
         val child =
             traceable(
@@ -384,11 +384,14 @@ internal class TraceableUnitTest {
     fun processInputs_receivesRawTypedInput() {
         var run: RunTree? = null
         val cfg =
-            TraceConfig<String, String>(
+            TraceConfig(
                 name = "test",
                 client = client,
                 tracingEnabled = true,
-                processInputs = Function { input -> mapOf("query" to input) },
+                processTracedIO =
+                    TraceProcessIO<String, String>(
+                        processInputs = Function { input -> mapOf("query" to input) }
+                    ),
             )
         val traced =
             traceable(
@@ -406,11 +409,14 @@ internal class TraceableUnitTest {
     fun processOutputs_receivesRawTypedOutput() {
         var run: RunTree? = null
         val cfg =
-            TraceConfig<String, String>(
+            TraceConfig(
                 name = "test",
                 client = client,
                 tracingEnabled = true,
-                processOutputs = Function { output -> mapOf("answer" to output) },
+                processTracedIO =
+                    TraceProcessIO<String, String>(
+                        processOutputs = Function { output -> mapOf("answer" to output) }
+                    ),
             )
         val traced =
             traceable(
@@ -428,11 +434,14 @@ internal class TraceableUnitTest {
     fun processInputs_bypassesDefaultSerialization() {
         var run: RunTree? = null
         val cfg =
-            TraceConfig<String, String>(
+            TraceConfig(
                 name = "test",
                 client = client,
                 tracingEnabled = true,
-                processInputs = Function { input -> mapOf("custom_key" to input) },
+                processTracedIO =
+                    TraceProcessIO<String, String>(
+                        processInputs = Function { input -> mapOf("custom_key" to input) }
+                    ),
             )
         val traced =
             traceable(
@@ -443,7 +452,7 @@ internal class TraceableUnitTest {
                 cfg,
             )
         traced("hello")
-        // Without processInputs, this would be {"inputs": "hello"}.
+        // Without processTracedIO, this would be {"inputs": "hello"}.
         assertThat(run!!.inputs).isEqualTo(mapOf("custom_key" to "hello"))
     }
 
@@ -451,12 +460,15 @@ internal class TraceableUnitTest {
     fun processInputs_andProcessOutputs_bothApplied() {
         var run: RunTree? = null
         val cfg =
-            TraceConfig<String, String>(
+            TraceConfig(
                 name = "test",
                 client = client,
                 tracingEnabled = true,
-                processInputs = Function { mapOf("q" to it) },
-                processOutputs = Function { mapOf("a" to it) },
+                processTracedIO =
+                    TraceProcessIO<String, String>(
+                        processInputs = Function { mapOf("q" to it) },
+                        processOutputs = Function { mapOf("a" to it) },
+                    ),
             )
         val traced =
             traceable(

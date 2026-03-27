@@ -41,10 +41,12 @@ private fun weatherTool(): ChatCompletionFunctionTool =
                             "properties",
                             JsonValue.from(
                                 mapOf(
-                                    "location" to mapOf(
-                                        "type" to "string",
-                                        "description" to "City and state, e.g. San Francisco, CA",
-                                    )
+                                    "location" to
+                                        mapOf(
+                                            "type" to "string",
+                                            "description" to
+                                                "City and state, e.g. San Francisco, CA",
+                                        )
                                 )
                             ),
                         )
@@ -55,7 +57,9 @@ private fun weatherTool(): ChatCompletionFunctionTool =
         )
         .build()
 
-private fun buildToolLoopParams(messages: List<ChatCompletionMessageParam>): ChatCompletionCreateParams =
+private fun buildToolLoopParams(
+    messages: List<ChatCompletionMessageParam>
+): ChatCompletionCreateParams =
     ChatCompletionCreateParams.builder()
         .model(ChatModel.GPT_4_1_MINI)
         .messages(messages)
@@ -74,12 +78,13 @@ private fun toolLoopOutputMap(completion: ChatCompletion): Map<String, Any?> =
     mapOf(
         "id" to completion.id(),
         "model" to completion.model().toString(),
-        "choices" to completion.choices().map { choice ->
-            mapOf(
-                "finish_reason" to choice.finishReason().toString(),
-                "message" to toJsonMap(choice.message()),
-            )
-        },
+        "choices" to
+            completion.choices().map { choice ->
+                mapOf(
+                    "finish_reason" to choice.finishReason().toString(),
+                    "message" to toJsonMap(choice.message()),
+                )
+            },
     )
 
 private fun userMessage(content: String): ChatCompletionMessageParam =
@@ -94,7 +99,10 @@ private fun assistantMessage(message: ChatCompletionMessage): ChatCompletionMess
 
 private fun toolMessage(toolCallId: String, result: Map<String, Any?>): ChatCompletionMessageParam =
     ChatCompletionMessageParam.ofTool(
-        ChatCompletionToolMessageParam.builder().toolCallId(toolCallId).contentAsJson(result).build()
+        ChatCompletionToolMessageParam.builder()
+            .toolCallId(toolCallId)
+            .contentAsJson(result)
+            .build()
     )
 
 private fun toolResult(argumentsJson: String): Map<String, Any?> =
@@ -106,7 +114,8 @@ private fun toolResult(argumentsJson: String): Map<String, Any?> =
         "temperature_f" to 72,
     )
 
-private fun finalContent(message: ChatCompletionMessage): String = message.content().getOrNull() ?: ""
+private fun finalContent(message: ChatCompletionMessage): String =
+    message.content().getOrNull() ?: ""
 
 /**
  * Integration tests for [traceable] that post real runs to LangSmith.
@@ -131,7 +140,7 @@ internal class TraceableTest {
         runType: RunType = RunType.CHAIN,
         metadata: Map<String, Any>? = null,
         tags: List<String>? = null,
-    ): TraceConfig<Any?, Any?> =
+    ): TraceConfig =
         TraceConfig(
             name = name,
             client = client,
@@ -243,14 +252,17 @@ internal class TraceableTest {
                     capturedLlmRun = getCurrentRunTree()
                     openai.chat().completions().create(params)
                 },
-                TraceConfig<ChatCompletionCreateParams, ChatCompletion>(
+                TraceConfig(
                     name = "call-openai-tool-loop",
                     client = client,
                     runType = RunType.LLM,
                     projectName = "traceable-java-tests",
                     tracingEnabled = true,
-                    processInputs = JFunction(::toolLoopInputMap),
-                    processOutputs = JFunction(::toolLoopOutputMap),
+                    processTracedIO =
+                        TraceProcessIO(
+                            processInputs = JFunction(::toolLoopInputMap),
+                            processOutputs = JFunction(::toolLoopOutputMap),
+                        ),
                 ),
             )
 
@@ -265,7 +277,10 @@ internal class TraceableTest {
                 { question: String ->
                     capturedAgentRun = getCurrentRunTree()
                     val messages = mutableListOf<ChatCompletionMessageParam>()
-                    messages += userMessage("$question Use the get_weather tool and then answer succinctly.")
+                    messages +=
+                        userMessage(
+                            "$question Use the get_weather tool and then answer succinctly."
+                        )
 
                     repeat(3) {
                         val completion = callOpenAi(buildToolLoopParams(messages))
@@ -286,20 +301,26 @@ internal class TraceableTest {
 
                     error("Model did not finish tool loop in time")
                 },
-                TraceConfig<String, String>(
+                TraceConfig(
                     name = "openai-tool-loop-agent",
                     client = client,
                     projectName = "traceable-java-tests",
                     tracingEnabled = true,
-                    processInputs = JFunction { question -> mapOf("question" to question) },
-                    processOutputs = JFunction { answer -> mapOf("answer" to answer) },
+                    processTracedIO =
+                        TraceProcessIO(
+                            processInputs =
+                                JFunction { question: String -> mapOf("question" to question) },
+                            processOutputs =
+                                JFunction { answer: String -> mapOf("answer" to answer) },
+                        ),
                 ),
             )
 
         val result = agent("What is the weather in San Francisco?")
         assertThat(result).isNotBlank()
         assertThat(capturedAgentRun).isNotNull
-        assertThat(capturedAgentRun!!.inputs).isEqualTo(mapOf("question" to "What is the weather in San Francisco?"))
+        assertThat(capturedAgentRun!!.inputs)
+            .isEqualTo(mapOf("question" to "What is the weather in San Francisco?"))
         assertThat(capturedAgentRun!!.outputs).isEqualTo(mapOf("answer" to result))
         assertThat(capturedLlmRun).isNotNull
         assertThat(capturedLlmRun!!.inputs).containsKeys("model", "messages", "tools")

@@ -15,6 +15,12 @@ private val logger = LoggerFactory.getLogger(RunTree::class.java)
 /**
  * Represents a run in the trace tree.
  *
+ * **Thread safety:** `RunTree` is mutable — [inputs], [outputs], [error], [endTime], [metadata],
+ * [tags], and [extra] can be modified after construction. A single `RunTree` instance should only
+ * be accessed from one thread at a time. Within a [traceable] wrapper this is guaranteed by the
+ * run-context scoping, but if you hold a reference to a `RunTree` and access it from multiple
+ * threads, external synchronization is required.
+ *
  * Can be created manually, via [traceable], or via [createChild]:
  * ```kotlin
  * // Via traceable (most common)
@@ -87,7 +93,7 @@ class RunTree(
      * @param config per-run configuration for the child
      * @return a new [RunTree] that is a child of this run
      */
-    fun createChild(config: TraceConfig<*, *>): RunTree {
+    fun createChild(config: TraceConfig): RunTree {
         val now = Instant.now()
         val childId = uuidv7(now)
         val childStartTime = ISO_FORMAT.format(now)
