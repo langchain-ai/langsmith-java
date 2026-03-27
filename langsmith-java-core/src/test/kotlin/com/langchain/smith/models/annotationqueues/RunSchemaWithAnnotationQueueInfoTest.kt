@@ -28,6 +28,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
                 .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addChildRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .completedCount(0L)
                 .completionCost("completion_cost")
                 .completionCostDetails(
                     RunSchemaWithAnnotationQueueInfo.CompletionCostDetails.builder()
@@ -110,6 +111,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
                 .promptTokens(0L)
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .referenceExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .reservationCount(0L)
                 .s3Urls(
                     RunSchemaWithAnnotationQueueInfo.S3Urls.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -151,6 +153,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(runSchemaWithAnnotationQueueInfo.childRunIds().getOrNull())
             .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(runSchemaWithAnnotationQueueInfo.completedCount()).contains(0L)
         assertThat(runSchemaWithAnnotationQueueInfo.completionCost()).contains("completion_cost")
         assertThat(runSchemaWithAnnotationQueueInfo.completionCostDetails())
             .contains(
@@ -258,6 +261,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(runSchemaWithAnnotationQueueInfo.referenceExampleId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(runSchemaWithAnnotationQueueInfo.reservationCount()).contains(0L)
         assertThat(runSchemaWithAnnotationQueueInfo.s3Urls())
             .contains(
                 RunSchemaWithAnnotationQueueInfo.S3Urls.builder()
@@ -306,6 +310,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
                 .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addChildRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .completedCount(0L)
                 .completionCost("completion_cost")
                 .completionCostDetails(
                     RunSchemaWithAnnotationQueueInfo.CompletionCostDetails.builder()
@@ -388,6 +393,7 @@ internal class RunSchemaWithAnnotationQueueInfoTest {
                 .promptTokens(0L)
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .referenceExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .reservationCount(0L)
                 .s3Urls(
                     RunSchemaWithAnnotationQueueInfo.S3Urls.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
