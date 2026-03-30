@@ -686,6 +686,38 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
     return CURRENT_RUN.runWith(run) {
         try {
             val result = block()
+
+            // If the result has a stream() method returning java.util.stream.Stream and is
+            // AutoCloseable, wrap it to defer run completion until the stream is consumed
+            // and closed. This matches OpenAI's StreamResponse and similar patterns.
+            // If an aggregator is configured, the aggregated result is recorded as output;
+            // otherwise the raw list of chunks is recorded.
+            val streamMethod =
+                if (result is AutoCloseable) {
+                    try {
+                        result::class.java.getMethod("stream").takeIf {
+                            java.util.stream.Stream::class.java.isAssignableFrom(it.returnType)
+                        }
+                    } catch (_: NoSuchMethodException) {
+                        null
+                    }
+                } else {
+                    null
+                }
+            if (streamMethod != null && result is AutoCloseable) {
+                // The proxy implements the same interfaces as `result`, so this is safe.
+                // We can't prove it statically because the proxy is created via reflection.
+                val proxy =
+                    createTracedStreamProxy(
+                        delegate = result,
+                        run = run,
+                        config = config,
+                        streamMethod = streamMethod,
+                    )
+                @Suppress("UNCHECKED_CAST")
+                return@runWith proxy as T
+            }
+
             run.endTime = nowIso()
             run.outputs = applyProcessOutputs(config, result) ?: toOutputMap(result)
             run.patchRun()
@@ -697,4 +729,99 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
             throw e
         }
     }
+}
+
+/**
+ * Creates a JDK dynamic proxy that implements the same interfaces as [delegate] (e.g.
+ * `StreamResponse`), intercepting `stream()` to collect elements and `close()` to record the output
+ * on the traced run. If [TraceProcessIO.aggregatorFn] is set, the aggregated result is recorded;
+ * otherwise the raw list of chunks is recorded.
+ *
+ * **Lifecycle:** The run is finalized when `close()` is called. Callers must use `use {}` (Kotlin)
+ * or try-with-resources (Java) to ensure the run is always completed. If an exception occurs during
+ * stream iteration, it is captured as the run error on `close()`.
+ */
+private fun createTracedStreamProxy(
+    delegate: AutoCloseable,
+    run: RunTree,
+    config: TraceConfig,
+    streamMethod: java.lang.reflect.Method,
+): Any {
+    val chunks = mutableListOf<Any?>()
+    val closed = java.util.concurrent.atomic.AtomicBoolean(false)
+    val iterationError = java.util.concurrent.atomic.AtomicReference<Throwable>(null)
+
+    val interfaces = delegate::class.java.interfaces
+
+    return java.lang.reflect.Proxy.newProxyInstance(delegate::class.java.classLoader, interfaces) {
+        _,
+        method,
+        args ->
+        when (method.name) {
+            "stream" -> {
+                // Delegate to the underlying stream() each call (preserves fresh-stream semantics).
+                // Wrap with peek() to collect chunks. Use a wrapping Spliterator to catch errors
+                // during iteration so close() can record them on the run.
+                val raw = streamMethod.invoke(delegate) as java.util.stream.Stream<*>
+                errorCapturingStream(raw.peek { chunks.add(it) }, iterationError)
+            }
+            "close" -> {
+                if (closed.compareAndSet(false, true)) {
+                    try {
+                        val error = iterationError.get()
+                        if (error != null) {
+                            run.endTime = nowIso()
+                            run.error = error.stackTraceToString()
+                            run.patchRun()
+                        } else {
+                            val aggregator = config.processTracedIO?.aggregatorFn
+                            val output =
+                                if (aggregator != null) aggregator.apply(chunks)
+                                else chunks.toList()
+                            run.endTime = nowIso()
+                            run.outputs =
+                                applyProcessOutputs(config, output) ?: toOutputMap(output)
+                            run.patchRun()
+                        }
+                    } catch (e: Throwable) {
+                        run.endTime = nowIso()
+                        run.error = e.stackTraceToString()
+                        run.patchRun()
+                    } finally {
+                        delegate.close()
+                    }
+                }
+            }
+            else -> {
+                if (args != null) method.invoke(delegate, *args) else method.invoke(delegate)
+            }
+        }
+    }
+}
+
+/**
+ * Wraps a [java.util.stream.Stream] so that exceptions thrown during iteration (e.g. inside
+ * `forEach`, `collect`) are captured into [errorRef] before being rethrown. This allows `close()`
+ * to record the error on the traced run even if the caller doesn't explicitly catch it.
+ */
+private fun errorCapturingStream(
+    source: java.util.stream.Stream<*>,
+    errorRef: java.util.concurrent.atomic.AtomicReference<Throwable>,
+): java.util.stream.Stream<*> {
+    val sourceSpliterator = source.spliterator()
+    val wrapping =
+        object : java.util.Spliterator<Any?> {
+            override fun tryAdvance(action: java.util.function.Consumer<in Any?>): Boolean =
+                try {
+                    sourceSpliterator.tryAdvance(action)
+                } catch (e: Throwable) {
+                    errorRef.compareAndSet(null, e)
+                    throw e
+                }
+
+            override fun trySplit(): java.util.Spliterator<Any?>? = null
+            override fun estimateSize(): Long = sourceSpliterator.estimateSize()
+            override fun characteristics(): Int = sourceSpliterator.characteristics()
+        }
+    return java.util.stream.StreamSupport.stream(wrapping, false).onClose { source.close() }
 }

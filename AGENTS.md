@@ -211,7 +211,7 @@ Tests skip gracefully via `assumeTrue` if keys are missing.
 ## Code style
 
 - `toString()` should be single-line, following the `ClassName{field=value, field=value}` convention used by the rest of the SDK.
-- Avoid `@Suppress("UNCHECKED_CAST")` — restructure code to use safe patterns (`as? String`, `is Map<*, *>` with `entries.associate`, etc).
+- Avoid `@Suppress("UNCHECKED_CAST")` — restructure code to use safe patterns (`as? String`, `is Map<*, *>` with `entries.associate`, etc). The only acceptable use is JDK dynamic proxies (`Proxy.newProxyInstance` returns `Object`), which must include a comment explaining why the cast is safe.
 - Use named arguments for constructor/function calls with 2+ parameters, especially when types could be confused:
   ```kotlin
   // Good
