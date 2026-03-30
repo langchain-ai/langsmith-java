@@ -687,33 +687,37 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
         try {
             val result = block()
 
-            // Only wrap stream-like results when the caller explicitly opted in by setting
-            // an aggregator on TraceProcessIO. Without an aggregator, the return value is
-            // treated normally (recorded immediately, run completed on return).
-            val streamMethod =
-                if (config.processTracedIO?.aggregatorFn != null && result is AutoCloseable) {
-                    try {
-                        result::class.java.getMethod("stream").takeIf {
-                            java.util.stream.Stream::class.java.isAssignableFrom(it.returnType)
+            // If the result is a java.util.stream.Stream and an aggregator is configured,
+            // instrument it: collect chunks via peek(), finalize the run via onClose().
+            val aggregator = config.processTracedIO?.aggregatorFn
+            if (aggregator != null && result is java.util.stream.Stream<*>) {
+                val chunks = mutableListOf<Any?>()
+                val iterationError = java.util.concurrent.atomic.AtomicReference<Throwable>(null)
+                val instrumented =
+                    wrapStreamWithErrorCapture(result, iterationError)
+                        .peek { chunks.add(it) }
+                        .onClose {
+                            try {
+                                val error = iterationError.get()
+                                if (error != null) {
+                                    run.endTime = nowIso()
+                                    run.error = error.stackTraceToString()
+                                } else {
+                                    val output = aggregator.apply(chunks)
+                                    run.endTime = nowIso()
+                                    run.outputs =
+                                        applyProcessOutputs(config, output) ?: toOutputMap(output)
+                                }
+                                run.patchRun()
+                            } catch (e: Throwable) {
+                                run.endTime = nowIso()
+                                run.error = e.stackTraceToString()
+                                run.patchRun()
+                            }
                         }
-                    } catch (_: NoSuchMethodException) {
-                        null
-                    }
-                } else {
-                    null
-                }
-            if (streamMethod != null && result is AutoCloseable) {
-                // The proxy implements the same interfaces as `result`, so this is safe.
-                // We can't prove it statically because the proxy is created via reflection.
-                val proxy =
-                    createTracedStreamProxy(
-                        delegate = result,
-                        run = run,
-                        config = config,
-                        streamMethod = streamMethod,
-                    )
+                // Safe: T is Stream<something>, instrumented is Stream<Any?> — same erasure.
                 @Suppress("UNCHECKED_CAST")
-                return@runWith proxy as T
+                return@runWith instrumented as T
             }
 
             run.endTime = nowIso()
@@ -730,116 +734,20 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
 }
 
 /**
- * Creates a JDK dynamic proxy that implements the same interfaces as [delegate] (e.g.
- * `StreamResponse`), intercepting `stream()` to collect elements and `close()` to record the output
- * on the traced run.
- *
- * Only works for interface-based return types (required by [java.lang.reflect.Proxy]).
- *
- * On `close()`:
- * 1. The delegate is closed first — if cleanup fails, the error is recorded on the run and
- *    rethrown.
- * 2. If an iteration error was captured (via [errorCapturingStream]), it is recorded on the run.
- * 3. Otherwise, the aggregator (if set) is called and the result is recorded via `processOutputs`.
- *    If no aggregator is set, the raw chunk list is recorded.
- *
- * On `stream()`:
- * - Delegates to the underlying `stream()` each call (fresh stream per call).
- * - Chunks are collected via `peek()` and reset on each `stream()` call to avoid double-counting.
- * - The returned stream wraps a [errorCapturingStream] spliterator that captures iteration errors.
+ * Wraps a [java.util.stream.Stream] so that exceptions during iteration are captured into
+ * [errorRef] before being rethrown. This lets the `onClose` handler record the real error instead
+ * of attempting aggregation on partial data.
  */
-private fun createTracedStreamProxy(
-    delegate: AutoCloseable,
-    run: RunTree,
-    config: TraceConfig,
-    streamMethod: java.lang.reflect.Method,
-): Any {
-    val chunks = mutableListOf<Any?>()
-    val closed = java.util.concurrent.atomic.AtomicBoolean(false)
-    val iterationError = java.util.concurrent.atomic.AtomicReference<Throwable>(null)
-
-    val interfaces = delegate::class.java.interfaces
-
-    return java.lang.reflect.Proxy.newProxyInstance(delegate::class.java.classLoader, interfaces) {
-        _,
-        method,
-        args ->
-        when {
-            method.name == "stream" && method.parameterCount == 0 -> {
-                // Clear chunks so repeated stream() calls don't double-count.
-                chunks.clear()
-                iterationError.set(null)
-                // Delegate to the underlying stream() each call (preserves fresh-stream semantics).
-                val raw = invokeUnwrapping(streamMethod, delegate) as java.util.stream.Stream<*>
-                errorCapturingStream(raw.peek { chunks.add(it) }, iterationError)
-            }
-            method.name == "close" && method.parameterCount == 0 -> {
-                if (closed.compareAndSet(false, true)) {
-                    // Close the delegate first — if cleanup fails, record that as the error.
-                    var closeError: Throwable? = null
-                    try {
-                        delegate.close()
-                    } catch (e: Throwable) {
-                        closeError = e
-                    }
-
-                    try {
-                        val error = iterationError.get() ?: closeError
-                        if (error != null) {
-                            run.endTime = nowIso()
-                            run.error = error.stackTraceToString()
-                        } else {
-                            val aggregator = config.processTracedIO!!.aggregatorFn!!
-                            val output = aggregator.apply(chunks)
-                            run.endTime = nowIso()
-                            run.outputs = applyProcessOutputs(config, output) ?: toOutputMap(output)
-                        }
-                        run.patchRun()
-                    } catch (e: Throwable) {
-                        run.endTime = nowIso()
-                        run.error = e.stackTraceToString()
-                        run.patchRun()
-                    }
-
-                    // Rethrow close error so caller sees the failure
-                    if (closeError != null) throw closeError
-                }
-            }
-            else -> {
-                // Unwrap InvocationTargetException so callers see the original exception
-                invokeUnwrapping(method, delegate, args)
-            }
-        }
-    }
-}
-
-/** Invokes a method via reflection, unwrapping [java.lang.reflect.InvocationTargetException]. */
-private fun invokeUnwrapping(
-    method: java.lang.reflect.Method,
-    target: Any,
-    args: Array<out Any?>? = null,
-): Any? =
-    try {
-        if (args != null) method.invoke(target, *args) else method.invoke(target)
-    } catch (e: java.lang.reflect.InvocationTargetException) {
-        throw e.cause ?: e
-    }
-
-/**
- * Wraps a [java.util.stream.Stream] so that exceptions thrown during iteration (e.g. inside
- * `forEach`, `collect`) are captured into [errorRef] before being rethrown. This allows `close()`
- * to record the error on the traced run even if the caller doesn't explicitly catch it.
- */
-private fun errorCapturingStream(
+private fun wrapStreamWithErrorCapture(
     source: java.util.stream.Stream<*>,
     errorRef: java.util.concurrent.atomic.AtomicReference<Throwable>,
-): java.util.stream.Stream<*> {
-    val sourceSpliterator = source.spliterator()
-    val wrapping =
+): java.util.stream.Stream<Any?> {
+    val delegate = source.spliterator()
+    val capturing =
         object : java.util.Spliterator<Any?> {
             override fun tryAdvance(action: java.util.function.Consumer<in Any?>): Boolean =
                 try {
-                    sourceSpliterator.tryAdvance(action)
+                    delegate.tryAdvance(action)
                 } catch (e: Throwable) {
                     errorRef.compareAndSet(null, e)
                     throw e
@@ -847,9 +755,9 @@ private fun errorCapturingStream(
 
             override fun trySplit(): java.util.Spliterator<Any?>? = null
 
-            override fun estimateSize(): Long = sourceSpliterator.estimateSize()
+            override fun estimateSize(): Long = delegate.estimateSize()
 
-            override fun characteristics(): Int = sourceSpliterator.characteristics()
+            override fun characteristics(): Int = delegate.characteristics()
         }
-    return java.util.stream.StreamSupport.stream(wrapping, false).onClose { source.close() }
+    return java.util.stream.StreamSupport.stream(capturing, false).onClose { source.close() }
 }

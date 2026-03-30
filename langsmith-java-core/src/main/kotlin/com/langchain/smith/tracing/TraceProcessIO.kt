@@ -59,22 +59,19 @@ class TraceProcessIO<PI, PO>(
     /**
      * Aggregator for streaming results. Setting this opts into stream tracing.
      *
-     * When set and the traced function returns an interface-based [AutoCloseable] whose `stream()`
-     * method returns [java.util.stream.Stream] (e.g. OpenAI's `StreamResponse`), `traceable` will:
-     * 1. Return a proxy that implements the same interfaces as the original return value
-     * 2. Collect each element as the caller iterates via `stream()`
-     * 3. Call this aggregator with the collected chunks when the **outer object** is closed
-     * 4. Pass the aggregated result through [processOutputs] and record it as run output
+     * When set and the traced function returns a [java.util.stream.Stream], `traceable` will:
+     * 1. Tee the stream via `peek()` to collect elements as the caller iterates
+     * 2. Register an `onClose()` handler that calls this aggregator with the collected chunks
+     * 3. Pass the aggregated result through [processOutputs] and record it as run output
      *
-     * Without an aggregator, stream-like return values are treated normally — the run is completed
+     * The caller gets back a real [java.util.stream.Stream] — no proxy, no type changes.
+     *
+     * Without an aggregator, `Stream` return values are treated normally — the run is completed
      * immediately on return, same as any other value.
      *
-     * **Lifecycle:** Callers must close the outer stream object (via `use {}` in Kotlin or
-     * try-with-resources in Java) to finalize the traced run. Closing just the `Stream<T>` from
-     * `stream()` is not sufficient. Abandoned stream objects will leave runs open indefinitely.
-     *
-     * **Limitations:** Stream wrapping only works for return types that implement interfaces
-     * (required by JDK dynamic proxies). Concrete classes without interfaces are not supported.
+     * **Lifecycle:** The run is finalized when the stream's `onClose` handler runs. Callers must
+     * close the stream (via `use {}` in Kotlin or try-with-resources in Java) to ensure the run is
+     * completed. Abandoned streams will leave runs open.
      */
     internal val aggregatorFn: Function<List<Any?>, Any?>? = aggregator
 
