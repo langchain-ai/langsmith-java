@@ -3,12 +3,12 @@ package com.langchain.smith.tracing
 import java.util.stream.Collectors
 import java.util.stream.Stream
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 /** Unit tests for streaming support in [traceable]. */
 internal class TraceableStreamingTest {
 
-    /** Minimal AutoCloseable with a `stream()` method, mimicking OpenAI's StreamResponse. */
     interface StreamLike<T> : AutoCloseable {
         fun stream(): Stream<T>
     }
@@ -31,23 +31,41 @@ internal class TraceableStreamingTest {
             override fun close() {}
         }
 
+    private fun failingCloseStream(): StreamLike<String> =
+        object : StreamLike<String> {
+            override fun stream(): Stream<String> = listOf("a", "b").stream()
+
+            override fun close() {
+                throw RuntimeException("close failed")
+            }
+        }
+
     private fun parentRun() = RunTree(name = "parent", runType = RunType.CHAIN)
 
-    private fun configWithAggregator(
-        capturedOutputs: MutableList<Map<String, Any?>>? = null
-    ): TraceConfig =
+    /** Traces a function, capturing the child [RunTree] for inspection. */
+    private fun traceCapturingRun(
+        config: TraceConfig,
+        streamFactory: () -> StreamLike<String>,
+    ): Pair<(String) -> StreamLike<String>, () -> RunTree?> {
+        var childRun: RunTree? = null
+        val traced =
+            traceable(
+                { _: String ->
+                    childRun = getCurrentRunTree()
+                    streamFactory()
+                },
+                config,
+            )
+        return traced to { childRun }
+    }
+
+    private fun configWithAggregator(): TraceConfig =
         TraceConfig.builder()
             .name("stream-test")
             .tracingEnabled(true)
             .processTracedIO(
                 TraceProcessIO<String, Any>(
-                    aggregator = java.util.function.Function { chunks -> chunks.joinToString("") },
-                    processOutputs =
-                        java.util.function.Function { output ->
-                            val map = mapOf("result" to output)
-                            capturedOutputs?.add(map)
-                            map
-                        },
+                    aggregator = java.util.function.Function { chunks -> chunks.joinToString("") }
                 )
             )
             .build()
@@ -66,82 +84,72 @@ internal class TraceableStreamingTest {
 
     @Test
     fun `stream proxy collects chunks and aggregates on close`() {
-        val capturedOutputs = mutableListOf<Map<String, Any?>>()
-        val config = configWithAggregator(capturedOutputs)
+        val config = configWithAggregator()
 
         withParent(parentRun()) {
-            val traced = traceable({ _: String -> fakeStream(listOf("x", "y", "z")) }, config)
+            val (traced, getRun) = traceCapturingRun(config) { fakeStream(listOf("x", "y", "z")) }
             val stream = traced("input")
             stream.stream().collect(Collectors.toList())
             stream.close()
-        }
 
-        assertThat(capturedOutputs).hasSize(1)
-        assertThat(capturedOutputs[0]["result"]).isEqualTo("xyz")
+            val run = getRun()!!
+            assertThat(run.endTime).isNotNull()
+            assertThat(run.outputs).isNotNull()
+            assertThat(run.outputs!!["outputs"]).isEqualTo("xyz")
+            assertThat(run.error).isNull()
+        }
     }
 
     @Test
     fun `stream proxy records raw chunks when no aggregator set`() {
-        val capturedOutputs = mutableListOf<Map<String, Any?>>()
-        val config =
-            TraceConfig.builder()
-                .name("no-agg")
-                .tracingEnabled(true)
-                .processTracedIO(
-                    TraceProcessIO<String, Any>(
-                        processOutputs =
-                            java.util.function.Function { output ->
-                                val map = mapOf("result" to output)
-                                capturedOutputs.add(map)
-                                map
-                            }
-                    )
-                )
-                .build()
+        val config = TraceConfig.builder().name("no-agg").tracingEnabled(true).build()
 
         withParent(parentRun()) {
-            val traced = traceable({ _: String -> fakeStream(listOf("a", "b")) }, config)
+            val (traced, getRun) = traceCapturingRun(config) { fakeStream(listOf("a", "b")) }
             val stream = traced("input")
             stream.stream().collect(Collectors.toList())
             stream.close()
-        }
 
-        assertThat(capturedOutputs).hasSize(1)
-        assertThat(capturedOutputs[0]["result"]).isEqualTo(listOf("a", "b"))
+            val run = getRun()!!
+            assertThat(run.endTime).isNotNull()
+            assertThat(run.outputs!!["outputs"]).isEqualTo(listOf("a", "b"))
+            assertThat(run.error).isNull()
+        }
     }
 
     @Test
-    fun `stream() returns fresh stream per call`() {
+    fun `repeated stream() calls only count last consumption`() {
         val config = configWithAggregator()
 
         withParent(parentRun()) {
-            val traced = traceable({ _: String -> fakeStream(listOf("a", "b")) }, config)
+            val (traced, getRun) = traceCapturingRun(config) { fakeStream(listOf("a", "b")) }
             val stream = traced("input")
 
-            val first = stream.stream().collect(Collectors.toList())
-            val second = stream.stream().collect(Collectors.toList())
-
-            assertThat(first).isEqualTo(listOf("a", "b"))
-            assertThat(second).isEqualTo(listOf("a", "b"))
+            stream.stream().collect(Collectors.toList())
+            stream.stream().collect(Collectors.toList())
             stream.close()
+
+            val run = getRun()!!
+            // Should be "ab" not "abab" — chunks reset on each stream() call
+            assertThat(run.outputs!!["outputs"]).isEqualTo("ab")
         }
     }
 
     @Test
     fun `close is idempotent`() {
-        val capturedOutputs = mutableListOf<Map<String, Any?>>()
-        val config = configWithAggregator(capturedOutputs)
+        val config = configWithAggregator()
 
         withParent(parentRun()) {
-            val traced = traceable({ _: String -> fakeStream(listOf("a")) }, config)
+            val (traced, getRun) = traceCapturingRun(config) { fakeStream(listOf("a")) }
             val stream = traced("input")
             stream.stream().collect(Collectors.toList())
 
             stream.close()
             stream.close()
-        }
 
-        assertThat(capturedOutputs).hasSize(1)
+            val run = getRun()!!
+            assertThat(run.endTime).isNotNull()
+        }
     }
 
     @Test
@@ -180,43 +188,31 @@ internal class TraceableStreamingTest {
     }
 
     @Test
-    fun `iteration error is captured on close`() {
-        val config =
-            TraceConfig.builder()
-                .name("iter-error")
-                .tracingEnabled(true)
-                .processTracedIO(
-                    TraceProcessIO<String, Any>(
-                        aggregator = java.util.function.Function { it },
-                    )
-                )
-                .build()
+    fun `iteration error is captured on run`() {
+        val config = configWithAggregator()
 
         withParent(parentRun()) {
-            val traced =
-                traceable(
-                    { _: String -> failingStream() },
-                    config,
-                )
+            val (traced, getRun) = traceCapturingRun(config) { failingStream() }
             val stream = traced("input")
             try {
                 stream.stream().collect(Collectors.toList())
-            } catch (_: RuntimeException) {
-                // expected
-            }
-            // close() should record the error, not throw
+            } catch (_: RuntimeException) {}
             stream.close()
+
+            val run = getRun()!!
+            assertThat(run.endTime).isNotNull()
+            assertThat(run.error).contains("stream failed")
         }
     }
 
     @Test
-    fun `aggregator error is captured in run`() {
+    fun `aggregator error is captured on run`() {
         val config =
             TraceConfig.builder()
                 .name("bad-agg")
                 .tracingEnabled(true)
                 .processTracedIO(
-                    TraceProcessIO<String, StreamLike<String>>(
+                    TraceProcessIO<String, Any>(
                         aggregator =
                             java.util.function.Function { throw RuntimeException("agg failed") }
                     )
@@ -224,11 +220,33 @@ internal class TraceableStreamingTest {
                 .build()
 
         withParent(parentRun()) {
-            val traced = traceable({ _: String -> fakeStream(listOf("a")) }, config)
+            val (traced, getRun) = traceCapturingRun(config) { fakeStream(listOf("a")) }
             val stream = traced("input")
             stream.stream().collect(Collectors.toList())
-            // close() should not throw — error is captured on the run
             stream.close()
+
+            val run = getRun()!!
+            assertThat(run.endTime).isNotNull()
+            assertThat(run.error).contains("agg failed")
+        }
+    }
+
+    @Test
+    fun `delegate close error is recorded on run and rethrown`() {
+        val config = configWithAggregator()
+
+        withParent(parentRun()) {
+            val (traced, getRun) = traceCapturingRun(config) { failingCloseStream() }
+            val stream = traced("input")
+            stream.stream().collect(Collectors.toList())
+
+            assertThatThrownBy { stream.close() }
+                .isInstanceOf(RuntimeException::class.java)
+                .hasMessage("close failed")
+
+            val run = getRun()!!
+            assertThat(run.endTime).isNotNull()
+            assertThat(run.error).contains("close failed")
         }
     }
 }

@@ -13,10 +13,13 @@ import java.util.function.Function
  *     - **0-arg** ([traceSupplier]): `Map<String, Any?>` (empty map)
  *     - **2-arg** ([traceBiFunction]): `Pair<I1, I2>`
  *     - **3-arg** ([traceTriFunction]): `Triple<I1, I2, I3>`
- * - [PO] — the type passed to `processOutputs`. This is always the raw output type of the traced
- *   function.
+ * - [PO] — the type passed to `processOutputs`. For non-streaming functions, this is the raw return
+ *   type. For streaming functions (when [aggregator] is set), this is the **aggregated output
+ *   type** — not the stream type. When no aggregator is set but the return is stream-like,
+ *   `processOutputs` receives a `List<Any?>` of collected chunks.
  *
- * When [inputs] is set, it replaces the default input serialization entirely. Same for [outputs].
+ * When `processInputs` is set, it replaces the default input serialization entirely. Same for
+ * `processOutputs`.
  *
  * ## Example (Kotlin)
  *
@@ -57,17 +60,21 @@ class TraceProcessIO<PI, PO>(
     /**
      * Optional aggregator for streaming results.
      *
-     * When the traced function returns an [AutoCloseable] with a `stream()` method (e.g. OpenAI's
-     * `StreamResponse`), `traceable` will:
-     * 1. Return the stream to the caller immediately (so they can iterate)
+     * When the traced function returns an interface-based [AutoCloseable] whose `stream()` method
+     * returns [java.util.stream.Stream] (e.g. OpenAI's `StreamResponse`), `traceable` will:
+     * 1. Return a proxy that implements the same interfaces as the original return value
      * 2. Collect each element as the caller iterates via `stream()`
-     * 3. Call this aggregator with the collected chunks when `close()` is called
+     * 3. Call this aggregator with the collected chunks when the **outer object** is closed
      * 4. Pass the aggregated result through [processOutputs] and record it as run output
      *
      * If no aggregator is set but the result is stream-like, the raw list of chunks is recorded.
      *
-     * **Important:** Callers must close the stream (via `use {}` in Kotlin or try-with-resources in
-     * Java) to ensure the traced run is finalized. Abandoned streams will leave runs open.
+     * **Lifecycle:** Callers must close the outer stream object (via `use {}` in Kotlin or
+     * try-with-resources in Java) to finalize the traced run. Closing just the `Stream<T>` from
+     * `stream()` is not sufficient. Abandoned stream objects will leave runs open indefinitely.
+     *
+     * **Limitations:** Stream wrapping only works for return types that implement interfaces
+     * (required by JDK dynamic proxies). Concrete classes without interfaces are not supported.
      */
     internal val aggregatorFn: Function<List<Any?>, Any?>? = aggregator
 

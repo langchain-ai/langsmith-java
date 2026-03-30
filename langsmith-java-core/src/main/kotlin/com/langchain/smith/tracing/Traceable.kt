@@ -687,11 +687,9 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
         try {
             val result = block()
 
-            // If the result has a stream() method returning java.util.stream.Stream and is
-            // AutoCloseable, wrap it to defer run completion until the stream is consumed
-            // and closed. This matches OpenAI's StreamResponse and similar patterns.
-            // If an aggregator is configured, the aggregated result is recorded as output;
-            // otherwise the raw list of chunks is recorded.
+            // If the result is an interface-based AutoCloseable with a stream() method
+            // returning java.util.stream.Stream, wrap it in a proxy that defers run
+            // completion until close(). See TraceProcessIO.aggregatorFn for details.
             val streamMethod =
                 if (result is AutoCloseable) {
                     try {
@@ -734,12 +732,21 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
 /**
  * Creates a JDK dynamic proxy that implements the same interfaces as [delegate] (e.g.
  * `StreamResponse`), intercepting `stream()` to collect elements and `close()` to record the output
- * on the traced run. If [TraceProcessIO.aggregatorFn] is set, the aggregated result is recorded;
- * otherwise the raw list of chunks is recorded.
+ * on the traced run.
  *
- * **Lifecycle:** The run is finalized when `close()` is called. Callers must use `use {}` (Kotlin)
- * or try-with-resources (Java) to ensure the run is always completed. If an exception occurs during
- * stream iteration, it is captured as the run error on `close()`.
+ * Only works for interface-based return types (required by [java.lang.reflect.Proxy]).
+ *
+ * On `close()`:
+ * 1. The delegate is closed first — if cleanup fails, the error is recorded on the run and
+ *    rethrown.
+ * 2. If an iteration error was captured (via [errorCapturingStream]), it is recorded on the run.
+ * 3. Otherwise, the aggregator (if set) is called and the result is recorded via `processOutputs`.
+ *    If no aggregator is set, the raw chunk list is recorded.
+ *
+ * On `stream()`:
+ * - Delegates to the underlying `stream()` each call (fresh stream per call).
+ * - Chunks are collected via `peek()` and reset on each `stream()` call to avoid double-counting.
+ * - The returned stream wraps a [errorCapturingStream] spliterator that captures iteration errors.
  */
 private fun createTracedStreamProxy(
     delegate: AutoCloseable,
@@ -759,45 +766,66 @@ private fun createTracedStreamProxy(
         args ->
         when (method.name) {
             "stream" -> {
+                // Clear chunks so repeated stream() calls don't double-count.
+                chunks.clear()
+                iterationError.set(null)
                 // Delegate to the underlying stream() each call (preserves fresh-stream semantics).
-                // Wrap with peek() to collect chunks. Use a wrapping Spliterator to catch errors
-                // during iteration so close() can record them on the run.
-                val raw = streamMethod.invoke(delegate) as java.util.stream.Stream<*>
+                val raw = invokeUnwrapping(streamMethod, delegate) as java.util.stream.Stream<*>
                 errorCapturingStream(raw.peek { chunks.add(it) }, iterationError)
             }
             "close" -> {
                 if (closed.compareAndSet(false, true)) {
+                    // Close the delegate first — if cleanup fails, record that as the error.
+                    var closeError: Throwable? = null
                     try {
-                        val error = iterationError.get()
+                        delegate.close()
+                    } catch (e: Throwable) {
+                        closeError = e
+                    }
+
+                    try {
+                        val error = iterationError.get() ?: closeError
                         if (error != null) {
                             run.endTime = nowIso()
                             run.error = error.stackTraceToString()
-                            run.patchRun()
                         } else {
                             val aggregator = config.processTracedIO?.aggregatorFn
                             val output =
                                 if (aggregator != null) aggregator.apply(chunks)
                                 else chunks.toList()
                             run.endTime = nowIso()
-                            run.outputs =
-                                applyProcessOutputs(config, output) ?: toOutputMap(output)
-                            run.patchRun()
+                            run.outputs = applyProcessOutputs(config, output) ?: toOutputMap(output)
                         }
+                        run.patchRun()
                     } catch (e: Throwable) {
                         run.endTime = nowIso()
                         run.error = e.stackTraceToString()
                         run.patchRun()
-                    } finally {
-                        delegate.close()
                     }
+
+                    // Rethrow close error so caller sees the failure
+                    if (closeError != null) throw closeError
                 }
             }
             else -> {
-                if (args != null) method.invoke(delegate, *args) else method.invoke(delegate)
+                // Unwrap InvocationTargetException so callers see the original exception
+                invokeUnwrapping(method, delegate, args)
             }
         }
     }
 }
+
+/** Invokes a method via reflection, unwrapping [java.lang.reflect.InvocationTargetException]. */
+private fun invokeUnwrapping(
+    method: java.lang.reflect.Method,
+    target: Any,
+    args: Array<out Any?>? = null,
+): Any? =
+    try {
+        if (args != null) method.invoke(target, *args) else method.invoke(target)
+    } catch (e: java.lang.reflect.InvocationTargetException) {
+        throw e.cause ?: e
+    }
 
 /**
  * Wraps a [java.util.stream.Stream] so that exceptions thrown during iteration (e.g. inside
@@ -820,7 +848,9 @@ private fun errorCapturingStream(
                 }
 
             override fun trySplit(): java.util.Spliterator<Any?>? = null
+
             override fun estimateSize(): Long = sourceSpliterator.estimateSize()
+
             override fun characteristics(): Int = sourceSpliterator.characteristics()
         }
     return java.util.stream.StreamSupport.stream(wrapping, false).onClose { source.close() }
