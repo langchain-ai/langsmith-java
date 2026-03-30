@@ -58,10 +58,6 @@ import java.util.function.Function
 fun wrapOpenAI(client: OpenAIClient, config: TraceConfig): OpenAIClient =
     TracedOpenAIClient(client, config)
 
-// ---------------------------------------------------------------------------
-// Internal wrapper implementations
-// ---------------------------------------------------------------------------
-
 private class TracedOpenAIClient(
     private val delegate: OpenAIClient,
     private val config: TraceConfig,
