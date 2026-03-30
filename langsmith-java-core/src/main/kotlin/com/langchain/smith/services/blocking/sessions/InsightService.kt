@@ -10,6 +10,8 @@ import com.langchain.smith.models.sessions.insights.InsightCreateParams
 import com.langchain.smith.models.sessions.insights.InsightCreateResponse
 import com.langchain.smith.models.sessions.insights.InsightDeleteParams
 import com.langchain.smith.models.sessions.insights.InsightDeleteResponse
+import com.langchain.smith.models.sessions.insights.InsightListPage
+import com.langchain.smith.models.sessions.insights.InsightListParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobParams
 import com.langchain.smith.models.sessions.insights.InsightRetrieveJobResponse
 import com.langchain.smith.models.sessions.insights.InsightRetrieveRunsParams
@@ -74,6 +76,35 @@ interface InsightService {
         params: InsightUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): InsightUpdateResponse
+
+    /** Get all clusters for a session. */
+    fun list(sessionId: String): InsightListPage = list(sessionId, InsightListParams.none())
+
+    /** @see list */
+    fun list(
+        sessionId: String,
+        params: InsightListParams = InsightListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): InsightListPage = list(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+    /** @see list */
+    fun list(
+        sessionId: String,
+        params: InsightListParams = InsightListParams.none(),
+    ): InsightListPage = list(sessionId, params, RequestOptions.none())
+
+    /** @see list */
+    fun list(
+        params: InsightListParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): InsightListPage
+
+    /** @see list */
+    fun list(params: InsightListParams): InsightListPage = list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(sessionId: String, requestOptions: RequestOptions): InsightListPage =
+        list(sessionId, InsightListParams.none(), requestOptions)
 
     /** Delete a session cluster job. */
     fun delete(jobId: String, params: InsightDeleteParams): InsightDeleteResponse =
@@ -213,6 +244,50 @@ interface InsightService {
             params: InsightUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<InsightUpdateResponse>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/sessions/{session_id}/insights`, but is
+         * otherwise the same as [InsightService.list].
+         */
+        @MustBeClosed
+        fun list(sessionId: String): HttpResponseFor<InsightListPage> =
+            list(sessionId, InsightListParams.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            sessionId: String,
+            params: InsightListParams = InsightListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<InsightListPage> =
+            list(params.toBuilder().sessionId(sessionId).build(), requestOptions)
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            sessionId: String,
+            params: InsightListParams = InsightListParams.none(),
+        ): HttpResponseFor<InsightListPage> = list(sessionId, params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: InsightListParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<InsightListPage>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(params: InsightListParams): HttpResponseFor<InsightListPage> =
+            list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            sessionId: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<InsightListPage> =
+            list(sessionId, InsightListParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `delete /api/v1/sessions/{session_id}/insights/{job_id}`,
