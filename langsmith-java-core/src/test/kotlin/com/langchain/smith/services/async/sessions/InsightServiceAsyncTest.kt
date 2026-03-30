@@ -97,6 +97,23 @@ internal class InsightServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun list() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .organizationId("My Organization ID")
+                .build()
+        val insightServiceAsync = client.sessions().insights()
+
+        val pageFuture = insightServiceAsync.list("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+
+        val page = pageFuture.get()
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun delete() {
         val client =
             LangsmithOkHttpClientAsync.builder()
