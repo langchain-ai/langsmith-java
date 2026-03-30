@@ -157,6 +157,25 @@ The project uses ktfmt with `--kotlinlang-style`.
 
 ## Testing
 
+### Don't add comments that restate the test name
+
+Test function names should be descriptive enough on their own. Don't add comments that repeat what the name already says:
+
+```kotlin
+// Good — name is self-documenting
+@Test
+fun parseLegacyPromptTemplateWithTemplateFormat() {
+    val manifest = ...
+}
+
+// Bad — comment restates the function name
+@Test
+fun parseLegacyPromptTemplateWithTemplateFormat() {
+    // Legacy PromptTemplate format with template_format field
+    val manifest = ...
+}
+```
+
 ### Running tests
 
 ```bash
@@ -189,4 +208,25 @@ Tests skip gracefully via `assumeTrue` if keys are missing.
 
 - `toString()` should be single-line, following the `ClassName{field=value, field=value}` convention used by the rest of the SDK.
 - Avoid `@Suppress("UNCHECKED_CAST")` — restructure code to use safe patterns (`as? String`, `is Map<*, *>` with `entries.associate`, etc).
+- Use named arguments for constructor/function calls with 2+ parameters, especially when types could be confused:
+  ```kotlin
+  // Good
+  PromptMessage(
+      role = PromptMessage.Role.HUMAN,
+      template = template,
+      templateFormat = templateFormat,
+  )
+
+  // Bad — positional args are ambiguous
+  PromptMessage(PromptMessage.Role.HUMAN, template, templateFormat = templateFormat)
+  ```
+- When an `Optional` has a fallback default, use `orElse(default)` directly instead of `orElse(null) ?: default`:
+  ```kotlin
+  // Good — default goes straight into orElse
+  kwargs["template_format"]?.asString()?.orElse("f-string") ?: "f-string"
+
+  // Bad — creates unnecessary null intermediary
+  kwargs["template_format"]?.asString()?.orElse(null) ?: "f-string"
+  ```
+  The `?: "f-string"` is still needed to handle the case where the key is missing from the map (`null` from `kwargs["template_format"]`), but `orElse` should carry the default for when the key exists but isn't a string.
 - Anthropic SDK is a `compileOnly` dependency — users must add it themselves. Methods that use Anthropic types should catch `NoClassDefFoundError` and throw `IllegalStateException` with a clear message.
