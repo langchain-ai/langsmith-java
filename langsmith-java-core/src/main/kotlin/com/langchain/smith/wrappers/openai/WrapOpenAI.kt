@@ -87,67 +87,92 @@ private class TracedChatService(
         TracedChatService(delegate.withOptions(modifier), config)
 }
 
+/**
+ * Builds the traced `create` functions (1-arg and 2-arg) for an OpenAI service.
+ *
+ * Both [TracedChatCompletionService] and [TracedResponseService] follow the same pattern — this
+ * extracts the shared tracing plumbing so each service only provides the type-specific bits.
+ *
+ * @param P the params type (e.g. [ChatCompletionCreateParams])
+ * @param R the response type (e.g. [ChatCompletion])
+ * @param config base tracing configuration
+ * @param paramsToMap serializes params to a map for recording as run inputs
+ * @param useResponsesApi whether this is the responses API (affects metadata)
+ * @param createOne calls the underlying service's `create(params)` method
+ * @param createTwo calls the underlying service's `create(params, requestOptions)` method
+ */
+private class TracedOpenAIClientCreate<P, R>(
+    config: TraceConfig,
+    paramsToMap: (P) -> Map<String, Any?>,
+    useResponsesApi: Boolean,
+    createOne: (P) -> R,
+    createTwo: (P, RequestOptions) -> R,
+) {
+    val oneArg: Function<P, R> =
+        traceable(
+            Function<P, R> {
+                setInvocationParams(paramsToMap(it), useResponsesApi = useResponsesApi)
+                createOne(it)
+            },
+            config
+                .toBuilder()
+                .name("ChatOpenAI")
+                .runType(RunType.LLM)
+                .processTracedIO(
+                    TraceProcessIO<P, R>(
+                        processInputs = Function { params -> paramsToMap(params) },
+                        processOutputs =
+                            Function { response -> processChatCompletionOutput(toMap(response!!)) },
+                    )
+                )
+                .build(),
+        )
+
+    val twoArg: java.util.function.BiFunction<P, RequestOptions, R> =
+        traceBiFunction(
+            java.util.function.BiFunction<P, RequestOptions, R> { params, opts ->
+                setInvocationParams(paramsToMap(params), useResponsesApi = useResponsesApi)
+                createTwo(params, opts)
+            },
+            config
+                .toBuilder()
+                .name("ChatOpenAI")
+                .runType(RunType.LLM)
+                .processTracedIO(
+                    TraceProcessIO<Pair<P, RequestOptions>, R>(
+                        processInputs =
+                            Function { (params, opts) ->
+                                paramsToMap(params) + ("request_options" to toGenericMap(opts))
+                            },
+                        processOutputs =
+                            Function { response -> processChatCompletionOutput(toMap(response!!)) },
+                    )
+                )
+                .build(),
+        )
+}
+
 private class TracedChatCompletionService(
     private val delegate: ChatCompletionService,
     private val config: TraceConfig,
 ) : ChatCompletionService by delegate {
 
-    private val processIO =
-        TraceProcessIO<ChatCompletionCreateParams, ChatCompletion>(
-            processInputs = Function { params -> chatParamsToMap(params) },
-            processOutputs =
-                Function { completion -> processChatCompletionOutput(toMap(completion)) },
-        )
-
-    private val processIOWithOpts =
-        TraceProcessIO<Pair<ChatCompletionCreateParams, RequestOptions>, ChatCompletion>(
-            processInputs =
-                Function { (params, opts) ->
-                    chatParamsToMap(params) + ("request_options" to toGenericMap(opts))
-                },
-            processOutputs =
-                Function { completion -> processChatCompletionOutput(toMap(completion)) },
-        )
-
-    private val oneArgTraced =
-        traceable(
-            Function<ChatCompletionCreateParams, ChatCompletion> {
-                setInvocationParams(chatParamsToMap(it), useResponsesApi = false)
-                delegate.create(it)
-            },
-            config
-                .toBuilder()
-                .name("ChatOpenAI")
-                .runType(RunType.LLM)
-                .processTracedIO(processIO)
-                .build(),
-        )
-
-    private val twoArgTraced =
-        traceBiFunction(
-            java.util.function.BiFunction<
-                ChatCompletionCreateParams,
-                RequestOptions,
-                ChatCompletion,
-            > { params, opts ->
-                setInvocationParams(chatParamsToMap(params), useResponsesApi = false)
-                delegate.create(params, opts)
-            },
-            config
-                .toBuilder()
-                .name("ChatOpenAI")
-                .runType(RunType.LLM)
-                .processTracedIO(processIOWithOpts)
-                .build(),
+    private val traced =
+        TracedOpenAIClientCreate(
+            config = config,
+            paramsToMap = ::chatParamsToMap,
+            useResponsesApi = false,
+            createOne = delegate::create,
+            createTwo = delegate::create,
         )
 
     override fun create(params: ChatCompletionCreateParams): ChatCompletion =
-        oneArgTraced.apply(params)
+        traced.oneArg.apply(params)
 
     override fun create(
         params: ChatCompletionCreateParams,
         requestOptions: RequestOptions,
-    ): ChatCompletion = twoArgTraced.apply(params, requestOptions)
+    ): ChatCompletion = traced.twoArg.apply(params, requestOptions)
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ChatCompletionService =
         TracedChatCompletionService(delegate.withOptions(modifier), config)
@@ -158,55 +183,19 @@ private class TracedResponseService(
     private val config: TraceConfig,
 ) : ResponseService by delegate {
 
-    private val processIO =
-        TraceProcessIO<ResponseCreateParams, Response>(
-            processInputs = Function { params -> responseParamsToMap(params) },
-            processOutputs = Function { response -> processChatCompletionOutput(toMap(response)) },
+    private val traced =
+        TracedOpenAIClientCreate(
+            config = config,
+            paramsToMap = ::responseParamsToMap,
+            useResponsesApi = true,
+            createOne = delegate::create,
+            createTwo = delegate::create,
         )
 
-    private val processIOWithOpts =
-        TraceProcessIO<Pair<ResponseCreateParams, RequestOptions>, Response>(
-            processInputs =
-                Function { (params, opts) ->
-                    responseParamsToMap(params) + ("request_options" to toGenericMap(opts))
-                },
-            processOutputs = Function { response -> processChatCompletionOutput(toMap(response)) },
-        )
-
-    private val oneArgTraced =
-        traceable(
-            Function<ResponseCreateParams, Response> {
-                setInvocationParams(responseParamsToMap(it), useResponsesApi = true)
-                delegate.create(it)
-            },
-            config
-                .toBuilder()
-                .name("ChatOpenAI")
-                .runType(RunType.LLM)
-                .processTracedIO(processIO)
-                .build(),
-        )
-
-    private val twoArgTraced =
-        traceBiFunction(
-            java.util.function.BiFunction<ResponseCreateParams, RequestOptions, Response> {
-                params,
-                opts ->
-                setInvocationParams(responseParamsToMap(params), useResponsesApi = true)
-                delegate.create(params, opts)
-            },
-            config
-                .toBuilder()
-                .name("ChatOpenAI")
-                .runType(RunType.LLM)
-                .processTracedIO(processIOWithOpts)
-                .build(),
-        )
-
-    override fun create(params: ResponseCreateParams): Response = oneArgTraced.apply(params)
+    override fun create(params: ResponseCreateParams): Response = traced.oneArg.apply(params)
 
     override fun create(params: ResponseCreateParams, requestOptions: RequestOptions): Response =
-        twoArgTraced.apply(params, requestOptions)
+        traced.twoArg.apply(params, requestOptions)
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ResponseService =
         TracedResponseService(delegate.withOptions(modifier), config)

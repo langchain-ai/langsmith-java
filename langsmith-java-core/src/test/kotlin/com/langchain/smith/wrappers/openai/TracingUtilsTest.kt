@@ -14,10 +14,6 @@ import org.junit.jupiter.api.Test
  */
 internal class TracingUtilsTest {
 
-    // ---------------------------------------------------------------------------
-    // processChatCompletionOutput
-    // ---------------------------------------------------------------------------
-
     @Test
     fun `processChatCompletionOutput restructures usage into usage_metadata`() {
         val raw =
@@ -215,10 +211,6 @@ internal class TracingUtilsTest {
         assertThat(result["service_tier"]).isEqualTo("priority")
         assertThat(result["choices"]).isEqualTo(listOf("result"))
     }
-
-    // ---------------------------------------------------------------------------
-    // setInvocationParams
-    // ---------------------------------------------------------------------------
 
     @Test
     fun `setInvocationParams sets ls metadata on current run`() {

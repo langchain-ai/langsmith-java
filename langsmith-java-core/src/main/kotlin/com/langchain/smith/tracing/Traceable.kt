@@ -464,9 +464,9 @@ fun <I, O> traceable(block: Function<I, O>, config: TraceConfig): Function<I, O>
 fun <I1, I2, O> traceable(block: (I1, I2) -> O, config: TraceConfig): (I1, I2) -> O {
     val resolvedConfig = resolveConfig(config, block)
     return { i1, i2 ->
-        val pair = Pair(i1, i2)
+        val rawArgs = Pair(i1, i2)
         val serializedInputs =
-            applyProcessInputs(resolvedConfig, pair) ?: mapOf("args" to listOf(i1, i2))
+            applyProcessInputs(resolvedConfig, rawArgs) ?: mapOf("args" to listOf(i1, i2))
         executeTraced(resolvedConfig, serializedInputs) { block(i1, i2) }
     }
 }
@@ -485,9 +485,9 @@ fun <I1, I2, O> traceable(
 fun <I1, I2, I3, O> traceable(block: (I1, I2, I3) -> O, config: TraceConfig): (I1, I2, I3) -> O {
     val resolvedConfig = resolveConfig(config, block)
     return { i1, i2, i3 ->
-        val triple = Triple(i1, i2, i3)
+        val rawArgs = Triple(i1, i2, i3)
         val serializedInputs =
-            applyProcessInputs(resolvedConfig, triple) ?: mapOf("args" to listOf(i1, i2, i3))
+            applyProcessInputs(resolvedConfig, rawArgs) ?: mapOf("args" to listOf(i1, i2, i3))
         executeTraced(resolvedConfig, serializedInputs) { block(i1, i2, i3) }
     }
 }
