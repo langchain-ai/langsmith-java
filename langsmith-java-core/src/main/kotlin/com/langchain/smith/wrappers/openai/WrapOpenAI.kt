@@ -103,7 +103,7 @@ private class TracedChatService(
  * @param createOne calls the underlying service's `create(params)` method
  * @param createTwo calls the underlying service's `create(params, requestOptions)` method
  */
-private class TracedOpenAIClientCreate<P, R>(
+private class TracedOpenAIClientCreate<P, R : Any>(
     config: TraceConfig,
     paramsToMap: (P) -> Map<String, Any?>,
     useResponsesApi: Boolean,
@@ -124,7 +124,7 @@ private class TracedOpenAIClientCreate<P, R>(
                     TraceProcessIO<P, R>(
                         processInputs = Function { params -> paramsToMap(params) },
                         processOutputs =
-                            Function { response -> processChatCompletionOutput(toMap(response!!)) },
+                            Function { response -> processChatCompletionOutput(toMap(response)) },
                     )
                 )
                 .build(),
@@ -147,7 +147,7 @@ private class TracedOpenAIClientCreate<P, R>(
                                 paramsToMap(params) + ("request_options" to toGenericMap(opts))
                             },
                         processOutputs =
-                            Function { response -> processChatCompletionOutput(toMap(response!!)) },
+                            Function { response -> processChatCompletionOutput(toMap(response)) },
                     )
                 )
                 .build(),
