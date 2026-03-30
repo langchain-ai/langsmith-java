@@ -178,19 +178,23 @@ fun parseLegacyPromptTemplateWithTemplateFormat() {
 
 ### Running tests
 
+Try to run targeted tests matching the code you changed:
+
 ```bash
-# All prompt tests (unit + integration)
-./gradlew :langsmith-java-core:test --tests "com.langchain.smith.prompts.*"
+# Run tests for the package you changed
+./gradlew :langsmith-java-core:test --tests "com.langchain.smith.prompts.*" --rerun
 
-# Just integration tests (requires API keys)
-./gradlew :langsmith-java-core:test --tests "com.langchain.smith.prompts.PromptIntegrationTest"
+# Run a single test class
+./gradlew :langsmith-java-core:test --tests "com.langchain.smith.prompts.ManifestParserTest" --rerun
 
-# Force re-run (skip Gradle cache)
-./gradlew :langsmith-java-core:test --tests "..." --rerun
+# Run a single test method
+./gradlew :langsmith-java-core:test --tests "com.langchain.smith.prompts.ManifestParserTest.parsePromptTemplate" --rerun
 
 # See println output
 ./gradlew :langsmith-java-core:test --tests "..." --rerun --info
 ```
+
+Only run the full suite (`./gradlew :langsmith-java-core:test --rerun`) before finalizing a PR or after large cross-cutting changes.
 
 ### Integration tests
 
