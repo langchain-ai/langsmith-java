@@ -687,11 +687,11 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
         try {
             val result = block()
 
-            // If the result is an interface-based AutoCloseable with a stream() method
-            // returning java.util.stream.Stream, wrap it in a proxy that defers run
-            // completion until close(). See TraceProcessIO.aggregatorFn for details.
+            // Only wrap stream-like results when the caller explicitly opted in by setting
+            // an aggregator on TraceProcessIO. Without an aggregator, the return value is
+            // treated normally (recorded immediately, run completed on return).
             val streamMethod =
-                if (result is AutoCloseable) {
+                if (config.processTracedIO?.aggregatorFn != null && result is AutoCloseable) {
                     try {
                         result::class.java.getMethod("stream").takeIf {
                             java.util.stream.Stream::class.java.isAssignableFrom(it.returnType)
@@ -764,8 +764,8 @@ private fun createTracedStreamProxy(
         _,
         method,
         args ->
-        when (method.name) {
-            "stream" -> {
+        when {
+            method.name == "stream" && method.parameterCount == 0 -> {
                 // Clear chunks so repeated stream() calls don't double-count.
                 chunks.clear()
                 iterationError.set(null)
@@ -773,7 +773,7 @@ private fun createTracedStreamProxy(
                 val raw = invokeUnwrapping(streamMethod, delegate) as java.util.stream.Stream<*>
                 errorCapturingStream(raw.peek { chunks.add(it) }, iterationError)
             }
-            "close" -> {
+            method.name == "close" && method.parameterCount == 0 -> {
                 if (closed.compareAndSet(false, true)) {
                     // Close the delegate first — if cleanup fails, record that as the error.
                     var closeError: Throwable? = null
@@ -789,10 +789,8 @@ private fun createTracedStreamProxy(
                             run.endTime = nowIso()
                             run.error = error.stackTraceToString()
                         } else {
-                            val aggregator = config.processTracedIO?.aggregatorFn
-                            val output =
-                                if (aggregator != null) aggregator.apply(chunks)
-                                else chunks.toList()
+                            val aggregator = config.processTracedIO!!.aggregatorFn!!
+                            val output = aggregator.apply(chunks)
                             run.endTime = nowIso()
                             run.outputs = applyProcessOutputs(config, output) ?: toOutputMap(output)
                         }

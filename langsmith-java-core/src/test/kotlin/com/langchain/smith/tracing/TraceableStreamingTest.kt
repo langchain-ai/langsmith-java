@@ -101,19 +101,18 @@ internal class TraceableStreamingTest {
     }
 
     @Test
-    fun `stream proxy records raw chunks when no aggregator set`() {
+    fun `no aggregator means no stream wrapping`() {
         val config = TraceConfig.builder().name("no-agg").tracingEnabled(true).build()
 
         withParent(parentRun()) {
             val (traced, getRun) = traceCapturingRun(config) { fakeStream(listOf("a", "b")) }
             val stream = traced("input")
-            stream.stream().collect(Collectors.toList())
-            stream.close()
+
+            // Without an aggregator, the result is not proxied — run completes immediately
+            assertThat(java.lang.reflect.Proxy.isProxyClass(stream::class.java)).isFalse()
 
             val run = getRun()!!
             assertThat(run.endTime).isNotNull()
-            assertThat(run.outputs!!["outputs"]).isEqualTo(listOf("a", "b"))
-            assertThat(run.error).isNull()
         }
     }
 

@@ -15,8 +15,7 @@ import java.util.function.Function
  *     - **3-arg** ([traceTriFunction]): `Triple<I1, I2, I3>`
  * - [PO] — the type passed to `processOutputs`. For non-streaming functions, this is the raw return
  *   type. For streaming functions (when [aggregator] is set), this is the **aggregated output
- *   type** — not the stream type. When no aggregator is set but the return is stream-like,
- *   `processOutputs` receives a `List<Any?>` of collected chunks.
+ *   type** returned by the aggregator — not the stream type itself.
  *
  * When `processInputs` is set, it replaces the default input serialization entirely. Same for
  * `processOutputs`.
@@ -58,16 +57,17 @@ class TraceProcessIO<PI, PO>(
     internal val outputsFn: Function<Any?, Map<String, Any?>>? = processOutputs?.erase()
 
     /**
-     * Optional aggregator for streaming results.
+     * Aggregator for streaming results. Setting this opts into stream tracing.
      *
-     * When the traced function returns an interface-based [AutoCloseable] whose `stream()` method
-     * returns [java.util.stream.Stream] (e.g. OpenAI's `StreamResponse`), `traceable` will:
+     * When set and the traced function returns an interface-based [AutoCloseable] whose `stream()`
+     * method returns [java.util.stream.Stream] (e.g. OpenAI's `StreamResponse`), `traceable` will:
      * 1. Return a proxy that implements the same interfaces as the original return value
      * 2. Collect each element as the caller iterates via `stream()`
      * 3. Call this aggregator with the collected chunks when the **outer object** is closed
      * 4. Pass the aggregated result through [processOutputs] and record it as run output
      *
-     * If no aggregator is set but the result is stream-like, the raw list of chunks is recorded.
+     * Without an aggregator, stream-like return values are treated normally — the run is completed
+     * immediately on return, same as any other value.
      *
      * **Lifecycle:** Callers must close the outer stream object (via `use {}` in Kotlin or
      * try-with-resources in Java) to finalize the traced run. Closing just the `Stream<T>` from
