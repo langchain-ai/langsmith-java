@@ -102,9 +102,15 @@ internal object ManifestParser {
             kwargs["template"]?.asString()?.orElse(null)
                 ?: throw IllegalArgumentException("PromptTemplate missing 'template' in kwargs")
 
+        val templateFormat = kwargs["template_format"]?.asString()?.orElse(null) ?: "f-string"
         val inputVariables = extractInputVariables(kwargs)
 
-        return PromptMessages(listOf(PromptMessage.human(template)), inputVariables)
+        return PromptMessages(
+            listOf(
+                PromptMessage(PromptMessage.Role.HUMAN, template, templateFormat = templateFormat)
+            ),
+            inputVariables,
+        )
     }
 
     /** Holds a parsed template string and its format. */
