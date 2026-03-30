@@ -1,90 +1,173 @@
 package com.langchain.smith.wrappers.openai
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.opentelemetry.api.common.AttributeKey
-import io.opentelemetry.api.trace.Span
-import io.opentelemetry.api.trace.SpanBuilder
-import io.opentelemetry.api.trace.SpanKind
-import io.opentelemetry.api.trace.Tracer
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.langchain.smith.tracing.getCurrentRunTree
+import com.openai.core.jsonMapper
+import com.openai.models.chat.completions.ChatCompletionCreateParams
+import com.openai.models.responses.ResponseCreateParams
 
-/** Internal utility for OpenTelemetry span creation and management. */
-internal object TracingUtils {
-    private const val INSTRUMENTATION_NAME = "langsmith-java-otel-wrappers"
-    private val jsonMapper = ObjectMapper()
+/**
+ * The OpenAI SDK's own ObjectMapper — understands JsonField, @ExcludeMissing, and @JsonProperty
+ * annotations. Used to serialize OpenAI SDK model types (Body, ChatCompletion, Response) which rely
+ * on explicit @JsonProperty annotations with snake_case keys rather than getter auto-detection.
+ */
+private val openAIMapper = jsonMapper()
 
-    fun getTracer(): Tracer =
-        io.opentelemetry.api.GlobalOpenTelemetry.get().getTracer(INSTRUMENTATION_NAME)
+/** A standard Jackson mapper for general-purpose serialization (e.g. RequestOptions). */
+private val genericMapper = jacksonObjectMapper()
 
-    fun createSpanBuilder(
-        model: String?,
-        operationType: String,
-        spanKind: String? = "llm",
-    ): SpanBuilder {
-        val tracer = getTracer()
-        val spanName = "$operationType ${model ?: "unknown"}"
-        val builder =
-            tracer
-                .spanBuilder(spanName)
-                .setSpanKind(SpanKind.CLIENT)
-                .setAttribute(AttributeKey.stringKey("gen_ai.system"), "openai")
-                .setAttribute(AttributeKey.stringKey("gen_ai.operation.name"), operationType)
-                .setAttribute(AttributeKey.stringKey("gen_ai.provider.name"), "openai")
-        spanKind?.let { builder.setAttribute(AttributeKey.stringKey("langsmith.span.kind"), it) }
-        return builder
-    }
+private val MAP_TYPE = object : TypeReference<Map<String, Any?>>() {}
 
-    fun setRequestAttributes(span: Span, model: String?) {
-        model?.let { span.setAttribute(AttributeKey.stringKey("gen_ai.request.model"), it) }
-    }
+/**
+ * Converts an OpenAI SDK model object to a `Map<String, Any?>` using the OpenAI SDK's own
+ * ObjectMapper, which correctly handles @JsonProperty, @ExcludeMissing, and JsonField.
+ */
+internal fun toMap(value: Any): Map<String, Any?> = openAIMapper.convertValue(value, MAP_TYPE)
 
-    fun setRequestParameters(span: Span, temperature: Double?, topP: Double?, maxTokens: Long?) {
-        temperature?.let {
-            span.setAttribute(AttributeKey.doubleKey("gen_ai.request.temperature"), it)
+/**
+ * Converts a general object to a `Map<String, Any?>` using a standard Jackson mapper with getter
+ * auto-detection. Used for non-OpenAI types like `RequestOptions`.
+ */
+internal fun toGenericMap(value: Any): Map<String, Any?> =
+    genericMapper.convertValue(value, MAP_TYPE)
+
+/**
+ * Serializes [ChatCompletionCreateParams] to a `Map<String, Any?>` using the inner Body (which has
+ * proper `@JsonProperty` snake_case annotations), matching the OpenAI REST API wire format.
+ */
+internal fun chatParamsToMap(params: ChatCompletionCreateParams): Map<String, Any?> =
+    toMap(params._body())
+
+/**
+ * Serializes [ResponseCreateParams] to a `Map<String, Any?>` using the inner Body (which has proper
+ * `@JsonProperty` snake_case annotations), matching the OpenAI REST API wire format.
+ */
+internal fun responseParamsToMap(params: ResponseCreateParams): Map<String, Any?> =
+    toMap(params._body())
+
+// Keys from the request params that go into ls_invocation_params (matching JS SDK)
+internal val TRACED_INVOCATION_KEYS =
+    setOf(
+        "frequency_penalty",
+        "n",
+        "logit_bias",
+        "logprobs",
+        "modalities",
+        "parallel_tool_calls",
+        "prediction",
+        "presence_penalty",
+        "prompt_cache_key",
+        "reasoning",
+        "reasoning_effort",
+        "response_format",
+        "seed",
+        "service_tier",
+        "stream_options",
+        "top_logprobs",
+        "top_p",
+        "truncation",
+        "user",
+        "verbosity",
+        "web_search_options",
+    )
+
+/**
+ * Processes a chat completion output to restructure usage into `usage_metadata`, matching the
+ * LangSmith JS SDK's `processChatCompletion`.
+ */
+internal fun processChatCompletionOutput(raw: Map<String, Any?>): Map<String, Any?> {
+    val result = raw.toMutableMap()
+    val usage = result.remove("usage")
+    if (usage is Map<*, *>) {
+        val serviceTier = result["service_tier"] as? String
+        val recognized = if (serviceTier in listOf("priority", "flex")) serviceTier else null
+        val prefix = if (recognized != null) "${recognized}_" else ""
+
+        // Chat completions use prompt_tokens/completion_tokens
+        // Responses API uses input_tokens/output_tokens
+        val inputTokens = (usage["prompt_tokens"] ?: usage["input_tokens"]) as? Number ?: 0
+        val outputTokens = (usage["completion_tokens"] ?: usage["output_tokens"]) as? Number ?: 0
+        val totalTokens = (usage["total_tokens"]) as? Number ?: 0
+
+        val inputTokenDetails = mutableMapOf<String, Any?>()
+        val outputTokenDetails = mutableMapOf<String, Any?>()
+
+        // Chat completions token details
+        val promptDetails = usage["prompt_tokens_details"] as? Map<*, *>
+        val completionDetails = usage["completion_tokens_details"] as? Map<*, *>
+        // Responses API token details
+        val inputDetails = usage["input_tokens_details"] as? Map<*, *>
+        val outputDetails = usage["output_tokens_details"] as? Map<*, *>
+
+        val cachedTokens = promptDetails?.get("cached_tokens") ?: inputDetails?.get("cached_tokens")
+        if (cachedTokens != null) {
+            inputTokenDetails["${prefix}cache_read"] = cachedTokens
         }
-        topP?.let { span.setAttribute(AttributeKey.doubleKey("gen_ai.request.top_p"), it) }
-        maxTokens?.let { span.setAttribute(AttributeKey.longKey("gen_ai.request.max_tokens"), it) }
-    }
 
-    fun setInputMessages(span: Span, messagesJson: String?) {
-        messagesJson?.let { span.setAttribute(AttributeKey.stringKey("gen_ai.input.messages"), it) }
-    }
+        val audioInputTokens = promptDetails?.get("audio_tokens")
+        if (audioInputTokens != null) {
+            inputTokenDetails["audio"] = audioInputTokens
+        }
 
-    fun setOutputMessages(span: Span, messagesJson: String?) {
-        messagesJson?.let {
-            span.setAttribute(AttributeKey.stringKey("gen_ai.output.messages"), it)
+        val reasoningTokens =
+            completionDetails?.get("reasoning_tokens") ?: outputDetails?.get("reasoning_tokens")
+        if (reasoningTokens != null) {
+            outputTokenDetails["${prefix}reasoning"] = reasoningTokens
+        }
+
+        val audioOutputTokens = completionDetails?.get("audio_tokens")
+        if (audioOutputTokens != null) {
+            outputTokenDetails["audio"] = audioOutputTokens
+        }
+
+        if (recognized != null) {
+            val cacheRead = (inputTokenDetails["${prefix}cache_read"] as? Number)?.toLong() ?: 0L
+            inputTokenDetails[recognized] = inputTokens.toLong() - cacheRead
+            val reasoning = (outputTokenDetails["${prefix}reasoning"] as? Number)?.toLong() ?: 0L
+            outputTokenDetails[recognized] = outputTokens.toLong() - reasoning
+        }
+
+        result["usage_metadata"] = buildMap {
+            put("input_tokens", inputTokens)
+            put("output_tokens", outputTokens)
+            put("total_tokens", totalTokens)
+            if (inputTokenDetails.isNotEmpty()) put("input_token_details", inputTokenDetails)
+            if (outputTokenDetails.isNotEmpty()) put("output_token_details", outputTokenDetails)
         }
     }
+    return result
+}
 
-    fun setResponseAttributes(
-        span: Span,
-        inputTokens: Long?,
-        outputTokens: Long?,
-        totalTokens: Long?,
-    ) {
-        inputTokens?.let {
-            span.setAttribute(AttributeKey.longKey("gen_ai.usage.input_tokens"), it)
-        }
-        outputTokens?.let {
-            span.setAttribute(AttributeKey.longKey("gen_ai.usage.output_tokens"), it)
-        }
-        totalTokens?.let {
-            span.setAttribute(AttributeKey.longKey("gen_ai.usage.total_tokens"), it)
+/**
+ * Extracts invocation params from chat completion request params and sets them as metadata on the
+ * current run, matching the JS SDK's `getInvocationParams`.
+ */
+internal fun setInvocationParams(params: Map<String, Any?>, useResponsesApi: Boolean) {
+    val run = getCurrentRunTree() ?: return
+
+    val invocationParams = mutableMapOf<String, Any?>()
+    for ((key, value) in params) {
+        if (key in TRACED_INVOCATION_KEYS) {
+            invocationParams[key] = value
         }
     }
-
-    fun setResponseMetadata(span: Span, responseModel: String?, finishReason: String?) {
-        responseModel?.let {
-            span.setAttribute(AttributeKey.stringKey("gen_ai.response.model"), it)
-        }
-        finishReason?.let {
-            span.setAttribute(AttributeKey.stringKey("gen_ai.response.finish_reason"), it)
-        }
+    if (useResponsesApi) {
+        invocationParams["use_responses_api"] = true
     }
 
-    fun recordException(span: Span, exception: Throwable) {
-        span.recordException(exception)
-        span.setAttribute(AttributeKey.booleanKey("error"), true)
+    run.metadata["ls_provider"] = "openai"
+    run.metadata["ls_model_type"] = "chat"
+    params["model"]?.let { run.metadata["ls_model_name"] = it }
+    (params["max_completion_tokens"] ?: params["max_tokens"])?.let {
+        run.metadata["ls_max_tokens"] = it
     }
-
-    fun writeJson(value: Any): String = jsonMapper.writeValueAsString(value)
+    params["temperature"]?.let { run.metadata["ls_temperature"] = it }
+    val stop = params["stop"]
+    if (stop != null) {
+        run.metadata["ls_stop"] = if (stop is String) listOf(stop) else stop
+    }
+    if (invocationParams.isNotEmpty()) {
+        run.metadata["ls_invocation_params"] = invocationParams
+    }
 }
