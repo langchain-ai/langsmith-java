@@ -10,10 +10,15 @@ import com.langchain.smith.tracing.traceable
 import com.openai.client.OpenAIClient
 import com.openai.core.ClientOptions
 import com.openai.core.RequestOptions
+import com.openai.core.http.StreamResponse
+import com.openai.helpers.ChatCompletionAccumulator
+import com.openai.helpers.ResponseAccumulator
 import com.openai.models.chat.completions.ChatCompletion
+import com.openai.models.chat.completions.ChatCompletionChunk
 import com.openai.models.chat.completions.ChatCompletionCreateParams
 import com.openai.models.responses.Response
 import com.openai.models.responses.ResponseCreateParams
+import com.openai.models.responses.ResponseStreamEvent
 import com.openai.services.blocking.ChatService
 import com.openai.services.blocking.ResponseService
 import com.openai.services.blocking.chat.ChatCompletionService
@@ -23,11 +28,10 @@ import java.util.function.Function
 /**
  * Wraps an [OpenAIClient] with LangSmith tracing.
  *
- * The returned client traces `chat().completions().create()` and `responses().create()` calls using
- * [traceable], recording inputs and outputs as JSON maps. All other methods — including
- * `createStreaming()` — pass through to the delegate unchanged.
- *
- * // TODO: Trace `createStreaming()` for both chat completions and responses.
+ * The returned client traces `chat().completions().create()`, `responses().create()`, and their
+ * streaming counterparts (`createStreaming()`) using [traceable], recording inputs and outputs as
+ * JSON maps. Streaming calls aggregate chunks using the SDK's built-in accumulators and record the
+ * final aggregated result when the stream closes.
  *
  * The [config] is used as the base configuration for all traced calls — the wrapper overrides
  * [TraceConfig.name] and [TraceConfig.runType] per operation.
@@ -90,41 +94,42 @@ private class TracedChatService(
 }
 
 /**
- * Builds the traced `create` functions (1-arg and 2-arg) for an OpenAI service.
+ * Builds the traced `create` and `createStreaming` functions for an OpenAI service.
  *
  * Both [TracedChatCompletionService] and [TracedResponseService] follow the same pattern — this
  * extracts the shared tracing plumbing so each service only provides the type-specific bits.
  *
  * @param P the params type (e.g. [ChatCompletionCreateParams])
  * @param R the response type (e.g. [ChatCompletion])
- * @param config base tracing configuration
- * @param paramsToMap serializes params to a map for recording as run inputs
- * @param useResponsesApi whether this is the responses API (affects metadata)
- * @param createOne calls the underlying service's `create(params)` method
- * @param createTwo calls the underlying service's `create(params, requestOptions)` method
+ * @param C the chunk/event type for streaming (e.g. [ChatCompletionChunk])
  */
-private class TracedOpenAIClientCreate<P, R : Any>(
+private class TracedOpenAIClientCreate<P, R : Any, C>(
     config: TraceConfig,
-    paramsToMap: (P) -> Map<String, Any?>,
-    useResponsesApi: Boolean,
+    private val paramsToMap: (P) -> Map<String, Any?>,
+    private val useResponsesApi: Boolean,
     createOne: (P) -> R,
     createTwo: (P, RequestOptions) -> R,
+    private val streamOne: (P) -> StreamResponse<C>,
+    private val streamTwo: (P, RequestOptions) -> StreamResponse<C>,
+    private val aggregator: java.util.function.Function<List<Any?>, Any?>,
 ) {
+    private val tracedConfig = config.toBuilder().name("ChatOpenAI").runType(RunType.LLM).build()
+
+    private val outputProcessor =
+        Function<R, Map<String, Any?>> { response -> processChatCompletionOutput(toMap(response)) }
+
     val oneArg: Function<P, R> =
         traceable(
-            Function<P, R> {
-                setInvocationParams(paramsToMap(it), useResponsesApi = useResponsesApi)
-                createOne(it)
+            Function<P, R> { p ->
+                setInvocationParams(paramsToMap(p), useResponsesApi = useResponsesApi)
+                createOne(p)
             },
-            config
+            tracedConfig
                 .toBuilder()
-                .name("ChatOpenAI")
-                .runType(RunType.LLM)
                 .processTracedIO(
                     TraceProcessIO<P, R>(
                         processInputs = Function { params -> paramsToMap(params) },
-                        processOutputs =
-                            Function { response -> processChatCompletionOutput(toMap(response)) },
+                        processOutputs = outputProcessor,
                     )
                 )
                 .build(),
@@ -136,22 +141,77 @@ private class TracedOpenAIClientCreate<P, R : Any>(
                 setInvocationParams(paramsToMap(params), useResponsesApi = useResponsesApi)
                 createTwo(params, opts)
             },
-            config
+            tracedConfig
                 .toBuilder()
-                .name("ChatOpenAI")
-                .runType(RunType.LLM)
                 .processTracedIO(
                     TraceProcessIO<Pair<P, RequestOptions>, R>(
                         processInputs =
                             Function { (params, opts) ->
                                 paramsToMap(params) + ("request_options" to toGenericMap(opts))
                             },
-                        processOutputs =
-                            Function { response -> processChatCompletionOutput(toMap(response)) },
+                        processOutputs = outputProcessor,
                     )
                 )
                 .build(),
         )
+
+    private val streamOutputProcessor =
+        Function<Any, Map<String, Any?>> { processChatCompletionOutput(toMap(it!!)) }
+
+    /**
+     * Traces a streaming call. The traced function returns the inner [java.util.stream.Stream]
+     * (which `traceable` instruments via `peek` + `onClose`), then we rewrap it in a
+     * [StreamResponse] that delegates `close()` to both the instrumented stream and the original
+     * response.
+     */
+    fun streamOneArg(params: P): StreamResponse<C> {
+        val response = streamOne(params)
+        val tracedStreamFn =
+            traceable(
+                Function<P, java.util.stream.Stream<C>> { p ->
+                    setInvocationParams(paramsToMap(p), useResponsesApi = useResponsesApi)
+                    response.stream()
+                },
+                tracedConfig
+                    .toBuilder()
+                    .processTracedIO(
+                        TraceProcessIO<P, Any>(
+                            processInputs = Function { p -> paramsToMap(p) },
+                            processOutputs = streamOutputProcessor,
+                            aggregator = aggregator,
+                        )
+                    )
+                    .build(),
+            )
+        val tracedStream = tracedStreamFn.apply(params)
+        return TracedStreamResponse(tracedStream, response)
+    }
+
+    fun streamTwoArg(params: P, opts: RequestOptions): StreamResponse<C> {
+        val response = streamTwo(params, opts)
+        val tracedStreamFn =
+            traceable(
+                Function<P, java.util.stream.Stream<C>> { p ->
+                    setInvocationParams(paramsToMap(p), useResponsesApi = useResponsesApi)
+                    response.stream()
+                },
+                tracedConfig
+                    .toBuilder()
+                    .processTracedIO(
+                        TraceProcessIO<P, Any>(
+                            processInputs =
+                                Function { p ->
+                                    paramsToMap(p) + ("request_options" to toGenericMap(opts))
+                                },
+                            processOutputs = streamOutputProcessor,
+                            aggregator = aggregator,
+                        )
+                    )
+                    .build(),
+            )
+        val tracedStream = tracedStreamFn.apply(params)
+        return TracedStreamResponse(tracedStream, response)
+    }
 }
 
 private class TracedChatCompletionService(
@@ -166,6 +226,9 @@ private class TracedChatCompletionService(
             useResponsesApi = false,
             createOne = delegate::create,
             createTwo = delegate::create,
+            streamOne = delegate::createStreaming,
+            streamTwo = delegate::createStreaming,
+            aggregator = CHAT_COMPLETION_AGGREGATOR,
         )
 
     override fun create(params: ChatCompletionCreateParams): ChatCompletion =
@@ -175,6 +238,15 @@ private class TracedChatCompletionService(
         params: ChatCompletionCreateParams,
         requestOptions: RequestOptions,
     ): ChatCompletion = traced.twoArg.apply(params, requestOptions)
+
+    override fun createStreaming(
+        params: ChatCompletionCreateParams
+    ): StreamResponse<ChatCompletionChunk> = traced.streamOneArg(params)
+
+    override fun createStreaming(
+        params: ChatCompletionCreateParams,
+        requestOptions: RequestOptions,
+    ): StreamResponse<ChatCompletionChunk> = traced.streamTwoArg(params, requestOptions)
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ChatCompletionService =
         TracedChatCompletionService(delegate.withOptions(modifier), config)
@@ -192,6 +264,9 @@ private class TracedResponseService(
             useResponsesApi = true,
             createOne = delegate::create,
             createTwo = delegate::create,
+            streamOne = delegate::createStreaming,
+            streamTwo = delegate::createStreaming,
+            aggregator = RESPONSES_AGGREGATOR,
         )
 
     override fun create(params: ResponseCreateParams): Response = traced.oneArg.apply(params)
@@ -199,6 +274,51 @@ private class TracedResponseService(
     override fun create(params: ResponseCreateParams, requestOptions: RequestOptions): Response =
         traced.twoArg.apply(params, requestOptions)
 
+    override fun createStreaming(
+        params: ResponseCreateParams
+    ): StreamResponse<ResponseStreamEvent> = traced.streamOneArg(params)
+
+    override fun createStreaming(
+        params: ResponseCreateParams,
+        requestOptions: RequestOptions,
+    ): StreamResponse<ResponseStreamEvent> = traced.streamTwoArg(params, requestOptions)
+
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ResponseService =
         TracedResponseService(delegate.withOptions(modifier), config)
 }
+
+/**
+ * A [StreamResponse] that returns an instrumented [java.util.stream.Stream] (with tracing
+ * peek/onClose handlers) and delegates [close] to the original response.
+ */
+private class TracedStreamResponse<C>(
+    private val tracedStream: java.util.stream.Stream<C>,
+    private val original: StreamResponse<C>,
+) : StreamResponse<C> {
+
+    override fun stream(): java.util.stream.Stream<C> = tracedStream
+
+    override fun close() {
+        try {
+            tracedStream.close()
+        } finally {
+            original.close()
+        }
+    }
+}
+
+/** Aggregator that uses the SDK's [ChatCompletionAccumulator] to reassemble chunks. */
+private val CHAT_COMPLETION_AGGREGATOR =
+    java.util.function.Function<List<Any?>, Any?> { chunks ->
+        val acc = ChatCompletionAccumulator.create()
+        chunks.filterIsInstance<ChatCompletionChunk>().forEach { acc.accumulate(it) }
+        acc.chatCompletion()
+    }
+
+/** Aggregator that uses the SDK's [ResponseAccumulator] to reassemble events. */
+private val RESPONSES_AGGREGATOR =
+    java.util.function.Function<List<Any?>, Any?> { events ->
+        val acc = ResponseAccumulator.create()
+        events.filterIsInstance<ResponseStreamEvent>().forEach { acc.accumulate(it) }
+        acc.response()
+    }
