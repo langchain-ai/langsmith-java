@@ -116,7 +116,6 @@ internal class ManifestParserTest {
 
     @Test
     fun parseLegacyPromptTemplateWithTemplateFormat() {
-        // Legacy PromptTemplate format with template_format field
         val manifest =
             mapOf(
                 "lc" to 1,

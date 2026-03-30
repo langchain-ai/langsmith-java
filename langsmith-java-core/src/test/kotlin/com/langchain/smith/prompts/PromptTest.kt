@@ -69,9 +69,8 @@ internal class PromptTest {
 
     @Test
     fun legacyPromptTemplateEndToEnd() {
-        // Test that the exact legacy format from the issue can be pulled and invoked
-        val manifest =
-            com.langchain.smith.core.JsonValue.from(
+        val prompt =
+            promptFromManifest(
                 mapOf(
                     "lc" to 1,
                     "type" to "constructor",
@@ -86,16 +85,6 @@ internal class PromptTest {
                 )
             )
 
-        val commit =
-            PromptCommit.of(
-                owner = "test",
-                repo = "parrot",
-                commitHash = "abc123",
-                manifest = manifest,
-            )
-
-        val prompt = Prompt.fromCommit(commit)
-
         assertThat(prompt.inputVariables).containsExactly("input")
 
         val result = prompt.invoke(mapOf("input" to "Hello world!"))
@@ -107,4 +96,15 @@ internal class PromptTest {
                 "You are a parrot. The current date is 2026-03-29T14:26:33.834Z\nHello world!"
             )
     }
+
+    /** Creates a [Prompt] from a raw manifest map, simulating the pull → parse flow. */
+    private fun promptFromManifest(manifest: Map<String, Any>): Prompt =
+        Prompt.fromCommit(
+            PromptCommit.of(
+                owner = "test",
+                repo = "test",
+                commitHash = "test",
+                manifest = com.langchain.smith.core.JsonValue.from(manifest),
+            )
+        )
 }
