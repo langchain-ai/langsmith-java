@@ -115,6 +115,32 @@ internal class ManifestParserTest {
     }
 
     @Test
+    fun parseLegacyPromptTemplateWithTemplateFormat() {
+        val manifest =
+            mapOf(
+                "lc" to 1,
+                "type" to "constructor",
+                "id" to listOf("langchain_core", "prompts", "prompt", "PromptTemplate"),
+                "kwargs" to
+                    mapOf(
+                        "input_variables" to listOf("input"),
+                        "template_format" to "f-string",
+                        "template" to
+                            "You are a parrot. The current date is 2026-03-29T14:26:33.834Z\n{input}",
+                    ),
+            )
+
+        val result = ManifestParser.parse(JsonValue.from(manifest))
+
+        assertThat(result.messages).hasSize(1)
+        assertThat(result.messages[0].role).isEqualTo(PromptMessage.Role.HUMAN)
+        assertThat(result.messages[0].template)
+            .isEqualTo("You are a parrot. The current date is 2026-03-29T14:26:33.834Z\n{input}")
+        assertThat(result.messages[0].templateFormat).isEqualTo("f-string")
+        assertThat(result.inputVariables).containsExactly("input")
+    }
+
+    @Test
     fun parseDirectTemplateInKwargs() {
         // Some manifests have the template directly in the message kwargs,
         // not nested in a "prompt" sub-object
@@ -142,6 +168,41 @@ internal class ManifestParserTest {
         assertThat(result.messages).hasSize(1)
         assertThat(result.messages[0].role).isEqualTo(PromptMessage.Role.SYSTEM)
         assertThat(result.messages[0].template).isEqualTo("Direct template text")
+    }
+
+    @Test
+    fun parseDirectTemplateWithTemplateFormat() {
+        // Test that template_format is preserved in direct template pattern
+        val manifest =
+            buildChatPromptManifest(
+                messages =
+                    listOf(
+                        mapOf(
+                            "lc" to 1,
+                            "type" to "constructor",
+                            "id" to
+                                listOf(
+                                    "langchain_core",
+                                    "prompts",
+                                    "chat",
+                                    "HumanMessagePromptTemplate",
+                                ),
+                            "kwargs" to
+                                mapOf(
+                                    "template" to "Hello {{name}}",
+                                    "template_format" to "mustache",
+                                ),
+                        )
+                    ),
+                inputVariables = listOf("name"),
+            )
+
+        val result = ManifestParser.parse(JsonValue.from(manifest))
+
+        assertThat(result.messages).hasSize(1)
+        assertThat(result.messages[0].role).isEqualTo(PromptMessage.Role.HUMAN)
+        assertThat(result.messages[0].template).isEqualTo("Hello {{name}}")
+        assertThat(result.messages[0].templateFormat).isEqualTo("mustache")
     }
 
     @Test

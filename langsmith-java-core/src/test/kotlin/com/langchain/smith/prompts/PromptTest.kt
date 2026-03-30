@@ -66,4 +66,45 @@ internal class PromptTest {
         assertThat(prompt.hasOutputSchema()).isFalse()
         assertThat(prompt.outputSchema).isNull()
     }
+
+    @Test
+    fun legacyPromptTemplateEndToEnd() {
+        val prompt =
+            promptFromManifest(
+                mapOf(
+                    "lc" to 1,
+                    "type" to "constructor",
+                    "id" to listOf("langchain_core", "prompts", "prompt", "PromptTemplate"),
+                    "kwargs" to
+                        mapOf(
+                            "input_variables" to listOf("input"),
+                            "template_format" to "f-string",
+                            "template" to
+                                "You are a parrot. The current date is 2026-03-29T14:26:33.834Z\n{input}",
+                        ),
+                )
+            )
+
+        assertThat(prompt.inputVariables).containsExactly("input")
+
+        val result = prompt.invoke(mapOf("input" to "Hello world!"))
+
+        assertThat(result.messages).hasSize(1)
+        assertThat(result.messages[0].role).isEqualTo(PromptMessage.Role.HUMAN)
+        assertThat(result.messages[0].template)
+            .isEqualTo(
+                "You are a parrot. The current date is 2026-03-29T14:26:33.834Z\nHello world!"
+            )
+    }
+
+    /** Creates a [Prompt] from a raw manifest map, simulating the pull → parse flow. */
+    private fun promptFromManifest(manifest: Map<String, Any>): Prompt =
+        Prompt.fromCommit(
+            PromptCommit.of(
+                owner = "test",
+                repo = "test",
+                commitHash = "test",
+                manifest = com.langchain.smith.core.JsonValue.from(manifest),
+            )
+        )
 }
