@@ -16,6 +16,7 @@ internal class CommitRetrieveResponseTest {
         val commitRetrieveResponse =
             CommitRetrieveResponse.builder()
                 .commitHash("commit_hash")
+                .description("description")
                 .addExample(
                     CommitRetrieveResponse.Example.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -32,6 +33,7 @@ internal class CommitRetrieveResponseTest {
                 .build()
 
         assertThat(commitRetrieveResponse.commitHash()).contains("commit_hash")
+        assertThat(commitRetrieveResponse.description()).contains("description")
         assertThat(commitRetrieveResponse.examples().getOrNull())
             .containsExactly(
                 CommitRetrieveResponse.Example.builder()
@@ -56,6 +58,7 @@ internal class CommitRetrieveResponseTest {
         val commitRetrieveResponse =
             CommitRetrieveResponse.builder()
                 .commitHash("commit_hash")
+                .description("description")
                 .addExample(
                     CommitRetrieveResponse.Example.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
