@@ -67,9 +67,12 @@ private class TracedOpenAIClient(
     private val config: TraceConfig,
 ) : OpenAIClient by delegate {
 
-    override fun chat(): ChatService = TracedChatService(delegate.chat(), config)
+    private val tracedChat by lazy { TracedChatService(delegate.chat(), config) }
+    private val tracedResponses by lazy { TracedResponseService(delegate.responses(), config) }
 
-    override fun responses(): ResponseService = TracedResponseService(delegate.responses(), config)
+    override fun chat(): ChatService = tracedChat
+
+    override fun responses(): ResponseService = tracedResponses
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): OpenAIClient =
         TracedOpenAIClient(delegate.withOptions(modifier), config)
@@ -80,8 +83,11 @@ private class TracedChatService(
     private val config: TraceConfig,
 ) : ChatService by delegate {
 
-    override fun completions(): ChatCompletionService =
+    private val tracedCompletions by lazy {
         TracedChatCompletionService(delegate.completions(), config)
+    }
+
+    override fun completions(): ChatCompletionService = tracedCompletions
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ChatService =
         TracedChatService(delegate.withOptions(modifier), config)
