@@ -695,7 +695,7 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
                 val iterationError = java.util.concurrent.atomic.AtomicReference<Throwable>(null)
                 val streamExhausted = java.util.concurrent.atomic.AtomicBoolean(false)
                 val instrumented =
-                    wrapStreamWithErrorCapture(result, iterationError, streamExhausted)
+                    result.withErrorTracking(iterationError, streamExhausted)
                         .peek { chunks.add(it) }
                         .onClose {
                             try {
@@ -747,16 +747,15 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
 }
 
 /**
- * Wraps a [java.util.stream.Stream] so that exceptions during iteration are captured into
- * [errorRef] before being rethrown. This lets the `onClose` handler record the real error instead
+ * Returns a new [java.util.stream.Stream] that captures exceptions during iteration into
+ * [errorRef] before rethrowing them. This lets the `onClose` handler record the real error instead
  * of attempting aggregation on partial data.
  */
-private fun wrapStreamWithErrorCapture(
-    source: java.util.stream.Stream<*>,
+private fun java.util.stream.Stream<*>.withErrorTracking(
     errorRef: java.util.concurrent.atomic.AtomicReference<Throwable>,
     exhaustedRef: java.util.concurrent.atomic.AtomicBoolean,
 ): java.util.stream.Stream<Any?> {
-    val delegate = source.spliterator()
+    val delegate = this.spliterator()
     val capturing =
         object : java.util.Spliterator<Any?> {
             override fun tryAdvance(action: java.util.function.Consumer<in Any?>): Boolean =
@@ -773,5 +772,5 @@ private fun wrapStreamWithErrorCapture(
 
             override fun characteristics(): Int = delegate.characteristics()
         }
-    return java.util.stream.StreamSupport.stream(capturing, false).onClose { source.close() }
+    return java.util.stream.StreamSupport.stream(capturing, false).onClose { this.close() }
 }
