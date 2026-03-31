@@ -59,7 +59,8 @@ import java.util.function.Function
  * @param config base tracing configuration (client, project, tags, etc.)
  * @return a wrapped [OpenAIClient] that traces LLM calls to LangSmith
  */
-fun wrapOpenAI(client: OpenAIClient, config: TraceConfig): OpenAIClient =
+@JvmOverloads
+fun wrapOpenAI(client: OpenAIClient, config: TraceConfig = TraceConfig()): OpenAIClient =
     TracedOpenAIClient(client, config)
 
 private class TracedOpenAIClient(
