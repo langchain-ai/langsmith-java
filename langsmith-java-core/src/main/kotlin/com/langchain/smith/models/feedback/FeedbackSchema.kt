@@ -44,6 +44,7 @@ private constructor(
     private val feedbackGroupId: JsonField<String>,
     private val feedbackSource: JsonField<FeedbackSource>,
     private val feedbackThreadId: JsonField<String>,
+    private val isRoot: JsonField<Boolean>,
     private val modifiedAt: JsonField<OffsetDateTime>,
     private val runId: JsonField<String>,
     private val score: JsonField<Score>,
@@ -78,6 +79,7 @@ private constructor(
         @JsonProperty("feedback_thread_id")
         @ExcludeMissing
         feedbackThreadId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("is_root") @ExcludeMissing isRoot: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("modified_at")
         @ExcludeMissing
         modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -100,6 +102,7 @@ private constructor(
         feedbackGroupId,
         feedbackSource,
         feedbackThreadId,
+        isRoot,
         modifiedAt,
         runId,
         score,
@@ -172,6 +175,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun feedbackThreadId(): Optional<String> = feedbackThreadId.getOptional("feedback_thread_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isRoot(): Optional<Boolean> = isRoot.getOptional("is_root")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -300,6 +309,13 @@ private constructor(
     fun _feedbackThreadId(): JsonField<String> = feedbackThreadId
 
     /**
+     * Returns the raw JSON value of [isRoot].
+     *
+     * Unlike [isRoot], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_root") @ExcludeMissing fun _isRoot(): JsonField<Boolean> = isRoot
+
+    /**
      * Returns the raw JSON value of [modifiedAt].
      *
      * Unlike [modifiedAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -391,6 +407,7 @@ private constructor(
         private var feedbackGroupId: JsonField<String> = JsonMissing.of()
         private var feedbackSource: JsonField<FeedbackSource> = JsonMissing.of()
         private var feedbackThreadId: JsonField<String> = JsonMissing.of()
+        private var isRoot: JsonField<Boolean> = JsonMissing.of()
         private var modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var runId: JsonField<String> = JsonMissing.of()
         private var score: JsonField<Score> = JsonMissing.of()
@@ -412,6 +429,7 @@ private constructor(
             feedbackGroupId = feedbackSchema.feedbackGroupId
             feedbackSource = feedbackSchema.feedbackSource
             feedbackThreadId = feedbackSchema.feedbackThreadId
+            isRoot = feedbackSchema.isRoot
             modifiedAt = feedbackSchema.modifiedAt
             runId = feedbackSchema.runId
             score = feedbackSchema.score
@@ -576,6 +594,16 @@ private constructor(
             this.feedbackThreadId = feedbackThreadId
         }
 
+        fun isRoot(isRoot: Boolean) = isRoot(JsonField.of(isRoot))
+
+        /**
+         * Sets [Builder.isRoot] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isRoot] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun isRoot(isRoot: JsonField<Boolean>) = apply { this.isRoot = isRoot }
+
         fun modifiedAt(modifiedAt: OffsetDateTime) = modifiedAt(JsonField.of(modifiedAt))
 
         /**
@@ -731,6 +759,7 @@ private constructor(
                 feedbackGroupId,
                 feedbackSource,
                 feedbackThreadId,
+                isRoot,
                 modifiedAt,
                 runId,
                 score,
@@ -759,6 +788,7 @@ private constructor(
         feedbackGroupId()
         feedbackSource().ifPresent { it.validate() }
         feedbackThreadId()
+        isRoot()
         modifiedAt()
         runId()
         score().ifPresent { it.validate() }
@@ -794,6 +824,7 @@ private constructor(
             (if (feedbackGroupId.asKnown().isPresent) 1 else 0) +
             (feedbackSource.asKnown().getOrNull()?.validity() ?: 0) +
             (if (feedbackThreadId.asKnown().isPresent) 1 else 0) +
+            (if (isRoot.asKnown().isPresent) 1 else 0) +
             (if (modifiedAt.asKnown().isPresent) 1 else 0) +
             (if (runId.asKnown().isPresent) 1 else 0) +
             (score.asKnown().getOrNull()?.validity() ?: 0) +
@@ -2078,6 +2109,7 @@ private constructor(
             feedbackGroupId == other.feedbackGroupId &&
             feedbackSource == other.feedbackSource &&
             feedbackThreadId == other.feedbackThreadId &&
+            isRoot == other.isRoot &&
             modifiedAt == other.modifiedAt &&
             runId == other.runId &&
             score == other.score &&
@@ -2100,6 +2132,7 @@ private constructor(
             feedbackGroupId,
             feedbackSource,
             feedbackThreadId,
+            isRoot,
             modifiedAt,
             runId,
             score,
@@ -2114,5 +2147,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackSchema{id=$id, key=$key, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, extra=$extra, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackSchema{id=$id, key=$key, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, extra=$extra, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, isRoot=$isRoot, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }
