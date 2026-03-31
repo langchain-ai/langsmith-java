@@ -37,7 +37,7 @@ jobs:
           cache: gradle
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@205054a7257716ec64af10a2e2ff1ac5d3b132db # v6
+        uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6
 
       - name: Run lints
         run: ./scripts/lint
@@ -64,7 +64,7 @@ jobs:
           cache: gradle
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@205054a7257716ec64af10a2e2ff1ac5d3b132db # v6
+        uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6
 
       - name: Build SDK
         run: ./scripts/build
