@@ -695,12 +695,8 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
                 val iterationError = java.util.concurrent.atomic.AtomicReference<Throwable>(null)
                 val streamExhausted = java.util.concurrent.atomic.AtomicBoolean(false)
                 val instrumented =
-<<<<<<< HEAD
-                    wrapStreamWithErrorCapture(result, iterationError, streamExhausted)
-=======
                     result
                         .withErrorTracking(iterationError, streamExhausted)
->>>>>>> 0217521b852c70dba4795b145b3eb7b16fd2d10f
                         .peek { chunks.add(it) }
                         .onClose {
                             try {
