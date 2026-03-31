@@ -154,6 +154,29 @@ internal class TraceableStreamingTest {
     }
 
     @Test
+    fun `early close records partial chunks`() {
+        val config = configWithAggregator()
+
+        withParent(parentRun()) {
+            val (traced, getRun) = traceCapturingRun(config) { Stream.of("a", "b", "c", "d", "e") }
+            val stream = traced("input")
+
+            // Consume only first 2 elements then close
+            val iter = stream.iterator()
+            val partial = listOf(iter.next(), iter.next())
+            stream.close()
+
+            assertThat(partial).isEqualTo(listOf("a", "b"))
+
+            val run = getRun()!!
+            assertThat(run.endTime).isNotNull()
+            assertThat(run.error).isEqualTo("Stream cancelled")
+            // Partial output is still aggregated
+            assertThat(run.outputs!!["outputs"]).isEqualTo("ab")
+        }
+    }
+
+    @Test
     fun `without aggregator stream return completes run immediately`() {
         val config = TraceConfig.builder().name("no-agg").tracingEnabled(true).build()
 
