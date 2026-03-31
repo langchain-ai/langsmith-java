@@ -686,6 +686,54 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
     return CURRENT_RUN.runWith(run) {
         try {
             val result = block()
+
+            // If the result is a java.util.stream.Stream and an aggregator is configured,
+            // instrument it: collect chunks via peek(), finalize the run via onClose().
+            val aggregator = config.processTracedIO?.aggregatorFn
+            if (aggregator != null && result is java.util.stream.Stream<*>) {
+                val chunks = mutableListOf<Any?>()
+                val iterationError = java.util.concurrent.atomic.AtomicReference<Throwable>(null)
+                val streamExhausted = java.util.concurrent.atomic.AtomicBoolean(false)
+                val instrumented =
+                    result
+                        .withErrorTracking(iterationError, streamExhausted)
+                        .peek { chunks.add(it) }
+                        .onClose {
+                            try {
+                                // Always try to aggregate whatever chunks we have
+                                var aggregationError: Throwable? = null
+                                if (chunks.isNotEmpty()) {
+                                    try {
+                                        val output = aggregator.apply(chunks)
+                                        run.outputs =
+                                            applyProcessOutputs(config, output)
+                                                ?: toOutputMap(output)
+                                    } catch (e: Throwable) {
+                                        aggregationError = e
+                                    }
+                                }
+
+                                val error = iterationError.get()
+                                run.endTime = nowIso()
+                                if (error != null) {
+                                    run.error = error.stackTraceToString()
+                                } else if (!streamExhausted.get()) {
+                                    run.error = "Stream cancelled"
+                                } else if (aggregationError != null) {
+                                    run.error = aggregationError.stackTraceToString()
+                                }
+                                run.patchRun()
+                            } catch (e: Throwable) {
+                                run.endTime = nowIso()
+                                run.error = e.stackTraceToString()
+                                run.patchRun()
+                            }
+                        }
+                // Safe: T is Stream<something>, instrumented is Stream<Any?> — same erasure.
+                @Suppress("UNCHECKED_CAST")
+                return@runWith instrumented as T
+            }
+
             run.endTime = nowIso()
             run.outputs = applyProcessOutputs(config, result) ?: toOutputMap(result)
             run.patchRun()
@@ -697,4 +745,33 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
             throw e
         }
     }
+}
+
+/**
+ * Returns a new [java.util.stream.Stream] that captures exceptions during iteration into [errorRef]
+ * before rethrowing them. This lets the `onClose` handler record the real error instead of
+ * attempting aggregation on partial data.
+ */
+private fun java.util.stream.Stream<*>.withErrorTracking(
+    errorRef: java.util.concurrent.atomic.AtomicReference<Throwable>,
+    exhaustedRef: java.util.concurrent.atomic.AtomicBoolean,
+): java.util.stream.Stream<Any?> {
+    val delegate = this.spliterator()
+    val capturing =
+        object : java.util.Spliterator<Any?> {
+            override fun tryAdvance(action: java.util.function.Consumer<in Any?>): Boolean =
+                try {
+                    delegate.tryAdvance(action).also { if (!it) exhaustedRef.set(true) }
+                } catch (e: Throwable) {
+                    errorRef.compareAndSet(null, e)
+                    throw e
+                }
+
+            override fun trySplit(): java.util.Spliterator<Any?>? = null
+
+            override fun estimateSize(): Long = delegate.estimateSize()
+
+            override fun characteristics(): Int = delegate.characteristics()
+        }
+    return java.util.stream.StreamSupport.stream(capturing, false).onClose { this.close() }
 }

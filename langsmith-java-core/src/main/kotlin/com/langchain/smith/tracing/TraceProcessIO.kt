@@ -13,10 +13,12 @@ import java.util.function.Function
  *     - **0-arg** ([traceSupplier]): `Map<String, Any?>` (empty map)
  *     - **2-arg** ([traceBiFunction]): `Pair<I1, I2>`
  *     - **3-arg** ([traceTriFunction]): `Triple<I1, I2, I3>`
- * - [PO] — the type passed to `processOutputs`. This is always the raw output type of the traced
- *   function.
+ * - [PO] — the type passed to `processOutputs`. For non-streaming functions, this is the raw return
+ *   type. For streaming functions (when [aggregator] is set), this is the **aggregated output
+ *   type** returned by the aggregator — not the stream type itself.
  *
- * When [inputs] is set, it replaces the default input serialization entirely. Same for [outputs].
+ * When `processInputs` is set, it replaces the default input serialization entirely. Same for
+ * `processOutputs`.
  *
  * ## Example (Kotlin)
  *
@@ -47,11 +49,31 @@ import java.util.function.Function
 class TraceProcessIO<PI, PO>(
     processInputs: Function<PI, Map<String, Any?>>? = null,
     processOutputs: Function<PO, Map<String, Any?>>? = null,
+    aggregator: Function<List<Any?>, Any?>? = null,
 ) {
     // Store erased wrappers so traceable overloads can call these without casts.
     // erase() converts Function<T, R> to Function<Any?, R> — safe because T erases to Object.
     internal val inputsFn: Function<Any?, Map<String, Any?>>? = processInputs?.erase()
     internal val outputsFn: Function<Any?, Map<String, Any?>>? = processOutputs?.erase()
+
+    /**
+     * Aggregator for streaming results. Setting this opts into stream tracing.
+     *
+     * When set and the traced function returns a [java.util.stream.Stream], `traceable` will:
+     * 1. Tee the stream via `peek()` to collect elements as the caller iterates
+     * 2. Register an `onClose()` handler that calls this aggregator with the collected chunks
+     * 3. Pass the aggregated result through [processOutputs] and record it as run output
+     *
+     * The caller gets back a real [java.util.stream.Stream] — no proxy, no type changes.
+     *
+     * Without an aggregator, `Stream` return values are treated normally — the run is completed
+     * immediately on return, same as any other value.
+     *
+     * **Lifecycle:** The run is finalized when the stream's `onClose` handler runs. Callers must
+     * close the stream (via `use {}` in Kotlin or try-with-resources in Java) to ensure the run is
+     * completed. Abandoned streams will leave runs open.
+     */
+    internal val aggregatorFn: Function<List<Any?>, Any?>? = aggregator
 
     companion object {
         /** Creates a new [Builder]. */
@@ -82,6 +104,7 @@ class TraceProcessIO<PI, PO>(
     class Builder<PI, PO> internal constructor() {
         private var processInputs: Function<PI, Map<String, Any?>>? = null
         private var processOutputs: Function<PO, Map<String, Any?>>? = null
+        private var aggregator: Function<List<Any?>, Any?>? = null
 
         /** Callback to transform the input before it is recorded on the run. */
         fun processInputs(processInputs: Function<PI, Map<String, Any?>>) = apply {
@@ -93,9 +116,23 @@ class TraceProcessIO<PI, PO>(
             this.processOutputs = processOutputs
         }
 
+        /**
+         * Aggregator for streaming results. Reduces collected chunks into a single output that is
+         * then passed through [processOutputs].
+         */
+        fun aggregator(aggregator: Function<List<Any?>, Any?>) = apply {
+            this.aggregator = aggregator
+        }
+
         /** Builds the [TraceProcessIO]. */
-        fun build() = TraceProcessIO(processInputs = processInputs, processOutputs = processOutputs)
+        fun build() =
+            TraceProcessIO(
+                processInputs = processInputs,
+                processOutputs = processOutputs,
+                aggregator = aggregator,
+            )
     }
 
-    override fun toString(): String = "TraceProcessIO{inputs=$inputsFn, outputs=$outputsFn}"
+    override fun toString(): String =
+        "TraceProcessIO{inputs=$inputsFn, outputs=$outputsFn, aggregator=$aggregatorFn}"
 }
