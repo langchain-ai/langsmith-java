@@ -35,14 +35,14 @@ configurations.all {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-core:2.18.2")
-    api("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+    api("com.fasterxml.jackson.core:jackson-core:2.18.6")
+    api("com.fasterxml.jackson.core:jackson-databind:2.18.6")
     api("com.google.errorprone:error_prone_annotations:2.33.0")
 
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.18.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.18.6")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.6")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.6")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.6")
     implementation("org.apache.httpcomponents.core5:httpcore5:5.2.4")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
 
@@ -65,6 +65,24 @@ dependencies {
     // Users who call AnthropicPayload.toAnthropicParams() must add this to their own dependencies.
     compileOnly("com.anthropic:anthropic-java:2.18.0")
     testImplementation("com.anthropic:anthropic-java:2.18.0")
+
+    // Security: constrain vulnerable transitive test dependencies (from wiremock-jre8).
+    // These constraints apply to the test scope only and do not affect published artifacts.
+    constraints {
+        // CVE-2024-13009, CVE-2025-5115, CVE-2024-22201, CVE-2023-36478
+        testImplementation("org.eclipse.jetty:jetty-server") { version { require("9.4.57.v20241219") } }
+        testImplementation("org.eclipse.jetty.http2:http2-common") { version { require("9.4.57.v20241219") } }
+        testImplementation("org.eclipse.jetty.http2:http2-hpack") { version { require("9.4.57.v20241219") } }
+        // CVE-2023-6481, CVE-2023-6378
+        testImplementation("ch.qos.logback:logback-core") { version { require("1.2.13") } }
+        testImplementation("ch.qos.logback:logback-classic") { version { require("1.2.13") } }
+        // CVE-2025-48976, CVE-2023-24998
+        testImplementation("commons-fileupload:commons-fileupload") { version { require("1.6.0") } }
+        // CVE-2024-47554
+        testImplementation("commons-io:commons-io") { version { require("2.14.0") } }
+        // CVE-2023-1370
+        testImplementation("net.minidev:json-smart") { version { require("2.4.9") } }
+    }
 
     testImplementation(kotlin("test"))
     // Simple logging for tests only
