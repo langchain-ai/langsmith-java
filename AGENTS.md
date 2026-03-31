@@ -91,6 +91,25 @@ override fun toString(): String =
         "}"
 ```
 
+### Prefer extension functions over type casts
+
+When adding behavior to a type you don't own, use a `private` extension function instead of casting to an implementation type:
+
+```kotlin
+// Good — extension function, no cast needed
+private fun Stream<*>.withErrorTracking(
+    errorRef: AtomicReference<Throwable>,
+    exhaustedRef: AtomicBoolean,
+): Stream<Any?> { ... }
+
+val instrumented = result.withErrorTracking(iterationError, streamExhausted)
+
+// Bad — casting to implementation type
+val instrumented = wrapStreamWithErrorCapture(result, iterationError, streamExhausted)
+// or worse:
+(runs as? RunServiceImpl)?.flush()
+```
+
 ### Use `partition` instead of double `filter`
 
 ```kotlin
@@ -224,6 +243,7 @@ Tests skip gracefully via `assumeTrue` if keys are missing.
   // Bad — positional args are ambiguous
   PromptMessage(PromptMessage.Role.HUMAN, template, templateFormat = templateFormat)
   ```
+- Name functions from the caller's perspective — describe what the caller gets, not what the function does internally. Prefer `stream.withErrorTracking()` over `wrapStreamWithErrorCapture(stream)`.
 - When an `Optional` has a fallback default, use `orElse(default)` directly instead of `orElse(null) ?: default`:
   ```kotlin
   // Good — default goes straight into orElse

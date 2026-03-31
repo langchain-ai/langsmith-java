@@ -695,7 +695,8 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
                 val iterationError = java.util.concurrent.atomic.AtomicReference<Throwable>(null)
                 val streamExhausted = java.util.concurrent.atomic.AtomicBoolean(false)
                 val instrumented =
-                    result.withErrorTracking(iterationError, streamExhausted)
+                    result
+                        .withErrorTracking(iterationError, streamExhausted)
                         .peek { chunks.add(it) }
                         .onClose {
                             try {
@@ -747,9 +748,9 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
 }
 
 /**
- * Returns a new [java.util.stream.Stream] that captures exceptions during iteration into
- * [errorRef] before rethrowing them. This lets the `onClose` handler record the real error instead
- * of attempting aggregation on partial data.
+ * Returns a new [java.util.stream.Stream] that captures exceptions during iteration into [errorRef]
+ * before rethrowing them. This lets the `onClose` handler record the real error instead of
+ * attempting aggregation on partial data.
  */
 private fun java.util.stream.Stream<*>.withErrorTracking(
     errorRef: java.util.concurrent.atomic.AtomicReference<Throwable>,
