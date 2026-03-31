@@ -28,6 +28,7 @@ internal class CommitServiceAsyncTest {
                 CommitCreateParams.builder()
                     .owner("owner")
                     .repo("repo")
+                    .description("description")
                     .manifest(JsonValue.from(mapOf<String, Any>()))
                     .parentCommit("parent_commit")
                     .skipWebhooks(JsonValue.from(mapOf<String, Any>()))

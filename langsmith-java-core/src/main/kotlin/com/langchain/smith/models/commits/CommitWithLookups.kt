@@ -25,6 +25,7 @@ private constructor(
     private val id: JsonField<String>,
     private val commitHash: JsonField<String>,
     private val createdAt: JsonField<OffsetDateTime>,
+    private val description: JsonField<String>,
     private val exampleRunIds: JsonField<List<String>>,
     private val fullName: JsonField<String>,
     private val manifest: JsonValue,
@@ -47,6 +48,9 @@ private constructor(
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("description")
+        @ExcludeMissing
+        description: JsonField<String> = JsonMissing.of(),
         @JsonProperty("example_run_ids")
         @ExcludeMissing
         exampleRunIds: JsonField<List<String>> = JsonMissing.of(),
@@ -71,6 +75,7 @@ private constructor(
         id,
         commitHash,
         createdAt,
+        description,
         exampleRunIds,
         fullName,
         manifest,
@@ -107,6 +112,14 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
+
+    /**
+     * Optional human-readable description for the commit
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = description.getOptional("description")
 
     /**
      * Example run IDs associated with the commit
@@ -214,6 +227,13 @@ private constructor(
     fun _createdAt(): JsonField<OffsetDateTime> = createdAt
 
     /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
+
+    /**
      * Returns the raw JSON value of [exampleRunIds].
      *
      * Unlike [exampleRunIds], this method doesn't throw if the JSON field has an unexpected type.
@@ -311,6 +331,7 @@ private constructor(
         private var id: JsonField<String> = JsonMissing.of()
         private var commitHash: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var description: JsonField<String> = JsonMissing.of()
         private var exampleRunIds: JsonField<MutableList<String>>? = null
         private var fullName: JsonField<String> = JsonMissing.of()
         private var manifest: JsonValue = JsonMissing.of()
@@ -328,6 +349,7 @@ private constructor(
             id = commitWithLookups.id
             commitHash = commitWithLookups.commitHash
             createdAt = commitWithLookups.createdAt
+            description = commitWithLookups.description
             exampleRunIds = commitWithLookups.exampleRunIds.map { it.toMutableList() }
             fullName = commitWithLookups.fullName
             manifest = commitWithLookups.manifest
@@ -375,6 +397,18 @@ private constructor(
          * supported value.
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
+
+        /** Optional human-readable description for the commit */
+        fun description(description: String) = description(JsonField.of(description))
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { this.description = description }
 
         /** Example run IDs associated with the commit */
         fun exampleRunIds(exampleRunIds: List<String>) = exampleRunIds(JsonField.of(exampleRunIds))
@@ -543,6 +577,7 @@ private constructor(
                 id,
                 commitHash,
                 createdAt,
+                description,
                 (exampleRunIds ?: JsonMissing.of()).map { it.toImmutable() },
                 fullName,
                 manifest,
@@ -567,6 +602,7 @@ private constructor(
         id()
         commitHash()
         createdAt()
+        description()
         exampleRunIds()
         fullName()
         manifestSha()
@@ -597,6 +633,7 @@ private constructor(
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (commitHash.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
+            (if (description.asKnown().isPresent) 1 else 0) +
             (exampleRunIds.asKnown().getOrNull()?.size ?: 0) +
             (if (fullName.asKnown().isPresent) 1 else 0) +
             (manifestSha.asKnown().getOrNull()?.size ?: 0) +
@@ -616,6 +653,7 @@ private constructor(
             id == other.id &&
             commitHash == other.commitHash &&
             createdAt == other.createdAt &&
+            description == other.description &&
             exampleRunIds == other.exampleRunIds &&
             fullName == other.fullName &&
             manifest == other.manifest &&
@@ -634,6 +672,7 @@ private constructor(
             id,
             commitHash,
             createdAt,
+            description,
             exampleRunIds,
             fullName,
             manifest,
@@ -651,5 +690,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CommitWithLookups{id=$id, commitHash=$commitHash, createdAt=$createdAt, exampleRunIds=$exampleRunIds, fullName=$fullName, manifest=$manifest, manifestSha=$manifestSha, numDownloads=$numDownloads, numViews=$numViews, parentCommitHash=$parentCommitHash, parentId=$parentId, repoId=$repoId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "CommitWithLookups{id=$id, commitHash=$commitHash, createdAt=$createdAt, description=$description, exampleRunIds=$exampleRunIds, fullName=$fullName, manifest=$manifest, manifestSha=$manifestSha, numDownloads=$numDownloads, numViews=$numViews, parentCommitHash=$parentCommitHash, parentId=$parentId, repoId=$repoId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

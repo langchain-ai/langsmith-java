@@ -26,6 +26,26 @@ dependencies {
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter")
+
+    // Security: constrain vulnerable transitive dependencies from Spring Boot 2.7.18.
+    // Spring Boot 2.7.x is EOL; these constraints override the managed versions in-place.
+    // None of these affect published artifacts (this is a non-published example module).
+    constraints {
+        // CVE-2025-24813 (CRITICAL), CVE-2026-24734, CVE-2025-55752, CVE-2025-53506,
+        // CVE-2025-52520, CVE-2025-48989, CVE-2025-48988, CVE-2024-56337, CVE-2024-50379, CVE-2024-34750
+        // Remove this constraint when upgrading to Spring Boot 3.x (which manages Tomcat 10+).
+        implementation("org.apache.tomcat.embed:tomcat-embed-core") { version { require("9.0.115") } }
+        implementation("org.apache.tomcat.embed:tomcat-embed-websocket") { version { require("9.0.115") } }
+        // CVE-2024-22243, CVE-2024-22259, CVE-2024-22262
+        // Note: CVE-2016-1000027 (CRITICAL) requires spring-web 6.0.0 — needs Spring Boot 3.x upgrade.
+        implementation("org.springframework:spring-web") { version { require("5.3.34") } }
+        implementation("org.springframework:spring-webmvc") { version { require("5.3.34") } }
+        // CVE-2023-6481, CVE-2023-6378
+        implementation("ch.qos.logback:logback-core") { version { require("1.2.13") } }
+        implementation("ch.qos.logback:logback-classic") { version { require("1.2.13") } }
+        // CVE-2022-25857 (note: CVE-2022-1471 requires snakeyaml 2.0 which is incompatible with Spring Boot 2.7.x)
+        implementation("org.yaml:snakeyaml") { version { require("1.31") } }
+    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

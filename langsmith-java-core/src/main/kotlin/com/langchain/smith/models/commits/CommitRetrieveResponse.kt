@@ -22,6 +22,7 @@ class CommitRetrieveResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val commitHash: JsonField<String>,
+    private val description: JsonField<String>,
     private val examples: JsonField<List<Example>>,
     private val isDraft: JsonField<Boolean>,
     private val manifest: JsonValue,
@@ -35,6 +36,9 @@ private constructor(
         @JsonProperty("commit_hash")
         @ExcludeMissing
         commitHash: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("description")
+        @ExcludeMissing
+        description: JsonField<String> = JsonMissing.of(),
         @JsonProperty("examples")
         @ExcludeMissing
         examples: JsonField<List<Example>> = JsonMissing.of(),
@@ -44,13 +48,28 @@ private constructor(
         @JsonProperty("model_provider")
         @ExcludeMissing
         modelProvider: JsonField<String> = JsonMissing.of(),
-    ) : this(commitHash, examples, isDraft, manifest, modelConfig, modelProvider, mutableMapOf())
+    ) : this(
+        commitHash,
+        description,
+        examples,
+        isDraft,
+        manifest,
+        modelConfig,
+        modelProvider,
+        mutableMapOf(),
+    )
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun commitHash(): Optional<String> = commitHash.getOptional("commit_hash")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = description.getOptional("description")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -92,6 +111,13 @@ private constructor(
      * Unlike [commitHash], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("commit_hash") @ExcludeMissing fun _commitHash(): JsonField<String> = commitHash
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
 
     /**
      * Returns the raw JSON value of [examples].
@@ -138,6 +164,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var commitHash: JsonField<String> = JsonMissing.of()
+        private var description: JsonField<String> = JsonMissing.of()
         private var examples: JsonField<MutableList<Example>>? = null
         private var isDraft: JsonField<Boolean> = JsonMissing.of()
         private var manifest: JsonValue = JsonMissing.of()
@@ -148,6 +175,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(commitRetrieveResponse: CommitRetrieveResponse) = apply {
             commitHash = commitRetrieveResponse.commitHash
+            description = commitRetrieveResponse.description
             examples = commitRetrieveResponse.examples.map { it.toMutableList() }
             isDraft = commitRetrieveResponse.isDraft
             manifest = commitRetrieveResponse.manifest
@@ -166,6 +194,17 @@ private constructor(
          * value.
          */
         fun commitHash(commitHash: JsonField<String>) = apply { this.commitHash = commitHash }
+
+        fun description(description: String) = description(JsonField.of(description))
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { this.description = description }
 
         fun examples(examples: List<Example>) = examples(JsonField.of(examples))
 
@@ -246,6 +285,7 @@ private constructor(
         fun build(): CommitRetrieveResponse =
             CommitRetrieveResponse(
                 commitHash,
+                description,
                 (examples ?: JsonMissing.of()).map { it.toImmutable() },
                 isDraft,
                 manifest,
@@ -263,6 +303,7 @@ private constructor(
         }
 
         commitHash()
+        description()
         examples().ifPresent { it.forEach { it.validate() } }
         isDraft()
         modelProvider()
@@ -285,6 +326,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (commitHash.asKnown().isPresent) 1 else 0) +
+            (if (description.asKnown().isPresent) 1 else 0) +
             (examples.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (isDraft.asKnown().isPresent) 1 else 0) +
             (if (modelProvider.asKnown().isPresent) 1 else 0)
@@ -542,6 +584,7 @@ private constructor(
 
         return other is CommitRetrieveResponse &&
             commitHash == other.commitHash &&
+            description == other.description &&
             examples == other.examples &&
             isDraft == other.isDraft &&
             manifest == other.manifest &&
@@ -553,6 +596,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             commitHash,
+            description,
             examples,
             isDraft,
             manifest,
@@ -565,5 +609,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CommitRetrieveResponse{commitHash=$commitHash, examples=$examples, isDraft=$isDraft, manifest=$manifest, modelConfig=$modelConfig, modelProvider=$modelProvider, additionalProperties=$additionalProperties}"
+        "CommitRetrieveResponse{commitHash=$commitHash, description=$description, examples=$examples, isDraft=$isDraft, manifest=$manifest, modelConfig=$modelConfig, modelProvider=$modelProvider, additionalProperties=$additionalProperties}"
 }

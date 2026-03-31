@@ -37,6 +37,12 @@ private constructor(
     fun repo(): Optional<String> = Optional.ofNullable(repo)
 
     /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = body.description()
+
+    /**
      * This arbitrary value can be deserialized into a custom type using the `convert` method:
      * ```java
      * MyClass myObject = commitCreateParams.manifest().convert(MyClass.class);
@@ -60,6 +66,13 @@ private constructor(
      * ```
      */
     fun _skipWebhooks(): JsonValue = body._skipWebhooks()
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _description(): JsonField<String> = body._description()
 
     /**
      * Returns the raw JSON value of [parentCommit].
@@ -121,11 +134,23 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [description]
          * - [manifest]
          * - [parentCommit]
          * - [skipWebhooks]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        fun description(description: String) = apply { body.description(description) }
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { body.description(description) }
 
         fun manifest(manifest: JsonValue) = apply { body.manifest(manifest) }
 
@@ -303,6 +328,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val description: JsonField<String>,
         private val manifest: JsonValue,
         private val parentCommit: JsonField<String>,
         private val skipWebhooks: JsonValue,
@@ -311,6 +337,9 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("description")
+            @ExcludeMissing
+            description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("manifest") @ExcludeMissing manifest: JsonValue = JsonMissing.of(),
             @JsonProperty("parent_commit")
             @ExcludeMissing
@@ -318,7 +347,13 @@ private constructor(
             @JsonProperty("skip_webhooks")
             @ExcludeMissing
             skipWebhooks: JsonValue = JsonMissing.of(),
-        ) : this(manifest, parentCommit, skipWebhooks, mutableMapOf())
+        ) : this(description, manifest, parentCommit, skipWebhooks, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun description(): Optional<String> = description.getOptional("description")
 
         /**
          * This arbitrary value can be deserialized into a custom type using the `convert` method:
@@ -344,6 +379,15 @@ private constructor(
          * ```
          */
         @JsonProperty("skip_webhooks") @ExcludeMissing fun _skipWebhooks(): JsonValue = skipWebhooks
+
+        /**
+         * Returns the raw JSON value of [description].
+         *
+         * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("description")
+        @ExcludeMissing
+        fun _description(): JsonField<String> = description
 
         /**
          * Returns the raw JSON value of [parentCommit].
@@ -376,6 +420,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var description: JsonField<String> = JsonMissing.of()
             private var manifest: JsonValue = JsonMissing.of()
             private var parentCommit: JsonField<String> = JsonMissing.of()
             private var skipWebhooks: JsonValue = JsonMissing.of()
@@ -383,10 +428,24 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                description = body.description
                 manifest = body.manifest
                 parentCommit = body.parentCommit
                 skipWebhooks = body.skipWebhooks
                 additionalProperties = body.additionalProperties.toMutableMap()
+            }
+
+            fun description(description: String) = description(JsonField.of(description))
+
+            /**
+             * Sets [Builder.description] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.description] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun description(description: JsonField<String>) = apply {
+                this.description = description
             }
 
             fun manifest(manifest: JsonValue) = apply { this.manifest = manifest }
@@ -435,7 +494,13 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              */
             fun build(): Body =
-                Body(manifest, parentCommit, skipWebhooks, additionalProperties.toMutableMap())
+                Body(
+                    description,
+                    manifest,
+                    parentCommit,
+                    skipWebhooks,
+                    additionalProperties.toMutableMap(),
+                )
         }
 
         private var validated: Boolean = false
@@ -445,6 +510,7 @@ private constructor(
                 return@apply
             }
 
+            description()
             parentCommit()
             validated = true
         }
@@ -464,7 +530,9 @@ private constructor(
          * Used for best match union deserialization.
          */
         @JvmSynthetic
-        internal fun validity(): Int = (if (parentCommit.asKnown().isPresent) 1 else 0)
+        internal fun validity(): Int =
+            (if (description.asKnown().isPresent) 1 else 0) +
+                (if (parentCommit.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -472,6 +540,7 @@ private constructor(
             }
 
             return other is Body &&
+                description == other.description &&
                 manifest == other.manifest &&
                 parentCommit == other.parentCommit &&
                 skipWebhooks == other.skipWebhooks &&
@@ -479,13 +548,13 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(manifest, parentCommit, skipWebhooks, additionalProperties)
+            Objects.hash(description, manifest, parentCommit, skipWebhooks, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{manifest=$manifest, parentCommit=$parentCommit, skipWebhooks=$skipWebhooks, additionalProperties=$additionalProperties}"
+            "Body{description=$description, manifest=$manifest, parentCommit=$parentCommit, skipWebhooks=$skipWebhooks, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
