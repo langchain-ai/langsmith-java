@@ -693,20 +693,33 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
             if (aggregator != null && result is java.util.stream.Stream<*>) {
                 val chunks = mutableListOf<Any?>()
                 val iterationError = java.util.concurrent.atomic.AtomicReference<Throwable>(null)
+                val streamExhausted = java.util.concurrent.atomic.AtomicBoolean(false)
                 val instrumented =
-                    wrapStreamWithErrorCapture(result, iterationError)
+                    wrapStreamWithErrorCapture(result, iterationError, streamExhausted)
                         .peek { chunks.add(it) }
                         .onClose {
                             try {
+                                // Always try to aggregate whatever chunks we have
+                                var aggregationError: Throwable? = null
+                                if (chunks.isNotEmpty()) {
+                                    try {
+                                        val output = aggregator.apply(chunks)
+                                        run.outputs =
+                                            applyProcessOutputs(config, output)
+                                                ?: toOutputMap(output)
+                                    } catch (e: Throwable) {
+                                        aggregationError = e
+                                    }
+                                }
+
                                 val error = iterationError.get()
+                                run.endTime = nowIso()
                                 if (error != null) {
-                                    run.endTime = nowIso()
                                     run.error = error.stackTraceToString()
-                                } else {
-                                    val output = aggregator.apply(chunks)
-                                    run.endTime = nowIso()
-                                    run.outputs =
-                                        applyProcessOutputs(config, output) ?: toOutputMap(output)
+                                } else if (!streamExhausted.get()) {
+                                    run.error = "Stream cancelled"
+                                } else if (aggregationError != null) {
+                                    run.error = aggregationError.stackTraceToString()
                                 }
                                 run.patchRun()
                             } catch (e: Throwable) {
@@ -741,13 +754,14 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
 private fun wrapStreamWithErrorCapture(
     source: java.util.stream.Stream<*>,
     errorRef: java.util.concurrent.atomic.AtomicReference<Throwable>,
+    exhaustedRef: java.util.concurrent.atomic.AtomicBoolean,
 ): java.util.stream.Stream<Any?> {
     val delegate = source.spliterator()
     val capturing =
         object : java.util.Spliterator<Any?> {
             override fun tryAdvance(action: java.util.function.Consumer<in Any?>): Boolean =
                 try {
-                    delegate.tryAdvance(action)
+                    delegate.tryAdvance(action).also { if (!it) exhaustedRef.set(true) }
                 } catch (e: Throwable) {
                     errorRef.compareAndSet(null, e)
                     throw e
