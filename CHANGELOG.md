@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.1.0-alpha.25 (2026-03-31)
+
+Full Changelog: [v0.1.0-alpha.24...v0.1.0-alpha.25](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.24...v0.1.0-alpha.25)
+
+### Features
+
+* Add `traceable` function wrapper for LangSmith tracing ([#101](https://github.com/langchain-ai/langsmith-java/issues/101)) ([f3bf340](https://github.com/langchain-ai/langsmith-java/commit/f3bf3404fe56be9801806ea44f283eb586d96ce8))
+* Adds package version resource to build ([#100](https://github.com/langchain-ai/langsmith-java/issues/100)) ([31cc003](https://github.com/langchain-ai/langsmith-java/commit/31cc0037be79a336cd86f6d53c7093f6c3fb7034))
+* Adds processInputs and processOutputs to traceable ([#113](https://github.com/langchain-ai/langsmith-java/issues/113)) ([ee2991f](https://github.com/langchain-ai/langsmith-java/commit/ee2991f830703f29b3d0eddfd621109362a465e5))
+* Adds streaming support for wrapOpenAI ([#118](https://github.com/langchain-ai/langsmith-java/issues/118)) ([aae9d2c](https://github.com/langchain-ai/langsmith-java/commit/aae9d2c0dc7f7dae40960113154d9ddff3bd0e06))
+* Adds support for tracing streams with traceable ([#117](https://github.com/langchain-ai/langsmith-java/issues/117)) ([0217521](https://github.com/langchain-ai/langsmith-java/commit/0217521b852c70dba4795b145b3eb7b16fd2d10f))
+* **api:** api update ([9182ef8](https://github.com/langchain-ai/langsmith-java/commit/9182ef84e304c602899c73b6865473d3ade4953f))
+* **api:** api update ([0c91488](https://github.com/langchain-ai/langsmith-java/commit/0c914884473e1de2877708cd92db30fdc8fc10aa))
+* **api:** api update ([efa16fc](https://github.com/langchain-ai/langsmith-java/commit/efa16fcb5974fbd5500714936cb52a6e930a6181))
+* **api:** api update ([979e8af](https://github.com/langchain-ai/langsmith-java/commit/979e8af2b6f01444bcea33e1e09d1acbc986a6be))
+* **api:** api update ([cd9f555](https://github.com/langchain-ai/langsmith-java/commit/cd9f555e525172d5ba0bcb0cd033dc045a9026bd))
+* **api:** api update ([af93e09](https://github.com/langchain-ai/langsmith-java/commit/af93e09dc9dd8597454b2a02b1ed37de4e71fde4))
+* **api:** manual updates ([493d5e9](https://github.com/langchain-ai/langsmith-java/commit/493d5e9b2844ff160598b87602c9f91733722fe4))
+* Rework wrapOpenAI ([#114](https://github.com/langchain-ai/langsmith-java/issues/114)) ([63e0bdc](https://github.com/langchain-ai/langsmith-java/commit/63e0bdc5c893185399065c2c602ed0d5c46bbc68))
+
+
+### Bug Fixes
+
+* Fix format detection when pulling legacy prompts ([#115](https://github.com/langchain-ai/langsmith-java/issues/115)) ([ea6c3d2](https://github.com/langchain-ai/langsmith-java/commit/ea6c3d29d7c726b7b8455e6e93ec3322330ea5e7))
+* patch security alerts — bump Jackson and constrain vulnerable transitive deps ([#119](https://github.com/langchain-ai/langsmith-java/issues/119)) ([dfe092c](https://github.com/langchain-ai/langsmith-java/commit/dfe092c51ab27c3131b81785321664a75d584764))
+
+
+### Chores
+
+* **deps:** bump gradle/actions from 5 to 6 in the all-actions group ([#99](https://github.com/langchain-ai/langsmith-java/issues/99)) ([4ba75e7](https://github.com/langchain-ai/langsmith-java/commit/4ba75e7776499833eddb1959b194b71eb847840f))
+* fix dependabot.yml posture issues ([#105](https://github.com/langchain-ai/langsmith-java/issues/105)) ([a0e5441](https://github.com/langchain-ai/langsmith-java/commit/a0e544170d0c62e340a6250c32b6b521f818eaa4))
+
 ## 0.1.0-alpha.24 (2026-03-25)
 
 Full Changelog: [v0.1.0-alpha.23...v0.1.0-alpha.24](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.23...v0.1.0-alpha.24)

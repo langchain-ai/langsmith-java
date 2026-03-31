@@ -114,6 +114,13 @@ internal class PromptMessages(
         }
         return "PromptMessages{${parts.joinToString(", ")}}"
     }
+
+    companion object {
+
+        /** Creates a [PromptMessages] from a single message and input variables. */
+        fun of(message: PromptMessage, inputVariables: List<String>): PromptMessages =
+            PromptMessages(listOf(message), inputVariables)
+    }
 }
 
 private fun toPromptMessage(value: Any?): PromptMessage? =

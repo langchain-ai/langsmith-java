@@ -3,6 +3,8 @@
 .gradle
 .idea
 .kotlin
+**/bin/main/
+**/bin/test/
 build/
 codegen.log
 kls_database.db

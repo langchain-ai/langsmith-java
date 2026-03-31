@@ -13,6 +13,7 @@ internal class CommitCreateParamsTest {
         CommitCreateParams.builder()
             .owner("owner")
             .repo("repo")
+            .description("description")
             .manifest(JsonValue.from(mapOf<String, Any>()))
             .parentCommit("parent_commit")
             .skipWebhooks(JsonValue.from(mapOf<String, Any>()))
@@ -35,6 +36,7 @@ internal class CommitCreateParamsTest {
             CommitCreateParams.builder()
                 .owner("owner")
                 .repo("repo")
+                .description("description")
                 .manifest(JsonValue.from(mapOf<String, Any>()))
                 .parentCommit("parent_commit")
                 .skipWebhooks(JsonValue.from(mapOf<String, Any>()))
@@ -42,6 +44,7 @@ internal class CommitCreateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.description()).contains("description")
         assertThat(body._manifest()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(body.parentCommit()).contains("parent_commit")
         assertThat(body._skipWebhooks()).isEqualTo(JsonValue.from(mapOf<String, Any>()))

@@ -16,6 +16,7 @@ internal class CommitRetrieveResponseTest {
         val commitRetrieveResponse =
             CommitRetrieveResponse.builder()
                 .commitHash("commit_hash")
+                .description("description")
                 .addExample(
                     CommitRetrieveResponse.Example.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -25,12 +26,14 @@ internal class CommitRetrieveResponseTest {
                         .startTime("start_time")
                         .build()
                 )
+                .isDraft(true)
                 .manifest(JsonValue.from(mapOf<String, Any>()))
                 .modelConfig(JsonValue.from(mapOf<String, Any>()))
                 .modelProvider("model_provider")
                 .build()
 
         assertThat(commitRetrieveResponse.commitHash()).contains("commit_hash")
+        assertThat(commitRetrieveResponse.description()).contains("description")
         assertThat(commitRetrieveResponse.examples().getOrNull())
             .containsExactly(
                 CommitRetrieveResponse.Example.builder()
@@ -41,6 +44,7 @@ internal class CommitRetrieveResponseTest {
                     .startTime("start_time")
                     .build()
             )
+        assertThat(commitRetrieveResponse.isDraft()).contains(true)
         assertThat(commitRetrieveResponse._manifest())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(commitRetrieveResponse._modelConfig())
@@ -54,6 +58,7 @@ internal class CommitRetrieveResponseTest {
         val commitRetrieveResponse =
             CommitRetrieveResponse.builder()
                 .commitHash("commit_hash")
+                .description("description")
                 .addExample(
                     CommitRetrieveResponse.Example.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -63,6 +68,7 @@ internal class CommitRetrieveResponseTest {
                         .startTime("start_time")
                         .build()
                 )
+                .isDraft(true)
                 .manifest(JsonValue.from(mapOf<String, Any>()))
                 .modelConfig(JsonValue.from(mapOf<String, Any>()))
                 .modelProvider("model_provider")

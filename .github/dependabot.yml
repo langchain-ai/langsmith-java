@@ -2,20 +2,57 @@ version: 2
 updates:
   - package-ecosystem: gradle
     directory: /
+    target-branch: "next"
     schedule:
-      interval: weekly
+      interval: monthly
     groups:
-      all-dependencies:
+      minor-and-patch:
         patterns:
           - "*"
+        update-types:
+          - minor
+          - patch
+      major:
+        patterns:
+          - "*"
+        update-types:
+          - major
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: docker
+    directory: /.devcontainer
+    target-branch: "next"
+    schedule:
+      interval: monthly
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      major:
+        patterns:
+          - "*"
+        update-types:
+          - major
     open-pull-requests-limit: 5
 
   - package-ecosystem: github-actions
     directory: /
+    target-branch: "next"
     schedule:
-      interval: weekly
+      interval: monthly
     groups:
-      all-actions:
+      minor-and-patch:
         patterns:
           - "*"
+        update-types:
+          - minor
+          - patch
+      major:
+        patterns:
+          - "*"
+        update-types:
+          - major
     open-pull-requests-limit: 5

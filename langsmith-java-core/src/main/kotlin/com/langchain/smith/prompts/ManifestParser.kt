@@ -102,9 +102,17 @@ internal object ManifestParser {
             kwargs["template"]?.asString()?.orElse(null)
                 ?: throw IllegalArgumentException("PromptTemplate missing 'template' in kwargs")
 
+        val templateFormat = kwargs["template_format"]?.asString()?.orElse("f-string") ?: "f-string"
         val inputVariables = extractInputVariables(kwargs)
 
-        return PromptMessages(listOf(PromptMessage.human(template)), inputVariables)
+        return PromptMessages.of(
+            PromptMessage(
+                role = PromptMessage.Role.HUMAN,
+                template = template,
+                templateFormat = templateFormat,
+            ),
+            inputVariables,
+        )
     }
 
     /** Holds a parsed template string and its format. */
@@ -164,7 +172,7 @@ internal object ManifestParser {
     private fun extractTemplate(kwargs: Map<String, JsonValue>): TemplateInfo? {
         // Check for direct template
         kwargs["template"]?.asString()?.orElse(null)?.let { tmpl ->
-            val fmt = kwargs["template_format"]?.asString()?.orElse(null) ?: "f-string"
+            val fmt = kwargs["template_format"]?.asString()?.orElse("f-string") ?: "f-string"
             return TemplateInfo(tmpl, fmt)
         }
 
@@ -172,7 +180,7 @@ internal object ManifestParser {
         val prompt = kwargs["prompt"]?.asObject()?.orElse(null) ?: return null
         val promptKwargs = extractKwargs(prompt)
         val tmpl = promptKwargs["template"]?.asString()?.orElse(null) ?: return null
-        val fmt = promptKwargs["template_format"]?.asString()?.orElse(null) ?: "f-string"
+        val fmt = promptKwargs["template_format"]?.asString()?.orElse("f-string") ?: "f-string"
         return TemplateInfo(tmpl, fmt)
     }
 
