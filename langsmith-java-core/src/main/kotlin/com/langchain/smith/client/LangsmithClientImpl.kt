@@ -94,7 +94,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     override fun settings(): SettingService = settings
 
-    override fun close() = clientOptions.close()
+    override fun close() {
+        runs.flush()
+        clientOptions.close()
+    }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClient.WithRawResponse {

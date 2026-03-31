@@ -2,6 +2,7 @@
 
 package com.langchain.smith.services.blocking
 
+import com.langchain.smith.client.AutoBatchQueue
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
@@ -16,6 +17,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
@@ -43,6 +45,18 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     private val rules: RuleService by lazy { RuleServiceImpl(clientOptions) }
 
+    private val batchQueue: AutoBatchQueue by lazy {
+        AutoBatchQueue(
+            runService = object : RunService by this {
+                override fun ingestBatch(
+                    params: RunIngestBatchParams,
+                    requestOptions: RequestOptions,
+                ): RunIngestBatchResponse =
+                    withRawResponse().ingestBatch(params, requestOptions).parse()
+            }
+        )
+    }
+
     override fun withRawResponse(): RunService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
@@ -53,20 +67,23 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     override fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions,
-    ): RunCreateResponse =
-        // post /runs
-        withRawResponse().create(params, requestOptions).parse()
+    ) {
+        batchQueue.post(params.run())
+    }
 
     override fun retrieve(params: RunRetrieveParams, requestOptions: RequestOptions): RunSchema =
-        // get /api/v1/runs/{run_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions,
-    ): RunUpdateResponse =
-        // patch /runs/{run_id}
-        withRawResponse().update(params, requestOptions).parse()
+    ) {
+        batchQueue.patch(params.run())
+    }
+
+    override fun flush() {
+        batchQueue.flush()
+    }
 
     override fun ingestBatch(
         params: RunIngestBatchParams,

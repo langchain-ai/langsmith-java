@@ -5,7 +5,6 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.getJavaVersion
 import com.langchain.smith.core.getPackageVersion
 import com.langchain.smith.models.runs.Run
-import com.langchain.smith.models.runs.RunIngestBatchParams
 import java.time.Instant
 import java.util.concurrent.ExecutorService
 import org.slf4j.LoggerFactory
@@ -125,28 +124,21 @@ class RunTree(
         )
     }
 
-    // TODO: Delegate background posting to the client's own executor/queue once background run
-    //  processing is implemented there. Currently we manage our own executor and submit individual
-    //  ingestBatch calls per run, which means no batching and no client-level flush/shutdown.
-
-    /** Posts this run to LangSmith in the background (creates the run with inputs + start time). */
+    /** Posts this run to LangSmith, batched with other pending operations. */
     fun postRun() {
         val c = client ?: return
-        val e = executor ?: DEFAULT_EXECUTOR
-        val runData = buildRunData()
-        submitSafely(e, name) {
-            c.runs().ingestBatch(RunIngestBatchParams.builder().addPost(runData).build())
-        }
+        c.runs().create(buildRunData())
     }
 
-    /** Patches this run in LangSmith in the background (updates with outputs, end time, error). */
+    /** Patches this run in LangSmith, batched with other pending operations. */
     fun patchRun() {
         val c = client ?: return
-        val e = executor ?: DEFAULT_EXECUTOR
-        val runData = buildRunData()
-        submitSafely(e, name) {
-            c.runs().ingestBatch(RunIngestBatchParams.builder().addPatch(runData).build())
-        }
+        c.runs().update(
+            com.langchain.smith.models.runs.RunUpdateParams.builder()
+                .runId(id)
+                .run(buildRunData())
+                .build()
+        )
     }
 
     /** Builds the [Run] data object for posting/patching to the LangSmith API. */
@@ -343,19 +335,7 @@ class RunTree(
 // Private helpers for RunTree posting
 // ---------------------------------------------------------------------------
 
-private fun submitSafely(executor: ExecutorService, runName: String, block: () -> Unit) {
-    try {
-        executor.submit {
-            try {
-                block()
-            } catch (e: Exception) {
-                logger.warn("Failed to send run '$runName'", e)
-            }
-        }
-    } catch (e: java.util.concurrent.RejectedExecutionException) {
-        logger.warn("Executor is shut down; dropping run '$runName'")
-    }
-}
+
 
 private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
     data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()

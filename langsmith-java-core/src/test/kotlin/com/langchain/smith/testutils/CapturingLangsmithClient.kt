@@ -2,6 +2,7 @@ package com.langchain.smith.testutils
 
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
@@ -46,8 +47,10 @@ internal class CapturingLangsmithClient {
                 if (method.name == "ingestBatch" && args != null && args.isNotEmpty()) {
                     val params = args[0]
                     if (params is RunIngestBatchParams) {
-                        params.post().ifPresent { postedRuns.addAll(it) }
-                        params.patch().ifPresent { patchedRuns.addAll(it) }
+                        synchronized(this) {
+                            params.post().ifPresent { postedRuns.addAll(it) }
+                            params.patch().ifPresent { patchedRuns.addAll(it) }
+                        }
                     }
                     // Forward to real LangSmith if available
                     if (realClient != null) {
@@ -55,6 +58,9 @@ internal class CapturingLangsmithClient {
                     } else {
                         RunIngestBatchResponse.builder().build()
                     }
+                } else if (method.name == "flush") {
+                    // no-op for test proxy
+                    null
                 } else if (method.name == "withRawResponse" || method.name == "withOptions") {
                     throw NotImplementedError()
                 } else {
@@ -77,13 +83,24 @@ internal class CapturingLangsmithClient {
         ) { _, method, _ ->
             when (method.name) {
                 "runs" -> runService
+<<<<<<< HEAD
+=======
+                "flush" -> {
+                    // no-op
+                    null
+                }
+>>>>>>> d3050890 (Adds background batching)
                 "close" -> {
                     realClient?.close()
                     Unit
                 }
                 else ->
                     throw NotImplementedError(
+<<<<<<< HEAD
                         "CapturingLangsmithClient only supports runs() and close()"
+=======
+                        "CapturingLangsmithClient only supports runs(), flush(), and close()"
+>>>>>>> d3050890 (Adds background batching)
                     )
             }
         } as LangsmithClient
