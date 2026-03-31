@@ -116,6 +116,7 @@ internal class GroupRunsResponseTest {
                                                         .build()
                                                 )
                                                 .feedbackThreadId("feedback_thread_id")
+                                                .isRoot(true)
                                                 .modifiedAt(
                                                     OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                                 )
@@ -372,6 +373,7 @@ internal class GroupRunsResponseTest {
                                                     .build()
                                             )
                                             .feedbackThreadId("feedback_thread_id")
+                                            .isRoot(true)
                                             .modifiedAt(
                                                 OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                             )
@@ -634,6 +636,7 @@ internal class GroupRunsResponseTest {
                                                         .build()
                                                 )
                                                 .feedbackThreadId("feedback_thread_id")
+                                                .isRoot(true)
                                                 .modifiedAt(
                                                     OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                                 )
