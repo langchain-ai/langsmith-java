@@ -22,7 +22,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Create a new session. */
+/** Update a session. */
 class SessionUpdateParams
 private constructor(
     private val sessionId: String?,

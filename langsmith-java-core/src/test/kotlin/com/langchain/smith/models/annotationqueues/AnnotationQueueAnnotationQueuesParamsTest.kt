@@ -26,11 +26,13 @@ internal class AnnotationQueueAnnotationQueuesParamsTest {
             )
             .numReviewersPerItem(0L)
             .reservationMinutes(0L)
+            .reviewerAccessMode("reviewer_access_mode")
             .rubricInstructions("rubric_instructions")
             .addRubricItem(
                 AnnotationQueueRubricItemSchema.builder()
                     .feedbackKey("feedback_key")
                     .description("description")
+                    .isAssertion(true)
                     .isRequired(true)
                     .scoreDescriptions(
                         AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
@@ -66,11 +68,13 @@ internal class AnnotationQueueAnnotationQueuesParamsTest {
                 )
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
+                .reviewerAccessMode("reviewer_access_mode")
                 .rubricInstructions("rubric_instructions")
                 .addRubricItem(
                     AnnotationQueueRubricItemSchema.builder()
                         .feedbackKey("feedback_key")
                         .description("description")
+                        .isAssertion(true)
                         .isRequired(true)
                         .scoreDescriptions(
                             AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
@@ -104,12 +108,14 @@ internal class AnnotationQueueAnnotationQueuesParamsTest {
             )
         assertThat(body.numReviewersPerItem()).contains(0L)
         assertThat(body.reservationMinutes()).contains(0L)
+        assertThat(body.reviewerAccessMode()).contains("reviewer_access_mode")
         assertThat(body.rubricInstructions()).contains("rubric_instructions")
         assertThat(body.rubricItems().getOrNull())
             .containsExactly(
                 AnnotationQueueRubricItemSchema.builder()
                     .feedbackKey("feedback_key")
                     .description("description")
+                    .isAssertion(true)
                     .isRequired(true)
                     .scoreDescriptions(
                         AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()

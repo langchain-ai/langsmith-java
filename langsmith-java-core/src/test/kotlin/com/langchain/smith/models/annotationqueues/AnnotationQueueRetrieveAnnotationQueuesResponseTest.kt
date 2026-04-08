@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -20,6 +21,13 @@ internal class AnnotationQueueRetrieveAnnotationQueuesResponseTest {
                 .queueType(AnnotationQueueRetrieveAnnotationQueuesResponse.QueueType.SINGLE)
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .totalRuns(0L)
+                .addAssignedReviewer(
+                    AnnotationQueueRetrieveAnnotationQueuesResponse.AssignedReviewer.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .email("email")
+                        .name("name")
+                        .build()
+                )
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
@@ -31,6 +39,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesResponseTest {
                 )
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
+                .reviewerAccessMode("reviewer_access_mode")
                 .runRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sourceRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -44,6 +53,14 @@ internal class AnnotationQueueRetrieveAnnotationQueuesResponseTest {
         assertThat(annotationQueueRetrieveAnnotationQueuesResponse.tenantId())
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(annotationQueueRetrieveAnnotationQueuesResponse.totalRuns()).isEqualTo(0L)
+        assertThat(annotationQueueRetrieveAnnotationQueuesResponse.assignedReviewers().getOrNull())
+            .containsExactly(
+                AnnotationQueueRetrieveAnnotationQueuesResponse.AssignedReviewer.builder()
+                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .email("email")
+                    .name("name")
+                    .build()
+            )
         assertThat(annotationQueueRetrieveAnnotationQueuesResponse.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(annotationQueueRetrieveAnnotationQueuesResponse.defaultDataset())
@@ -62,6 +79,8 @@ internal class AnnotationQueueRetrieveAnnotationQueuesResponseTest {
             .contains(0L)
         assertThat(annotationQueueRetrieveAnnotationQueuesResponse.reservationMinutes())
             .contains(0L)
+        assertThat(annotationQueueRetrieveAnnotationQueuesResponse.reviewerAccessMode())
+            .contains("reviewer_access_mode")
         assertThat(annotationQueueRetrieveAnnotationQueuesResponse.runRuleId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(annotationQueueRetrieveAnnotationQueuesResponse.sourceRuleId())
@@ -80,6 +99,13 @@ internal class AnnotationQueueRetrieveAnnotationQueuesResponseTest {
                 .queueType(AnnotationQueueRetrieveAnnotationQueuesResponse.QueueType.SINGLE)
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .totalRuns(0L)
+                .addAssignedReviewer(
+                    AnnotationQueueRetrieveAnnotationQueuesResponse.AssignedReviewer.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .email("email")
+                        .name("name")
+                        .build()
+                )
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
@@ -91,6 +117,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesResponseTest {
                 )
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
+                .reviewerAccessMode("reviewer_access_mode")
                 .runRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sourceRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
