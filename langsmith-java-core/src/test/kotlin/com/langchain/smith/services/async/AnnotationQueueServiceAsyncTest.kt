@@ -63,11 +63,13 @@ internal class AnnotationQueueServiceAsyncTest {
                     .name("name")
                     .numReviewersPerItem(0L)
                     .reservationMinutes(0L)
+                    .reviewerAccessMode(AnnotationQueueUpdateParams.ReviewerAccessMode.ANY)
                     .rubricInstructions("rubric_instructions")
                     .addRubricItem(
                         AnnotationQueueRubricItemSchema.builder()
                             .feedbackKey("feedback_key")
                             .description("description")
+                            .isAssertion(true)
                             .isRequired(true)
                             .scoreDescriptions(
                                 AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
@@ -133,11 +135,13 @@ internal class AnnotationQueueServiceAsyncTest {
                     )
                     .numReviewersPerItem(0L)
                     .reservationMinutes(0L)
+                    .reviewerAccessMode("reviewer_access_mode")
                     .rubricInstructions("rubric_instructions")
                     .addRubricItem(
                         AnnotationQueueRubricItemSchema.builder()
                             .feedbackKey("feedback_key")
                             .description("description")
+                            .isAssertion(true)
                             .isRequired(true)
                             .scoreDescriptions(
                                 AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()

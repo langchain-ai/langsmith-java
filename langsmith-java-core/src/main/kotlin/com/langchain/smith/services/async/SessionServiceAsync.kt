@@ -92,7 +92,7 @@ interface SessionServiceAsync {
     ): CompletableFuture<TracerSession> =
         retrieve(sessionId, SessionRetrieveParams.none(), requestOptions)
 
-    /** Create a new session. */
+    /** Update a session. */
     fun update(sessionId: String): CompletableFuture<TracerSessionWithoutVirtualFields> =
         update(sessionId, SessionUpdateParams.none())
 

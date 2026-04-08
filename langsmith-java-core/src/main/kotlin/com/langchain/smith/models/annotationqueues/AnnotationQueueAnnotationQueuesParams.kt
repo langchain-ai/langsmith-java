@@ -89,6 +89,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun reviewerAccessMode(): Optional<String> = body.reviewerAccessMode()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun rubricInstructions(): Optional<String> = body.rubricInstructions()
 
     /**
@@ -174,6 +180,14 @@ private constructor(
      * type.
      */
     fun _reservationMinutes(): JsonField<Long> = body._reservationMinutes()
+
+    /**
+     * Returns the raw JSON value of [reviewerAccessMode].
+     *
+     * Unlike [reviewerAccessMode], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _reviewerAccessMode(): JsonField<String> = body._reviewerAccessMode()
 
     /**
      * Returns the raw JSON value of [rubricInstructions].
@@ -422,6 +436,21 @@ private constructor(
             body.reservationMinutes(reservationMinutes)
         }
 
+        fun reviewerAccessMode(reviewerAccessMode: String) = apply {
+            body.reviewerAccessMode(reviewerAccessMode)
+        }
+
+        /**
+         * Sets [Builder.reviewerAccessMode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.reviewerAccessMode] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun reviewerAccessMode(reviewerAccessMode: JsonField<String>) = apply {
+            body.reviewerAccessMode(reviewerAccessMode)
+        }
+
         fun rubricInstructions(rubricInstructions: String?) = apply {
             body.rubricInstructions(rubricInstructions)
         }
@@ -659,6 +688,7 @@ private constructor(
         private val metadata: JsonField<Metadata>,
         private val numReviewersPerItem: JsonField<Long>,
         private val reservationMinutes: JsonField<Long>,
+        private val reviewerAccessMode: JsonField<String>,
         private val rubricInstructions: JsonField<String>,
         private val rubricItems: JsonField<List<AnnotationQueueRubricItemSchema>>,
         private val sessionIds: JsonField<List<String>>,
@@ -691,6 +721,9 @@ private constructor(
             @JsonProperty("reservation_minutes")
             @ExcludeMissing
             reservationMinutes: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("reviewer_access_mode")
+            @ExcludeMissing
+            reviewerAccessMode: JsonField<String> = JsonMissing.of(),
             @JsonProperty("rubric_instructions")
             @ExcludeMissing
             rubricInstructions: JsonField<String> = JsonMissing.of(),
@@ -713,6 +746,7 @@ private constructor(
             metadata,
             numReviewersPerItem,
             reservationMinutes,
+            reviewerAccessMode,
             rubricInstructions,
             rubricItems,
             sessionIds,
@@ -776,6 +810,13 @@ private constructor(
          */
         fun reservationMinutes(): Optional<Long> =
             reservationMinutes.getOptional("reservation_minutes")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun reviewerAccessMode(): Optional<String> =
+            reviewerAccessMode.getOptional("reviewer_access_mode")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -883,6 +924,16 @@ private constructor(
         fun _reservationMinutes(): JsonField<Long> = reservationMinutes
 
         /**
+         * Returns the raw JSON value of [reviewerAccessMode].
+         *
+         * Unlike [reviewerAccessMode], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("reviewer_access_mode")
+        @ExcludeMissing
+        fun _reviewerAccessMode(): JsonField<String> = reviewerAccessMode
+
+        /**
          * Returns the raw JSON value of [rubricInstructions].
          *
          * Unlike [rubricInstructions], this method doesn't throw if the JSON field has an
@@ -956,6 +1007,7 @@ private constructor(
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var numReviewersPerItem: JsonField<Long> = JsonMissing.of()
             private var reservationMinutes: JsonField<Long> = JsonMissing.of()
+            private var reviewerAccessMode: JsonField<String> = JsonMissing.of()
             private var rubricInstructions: JsonField<String> = JsonMissing.of()
             private var rubricItems: JsonField<MutableList<AnnotationQueueRubricItemSchema>>? = null
             private var sessionIds: JsonField<MutableList<String>>? = null
@@ -973,6 +1025,7 @@ private constructor(
                 metadata = body.metadata
                 numReviewersPerItem = body.numReviewersPerItem
                 reservationMinutes = body.reservationMinutes
+                reviewerAccessMode = body.reviewerAccessMode
                 rubricInstructions = body.rubricInstructions
                 rubricItems = body.rubricItems.map { it.toMutableList() }
                 sessionIds = body.sessionIds.map { it.toMutableList() }
@@ -1150,6 +1203,20 @@ private constructor(
                 this.reservationMinutes = reservationMinutes
             }
 
+            fun reviewerAccessMode(reviewerAccessMode: String) =
+                reviewerAccessMode(JsonField.of(reviewerAccessMode))
+
+            /**
+             * Sets [Builder.reviewerAccessMode] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.reviewerAccessMode] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun reviewerAccessMode(reviewerAccessMode: JsonField<String>) = apply {
+                this.reviewerAccessMode = reviewerAccessMode
+            }
+
             fun rubricInstructions(rubricInstructions: String?) =
                 rubricInstructions(JsonField.ofNullable(rubricInstructions))
 
@@ -1284,6 +1351,7 @@ private constructor(
                     metadata,
                     numReviewersPerItem,
                     reservationMinutes,
+                    reviewerAccessMode,
                     rubricInstructions,
                     (rubricItems ?: JsonMissing.of()).map { it.toImmutable() },
                     (sessionIds ?: JsonMissing.of()).map { it.toImmutable() },
@@ -1308,6 +1376,7 @@ private constructor(
             metadata().ifPresent { it.validate() }
             numReviewersPerItem()
             reservationMinutes()
+            reviewerAccessMode()
             rubricInstructions()
             rubricItems().ifPresent { it.forEach { it.validate() } }
             sessionIds()
@@ -1340,6 +1409,7 @@ private constructor(
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (numReviewersPerItem.asKnown().isPresent) 1 else 0) +
                 (if (reservationMinutes.asKnown().isPresent) 1 else 0) +
+                (if (reviewerAccessMode.asKnown().isPresent) 1 else 0) +
                 (if (rubricInstructions.asKnown().isPresent) 1 else 0) +
                 (rubricItems.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (sessionIds.asKnown().getOrNull()?.size ?: 0) +
@@ -1360,6 +1430,7 @@ private constructor(
                 metadata == other.metadata &&
                 numReviewersPerItem == other.numReviewersPerItem &&
                 reservationMinutes == other.reservationMinutes &&
+                reviewerAccessMode == other.reviewerAccessMode &&
                 rubricInstructions == other.rubricInstructions &&
                 rubricItems == other.rubricItems &&
                 sessionIds == other.sessionIds &&
@@ -1378,6 +1449,7 @@ private constructor(
                 metadata,
                 numReviewersPerItem,
                 reservationMinutes,
+                reviewerAccessMode,
                 rubricInstructions,
                 rubricItems,
                 sessionIds,
@@ -1389,7 +1461,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{name=$name, id=$id, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, sessionIds=$sessionIds, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+            "Body{name=$name, id=$id, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, reviewerAccessMode=$reviewerAccessMode, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, sessionIds=$sessionIds, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
     }
 
     class Metadata

@@ -85,7 +85,7 @@ interface SessionService {
     fun retrieve(sessionId: String, requestOptions: RequestOptions): TracerSession =
         retrieve(sessionId, SessionRetrieveParams.none(), requestOptions)
 
-    /** Create a new session. */
+    /** Update a session. */
     fun update(sessionId: String): TracerSessionWithoutVirtualFields =
         update(sessionId, SessionUpdateParams.none())
 

@@ -23,6 +23,7 @@ class AnnotationQueueRubricItemSchema
 private constructor(
     private val feedbackKey: JsonField<String>,
     private val description: JsonField<String>,
+    private val isAssertion: JsonField<Boolean>,
     private val isRequired: JsonField<Boolean>,
     private val scoreDescriptions: JsonField<ScoreDescriptions>,
     private val valueDescriptions: JsonField<ValueDescriptions>,
@@ -37,6 +38,9 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("is_assertion")
+        @ExcludeMissing
+        isAssertion: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("is_required")
         @ExcludeMissing
         isRequired: JsonField<Boolean> = JsonMissing.of(),
@@ -49,6 +53,7 @@ private constructor(
     ) : this(
         feedbackKey,
         description,
+        isAssertion,
         isRequired,
         scoreDescriptions,
         valueDescriptions,
@@ -66,6 +71,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = description.getOptional("description")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isAssertion(): Optional<Boolean> = isAssertion.getOptional("is_assertion")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -102,6 +113,15 @@ private constructor(
      * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
+
+    /**
+     * Returns the raw JSON value of [isAssertion].
+     *
+     * Unlike [isAssertion], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_assertion")
+    @ExcludeMissing
+    fun _isAssertion(): JsonField<Boolean> = isAssertion
 
     /**
      * Returns the raw JSON value of [isRequired].
@@ -161,6 +181,7 @@ private constructor(
 
         private var feedbackKey: JsonField<String>? = null
         private var description: JsonField<String> = JsonMissing.of()
+        private var isAssertion: JsonField<Boolean> = JsonMissing.of()
         private var isRequired: JsonField<Boolean> = JsonMissing.of()
         private var scoreDescriptions: JsonField<ScoreDescriptions> = JsonMissing.of()
         private var valueDescriptions: JsonField<ValueDescriptions> = JsonMissing.of()
@@ -171,6 +192,7 @@ private constructor(
             apply {
                 feedbackKey = annotationQueueRubricItemSchema.feedbackKey
                 description = annotationQueueRubricItemSchema.description
+                isAssertion = annotationQueueRubricItemSchema.isAssertion
                 isRequired = annotationQueueRubricItemSchema.isRequired
                 scoreDescriptions = annotationQueueRubricItemSchema.scoreDescriptions
                 valueDescriptions = annotationQueueRubricItemSchema.valueDescriptions
@@ -202,6 +224,27 @@ private constructor(
          * value.
          */
         fun description(description: JsonField<String>) = apply { this.description = description }
+
+        fun isAssertion(isAssertion: Boolean?) = isAssertion(JsonField.ofNullable(isAssertion))
+
+        /**
+         * Alias for [Builder.isAssertion].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun isAssertion(isAssertion: Boolean) = isAssertion(isAssertion as Boolean?)
+
+        /** Alias for calling [Builder.isAssertion] with `isAssertion.orElse(null)`. */
+        fun isAssertion(isAssertion: Optional<Boolean>) = isAssertion(isAssertion.getOrNull())
+
+        /**
+         * Sets [Builder.isAssertion] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isAssertion] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isAssertion(isAssertion: JsonField<Boolean>) = apply { this.isAssertion = isAssertion }
 
         fun isRequired(isRequired: Boolean?) = isRequired(JsonField.ofNullable(isRequired))
 
@@ -295,6 +338,7 @@ private constructor(
             AnnotationQueueRubricItemSchema(
                 checkRequired("feedbackKey", feedbackKey),
                 description,
+                isAssertion,
                 isRequired,
                 scoreDescriptions,
                 valueDescriptions,
@@ -311,6 +355,7 @@ private constructor(
 
         feedbackKey()
         description()
+        isAssertion()
         isRequired()
         scoreDescriptions().ifPresent { it.validate() }
         valueDescriptions().ifPresent { it.validate() }
@@ -334,6 +379,7 @@ private constructor(
     internal fun validity(): Int =
         (if (feedbackKey.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
+            (if (isAssertion.asKnown().isPresent) 1 else 0) +
             (if (isRequired.asKnown().isPresent) 1 else 0) +
             (scoreDescriptions.asKnown().getOrNull()?.validity() ?: 0) +
             (valueDescriptions.asKnown().getOrNull()?.validity() ?: 0)
@@ -544,6 +590,7 @@ private constructor(
         return other is AnnotationQueueRubricItemSchema &&
             feedbackKey == other.feedbackKey &&
             description == other.description &&
+            isAssertion == other.isAssertion &&
             isRequired == other.isRequired &&
             scoreDescriptions == other.scoreDescriptions &&
             valueDescriptions == other.valueDescriptions &&
@@ -554,6 +601,7 @@ private constructor(
         Objects.hash(
             feedbackKey,
             description,
+            isAssertion,
             isRequired,
             scoreDescriptions,
             valueDescriptions,
@@ -564,5 +612,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AnnotationQueueRubricItemSchema{feedbackKey=$feedbackKey, description=$description, isRequired=$isRequired, scoreDescriptions=$scoreDescriptions, valueDescriptions=$valueDescriptions, additionalProperties=$additionalProperties}"
+        "AnnotationQueueRubricItemSchema{feedbackKey=$feedbackKey, description=$description, isAssertion=$isAssertion, isRequired=$isRequired, scoreDescriptions=$scoreDescriptions, valueDescriptions=$valueDescriptions, additionalProperties=$additionalProperties}"
 }

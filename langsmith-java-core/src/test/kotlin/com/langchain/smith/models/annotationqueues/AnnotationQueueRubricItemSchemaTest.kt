@@ -16,6 +16,7 @@ internal class AnnotationQueueRubricItemSchemaTest {
             AnnotationQueueRubricItemSchema.builder()
                 .feedbackKey("feedback_key")
                 .description("description")
+                .isAssertion(true)
                 .isRequired(true)
                 .scoreDescriptions(
                     AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()
@@ -31,6 +32,7 @@ internal class AnnotationQueueRubricItemSchemaTest {
 
         assertThat(annotationQueueRubricItemSchema.feedbackKey()).isEqualTo("feedback_key")
         assertThat(annotationQueueRubricItemSchema.description()).contains("description")
+        assertThat(annotationQueueRubricItemSchema.isAssertion()).contains(true)
         assertThat(annotationQueueRubricItemSchema.isRequired()).contains(true)
         assertThat(annotationQueueRubricItemSchema.scoreDescriptions())
             .contains(
@@ -53,6 +55,7 @@ internal class AnnotationQueueRubricItemSchemaTest {
             AnnotationQueueRubricItemSchema.builder()
                 .feedbackKey("feedback_key")
                 .description("description")
+                .isAssertion(true)
                 .isRequired(true)
                 .scoreDescriptions(
                     AnnotationQueueRubricItemSchema.ScoreDescriptions.builder()

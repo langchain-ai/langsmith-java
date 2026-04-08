@@ -17,6 +17,7 @@ import kotlin.jvm.optionals.getOrNull
 /** Get Annotation Queues */
 class AnnotationQueueRetrieveAnnotationQueuesParams
 private constructor(
+    private val assignedToMe: Boolean?,
     private val datasetId: String?,
     private val ids: List<String>?,
     private val limit: Long?,
@@ -28,6 +29,8 @@ private constructor(
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    fun assignedToMe(): Optional<Boolean> = Optional.ofNullable(assignedToMe)
 
     fun datasetId(): Optional<String> = Optional.ofNullable(datasetId)
 
@@ -67,6 +70,7 @@ private constructor(
     /** A builder for [AnnotationQueueRetrieveAnnotationQueuesParams]. */
     class Builder internal constructor() {
 
+        private var assignedToMe: Boolean? = null
         private var datasetId: String? = null
         private var ids: MutableList<String>? = null
         private var limit: Long? = null
@@ -83,6 +87,7 @@ private constructor(
             annotationQueueRetrieveAnnotationQueuesParams:
                 AnnotationQueueRetrieveAnnotationQueuesParams
         ) = apply {
+            assignedToMe = annotationQueueRetrieveAnnotationQueuesParams.assignedToMe
             datasetId = annotationQueueRetrieveAnnotationQueuesParams.datasetId
             ids = annotationQueueRetrieveAnnotationQueuesParams.ids?.toMutableList()
             limit = annotationQueueRetrieveAnnotationQueuesParams.limit
@@ -96,6 +101,18 @@ private constructor(
             additionalQueryParams =
                 annotationQueueRetrieveAnnotationQueuesParams.additionalQueryParams.toBuilder()
         }
+
+        fun assignedToMe(assignedToMe: Boolean?) = apply { this.assignedToMe = assignedToMe }
+
+        /**
+         * Alias for [Builder.assignedToMe].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun assignedToMe(assignedToMe: Boolean) = assignedToMe(assignedToMe as Boolean?)
+
+        /** Alias for calling [Builder.assignedToMe] with `assignedToMe.orElse(null)`. */
+        fun assignedToMe(assignedToMe: Optional<Boolean>) = assignedToMe(assignedToMe.getOrNull())
 
         fun datasetId(datasetId: String?) = apply { this.datasetId = datasetId }
 
@@ -274,6 +291,7 @@ private constructor(
          */
         fun build(): AnnotationQueueRetrieveAnnotationQueuesParams =
             AnnotationQueueRetrieveAnnotationQueuesParams(
+                assignedToMe,
                 datasetId,
                 ids?.toImmutable(),
                 limit,
@@ -292,6 +310,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                assignedToMe?.let { put("assigned_to_me", it.toString()) }
                 datasetId?.let { put("dataset_id", it) }
                 ids?.let { put("ids", it.joinToString(",")) }
                 limit?.let { put("limit", it.toString()) }
@@ -439,6 +458,7 @@ private constructor(
         }
 
         return other is AnnotationQueueRetrieveAnnotationQueuesParams &&
+            assignedToMe == other.assignedToMe &&
             datasetId == other.datasetId &&
             ids == other.ids &&
             limit == other.limit &&
@@ -453,6 +473,7 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
+            assignedToMe,
             datasetId,
             ids,
             limit,
@@ -466,5 +487,5 @@ private constructor(
         )
 
     override fun toString() =
-        "AnnotationQueueRetrieveAnnotationQueuesParams{datasetId=$datasetId, ids=$ids, limit=$limit, name=$name, nameContains=$nameContains, offset=$offset, queueType=$queueType, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "AnnotationQueueRetrieveAnnotationQueuesParams{assignedToMe=$assignedToMe, datasetId=$datasetId, ids=$ids, limit=$limit, name=$name, nameContains=$nameContains, offset=$offset, queueType=$queueType, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

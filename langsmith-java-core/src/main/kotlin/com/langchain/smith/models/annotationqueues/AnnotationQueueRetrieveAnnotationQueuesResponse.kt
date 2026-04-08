@@ -11,6 +11,7 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
@@ -29,6 +30,7 @@ private constructor(
     private val queueType: JsonField<QueueType>,
     private val tenantId: JsonField<String>,
     private val totalRuns: JsonField<Long>,
+    private val assignedReviewers: JsonField<List<AssignedReviewer>>,
     private val createdAt: JsonField<OffsetDateTime>,
     private val defaultDataset: JsonField<String>,
     private val description: JsonField<String>,
@@ -36,6 +38,7 @@ private constructor(
     private val metadata: JsonField<Metadata>,
     private val numReviewersPerItem: JsonField<Long>,
     private val reservationMinutes: JsonField<Long>,
+    private val reviewerAccessMode: JsonField<String>,
     private val runRuleId: JsonField<String>,
     private val sourceRuleId: JsonField<String>,
     private val updatedAt: JsonField<OffsetDateTime>,
@@ -51,6 +54,9 @@ private constructor(
         queueType: JsonField<QueueType> = JsonMissing.of(),
         @JsonProperty("tenant_id") @ExcludeMissing tenantId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("total_runs") @ExcludeMissing totalRuns: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("assigned_reviewers")
+        @ExcludeMissing
+        assignedReviewers: JsonField<List<AssignedReviewer>> = JsonMissing.of(),
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -70,6 +76,9 @@ private constructor(
         @JsonProperty("reservation_minutes")
         @ExcludeMissing
         reservationMinutes: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("reviewer_access_mode")
+        @ExcludeMissing
+        reviewerAccessMode: JsonField<String> = JsonMissing.of(),
         @JsonProperty("run_rule_id")
         @ExcludeMissing
         runRuleId: JsonField<String> = JsonMissing.of(),
@@ -85,6 +94,7 @@ private constructor(
         queueType,
         tenantId,
         totalRuns,
+        assignedReviewers,
         createdAt,
         defaultDataset,
         description,
@@ -92,6 +102,7 @@ private constructor(
         metadata,
         numReviewersPerItem,
         reservationMinutes,
+        reviewerAccessMode,
         runRuleId,
         sourceRuleId,
         updatedAt,
@@ -127,6 +138,13 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun totalRuns(): Long = totalRuns.getRequired("total_runs")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun assignedReviewers(): Optional<List<AssignedReviewer>> =
+        assignedReviewers.getOptional("assigned_reviewers")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -171,6 +189,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun reservationMinutes(): Optional<Long> = reservationMinutes.getOptional("reservation_minutes")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun reviewerAccessMode(): Optional<String> =
+        reviewerAccessMode.getOptional("reviewer_access_mode")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -224,6 +249,16 @@ private constructor(
      * Unlike [totalRuns], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("total_runs") @ExcludeMissing fun _totalRuns(): JsonField<Long> = totalRuns
+
+    /**
+     * Returns the raw JSON value of [assignedReviewers].
+     *
+     * Unlike [assignedReviewers], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("assigned_reviewers")
+    @ExcludeMissing
+    fun _assignedReviewers(): JsonField<List<AssignedReviewer>> = assignedReviewers
 
     /**
      * Returns the raw JSON value of [createdAt].
@@ -288,6 +323,16 @@ private constructor(
     fun _reservationMinutes(): JsonField<Long> = reservationMinutes
 
     /**
+     * Returns the raw JSON value of [reviewerAccessMode].
+     *
+     * Unlike [reviewerAccessMode], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("reviewer_access_mode")
+    @ExcludeMissing
+    fun _reviewerAccessMode(): JsonField<String> = reviewerAccessMode
+
+    /**
      * Returns the raw JSON value of [runRuleId].
      *
      * Unlike [runRuleId], this method doesn't throw if the JSON field has an unexpected type.
@@ -350,6 +395,7 @@ private constructor(
         private var queueType: JsonField<QueueType>? = null
         private var tenantId: JsonField<String>? = null
         private var totalRuns: JsonField<Long>? = null
+        private var assignedReviewers: JsonField<MutableList<AssignedReviewer>>? = null
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var defaultDataset: JsonField<String> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
@@ -357,6 +403,7 @@ private constructor(
         private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var numReviewersPerItem: JsonField<Long> = JsonMissing.of()
         private var reservationMinutes: JsonField<Long> = JsonMissing.of()
+        private var reviewerAccessMode: JsonField<String> = JsonMissing.of()
         private var runRuleId: JsonField<String> = JsonMissing.of()
         private var sourceRuleId: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -372,6 +419,10 @@ private constructor(
             queueType = annotationQueueRetrieveAnnotationQueuesResponse.queueType
             tenantId = annotationQueueRetrieveAnnotationQueuesResponse.tenantId
             totalRuns = annotationQueueRetrieveAnnotationQueuesResponse.totalRuns
+            assignedReviewers =
+                annotationQueueRetrieveAnnotationQueuesResponse.assignedReviewers.map {
+                    it.toMutableList()
+                }
             createdAt = annotationQueueRetrieveAnnotationQueuesResponse.createdAt
             defaultDataset = annotationQueueRetrieveAnnotationQueuesResponse.defaultDataset
             description = annotationQueueRetrieveAnnotationQueuesResponse.description
@@ -380,6 +431,7 @@ private constructor(
             numReviewersPerItem =
                 annotationQueueRetrieveAnnotationQueuesResponse.numReviewersPerItem
             reservationMinutes = annotationQueueRetrieveAnnotationQueuesResponse.reservationMinutes
+            reviewerAccessMode = annotationQueueRetrieveAnnotationQueuesResponse.reviewerAccessMode
             runRuleId = annotationQueueRetrieveAnnotationQueuesResponse.runRuleId
             sourceRuleId = annotationQueueRetrieveAnnotationQueuesResponse.sourceRuleId
             updatedAt = annotationQueueRetrieveAnnotationQueuesResponse.updatedAt
@@ -437,6 +489,32 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun totalRuns(totalRuns: JsonField<Long>) = apply { this.totalRuns = totalRuns }
+
+        fun assignedReviewers(assignedReviewers: List<AssignedReviewer>) =
+            assignedReviewers(JsonField.of(assignedReviewers))
+
+        /**
+         * Sets [Builder.assignedReviewers] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.assignedReviewers] with a well-typed
+         * `List<AssignedReviewer>` value instead. This method is primarily for setting the field to
+         * an undocumented or not yet supported value.
+         */
+        fun assignedReviewers(assignedReviewers: JsonField<List<AssignedReviewer>>) = apply {
+            this.assignedReviewers = assignedReviewers.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [AssignedReviewer] to [assignedReviewers].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addAssignedReviewer(assignedReviewer: AssignedReviewer) = apply {
+            assignedReviewers =
+                (assignedReviewers ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("assignedReviewers", it).add(assignedReviewer)
+                }
+        }
 
         fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
 
@@ -579,6 +657,20 @@ private constructor(
             this.reservationMinutes = reservationMinutes
         }
 
+        fun reviewerAccessMode(reviewerAccessMode: String) =
+            reviewerAccessMode(JsonField.of(reviewerAccessMode))
+
+        /**
+         * Sets [Builder.reviewerAccessMode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.reviewerAccessMode] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun reviewerAccessMode(reviewerAccessMode: JsonField<String>) = apply {
+            this.reviewerAccessMode = reviewerAccessMode
+        }
+
         fun runRuleId(runRuleId: String?) = runRuleId(JsonField.ofNullable(runRuleId))
 
         /** Alias for calling [Builder.runRuleId] with `runRuleId.orElse(null)`. */
@@ -662,6 +754,7 @@ private constructor(
                 checkRequired("queueType", queueType),
                 checkRequired("tenantId", tenantId),
                 checkRequired("totalRuns", totalRuns),
+                (assignedReviewers ?: JsonMissing.of()).map { it.toImmutable() },
                 createdAt,
                 defaultDataset,
                 description,
@@ -669,6 +762,7 @@ private constructor(
                 metadata,
                 numReviewersPerItem,
                 reservationMinutes,
+                reviewerAccessMode,
                 runRuleId,
                 sourceRuleId,
                 updatedAt,
@@ -688,6 +782,7 @@ private constructor(
         queueType().validate()
         tenantId()
         totalRuns()
+        assignedReviewers().ifPresent { it.forEach { it.validate() } }
         createdAt()
         defaultDataset()
         description()
@@ -695,6 +790,7 @@ private constructor(
         metadata().ifPresent { it.validate() }
         numReviewersPerItem()
         reservationMinutes()
+        reviewerAccessMode()
         runRuleId()
         sourceRuleId()
         updatedAt()
@@ -721,6 +817,7 @@ private constructor(
             (queueType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (tenantId.asKnown().isPresent) 1 else 0) +
             (if (totalRuns.asKnown().isPresent) 1 else 0) +
+            (assignedReviewers.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (defaultDataset.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
@@ -728,6 +825,7 @@ private constructor(
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (numReviewersPerItem.asKnown().isPresent) 1 else 0) +
             (if (reservationMinutes.asKnown().isPresent) 1 else 0) +
+            (if (reviewerAccessMode.asKnown().isPresent) 1 else 0) +
             (if (runRuleId.asKnown().isPresent) 1 else 0) +
             (if (sourceRuleId.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
@@ -861,6 +959,235 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    /** Identity info for an assigned reviewer on an annotation queue. */
+    class AssignedReviewer
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val id: JsonField<String>,
+        private val email: JsonField<String>,
+        private val name: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        ) : this(id, email, name, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun id(): String = id.getRequired("id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun email(): Optional<String> = email.getOptional("email")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun name(): Optional<String> = name.getOptional("name")
+
+        /**
+         * Returns the raw JSON value of [id].
+         *
+         * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+        /**
+         * Returns the raw JSON value of [email].
+         *
+         * Unlike [email], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<String> = email
+
+        /**
+         * Returns the raw JSON value of [name].
+         *
+         * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [AssignedReviewer].
+             *
+             * The following fields are required:
+             * ```java
+             * .id()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [AssignedReviewer]. */
+        class Builder internal constructor() {
+
+            private var id: JsonField<String>? = null
+            private var email: JsonField<String> = JsonMissing.of()
+            private var name: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(assignedReviewer: AssignedReviewer) = apply {
+                id = assignedReviewer.id
+                email = assignedReviewer.email
+                name = assignedReviewer.name
+                additionalProperties = assignedReviewer.additionalProperties.toMutableMap()
+            }
+
+            fun id(id: String) = id(JsonField.of(id))
+
+            /**
+             * Sets [Builder.id] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.id] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun id(id: JsonField<String>) = apply { this.id = id }
+
+            fun email(email: String?) = email(JsonField.ofNullable(email))
+
+            /** Alias for calling [Builder.email] with `email.orElse(null)`. */
+            fun email(email: Optional<String>) = email(email.getOrNull())
+
+            /**
+             * Sets [Builder.email] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.email] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun email(email: JsonField<String>) = apply { this.email = email }
+
+            fun name(name: String?) = name(JsonField.ofNullable(name))
+
+            /** Alias for calling [Builder.name] with `name.orElse(null)`. */
+            fun name(name: Optional<String>) = name(name.getOrNull())
+
+            /**
+             * Sets [Builder.name] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.name] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun name(name: JsonField<String>) = apply { this.name = name }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [AssignedReviewer].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .id()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): AssignedReviewer =
+                AssignedReviewer(
+                    checkRequired("id", id),
+                    email,
+                    name,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        fun validate(): AssignedReviewer = apply {
+            if (validated) {
+                return@apply
+            }
+
+            id()
+            email()
+            name()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (id.asKnown().isPresent) 1 else 0) +
+                (if (email.asKnown().isPresent) 1 else 0) +
+                (if (name.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AssignedReviewer &&
+                id == other.id &&
+                email == other.email &&
+                name == other.name &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(id, email, name, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "AssignedReviewer{id=$id, email=$email, name=$name, additionalProperties=$additionalProperties}"
+    }
+
     class Metadata
     @JsonCreator
     private constructor(
@@ -971,6 +1298,7 @@ private constructor(
             queueType == other.queueType &&
             tenantId == other.tenantId &&
             totalRuns == other.totalRuns &&
+            assignedReviewers == other.assignedReviewers &&
             createdAt == other.createdAt &&
             defaultDataset == other.defaultDataset &&
             description == other.description &&
@@ -978,6 +1306,7 @@ private constructor(
             metadata == other.metadata &&
             numReviewersPerItem == other.numReviewersPerItem &&
             reservationMinutes == other.reservationMinutes &&
+            reviewerAccessMode == other.reviewerAccessMode &&
             runRuleId == other.runRuleId &&
             sourceRuleId == other.sourceRuleId &&
             updatedAt == other.updatedAt &&
@@ -991,6 +1320,7 @@ private constructor(
             queueType,
             tenantId,
             totalRuns,
+            assignedReviewers,
             createdAt,
             defaultDataset,
             description,
@@ -998,6 +1328,7 @@ private constructor(
             metadata,
             numReviewersPerItem,
             reservationMinutes,
+            reviewerAccessMode,
             runRuleId,
             sourceRuleId,
             updatedAt,
@@ -1008,5 +1339,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "AnnotationQueueRetrieveAnnotationQueuesResponse{id=$id, name=$name, queueType=$queueType, tenantId=$tenantId, totalRuns=$totalRuns, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, runRuleId=$runRuleId, sourceRuleId=$sourceRuleId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "AnnotationQueueRetrieveAnnotationQueuesResponse{id=$id, name=$name, queueType=$queueType, tenantId=$tenantId, totalRuns=$totalRuns, assignedReviewers=$assignedReviewers, createdAt=$createdAt, defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, reviewerAccessMode=$reviewerAccessMode, runRuleId=$runRuleId, sourceRuleId=$sourceRuleId, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

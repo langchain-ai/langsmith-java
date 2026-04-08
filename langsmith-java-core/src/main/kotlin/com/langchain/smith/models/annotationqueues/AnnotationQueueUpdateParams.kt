@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.BaseDeserializer
 import com.langchain.smith.core.BaseSerializer
+import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
@@ -90,6 +91,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun reviewerAccessMode(): Optional<ReviewerAccessMode> = body.reviewerAccessMode()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun rubricInstructions(): Optional<String> = body.rubricInstructions()
 
     /**
@@ -149,6 +156,14 @@ private constructor(
      * type.
      */
     fun _reservationMinutes(): JsonField<Long> = body._reservationMinutes()
+
+    /**
+     * Returns the raw JSON value of [reviewerAccessMode].
+     *
+     * Unlike [reviewerAccessMode], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _reviewerAccessMode(): JsonField<ReviewerAccessMode> = body._reviewerAccessMode()
 
     /**
      * Returns the raw JSON value of [rubricInstructions].
@@ -359,6 +374,27 @@ private constructor(
             body.reservationMinutes(reservationMinutes)
         }
 
+        fun reviewerAccessMode(reviewerAccessMode: ReviewerAccessMode?) = apply {
+            body.reviewerAccessMode(reviewerAccessMode)
+        }
+
+        /**
+         * Alias for calling [Builder.reviewerAccessMode] with `reviewerAccessMode.orElse(null)`.
+         */
+        fun reviewerAccessMode(reviewerAccessMode: Optional<ReviewerAccessMode>) =
+            reviewerAccessMode(reviewerAccessMode.getOrNull())
+
+        /**
+         * Sets [Builder.reviewerAccessMode] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.reviewerAccessMode] with a well-typed
+         * [ReviewerAccessMode] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun reviewerAccessMode(reviewerAccessMode: JsonField<ReviewerAccessMode>) = apply {
+            body.reviewerAccessMode(reviewerAccessMode)
+        }
+
         fun rubricInstructions(rubricInstructions: String?) = apply {
             body.rubricInstructions(rubricInstructions)
         }
@@ -562,6 +598,7 @@ private constructor(
         private val name: JsonField<String>,
         private val numReviewersPerItem: JsonField<NumReviewersPerItem>,
         private val reservationMinutes: JsonField<Long>,
+        private val reviewerAccessMode: JsonField<ReviewerAccessMode>,
         private val rubricInstructions: JsonField<String>,
         private val rubricItems: JsonField<List<AnnotationQueueRubricItemSchema>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -588,6 +625,9 @@ private constructor(
             @JsonProperty("reservation_minutes")
             @ExcludeMissing
             reservationMinutes: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("reviewer_access_mode")
+            @ExcludeMissing
+            reviewerAccessMode: JsonField<ReviewerAccessMode> = JsonMissing.of(),
             @JsonProperty("rubric_instructions")
             @ExcludeMissing
             rubricInstructions: JsonField<String> = JsonMissing.of(),
@@ -602,6 +642,7 @@ private constructor(
             name,
             numReviewersPerItem,
             reservationMinutes,
+            reviewerAccessMode,
             rubricInstructions,
             rubricItems,
             mutableMapOf(),
@@ -651,6 +692,13 @@ private constructor(
          */
         fun reservationMinutes(): Optional<Long> =
             reservationMinutes.getOptional("reservation_minutes")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun reviewerAccessMode(): Optional<ReviewerAccessMode> =
+            reviewerAccessMode.getOptional("reviewer_access_mode")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -730,6 +778,16 @@ private constructor(
         fun _reservationMinutes(): JsonField<Long> = reservationMinutes
 
         /**
+         * Returns the raw JSON value of [reviewerAccessMode].
+         *
+         * Unlike [reviewerAccessMode], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("reviewer_access_mode")
+        @ExcludeMissing
+        fun _reviewerAccessMode(): JsonField<ReviewerAccessMode> = reviewerAccessMode
+
+        /**
          * Returns the raw JSON value of [rubricInstructions].
          *
          * Unlike [rubricInstructions], this method doesn't throw if the JSON field has an
@@ -776,6 +834,7 @@ private constructor(
             private var name: JsonField<String> = JsonMissing.of()
             private var numReviewersPerItem: JsonField<NumReviewersPerItem> = JsonMissing.of()
             private var reservationMinutes: JsonField<Long> = JsonMissing.of()
+            private var reviewerAccessMode: JsonField<ReviewerAccessMode> = JsonMissing.of()
             private var rubricInstructions: JsonField<String> = JsonMissing.of()
             private var rubricItems: JsonField<MutableList<AnnotationQueueRubricItemSchema>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -789,6 +848,7 @@ private constructor(
                 name = body.name
                 numReviewersPerItem = body.numReviewersPerItem
                 reservationMinutes = body.reservationMinutes
+                reviewerAccessMode = body.reviewerAccessMode
                 rubricInstructions = body.rubricInstructions
                 rubricItems = body.rubricItems.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
@@ -941,6 +1001,27 @@ private constructor(
                 this.reservationMinutes = reservationMinutes
             }
 
+            fun reviewerAccessMode(reviewerAccessMode: ReviewerAccessMode?) =
+                reviewerAccessMode(JsonField.ofNullable(reviewerAccessMode))
+
+            /**
+             * Alias for calling [Builder.reviewerAccessMode] with
+             * `reviewerAccessMode.orElse(null)`.
+             */
+            fun reviewerAccessMode(reviewerAccessMode: Optional<ReviewerAccessMode>) =
+                reviewerAccessMode(reviewerAccessMode.getOrNull())
+
+            /**
+             * Sets [Builder.reviewerAccessMode] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.reviewerAccessMode] with a well-typed
+             * [ReviewerAccessMode] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
+             */
+            fun reviewerAccessMode(reviewerAccessMode: JsonField<ReviewerAccessMode>) = apply {
+                this.reviewerAccessMode = reviewerAccessMode
+            }
+
             fun rubricInstructions(rubricInstructions: String?) =
                 rubricInstructions(JsonField.ofNullable(rubricInstructions))
 
@@ -1025,6 +1106,7 @@ private constructor(
                     name,
                     numReviewersPerItem,
                     reservationMinutes,
+                    reviewerAccessMode,
                     rubricInstructions,
                     (rubricItems ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
@@ -1045,6 +1127,7 @@ private constructor(
             name()
             numReviewersPerItem().ifPresent { it.validate() }
             reservationMinutes()
+            reviewerAccessMode().ifPresent { it.validate() }
             rubricInstructions()
             rubricItems().ifPresent { it.forEach { it.validate() } }
             validated = true
@@ -1073,6 +1156,7 @@ private constructor(
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (numReviewersPerItem.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (reservationMinutes.asKnown().isPresent) 1 else 0) +
+                (reviewerAccessMode.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (rubricInstructions.asKnown().isPresent) 1 else 0) +
                 (rubricItems.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
@@ -1089,6 +1173,7 @@ private constructor(
                 name == other.name &&
                 numReviewersPerItem == other.numReviewersPerItem &&
                 reservationMinutes == other.reservationMinutes &&
+                reviewerAccessMode == other.reviewerAccessMode &&
                 rubricInstructions == other.rubricInstructions &&
                 rubricItems == other.rubricItems &&
                 additionalProperties == other.additionalProperties
@@ -1103,6 +1188,7 @@ private constructor(
                 name,
                 numReviewersPerItem,
                 reservationMinutes,
+                reviewerAccessMode,
                 rubricInstructions,
                 rubricItems,
                 additionalProperties,
@@ -1112,7 +1198,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, name=$name, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, additionalProperties=$additionalProperties}"
+            "Body{defaultDataset=$defaultDataset, description=$description, enableReservations=$enableReservations, metadata=$metadata, name=$name, numReviewersPerItem=$numReviewersPerItem, reservationMinutes=$reservationMinutes, reviewerAccessMode=$reviewerAccessMode, rubricInstructions=$rubricInstructions, rubricItems=$rubricItems, additionalProperties=$additionalProperties}"
     }
 
     @JsonDeserialize(using = Metadata.Deserializer::class)
@@ -1568,6 +1654,138 @@ private constructor(
                 }
             }
         }
+    }
+
+    class ReviewerAccessMode
+    @JsonCreator
+    private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val ANY = of("any")
+
+            @JvmField val ASSIGNED = of("assigned")
+
+            @JvmStatic fun of(value: String) = ReviewerAccessMode(JsonField.of(value))
+        }
+
+        /** An enum containing [ReviewerAccessMode]'s known values. */
+        enum class Known {
+            ANY,
+            ASSIGNED,
+        }
+
+        /**
+         * An enum containing [ReviewerAccessMode]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [ReviewerAccessMode] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            ANY,
+            ASSIGNED,
+            /**
+             * An enum member indicating that [ReviewerAccessMode] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                ANY -> Value.ANY
+                ASSIGNED -> Value.ASSIGNED
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                ANY -> Known.ANY
+                ASSIGNED -> Known.ASSIGNED
+                else -> throw LangChainInvalidDataException("Unknown ReviewerAccessMode: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        fun validate(): ReviewerAccessMode = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ReviewerAccessMode && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
     }
 
     override fun equals(other: Any?): Boolean {

@@ -11,6 +11,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
     @Test
     fun create() {
         AnnotationQueueRetrieveAnnotationQueuesParams.builder()
+            .assignedToMe(true)
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .limit(1L)
@@ -26,6 +27,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
     fun queryParams() {
         val params =
             AnnotationQueueRetrieveAnnotationQueuesParams.builder()
+                .assignedToMe(true)
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .limit(1L)
@@ -41,6 +43,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
+                    .put("assigned_to_me", "true")
                     .put("dataset_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("ids", listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","))
                     .put("limit", "1")
