@@ -175,7 +175,6 @@ class LangChain4jParallelToolTest {
         assertThat(capturedToolRuns.get("getTime").getTraceId()).isEqualTo(agentRun.getTraceId());
     }
 
-    /** Without config.parent, tool runs become detached root traces. */
     @Test
     void parallelToolCalls_withoutParent_contextIsLost() throws Exception {
         ToolExecutionRequest req1 = ToolExecutionRequest.builder()
@@ -252,7 +251,6 @@ class LangChain4jParallelToolTest {
         assertThat(captured.get("t1").getTraceId()).isNotEqualTo(agentRun.getTraceId());
     }
 
-    /** Errors are captured on the child RunTree even across thread boundaries. */
     @Test
     void parallelToolCalls_errorIsCaptured() throws Exception {
         ToolExecutionRequest failReq = ToolExecutionRequest.builder()

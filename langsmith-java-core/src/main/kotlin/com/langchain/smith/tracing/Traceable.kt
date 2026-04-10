@@ -209,13 +209,14 @@ class ParentConfig
 private constructor(internal val runTree: RunTree?, internal val isExplicit: Boolean) {
     companion object {
         /** Resolve the parent from the current thread's context (default). */
-        @JvmField val AUTO = ParentConfig(null, false)
+        @JvmField val AUTO = ParentConfig(runTree = null, isExplicit = false)
 
         /** Force a new root trace — no parent, even if one exists on the thread. */
-        @JvmStatic fun none(): ParentConfig = ParentConfig(null, true)
+        @JvmStatic fun none(): ParentConfig = ParentConfig(runTree = null, isExplicit = true)
 
         /** Use the given [RunTree] as the explicit parent. */
-        @JvmStatic fun of(parent: RunTree): ParentConfig = ParentConfig(parent, true)
+        @JvmStatic
+        fun of(parent: RunTree): ParentConfig = ParentConfig(runTree = parent, isExplicit = true)
     }
 }
 
