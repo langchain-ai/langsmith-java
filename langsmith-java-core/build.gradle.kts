@@ -96,4 +96,8 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.14.2")
     testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+
+    // LangChain4j for testing parallel tool execution context propagation
+    testImplementation("dev.langchain4j:langchain4j:1.12.2")
+    testImplementation("dev.langchain4j:langchain4j-core:1.12.2")
 }
