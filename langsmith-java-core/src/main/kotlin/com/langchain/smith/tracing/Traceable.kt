@@ -194,6 +194,32 @@ internal val DEFAULT_PROJECT_NAME: String? by lazy {
 internal val DEFAULT_EXECUTOR: ExecutorService by lazy { Executors.newCachedThreadPool() }
 
 /**
+ * Controls how the parent [RunTree] is resolved for a traced run.
+ * - [AUTO] (default) — resolve the parent from the current thread's context.
+ * - [of]`(parent)` — use the given [RunTree] as the parent, regardless of thread context.
+ * - [none]`()` — force a new root trace, ignoring any active thread context.
+ *
+ * ```java
+ * TraceConfig.builder().parent(parent).build();   // child of parent
+ * TraceConfig.builder().parent(null).build();      // new root trace
+ * // .parent() not called                         // auto-resolve from thread
+ * ```
+ */
+class ParentConfig
+private constructor(internal val runTree: RunTree?, internal val isExplicit: Boolean) {
+    companion object {
+        /** Resolve the parent from the current thread's context (default). */
+        @JvmField val AUTO = ParentConfig(null, false)
+
+        /** Force a new root trace — no parent, even if one exists on the thread. */
+        @JvmStatic fun none(): ParentConfig = ParentConfig(null, true)
+
+        /** Use the given [RunTree] as the explicit parent. */
+        @JvmStatic fun of(parent: RunTree): ParentConfig = ParentConfig(parent, true)
+    }
+}
+
+/**
  * Configuration for a traced run.
  *
  * At the root of a trace, [client] must be provided (or set via [setDefaultClient]). Child runs
@@ -255,31 +281,37 @@ class TraceConfig(
      */
     val processTracedIO: TraceProcessIO<*, *>? = null,
     /**
-     * An explicit parent [RunTree] to attach this run to.
+     * Explicit parent [RunTree] override.
      *
-     * Normally the parent is resolved automatically from the current thread's context (via
-     * [getCurrentRunTree]). Set this when the traced function will execute on a **different
-     * thread** that does not inherit the context — for example, when a framework like LangChain4j
-     * dispatches tool calls to a thread pool you don't control.
+     * By default the parent is resolved from the current thread's context. Set this to control
+     * parent linkage explicitly:
+     * - **[ParentConfig.of]`(parent)`** — attach this run as a child of `parent`, even on a thread
+     *   with no context (e.g. a framework-managed thread pool).
+     * - **[ParentConfig.none]`()`** — force this run to be a new root trace, even when a parent
+     *   exists on the current thread.
      *
-     * Capture the parent on the originating thread and pass it through the config:
      * ```java
+     * // Capture the parent on the originating thread
      * RunTree parent = Tracing.getCurrentRunTree();
      *
-     * TraceConfig config = TraceConfig.builder()
+     * // Force a child relationship on a worker thread
+     * TraceConfig child = TraceConfig.builder()
      *     .name("my-tool")
-     *     .runType(RunType.TOOL)
-     *     .parent(parent)          // ← will be used even on a foreign thread
+     *     .parent(parent)    // attach as child
+     *     .build();
+     *
+     * // Force a new root trace
+     * TraceConfig root = TraceConfig.builder()
+     *     .name("independent-trace")
+     *     .parent(null)      // new root, ignores thread-local
      *     .build();
      * ```
      *
-     * When both [parent] and the thread-local context are present, the thread-local context takes
-     * precedence (it is the more specific/nested scope).
-     *
+     * @see ParentConfig
      * @see getCurrentRunTree
      * @see withParent
      */
-    val parent: RunTree? = null,
+    val parent: ParentConfig = ParentConfig.AUTO,
 ) {
     companion object {
         /** Creates a new [Builder] for constructing a [TraceConfig]. */
@@ -310,7 +342,7 @@ class TraceConfig(
         private var executor: ExecutorService? = null
         private var tracingEnabled: Boolean? = null
         private var processTracedIO: TraceProcessIO<*, *>? = null
-        private var parent: RunTree? = null
+        private var parent: ParentConfig = ParentConfig.AUTO
 
         @JvmSynthetic
         internal fun from(config: TraceConfig) = apply {
@@ -361,11 +393,17 @@ class TraceConfig(
         }
 
         /**
-         * An explicit parent [RunTree] for cross-thread context propagation.
+         * Sets the parent [RunTree] for this run.
+         *
+         * Pass a [RunTree] to attach this run as a child — useful for cross-thread context
+         * propagation. Pass `null` to force a new root trace, ignoring any parent that may be
+         * active on the current thread.
          *
          * @see TraceConfig.parent
          */
-        fun parent(parent: RunTree) = apply { this.parent = parent }
+        fun parent(parent: RunTree?) = apply {
+            this.parent = if (parent != null) ParentConfig.of(parent) else ParentConfig.none()
+        }
 
         /** Builds the [TraceConfig]. */
         fun build() =
@@ -668,8 +706,11 @@ private fun toStringKeyedMap(value: Any?): Map<String, Any?>? {
 }
 
 private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, block: () -> T): T {
-    // Thread-local context takes precedence; fall back to explicit parent from config.
-    val parentRun = CURRENT_RUN.get() ?: config.parent
+    // Resolve parent: explicit config.parent always wins over thread-local.
+    //   AUTO (default)          → resolve from thread-local
+    //   ParentConfig.of(run)    → use that run as parent
+    //   ParentConfig.none()     → force new root trace (no parent)
+    val parentRun = if (config.parent.isExplicit) config.parent.runTree else CURRENT_RUN.get()
 
     // Merge config: child config wins, then parent, then defaults.
     val tracingEnabled = config.tracingEnabled ?: parentRun?.tracingEnabled ?: isTracingEnabled()

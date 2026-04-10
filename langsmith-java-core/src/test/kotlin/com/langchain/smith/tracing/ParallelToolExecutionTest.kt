@@ -9,12 +9,8 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 
 /**
- * Tests that tracing context can be propagated across thread boundaries via [TraceConfig.parent].
- *
- * Context is stored in a ThreadLocal/ScopedValue and does NOT automatically propagate to child
- * threads. [TraceConfig.parent] lets the user capture the parent [RunTree] on the originating
- * thread and pass it through the config so the child run is linked correctly even when
- * [getCurrentRunTree] returns null on the worker thread.
+ * Tests for [TraceConfig.parent] — explicit parent override for cross-thread context propagation
+ * and forced root traces.
  */
 internal class ParallelToolExecutionTest {
 
@@ -28,6 +24,30 @@ internal class ParallelToolExecutionTest {
             .apply { if (parent != null) parent(parent) }
             .build()
 
+    // -- builder three-state semantics ---------------------------------------
+
+    @Test
+    fun `builder parent not called leaves AUTO`() {
+        val cfg = TraceConfig.builder().name("test").client(client).build()
+        assertThat(cfg.parent).isSameAs(ParentConfig.AUTO)
+        assertThat(cfg.parent.isExplicit).isFalse()
+    }
+
+    @Test
+    fun `builder parent with RunTree is explicit with that run`() {
+        val run = RunTree(name = "p", runType = RunType.CHAIN, client = client)
+        val cfg = TraceConfig.builder().name("test").client(client).parent(run).build()
+        assertThat(cfg.parent.isExplicit).isTrue()
+        assertThat(cfg.parent.runTree).isSameAs(run)
+    }
+
+    @Test
+    fun `builder parent with null is explicit with no run`() {
+        val cfg = TraceConfig.builder().name("test").client(client).parent(null).build()
+        assertThat(cfg.parent.isExplicit).isTrue()
+        assertThat(cfg.parent.runTree).isNull()
+    }
+
     // -- demonstrates the problem -------------------------------------------
 
     @Test
@@ -39,7 +59,6 @@ internal class ParallelToolExecutionTest {
 
         CURRENT_RUN.runWith(parentRun) {
             Thread {
-                    // No context on this thread — creates a detached root
                     val traced =
                         traceable(
                             { _: String ->
@@ -55,16 +74,15 @@ internal class ParallelToolExecutionTest {
         }
         latch.await(5, TimeUnit.SECONDS)
 
-        // The child run exists but is a root — not linked to the parent
         assertThat(childRun).isNotNull
         assertThat(childRun!!.parentRunId).isNull()
         assertThat(childRun!!.traceId).isNotEqualTo(parentRun.traceId)
     }
 
-    // -- TraceConfig.parent fixes it ----------------------------------------
+    // -- config.parent fixes it ---------------------------------------------
 
     @Test
-    fun `TraceConfig parent links child run across threads`() {
+    fun `config parent links child run across threads`() {
         val parentRun =
             RunTree(name = "parent", runType = RunType.CHAIN, client = client, projectName = "proj")
         val childRuns = ConcurrentHashMap<String, RunTree>()
@@ -106,27 +124,65 @@ internal class ParallelToolExecutionTest {
     }
 
     @Test
-    fun `thread-local context takes precedence over config parent`() {
-        val outerParent =
-            RunTree(name = "outer", runType = RunType.CHAIN, client = client, projectName = "proj")
-        val innerParent =
-            RunTree(name = "inner", runType = RunType.CHAIN, client = client, projectName = "proj")
+    fun `explicit config parent overrides thread-local context`() {
+        val threadLocalParent =
+            RunTree(name = "tl", runType = RunType.CHAIN, client = client, projectName = "proj")
+        val explicitParent =
+            RunTree(
+                name = "explicit",
+                runType = RunType.CHAIN,
+                client = client,
+                projectName = "proj",
+            )
         var childRun: RunTree? = null
 
-        // innerParent is set on the thread; outerParent is in the config
-        CURRENT_RUN.runWith(innerParent) {
+        CURRENT_RUN.runWith(threadLocalParent) {
             traceable(
                 { _: String ->
                     childRun = getCurrentRunTree()
                     "ok"
                 },
-                config("tool", outerParent),
+                config("tool", explicitParent),
             )("in")
         }
 
-        // Thread-local (innerParent) wins
-        assertThat(childRun!!.parentRunId).isEqualTo(innerParent.id)
+        // Explicit parent wins over thread-local
+        assertThat(childRun!!.parentRunId).isEqualTo(explicitParent.id)
     }
+
+    // -- parent(null) forces new root ----------------------------------------
+
+    @Test
+    fun `parent null forces a root trace even with active context`() {
+        val parentRun =
+            RunTree(name = "parent", runType = RunType.CHAIN, client = client, projectName = "proj")
+        var childRun: RunTree? = null
+
+        val rootConfig =
+            TraceConfig.builder()
+                .name("independent")
+                .client(client)
+                .tracingEnabled(true)
+                .parent(null)
+                .build()
+
+        CURRENT_RUN.runWith(parentRun) {
+            traceable(
+                { _: String ->
+                    childRun = getCurrentRunTree()
+                    "ok"
+                },
+                rootConfig,
+            )("in")
+        }
+
+        // Should be a root — not linked to parentRun
+        assertThat(childRun).isNotNull
+        assertThat(childRun!!.parentRunId).isNull()
+        assertThat(childRun!!.traceId).isNotEqualTo(parentRun.traceId)
+    }
+
+    // -- error capture across threads ---------------------------------------
 
     @Test
     fun `error is captured on child run across thread boundary`() {
