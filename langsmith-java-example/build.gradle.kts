@@ -1,7 +1,7 @@
 plugins {
     application
     kotlin("jvm")
-    id("org.jetbrains.kotlin.plugin.spring") version "2.0.21"
+    id("org.jetbrains.kotlin.plugin.spring") version "2.1.20"
     id("org.springframework.boot") version "2.7.18" apply false
 }
 

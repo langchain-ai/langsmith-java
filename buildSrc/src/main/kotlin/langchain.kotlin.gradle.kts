@@ -20,12 +20,11 @@ kotlin {
             "-Xjvm-default=all",
             "-Xjdk-release=1.8",
             // Suppress deprecation warnings because we may still reference and test deprecated members.
-            // TODO: Replace with `-Xsuppress-warning=DEPRECATION` once we use Kotlin compiler 2.1.0+.
             "-nowarn",
         )
         jvmTarget.set(JvmTarget.JVM_1_8)
-        languageVersion.set(KotlinVersion.KOTLIN_2_0)
-        apiVersion.set(KotlinVersion.KOTLIN_2_0)
+        languageVersion.set(KotlinVersion.KOTLIN_2_1)
+        apiVersion.set(KotlinVersion.KOTLIN_2_1)
     }
 }
 
