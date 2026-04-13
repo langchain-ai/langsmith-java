@@ -212,7 +212,10 @@ private constructor(internal val runTree: RunTree?, internal val isExplicit: Boo
         @JvmField val AUTO = ParentConfig(runTree = null, isExplicit = false)
 
         /** Force a new root trace — no parent, even if one exists on the thread. */
-        @JvmStatic fun none(): ParentConfig = ParentConfig(runTree = null, isExplicit = true)
+        @JvmField val NONE = ParentConfig(runTree = null, isExplicit = true)
+
+        /** Force a new root trace — no parent, even if one exists on the thread. */
+        @JvmStatic fun none(): ParentConfig = NONE
 
         /** Use the given [RunTree] as the explicit parent. */
         @JvmStatic
@@ -403,7 +406,7 @@ class TraceConfig(
          * @see TraceConfig.parent
          */
         fun parent(parent: RunTree?) = apply {
-            this.parent = if (parent != null) ParentConfig.of(parent) else ParentConfig.none()
+            this.parent = if (parent != null) ParentConfig.of(parent) else ParentConfig.NONE
         }
 
         /** Builds the [TraceConfig]. */
