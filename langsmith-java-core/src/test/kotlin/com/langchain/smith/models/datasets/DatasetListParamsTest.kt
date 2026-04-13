@@ -12,7 +12,7 @@ internal class DatasetListParamsTest {
     fun create() {
         DatasetListParams.builder()
             .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .datatypeOfDataTypes(listOf(DataType.KV))
+            .datatype(DataType.KV)
             .addExclude(DatasetListParams.Exclude.EXAMPLE_COUNT)
             .excludeCorrectionsDatasets(true)
             .limit(1L)
@@ -31,7 +31,7 @@ internal class DatasetListParamsTest {
         val params =
             DatasetListParams.builder()
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .datatypeOfDataTypes(listOf(DataType.KV))
+                .datatype(DataType.KV)
                 .addExclude(DatasetListParams.Exclude.EXAMPLE_COUNT)
                 .excludeCorrectionsDatasets(true)
                 .limit(1L)
@@ -50,7 +50,7 @@ internal class DatasetListParamsTest {
             .isEqualTo(
                 QueryParams.builder()
                     .put("id", listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","))
-                    .put("data_type", listOf("kv").joinToString(","))
+                    .put("data_type", "kv")
                     .put("exclude", listOf("example_count").joinToString(","))
                     .put("exclude_corrections_datasets", "true")
                     .put("limit", "1")

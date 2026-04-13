@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -19,6 +20,13 @@ internal class AnnotationQueueSchemaTest {
                 .name("name")
                 .queueType(AnnotationQueueSchema.QueueType.SINGLE)
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addAssignedReviewer(
+                    AnnotationQueueSchema.AssignedReviewer.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .email("email")
+                        .name("name")
+                        .build()
+                )
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
@@ -30,6 +38,7 @@ internal class AnnotationQueueSchemaTest {
                 )
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
+                .reviewerAccessMode("reviewer_access_mode")
                 .runRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sourceRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -41,6 +50,14 @@ internal class AnnotationQueueSchemaTest {
             .isEqualTo(AnnotationQueueSchema.QueueType.SINGLE)
         assertThat(annotationQueueSchema.tenantId())
             .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(annotationQueueSchema.assignedReviewers().getOrNull())
+            .containsExactly(
+                AnnotationQueueSchema.AssignedReviewer.builder()
+                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .email("email")
+                    .name("name")
+                    .build()
+            )
         assertThat(annotationQueueSchema.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(annotationQueueSchema.defaultDataset())
@@ -55,6 +72,7 @@ internal class AnnotationQueueSchemaTest {
             )
         assertThat(annotationQueueSchema.numReviewersPerItem()).contains(0L)
         assertThat(annotationQueueSchema.reservationMinutes()).contains(0L)
+        assertThat(annotationQueueSchema.reviewerAccessMode()).contains("reviewer_access_mode")
         assertThat(annotationQueueSchema.runRuleId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(annotationQueueSchema.sourceRuleId())
@@ -72,6 +90,13 @@ internal class AnnotationQueueSchemaTest {
                 .name("name")
                 .queueType(AnnotationQueueSchema.QueueType.SINGLE)
                 .tenantId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addAssignedReviewer(
+                    AnnotationQueueSchema.AssignedReviewer.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .email("email")
+                        .name("name")
+                        .build()
+                )
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .defaultDataset("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
@@ -83,6 +108,7 @@ internal class AnnotationQueueSchemaTest {
                 )
                 .numReviewersPerItem(0L)
                 .reservationMinutes(0L)
+                .reviewerAccessMode("reviewer_access_mode")
                 .runRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .sourceRuleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))

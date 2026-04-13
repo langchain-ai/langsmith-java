@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.0-alpha.26 (2026-04-13)
+
+Full Changelog: [v0.1.0-alpha.25...v0.1.0-alpha.26](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.25...v0.1.0-alpha.26)
+
+### Features
+
+* Allow manually specifying parent run tree in traceable config ([#126](https://github.com/langchain-ai/langsmith-java/issues/126)) ([a1409fb](https://github.com/langchain-ai/langsmith-java/commit/a1409fb0d7c0319d4129daea5300578e4371a858))
+* **api:** api update ([8198ce7](https://github.com/langchain-ai/langsmith-java/commit/8198ce7001d0656bcb4807331d385b0eb8b81a75))
+* **api:** api update ([286a62f](https://github.com/langchain-ai/langsmith-java/commit/286a62fba8b5bac8105c71dc52b4a36a37012eae))
+
+
+### Chores
+
+* **deps:** bump gradle-wrapper from 8.12 to 9.4.1 ([#124](https://github.com/langchain-ai/langsmith-java/issues/124)) ([78b7db0](https://github.com/langchain-ai/langsmith-java/commit/78b7db0e1f08c6de8c12af504dd098cf7c958faa))
+* **deps:** bump gradle/actions ([#121](https://github.com/langchain-ai/langsmith-java/issues/121)) ([e3ca5d7](https://github.com/langchain-ai/langsmith-java/commit/e3ca5d7b712f92ce72586bfd7be208c73cec332f))
+* **deps:** bump gradle/gradle-build-action ([#122](https://github.com/langchain-ai/langsmith-java/issues/122)) ([d91305f](https://github.com/langchain-ai/langsmith-java/commit/d91305f9157b8d73dfaf8a925c7b2b0e5743f4b2))
+
+
+### Documentation
+
+* improve examples ([1556365](https://github.com/langchain-ai/langsmith-java/commit/1556365dd6c04f3290b9a836b3c28c09056be5ad))
+
 ## 0.1.0-alpha.25 (2026-03-31)
 
 Full Changelog: [v0.1.0-alpha.24...v0.1.0-alpha.25](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.24...v0.1.0-alpha.25)
