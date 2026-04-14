@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-alpha.28 (2026-04-14)
+
+Full Changelog: [v0.1.0-alpha.27...v0.1.0-alpha.28](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.27...v0.1.0-alpha.28)
+
+### Features
+
+* **api:** api update ([35484cf](https://github.com/langchain-ai/langsmith-java/commit/35484cf9b1f1ed6642ef857d3fb4aefdb37ae369))
+
 ## 0.1.0-alpha.27 (2026-04-14)
 
 Full Changelog: [v0.1.0-alpha.26...v0.1.0-alpha.27](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.26...v0.1.0-alpha.27)
