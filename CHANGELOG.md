@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-alpha.27 (2026-04-14)
+
+Full Changelog: [v0.1.0-alpha.26...v0.1.0-alpha.27](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.26...v0.1.0-alpha.27)
+
 ## 0.1.0-alpha.26 (2026-04-13)
 
 Full Changelog: [v0.1.0-alpha.25...v0.1.0-alpha.26](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.25...v0.1.0-alpha.26)
