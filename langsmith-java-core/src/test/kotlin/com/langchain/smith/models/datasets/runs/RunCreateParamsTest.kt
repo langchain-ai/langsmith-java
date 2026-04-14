@@ -33,7 +33,6 @@ internal class RunCreateParamsTest {
                     .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
                     .build()
             )
-            .stream(true)
             .build()
     }
 
@@ -74,7 +73,6 @@ internal class RunCreateParamsTest {
                         .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
                         .build()
                 )
-                .stream(true)
                 .build()
 
         val queryParams = params._queryParams()
@@ -119,7 +117,6 @@ internal class RunCreateParamsTest {
                         .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
                         .build()
                 )
-                .stream(true)
                 .build()
 
         val body = params._body()
@@ -145,7 +142,6 @@ internal class RunCreateParamsTest {
                     .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
                     .build()
             )
-        assertThat(body.stream()).contains(true)
     }
 
     @Test

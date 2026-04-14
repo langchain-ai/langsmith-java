@@ -48,7 +48,6 @@ internal class RunServiceAsyncTest {
                             .sortOrder(SortParamsForRunsComparisonView.SortOrder.ASC)
                             .build()
                     )
-                    .stream(true)
                     .build()
             )
 
