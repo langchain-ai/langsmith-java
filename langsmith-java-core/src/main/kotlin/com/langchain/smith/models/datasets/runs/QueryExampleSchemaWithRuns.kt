@@ -31,7 +31,6 @@ private constructor(
     private val offset: JsonField<Long>,
     private val preview: JsonField<Boolean>,
     private val sortParams: JsonField<SortParamsForRunsComparisonView>,
-    private val stream: JsonField<Boolean>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -56,7 +55,6 @@ private constructor(
         @JsonProperty("sort_params")
         @ExcludeMissing
         sortParams: JsonField<SortParamsForRunsComparisonView> = JsonMissing.of(),
-        @JsonProperty("stream") @ExcludeMissing stream: JsonField<Boolean> = JsonMissing.of(),
     ) : this(
         sessionIds,
         comparativeExperimentId,
@@ -67,7 +65,6 @@ private constructor(
         offset,
         preview,
         sortParams,
-        stream,
         mutableMapOf(),
     )
 
@@ -127,12 +124,6 @@ private constructor(
      */
     fun sortParams(): Optional<SortParamsForRunsComparisonView> =
         sortParams.getOptional("sort_params")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun stream(): Optional<Boolean> = stream.getOptional("stream")
 
     /**
      * Returns the raw JSON value of [sessionIds].
@@ -209,13 +200,6 @@ private constructor(
     @ExcludeMissing
     fun _sortParams(): JsonField<SortParamsForRunsComparisonView> = sortParams
 
-    /**
-     * Returns the raw JSON value of [stream].
-     *
-     * Unlike [stream], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("stream") @ExcludeMissing fun _stream(): JsonField<Boolean> = stream
-
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -253,7 +237,6 @@ private constructor(
         private var offset: JsonField<Long> = JsonMissing.of()
         private var preview: JsonField<Boolean> = JsonMissing.of()
         private var sortParams: JsonField<SortParamsForRunsComparisonView> = JsonMissing.of()
-        private var stream: JsonField<Boolean> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -267,7 +250,6 @@ private constructor(
             offset = queryExampleSchemaWithRuns.offset
             preview = queryExampleSchemaWithRuns.preview
             sortParams = queryExampleSchemaWithRuns.sortParams
-            stream = queryExampleSchemaWithRuns.stream
             additionalProperties = queryExampleSchemaWithRuns.additionalProperties.toMutableMap()
         }
 
@@ -420,16 +402,6 @@ private constructor(
             this.sortParams = sortParams
         }
 
-        fun stream(stream: Boolean) = stream(JsonField.of(stream))
-
-        /**
-         * Sets [Builder.stream] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.stream] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun stream(stream: JsonField<Boolean>) = apply { this.stream = stream }
-
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -472,7 +444,6 @@ private constructor(
                 offset,
                 preview,
                 sortParams,
-                stream,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -493,7 +464,6 @@ private constructor(
         offset()
         preview()
         sortParams().ifPresent { it.validate() }
-        stream()
         validated = true
     }
 
@@ -520,8 +490,7 @@ private constructor(
             (if (limit.asKnown().isPresent) 1 else 0) +
             (if (offset.asKnown().isPresent) 1 else 0) +
             (if (preview.asKnown().isPresent) 1 else 0) +
-            (sortParams.asKnown().getOrNull()?.validity() ?: 0) +
-            (if (stream.asKnown().isPresent) 1 else 0)
+            (sortParams.asKnown().getOrNull()?.validity() ?: 0)
 
     class Filters
     @JsonCreator
@@ -637,7 +606,6 @@ private constructor(
             offset == other.offset &&
             preview == other.preview &&
             sortParams == other.sortParams &&
-            stream == other.stream &&
             additionalProperties == other.additionalProperties
     }
 
@@ -652,7 +620,6 @@ private constructor(
             offset,
             preview,
             sortParams,
-            stream,
             additionalProperties,
         )
     }
@@ -660,5 +627,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "QueryExampleSchemaWithRuns{sessionIds=$sessionIds, comparativeExperimentId=$comparativeExperimentId, exampleIds=$exampleIds, filters=$filters, includeAnnotatorDetail=$includeAnnotatorDetail, limit=$limit, offset=$offset, preview=$preview, sortParams=$sortParams, stream=$stream, additionalProperties=$additionalProperties}"
+        "QueryExampleSchemaWithRuns{sessionIds=$sessionIds, comparativeExperimentId=$comparativeExperimentId, exampleIds=$exampleIds, filters=$filters, includeAnnotatorDetail=$includeAnnotatorDetail, limit=$limit, offset=$offset, preview=$preview, sortParams=$sortParams, additionalProperties=$additionalProperties}"
 }
