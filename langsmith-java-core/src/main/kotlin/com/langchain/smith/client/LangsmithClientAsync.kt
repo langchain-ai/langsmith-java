@@ -11,6 +11,7 @@ import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
 import com.langchain.smith.services.async.RunServiceAsync
+import com.langchain.smith.services.async.SandboxServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsync
 import java.util.function.Consumer
@@ -71,6 +72,8 @@ interface LangsmithClientAsync {
 
     fun settings(): SettingServiceAsync
 
+    fun sandboxes(): SandboxServiceAsync
+
     /**
      * Closes this client, relinquishing any underlying resources.
      *
@@ -117,5 +120,7 @@ interface LangsmithClientAsync {
         fun commits(): CommitServiceAsync.WithRawResponse
 
         fun settings(): SettingServiceAsync.WithRawResponse
+
+        fun sandboxes(): SandboxServiceAsync.WithRawResponse
     }
 }
