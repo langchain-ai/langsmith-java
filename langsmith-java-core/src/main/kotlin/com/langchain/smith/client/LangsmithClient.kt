@@ -11,6 +11,7 @@ import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
 import com.langchain.smith.services.blocking.RunService
+import com.langchain.smith.services.blocking.SandboxService
 import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SettingService
 import java.util.function.Consumer
@@ -71,6 +72,8 @@ interface LangsmithClient {
 
     fun settings(): SettingService
 
+    fun sandboxes(): SandboxService
+
     /**
      * Closes this client, relinquishing any underlying resources.
      *
@@ -113,5 +116,7 @@ interface LangsmithClient {
         fun commits(): CommitService.WithRawResponse
 
         fun settings(): SettingService.WithRawResponse
+
+        fun sandboxes(): SandboxService.WithRawResponse
     }
 }

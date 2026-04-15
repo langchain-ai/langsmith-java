@@ -20,6 +20,8 @@ import com.langchain.smith.services.blocking.RepoService
 import com.langchain.smith.services.blocking.RepoServiceImpl
 import com.langchain.smith.services.blocking.RunService
 import com.langchain.smith.services.blocking.RunServiceImpl
+import com.langchain.smith.services.blocking.SandboxService
+import com.langchain.smith.services.blocking.SandboxServiceImpl
 import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SessionServiceImpl
 import com.langchain.smith.services.blocking.SettingService
@@ -67,6 +69,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val settings: SettingService by lazy { SettingServiceImpl(clientOptionsWithUserAgent) }
 
+    private val sandboxes: SandboxService by lazy { SandboxServiceImpl(clientOptionsWithUserAgent) }
+
     override fun async(): LangsmithClientAsync = async
 
     override fun withRawResponse(): LangsmithClient.WithRawResponse = withRawResponse
@@ -93,6 +97,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun commits(): CommitService = commits
 
     override fun settings(): SettingService = settings
+
+    override fun sandboxes(): SandboxService = sandboxes
 
     override fun close() = clientOptions.close()
 
@@ -139,6 +145,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             SettingServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val sandboxes: SandboxService.WithRawResponse by lazy {
+            SandboxServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): LangsmithClient.WithRawResponse =
@@ -165,5 +175,7 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun commits(): CommitService.WithRawResponse = commits
 
         override fun settings(): SettingService.WithRawResponse = settings
+
+        override fun sandboxes(): SandboxService.WithRawResponse = sandboxes
     }
 }

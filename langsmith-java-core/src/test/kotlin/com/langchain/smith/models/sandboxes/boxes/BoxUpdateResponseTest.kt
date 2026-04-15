@@ -1,0 +1,166 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.langchain.smith.models.sandboxes.boxes
+
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.jsonMapper
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+internal class BoxUpdateResponseTest {
+
+    @Test
+    fun create() {
+        val boxUpdateResponse =
+            BoxUpdateResponse.builder()
+                .id("id")
+                .createdAt("created_at")
+                .dataplaneUrl("dataplane_url")
+                .expiresAt("expires_at")
+                .fsCapacityBytes(0L)
+                .idleTtlSeconds(0L)
+                .memBytes(0L)
+                .name("name")
+                .proxyConfig(
+                    BoxUpdateResponse.ProxyConfig.builder()
+                        .accessControl(
+                            BoxUpdateResponse.ProxyConfig.AccessControl.builder()
+                                .addAllowList("string")
+                                .addDenyList("string")
+                                .build()
+                        )
+                        .addNoProxy("string")
+                        .addRule(
+                            BoxUpdateResponse.ProxyConfig.Rule.builder()
+                                .addMatchHost("string")
+                                .name("name")
+                                .enabled(true)
+                                .addHeader(
+                                    BoxUpdateResponse.ProxyConfig.Rule.Header.builder()
+                                        .name("name")
+                                        .type(
+                                            BoxUpdateResponse.ProxyConfig.Rule.Header.Type.PLAINTEXT
+                                        )
+                                        .isSet(true)
+                                        .value("value")
+                                        .build()
+                                )
+                                .addMatchPath("string")
+                                .build()
+                        )
+                        .build()
+                )
+                .snapshotId("snapshot_id")
+                .status("status")
+                .statusMessage("status_message")
+                .templateName("template_name")
+                .ttlSeconds(0L)
+                .updatedAt("updated_at")
+                .vcpus(0L)
+                .build()
+
+        assertThat(boxUpdateResponse.id()).contains("id")
+        assertThat(boxUpdateResponse.createdAt()).contains("created_at")
+        assertThat(boxUpdateResponse.dataplaneUrl()).contains("dataplane_url")
+        assertThat(boxUpdateResponse.expiresAt()).contains("expires_at")
+        assertThat(boxUpdateResponse.fsCapacityBytes()).contains(0L)
+        assertThat(boxUpdateResponse.idleTtlSeconds()).contains(0L)
+        assertThat(boxUpdateResponse.memBytes()).contains(0L)
+        assertThat(boxUpdateResponse.name()).contains("name")
+        assertThat(boxUpdateResponse.proxyConfig())
+            .contains(
+                BoxUpdateResponse.ProxyConfig.builder()
+                    .accessControl(
+                        BoxUpdateResponse.ProxyConfig.AccessControl.builder()
+                            .addAllowList("string")
+                            .addDenyList("string")
+                            .build()
+                    )
+                    .addNoProxy("string")
+                    .addRule(
+                        BoxUpdateResponse.ProxyConfig.Rule.builder()
+                            .addMatchHost("string")
+                            .name("name")
+                            .enabled(true)
+                            .addHeader(
+                                BoxUpdateResponse.ProxyConfig.Rule.Header.builder()
+                                    .name("name")
+                                    .type(BoxUpdateResponse.ProxyConfig.Rule.Header.Type.PLAINTEXT)
+                                    .isSet(true)
+                                    .value("value")
+                                    .build()
+                            )
+                            .addMatchPath("string")
+                            .build()
+                    )
+                    .build()
+            )
+        assertThat(boxUpdateResponse.snapshotId()).contains("snapshot_id")
+        assertThat(boxUpdateResponse.status()).contains("status")
+        assertThat(boxUpdateResponse.statusMessage()).contains("status_message")
+        assertThat(boxUpdateResponse.templateName()).contains("template_name")
+        assertThat(boxUpdateResponse.ttlSeconds()).contains(0L)
+        assertThat(boxUpdateResponse.updatedAt()).contains("updated_at")
+        assertThat(boxUpdateResponse.vcpus()).contains(0L)
+    }
+
+    @Test
+    fun roundtrip() {
+        val jsonMapper = jsonMapper()
+        val boxUpdateResponse =
+            BoxUpdateResponse.builder()
+                .id("id")
+                .createdAt("created_at")
+                .dataplaneUrl("dataplane_url")
+                .expiresAt("expires_at")
+                .fsCapacityBytes(0L)
+                .idleTtlSeconds(0L)
+                .memBytes(0L)
+                .name("name")
+                .proxyConfig(
+                    BoxUpdateResponse.ProxyConfig.builder()
+                        .accessControl(
+                            BoxUpdateResponse.ProxyConfig.AccessControl.builder()
+                                .addAllowList("string")
+                                .addDenyList("string")
+                                .build()
+                        )
+                        .addNoProxy("string")
+                        .addRule(
+                            BoxUpdateResponse.ProxyConfig.Rule.builder()
+                                .addMatchHost("string")
+                                .name("name")
+                                .enabled(true)
+                                .addHeader(
+                                    BoxUpdateResponse.ProxyConfig.Rule.Header.builder()
+                                        .name("name")
+                                        .type(
+                                            BoxUpdateResponse.ProxyConfig.Rule.Header.Type.PLAINTEXT
+                                        )
+                                        .isSet(true)
+                                        .value("value")
+                                        .build()
+                                )
+                                .addMatchPath("string")
+                                .build()
+                        )
+                        .build()
+                )
+                .snapshotId("snapshot_id")
+                .status("status")
+                .statusMessage("status_message")
+                .templateName("template_name")
+                .ttlSeconds(0L)
+                .updatedAt("updated_at")
+                .vcpus(0L)
+                .build()
+
+        val roundtrippedBoxUpdateResponse =
+            jsonMapper.readValue(
+                jsonMapper.writeValueAsString(boxUpdateResponse),
+                jacksonTypeRef<BoxUpdateResponse>(),
+            )
+
+        assertThat(roundtrippedBoxUpdateResponse).isEqualTo(boxUpdateResponse)
+    }
+}
