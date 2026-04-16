@@ -25,6 +25,8 @@ private constructor(
     private val nameContains: String?,
     private val offset: Long?,
     private val queueType: QueueType?,
+    private val sortBy: String?,
+    private val sortByDesc: Boolean?,
     private val tagValueId: List<String>?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -45,6 +47,10 @@ private constructor(
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
     fun queueType(): Optional<QueueType> = Optional.ofNullable(queueType)
+
+    fun sortBy(): Optional<String> = Optional.ofNullable(sortBy)
+
+    fun sortByDesc(): Optional<Boolean> = Optional.ofNullable(sortByDesc)
 
     fun tagValueId(): Optional<List<String>> = Optional.ofNullable(tagValueId)
 
@@ -78,6 +84,8 @@ private constructor(
         private var nameContains: String? = null
         private var offset: Long? = null
         private var queueType: QueueType? = null
+        private var sortBy: String? = null
+        private var sortByDesc: Boolean? = null
         private var tagValueId: MutableList<String>? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -95,6 +103,8 @@ private constructor(
             nameContains = annotationQueueRetrieveAnnotationQueuesParams.nameContains
             offset = annotationQueueRetrieveAnnotationQueuesParams.offset
             queueType = annotationQueueRetrieveAnnotationQueuesParams.queueType
+            sortBy = annotationQueueRetrieveAnnotationQueuesParams.sortBy
+            sortByDesc = annotationQueueRetrieveAnnotationQueuesParams.sortByDesc
             tagValueId = annotationQueueRetrieveAnnotationQueuesParams.tagValueId?.toMutableList()
             additionalHeaders =
                 annotationQueueRetrieveAnnotationQueuesParams.additionalHeaders.toBuilder()
@@ -169,6 +179,23 @@ private constructor(
 
         /** Alias for calling [Builder.queueType] with `queueType.orElse(null)`. */
         fun queueType(queueType: Optional<QueueType>) = queueType(queueType.getOrNull())
+
+        fun sortBy(sortBy: String?) = apply { this.sortBy = sortBy }
+
+        /** Alias for calling [Builder.sortBy] with `sortBy.orElse(null)`. */
+        fun sortBy(sortBy: Optional<String>) = sortBy(sortBy.getOrNull())
+
+        fun sortByDesc(sortByDesc: Boolean?) = apply { this.sortByDesc = sortByDesc }
+
+        /**
+         * Alias for [Builder.sortByDesc].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun sortByDesc(sortByDesc: Boolean) = sortByDesc(sortByDesc as Boolean?)
+
+        /** Alias for calling [Builder.sortByDesc] with `sortByDesc.orElse(null)`. */
+        fun sortByDesc(sortByDesc: Optional<Boolean>) = sortByDesc(sortByDesc.getOrNull())
 
         fun tagValueId(tagValueId: List<String>?) = apply {
             this.tagValueId = tagValueId?.toMutableList()
@@ -299,6 +326,8 @@ private constructor(
                 nameContains,
                 offset,
                 queueType,
+                sortBy,
+                sortByDesc,
                 tagValueId?.toImmutable(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -318,6 +347,8 @@ private constructor(
                 nameContains?.let { put("name_contains", it) }
                 offset?.let { put("offset", it.toString()) }
                 queueType?.let { put("queue_type", it.toString()) }
+                sortBy?.let { put("sort_by", it) }
+                sortByDesc?.let { put("sort_by_desc", it.toString()) }
                 tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
                 putAll(additionalQueryParams)
             }
@@ -466,6 +497,8 @@ private constructor(
             nameContains == other.nameContains &&
             offset == other.offset &&
             queueType == other.queueType &&
+            sortBy == other.sortBy &&
+            sortByDesc == other.sortByDesc &&
             tagValueId == other.tagValueId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -481,11 +514,13 @@ private constructor(
             nameContains,
             offset,
             queueType,
+            sortBy,
+            sortByDesc,
             tagValueId,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "AnnotationQueueRetrieveAnnotationQueuesParams{assignedToMe=$assignedToMe, datasetId=$datasetId, ids=$ids, limit=$limit, name=$name, nameContains=$nameContains, offset=$offset, queueType=$queueType, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "AnnotationQueueRetrieveAnnotationQueuesParams{assignedToMe=$assignedToMe, datasetId=$datasetId, ids=$ids, limit=$limit, name=$name, nameContains=$nameContains, offset=$offset, queueType=$queueType, sortBy=$sortBy, sortByDesc=$sortByDesc, tagValueId=$tagValueId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

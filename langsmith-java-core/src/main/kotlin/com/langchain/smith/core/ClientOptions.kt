@@ -511,9 +511,9 @@ private constructor(
                     headers.replace("X-API-Key", it)
                 }
             }
-            organizationId?.let {
+            tenantId?.let {
                 if (!it.isEmpty()) {
-                    headers.replace("X-Organization-Id", it)
+                    headers.replace("X-Tenant-Id", it)
                 }
             }
             bearerToken?.let {
@@ -521,9 +521,9 @@ private constructor(
                     headers.replace("Authorization", "Bearer $it")
                 }
             }
-            tenantId?.let {
+            organizationId?.let {
                 if (!it.isEmpty()) {
-                    headers.replace("X-Tenant-Id", it)
+                    headers.replace("X-Organization-Id", it)
                 }
             }
 
