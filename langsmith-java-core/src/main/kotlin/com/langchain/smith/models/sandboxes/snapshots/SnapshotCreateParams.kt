@@ -52,24 +52,6 @@ private constructor(
     fun registryId(): Optional<String> = body.registryId()
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun registryPassword(): Optional<String> = body.registryPassword()
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun registryUrl(): Optional<String> = body.registryUrl()
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun registryUsername(): Optional<String> = body.registryUsername()
-
-    /**
      * Returns the raw JSON value of [dockerImage].
      *
      * Unlike [dockerImage], this method doesn't throw if the JSON field has an unexpected type.
@@ -96,29 +78,6 @@ private constructor(
      * Unlike [registryId], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _registryId(): JsonField<String> = body._registryId()
-
-    /**
-     * Returns the raw JSON value of [registryPassword].
-     *
-     * Unlike [registryPassword], this method doesn't throw if the JSON field has an unexpected
-     * type.
-     */
-    fun _registryPassword(): JsonField<String> = body._registryPassword()
-
-    /**
-     * Returns the raw JSON value of [registryUrl].
-     *
-     * Unlike [registryUrl], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _registryUrl(): JsonField<String> = body._registryUrl()
-
-    /**
-     * Returns the raw JSON value of [registryUsername].
-     *
-     * Unlike [registryUsername], this method doesn't throw if the JSON field has an unexpected
-     * type.
-     */
-    fun _registryUsername(): JsonField<String> = body._registryUsername()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -168,8 +127,6 @@ private constructor(
          * - [fsCapacityBytes]
          * - [name]
          * - [registryId]
-         * - [registryPassword]
-         * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -217,47 +174,6 @@ private constructor(
          * value.
          */
         fun registryId(registryId: JsonField<String>) = apply { body.registryId(registryId) }
-
-        fun registryPassword(registryPassword: String) = apply {
-            body.registryPassword(registryPassword)
-        }
-
-        /**
-         * Sets [Builder.registryPassword] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.registryPassword] with a well-typed [String] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun registryPassword(registryPassword: JsonField<String>) = apply {
-            body.registryPassword(registryPassword)
-        }
-
-        fun registryUrl(registryUrl: String) = apply { body.registryUrl(registryUrl) }
-
-        /**
-         * Sets [Builder.registryUrl] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.registryUrl] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun registryUrl(registryUrl: JsonField<String>) = apply { body.registryUrl(registryUrl) }
-
-        fun registryUsername(registryUsername: String) = apply {
-            body.registryUsername(registryUsername)
-        }
-
-        /**
-         * Sets [Builder.registryUsername] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.registryUsername] with a well-typed [String] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun registryUsername(registryUsername: JsonField<String>) = apply {
-            body.registryUsername(registryUsername)
-        }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -411,9 +327,6 @@ private constructor(
         private val fsCapacityBytes: JsonField<Long>,
         private val name: JsonField<String>,
         private val registryId: JsonField<String>,
-        private val registryPassword: JsonField<String>,
-        private val registryUrl: JsonField<String>,
-        private val registryUsername: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -429,25 +342,7 @@ private constructor(
             @JsonProperty("registry_id")
             @ExcludeMissing
             registryId: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("registry_password")
-            @ExcludeMissing
-            registryPassword: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("registry_url")
-            @ExcludeMissing
-            registryUrl: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("registry_username")
-            @ExcludeMissing
-            registryUsername: JsonField<String> = JsonMissing.of(),
-        ) : this(
-            dockerImage,
-            fsCapacityBytes,
-            name,
-            registryId,
-            registryPassword,
-            registryUrl,
-            registryUsername,
-            mutableMapOf(),
-        )
+        ) : this(dockerImage, fsCapacityBytes, name, registryId, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -472,24 +367,6 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun registryId(): Optional<String> = registryId.getOptional("registry_id")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun registryPassword(): Optional<String> = registryPassword.getOptional("registry_password")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun registryUrl(): Optional<String> = registryUrl.getOptional("registry_url")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun registryUsername(): Optional<String> = registryUsername.getOptional("registry_username")
 
         /**
          * Returns the raw JSON value of [dockerImage].
@@ -526,35 +403,6 @@ private constructor(
         @ExcludeMissing
         fun _registryId(): JsonField<String> = registryId
 
-        /**
-         * Returns the raw JSON value of [registryPassword].
-         *
-         * Unlike [registryPassword], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("registry_password")
-        @ExcludeMissing
-        fun _registryPassword(): JsonField<String> = registryPassword
-
-        /**
-         * Returns the raw JSON value of [registryUrl].
-         *
-         * Unlike [registryUrl], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("registry_url")
-        @ExcludeMissing
-        fun _registryUrl(): JsonField<String> = registryUrl
-
-        /**
-         * Returns the raw JSON value of [registryUsername].
-         *
-         * Unlike [registryUsername], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("registry_username")
-        @ExcludeMissing
-        fun _registryUsername(): JsonField<String> = registryUsername
-
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -589,9 +437,6 @@ private constructor(
             private var fsCapacityBytes: JsonField<Long>? = null
             private var name: JsonField<String>? = null
             private var registryId: JsonField<String> = JsonMissing.of()
-            private var registryPassword: JsonField<String> = JsonMissing.of()
-            private var registryUrl: JsonField<String> = JsonMissing.of()
-            private var registryUsername: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -600,9 +445,6 @@ private constructor(
                 fsCapacityBytes = body.fsCapacityBytes
                 name = body.name
                 registryId = body.registryId
-                registryPassword = body.registryPassword
-                registryUrl = body.registryUrl
-                registryUsername = body.registryUsername
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -655,47 +497,6 @@ private constructor(
              */
             fun registryId(registryId: JsonField<String>) = apply { this.registryId = registryId }
 
-            fun registryPassword(registryPassword: String) =
-                registryPassword(JsonField.of(registryPassword))
-
-            /**
-             * Sets [Builder.registryPassword] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.registryPassword] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun registryPassword(registryPassword: JsonField<String>) = apply {
-                this.registryPassword = registryPassword
-            }
-
-            fun registryUrl(registryUrl: String) = registryUrl(JsonField.of(registryUrl))
-
-            /**
-             * Sets [Builder.registryUrl] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.registryUrl] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun registryUrl(registryUrl: JsonField<String>) = apply {
-                this.registryUrl = registryUrl
-            }
-
-            fun registryUsername(registryUsername: String) =
-                registryUsername(JsonField.of(registryUsername))
-
-            /**
-             * Sets [Builder.registryUsername] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.registryUsername] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun registryUsername(registryUsername: JsonField<String>) = apply {
-                this.registryUsername = registryUsername
-            }
-
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -735,9 +536,6 @@ private constructor(
                     checkRequired("fsCapacityBytes", fsCapacityBytes),
                     checkRequired("name", name),
                     registryId,
-                    registryPassword,
-                    registryUrl,
-                    registryUsername,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -753,9 +551,6 @@ private constructor(
             fsCapacityBytes()
             name()
             registryId()
-            registryPassword()
-            registryUrl()
-            registryUsername()
             validated = true
         }
 
@@ -778,10 +573,7 @@ private constructor(
             (if (dockerImage.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
-                (if (registryId.asKnown().isPresent) 1 else 0) +
-                (if (registryPassword.asKnown().isPresent) 1 else 0) +
-                (if (registryUrl.asKnown().isPresent) 1 else 0) +
-                (if (registryUsername.asKnown().isPresent) 1 else 0)
+                (if (registryId.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -793,29 +585,17 @@ private constructor(
                 fsCapacityBytes == other.fsCapacityBytes &&
                 name == other.name &&
                 registryId == other.registryId &&
-                registryPassword == other.registryPassword &&
-                registryUrl == other.registryUrl &&
-                registryUsername == other.registryUsername &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(
-                dockerImage,
-                fsCapacityBytes,
-                name,
-                registryId,
-                registryPassword,
-                registryUrl,
-                registryUsername,
-                additionalProperties,
-            )
+            Objects.hash(dockerImage, fsCapacityBytes, name, registryId, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, name=$name, registryId=$registryId, registryPassword=$registryPassword, registryUrl=$registryUrl, registryUsername=$registryUsername, additionalProperties=$additionalProperties}"
+            "Body{dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, name=$name, registryId=$registryId, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
