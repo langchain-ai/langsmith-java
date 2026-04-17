@@ -28,9 +28,6 @@ internal class SnapshotServiceAsyncTest {
                     .fsCapacityBytes(0L)
                     .name("name")
                     .registryId("registry_id")
-                    .registryPassword("registry_password")
-                    .registryUrl("registry_url")
-                    .registryUsername("registry_username")
                     .build()
             )
 

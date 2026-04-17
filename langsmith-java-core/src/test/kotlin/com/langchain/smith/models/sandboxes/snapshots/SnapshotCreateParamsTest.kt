@@ -14,9 +14,6 @@ internal class SnapshotCreateParamsTest {
             .fsCapacityBytes(0L)
             .name("name")
             .registryId("registry_id")
-            .registryPassword("registry_password")
-            .registryUrl("registry_url")
-            .registryUsername("registry_username")
             .build()
     }
 
@@ -28,9 +25,6 @@ internal class SnapshotCreateParamsTest {
                 .fsCapacityBytes(0L)
                 .name("name")
                 .registryId("registry_id")
-                .registryPassword("registry_password")
-                .registryUrl("registry_url")
-                .registryUsername("registry_username")
                 .build()
 
         val body = params._body()
@@ -39,9 +33,6 @@ internal class SnapshotCreateParamsTest {
         assertThat(body.fsCapacityBytes()).isEqualTo(0L)
         assertThat(body.name()).isEqualTo("name")
         assertThat(body.registryId()).contains("registry_id")
-        assertThat(body.registryPassword()).contains("registry_password")
-        assertThat(body.registryUrl()).contains("registry_url")
-        assertThat(body.registryUsername()).contains("registry_username")
     }
 
     @Test
