@@ -41,7 +41,11 @@ interface BoxServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BoxServiceAsync
 
-    /** Create a new sandbox from a template. Optionally blocks until ready or timeout. */
+    /**
+     * Create a new sandbox. The snapshot may be identified by `snapshot_id` (UUID) or by
+     * `snapshot_name` (tenant-scoped unique name); exactly one of `template_name`, `snapshot_id`,
+     * or `snapshot_name` must be set. Optionally blocks until ready or timeout.
+     */
     fun create(): CompletableFuture<BoxCreateResponse> = create(BoxCreateParams.none())
 
     /** @see create */

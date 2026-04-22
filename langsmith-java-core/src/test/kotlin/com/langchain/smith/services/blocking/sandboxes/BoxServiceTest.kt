@@ -62,6 +62,7 @@ internal class BoxServiceTest {
                             .build()
                     )
                     .snapshotId("snapshot_id")
+                    .snapshotName("snapshot_name")
                     .templateName("template_name")
                     .timeout(0L)
                     .ttlSeconds(0L)

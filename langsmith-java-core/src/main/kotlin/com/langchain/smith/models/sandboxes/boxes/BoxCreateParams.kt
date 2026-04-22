@@ -23,7 +23,11 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Create a new sandbox from a template. Optionally blocks until ready or timeout. */
+/**
+ * Create a new sandbox. The snapshot may be identified by `snapshot_id` (UUID) or by
+ * `snapshot_name` (tenant-scoped unique name); exactly one of `template_name`, `snapshot_id`, or
+ * `snapshot_name` must be set. Optionally blocks until ready or timeout.
+ */
 class BoxCreateParams
 private constructor(
     private val body: Body,
@@ -66,6 +70,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun snapshotId(): Optional<String> = body.snapshotId()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun snapshotName(): Optional<String> = body.snapshotName()
 
     /**
      * required for Kata path
@@ -140,6 +150,13 @@ private constructor(
      * Unlike [snapshotId], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _snapshotId(): JsonField<String> = body._snapshotId()
+
+    /**
+     * Returns the raw JSON value of [snapshotName].
+     *
+     * Unlike [snapshotName], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _snapshotName(): JsonField<String> = body._snapshotName()
 
     /**
      * Returns the raw JSON value of [templateName].
@@ -291,6 +308,19 @@ private constructor(
          * value.
          */
         fun snapshotId(snapshotId: JsonField<String>) = apply { body.snapshotId(snapshotId) }
+
+        fun snapshotName(snapshotName: String) = apply { body.snapshotName(snapshotName) }
+
+        /**
+         * Sets [Builder.snapshotName] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.snapshotName] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun snapshotName(snapshotName: JsonField<String>) = apply {
+            body.snapshotName(snapshotName)
+        }
 
         /** required for Kata path */
         fun templateName(templateName: String) = apply { body.templateName(templateName) }
@@ -490,6 +520,7 @@ private constructor(
         private val name: JsonField<String>,
         private val proxyConfig: JsonField<ProxyConfig>,
         private val snapshotId: JsonField<String>,
+        private val snapshotName: JsonField<String>,
         private val templateName: JsonField<String>,
         private val timeout: JsonField<Long>,
         private val ttlSeconds: JsonField<Long>,
@@ -514,6 +545,9 @@ private constructor(
             @JsonProperty("snapshot_id")
             @ExcludeMissing
             snapshotId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("snapshot_name")
+            @ExcludeMissing
+            snapshotName: JsonField<String> = JsonMissing.of(),
             @JsonProperty("template_name")
             @ExcludeMissing
             templateName: JsonField<String> = JsonMissing.of(),
@@ -532,6 +566,7 @@ private constructor(
             name,
             proxyConfig,
             snapshotId,
+            snapshotName,
             templateName,
             timeout,
             ttlSeconds,
@@ -575,6 +610,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun snapshotId(): Optional<String> = snapshotId.getOptional("snapshot_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun snapshotName(): Optional<String> = snapshotName.getOptional("snapshot_name")
 
         /**
          * required for Kata path
@@ -661,6 +702,16 @@ private constructor(
         fun _snapshotId(): JsonField<String> = snapshotId
 
         /**
+         * Returns the raw JSON value of [snapshotName].
+         *
+         * Unlike [snapshotName], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("snapshot_name")
+        @ExcludeMissing
+        fun _snapshotName(): JsonField<String> = snapshotName
+
+        /**
          * Returns the raw JSON value of [templateName].
          *
          * Unlike [templateName], this method doesn't throw if the JSON field has an unexpected
@@ -728,6 +779,7 @@ private constructor(
             private var name: JsonField<String> = JsonMissing.of()
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
             private var snapshotId: JsonField<String> = JsonMissing.of()
+            private var snapshotName: JsonField<String> = JsonMissing.of()
             private var templateName: JsonField<String> = JsonMissing.of()
             private var timeout: JsonField<Long> = JsonMissing.of()
             private var ttlSeconds: JsonField<Long> = JsonMissing.of()
@@ -743,6 +795,7 @@ private constructor(
                 name = body.name
                 proxyConfig = body.proxyConfig
                 snapshotId = body.snapshotId
+                snapshotName = body.snapshotName
                 templateName = body.templateName
                 timeout = body.timeout
                 ttlSeconds = body.ttlSeconds
@@ -823,6 +876,19 @@ private constructor(
              * supported value.
              */
             fun snapshotId(snapshotId: JsonField<String>) = apply { this.snapshotId = snapshotId }
+
+            fun snapshotName(snapshotName: String) = snapshotName(JsonField.of(snapshotName))
+
+            /**
+             * Sets [Builder.snapshotName] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.snapshotName] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun snapshotName(snapshotName: JsonField<String>) = apply {
+                this.snapshotName = snapshotName
+            }
 
             /** required for Kata path */
             fun templateName(templateName: String) = templateName(JsonField.of(templateName))
@@ -916,6 +982,7 @@ private constructor(
                     name,
                     proxyConfig,
                     snapshotId,
+                    snapshotName,
                     templateName,
                     timeout,
                     ttlSeconds,
@@ -938,6 +1005,7 @@ private constructor(
             name()
             proxyConfig().ifPresent { it.validate() }
             snapshotId()
+            snapshotName()
             templateName()
             timeout()
             ttlSeconds()
@@ -968,6 +1036,7 @@ private constructor(
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
+                (if (snapshotName.asKnown().isPresent) 1 else 0) +
                 (if (templateName.asKnown().isPresent) 1 else 0) +
                 (if (timeout.asKnown().isPresent) 1 else 0) +
                 (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
@@ -986,6 +1055,7 @@ private constructor(
                 name == other.name &&
                 proxyConfig == other.proxyConfig &&
                 snapshotId == other.snapshotId &&
+                snapshotName == other.snapshotName &&
                 templateName == other.templateName &&
                 timeout == other.timeout &&
                 ttlSeconds == other.ttlSeconds &&
@@ -1002,6 +1072,7 @@ private constructor(
                 name,
                 proxyConfig,
                 snapshotId,
+                snapshotName,
                 templateName,
                 timeout,
                 ttlSeconds,
@@ -1014,7 +1085,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, templateName=$templateName, timeout=$timeout, ttlSeconds=$ttlSeconds, vcpus=$vcpus, waitForReady=$waitForReady, additionalProperties=$additionalProperties}"
+            "Body{fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, snapshotName=$snapshotName, templateName=$templateName, timeout=$timeout, ttlSeconds=$ttlSeconds, vcpus=$vcpus, waitForReady=$waitForReady, additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig
