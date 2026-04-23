@@ -6,6 +6,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.blocking.AnnotationQueueService
 import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.DatasetService
+import com.langchain.smith.services.blocking.EvaluatorService
 import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.PublicService
@@ -60,6 +61,8 @@ interface LangsmithClient {
 
     fun runs(): RunService
 
+    fun evaluators(): EvaluatorService
+
     fun feedback(): FeedbackService
 
     fun public_(): PublicService
@@ -104,6 +107,8 @@ interface LangsmithClient {
         fun datasets(): DatasetService.WithRawResponse
 
         fun runs(): RunService.WithRawResponse
+
+        fun evaluators(): EvaluatorService.WithRawResponse
 
         fun feedback(): FeedbackService.WithRawResponse
 

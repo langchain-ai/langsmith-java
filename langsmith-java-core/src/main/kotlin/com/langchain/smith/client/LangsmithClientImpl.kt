@@ -10,6 +10,8 @@ import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.CommitServiceImpl
 import com.langchain.smith.services.blocking.DatasetService
 import com.langchain.smith.services.blocking.DatasetServiceImpl
+import com.langchain.smith.services.blocking.EvaluatorService
+import com.langchain.smith.services.blocking.EvaluatorServiceImpl
 import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.ExampleServiceImpl
 import com.langchain.smith.services.blocking.FeedbackService
@@ -53,6 +55,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val runs: RunService by lazy { RunServiceImpl(clientOptionsWithUserAgent) }
 
+    private val evaluators: EvaluatorService by lazy {
+        EvaluatorServiceImpl(clientOptionsWithUserAgent)
+    }
+
     private val feedback: FeedbackService by lazy {
         FeedbackServiceImpl(clientOptionsWithUserAgent)
     }
@@ -85,6 +91,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun datasets(): DatasetService = datasets
 
     override fun runs(): RunService = runs
+
+    override fun evaluators(): EvaluatorService = evaluators
 
     override fun feedback(): FeedbackService = feedback
 
@@ -119,6 +127,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
         private val runs: RunService.WithRawResponse by lazy {
             RunServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val evaluators: EvaluatorService.WithRawResponse by lazy {
+            EvaluatorServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val feedback: FeedbackService.WithRawResponse by lazy {
@@ -163,6 +175,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun datasets(): DatasetService.WithRawResponse = datasets
 
         override fun runs(): RunService.WithRawResponse = runs
+
+        override fun evaluators(): EvaluatorService.WithRawResponse = evaluators
 
         override fun feedback(): FeedbackService.WithRawResponse = feedback
 
