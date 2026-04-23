@@ -10,6 +10,8 @@ import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsyncImpl
 import com.langchain.smith.services.async.DatasetServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsyncImpl
+import com.langchain.smith.services.async.EvaluatorServiceAsync
+import com.langchain.smith.services.async.EvaluatorServiceAsyncImpl
 import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.ExampleServiceAsyncImpl
 import com.langchain.smith.services.async.FeedbackServiceAsync
@@ -59,6 +61,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
 
+    private val evaluators: EvaluatorServiceAsync by lazy {
+        EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val feedback: FeedbackServiceAsync by lazy {
         FeedbackServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -100,6 +106,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun runs(): RunServiceAsync = runs
 
+    override fun evaluators(): EvaluatorServiceAsync = evaluators
+
     override fun feedback(): FeedbackServiceAsync = feedback
 
     override fun public_(): PublicServiceAsync = public_
@@ -133,6 +141,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         private val runs: RunServiceAsync.WithRawResponse by lazy {
             RunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val evaluators: EvaluatorServiceAsync.WithRawResponse by lazy {
+            EvaluatorServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val feedback: FeedbackServiceAsync.WithRawResponse by lazy {
@@ -177,6 +189,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun datasets(): DatasetServiceAsync.WithRawResponse = datasets
 
         override fun runs(): RunServiceAsync.WithRawResponse = runs
+
+        override fun evaluators(): EvaluatorServiceAsync.WithRawResponse = evaluators
 
         override fun feedback(): FeedbackServiceAsync.WithRawResponse = feedback
 
