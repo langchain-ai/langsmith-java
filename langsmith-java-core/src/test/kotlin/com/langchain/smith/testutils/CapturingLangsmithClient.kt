@@ -38,41 +38,88 @@ internal class CapturingLangsmithClient {
 
     val client: LangsmithClient = createProxy()
 
+    private fun extractRunFromCreateArgs(args: Array<Any?>): Run? {
+        // create(params: RunCreateParams) or create(run: Run)
+        val first = args.firstOrNull() ?: return null
+        return when (first) {
+            is com.langchain.smith.models.runs.RunCreateParams -> first.run()
+            is Run -> first
+            else -> null
+        }
+    }
+
+    private fun extractRunFromUpdateArgs(args: Array<Any?>): Run? {
+        // update(params: RunUpdateParams) or update(runId: String, params: RunUpdateParams)
+        val first = args.firstOrNull() ?: return null
+        return when (first) {
+            is com.langchain.smith.models.runs.RunUpdateParams -> first.run()
+            else -> null
+        }
+    }
+
     private fun createProxy(): LangsmithClient {
         val runService =
             Proxy.newProxyInstance(
                 RunService::class.java.classLoader,
                 arrayOf(RunService::class.java),
             ) { _, method, args ->
-                if (method.name == "ingestBatch" && args != null && args.isNotEmpty()) {
-                    val params = args[0]
-                    if (params is RunIngestBatchParams) {
-                        synchronized(this) {
-                            params.post().ifPresent { postedRuns.addAll(it) }
-                            params.patch().ifPresent { patchedRuns.addAll(it) }
+                when (method.name) {
+                    "ingestBatch" -> {
+                        if (args != null && args.isNotEmpty()) {
+                            val params = args[0]
+                            if (params is RunIngestBatchParams) {
+                                synchronized(this) {
+                                    params.post().ifPresent { postedRuns.addAll(it) }
+                                    params.patch().ifPresent { patchedRuns.addAll(it) }
+                                }
+                            }
+                        }
+                        if (realClient != null) {
+                            method.invoke(realClient.runs(), *args.orEmpty())
+                        } else {
+                            RunIngestBatchResponse.builder().build()
                         }
                     }
-                    // Forward to real LangSmith if available
-                    if (realClient != null) {
-                        method.invoke(realClient.runs(), *args)
-                    } else {
-                        RunIngestBatchResponse.builder().build()
+                    "create" -> {
+                        // Extract run from params and capture it directly
+                        if (args != null && args.isNotEmpty()) {
+                            val run = extractRunFromCreateArgs(args)
+                            if (run != null) {
+                                synchronized(this) { postedRuns.add(run) }
+                            }
+                        }
+                        if (realClient != null) {
+                            method.invoke(realClient.runs(), *args.orEmpty())
+                        } else {
+                            Unit
+                        }
                     }
-                } else if (method.name == "flush") {
-                    // no-op for test proxy
-                    null
-                } else if (method.name == "withRawResponse" || method.name == "withOptions") {
-                    throw NotImplementedError()
-                } else {
-                    // Forward unknown methods to real client if available
-                    if (realClient != null && args != null) {
-                        method.invoke(realClient.runs(), *args)
-                    } else if (realClient != null) {
-                        method.invoke(realClient.runs())
-                    } else {
-                        throw NotImplementedError(
-                            "CapturingLangsmithClient: ${method.name} not supported without LANGSMITH_API_KEY"
-                        )
+                    "update" -> {
+                        // Extract run from params and capture it directly
+                        if (args != null && args.isNotEmpty()) {
+                            val run = extractRunFromUpdateArgs(args)
+                            if (run != null) {
+                                synchronized(this) { patchedRuns.add(run) }
+                            }
+                        }
+                        if (realClient != null) {
+                            method.invoke(realClient.runs(), *args.orEmpty())
+                        } else {
+                            Unit
+                        }
+                    }
+                    "flush" -> null
+                    "withRawResponse", "withOptions" -> throw NotImplementedError()
+                    else -> {
+                        if (realClient != null && args != null) {
+                            method.invoke(realClient.runs(), *args)
+                        } else if (realClient != null) {
+                            method.invoke(realClient.runs())
+                        } else {
+                            throw NotImplementedError(
+                                "CapturingLangsmithClient: ${method.name} not supported without LANGSMITH_API_KEY"
+                            )
+                        }
                     }
                 }
             } as RunService
@@ -83,24 +130,17 @@ internal class CapturingLangsmithClient {
         ) { _, method, _ ->
             when (method.name) {
                 "runs" -> runService
-<<<<<<< HEAD
-=======
                 "flush" -> {
                     // no-op
                     null
                 }
->>>>>>> d3050890 (Adds background batching)
                 "close" -> {
                     realClient?.close()
                     Unit
                 }
                 else ->
                     throw NotImplementedError(
-<<<<<<< HEAD
-                        "CapturingLangsmithClient only supports runs() and close()"
-=======
                         "CapturingLangsmithClient only supports runs(), flush(), and close()"
->>>>>>> d3050890 (Adds background batching)
                     )
             }
         } as LangsmithClient
