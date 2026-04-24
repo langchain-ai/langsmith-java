@@ -128,7 +128,7 @@ internal class RunServiceTest {
         val run =
             runService.update(
                 RunUpdateParams.builder()
-                    .runId("run_id")
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .run(
                         Run.builder()
                             .id("id")

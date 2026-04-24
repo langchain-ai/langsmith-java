@@ -11,7 +11,7 @@ internal class RunUpdateParamsTest {
     @Test
     fun create() {
         RunUpdateParams.builder()
-            .runId("run_id")
+            .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .run(
                 Run.builder()
                     .id("id")
@@ -70,9 +70,13 @@ internal class RunUpdateParamsTest {
 
     @Test
     fun pathParams() {
-        val params = RunUpdateParams.builder().runId("run_id").run(Run.builder().build()).build()
+        val params =
+            RunUpdateParams.builder()
+                .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .run(Run.builder().build())
+                .build()
 
-        assertThat(params._pathParam(0)).isEqualTo("run_id")
+        assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         // out-of-bound path param
         assertThat(params._pathParam(1)).isEqualTo("")
     }
@@ -81,7 +85,7 @@ internal class RunUpdateParamsTest {
     fun body() {
         val params =
             RunUpdateParams.builder()
-                .runId("run_id")
+                .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .run(
                     Run.builder()
                         .id("id")
@@ -197,7 +201,11 @@ internal class RunUpdateParamsTest {
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = RunUpdateParams.builder().runId("run_id").run(Run.builder().build()).build()
+        val params =
+            RunUpdateParams.builder()
+                .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .run(Run.builder().build())
+                .build()
 
         val body = params._body()
 
