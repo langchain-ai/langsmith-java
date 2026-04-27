@@ -1,5 +1,7 @@
 package com.langchain.smith.client
 
+import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.models.runs.Run
@@ -29,7 +31,7 @@ import org.slf4j.LoggerFactory
  * @param aggregationDelayMs delay before timer-based flush (default 250ms)
  */
 class AutoBatchQueue(
-    private val sendBatch: (RunIngestBatchParams) -> CompletionStage<Void?>,
+    private val sendBatch: (RunIngestBatchParams, RequestOptions) -> CompletionStage<Void?>,
     private val batchSizeLimit: Int = DEFAULT_BATCH_SIZE_LIMIT,
     private val aggregationDelayMs: Long = DEFAULT_AGGREGATION_DELAY_MS,
 ) {
@@ -51,10 +53,18 @@ class AutoBatchQueue(
         run: Run,
         headers: Headers = Headers.builder().build(),
         queryParams: QueryParams = QueryParams.builder().build(),
+        requestOptions: RequestOptions = RequestOptions.none(),
     ) {
         lock.withLock {
             check(!shutdown) { "AutoBatchQueue is shut down" }
-            posts.add(BatchItem(run = run, headers = headers, queryParams = queryParams))
+            posts.add(
+                BatchItem(
+                    run = run,
+                    headers = headers,
+                    queryParams = queryParams,
+                    requestOptions = requestOptions,
+                )
+            )
             scheduleOrFlush()
         }
     }
@@ -64,10 +74,18 @@ class AutoBatchQueue(
         run: Run,
         headers: Headers = Headers.builder().build(),
         queryParams: QueryParams = QueryParams.builder().build(),
+        requestOptions: RequestOptions = RequestOptions.none(),
     ) {
         lock.withLock {
             check(!shutdown) { "AutoBatchQueue is shut down" }
-            patches.add(BatchItem(run = run, headers = headers, queryParams = queryParams))
+            patches.add(
+                BatchItem(
+                    run = run,
+                    headers = headers,
+                    queryParams = queryParams,
+                    requestOptions = requestOptions,
+                )
+            )
             scheduleOrFlush()
         }
     }
@@ -78,8 +96,8 @@ class AutoBatchQueue(
      * Safe to call from any thread. No-op if the queue is empty.
      */
     fun flush() {
-        val batch = lock.withLock { drain()?.also { activeSends++ } }
-        if (batch != null) sendBatchAfterIncrement(batch)
+        val batches = lock.withLock { drain().also { activeSends += it.size } }
+        batches.forEach(::sendBatchAfterIncrement)
         waitForActiveSends()
     }
 
@@ -108,8 +126,9 @@ class AutoBatchQueue(
     private fun scheduleOrFlush() {
         // Already holding lock
         if (posts.size + patches.size >= batchSizeLimit) {
-            val batch = drain() ?: return
-            submitBatch(batch)
+            val batches = drain()
+            if (batches.isEmpty()) return
+            submitBatches(batches)
         } else {
             pendingFlush?.cancel(false)
             pendingFlush =
@@ -117,9 +136,8 @@ class AutoBatchQueue(
                     {
                         // Drain and send inline on the scheduler thread; track via activeSends so
                         // flush() can wait for the returned future to complete.
-                        val batch =
-                            lock.withLock { drain()?.also { activeSends++ } } ?: return@schedule
-                        sendBatchAfterIncrement(batch)
+                        val batches = lock.withLock { drain().also { activeSends += it.size } }
+                        batches.forEach(::sendBatchAfterIncrement)
                     },
                     aggregationDelayMs,
                     TimeUnit.MILLISECONDS,
@@ -128,7 +146,7 @@ class AutoBatchQueue(
     }
 
     /**
-     * Drains the queue and returns the batch params, or null if empty. Must hold lock.
+     * Drains the queue and returns batch params grouped by request options. Must hold lock.
      *
      * TODO: Merge create + update for the same run ID before sending (like the JS/Python SDKs).
      *   This would reduce the number of operations in each batch when a run is created and
@@ -137,68 +155,61 @@ class AutoBatchQueue(
      * TODO: Support multipart ingest endpoint for large payloads with attachments.
      * TODO: Support gzip compression for batch requests.
      */
-    private fun drain(): RunIngestBatchParams? {
-        if (posts.isEmpty() && patches.isEmpty()) return null
+    private fun drain(): List<Batch> {
+        if (posts.isEmpty() && patches.isEmpty()) return emptyList()
 
         pendingFlush?.cancel(false)
         pendingFlush = null
 
-        val builder = RunIngestBatchParams.builder()
-        val headers = Headers.builder()
-        val queryParams = QueryParams.builder()
-        addItemsToBatch(
-            items = posts,
-            setRuns = builder::post,
-            headers = headers,
-            queryParams = queryParams,
-        )
-        addItemsToBatch(
-            items = patches,
-            setRuns = builder::patch,
-            headers = headers,
-            queryParams = queryParams,
-        )
-        builder.additionalHeaders(headers.build())
-        builder.additionalQueryParams(queryParams.build())
-        return builder.build()
+        val groups = linkedMapOf<RequestOptionsKey, BatchGroup>()
+        addItemsToGroups(items = posts, groups = groups, isPost = true)
+        addItemsToGroups(items = patches, groups = groups, isPost = false)
+
+        return groups.values.map { it.toBatch() }
     }
 
-    private fun addItemsToBatch(
+    private fun addItemsToGroups(
         items: MutableList<BatchItem>,
-        setRuns: (List<Run>) -> RunIngestBatchParams.Builder,
-        headers: Headers.Builder,
-        queryParams: QueryParams.Builder,
+        groups: MutableMap<RequestOptionsKey, BatchGroup>,
+        isPost: Boolean,
     ) {
-        if (items.isEmpty()) return
-        setRuns(items.map { it.run })
-        items.forEach {
-            headers.putAll(it.headers)
-            queryParams.putAll(it.queryParams)
+        items.forEach { item ->
+            val group =
+                groups.getOrPut(item.requestOptions.key()) { BatchGroup(item.requestOptions) }
+            if (isPost) {
+                group.posts.add(item.run)
+            } else {
+                group.patches.add(item.run)
+            }
+            group.headers.putAll(item.headers)
+            group.queryParams.putAll(item.queryParams)
         }
         items.clear()
     }
 
-    /** Submits a batch for async send on the scheduler thread. Caller must hold the lock. */
-    private fun submitBatch(params: RunIngestBatchParams) {
+    /** Submits batches for async send on the scheduler thread. Caller must hold the lock. */
+    private fun submitBatches(batches: List<Batch>) {
         // Already holding lock
-        activeSends++
-        try {
-            scheduler.execute { sendBatchAfterIncrement(params) }
-        } catch (e: RejectedExecutionException) {
-            // scheduler is shut down; decrement and log dropped runs
-            activeSends--
-            sendCompleted.signalAll()
-            logger.warn(
-                "Batch queue scheduler rejected a batch; dropping {} run operations",
-                operationCount(params),
-                e,
-            )
+        activeSends += batches.size
+        batches.forEach { batch ->
+            try {
+                scheduler.execute { sendBatchAfterIncrement(batch) }
+            } catch (e: RejectedExecutionException) {
+                // scheduler is shut down; decrement and log dropped runs
+                activeSends--
+                sendCompleted.signalAll()
+                logger.warn(
+                    "Batch queue scheduler rejected a batch; dropping {} run operations",
+                    operationCount(batch.params),
+                    e,
+                )
+            }
         }
     }
 
-    private fun sendBatchAfterIncrement(params: RunIngestBatchParams) {
+    private fun sendBatchAfterIncrement(batch: Batch) {
         try {
-            sendBatch(params).whenComplete { _, error ->
+            sendBatch(batch.params, batch.requestOptions).whenComplete { _, error ->
                 if (error != null) {
                     logger.warn("Failed to send batch of runs", error)
                 }
@@ -233,7 +244,36 @@ class AutoBatchQueue(
     private fun operationCount(params: RunIngestBatchParams): Int =
         params.post().orElse(emptyList()).size + params.patch().orElse(emptyList()).size
 
-    private data class BatchItem(val run: Run, val headers: Headers, val queryParams: QueryParams)
+    private data class Batch(val params: RunIngestBatchParams, val requestOptions: RequestOptions)
+
+    private data class BatchGroup(
+        val requestOptions: RequestOptions,
+        val posts: MutableList<Run> = mutableListOf(),
+        val patches: MutableList<Run> = mutableListOf(),
+        val headers: Headers.Builder = Headers.builder(),
+        val queryParams: QueryParams.Builder = QueryParams.builder(),
+    ) {
+        fun toBatch(): Batch {
+            val builder = RunIngestBatchParams.builder()
+            if (posts.isNotEmpty()) builder.post(posts)
+            if (patches.isNotEmpty()) builder.patch(patches)
+            builder.additionalHeaders(headers.build())
+            builder.additionalQueryParams(queryParams.build())
+            return Batch(params = builder.build(), requestOptions = requestOptions)
+        }
+    }
+
+    private data class BatchItem(
+        val run: Run,
+        val headers: Headers,
+        val queryParams: QueryParams,
+        val requestOptions: RequestOptions,
+    )
+
+    private data class RequestOptionsKey(val responseValidation: Boolean?, val timeout: Timeout?)
+
+    private fun RequestOptions.key(): RequestOptionsKey =
+        RequestOptionsKey(responseValidation = responseValidation, timeout = timeout)
 
     companion object {
         private val logger = LoggerFactory.getLogger(AutoBatchQueue::class.java)

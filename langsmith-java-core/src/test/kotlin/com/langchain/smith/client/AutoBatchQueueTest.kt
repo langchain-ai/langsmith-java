@@ -1,10 +1,13 @@
 package com.langchain.smith.client
 
+import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.testutils.CapturingLangsmithClient
+import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -22,7 +25,7 @@ internal class AutoBatchQueueTest {
         aggregationDelayMs: Long = AutoBatchQueue.DEFAULT_AGGREGATION_DELAY_MS,
     ): AutoBatchQueue =
         AutoBatchQueue(
-            sendBatch = { params ->
+            sendBatch = { params, _ ->
                 capture.client.runs().ingestBatch(params)
                 CompletableFuture.completedFuture(null)
             },
@@ -114,7 +117,7 @@ internal class AutoBatchQueueTest {
         var capturedParams: RunIngestBatchParams? = null
         val queue =
             AutoBatchQueue(
-                sendBatch = { params ->
+                sendBatch = { params, _ ->
                     capturedParams = params
                     CompletableFuture.completedFuture(null)
                 }
@@ -138,6 +141,39 @@ internal class AutoBatchQueueTest {
             .containsExactly("1")
         assertThat(capturedParams?._additionalQueryParams()?.values("patch_param"))
             .containsExactly("2")
+    }
+
+    @Test
+    fun `groups operations by request options and applies them to batch requests`() {
+        val sentBatches = mutableListOf<Pair<RunIngestBatchParams, RequestOptions>>()
+        val fastOptions =
+            RequestOptions.builder()
+                .timeout(Timeout.builder().request(Duration.ofSeconds(1)).build())
+                .build()
+        val slowOptions =
+            RequestOptions.builder()
+                .timeout(Timeout.builder().request(Duration.ofSeconds(10)).build())
+                .build()
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params, requestOptions ->
+                    sentBatches.add(params to requestOptions)
+                    CompletableFuture.completedFuture(null)
+                }
+            )
+
+        queue.post(testRun("r1"), requestOptions = fastOptions)
+        queue.post(testRun("r2"), requestOptions = slowOptions)
+        queue.patch(testRun("r3"), requestOptions = fastOptions)
+        queue.flush()
+
+        assertThat(sentBatches).hasSize(2)
+        val fastBatch = sentBatches.single { it.second === fastOptions }.first
+        val slowBatch = sentBatches.single { it.second === slowOptions }.first
+        assertThat(fastBatch.post().get().map { it.id().getOrNull() }).containsExactly("r1")
+        assertThat(fastBatch.patch().get().map { it.id().getOrNull() }).containsExactly("r3")
+        assertThat(slowBatch.post().get().map { it.id().getOrNull() }).containsExactly("r2")
+        assertThat(slowBatch.patch().isPresent).isFalse()
     }
 
     @Test

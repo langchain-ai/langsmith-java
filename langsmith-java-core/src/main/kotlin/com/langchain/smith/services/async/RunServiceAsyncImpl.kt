@@ -48,8 +48,8 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
 
     private val batchQueue: AutoBatchQueue by lazy {
         AutoBatchQueue(
-            sendBatch = { params ->
-                withRawResponse().ingestBatch(params, RequestOptions.none()).thenApply {
+            sendBatch = { params, requestOptions ->
+                withRawResponse().ingestBatch(params, requestOptions).thenApply {
                     it.parse()
                     null
                 }
@@ -69,7 +69,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> {
         if (clientOptions.autoBatchTracing) {
-            batchQueue.post(params.run(), params._headers(), params._queryParams())
+            batchQueue.post(params.run(), params._headers(), params._queryParams(), requestOptions)
             return CompletableFuture.completedFuture(null)
         }
 
@@ -111,6 +111,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             params.run().toBuilder().id(runId).build(),
             params._headers(),
             params._queryParams(),
+            requestOptions,
         )
         return CompletableFuture.completedFuture(null)
     }

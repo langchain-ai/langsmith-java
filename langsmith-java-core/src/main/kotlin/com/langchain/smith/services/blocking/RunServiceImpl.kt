@@ -47,9 +47,9 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     private val batchQueue: AutoBatchQueue by lazy {
         AutoBatchQueue(
-            sendBatch = { params ->
+            sendBatch = { params, requestOptions ->
                 try {
-                    withRawResponse().ingestBatch(params, RequestOptions.none()).parse()
+                    withRawResponse().ingestBatch(params, requestOptions).parse()
                     CompletableFuture.completedFuture(null)
                 } catch (e: Exception) {
                     CompletableFuture<Void?>().also { it.completeExceptionally(e) }
@@ -67,7 +67,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun create(params: RunCreateParams, requestOptions: RequestOptions) {
         if (clientOptions.autoBatchTracing) {
-            batchQueue.post(params.run(), params._headers(), params._queryParams())
+            batchQueue.post(params.run(), params._headers(), params._queryParams(), requestOptions)
         } else {
             withRawResponse().create(params, requestOptions).parse()
         }
@@ -94,6 +94,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             params.run().toBuilder().id(runId).build(),
             params._headers(),
             params._queryParams(),
+            requestOptions,
         )
     }
 

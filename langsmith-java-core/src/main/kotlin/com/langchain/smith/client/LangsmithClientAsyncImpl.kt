@@ -60,9 +60,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         DatasetServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val runs: RunServiceAsyncImpl by lazy {
-        RunServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
+    private val runsLazy = lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
+    private val runs: RunServiceAsyncImpl by runsLazy
 
     private val evaluators: EvaluatorServiceAsync by lazy {
         EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -126,7 +125,9 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun sandboxes(): SandboxServiceAsync = sandboxes
 
     override fun close() {
-        runs.shutdown()
+        if (runsLazy.isInitialized()) {
+            runs.shutdown()
+        }
         if (syncLazy.isInitialized()) {
             sync.close()
         } else {
