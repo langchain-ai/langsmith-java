@@ -9,6 +9,9 @@ import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.testutils.CapturingLangsmithClient
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -32,6 +35,13 @@ internal class AutoBatchQueueTest {
             batchSizeLimit = batchSizeLimit,
             aggregationDelayMs = aggregationDelayMs,
         )
+
+    private fun operationCount(params: RunIngestBatchParams): Int =
+        params.post().orElse(emptyList()).size + params.patch().orElse(emptyList()).size
+
+    private fun runIds(params: RunIngestBatchParams): List<String> =
+        params.post().orElse(emptyList()).mapNotNull { it.id().getOrNull() } +
+            params.patch().orElse(emptyList()).mapNotNull { it.id().getOrNull() }
 
     @Test
     fun `post and flush sends batch with post`() {
@@ -174,6 +184,56 @@ internal class AutoBatchQueueTest {
         assertThat(fastBatch.patch().get().map { it.id().getOrNull() }).containsExactly("r3")
         assertThat(slowBatch.post().get().map { it.id().getOrNull() }).containsExactly("r2")
         assertThat(slowBatch.patch().isPresent).isFalse()
+    }
+
+    @Test
+    fun `load test splits many queued runs into size limited batches`() {
+        val sentBatches = ConcurrentLinkedQueue<RunIngestBatchParams>()
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params, _ ->
+                    sentBatches.add(params)
+                    CompletableFuture.completedFuture(null)
+                },
+                batchSizeLimit = 100,
+                aggregationDelayMs = 10_000,
+            )
+
+        repeat(250) { index -> queue.post(testRun("r$index")) }
+        queue.flush()
+
+        assertThat(sentBatches).hasSize(3)
+        assertThat(sentBatches.map { operationCount(it) }).containsExactly(100, 100, 50)
+        assertThat(sentBatches.flatMap { runIds(it) })
+            .containsExactlyElementsOf((0 until 250).map { "r$it" })
+    }
+
+    @Test
+    fun `load test accepts concurrent producers and flushes all runs`() {
+        val sentBatches = ConcurrentLinkedQueue<RunIngestBatchParams>()
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params, _ ->
+                    sentBatches.add(params)
+                    CompletableFuture.completedFuture(null)
+                },
+                batchSizeLimit = 50,
+                aggregationDelayMs = 10_000,
+            )
+        val executor = Executors.newFixedThreadPool(8)
+
+        try {
+            repeat(1_000) { index -> executor.submit { queue.post(testRun("r$index")) } }
+            executor.shutdown()
+            assertThat(executor.awaitTermination(10, TimeUnit.SECONDS)).isTrue()
+            queue.flush()
+        } finally {
+            executor.shutdownNow()
+            queue.shutdown()
+        }
+
+        assertThat(sentBatches.flatMap { runIds(it) }.toSet()).hasSize(1_000)
+        assertThat(sentBatches.all { operationCount(it) <= 50 }).isTrue()
     }
 
     @Test
