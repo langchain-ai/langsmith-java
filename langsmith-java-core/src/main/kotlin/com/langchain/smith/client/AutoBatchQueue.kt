@@ -78,8 +78,8 @@ class AutoBatchQueue(
      * Safe to call from any thread. No-op if the queue is empty.
      */
     fun flush() {
-        val batch = lock.withLock { drain() }
-        if (batch != null) sendBatchTracked(batch)
+        val batch = lock.withLock { drain()?.also { activeSends++ } }
+        if (batch != null) sendBatchAfterIncrement(batch)
         waitForActiveSends()
     }
 
@@ -194,11 +194,6 @@ class AutoBatchQueue(
                 e,
             )
         }
-    }
-
-    private fun sendBatchTracked(params: RunIngestBatchParams) {
-        lock.withLock { activeSends++ }
-        sendBatchAfterIncrement(params)
     }
 
     private fun sendBatchAfterIncrement(params: RunIngestBatchParams) {
