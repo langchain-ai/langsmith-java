@@ -3,8 +3,10 @@ package com.langchain.smith.testutils
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
+import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.blocking.RunService
 import java.lang.reflect.Proxy
 
@@ -51,7 +53,12 @@ internal class CapturingLangsmithClient {
         // update(params: RunUpdateParams) or update(runId: String, params: RunUpdateParams)
         val first = args.firstOrNull() ?: return null
         return when (first) {
-            is com.langchain.smith.models.runs.RunUpdateParams -> first.run()
+            is com.langchain.smith.models.runs.RunUpdateParams ->
+                first.runId().map { first.run().toBuilder().id(it).build() }.orElse(first.run())
+            is String -> {
+                val params = args.getOrNull(1) as? com.langchain.smith.models.runs.RunUpdateParams
+                params?.run()?.toBuilder()?.id(first)?.build()
+            }
             else -> null
         }
     }
@@ -90,7 +97,7 @@ internal class CapturingLangsmithClient {
                         if (realClient != null) {
                             method.invoke(realClient.runs(), *args.orEmpty())
                         } else {
-                            Unit
+                            RunCreateResponse.builder().build()
                         }
                     }
                     "update" -> {
@@ -104,7 +111,7 @@ internal class CapturingLangsmithClient {
                         if (realClient != null) {
                             method.invoke(realClient.runs(), *args.orEmpty())
                         } else {
-                            Unit
+                            RunUpdateResponse.builder().build()
                         }
                     }
                     "flush" -> null

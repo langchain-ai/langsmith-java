@@ -48,22 +48,22 @@ interface RunService {
      * Queues a single run for ingestion. The request body must be a JSON-encoded run object that
      * follows the Run schema.
      */
-    fun create(params: RunCreateParams) {
-        create(params, RequestOptions.none())
-    }
+    fun create(params: RunCreateParams): RunCreateResponse = create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(params: RunCreateParams, requestOptions: RequestOptions = RequestOptions.none())
+    fun create(
+        params: RunCreateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunCreateResponse
 
     /** @see create */
-    fun create(run: Run, requestOptions: RequestOptions = RequestOptions.none()) {
-        create(RunCreateParams.builder().run(run).build(), requestOptions)
-    }
+    fun create(
+        run: Run,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunCreateResponse = create(RunCreateParams.builder().run(run).build(), requestOptions)
 
     /** @see create */
-    fun create(run: Run) {
-        create(run, RequestOptions.none())
-    }
+    fun create(run: Run): RunCreateResponse = create(run, RequestOptions.none())
 
     /** Get a specific run. */
     fun retrieve(runId: String): RunSchema = retrieve(runId, RunRetrieveParams.none())
@@ -96,26 +96,24 @@ interface RunService {
      * Updates a run identified by its ID. The body should contain only the fields to be changed;
      * unknown fields are ignored.
      */
-    fun update(runId: String, params: RunUpdateParams) {
+    fun update(runId: String, params: RunUpdateParams): RunUpdateResponse =
         update(runId, params, RequestOptions.none())
-    }
 
     /** @see update */
     fun update(
         runId: String,
         params: RunUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ) {
-        update(params.toBuilder().runId(runId).build(), requestOptions)
-    }
+    ): RunUpdateResponse = update(params.toBuilder().runId(runId).build(), requestOptions)
 
     /** @see update */
-    fun update(params: RunUpdateParams) {
-        update(params, RequestOptions.none())
-    }
+    fun update(params: RunUpdateParams): RunUpdateResponse = update(params, RequestOptions.none())
 
     /** @see update */
-    fun update(params: RunUpdateParams, requestOptions: RequestOptions = RequestOptions.none())
+    fun update(
+        params: RunUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunUpdateResponse
 
     /**
      * Ingests a batch of runs in a single JSON payload. The payload must have `post` and/or `patch`

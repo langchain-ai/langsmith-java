@@ -4,9 +4,11 @@ import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.services.blocking.RunService
 import java.util.concurrent.Executors
+import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.Condition
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import org.slf4j.LoggerFactory
@@ -30,9 +32,12 @@ class AutoBatchQueue(
     private val aggregationDelayMs: Long = DEFAULT_AGGREGATION_DELAY_MS,
 ) {
     private val lock = ReentrantLock()
+    private val sendCompleted: Condition = lock.newCondition()
     private val posts = mutableListOf<Run>()
     private val patches = mutableListOf<Run>()
     private var pendingFlush: ScheduledFuture<*>? = null
+    private var activeSends = 0
+    private var shutdown = false
 
     private val scheduler: ScheduledExecutorService =
         Executors.newSingleThreadScheduledExecutor { r ->
@@ -42,6 +47,7 @@ class AutoBatchQueue(
     /** Enqueues a run create operation. */
     fun post(run: Run) {
         lock.withLock {
+            check(!shutdown) { "AutoBatchQueue is shut down" }
             posts.add(run)
             scheduleOrFlush()
         }
@@ -50,6 +56,7 @@ class AutoBatchQueue(
     /** Enqueues a run update (patch) operation. */
     fun patch(run: Run) {
         lock.withLock {
+            check(!shutdown) { "AutoBatchQueue is shut down" }
             patches.add(run)
             scheduleOrFlush()
         }
@@ -61,8 +68,9 @@ class AutoBatchQueue(
      * Safe to call from any thread. No-op if the queue is empty.
      */
     fun flush() {
-        val batch = lock.withLock { drain() } ?: return
-        sendBatch(batch)
+        val batch = lock.withLock { drain() }
+        if (batch != null) sendBatchTracked(batch)
+        waitForActiveSends()
     }
 
     /**
@@ -71,6 +79,7 @@ class AutoBatchQueue(
      * After calling this, the queue will no longer accept new operations.
      */
     fun shutdown() {
+        lock.withLock { shutdown = true }
         flush()
         scheduler.shutdown()
         try {
@@ -79,6 +88,7 @@ class AutoBatchQueue(
             }
         } catch (_: InterruptedException) {
             scheduler.shutdownNow()
+            Thread.currentThread().interrupt()
         }
     }
 
@@ -89,14 +99,19 @@ class AutoBatchQueue(
         // Already holding lock
         if (posts.size + patches.size >= batchSizeLimit) {
             val batch = drain() ?: return
-            scheduler.execute { sendBatch(batch) }
+            submitBatch(batch)
         } else {
             pendingFlush?.cancel(false)
             pendingFlush =
                 scheduler.schedule(
                     {
-                        val batch = lock.withLock { drain() } ?: return@schedule
-                        sendBatch(batch)
+                        val batch =
+                            lock.withLock { drain()?.also { activeSends++ } } ?: return@schedule
+                        try {
+                            sendBatch(batch)
+                        } finally {
+                            markSendComplete()
+                        }
                     },
                     aggregationDelayMs,
                     TimeUnit.MILLISECONDS,
@@ -129,6 +144,51 @@ class AutoBatchQueue(
             patches.clear()
         }
         return builder.build()
+    }
+
+    private fun submitBatch(params: RunIngestBatchParams) {
+        activeSends++
+        try {
+            scheduler.execute {
+                try {
+                    sendBatch(params)
+                } finally {
+                    markSendComplete()
+                }
+            }
+        } catch (e: RejectedExecutionException) {
+            markSendComplete()
+            logger.warn("Batch queue scheduler rejected a batch", e)
+        }
+    }
+
+    private fun sendBatchTracked(params: RunIngestBatchParams) {
+        lock.withLock { activeSends++ }
+        try {
+            sendBatch(params)
+        } finally {
+            markSendComplete()
+        }
+    }
+
+    private fun waitForActiveSends() {
+        lock.withLock {
+            while (activeSends > 0) {
+                try {
+                    sendCompleted.await()
+                } catch (_: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                    return
+                }
+            }
+        }
+    }
+
+    private fun markSendComplete() {
+        lock.withLock {
+            activeSends--
+            sendCompleted.signalAll()
+        }
     }
 
     private fun sendBatch(params: RunIngestBatchParams) {

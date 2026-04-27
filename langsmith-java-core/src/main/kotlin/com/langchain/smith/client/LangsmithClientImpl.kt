@@ -53,7 +53,7 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val datasets: DatasetService by lazy { DatasetServiceImpl(clientOptionsWithUserAgent) }
 
-    private val runs: RunService by lazy { RunServiceImpl(clientOptionsWithUserAgent) }
+    private val runs: RunServiceImpl by lazy { RunServiceImpl(clientOptionsWithUserAgent) }
 
     private val evaluators: EvaluatorService by lazy {
         EvaluatorServiceImpl(clientOptionsWithUserAgent)
@@ -109,7 +109,7 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun sandboxes(): SandboxService = sandboxes
 
     override fun close() {
-        runs.flush()
+        runs.shutdown()
         clientOptions.close()
     }
 

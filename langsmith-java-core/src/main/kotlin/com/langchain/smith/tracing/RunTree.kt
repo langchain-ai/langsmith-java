@@ -124,22 +124,28 @@ class RunTree(
         )
     }
 
-    /** Posts this run to LangSmith, batched with other pending operations. */
+    /** Posts this run to LangSmith in the background, batched with other pending operations. */
     fun postRun() {
         val c = client ?: return
-        c.runs().create(buildRunData())
+        val e = executor ?: DEFAULT_EXECUTOR
+        val runData = buildRunData()
+        submitSafely(e, name) { c.runs().create(runData) }
     }
 
-    /** Patches this run in LangSmith, batched with other pending operations. */
+    /** Patches this run in LangSmith in the background, batched with other pending operations. */
     fun patchRun() {
         val c = client ?: return
-        c.runs()
-            .update(
-                com.langchain.smith.models.runs.RunUpdateParams.builder()
-                    .runId(id)
-                    .run(buildRunData())
-                    .build()
-            )
+        val e = executor ?: DEFAULT_EXECUTOR
+        val runData = buildRunData()
+        submitSafely(e, name) {
+            c.runs()
+                .update(
+                    com.langchain.smith.models.runs.RunUpdateParams.builder()
+                        .runId(id)
+                        .run(runData)
+                        .build()
+                )
+        }
     }
 
     /** Builds the [Run] data object for posting/patching to the LangSmith API. */
@@ -335,6 +341,20 @@ class RunTree(
 // ---------------------------------------------------------------------------
 // Private helpers for RunTree posting
 // ---------------------------------------------------------------------------
+
+private fun submitSafely(executor: ExecutorService, runName: String, block: () -> Unit) {
+    try {
+        executor.submit {
+            try {
+                block()
+            } catch (e: Exception) {
+                logger.warn("Failed to send run '$runName'", e)
+            }
+        }
+    } catch (e: java.util.concurrent.RejectedExecutionException) {
+        logger.warn("Executor is shut down; dropping run '$runName'", e)
+    }
+}
 
 private fun toJsonValueMap(data: Map<String, Any?>?): Map<String, JsonValue> =
     data?.mapValues { (_, v) -> JsonValue.from(v) } ?: emptyMap()

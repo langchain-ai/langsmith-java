@@ -64,19 +64,46 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun rules(): RuleService = rules
 
-    override fun create(params: RunCreateParams, requestOptions: RequestOptions) {
+    override fun create(
+        params: RunCreateParams,
+        requestOptions: RequestOptions,
+    ): RunCreateResponse {
+        if (!canBatch(params, requestOptions)) {
+            return withRawResponse().create(params, requestOptions).parse()
+        }
+
         batchQueue.post(params.run())
+        return RunCreateResponse.builder().build()
     }
 
     override fun retrieve(params: RunRetrieveParams, requestOptions: RequestOptions): RunSchema =
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    override fun update(params: RunUpdateParams, requestOptions: RequestOptions) {
-        batchQueue.patch(params.run())
+    override fun update(
+        params: RunUpdateParams,
+        requestOptions: RequestOptions,
+    ): RunUpdateResponse {
+        if (!canBatch(params, requestOptions)) {
+            return withRawResponse().update(params, requestOptions).parse()
+        }
+
+        val runId = params.runId().getOrNull()
+        if (runId == null) {
+            // Preserve the synchronous endpoint's validation/error behavior when no path run ID is
+            // provided; the batch API identifies patches by the run body's ID.
+            return withRawResponse().update(params, requestOptions).parse()
+        }
+
+        batchQueue.patch(params.run().toBuilder().id(runId).build())
+        return RunUpdateResponse.builder().build()
     }
 
     override fun flush() {
         batchQueue.flush()
+    }
+
+    internal fun shutdown() {
+        batchQueue.shutdown()
     }
 
     override fun ingestBatch(
@@ -100,6 +127,19 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     ): RunUpdate2Response =
         // patch /api/v1/runs/{run_id}
         withRawResponse().update2(params, requestOptions).parse()
+
+    private fun canBatch(params: RunCreateParams, requestOptions: RequestOptions): Boolean =
+        !hasCustomRequestOptions(requestOptions) &&
+            params._headers().isEmpty() &&
+            params._queryParams().isEmpty()
+
+    private fun canBatch(params: RunUpdateParams, requestOptions: RequestOptions): Boolean =
+        !hasCustomRequestOptions(requestOptions) &&
+            params._headers().isEmpty() &&
+            params._queryParams().isEmpty()
+
+    private fun hasCustomRequestOptions(requestOptions: RequestOptions): Boolean =
+        requestOptions.responseValidation != null || requestOptions.timeout != null
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunService.WithRawResponse {
