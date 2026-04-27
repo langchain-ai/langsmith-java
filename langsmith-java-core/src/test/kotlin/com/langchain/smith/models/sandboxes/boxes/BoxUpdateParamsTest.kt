@@ -23,6 +23,24 @@ internal class BoxUpdateParamsTest {
                             .addDenyList("string")
                             .build()
                     )
+                    .addCallback(
+                        BoxUpdateParams.ProxyConfig.Callback.builder()
+                            .addMatchHost("string")
+                            .ttlSeconds(60L)
+                            .url("url")
+                            .addRequestHeader(
+                                BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
+                                    .bodyName("name")
+                                    .type(
+                                        BoxUpdateParams.ProxyConfig.Callback.RequestHeader.Type
+                                            .PLAINTEXT
+                                    )
+                                    .isSet(true)
+                                    .value("value")
+                                    .build()
+                            )
+                            .build()
+                    )
                     .addNoProxy("string")
                     .addRule(
                         BoxUpdateParams.ProxyConfig.Rule.builder()
@@ -73,6 +91,24 @@ internal class BoxUpdateParamsTest {
                                 .addDenyList("string")
                                 .build()
                         )
+                        .addCallback(
+                            BoxUpdateParams.ProxyConfig.Callback.builder()
+                                .addMatchHost("string")
+                                .ttlSeconds(60L)
+                                .url("url")
+                                .addRequestHeader(
+                                    BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
+                                        .bodyName("name")
+                                        .type(
+                                            BoxUpdateParams.ProxyConfig.Callback.RequestHeader.Type
+                                                .PLAINTEXT
+                                        )
+                                        .isSet(true)
+                                        .value("value")
+                                        .build()
+                                )
+                                .build()
+                        )
                         .addNoProxy("string")
                         .addRule(
                             BoxUpdateParams.ProxyConfig.Rule.builder()
@@ -111,6 +147,24 @@ internal class BoxUpdateParamsTest {
                         BoxUpdateParams.ProxyConfig.AccessControl.builder()
                             .addAllowList("string")
                             .addDenyList("string")
+                            .build()
+                    )
+                    .addCallback(
+                        BoxUpdateParams.ProxyConfig.Callback.builder()
+                            .addMatchHost("string")
+                            .ttlSeconds(60L)
+                            .url("url")
+                            .addRequestHeader(
+                                BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
+                                    .bodyName("name")
+                                    .type(
+                                        BoxUpdateParams.ProxyConfig.Callback.RequestHeader.Type
+                                            .PLAINTEXT
+                                    )
+                                    .isSet(true)
+                                    .value("value")
+                                    .build()
+                            )
                             .build()
                     )
                     .addNoProxy("string")

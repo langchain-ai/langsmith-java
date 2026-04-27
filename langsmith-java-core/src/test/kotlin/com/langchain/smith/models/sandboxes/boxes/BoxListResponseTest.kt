@@ -33,6 +33,28 @@ internal class BoxListResponseTest {
                                         .addDenyList("string")
                                         .build()
                                 )
+                                .addCallback(
+                                    BoxListResponse.Sandbox.ProxyConfig.Callback.builder()
+                                        .addMatchHost("string")
+                                        .ttlSeconds(60L)
+                                        .url("url")
+                                        .addRequestHeader(
+                                            BoxListResponse.Sandbox.ProxyConfig.Callback
+                                                .RequestHeader
+                                                .builder()
+                                                .name("name")
+                                                .type(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Callback
+                                                        .RequestHeader
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addNoProxy("string")
                                 .addRule(
                                     BoxListResponse.Sandbox.ProxyConfig.Rule.builder()
@@ -86,6 +108,27 @@ internal class BoxListResponseTest {
                                 BoxListResponse.Sandbox.ProxyConfig.AccessControl.builder()
                                     .addAllowList("string")
                                     .addDenyList("string")
+                                    .build()
+                            )
+                            .addCallback(
+                                BoxListResponse.Sandbox.ProxyConfig.Callback.builder()
+                                    .addMatchHost("string")
+                                    .ttlSeconds(60L)
+                                    .url("url")
+                                    .addRequestHeader(
+                                        BoxListResponse.Sandbox.ProxyConfig.Callback.RequestHeader
+                                            .builder()
+                                            .name("name")
+                                            .type(
+                                                BoxListResponse.Sandbox.ProxyConfig.Callback
+                                                    .RequestHeader
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
                                     .build()
                             )
                             .addNoProxy("string")
@@ -143,6 +186,28 @@ internal class BoxListResponseTest {
                                     BoxListResponse.Sandbox.ProxyConfig.AccessControl.builder()
                                         .addAllowList("string")
                                         .addDenyList("string")
+                                        .build()
+                                )
+                                .addCallback(
+                                    BoxListResponse.Sandbox.ProxyConfig.Callback.builder()
+                                        .addMatchHost("string")
+                                        .ttlSeconds(60L)
+                                        .url("url")
+                                        .addRequestHeader(
+                                            BoxListResponse.Sandbox.ProxyConfig.Callback
+                                                .RequestHeader
+                                                .builder()
+                                                .name("name")
+                                                .type(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Callback
+                                                        .RequestHeader
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
                                         .build()
                                 )
                                 .addNoProxy("string")

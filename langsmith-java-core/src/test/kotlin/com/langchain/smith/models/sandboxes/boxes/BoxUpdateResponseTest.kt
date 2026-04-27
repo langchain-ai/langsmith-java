@@ -29,6 +29,25 @@ internal class BoxUpdateResponseTest {
                                 .addDenyList("string")
                                 .build()
                         )
+                        .addCallback(
+                            BoxUpdateResponse.ProxyConfig.Callback.builder()
+                                .addMatchHost("string")
+                                .ttlSeconds(60L)
+                                .url("url")
+                                .addRequestHeader(
+                                    BoxUpdateResponse.ProxyConfig.Callback.RequestHeader.builder()
+                                        .name("name")
+                                        .type(
+                                            BoxUpdateResponse.ProxyConfig.Callback.RequestHeader
+                                                .Type
+                                                .PLAINTEXT
+                                        )
+                                        .isSet(true)
+                                        .value("value")
+                                        .build()
+                                )
+                                .build()
+                        )
                         .addNoProxy("string")
                         .addRule(
                             BoxUpdateResponse.ProxyConfig.Rule.builder()
@@ -74,6 +93,24 @@ internal class BoxUpdateResponseTest {
                         BoxUpdateResponse.ProxyConfig.AccessControl.builder()
                             .addAllowList("string")
                             .addDenyList("string")
+                            .build()
+                    )
+                    .addCallback(
+                        BoxUpdateResponse.ProxyConfig.Callback.builder()
+                            .addMatchHost("string")
+                            .ttlSeconds(60L)
+                            .url("url")
+                            .addRequestHeader(
+                                BoxUpdateResponse.ProxyConfig.Callback.RequestHeader.builder()
+                                    .name("name")
+                                    .type(
+                                        BoxUpdateResponse.ProxyConfig.Callback.RequestHeader.Type
+                                            .PLAINTEXT
+                                    )
+                                    .isSet(true)
+                                    .value("value")
+                                    .build()
+                            )
                             .build()
                     )
                     .addNoProxy("string")
@@ -123,6 +160,25 @@ internal class BoxUpdateResponseTest {
                             BoxUpdateResponse.ProxyConfig.AccessControl.builder()
                                 .addAllowList("string")
                                 .addDenyList("string")
+                                .build()
+                        )
+                        .addCallback(
+                            BoxUpdateResponse.ProxyConfig.Callback.builder()
+                                .addMatchHost("string")
+                                .ttlSeconds(60L)
+                                .url("url")
+                                .addRequestHeader(
+                                    BoxUpdateResponse.ProxyConfig.Callback.RequestHeader.builder()
+                                        .name("name")
+                                        .type(
+                                            BoxUpdateResponse.ProxyConfig.Callback.RequestHeader
+                                                .Type
+                                                .PLAINTEXT
+                                        )
+                                        .isSet(true)
+                                        .value("value")
+                                        .build()
+                                )
                                 .build()
                         )
                         .addNoProxy("string")

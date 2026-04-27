@@ -39,6 +39,25 @@ internal class BoxServiceAsyncTest {
                                     .addDenyList("string")
                                     .build()
                             )
+                            .addCallback(
+                                BoxCreateParams.ProxyConfig.Callback.builder()
+                                    .addMatchHost("string")
+                                    .ttlSeconds(60L)
+                                    .url("url")
+                                    .addRequestHeader(
+                                        BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
+                                            .name("name")
+                                            .type(
+                                                BoxCreateParams.ProxyConfig.Callback.RequestHeader
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .addNoProxy("string")
                             .addRule(
                                 BoxCreateParams.ProxyConfig.Rule.builder()
@@ -117,6 +136,25 @@ internal class BoxServiceAsyncTest {
                                 BoxUpdateParams.ProxyConfig.AccessControl.builder()
                                     .addAllowList("string")
                                     .addDenyList("string")
+                                    .build()
+                            )
+                            .addCallback(
+                                BoxUpdateParams.ProxyConfig.Callback.builder()
+                                    .addMatchHost("string")
+                                    .ttlSeconds(60L)
+                                    .url("url")
+                                    .addRequestHeader(
+                                        BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
+                                            .bodyName("name")
+                                            .type(
+                                                BoxUpdateParams.ProxyConfig.Callback.RequestHeader
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
                                     .build()
                             )
                             .addNoProxy("string")

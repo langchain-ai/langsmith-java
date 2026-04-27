@@ -860,6 +860,7 @@ private constructor(
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
             private val accessControl: JsonField<AccessControl>,
+            private val callbacks: JsonField<List<Callback>>,
             private val noProxy: JsonField<List<String>>,
             private val rules: JsonField<List<Rule>>,
             private val additionalProperties: MutableMap<String, JsonValue>,
@@ -870,13 +871,16 @@ private constructor(
                 @JsonProperty("access_control")
                 @ExcludeMissing
                 accessControl: JsonField<AccessControl> = JsonMissing.of(),
+                @JsonProperty("callbacks")
+                @ExcludeMissing
+                callbacks: JsonField<List<Callback>> = JsonMissing.of(),
                 @JsonProperty("no_proxy")
                 @ExcludeMissing
                 noProxy: JsonField<List<String>> = JsonMissing.of(),
                 @JsonProperty("rules")
                 @ExcludeMissing
                 rules: JsonField<List<Rule>> = JsonMissing.of(),
-            ) : this(accessControl, noProxy, rules, mutableMapOf())
+            ) : this(accessControl, callbacks, noProxy, rules, mutableMapOf())
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -884,6 +888,12 @@ private constructor(
              */
             fun accessControl(): Optional<AccessControl> =
                 accessControl.getOptional("access_control")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun callbacks(): Optional<List<Callback>> = callbacks.getOptional("callbacks")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -906,6 +916,16 @@ private constructor(
             @JsonProperty("access_control")
             @ExcludeMissing
             fun _accessControl(): JsonField<AccessControl> = accessControl
+
+            /**
+             * Returns the raw JSON value of [callbacks].
+             *
+             * Unlike [callbacks], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("callbacks")
+            @ExcludeMissing
+            fun _callbacks(): JsonField<List<Callback>> = callbacks
 
             /**
              * Returns the raw JSON value of [noProxy].
@@ -945,6 +965,7 @@ private constructor(
             class Builder internal constructor() {
 
                 private var accessControl: JsonField<AccessControl> = JsonMissing.of()
+                private var callbacks: JsonField<MutableList<Callback>>? = null
                 private var noProxy: JsonField<MutableList<String>>? = null
                 private var rules: JsonField<MutableList<Rule>>? = null
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -952,6 +973,7 @@ private constructor(
                 @JvmSynthetic
                 internal fun from(proxyConfig: ProxyConfig) = apply {
                     accessControl = proxyConfig.accessControl
+                    callbacks = proxyConfig.callbacks.map { it.toMutableList() }
                     noProxy = proxyConfig.noProxy.map { it.toMutableList() }
                     rules = proxyConfig.rules.map { it.toMutableList() }
                     additionalProperties = proxyConfig.additionalProperties.toMutableMap()
@@ -969,6 +991,31 @@ private constructor(
                  */
                 fun accessControl(accessControl: JsonField<AccessControl>) = apply {
                     this.accessControl = accessControl
+                }
+
+                fun callbacks(callbacks: List<Callback>) = callbacks(JsonField.of(callbacks))
+
+                /**
+                 * Sets [Builder.callbacks] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.callbacks] with a well-typed `List<Callback>`
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun callbacks(callbacks: JsonField<List<Callback>>) = apply {
+                    this.callbacks = callbacks.map { it.toMutableList() }
+                }
+
+                /**
+                 * Adds a single [Callback] to [callbacks].
+                 *
+                 * @throws IllegalStateException if the field was previously set to a non-list.
+                 */
+                fun addCallback(callback: Callback) = apply {
+                    callbacks =
+                        (callbacks ?: JsonField.of(mutableListOf())).also {
+                            checkKnown("callbacks", it).add(callback)
+                        }
                 }
 
                 fun noProxy(noProxy: List<String>) = noProxy(JsonField.of(noProxy))
@@ -1051,6 +1098,7 @@ private constructor(
                 fun build(): ProxyConfig =
                     ProxyConfig(
                         accessControl,
+                        (callbacks ?: JsonMissing.of()).map { it.toImmutable() },
                         (noProxy ?: JsonMissing.of()).map { it.toImmutable() },
                         (rules ?: JsonMissing.of()).map { it.toImmutable() },
                         additionalProperties.toMutableMap(),
@@ -1065,6 +1113,7 @@ private constructor(
                 }
 
                 accessControl().ifPresent { it.validate() }
+                callbacks().ifPresent { it.forEach { it.validate() } }
                 noProxy()
                 rules().ifPresent { it.forEach { it.validate() } }
                 validated = true
@@ -1087,6 +1136,7 @@ private constructor(
             @JvmSynthetic
             internal fun validity(): Int =
                 (accessControl.asKnown().getOrNull()?.validity() ?: 0) +
+                    (callbacks.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                     (noProxy.asKnown().getOrNull()?.size ?: 0) +
                     (rules.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
@@ -1309,6 +1359,744 @@ private constructor(
 
                 override fun toString() =
                     "AccessControl{allowList=$allowList, denyList=$denyList, additionalProperties=$additionalProperties}"
+            }
+
+            class Callback
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val matchHosts: JsonField<List<String>>,
+                private val ttlSeconds: JsonField<Long>,
+                private val url: JsonField<String>,
+                private val requestHeaders: JsonField<List<RequestHeader>>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("match_hosts")
+                    @ExcludeMissing
+                    matchHosts: JsonField<List<String>> = JsonMissing.of(),
+                    @JsonProperty("ttl_seconds")
+                    @ExcludeMissing
+                    ttlSeconds: JsonField<Long> = JsonMissing.of(),
+                    @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("request_headers")
+                    @ExcludeMissing
+                    requestHeaders: JsonField<List<RequestHeader>> = JsonMissing.of(),
+                ) : this(matchHosts, ttlSeconds, url, requestHeaders, mutableMapOf())
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun matchHosts(): List<String> = matchHosts.getRequired("match_hosts")
+
+                /**
+                 * TTLSeconds is how long resolved headers are cached before the proxy re-invokes
+                 * URL. Must be between 60 and 3600 seconds.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun ttlSeconds(): Long = ttlSeconds.getRequired("ttl_seconds")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun url(): String = url.getRequired("url")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun requestHeaders(): Optional<List<RequestHeader>> =
+                    requestHeaders.getOptional("request_headers")
+
+                /**
+                 * Returns the raw JSON value of [matchHosts].
+                 *
+                 * Unlike [matchHosts], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("match_hosts")
+                @ExcludeMissing
+                fun _matchHosts(): JsonField<List<String>> = matchHosts
+
+                /**
+                 * Returns the raw JSON value of [ttlSeconds].
+                 *
+                 * Unlike [ttlSeconds], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("ttl_seconds")
+                @ExcludeMissing
+                fun _ttlSeconds(): JsonField<Long> = ttlSeconds
+
+                /**
+                 * Returns the raw JSON value of [url].
+                 *
+                 * Unlike [url], this method doesn't throw if the JSON field has an unexpected type.
+                 */
+                @JsonProperty("url") @ExcludeMissing fun _url(): JsonField<String> = url
+
+                /**
+                 * Returns the raw JSON value of [requestHeaders].
+                 *
+                 * Unlike [requestHeaders], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("request_headers")
+                @ExcludeMissing
+                fun _requestHeaders(): JsonField<List<RequestHeader>> = requestHeaders
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /**
+                     * Returns a mutable builder for constructing an instance of [Callback].
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .matchHosts()
+                     * .ttlSeconds()
+                     * .url()
+                     * ```
+                     */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Callback]. */
+                class Builder internal constructor() {
+
+                    private var matchHosts: JsonField<MutableList<String>>? = null
+                    private var ttlSeconds: JsonField<Long>? = null
+                    private var url: JsonField<String>? = null
+                    private var requestHeaders: JsonField<MutableList<RequestHeader>>? = null
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(callback: Callback) = apply {
+                        matchHosts = callback.matchHosts.map { it.toMutableList() }
+                        ttlSeconds = callback.ttlSeconds
+                        url = callback.url
+                        requestHeaders = callback.requestHeaders.map { it.toMutableList() }
+                        additionalProperties = callback.additionalProperties.toMutableMap()
+                    }
+
+                    fun matchHosts(matchHosts: List<String>) = matchHosts(JsonField.of(matchHosts))
+
+                    /**
+                     * Sets [Builder.matchHosts] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.matchHosts] with a well-typed `List<String>`
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun matchHosts(matchHosts: JsonField<List<String>>) = apply {
+                        this.matchHosts = matchHosts.map { it.toMutableList() }
+                    }
+
+                    /**
+                     * Adds a single [String] to [matchHosts].
+                     *
+                     * @throws IllegalStateException if the field was previously set to a non-list.
+                     */
+                    fun addMatchHost(matchHost: String) = apply {
+                        matchHosts =
+                            (matchHosts ?: JsonField.of(mutableListOf())).also {
+                                checkKnown("matchHosts", it).add(matchHost)
+                            }
+                    }
+
+                    /**
+                     * TTLSeconds is how long resolved headers are cached before the proxy
+                     * re-invokes URL. Must be between 60 and 3600 seconds.
+                     */
+                    fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
+
+                    /**
+                     * Sets [Builder.ttlSeconds] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.ttlSeconds] with a well-typed [Long] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun ttlSeconds(ttlSeconds: JsonField<Long>) = apply {
+                        this.ttlSeconds = ttlSeconds
+                    }
+
+                    fun url(url: String) = url(JsonField.of(url))
+
+                    /**
+                     * Sets [Builder.url] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.url] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun url(url: JsonField<String>) = apply { this.url = url }
+
+                    fun requestHeaders(requestHeaders: List<RequestHeader>) =
+                        requestHeaders(JsonField.of(requestHeaders))
+
+                    /**
+                     * Sets [Builder.requestHeaders] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.requestHeaders] with a well-typed
+                     * `List<RequestHeader>` value instead. This method is primarily for setting the
+                     * field to an undocumented or not yet supported value.
+                     */
+                    fun requestHeaders(requestHeaders: JsonField<List<RequestHeader>>) = apply {
+                        this.requestHeaders = requestHeaders.map { it.toMutableList() }
+                    }
+
+                    /**
+                     * Adds a single [RequestHeader] to [requestHeaders].
+                     *
+                     * @throws IllegalStateException if the field was previously set to a non-list.
+                     */
+                    fun addRequestHeader(requestHeader: RequestHeader) = apply {
+                        requestHeaders =
+                            (requestHeaders ?: JsonField.of(mutableListOf())).also {
+                                checkKnown("requestHeaders", it).add(requestHeader)
+                            }
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Callback].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .matchHosts()
+                     * .ttlSeconds()
+                     * .url()
+                     * ```
+                     *
+                     * @throws IllegalStateException if any required field is unset.
+                     */
+                    fun build(): Callback =
+                        Callback(
+                            checkRequired("matchHosts", matchHosts).map { it.toImmutable() },
+                            checkRequired("ttlSeconds", ttlSeconds),
+                            checkRequired("url", url),
+                            (requestHeaders ?: JsonMissing.of()).map { it.toImmutable() },
+                            additionalProperties.toMutableMap(),
+                        )
+                }
+
+                private var validated: Boolean = false
+
+                fun validate(): Callback = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    matchHosts()
+                    ttlSeconds()
+                    url()
+                    requestHeaders().ifPresent { it.forEach { it.validate() } }
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (matchHosts.asKnown().getOrNull()?.size ?: 0) +
+                        (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
+                        (if (url.asKnown().isPresent) 1 else 0) +
+                        (requestHeaders.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+                class RequestHeader
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val name: JsonField<String>,
+                    private val type: JsonField<Type>,
+                    private val isSet: JsonField<Boolean>,
+                    private val value: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("name")
+                        @ExcludeMissing
+                        name: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("type")
+                        @ExcludeMissing
+                        type: JsonField<Type> = JsonMissing.of(),
+                        @JsonProperty("is_set")
+                        @ExcludeMissing
+                        isSet: JsonField<Boolean> = JsonMissing.of(),
+                        @JsonProperty("value")
+                        @ExcludeMissing
+                        value: JsonField<String> = JsonMissing.of(),
+                    ) : this(name, type, isSet, value, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun name(): String = name.getRequired("name")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun type(): Type = type.getRequired("type")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun isSet(): Optional<Boolean> = isSet.getOptional("is_set")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun value(): Optional<String> = value.getOptional("value")
+
+                    /**
+                     * Returns the raw JSON value of [name].
+                     *
+                     * Unlike [name], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+                    /**
+                     * Returns the raw JSON value of [type].
+                     *
+                     * Unlike [type], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                    /**
+                     * Returns the raw JSON value of [isSet].
+                     *
+                     * Unlike [isSet], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("is_set") @ExcludeMissing fun _isSet(): JsonField<Boolean> = isSet
+
+                    /**
+                     * Returns the raw JSON value of [value].
+                     *
+                     * Unlike [value], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("value") @ExcludeMissing fun _value(): JsonField<String> = value
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [RequestHeader].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .name()
+                         * .type()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [RequestHeader]. */
+                    class Builder internal constructor() {
+
+                        private var name: JsonField<String>? = null
+                        private var type: JsonField<Type>? = null
+                        private var isSet: JsonField<Boolean> = JsonMissing.of()
+                        private var value: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(requestHeader: RequestHeader) = apply {
+                            name = requestHeader.name
+                            type = requestHeader.type
+                            isSet = requestHeader.isSet
+                            value = requestHeader.value
+                            additionalProperties = requestHeader.additionalProperties.toMutableMap()
+                        }
+
+                        fun name(name: String) = name(JsonField.of(name))
+
+                        /**
+                         * Sets [Builder.name] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.name] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun name(name: JsonField<String>) = apply { this.name = name }
+
+                        fun type(type: Type) = type(JsonField.of(type))
+
+                        /**
+                         * Sets [Builder.type] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.type] with a well-typed [Type] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                        fun isSet(isSet: Boolean) = isSet(JsonField.of(isSet))
+
+                        /**
+                         * Sets [Builder.isSet] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.isSet] with a well-typed [Boolean] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun isSet(isSet: JsonField<Boolean>) = apply { this.isSet = isSet }
+
+                        fun value(value: String) = value(JsonField.of(value))
+
+                        /**
+                         * Sets [Builder.value] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.value] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun value(value: JsonField<String>) = apply { this.value = value }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [RequestHeader].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .name()
+                         * .type()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): RequestHeader =
+                            RequestHeader(
+                                checkRequired("name", name),
+                                checkRequired("type", type),
+                                isSet,
+                                value,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    fun validate(): RequestHeader = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        name()
+                        type().validate()
+                        isSet()
+                        value()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (name.asKnown().isPresent) 1 else 0) +
+                            (type.asKnown().getOrNull()?.validity() ?: 0) +
+                            (if (isSet.asKnown().isPresent) 1 else 0) +
+                            (if (value.asKnown().isPresent) 1 else 0)
+
+                    class Type
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val PLAINTEXT = of("plaintext")
+
+                            @JvmField val OPAQUE = of("opaque")
+
+                            @JvmField val WORKSPACE_SECRET = of("workspace_secret")
+
+                            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Type]'s known values. */
+                        enum class Known {
+                            PLAINTEXT,
+                            OPAQUE,
+                            WORKSPACE_SECRET,
+                        }
+
+                        /**
+                         * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Type] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            PLAINTEXT,
+                            OPAQUE,
+                            WORKSPACE_SECRET,
+                            /**
+                             * An enum member indicating that [Type] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                PLAINTEXT -> Value.PLAINTEXT
+                                OPAQUE -> Value.OPAQUE
+                                WORKSPACE_SECRET -> Value.WORKSPACE_SECRET
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                PLAINTEXT -> Known.PLAINTEXT
+                                OPAQUE -> Known.OPAQUE
+                                WORKSPACE_SECRET -> Known.WORKSPACE_SECRET
+                                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        fun validate(): Type = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Type && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is RequestHeader &&
+                            name == other.name &&
+                            type == other.type &&
+                            isSet == other.isSet &&
+                            value == other.value &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(name, type, isSet, value, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "RequestHeader{name=$name, type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
+                }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Callback &&
+                        matchHosts == other.matchHosts &&
+                        ttlSeconds == other.ttlSeconds &&
+                        url == other.url &&
+                        requestHeaders == other.requestHeaders &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy {
+                    Objects.hash(matchHosts, ttlSeconds, url, requestHeaders, additionalProperties)
+                }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "Callback{matchHosts=$matchHosts, ttlSeconds=$ttlSeconds, url=$url, requestHeaders=$requestHeaders, additionalProperties=$additionalProperties}"
             }
 
             class Rule
@@ -2102,19 +2890,20 @@ private constructor(
 
                 return other is ProxyConfig &&
                     accessControl == other.accessControl &&
+                    callbacks == other.callbacks &&
                     noProxy == other.noProxy &&
                     rules == other.rules &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(accessControl, noProxy, rules, additionalProperties)
+                Objects.hash(accessControl, callbacks, noProxy, rules, additionalProperties)
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "ProxyConfig{accessControl=$accessControl, noProxy=$noProxy, rules=$rules, additionalProperties=$additionalProperties}"
+                "ProxyConfig{accessControl=$accessControl, callbacks=$callbacks, noProxy=$noProxy, rules=$rules, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {

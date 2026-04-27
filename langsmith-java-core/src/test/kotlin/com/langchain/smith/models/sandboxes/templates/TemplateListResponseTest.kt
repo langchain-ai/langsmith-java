@@ -30,6 +30,29 @@ internal class TemplateListResponseTest {
                                         .addDenyList("string")
                                         .build()
                                 )
+                                .addCallback(
+                                    TemplateListResponse.Template.ProxyConfig.Callback.builder()
+                                        .addMatchHost("string")
+                                        .ttlSeconds(60L)
+                                        .url("url")
+                                        .addRequestHeader(
+                                            TemplateListResponse.Template.ProxyConfig.Callback
+                                                .RequestHeader
+                                                .builder()
+                                                .name("name")
+                                                .type(
+                                                    TemplateListResponse.Template.ProxyConfig
+                                                        .Callback
+                                                        .RequestHeader
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addNoProxy("string")
                                 .addRule(
                                     TemplateListResponse.Template.ProxyConfig.Rule.builder()
@@ -89,6 +112,28 @@ internal class TemplateListResponseTest {
                                 TemplateListResponse.Template.ProxyConfig.AccessControl.builder()
                                     .addAllowList("string")
                                     .addDenyList("string")
+                                    .build()
+                            )
+                            .addCallback(
+                                TemplateListResponse.Template.ProxyConfig.Callback.builder()
+                                    .addMatchHost("string")
+                                    .ttlSeconds(60L)
+                                    .url("url")
+                                    .addRequestHeader(
+                                        TemplateListResponse.Template.ProxyConfig.Callback
+                                            .RequestHeader
+                                            .builder()
+                                            .name("name")
+                                            .type(
+                                                TemplateListResponse.Template.ProxyConfig.Callback
+                                                    .RequestHeader
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
                                     .build()
                             )
                             .addNoProxy("string")
@@ -155,6 +200,29 @@ internal class TemplateListResponseTest {
                                         .builder()
                                         .addAllowList("string")
                                         .addDenyList("string")
+                                        .build()
+                                )
+                                .addCallback(
+                                    TemplateListResponse.Template.ProxyConfig.Callback.builder()
+                                        .addMatchHost("string")
+                                        .ttlSeconds(60L)
+                                        .url("url")
+                                        .addRequestHeader(
+                                            TemplateListResponse.Template.ProxyConfig.Callback
+                                                .RequestHeader
+                                                .builder()
+                                                .name("name")
+                                                .type(
+                                                    TemplateListResponse.Template.ProxyConfig
+                                                        .Callback
+                                                        .RequestHeader
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
                                         .build()
                                 )
                                 .addNoProxy("string")

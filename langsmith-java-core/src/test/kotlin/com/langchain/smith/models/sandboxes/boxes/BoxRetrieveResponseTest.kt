@@ -29,6 +29,25 @@ internal class BoxRetrieveResponseTest {
                                 .addDenyList("string")
                                 .build()
                         )
+                        .addCallback(
+                            BoxRetrieveResponse.ProxyConfig.Callback.builder()
+                                .addMatchHost("string")
+                                .ttlSeconds(60L)
+                                .url("url")
+                                .addRequestHeader(
+                                    BoxRetrieveResponse.ProxyConfig.Callback.RequestHeader.builder()
+                                        .name("name")
+                                        .type(
+                                            BoxRetrieveResponse.ProxyConfig.Callback.RequestHeader
+                                                .Type
+                                                .PLAINTEXT
+                                        )
+                                        .isSet(true)
+                                        .value("value")
+                                        .build()
+                                )
+                                .build()
+                        )
                         .addNoProxy("string")
                         .addRule(
                             BoxRetrieveResponse.ProxyConfig.Rule.builder()
@@ -75,6 +94,24 @@ internal class BoxRetrieveResponseTest {
                         BoxRetrieveResponse.ProxyConfig.AccessControl.builder()
                             .addAllowList("string")
                             .addDenyList("string")
+                            .build()
+                    )
+                    .addCallback(
+                        BoxRetrieveResponse.ProxyConfig.Callback.builder()
+                            .addMatchHost("string")
+                            .ttlSeconds(60L)
+                            .url("url")
+                            .addRequestHeader(
+                                BoxRetrieveResponse.ProxyConfig.Callback.RequestHeader.builder()
+                                    .name("name")
+                                    .type(
+                                        BoxRetrieveResponse.ProxyConfig.Callback.RequestHeader.Type
+                                            .PLAINTEXT
+                                    )
+                                    .isSet(true)
+                                    .value("value")
+                                    .build()
+                            )
                             .build()
                     )
                     .addNoProxy("string")
@@ -126,6 +163,25 @@ internal class BoxRetrieveResponseTest {
                             BoxRetrieveResponse.ProxyConfig.AccessControl.builder()
                                 .addAllowList("string")
                                 .addDenyList("string")
+                                .build()
+                        )
+                        .addCallback(
+                            BoxRetrieveResponse.ProxyConfig.Callback.builder()
+                                .addMatchHost("string")
+                                .ttlSeconds(60L)
+                                .url("url")
+                                .addRequestHeader(
+                                    BoxRetrieveResponse.ProxyConfig.Callback.RequestHeader.builder()
+                                        .name("name")
+                                        .type(
+                                            BoxRetrieveResponse.ProxyConfig.Callback.RequestHeader
+                                                .Type
+                                                .PLAINTEXT
+                                        )
+                                        .isSet(true)
+                                        .value("value")
+                                        .build()
+                                )
                                 .build()
                         )
                         .addNoProxy("string")
