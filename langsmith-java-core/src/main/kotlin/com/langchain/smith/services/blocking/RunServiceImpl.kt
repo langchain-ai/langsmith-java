@@ -64,38 +64,33 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun rules(): RuleService = rules
 
-    override fun create(
-        params: RunCreateParams,
-        requestOptions: RequestOptions,
-    ): RunCreateResponse {
+    override fun create(params: RunCreateParams, requestOptions: RequestOptions) {
         if (!canBatch(params, requestOptions)) {
-            return withRawResponse().create(params, requestOptions).parse()
+            withRawResponse().create(params, requestOptions).parse()
+            return
         }
 
         batchQueue.post(params.run())
-        return RunCreateResponse.builder().build()
     }
 
     override fun retrieve(params: RunRetrieveParams, requestOptions: RequestOptions): RunSchema =
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    override fun update(
-        params: RunUpdateParams,
-        requestOptions: RequestOptions,
-    ): RunUpdateResponse {
+    override fun update(params: RunUpdateParams, requestOptions: RequestOptions) {
         if (!canBatch(params, requestOptions)) {
-            return withRawResponse().update(params, requestOptions).parse()
+            withRawResponse().update(params, requestOptions).parse()
+            return
         }
 
         val runId = params.runId().getOrNull()
         if (runId == null) {
             // Preserve the synchronous endpoint's validation/error behavior when no path run ID is
             // provided; the batch API identifies patches by the run body's ID.
-            return withRawResponse().update(params, requestOptions).parse()
+            withRawResponse().update(params, requestOptions).parse()
+            return
         }
 
         batchQueue.patch(params.run().toBuilder().id(runId).build())
-        return RunUpdateResponse.builder().build()
     }
 
     override fun flush() {

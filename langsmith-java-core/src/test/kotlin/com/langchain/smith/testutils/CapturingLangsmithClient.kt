@@ -3,10 +3,8 @@ package com.langchain.smith.testutils
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.models.runs.Run
-import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
-import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.blocking.RunService
 import java.lang.reflect.Proxy
 
@@ -97,7 +95,7 @@ internal class CapturingLangsmithClient {
                         if (realClient != null) {
                             method.invoke(realClient.runs(), *args.orEmpty())
                         } else {
-                            RunCreateResponse.builder().build()
+                            null
                         }
                     }
                     "update" -> {
@@ -111,7 +109,7 @@ internal class CapturingLangsmithClient {
                         if (realClient != null) {
                             method.invoke(realClient.runs(), *args.orEmpty())
                         } else {
-                            RunUpdateResponse.builder().build()
+                            null
                         }
                     }
                     "flush" -> null

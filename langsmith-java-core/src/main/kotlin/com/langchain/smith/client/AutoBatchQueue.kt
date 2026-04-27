@@ -105,6 +105,8 @@ class AutoBatchQueue(
             pendingFlush =
                 scheduler.schedule(
                     {
+                        // Drain and send inline on the scheduler thread; track via activeSends so
+                        // flush() can wait for completion.
                         val batch =
                             lock.withLock { drain()?.also { activeSends++ } } ?: return@schedule
                         try {
@@ -146,7 +148,9 @@ class AutoBatchQueue(
         return builder.build()
     }
 
+    /** Submits a batch for async send on the scheduler thread. Caller must hold the lock. */
     private fun submitBatch(params: RunIngestBatchParams) {
+        // Already holding lock
         activeSends++
         try {
             scheduler.execute {
@@ -157,8 +161,16 @@ class AutoBatchQueue(
                 }
             }
         } catch (e: RejectedExecutionException) {
-            markSendComplete()
-            logger.warn("Batch queue scheduler rejected a batch", e)
+            // scheduler is shut down; decrement and log dropped runs
+            activeSends--
+            sendCompleted.signalAll()
+            val dropped =
+                (params.post().orElse(null)?.size ?: 0) + (params.patch().orElse(null)?.size ?: 0)
+            logger.warn(
+                "Batch queue scheduler rejected a batch; dropping {} run operations",
+                dropped,
+                e,
+            )
         }
     }
 
