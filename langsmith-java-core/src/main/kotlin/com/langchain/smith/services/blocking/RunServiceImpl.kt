@@ -66,19 +66,18 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     override fun rules(): RuleService = rules
 
     override fun create(params: RunCreateParams, requestOptions: RequestOptions) {
-        if (!canBatch(params, requestOptions)) {
+        if (clientOptions.autoBatchTracing) {
+            batchQueue.post(params.run(), params._headers(), params._queryParams())
+        } else {
             withRawResponse().create(params, requestOptions).parse()
-            return
         }
-
-        batchQueue.post(params.run())
     }
 
     override fun retrieve(params: RunRetrieveParams, requestOptions: RequestOptions): RunSchema =
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(params: RunUpdateParams, requestOptions: RequestOptions) {
-        if (!canBatch(params, requestOptions)) {
+        if (!clientOptions.autoBatchTracing) {
             withRawResponse().update(params, requestOptions).parse()
             return
         }
@@ -91,7 +90,11 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             return
         }
 
-        batchQueue.patch(params.run().toBuilder().id(runId).build())
+        batchQueue.patch(
+            params.run().toBuilder().id(runId).build(),
+            params._headers(),
+            params._queryParams(),
+        )
     }
 
     override fun flush() {
@@ -123,19 +126,6 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     ): RunUpdate2Response =
         // patch /api/v1/runs/{run_id}
         withRawResponse().update2(params, requestOptions).parse()
-
-    private fun canBatch(params: RunCreateParams, requestOptions: RequestOptions): Boolean =
-        !hasCustomRequestOptions(requestOptions) &&
-            params._headers().isEmpty() &&
-            params._queryParams().isEmpty()
-
-    private fun canBatch(params: RunUpdateParams, requestOptions: RequestOptions): Boolean =
-        !hasCustomRequestOptions(requestOptions) &&
-            params._headers().isEmpty() &&
-            params._queryParams().isEmpty()
-
-    private fun hasCustomRequestOptions(requestOptions: RequestOptions): Boolean =
-        requestOptions.responseValidation != null || requestOptions.timeout != null
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunService.WithRawResponse {

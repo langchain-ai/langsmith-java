@@ -1,5 +1,7 @@
 package com.langchain.smith.client
 
+import com.langchain.smith.core.http.Headers
+import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import java.util.concurrent.CompletionStage
@@ -33,8 +35,8 @@ class AutoBatchQueue(
 ) {
     private val lock = ReentrantLock()
     private val sendCompleted: Condition = lock.newCondition()
-    private val posts = mutableListOf<Run>()
-    private val patches = mutableListOf<Run>()
+    private val posts = mutableListOf<BatchItem>()
+    private val patches = mutableListOf<BatchItem>()
     private var pendingFlush: ScheduledFuture<*>? = null
     private var activeSends = 0
     private var shutdown = false
@@ -45,19 +47,27 @@ class AutoBatchQueue(
         }
 
     /** Enqueues a run create operation. */
-    fun post(run: Run) {
+    fun post(
+        run: Run,
+        headers: Headers = Headers.builder().build(),
+        queryParams: QueryParams = QueryParams.builder().build(),
+    ) {
         lock.withLock {
             check(!shutdown) { "AutoBatchQueue is shut down" }
-            posts.add(run)
+            posts.add(BatchItem(run = run, headers = headers, queryParams = queryParams))
             scheduleOrFlush()
         }
     }
 
     /** Enqueues a run update (patch) operation. */
-    fun patch(run: Run) {
+    fun patch(
+        run: Run,
+        headers: Headers = Headers.builder().build(),
+        queryParams: QueryParams = QueryParams.builder().build(),
+    ) {
         lock.withLock {
             check(!shutdown) { "AutoBatchQueue is shut down" }
-            patches.add(run)
+            patches.add(BatchItem(run = run, headers = headers, queryParams = queryParams))
             scheduleOrFlush()
         }
     }
@@ -123,6 +133,7 @@ class AutoBatchQueue(
      * TODO: Merge create + update for the same run ID before sending (like the JS/Python SDKs).
      *   This would reduce the number of operations in each batch when a run is created and
      *   immediately updated (common for short-lived runs).
+     * TODO: Also flush/split batches based on serialized payload size, not just operation count.
      * TODO: Support multipart ingest endpoint for large payloads with attachments.
      * TODO: Support gzip compression for batch requests.
      */
@@ -133,15 +144,38 @@ class AutoBatchQueue(
         pendingFlush = null
 
         val builder = RunIngestBatchParams.builder()
-        if (posts.isNotEmpty()) {
-            builder.post(posts.toList())
-            posts.clear()
-        }
-        if (patches.isNotEmpty()) {
-            builder.patch(patches.toList())
-            patches.clear()
-        }
+        val headers = Headers.builder()
+        val queryParams = QueryParams.builder()
+        addItemsToBatch(
+            items = posts,
+            setRuns = builder::post,
+            headers = headers,
+            queryParams = queryParams,
+        )
+        addItemsToBatch(
+            items = patches,
+            setRuns = builder::patch,
+            headers = headers,
+            queryParams = queryParams,
+        )
+        builder.additionalHeaders(headers.build())
+        builder.additionalQueryParams(queryParams.build())
         return builder.build()
+    }
+
+    private fun addItemsToBatch(
+        items: MutableList<BatchItem>,
+        setRuns: (List<Run>) -> RunIngestBatchParams.Builder,
+        headers: Headers.Builder,
+        queryParams: QueryParams.Builder,
+    ) {
+        if (items.isEmpty()) return
+        setRuns(items.map { it.run })
+        items.forEach {
+            headers.putAll(it.headers)
+            queryParams.putAll(it.queryParams)
+        }
+        items.clear()
     }
 
     /** Submits a batch for async send on the scheduler thread. Caller must hold the lock. */
@@ -202,7 +236,9 @@ class AutoBatchQueue(
     }
 
     private fun operationCount(params: RunIngestBatchParams): Int =
-        (params.post().orElse(null)?.size ?: 0) + (params.patch().orElse(null)?.size ?: 0)
+        params.post().orElse(emptyList()).size + params.patch().orElse(emptyList()).size
+
+    private data class BatchItem(val run: Run, val headers: Headers, val queryParams: QueryParams)
 
     companion object {
         private val logger = LoggerFactory.getLogger(AutoBatchQueue::class.java)

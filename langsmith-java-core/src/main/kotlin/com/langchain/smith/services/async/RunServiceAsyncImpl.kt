@@ -68,15 +68,15 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: RunCreateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> {
-        if (!canBatch(params, requestOptions)) {
-            return withRawResponse().create(params, requestOptions).thenApply {
-                it.parse()
-                null
-            }
+        if (clientOptions.autoBatchTracing) {
+            batchQueue.post(params.run(), params._headers(), params._queryParams())
+            return CompletableFuture.completedFuture(null)
         }
 
-        batchQueue.post(params.run())
-        return CompletableFuture.completedFuture(null)
+        return withRawResponse().create(params, requestOptions).thenApply {
+            it.parse()
+            null
+        }
     }
 
     override fun retrieve(
@@ -90,7 +90,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: RunUpdateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> {
-        if (!canBatch(params, requestOptions)) {
+        if (!clientOptions.autoBatchTracing) {
             return withRawResponse().update(params, requestOptions).thenApply {
                 it.parse()
                 null
@@ -107,7 +107,11 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             }
         }
 
-        batchQueue.patch(params.run().toBuilder().id(runId).build())
+        batchQueue.patch(
+            params.run().toBuilder().id(runId).build(),
+            params._headers(),
+            params._queryParams(),
+        )
         return CompletableFuture.completedFuture(null)
     }
 
@@ -145,19 +149,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     internal fun shutdown() {
         batchQueue.shutdown()
     }
-
-    private fun canBatch(params: RunCreateParams, requestOptions: RequestOptions): Boolean =
-        !hasCustomRequestOptions(requestOptions) &&
-            params._headers().isEmpty() &&
-            params._queryParams().isEmpty()
-
-    private fun canBatch(params: RunUpdateParams, requestOptions: RequestOptions): Boolean =
-        !hasCustomRequestOptions(requestOptions) &&
-            params._headers().isEmpty() &&
-            params._queryParams().isEmpty()
-
-    private fun hasCustomRequestOptions(requestOptions: RequestOptions): Boolean =
-        requestOptions.responseValidation != null || requestOptions.timeout != null
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunServiceAsync.WithRawResponse {

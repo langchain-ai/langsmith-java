@@ -1,6 +1,9 @@
 package com.langchain.smith.client
 
+import com.langchain.smith.core.http.Headers
+import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.testutils.CapturingLangsmithClient
 import java.util.concurrent.CompletableFuture
 import kotlin.jvm.optionals.getOrNull
@@ -104,6 +107,37 @@ internal class AutoBatchQueueTest {
         Thread.sleep(300)
 
         assertThat(capture.postedRuns).hasSize(1)
+    }
+
+    @Test
+    fun `propagates operation headers and query params to batch request`() {
+        var capturedParams: RunIngestBatchParams? = null
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params ->
+                    capturedParams = params
+                    CompletableFuture.completedFuture(null)
+                }
+            )
+
+        queue.post(
+            testRun("r1"),
+            headers = Headers.builder().put("X-Test", "post").build(),
+            queryParams = QueryParams.builder().put("post_param", "1").build(),
+        )
+        queue.patch(
+            testRun("r2"),
+            headers = Headers.builder().put("X-Test", "patch").build(),
+            queryParams = QueryParams.builder().put("patch_param", "2").build(),
+        )
+        queue.flush()
+
+        assertThat(capturedParams?._additionalHeaders()?.values("X-Test"))
+            .containsExactly("post", "patch")
+        assertThat(capturedParams?._additionalQueryParams()?.values("post_param"))
+            .containsExactly("1")
+        assertThat(capturedParams?._additionalQueryParams()?.values("patch_param"))
+            .containsExactly("2")
     }
 
     @Test

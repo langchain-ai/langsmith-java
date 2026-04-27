@@ -271,6 +271,16 @@ class LangsmithOkHttpClient private constructor() {
          */
         fun maxRetries(maxRetries: Int) = apply { clientOptions.maxRetries(maxRetries) }
 
+        /**
+         * Whether run create/update calls should be automatically batched for tracing.
+         *
+         * Defaults to true. Set to false to send run create/update calls synchronously through the
+         * single-run endpoints.
+         */
+        fun autoBatchTracing(autoBatchTracing: Boolean) = apply {
+            clientOptions.autoBatchTracing(autoBatchTracing)
+        }
+
         fun apiKey(apiKey: String?) = apply { clientOptions.apiKey(apiKey) }
 
         /** Alias for calling [Builder.apiKey] with `apiKey.orElse(null)`. */
