@@ -2,6 +2,7 @@
 
 package com.langchain.smith.services.async
 
+import com.langchain.smith.client.AutoBatchQueue
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
@@ -45,6 +46,17 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
 
     private val rules: RuleServiceAsync by lazy { RuleServiceAsyncImpl(clientOptions) }
 
+    private val batchQueue: AutoBatchQueue by lazy {
+        AutoBatchQueue(
+            sendBatch = { params ->
+                withRawResponse().ingestBatch(params, RequestOptions.none()).thenApply {
+                    it.parse()
+                    null
+                }
+            }
+        )
+    }
+
     override fun withRawResponse(): RunServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync =
@@ -55,9 +67,17 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<RunCreateResponse> =
-        // post /runs
-        withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+    ): CompletableFuture<Void?> {
+        if (!canBatch(params, requestOptions)) {
+            return withRawResponse().create(params, requestOptions).thenApply {
+                it.parse()
+                null
+            }
+        }
+
+        batchQueue.post(params.run())
+        return CompletableFuture.completedFuture(null)
+    }
 
     override fun retrieve(
         params: RunRetrieveParams,
@@ -69,9 +89,27 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<RunUpdateResponse> =
-        // patch /runs/{run_id}
-        withRawResponse().update(params, requestOptions).thenApply { it.parse() }
+    ): CompletableFuture<Void?> {
+        if (!canBatch(params, requestOptions)) {
+            return withRawResponse().update(params, requestOptions).thenApply {
+                it.parse()
+                null
+            }
+        }
+
+        val runId = params.runId().getOrNull()
+        if (runId == null) {
+            // Preserve the synchronous endpoint's validation/error behavior when no path run ID is
+            // provided; the batch API identifies patches by the run body's ID.
+            return withRawResponse().update(params, requestOptions).thenApply {
+                it.parse()
+                null
+            }
+        }
+
+        batchQueue.patch(params.run().toBuilder().id(runId).build())
+        return CompletableFuture.completedFuture(null)
+    }
 
     override fun ingestBatch(
         params: RunIngestBatchParams,
@@ -100,6 +138,26 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<RunUpdate2Response> =
         // patch /api/v1/runs/{run_id}
         withRawResponse().update2(params, requestOptions).thenApply { it.parse() }
+
+    override fun flush(): CompletableFuture<Void?> =
+        CompletableFuture.runAsync { batchQueue.flush() }.thenApply { null }
+
+    internal fun shutdown() {
+        batchQueue.shutdown()
+    }
+
+    private fun canBatch(params: RunCreateParams, requestOptions: RequestOptions): Boolean =
+        !hasCustomRequestOptions(requestOptions) &&
+            params._headers().isEmpty() &&
+            params._queryParams().isEmpty()
+
+    private fun canBatch(params: RunUpdateParams, requestOptions: RequestOptions): Boolean =
+        !hasCustomRequestOptions(requestOptions) &&
+            params._headers().isEmpty() &&
+            params._queryParams().isEmpty()
+
+    private fun hasCustomRequestOptions(requestOptions: RequestOptions): Boolean =
+        requestOptions.responseValidation != null || requestOptions.timeout != null
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunServiceAsync.WithRawResponse {

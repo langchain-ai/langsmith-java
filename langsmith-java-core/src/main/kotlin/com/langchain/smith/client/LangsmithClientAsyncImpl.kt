@@ -41,7 +41,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
                 .build()
 
     // Pass the original clientOptions so that this client sets its own User-Agent.
-    private val sync: LangsmithClient by lazy { LangsmithClientImpl(clientOptions) }
+    private val syncLazy = lazy { LangsmithClientImpl(clientOptions) }
+    private val sync: LangsmithClient by syncLazy
 
     private val withRawResponse: LangsmithClientAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
@@ -59,7 +60,9 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         DatasetServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
+    private val runs: RunServiceAsyncImpl by lazy {
+        RunServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
 
     private val evaluators: EvaluatorServiceAsync by lazy {
         EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -122,7 +125,14 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun sandboxes(): SandboxServiceAsync = sandboxes
 
-    override fun close() = clientOptions.close()
+    override fun close() {
+        runs.shutdown()
+        if (syncLazy.isInitialized()) {
+            sync.close()
+        } else {
+            clientOptions.close()
+        }
+    }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClientAsync.WithRawResponse {

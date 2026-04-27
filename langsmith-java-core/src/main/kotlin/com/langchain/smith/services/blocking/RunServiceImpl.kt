@@ -33,6 +33,7 @@ import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.blocking.runs.RuleService
 import com.langchain.smith.services.blocking.runs.RuleServiceImpl
+import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -46,14 +47,14 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     private val batchQueue: AutoBatchQueue by lazy {
         AutoBatchQueue(
-            runService =
-                object : RunService by this {
-                    override fun ingestBatch(
-                        params: RunIngestBatchParams,
-                        requestOptions: RequestOptions,
-                    ): RunIngestBatchResponse =
-                        withRawResponse().ingestBatch(params, requestOptions).parse()
+            sendBatch = { params ->
+                try {
+                    withRawResponse().ingestBatch(params, RequestOptions.none()).parse()
+                    CompletableFuture.completedFuture(null)
+                } catch (e: Exception) {
+                    CompletableFuture<Void?>().also { it.completeExceptionally(e) }
                 }
+            }
         )
     }
 

@@ -2,7 +2,7 @@ package com.langchain.smith.client
 
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
-import com.langchain.smith.services.blocking.RunService
+import java.util.concurrent.CompletionStage
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.ScheduledExecutorService
@@ -22,12 +22,12 @@ import org.slf4j.LoggerFactory
  * - After [aggregationDelayMs] milliseconds of inactivity (timer-based drain)
  * - When [flush] is called explicitly
  *
- * @param runService the run service to send batches through
+ * @param sendBatch sends a batch and completes when the send has finished
  * @param batchSizeLimit max operations before auto-flush (default 100)
  * @param aggregationDelayMs delay before timer-based flush (default 250ms)
  */
 class AutoBatchQueue(
-    private val runService: RunService,
+    private val sendBatch: (RunIngestBatchParams) -> CompletionStage<Void?>,
     private val batchSizeLimit: Int = DEFAULT_BATCH_SIZE_LIMIT,
     private val aggregationDelayMs: Long = DEFAULT_AGGREGATION_DELAY_MS,
 ) {
@@ -106,14 +106,10 @@ class AutoBatchQueue(
                 scheduler.schedule(
                     {
                         // Drain and send inline on the scheduler thread; track via activeSends so
-                        // flush() can wait for completion.
+                        // flush() can wait for the returned future to complete.
                         val batch =
                             lock.withLock { drain()?.also { activeSends++ } } ?: return@schedule
-                        try {
-                            sendBatch(batch)
-                        } finally {
-                            markSendComplete()
-                        }
+                        sendBatchAfterIncrement(batch)
                     },
                     aggregationDelayMs,
                     TimeUnit.MILLISECONDS,
@@ -153,22 +149,14 @@ class AutoBatchQueue(
         // Already holding lock
         activeSends++
         try {
-            scheduler.execute {
-                try {
-                    sendBatch(params)
-                } finally {
-                    markSendComplete()
-                }
-            }
+            scheduler.execute { sendBatchAfterIncrement(params) }
         } catch (e: RejectedExecutionException) {
             // scheduler is shut down; decrement and log dropped runs
             activeSends--
             sendCompleted.signalAll()
-            val dropped =
-                (params.post().orElse(null)?.size ?: 0) + (params.patch().orElse(null)?.size ?: 0)
             logger.warn(
                 "Batch queue scheduler rejected a batch; dropping {} run operations",
-                dropped,
+                operationCount(params),
                 e,
             )
         }
@@ -176,9 +164,19 @@ class AutoBatchQueue(
 
     private fun sendBatchTracked(params: RunIngestBatchParams) {
         lock.withLock { activeSends++ }
+        sendBatchAfterIncrement(params)
+    }
+
+    private fun sendBatchAfterIncrement(params: RunIngestBatchParams) {
         try {
-            sendBatch(params)
-        } finally {
+            sendBatch(params).whenComplete { _, error ->
+                if (error != null) {
+                    logger.warn("Failed to send batch of runs", error)
+                }
+                markSendComplete()
+            }
+        } catch (e: Exception) {
+            logger.warn("Failed to send batch of runs", e)
             markSendComplete()
         }
     }
@@ -203,13 +201,8 @@ class AutoBatchQueue(
         }
     }
 
-    private fun sendBatch(params: RunIngestBatchParams) {
-        try {
-            runService.ingestBatch(params)
-        } catch (e: Exception) {
-            logger.warn("Failed to send batch of runs", e)
-        }
-    }
+    private fun operationCount(params: RunIngestBatchParams): Int =
+        (params.post().orElse(null)?.size ?: 0) + (params.patch().orElse(null)?.size ?: 0)
 
     companion object {
         private val logger = LoggerFactory.getLogger(AutoBatchQueue::class.java)
