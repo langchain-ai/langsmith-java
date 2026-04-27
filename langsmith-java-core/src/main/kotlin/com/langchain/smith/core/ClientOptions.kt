@@ -457,6 +457,14 @@ private constructor(
             (System.getProperty("langchain.langsmithOrganizationId")
                     ?: System.getenv("LANGSMITH_ORGANIZATION_ID"))
                 ?.let { organizationId(it) }
+            System.getenv("LANGCHAIN_CUSTOM_HEADERS")?.let { customHeadersEnv ->
+                for (line in customHeadersEnv.split("\n")) {
+                    val colon = line.indexOf(':')
+                    if (colon >= 0) {
+                        putHeader(line.substring(0, colon).trim(), line.substring(colon + 1).trim())
+                    }
+                }
+            }
         }
 
         /**
