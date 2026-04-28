@@ -281,10 +281,14 @@ class AutoBatchQueue(
     }
 
     private fun drainAndSubmitSends() {
-        val batches = drainUpTo(batchSizeLimit)
-        if (batches.isEmpty()) return
+        var remainingToDrain = queuedCount.get()
+        while (remainingToDrain > 0) {
+            val drainResult = drainUpTo(minOf(batchSizeLimit, remainingToDrain))
+            if (drainResult.itemCount == 0) break
 
-        batches.forEach(::submitBatch)
+            drainResult.batches.forEach(::submitBatch)
+            remainingToDrain -= drainResult.itemCount
+        }
 
         when {
             queuedCount.get() >= batchSizeLimit -> triggerFlush()
@@ -300,11 +304,11 @@ class AutoBatchQueue(
      * TODO: Support multipart ingest endpoint for large payloads with attachments.
      * TODO: Support gzip compression for batch requests.
      */
-    private fun drainUpTo(maxItems: Int): List<Batch> {
+    private fun drainUpTo(maxItems: Int): DrainResult {
         val openGroups = linkedMapOf<RequestOptionsKey, BatchGroup>()
         var drained = 0
 
-        return buildList {
+        val batches = buildList {
             while (drained < maxItems) {
                 val item = items.poll() ?: break
                 queuedCount.decrementAndGet()
@@ -326,6 +330,7 @@ class AutoBatchQueue(
 
             addAll(openGroups.values.map { it.toBatch() })
         }
+        return DrainResult(batches = batches, itemCount = drained)
     }
 
     private fun submitBatch(batch: Batch) {
@@ -374,6 +379,8 @@ class AutoBatchQueue(
         Post,
         Patch,
     }
+
+    private data class DrainResult(val batches: List<Batch>, val itemCount: Int)
 
     private data class Batch(val params: RunIngestBatchParams, val requestOptions: RequestOptions)
 

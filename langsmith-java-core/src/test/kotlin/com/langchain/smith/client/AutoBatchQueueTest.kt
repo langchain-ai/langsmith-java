@@ -412,6 +412,46 @@ internal class AutoBatchQueueTest {
     }
 
     @Test
+    fun `aggregation delay drains all pending serialized-size batches without explicit flush`() {
+        val sentBatches = ConcurrentLinkedQueue<RunIngestBatchParams>()
+        val sendsCompleted = CountDownLatch(5)
+        val mapper = jsonMapper()
+        val twoRunBody =
+            RunIngestBatchParams.builder()
+                .addPost(testRun("r1"))
+                .addPost(testRun("r2"))
+                .build()
+                ._body()
+        val batchSizeLimitBytes = mapper.writeValueAsBytes(twoRunBody).size - 1
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params, _ ->
+                    sentBatches.add(params)
+                    sendsCompleted.countDown()
+                    CompletableFuture.completedFuture(null)
+                },
+                batchSizeLimit = 100,
+                aggregationDelayMs = 100,
+                sendParallelism = 1,
+                batchSizeLimitBytes = batchSizeLimitBytes,
+            )
+
+        try {
+            val ids = (1..5).map { "r$it" }
+            ids.forEach { queue.post(testRun(it)) }
+
+            assertThat(sentBatches).isEmpty()
+            assertThat(sendsCompleted.await(500, TimeUnit.MILLISECONDS)).isTrue()
+
+            assertThat(queue.size()).isEqualTo(0)
+            assertThat(sentBatches).hasSize(5)
+            assertThat(sentBatches.flatMap { runIds(it) }).containsExactlyElementsOf(ids)
+        } finally {
+            queue.shutdown()
+        }
+    }
+
+    @Test
     fun `load test splits many queued runs into size limited batches`() {
         val sentBatches = ConcurrentLinkedQueue<RunIngestBatchParams>()
         val queue =
