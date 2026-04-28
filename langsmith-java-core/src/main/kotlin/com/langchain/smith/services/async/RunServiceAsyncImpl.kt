@@ -90,22 +90,11 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: RunUpdateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> {
-        if (!clientOptions.autoBatchTracing) {
-            return withRawResponse().update(params, requestOptions).thenApply {
-                it.parse()
-                null
-            }
+        if (shouldUpdateSynchronously(params)) {
+            return updateSynchronously(params, requestOptions)
         }
 
-        val runId = params.runId().getOrNull()
-        if (runId == null) {
-            // Preserve the synchronous endpoint's validation/error behavior when no path run ID is
-            // provided; the batch API identifies patches by the run body's ID.
-            return withRawResponse().update(params, requestOptions).thenApply {
-                it.parse()
-                null
-            }
-        }
+        val runId = checkRequired("runId", params.runId().getOrNull())
 
         batchQueue.patch(
             params.run().toBuilder().id(runId).build(),
@@ -146,6 +135,18 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
 
     override fun flush(): CompletableFuture<Void?> =
         CompletableFuture.runAsync { batchQueue.flush() }.thenApply { null }
+
+    private fun shouldUpdateSynchronously(params: RunUpdateParams): Boolean =
+        !clientOptions.autoBatchTracing || !params.runId().isPresent
+
+    private fun updateSynchronously(
+        params: RunUpdateParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<Void?> =
+        withRawResponse().update(params, requestOptions).thenApply {
+            it.parse()
+            null
+        }
 
     internal fun shutdown() {
         batchQueue.shutdown()

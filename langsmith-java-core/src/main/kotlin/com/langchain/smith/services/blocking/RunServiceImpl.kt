@@ -77,18 +77,12 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(params: RunUpdateParams, requestOptions: RequestOptions) {
-        if (!clientOptions.autoBatchTracing) {
-            withRawResponse().update(params, requestOptions).parse()
+        if (shouldUpdateSynchronously(params)) {
+            updateSynchronously(params, requestOptions)
             return
         }
 
-        val runId = params.runId().getOrNull()
-        if (runId == null) {
-            // Preserve the synchronous endpoint's validation/error behavior when no path run ID is
-            // provided; the batch API identifies patches by the run body's ID.
-            withRawResponse().update(params, requestOptions).parse()
-            return
-        }
+        val runId = checkRequired("runId", params.runId().getOrNull())
 
         batchQueue.patch(
             params.run().toBuilder().id(runId).build(),
@@ -100,6 +94,13 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun flush() {
         batchQueue.flush()
+    }
+
+    private fun shouldUpdateSynchronously(params: RunUpdateParams): Boolean =
+        !clientOptions.autoBatchTracing || !params.runId().isPresent
+
+    private fun updateSynchronously(params: RunUpdateParams, requestOptions: RequestOptions) {
+        withRawResponse().update(params, requestOptions).parse()
     }
 
     internal fun shutdown() {

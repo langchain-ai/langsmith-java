@@ -41,8 +41,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
                 .build()
 
     // Pass the original clientOptions so that this client sets its own User-Agent.
-    private val syncLazy = lazy { LangsmithClientImpl(clientOptions) }
-    private val sync: LangsmithClient by syncLazy
+    private val sync = lazy { LangsmithClientImpl(clientOptions) }
 
     private val withRawResponse: LangsmithClientAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
@@ -60,8 +59,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         DatasetServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val runsLazy = lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
-    private val runs: RunServiceAsyncImpl by runsLazy
+    private val runs = lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val evaluators: EvaluatorServiceAsync by lazy {
         EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -93,7 +91,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         SandboxServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    override fun sync(): LangsmithClient = sync
+    override fun sync(): LangsmithClient = sync.value
 
     override fun withRawResponse(): LangsmithClientAsync.WithRawResponse = withRawResponse
 
@@ -106,7 +104,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun datasets(): DatasetServiceAsync = datasets
 
-    override fun runs(): RunServiceAsync = runs
+    override fun runs(): RunServiceAsync = runs.value
 
     override fun evaluators(): EvaluatorServiceAsync = evaluators
 
@@ -125,11 +123,11 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun sandboxes(): SandboxServiceAsync = sandboxes
 
     override fun close() {
-        if (runsLazy.isInitialized()) {
-            runs.shutdown()
+        if (runs.isInitialized()) {
+            runs.value.shutdown()
         }
-        if (syncLazy.isInitialized()) {
-            sync.close()
+        if (sync.isInitialized()) {
+            sync.value.close()
         } else {
             clientOptions.close()
         }
