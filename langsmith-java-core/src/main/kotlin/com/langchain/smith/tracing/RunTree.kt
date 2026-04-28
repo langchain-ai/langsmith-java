@@ -132,11 +132,19 @@ class RunTree(
         submitSafely(e, name) { c.runs().create(runData) }
     }
 
+    /**
+     * Patches this run in LangSmith in the background, batched with other pending operations.
+     *
+     * Inputs are omitted by default so the patch does not duplicate or overwrite the create payload
+     * if the create and patch are merged during batching.
+     */
+    fun patchRun() = patchRun(excludeInputs = true)
+
     /** Patches this run in LangSmith in the background, batched with other pending operations. */
-    fun patchRun() {
+    fun patchRun(excludeInputs: Boolean) {
         val c = client ?: return
         val e = executor ?: DEFAULT_EXECUTOR
-        val runData = buildRunData()
+        val runData = buildRunData(includeInputs = !excludeInputs)
         submitSafely(e, name) {
             c.runs()
                 .update(
@@ -149,7 +157,9 @@ class RunTree(
     }
 
     /** Builds the [Run] data object for posting/patching to the LangSmith API. */
-    fun buildRunData(): Run {
+    fun buildRunData(): Run = buildRunData(includeInputs = true)
+
+    private fun buildRunData(includeInputs: Boolean): Run {
         val builder =
             Run.builder()
                 .id(id)
@@ -160,9 +170,6 @@ class RunTree(
                 .startTime(startTime)
                 .apply { this@RunTree.projectName?.let { sessionName(it) } }
                 .tags(tags)
-                .inputs(
-                    Run.Inputs.builder().putAllAdditionalProperties(toJsonValueMap(inputs)).build()
-                )
                 .extra(
                     Run.Extra.builder()
                         .apply {
@@ -177,6 +184,11 @@ class RunTree(
                         .build()
                 )
 
+        if (includeInputs) {
+            builder.inputs(
+                Run.Inputs.builder().putAllAdditionalProperties(toJsonValueMap(inputs)).build()
+            )
+        }
         endTime?.let { builder.endTime(it) }
         error?.let { builder.error(it) }
         parentRunId?.let { builder.parentRunId(it) }

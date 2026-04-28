@@ -27,6 +27,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter")
 
+    // Simple logging for examples. This lets smoke tests show SDK debug/trace logs.
+    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
+
     // Security: constrain vulnerable transitive dependencies from Spring Boot 2.7.18.
     // Spring Boot 2.7.x is EOL; these constraints override the managed versions in-place.
     // None of these affect published artifacts (this is a non-published example module).
@@ -94,6 +97,10 @@ application {
 // Export stdin to examples for readln(); require -Pexample= when running (configuration-cache safe: no project access in doFirst)
 tasks.named<JavaExec>("run") {
     standardInput = System.`in`
+    systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "info")
+    systemProperty("org.slf4j.simpleLogger.log.com.langchain.smith.client.AutoBatchQueue", "trace")
+    systemProperty("org.slf4j.simpleLogger.showDateTime", "false")
+    systemProperty("org.slf4j.simpleLogger.showShortLogName", "true")
     doFirst {
         if (mainClass.get() == "Main") {
             throw GradleException(

@@ -44,6 +44,10 @@ fun format(variables: Map<String, Any>): PromptMessages {
 
 ## Kotlin idioms
 
+### Prefer immutable collection transformations
+
+Avoid mutable accumulators when `map`, `filter`, `partition`, `associate`, `buildMap`, or `buildList` express the same logic clearly. Use mutation only when it materially improves readability, performance, or is required by an API.
+
 ### Use `buildMap` / `buildList` instead of mutable + convert
 
 ```kotlin
