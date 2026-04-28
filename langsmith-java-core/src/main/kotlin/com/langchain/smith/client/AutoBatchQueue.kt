@@ -18,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.locks.ReentrantLock
 import org.slf4j.LoggerFactory
 
 /**
@@ -44,7 +45,7 @@ class AutoBatchQueue(
     private val queuedCount = AtomicInteger(0)
     private val shutdown = AtomicBoolean(false)
     private val delayedFlushScheduled = AtomicBoolean(false)
-    private val enqueueShutdownLock = Any()
+    private val enqueueShutdownLock = ReentrantLock()
     private val activeSends =
         object : Phaser(0) {
             override fun onAdvance(phase: Int, registeredParties: Int): Boolean = false
@@ -108,7 +109,14 @@ class AutoBatchQueue(
      * After calling this, the queue will no longer accept new operations.
      */
     fun shutdown() {
-        synchronized(enqueueShutdownLock) { if (!shutdown.compareAndSet(false, true)) return }
+        enqueueShutdownLock.lock()
+        try {
+            // Serialize with enqueue's check-and-add so flush cannot miss an item that observed
+            // shutdown=false but has not yet been queued.
+            if (!shutdown.compareAndSet(false, true)) return
+        } finally {
+            enqueueShutdownLock.unlock()
+        }
 
         flush()
         coordinator.shutdown()
@@ -138,8 +146,9 @@ class AutoBatchQueue(
         queryParams: QueryParams,
         requestOptions: RequestOptions,
     ) {
-        val count =
-            synchronized(enqueueShutdownLock) {
+        val count = run {
+            enqueueShutdownLock.lock()
+            try {
                 check(!shutdown.get()) { "AutoBatchQueue is shut down" }
                 items.add(
                     BatchItem(
@@ -151,7 +160,10 @@ class AutoBatchQueue(
                     )
                 )
                 queuedCount.incrementAndGet()
+            } finally {
+                enqueueShutdownLock.unlock()
             }
+        }
 
         afterEnqueue(count)
     }
