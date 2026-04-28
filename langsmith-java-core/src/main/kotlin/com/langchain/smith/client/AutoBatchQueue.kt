@@ -17,6 +17,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Phaser
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -35,20 +36,28 @@ import org.slf4j.LoggerFactory
  *
  * @param sendBatch sends a batch and completes when the send has finished
  * @param batchSizeLimit max operations before auto-flush (default 100)
- * @param aggregationDelayMs delay before timer-based flush (default 250ms)
+ * @param aggregationDelayMs inactivity delay before timer-based flush (default 250ms, matching JS
+ *   auto-batch aggregation and Python's initial queue wait)
  * @param sendParallelism max number of batch requests to send concurrently (default 4)
+ * @param maxAggregationDelayMs max delay before timer-based flush after first item in a burst
+ *   (default 500ms, matching Python's background flush interval)
+ * @param batchSizeLimitBytes max serialized JSON body size per batch (default 20 MiB)
  */
 class AutoBatchQueue(
     private val sendBatch: (RunIngestBatchParams, RequestOptions) -> CompletionStage<Void?>,
     private val batchSizeLimit: Int = DEFAULT_BATCH_SIZE_LIMIT,
     private val aggregationDelayMs: Long = DEFAULT_AGGREGATION_DELAY_MS,
     private val sendParallelism: Int = DEFAULT_SEND_PARALLELISM,
+    private val maxAggregationDelayMs: Long = DEFAULT_MAX_AGGREGATION_DELAY_MS,
+    private val batchSizeLimitBytes: Int,
 ) {
     private val items = ConcurrentLinkedQueue<BatchItem>()
     private val queuedCount = AtomicInteger(0)
     private val shutdown = AtomicBoolean(false)
-    private val delayedFlushScheduled = AtomicBoolean(false)
     private val enqueueShutdownLock = ReentrantLock()
+    private val delayedFlushLock = ReentrantLock()
+    private var delayedFlushFuture: ScheduledFuture<*>? = null
+    private var firstQueuedAtNanos: Long? = null
     private val activeSends =
         object : Phaser(0) {
             override fun onAdvance(phase: Int, registeredParties: Int): Boolean = false
@@ -91,6 +100,7 @@ class AutoBatchQueue(
      * Safe to call from any thread. No-op if the queue is empty.
      */
     fun flush() {
+        cancelDelayedFlush()
         while (true) {
             if (queuedCount.get() > 0 && !drainOnCoordinator()) {
                 return
@@ -139,6 +149,20 @@ class AutoBatchQueue(
         }
     }
 
+    constructor(
+        sendBatch: (RunIngestBatchParams, RequestOptions) -> CompletionStage<Void?>,
+        batchSizeLimit: Int = DEFAULT_BATCH_SIZE_LIMIT,
+        aggregationDelayMs: Long = DEFAULT_AGGREGATION_DELAY_MS,
+        sendParallelism: Int = DEFAULT_SEND_PARALLELISM,
+    ) : this(
+        sendBatch = sendBatch,
+        batchSizeLimit = batchSizeLimit,
+        aggregationDelayMs = aggregationDelayMs,
+        sendParallelism = sendParallelism,
+        maxAggregationDelayMs = DEFAULT_MAX_AGGREGATION_DELAY_MS,
+        batchSizeLimitBytes = DEFAULT_BATCH_SIZE_LIMIT_BYTES,
+    )
+
     /** Returns the number of queued operations (for testing). */
     internal fun size(): Int = queuedCount.get()
 
@@ -180,28 +204,60 @@ class AutoBatchQueue(
     }
 
     private fun scheduleFlush() {
-        if (!delayedFlushScheduled.compareAndSet(false, true)) return
-
+        delayedFlushLock.lock()
         try {
-            coordinator.schedule(
-                {
-                    delayedFlushScheduled.set(false)
-                    drainAndSubmitSends()
-                },
-                aggregationDelayMs,
-                TimeUnit.MILLISECONDS,
-            )
+            val now = System.nanoTime()
+            val firstQueuedAt = firstQueuedAtNanos ?: now.also { firstQueuedAtNanos = it }
+            val elapsedMs = TimeUnit.NANOSECONDS.toMillis(now - firstQueuedAt)
+            val remainingMaxDelayMs = (maxAggregationDelayMs - elapsedMs).coerceAtLeast(0)
+            val delayMs = minOf(aggregationDelayMs, remainingMaxDelayMs)
+
+            delayedFlushFuture?.cancel(false)
+            delayedFlushFuture =
+                coordinator.schedule(
+                    {
+                        clearDelayedFlushState()
+                        drainAndSubmitSends()
+                    },
+                    delayMs,
+                    TimeUnit.MILLISECONDS,
+                )
         } catch (e: RejectedExecutionException) {
-            delayedFlushScheduled.set(false)
+            delayedFlushFuture = null
+            firstQueuedAtNanos = null
             logger.warn("Batch queue coordinator rejected delayed flush", e)
+        } finally {
+            delayedFlushLock.unlock()
+        }
+    }
+
+    private fun clearDelayedFlushState() {
+        delayedFlushLock.lock()
+        try {
+            delayedFlushFuture = null
+            firstQueuedAtNanos = null
+        } finally {
+            delayedFlushLock.unlock()
         }
     }
 
     private fun triggerFlush() {
+        cancelDelayedFlush()
         try {
             coordinator.execute { drainAndSubmitSends() }
         } catch (e: RejectedExecutionException) {
             logger.warn("Batch queue coordinator rejected flush", e)
+        }
+    }
+
+    private fun cancelDelayedFlush() {
+        delayedFlushLock.lock()
+        try {
+            delayedFlushFuture?.cancel(false)
+            delayedFlushFuture = null
+            firstQueuedAtNanos = null
+        } finally {
+            delayedFlushLock.unlock()
         }
     }
 
@@ -241,30 +297,35 @@ class AutoBatchQueue(
      * Drains up to [maxItems] queued operations and returns batch params grouped by request
      * options.
      *
-     * TODO: Also flush/split batches based on serialized payload size, not just operation count.
      * TODO: Support multipart ingest endpoint for large payloads with attachments.
      * TODO: Support gzip compression for batch requests.
      */
     private fun drainUpTo(maxItems: Int): List<Batch> {
-        val groups = linkedMapOf<RequestOptionsKey, BatchGroup>()
+        val openGroups = linkedMapOf<RequestOptionsKey, BatchGroup>()
         var drained = 0
 
-        while (drained < maxItems) {
-            val item = items.poll() ?: break
-            queuedCount.decrementAndGet()
-            drained++
+        return buildList {
+            while (drained < maxItems) {
+                val item = items.poll() ?: break
+                queuedCount.decrementAndGet()
+                drained++
 
-            val group =
-                groups.getOrPut(item.requestOptions.key()) { BatchGroup(item.requestOptions) }
-            when (item.op) {
-                BatchOp.Post -> group.posts.add(item.run)
-                BatchOp.Patch -> group.patches.add(item.run)
+                val key = item.requestOptions.key()
+                val itemSerializedSize = objectMapper.writeValueAsBytes(item.run).size
+                var group = openGroups.getOrPut(key) { BatchGroup(item.requestOptions) }
+                if (
+                    group.isNotEmpty() &&
+                        group.serializedSizeWith(item, itemSerializedSize) > batchSizeLimitBytes
+                ) {
+                    add(group.toBatch())
+                    group = BatchGroup(item.requestOptions)
+                    openGroups[key] = group
+                }
+                group.add(item, itemSerializedSize)
             }
-            group.headers.putAll(item.headers)
-            group.queryParams.putAll(item.queryParams)
-        }
 
-        return groups.values.map { it.toBatch() }
+            addAll(openGroups.values.map { it.toBatch() })
+        }
     }
 
     private fun submitBatch(batch: Batch) {
@@ -316,13 +377,67 @@ class AutoBatchQueue(
 
     private data class Batch(val params: RunIngestBatchParams, val requestOptions: RequestOptions)
 
-    private data class BatchGroup(
+    private class BatchGroup(
         val requestOptions: RequestOptions,
         val posts: MutableList<Run> = mutableListOf(),
         val patches: MutableList<Run> = mutableListOf(),
         val headers: Headers.Builder = Headers.builder(),
         val queryParams: QueryParams.Builder = QueryParams.builder(),
     ) {
+        private var postSerializedSizeBytes = 0
+        private var patchSerializedSizeBytes = 0
+
+        fun add(item: BatchItem, serializedSizeBytes: Int) {
+            when (item.op) {
+                BatchOp.Post -> {
+                    posts.add(item.run)
+                    postSerializedSizeBytes += serializedSizeBytes
+                }
+                BatchOp.Patch -> {
+                    patches.add(item.run)
+                    patchSerializedSizeBytes += serializedSizeBytes
+                }
+            }
+            headers.putAll(item.headers)
+            queryParams.putAll(item.queryParams)
+        }
+
+        fun isNotEmpty(): Boolean = posts.isNotEmpty() || patches.isNotEmpty()
+
+        fun serializedSizeWith(item: BatchItem, itemSerializedSizeBytes: Int): Int =
+            estimatedBodySizeBytes(
+                postCount = posts.size + if (item.op == BatchOp.Post) 1 else 0,
+                postItemsSizeBytes =
+                    postSerializedSizeBytes +
+                        if (item.op == BatchOp.Post) itemSerializedSizeBytes else 0,
+                patchCount = patches.size + if (item.op == BatchOp.Patch) 1 else 0,
+                patchItemsSizeBytes =
+                    patchSerializedSizeBytes +
+                        if (item.op == BatchOp.Patch) itemSerializedSizeBytes else 0,
+            )
+
+        private fun estimatedBodySizeBytes(
+            postCount: Int,
+            postItemsSizeBytes: Int,
+            patchCount: Int,
+            patchItemsSizeBytes: Int,
+        ): Int {
+            var size = 2 // Opening and closing braces.
+            var fieldCount = 0
+            if (patchCount > 0) {
+                size += fieldSizeBytes("patch", patchCount, patchItemsSizeBytes)
+                fieldCount++
+            }
+            if (postCount > 0) {
+                if (fieldCount > 0) size++ // Comma between top-level fields.
+                size += fieldSizeBytes("post", postCount, postItemsSizeBytes)
+            }
+            return size
+        }
+
+        private fun fieldSizeBytes(name: String, count: Int, itemsSizeBytes: Int): Int =
+            name.length + 5 + itemsSizeBytes + (count - 1) // `"name":[]` + item commas.
+
         fun toBatch(): Batch {
             val mergeResult = mergePostsAndPatches()
             val builder = RunIngestBatchParams.builder()
@@ -394,7 +509,9 @@ class AutoBatchQueue(
         private val objectMapper = jsonMapper()
 
         const val DEFAULT_BATCH_SIZE_LIMIT = 100
+        const val DEFAULT_BATCH_SIZE_LIMIT_BYTES = 20_971_520
         const val DEFAULT_AGGREGATION_DELAY_MS = 250L
+        const val DEFAULT_MAX_AGGREGATION_DELAY_MS = 500L
         const val DEFAULT_SEND_PARALLELISM = 4
     }
 }

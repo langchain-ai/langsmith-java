@@ -2,6 +2,16 @@
 
 package com.langchain.smith.services.blocking
 
+import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.okJson
+import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.stubFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
+import com.github.tomakehurst.wiremock.client.WireMock.verify
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo
+import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.runs.Run
@@ -15,8 +25,48 @@ import com.langchain.smith.models.sessions.RunStatsGroupBy
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.ResourceLock
 
+@WireMockTest
+@ResourceLock("https://github.com/wiremock/wiremock/issues/169")
 internal class RunServiceTest {
+
+    @Test
+    fun `auto batch queue uses server batch ingest size limit`(wmRuntimeInfo: WireMockRuntimeInfo) {
+        stubFor(
+            get(urlPathEqualTo("/api/v1/info"))
+                .willReturn(
+                    okJson(
+                        """
+                        {"batch_ingest_config":{"size_limit":2,"size_limit_bytes":20971520}}
+                        """
+                            .trimIndent()
+                    )
+                )
+        )
+        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(okJson("{}")))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val runService = client.runs()
+
+        try {
+            runService.create(testRun("r1"))
+            runService.create(testRun("r2"))
+            runService.create(testRun("r3"))
+            runService.flush()
+
+            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(2, postRequestedFor(urlPathEqualTo("/runs/batch")))
+        } finally {
+            client.close()
+        }
+    }
+
+    private fun testRun(id: String): Run =
+        Run.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
 
     @Disabled("Mock server tests are disabled")
     @Test

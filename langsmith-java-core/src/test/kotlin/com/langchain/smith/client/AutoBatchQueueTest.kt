@@ -5,6 +5,7 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.testutils.CapturingLangsmithClient
@@ -29,6 +30,7 @@ internal class AutoBatchQueueTest {
         capture: CapturingLangsmithClient,
         batchSizeLimit: Int = AutoBatchQueue.DEFAULT_BATCH_SIZE_LIMIT,
         aggregationDelayMs: Long = AutoBatchQueue.DEFAULT_AGGREGATION_DELAY_MS,
+        maxAggregationDelayMs: Long = AutoBatchQueue.DEFAULT_MAX_AGGREGATION_DELAY_MS,
     ): AutoBatchQueue =
         AutoBatchQueue(
             sendBatch = { params, _ ->
@@ -37,6 +39,8 @@ internal class AutoBatchQueueTest {
             },
             batchSizeLimit = batchSizeLimit,
             aggregationDelayMs = aggregationDelayMs,
+            maxAggregationDelayMs = maxAggregationDelayMs,
+            batchSizeLimitBytes = AutoBatchQueue.DEFAULT_BATCH_SIZE_LIMIT_BYTES,
         )
 
     private fun operationCount(params: RunIngestBatchParams): Int =
@@ -152,6 +156,86 @@ internal class AutoBatchQueueTest {
     }
 
     @Test
+    fun `batch size limit starts a new batch for subsequent runs`() {
+        val sentBatches = ConcurrentLinkedQueue<RunIngestBatchParams>()
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params, _ ->
+                    sentBatches.add(params)
+                    CompletableFuture.completedFuture(null)
+                },
+                batchSizeLimit = 2,
+                aggregationDelayMs = 10_000,
+                sendParallelism = 1,
+                batchSizeLimitBytes = AutoBatchQueue.DEFAULT_BATCH_SIZE_LIMIT_BYTES,
+            )
+
+        try {
+            queue.post(testRun("r1"))
+            queue.post(testRun("r2"))
+            queue.post(testRun("r3"))
+            queue.flush()
+
+            assertThat(sentBatches).hasSize(2)
+            assertThat(sentBatches.map(::runIds)).containsExactly(listOf("r1", "r2"), listOf("r3"))
+        } finally {
+            queue.shutdown()
+        }
+    }
+
+    @Test
+    fun `serialized payload size limit starts a new batch for subsequent runs`() {
+        val sentBatches = ConcurrentLinkedQueue<RunIngestBatchParams>()
+        val mapper = jsonMapper()
+        val twoRunBody =
+            RunIngestBatchParams.builder()
+                .addPost(testRun("r1"))
+                .addPost(testRun("r2"))
+                .build()
+                ._body()
+        val threeRunBody =
+            RunIngestBatchParams.builder()
+                .addPost(testRun("r1"))
+                .addPost(testRun("r2"))
+                .addPost(testRun("r3"))
+                .build()
+                ._body()
+        val batchSizeLimitBytes = mapper.writeValueAsBytes(threeRunBody).size - 1
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params, _ ->
+                    sentBatches.add(params)
+                    CompletableFuture.completedFuture(null)
+                },
+                batchSizeLimit = 100,
+                aggregationDelayMs = 10_000,
+                sendParallelism = 1,
+                batchSizeLimitBytes = batchSizeLimitBytes,
+            )
+
+        try {
+            assertThat(mapper.writeValueAsBytes(twoRunBody).size)
+                .isLessThanOrEqualTo(batchSizeLimitBytes)
+            assertThat(mapper.writeValueAsBytes(threeRunBody).size)
+                .isGreaterThan(batchSizeLimitBytes)
+
+            queue.post(testRun("r1"))
+            queue.post(testRun("r2"))
+            queue.post(testRun("r3"))
+            queue.flush()
+
+            assertThat(sentBatches).hasSize(2)
+            assertThat(sentBatches.map(::runIds)).containsExactly(listOf("r1", "r2"), listOf("r3"))
+            assertThat(sentBatches).allSatisfy { params ->
+                assertThat(mapper.writeValueAsBytes(params._body()).size)
+                    .isLessThanOrEqualTo(batchSizeLimitBytes)
+            }
+        } finally {
+            queue.shutdown()
+        }
+    }
+
+    @Test
     fun `timer-based drain fires after delay`() {
         val capture = CapturingLangsmithClient()
         val queue = testQueue(capture = capture, batchSizeLimit = 100, aggregationDelayMs = 100)
@@ -162,6 +246,60 @@ internal class AutoBatchQueueTest {
         Thread.sleep(300)
 
         assertThat(capture.postedRuns).hasSize(1)
+    }
+
+    @Test
+    fun `timer-based drain resets after each enqueue`() {
+        val capture = CapturingLangsmithClient()
+        val queue =
+            testQueue(
+                capture = capture,
+                batchSizeLimit = 100,
+                aggregationDelayMs = 300,
+                maxAggregationDelayMs = 2_000,
+            )
+
+        queue.post(testRun("r1"))
+        Thread.sleep(150)
+        queue.post(testRun("r2"))
+        Thread.sleep(200)
+
+        assertThat(capture.postedRuns).isEmpty()
+
+        Thread.sleep(250)
+
+        assertThat(capture.postedRuns.mapNotNull { it.id().getOrNull() })
+            .containsExactly("r1", "r2")
+    }
+
+    @Test
+    fun `timer-based drain respects max aggregation delay`() {
+        val sentBatches = ConcurrentLinkedQueue<RunIngestBatchParams>()
+        val sendCompleted = CountDownLatch(1)
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params, _ ->
+                    sentBatches.add(params)
+                    sendCompleted.countDown()
+                    CompletableFuture.completedFuture(null)
+                },
+                batchSizeLimit = 100,
+                aggregationDelayMs = 1_000,
+                maxAggregationDelayMs = 300,
+                batchSizeLimitBytes = AutoBatchQueue.DEFAULT_BATCH_SIZE_LIMIT_BYTES,
+            )
+
+        try {
+            queue.post(testRun("r1"))
+            Thread.sleep(150)
+            queue.post(testRun("r2"))
+
+            assertThat(sendCompleted.await(500, TimeUnit.MILLISECONDS)).isTrue()
+            assertThat(sentBatches).hasSize(1)
+            assertThat(runIds(sentBatches.single())).containsExactly("r1", "r2")
+        } finally {
+            queue.shutdown()
+        }
     }
 
     @Test
@@ -226,6 +364,51 @@ internal class AutoBatchQueueTest {
         assertThat(fastBatch.patch().get().map { it.id().getOrNull() }).containsExactly("r3")
         assertThat(slowBatch.post().get().map { it.id().getOrNull() }).containsExactly("r2")
         assertThat(slowBatch.patch().isPresent).isFalse()
+    }
+
+    @Test
+    fun `aggregation delay drains queued runs then splits by serialized payload size`() {
+        val sentBatches = ConcurrentLinkedQueue<RunIngestBatchParams>()
+        val sendsCompleted = CountDownLatch(3)
+        val mapper = jsonMapper()
+        val twoRunBody =
+            RunIngestBatchParams.builder()
+                .addPost(testRun("r1"))
+                .addPost(testRun("r2"))
+                .build()
+                ._body()
+        val batchSizeLimitBytes = mapper.writeValueAsBytes(twoRunBody).size - 1
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { params, _ ->
+                    sentBatches.add(params)
+                    sendsCompleted.countDown()
+                    CompletableFuture.completedFuture(null)
+                },
+                batchSizeLimit = 100,
+                aggregationDelayMs = 100,
+                sendParallelism = 1,
+                batchSizeLimitBytes = batchSizeLimitBytes,
+            )
+
+        try {
+            queue.post(testRun("r1"))
+            Thread.sleep(50)
+            queue.post(testRun("r2"))
+            queue.post(testRun("r3"))
+
+            assertThat(sentBatches).isEmpty()
+            assertThat(sendsCompleted.await(500, TimeUnit.MILLISECONDS)).isTrue()
+
+            assertThat(sentBatches).hasSize(3)
+            assertThat(sentBatches.flatMap { runIds(it) }).containsExactly("r1", "r2", "r3")
+            assertThat(sentBatches).allSatisfy { params ->
+                assertThat(mapper.writeValueAsBytes(params._body()).size)
+                    .isLessThanOrEqualTo(batchSizeLimitBytes)
+            }
+        } finally {
+            queue.shutdown()
+        }
     }
 
     @Test

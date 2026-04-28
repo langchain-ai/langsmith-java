@@ -2,7 +2,9 @@
 
 package com.langchain.smith.services.async
 
+import com.langchain.smith.client.AutoBatchIngestLimits
 import com.langchain.smith.client.AutoBatchQueue
+import com.langchain.smith.client.toAutoBatchIngestLimits
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
@@ -31,11 +33,13 @@ import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
+import com.langchain.smith.services.async.annotationqueues.InfoServiceAsyncImpl
 import com.langchain.smith.services.async.runs.RuleServiceAsync
 import com.langchain.smith.services.async.runs.RuleServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
+import org.slf4j.LoggerFactory
 
 class RunServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     RunServiceAsync {
@@ -47,17 +51,36 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     private val rules: RuleServiceAsync by lazy { RuleServiceAsyncImpl(clientOptions) }
 
     private val batchQueue: AutoBatchQueue by lazy {
+        val limits = fetchAutoBatchIngestLimits()
         AutoBatchQueue(
             sendBatch = { params, requestOptions ->
                 withRawResponse().ingestBatch(params, requestOptions).thenApply {
                     it.parse()
                     null
                 }
-            }
+            },
+            batchSizeLimit = limits.batchSizeLimit,
+            batchSizeLimitBytes = limits.batchSizeLimitBytes,
         )
     }
 
     override fun withRawResponse(): RunServiceAsync.WithRawResponse = withRawResponse
+
+    private fun fetchAutoBatchIngestLimits() =
+        try {
+            InfoServiceAsyncImpl(clientOptions)
+                .list()
+                .get()
+                .batchIngestConfig()
+                .getOrNull()
+                .toAutoBatchIngestLimits()
+        } catch (e: Exception) {
+            logger.warn(
+                "Failed to fetch LangSmith batch ingest config; using default batch limits",
+                e,
+            )
+            AutoBatchIngestLimits()
+        }
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync =
         RunServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
@@ -150,6 +173,10 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
 
     internal fun shutdown() {
         batchQueue.shutdown()
+    }
+
+    private companion object {
+        private val logger = LoggerFactory.getLogger(RunServiceAsyncImpl::class.java)
     }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :

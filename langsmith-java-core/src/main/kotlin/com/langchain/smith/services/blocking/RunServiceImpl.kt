@@ -2,7 +2,9 @@
 
 package com.langchain.smith.services.blocking
 
+import com.langchain.smith.client.AutoBatchIngestLimits
 import com.langchain.smith.client.AutoBatchQueue
+import com.langchain.smith.client.toAutoBatchIngestLimits
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
@@ -31,11 +33,13 @@ import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
+import com.langchain.smith.services.blocking.annotationqueues.InfoServiceImpl
 import com.langchain.smith.services.blocking.runs.RuleService
 import com.langchain.smith.services.blocking.runs.RuleServiceImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
+import org.slf4j.LoggerFactory
 
 class RunServiceImpl internal constructor(private val clientOptions: ClientOptions) : RunService {
 
@@ -46,6 +50,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     private val rules: RuleService by lazy { RuleServiceImpl(clientOptions) }
 
     private val batchQueue: AutoBatchQueue by lazy {
+        val limits = fetchAutoBatchIngestLimits()
         AutoBatchQueue(
             sendBatch = { params, requestOptions ->
                 try {
@@ -54,11 +59,28 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 } catch (e: Exception) {
                     CompletableFuture<Void?>().also { it.completeExceptionally(e) }
                 }
-            }
+            },
+            batchSizeLimit = limits.batchSizeLimit,
+            batchSizeLimitBytes = limits.batchSizeLimitBytes,
         )
     }
 
     override fun withRawResponse(): RunService.WithRawResponse = withRawResponse
+
+    private fun fetchAutoBatchIngestLimits() =
+        try {
+            InfoServiceImpl(clientOptions)
+                .list()
+                .batchIngestConfig()
+                .getOrNull()
+                .toAutoBatchIngestLimits()
+        } catch (e: Exception) {
+            logger.warn(
+                "Failed to fetch LangSmith batch ingest config; using default batch limits",
+                e,
+            )
+            AutoBatchIngestLimits()
+        }
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
         RunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
@@ -105,6 +127,10 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     internal fun shutdown() {
         batchQueue.shutdown()
+    }
+
+    private companion object {
+        private val logger = LoggerFactory.getLogger(RunServiceImpl::class.java)
     }
 
     override fun ingestBatch(
