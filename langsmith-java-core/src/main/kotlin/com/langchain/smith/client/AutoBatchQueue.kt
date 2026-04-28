@@ -1,9 +1,11 @@
 package com.langchain.smith.client
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import java.util.concurrent.CompletionException
@@ -19,6 +21,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.jvm.optionals.getOrNull
 import org.slf4j.LoggerFactory
 
 /**
@@ -238,9 +241,6 @@ class AutoBatchQueue(
      * Drains up to [maxItems] queued operations and returns batch params grouped by request
      * options.
      *
-     * TODO: Merge create + update for the same run ID before sending (like the JS/Python SDKs).
-     *   This would reduce the number of operations in each batch when a run is created and
-     *   immediately updated (common for short-lived runs).
      * TODO: Also flush/split batches based on serialized payload size, not just operation count.
      * TODO: Support multipart ingest endpoint for large payloads with attachments.
      * TODO: Support gzip compression for batch requests.
@@ -324,12 +324,50 @@ class AutoBatchQueue(
         val queryParams: QueryParams.Builder = QueryParams.builder(),
     ) {
         fun toBatch(): Batch {
+            val (mergedPosts, standalonePatches) = mergePostsAndPatches()
             val builder = RunIngestBatchParams.builder()
-            if (posts.isNotEmpty()) builder.post(posts)
-            if (patches.isNotEmpty()) builder.patch(patches)
+            if (mergedPosts.isNotEmpty()) builder.post(mergedPosts)
+            if (standalonePatches.isNotEmpty()) builder.patch(standalonePatches)
             builder.additionalHeaders(headers.build())
             builder.additionalQueryParams(queryParams.build())
             return Batch(params = builder.build(), requestOptions = requestOptions)
+        }
+
+        private fun mergePostsAndPatches(): Pair<List<Run>, List<Run>> {
+            if (posts.isEmpty() || patches.isEmpty()) {
+                return posts to patches
+            }
+
+            val postsById = linkedMapOf<String, Run>()
+            val postsWithoutId = mutableListOf<Run>()
+            for (post in posts) {
+                val id = post.id().getOrNull()
+                if (id == null) {
+                    postsWithoutId.add(post)
+                } else {
+                    postsById[id] = post
+                }
+            }
+
+            val standalonePatches = mutableListOf<Run>()
+            for (patch in patches) {
+                val id = patch.id().getOrNull()
+                val post = id?.let(postsById::get)
+                if (id != null && post != null) {
+                    postsById[id] = mergePostAndPatch(post, patch)
+                } else {
+                    standalonePatches.add(patch)
+                }
+            }
+
+            return (postsWithoutId + postsById.values) to standalonePatches
+        }
+
+        private fun mergePostAndPatch(post: Run, patch: Run): Run {
+            val merged = objectMapper.valueToTree<ObjectNode>(post)
+            val patchFields = objectMapper.valueToTree<ObjectNode>(patch)
+            patchFields.fields().forEach { (field, value) -> merged.set<ObjectNode>(field, value) }
+            return objectMapper.treeToValue(merged, Run::class.java)
         }
     }
 
@@ -348,6 +386,7 @@ class AutoBatchQueue(
 
     companion object {
         private val logger = LoggerFactory.getLogger(AutoBatchQueue::class.java)
+        private val objectMapper = jsonMapper()
 
         const val DEFAULT_BATCH_SIZE_LIMIT = 100
         const val DEFAULT_AGGREGATION_DELAY_MS = 250L

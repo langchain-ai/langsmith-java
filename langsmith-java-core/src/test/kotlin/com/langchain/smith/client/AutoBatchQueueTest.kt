@@ -1,5 +1,6 @@
 package com.langchain.smith.client
 
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.Headers
@@ -82,6 +83,45 @@ internal class AutoBatchQueueTest {
 
         assertThat(capture.postedRuns).hasSize(1)
         assertThat(capture.patchedRuns).hasSize(1)
+    }
+
+    @Test
+    fun `merges post and patch for same run id`() {
+        val capture = CapturingLangsmithClient()
+        val queue = testQueue(capture)
+        val post =
+            testRun("r1")
+                .toBuilder()
+                .inputs(
+                    Run.Inputs.builder()
+                        .putAdditionalProperty("question", JsonValue.from("hello"))
+                        .build()
+                )
+                .build()
+        val patch =
+            Run.builder()
+                .id("r1")
+                .outputs(
+                    Run.Outputs.builder()
+                        .putAdditionalProperty("answer", JsonValue.from("world"))
+                        .build()
+                )
+                .endTime("2024-01-01T00:00:01Z")
+                .build()
+
+        queue.post(post)
+        queue.patch(patch)
+        queue.flush()
+
+        assertThat(capture.postedRuns).hasSize(1)
+        assertThat(capture.patchedRuns).isEmpty()
+        val mergedRun = capture.postedRuns.single()
+        assertThat(mergedRun.id().getOrNull()).isEqualTo("r1")
+        assertThat(mergedRun.inputs().get()._additionalProperties()["question"])
+            .isEqualTo(JsonValue.from("hello"))
+        assertThat(mergedRun.outputs().get()._additionalProperties()["answer"])
+            .isEqualTo(JsonValue.from("world"))
+        assertThat(mergedRun.endTime().getOrNull()).isEqualTo("2024-01-01T00:00:01Z")
     }
 
     @Test
