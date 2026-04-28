@@ -243,7 +243,6 @@ class AutoBatchQueue(
      *
      * TODO: Also flush/split batches based on serialized payload size, not just operation count.
      * TODO: Support multipart ingest endpoint for large payloads with attachments.
-     * TODO: Support gzip compression for batch requests.
      */
     private fun drainUpTo(maxItems: Int): List<Batch> {
         val groups = linkedMapOf<RequestOptionsKey, BatchGroup>()

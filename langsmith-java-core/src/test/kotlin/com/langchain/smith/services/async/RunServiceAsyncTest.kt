@@ -2,8 +2,15 @@
 
 package com.langchain.smith.services.async
 
+import com.github.luben.zstd.ZstdInputStream
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
+import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.RequestOptions
+import com.langchain.smith.core.http.Headers
+import com.langchain.smith.core.http.HttpClient
+import com.langchain.smith.core.http.HttpRequest
+import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunQueryParams
@@ -13,11 +20,110 @@ import com.langchain.smith.models.runs.RunTypeEnum
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunsFilterDataSourceTypeEnum
 import com.langchain.smith.models.sessions.RunStatsGroupBy
+import java.io.ByteArrayInputStream
 import java.time.OffsetDateTime
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.atomic.AtomicReference
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.ResourceLock
 
+@ResourceLock("langsmithDisableRunCompression")
 internal class RunServiceAsyncTest {
+
+    @Test
+    fun ingestBatch_sendsStreamingZstdJsonBodyWhenSupported() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest)
+        val runService = runService(httpClient)
+
+        runService
+            .ingestBatch(
+                RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
+            )
+            .get()
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "batch")
+        assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+        assertThat(body.contentType()).isEqualTo("application/json")
+        assertThat(body.contentLength()).isEqualTo(-1L)
+        assertThat(body.repeatable()).isTrue()
+        assertThat(decompress(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+    }
+
+    @Test
+    fun ingestBatch_sendsUncompressedJsonBodyWhenZstdUnsupported() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest, zstdCompressionEnabled = false)
+        val runService = runService(httpClient)
+
+        runService
+            .ingestBatch(
+                RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
+            )
+            .get()
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "batch")
+        assertThat(request.headers.values("Content-Encoding")).isEmpty()
+        assertThat(body.contentType()).isEqualTo("application/json")
+        assertThat(body.repeatable()).isTrue()
+        assertThat(readBody(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+    }
+
+    @Test
+    fun ingestBatch_sendsUncompressedJsonBodyWhenInfoRequestFails() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest, failInfoRequest = true)
+        val runService = runService(httpClient)
+
+        runService
+            .ingestBatch(
+                RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
+            )
+            .get()
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "batch")
+        assertThat(request.headers.values("Content-Encoding")).isEmpty()
+        assertThat(readBody(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+    }
+
+    @Test
+    fun ingestBatch_sendsUncompressedJsonBodyWhenRunCompressionDisabled() {
+        val previousValue = System.getProperty("langchain.langsmithDisableRunCompression")
+        System.setProperty("langchain.langsmithDisableRunCompression", "true")
+        try {
+            val capturedRequest = AtomicReference<HttpRequest>()
+            val httpClient = capturingHttpClient(capturedRequest)
+            val runService = runService(httpClient)
+
+            runService
+                .ingestBatch(
+                    RunIngestBatchParams.builder()
+                        .addPost(Run.builder().id("run-id").build())
+                        .build()
+                )
+                .get()
+
+            val request = capturedRequest.get()
+            val body = request.body!!
+            assertThat(request.pathSegments).containsExactly("runs", "batch")
+            assertThat(request.headers.values("Content-Encoding")).isEmpty()
+            assertThat(readBody(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+        } finally {
+            if (previousValue == null) {
+                System.clearProperty("langchain.langsmithDisableRunCompression")
+            } else {
+                System.setProperty("langchain.langsmithDisableRunCompression", previousValue)
+            }
+        }
+    }
 
     @Disabled("Mock server tests are disabled")
     @Test
@@ -425,5 +531,86 @@ internal class RunServiceAsyncTest {
 
         val response = responseFuture.get()
         response.validate()
+    }
+
+    private fun runService(httpClient: HttpClient): RunServiceAsync.WithRawResponse =
+        RunServiceAsyncImpl(
+                ClientOptions.builder()
+                    .httpClient(httpClient)
+                    .baseUrl("https://example.com")
+                    .checkJacksonVersionCompatibility(false)
+                    .build()
+            )
+            .withRawResponse()
+
+    private fun capturingHttpClient(
+        capturedRequest: AtomicReference<HttpRequest>,
+        zstdCompressionEnabled: Boolean = true,
+        failInfoRequest: Boolean = false,
+    ): HttpClient =
+        object : HttpClient {
+            override fun execute(
+                request: HttpRequest,
+                requestOptions: RequestOptions,
+            ): HttpResponse {
+                if (request.pathSegments == listOf("info")) {
+                    if (failInfoRequest) {
+                        throw RuntimeException("failed to fetch info")
+                    }
+                    return infoResponse(zstdCompressionEnabled)
+                }
+                capturedRequest.set(request)
+                return okResponse()
+            }
+
+            override fun executeAsync(
+                request: HttpRequest,
+                requestOptions: RequestOptions,
+            ): CompletableFuture<HttpResponse> {
+                if (request.pathSegments == listOf("info")) {
+                    if (failInfoRequest) {
+                        val future = CompletableFuture<HttpResponse>()
+                        future.completeExceptionally(RuntimeException("failed to fetch info"))
+                        return future
+                    }
+                    return CompletableFuture.completedFuture(infoResponse(zstdCompressionEnabled))
+                }
+                capturedRequest.set(request)
+                return CompletableFuture.completedFuture(okResponse())
+            }
+
+            override fun close() {}
+        }
+
+    private fun infoResponse(zstdCompressionEnabled: Boolean): HttpResponse =
+        jsonResponse(
+            """{"version":"test","instance_flags":{"zstd_compression_enabled":$zstdCompressionEnabled}}"""
+        )
+
+    private fun okResponse(): HttpResponse = jsonResponse("{}")
+
+    private fun jsonResponse(json: String): HttpResponse =
+        object : HttpResponse {
+            override fun statusCode(): Int = 200
+
+            override fun headers(): Headers = Headers.builder().build()
+
+            override fun body(): ByteArrayInputStream = json.byteInputStream()
+
+            override fun close() {}
+        }
+
+    private fun decompress(body: com.langchain.smith.core.http.HttpRequestBody): String {
+        val output = java.io.ByteArrayOutputStream()
+        body.writeTo(output)
+        return ZstdInputStream(ByteArrayInputStream(output.toByteArray()))
+            .bufferedReader(Charsets.UTF_8)
+            .use { it.readText() }
+    }
+
+    private fun readBody(body: com.langchain.smith.core.http.HttpRequestBody): String {
+        val output = java.io.ByteArrayOutputStream()
+        body.writeTo(output)
+        return output.toString("UTF-8")
     }
 }

@@ -16,7 +16,10 @@ import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
+import com.langchain.smith.core.http.zstdJson
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.annotationqueues.info.InfoListParams
+import com.langchain.smith.models.annotationqueues.info.InfoListResponse
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
@@ -33,6 +36,9 @@ import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.async.runs.RuleServiceAsync
 import com.langchain.smith.services.async.runs.RuleServiceAsyncImpl
+import com.langchain.smith.services.isRunCompressionDisabled
+import com.langchain.smith.services.isZstdAvailable
+import com.langchain.smith.services.isZstdCompressionEnabled
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -158,6 +164,46 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val infoHandler: Handler<InfoListResponse> =
+            jsonHandler<InfoListResponse>(clientOptions.jsonMapper)
+
+        private val zstdCompressionEnabled: CompletableFuture<Boolean> by lazy {
+            fetchZstdCompressionEnabled()
+        }
+
+        private fun fetchZstdCompressionEnabled(): CompletableFuture<Boolean> {
+            try {
+                if (isRunCompressionDisabled() || !isZstdAvailable()) {
+                    return CompletableFuture.completedFuture(false)
+                }
+                val params = InfoListParams.none()
+                val request =
+                    HttpRequest.builder()
+                        .method(HttpMethod.GET)
+                        .baseUrl(clientOptions.baseUrl())
+                        .addPathSegment("info")
+                        .putHeader("Accept", "application/json")
+                        .build()
+                        .prepareAsync(clientOptions, params)
+                val requestOptions =
+                    RequestOptions.none().applyDefaults(RequestOptions.from(clientOptions))
+                return request
+                    .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                    .thenApply { response ->
+                        response.use {
+                            isZstdCompressionEnabled(
+                                errorHandler.handle(it).let { checked ->
+                                    infoHandler.handle(checked)
+                                }
+                            )
+                        }
+                    }
+                    .exceptionally { false }
+            } catch (_: Exception) {
+                return CompletableFuture.completedFuture(false)
+            }
+        }
+
         private val rules: RuleServiceAsync.WithRawResponse by lazy {
             RuleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -276,16 +322,23 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             params: RunIngestBatchParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<RunIngestBatchResponse>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs", "batch")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
+            return zstdCompressionEnabled
+                .thenCompose { zstdCompressionEnabled ->
+                    val requestBuilder =
+                        HttpRequest.builder()
+                            .method(HttpMethod.POST)
+                            .baseUrl(clientOptions.baseUrl())
+                            .addPathSegments("runs", "batch")
+                    if (zstdCompressionEnabled) {
+                        requestBuilder
+                            .putHeader("Content-Encoding", "zstd")
+                            .body(zstdJson(clientOptions.jsonMapper, params._body()))
+                    } else {
+                        requestBuilder.body(json(clientOptions.jsonMapper, params._body()))
+                    }
+                    requestBuilder.build().prepareAsync(clientOptions, params)
+                }
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
