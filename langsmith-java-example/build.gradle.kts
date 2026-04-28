@@ -22,6 +22,9 @@ dependencies {
     // Jackson for JSON handling in examples
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
 
+    // Simple logging for examples. This lets smoke tests show SDK debug/trace logs.
+    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
+
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -94,6 +97,10 @@ application {
 // Export stdin to examples for readln(); require -Pexample= when running (configuration-cache safe: no project access in doFirst)
 tasks.named<JavaExec>("run") {
     standardInput = System.`in`
+    systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "info")
+    systemProperty("org.slf4j.simpleLogger.log.com.langchain.smith.client.AutoBatchQueue", "trace")
+    systemProperty("org.slf4j.simpleLogger.showDateTime", "false")
+    systemProperty("org.slf4j.simpleLogger.showShortLogName", "true")
     doFirst {
         if (mainClass.get() == "Main") {
             throw GradleException(

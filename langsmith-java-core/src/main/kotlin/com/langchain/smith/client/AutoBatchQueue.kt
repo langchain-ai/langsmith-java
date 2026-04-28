@@ -324,18 +324,18 @@ class AutoBatchQueue(
         val queryParams: QueryParams.Builder = QueryParams.builder(),
     ) {
         fun toBatch(): Batch {
-            val (mergedPosts, standalonePatches) = mergePostsAndPatches()
+            val mergeResult = mergePostsAndPatches()
             val builder = RunIngestBatchParams.builder()
-            if (mergedPosts.isNotEmpty()) builder.post(mergedPosts)
-            if (standalonePatches.isNotEmpty()) builder.patch(standalonePatches)
+            if (mergeResult.posts.isNotEmpty()) builder.post(mergeResult.posts)
+            if (mergeResult.patches.isNotEmpty()) builder.patch(mergeResult.patches)
             builder.additionalHeaders(headers.build())
             builder.additionalQueryParams(queryParams.build())
             return Batch(params = builder.build(), requestOptions = requestOptions)
         }
 
-        private fun mergePostsAndPatches(): Pair<List<Run>, List<Run>> {
+        private fun mergePostsAndPatches(): MergeResult {
             if (posts.isEmpty() || patches.isEmpty()) {
-                return posts to patches
+                return MergeResult(posts = posts, patches = patches)
             }
 
             val postsById = linkedMapOf<String, Run>()
@@ -350,17 +350,23 @@ class AutoBatchQueue(
             }
 
             val standalonePatches = mutableListOf<Run>()
+            val mergedRunIds = mutableListOf<String>()
             for (patch in patches) {
                 val id = patch.id().getOrNull()
                 val post = id?.let(postsById::get)
                 if (id != null && post != null) {
                     postsById[id] = mergePostAndPatch(post, patch)
+                    mergedRunIds.add(id)
                 } else {
                     standalonePatches.add(patch)
                 }
             }
 
-            return (postsWithoutId + postsById.values) to standalonePatches
+            return MergeResult(
+                posts = postsWithoutId + postsById.values,
+                patches = standalonePatches,
+                mergedRunIds = mergedRunIds,
+            )
         }
 
         private fun mergePostAndPatch(post: Run, patch: Run): Run {
@@ -370,6 +376,12 @@ class AutoBatchQueue(
             return objectMapper.treeToValue(merged, Run::class.java)
         }
     }
+
+    private data class MergeResult(
+        val posts: List<Run>,
+        val patches: List<Run>,
+        val mergedRunIds: List<String> = emptyList(),
+    )
 
     private data class BatchItem(
         val op: BatchOp,
