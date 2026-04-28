@@ -6,15 +6,18 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
+import java.util.concurrent.CompletionException
 import java.util.concurrent.CompletionStage
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.Phaser
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.Condition
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import org.slf4j.LoggerFactory
 
 /**
@@ -29,23 +32,32 @@ import org.slf4j.LoggerFactory
  * @param sendBatch sends a batch and completes when the send has finished
  * @param batchSizeLimit max operations before auto-flush (default 100)
  * @param aggregationDelayMs delay before timer-based flush (default 250ms)
+ * @param sendParallelism max number of batch requests to send concurrently (default 4)
  */
 class AutoBatchQueue(
     private val sendBatch: (RunIngestBatchParams, RequestOptions) -> CompletionStage<Void?>,
     private val batchSizeLimit: Int = DEFAULT_BATCH_SIZE_LIMIT,
     private val aggregationDelayMs: Long = DEFAULT_AGGREGATION_DELAY_MS,
+    private val sendParallelism: Int = DEFAULT_SEND_PARALLELISM,
 ) {
-    private val lock = ReentrantLock()
-    private val sendCompleted: Condition = lock.newCondition()
-    private val posts = mutableListOf<BatchItem>()
-    private val patches = mutableListOf<BatchItem>()
-    private var pendingFlush: ScheduledFuture<*>? = null
-    private var activeSends = 0
-    private var shutdown = false
+    private val items = ConcurrentLinkedQueue<BatchItem>()
+    private val queuedCount = AtomicInteger(0)
+    private val shutdown = AtomicBoolean(false)
+    private val delayedFlushScheduled = AtomicBoolean(false)
+    private val enqueueShutdownLock = Any()
+    private val activeSends =
+        object : Phaser(0) {
+            override fun onAdvance(phase: Int, registeredParties: Int): Boolean = false
+        }
 
-    private val scheduler: ScheduledExecutorService =
+    private val coordinator: ScheduledExecutorService =
         Executors.newSingleThreadScheduledExecutor { r ->
-            Thread(r, "langsmith-batch-queue").apply { isDaemon = true }
+            Thread(r, "langsmith-batch-coordinator").apply { isDaemon = true }
+        }
+
+    private val sendExecutor: ExecutorService =
+        Executors.newFixedThreadPool(sendParallelism) { r ->
+            Thread(r, "langsmith-batch-sender").apply { isDaemon = true }
         }
 
     /** Enqueues a run create operation. */
@@ -55,18 +67,7 @@ class AutoBatchQueue(
         queryParams: QueryParams = QueryParams.builder().build(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ) {
-        lock.withLock {
-            check(!shutdown) { "AutoBatchQueue is shut down" }
-            posts.add(
-                BatchItem(
-                    run = run,
-                    headers = headers,
-                    queryParams = queryParams,
-                    requestOptions = requestOptions,
-                )
-            )
-            scheduleOrFlush()
-        }
+        enqueue(BatchOp.Post, run, headers, queryParams, requestOptions)
     }
 
     /** Enqueues a run update (patch) operation. */
@@ -76,77 +77,154 @@ class AutoBatchQueue(
         queryParams: QueryParams = QueryParams.builder().build(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ) {
-        lock.withLock {
-            check(!shutdown) { "AutoBatchQueue is shut down" }
-            patches.add(
-                BatchItem(
-                    run = run,
-                    headers = headers,
-                    queryParams = queryParams,
-                    requestOptions = requestOptions,
-                )
-            )
-            scheduleOrFlush()
-        }
+        enqueue(BatchOp.Patch, run, headers, queryParams, requestOptions)
     }
 
     /**
-     * Flushes all queued operations immediately, blocking until the batch request completes.
+     * Flushes all queued operations immediately, blocking until batch requests that were queued or
+     * already in-flight have completed.
      *
      * Safe to call from any thread. No-op if the queue is empty.
      */
     fun flush() {
-        val batches = lock.withLock { drain().also { activeSends += it.size } }
-        batches.forEach(::sendBatchAfterIncrement)
-        waitForActiveSends()
+        while (true) {
+            if (queuedCount.get() > 0 && !drainOnCoordinator()) {
+                return
+            }
+
+            if (!waitForActiveSends()) {
+                return
+            }
+
+            if (queuedCount.get() == 0 && !hasActiveSends()) {
+                return
+            }
+        }
     }
 
     /**
-     * Flushes remaining operations and shuts down the background timer.
+     * Flushes remaining operations and shuts down the background executors.
      *
      * After calling this, the queue will no longer accept new operations.
      */
     fun shutdown() {
-        lock.withLock { shutdown = true }
+        synchronized(enqueueShutdownLock) { if (!shutdown.compareAndSet(false, true)) return }
+
         flush()
-        scheduler.shutdown()
+        coordinator.shutdown()
+        sendExecutor.shutdown()
+
         try {
-            if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {
-                scheduler.shutdownNow()
+            if (!coordinator.awaitTermination(5, TimeUnit.SECONDS)) {
+                coordinator.shutdownNow()
+            }
+            if (!sendExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                sendExecutor.shutdownNow()
             }
         } catch (_: InterruptedException) {
-            scheduler.shutdownNow()
+            coordinator.shutdownNow()
+            sendExecutor.shutdownNow()
             Thread.currentThread().interrupt()
         }
     }
 
     /** Returns the number of queued operations (for testing). */
-    internal fun size(): Int = lock.withLock { posts.size + patches.size }
+    internal fun size(): Int = queuedCount.get()
 
-    private fun scheduleOrFlush() {
-        // Already holding lock
-        if (posts.size + patches.size >= batchSizeLimit) {
-            val batches = drain()
-            if (batches.isEmpty()) return
-            submitBatches(batches)
-        } else {
-            pendingFlush?.cancel(false)
-            pendingFlush =
-                scheduler.schedule(
-                    {
-                        // Drain and send inline on the scheduler thread; track via activeSends so
-                        // flush() can wait for the returned future to complete.
-                        val batches = lock.withLock { drain().also { activeSends += it.size } }
-                        batches.forEach(::sendBatchAfterIncrement)
-                    },
-                    aggregationDelayMs,
-                    TimeUnit.MILLISECONDS,
+    private fun enqueue(
+        op: BatchOp,
+        run: Run,
+        headers: Headers,
+        queryParams: QueryParams,
+        requestOptions: RequestOptions,
+    ) {
+        val count =
+            synchronized(enqueueShutdownLock) {
+                check(!shutdown.get()) { "AutoBatchQueue is shut down" }
+                items.add(
+                    BatchItem(
+                        op = op,
+                        run = run,
+                        headers = headers,
+                        queryParams = queryParams,
+                        requestOptions = requestOptions,
+                    )
                 )
+                queuedCount.incrementAndGet()
+            }
+
+        afterEnqueue(count)
+    }
+
+    private fun afterEnqueue(count: Int) {
+        if (count >= batchSizeLimit) {
+            triggerFlush()
+        } else {
+            scheduleFlush()
+        }
+    }
+
+    private fun scheduleFlush() {
+        if (!delayedFlushScheduled.compareAndSet(false, true)) return
+
+        try {
+            coordinator.schedule(
+                {
+                    delayedFlushScheduled.set(false)
+                    drainAndSubmitSends()
+                },
+                aggregationDelayMs,
+                TimeUnit.MILLISECONDS,
+            )
+        } catch (e: RejectedExecutionException) {
+            delayedFlushScheduled.set(false)
+            logger.warn("Batch queue coordinator rejected delayed flush", e)
+        }
+    }
+
+    private fun triggerFlush() {
+        try {
+            coordinator.execute { drainAndSubmitSends() }
+        } catch (e: RejectedExecutionException) {
+            logger.warn("Batch queue coordinator rejected flush", e)
+        }
+    }
+
+    private fun drainOnCoordinator(): Boolean {
+        val drainFuture =
+            try {
+                coordinator.submit { drainAndSubmitSends() }
+            } catch (e: RejectedExecutionException) {
+                throw IllegalStateException("Batch queue coordinator rejected flush", e)
+            }
+
+        try {
+            drainFuture.get()
+            return true
+        } catch (_: InterruptedException) {
+            Thread.currentThread().interrupt()
+            return false
+        } catch (e: ExecutionException) {
+            throw RuntimeException("Failed to flush batch queue", e.cause)
+        }
+    }
+
+    private fun drainAndSubmitSends() {
+        val batches = drainUpTo(batchSizeLimit)
+        if (batches.isEmpty()) return
+
+        batches.forEach(::submitBatch)
+
+        when {
+            queuedCount.get() >= batchSizeLimit -> triggerFlush()
+            queuedCount.get() > 0 && !shutdown.get() -> scheduleFlush()
+            queuedCount.get() > 0 && shutdown.get() -> triggerFlush()
         }
     }
 
     /**
-     * Drains the queue and returns batch params grouped by request options. Must hold lock.
+     * Drains up to [maxItems] queued operations and returns batch params grouped by request
+     * options.
      *
      * TODO: Merge create + update for the same run ID before sending (like the JS/Python SDKs).
      *   This would reduce the number of operations in each batch when a run is created and
@@ -155,94 +233,74 @@ class AutoBatchQueue(
      * TODO: Support multipart ingest endpoint for large payloads with attachments.
      * TODO: Support gzip compression for batch requests.
      */
-    private fun drain(): List<Batch> {
-        if (posts.isEmpty() && patches.isEmpty()) return emptyList()
-
-        pendingFlush?.cancel(false)
-        pendingFlush = null
-
+    private fun drainUpTo(maxItems: Int): List<Batch> {
         val groups = linkedMapOf<RequestOptionsKey, BatchGroup>()
-        addItemsToGroups(items = posts, groups = groups, isPost = true)
-        addItemsToGroups(items = patches, groups = groups, isPost = false)
+        var drained = 0
 
-        return groups.values.map { it.toBatch() }
-    }
+        while (drained < maxItems) {
+            val item = items.poll() ?: break
+            queuedCount.decrementAndGet()
+            drained++
 
-    private fun addItemsToGroups(
-        items: MutableList<BatchItem>,
-        groups: MutableMap<RequestOptionsKey, BatchGroup>,
-        isPost: Boolean,
-    ) {
-        items.forEach { item ->
             val group =
                 groups.getOrPut(item.requestOptions.key()) { BatchGroup(item.requestOptions) }
-            if (isPost) {
-                group.posts.add(item.run)
-            } else {
-                group.patches.add(item.run)
+            when (item.op) {
+                BatchOp.Post -> group.posts.add(item.run)
+                BatchOp.Patch -> group.patches.add(item.run)
             }
             group.headers.putAll(item.headers)
             group.queryParams.putAll(item.queryParams)
         }
-        items.clear()
+
+        return groups.values.map { it.toBatch() }
     }
 
-    /** Submits batches for async send on the scheduler thread. Caller must hold the lock. */
-    private fun submitBatches(batches: List<Batch>) {
-        // Already holding lock
-        activeSends += batches.size
-        batches.forEach { batch ->
-            try {
-                scheduler.execute { sendBatchAfterIncrement(batch) }
-            } catch (e: RejectedExecutionException) {
-                // scheduler is shut down; decrement and log dropped runs
-                activeSends--
-                sendCompleted.signalAll()
-                logger.warn(
-                    "Batch queue scheduler rejected a batch; dropping {} run operations",
-                    operationCount(batch.params),
-                    e,
-                )
-            }
-        }
-    }
-
-    private fun sendBatchAfterIncrement(batch: Batch) {
+    private fun submitBatch(batch: Batch) {
+        activeSends.register()
         try {
-            sendBatch(batch.params, batch.requestOptions).whenComplete { _, error ->
-                if (error != null) {
-                    logger.warn("Failed to send batch of runs", error)
-                }
-                markSendComplete()
-            }
-        } catch (e: Exception) {
-            logger.warn("Failed to send batch of runs", e)
-            markSendComplete()
-        }
-    }
-
-    private fun waitForActiveSends() {
-        lock.withLock {
-            while (activeSends > 0) {
+            sendExecutor.execute {
                 try {
-                    sendCompleted.await()
-                } catch (_: InterruptedException) {
-                    Thread.currentThread().interrupt()
-                    return
+                    sendBatch(batch.params, batch.requestOptions).toCompletableFuture().join()
+                } catch (e: CompletionException) {
+                    logger.warn("Failed to send batch of runs", e.cause ?: e)
+                } catch (e: Exception) {
+                    logger.warn("Failed to send batch of runs", e)
+                } finally {
+                    activeSends.arriveAndDeregister()
                 }
             }
+        } catch (e: RejectedExecutionException) {
+            activeSends.arriveAndDeregister()
+            logger.warn(
+                "Batch queue sender rejected a batch; dropping {} run operations",
+                operationCount(batch.params),
+                e,
+            )
         }
     }
 
-    private fun markSendComplete() {
-        lock.withLock {
-            activeSends--
-            sendCompleted.signalAll()
+    private fun waitForActiveSends(): Boolean {
+        while (hasActiveSends()) {
+            val phase = activeSends.phase
+            try {
+                activeSends.awaitAdvanceInterruptibly(phase)
+            } catch (_: InterruptedException) {
+                Thread.currentThread().interrupt()
+                return false
+            }
         }
+        return true
     }
+
+    private fun hasActiveSends(): Boolean = activeSends.registeredParties > 0
 
     private fun operationCount(params: RunIngestBatchParams): Int =
         params.post().orElse(emptyList()).size + params.patch().orElse(emptyList()).size
+
+    private enum class BatchOp {
+        Post,
+        Patch,
+    }
 
     private data class Batch(val params: RunIngestBatchParams, val requestOptions: RequestOptions)
 
@@ -264,6 +322,7 @@ class AutoBatchQueue(
     }
 
     private data class BatchItem(
+        val op: BatchOp,
         val run: Run,
         val headers: Headers,
         val queryParams: QueryParams,
@@ -280,5 +339,6 @@ class AutoBatchQueue(
 
         const val DEFAULT_BATCH_SIZE_LIMIT = 100
         const val DEFAULT_AGGREGATION_DELAY_MS = 250L
+        const val DEFAULT_SEND_PARALLELISM = 4
     }
 }

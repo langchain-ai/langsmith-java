@@ -10,8 +10,10 @@ import com.langchain.smith.testutils.CapturingLangsmithClient
 import java.time.Duration
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -155,7 +157,7 @@ internal class AutoBatchQueueTest {
 
     @Test
     fun `groups operations by request options and applies them to batch requests`() {
-        val sentBatches = mutableListOf<Pair<RunIngestBatchParams, RequestOptions>>()
+        val sentBatches = ConcurrentLinkedQueue<Pair<RunIngestBatchParams, RequestOptions>>()
         val fastOptions =
             RequestOptions.builder()
                 .timeout(Timeout.builder().request(Duration.ofSeconds(1)).build())
@@ -202,10 +204,8 @@ internal class AutoBatchQueueTest {
         repeat(250) { index -> queue.post(testRun("r$index")) }
         queue.flush()
 
-        assertThat(sentBatches).hasSize(3)
-        assertThat(sentBatches.map { operationCount(it) }).containsExactly(100, 100, 50)
-        assertThat(sentBatches.flatMap { runIds(it) })
-            .containsExactlyElementsOf((0 until 250).map { "r$it" })
+        assertThat(sentBatches.flatMap { runIds(it) }.toSet()).hasSize(250)
+        assertThat(sentBatches.all { operationCount(it) <= 100 }).isTrue()
     }
 
     @Test
@@ -234,6 +234,43 @@ internal class AutoBatchQueueTest {
 
         assertThat(sentBatches.flatMap { runIds(it) }.toSet()).hasSize(1_000)
         assertThat(sentBatches.all { operationCount(it) <= 50 }).isTrue()
+    }
+
+    @Test
+    fun `flush waits for size triggered sends already in flight`() {
+        val sendStarted = CountDownLatch(1)
+        val sendCompleted = CompletableFuture<Void?>()
+        val flushReturned = AtomicBoolean(false)
+        val queue =
+            AutoBatchQueue(
+                sendBatch = { _, _ ->
+                    sendStarted.countDown()
+                    sendCompleted
+                },
+                batchSizeLimit = 1,
+                aggregationDelayMs = 10_000,
+            )
+
+        try {
+            queue.post(testRun("r1"))
+            assertThat(sendStarted.await(10, TimeUnit.SECONDS)).isTrue()
+
+            val flushThread = Thread {
+                queue.flush()
+                flushReturned.set(true)
+            }
+            flushThread.start()
+
+            Thread.sleep(100)
+            assertThat(flushReturned.get()).isFalse()
+
+            sendCompleted.complete(null)
+            flushThread.join(10_000)
+            assertThat(flushReturned.get()).isTrue()
+        } finally {
+            sendCompleted.complete(null)
+            queue.shutdown()
+        }
     }
 
     @Test
