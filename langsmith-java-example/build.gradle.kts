@@ -22,13 +22,13 @@ dependencies {
     // Jackson for JSON handling in examples
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
 
-    // Simple logging for examples. This lets smoke tests show SDK debug/trace logs.
-    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
-
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
     implementation(platform("org.springframework.boot:spring-boot-dependencies:2.7.18"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter")
+
+    // Simple logging for examples. This lets smoke tests show SDK debug/trace logs.
+    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
 
     // Security: constrain vulnerable transitive dependencies from Spring Boot 2.7.18.
     // Spring Boot 2.7.x is EOL; these constraints override the managed versions in-place.
