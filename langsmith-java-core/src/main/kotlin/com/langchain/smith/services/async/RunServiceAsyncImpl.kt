@@ -2,6 +2,7 @@
 
 package com.langchain.smith.services.async
 
+import com.langchain.smith.client.AutoBatchQueue
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
@@ -45,6 +46,17 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
 
     private val rules: RuleServiceAsync by lazy { RuleServiceAsyncImpl(clientOptions) }
 
+    private val batchQueue: AutoBatchQueue by lazy {
+        AutoBatchQueue(
+            sendBatch = { params, requestOptions ->
+                withRawResponse().ingestBatch(params, requestOptions).thenApply {
+                    it.parse()
+                    null
+                }
+            }
+        )
+    }
+
     override fun withRawResponse(): RunServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync =
@@ -55,9 +67,17 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<RunCreateResponse> =
-        // post /runs
-        withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+    ): CompletableFuture<Void?> {
+        if (clientOptions.autoBatchTracing) {
+            batchQueue.post(params.run(), params._headers(), params._queryParams(), requestOptions)
+            return CompletableFuture.completedFuture(null)
+        }
+
+        return withRawResponse().create(params, requestOptions).thenApply {
+            it.parse()
+            null
+        }
+    }
 
     override fun retrieve(
         params: RunRetrieveParams,
@@ -69,9 +89,21 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<RunUpdateResponse> =
-        // patch /runs/{run_id}
-        withRawResponse().update(params, requestOptions).thenApply { it.parse() }
+    ): CompletableFuture<Void?> {
+        if (shouldUpdateSynchronously(params)) {
+            return updateSynchronously(params, requestOptions)
+        }
+
+        val runId = checkRequired("runId", params.runId().getOrNull())
+
+        batchQueue.patch(
+            params.run().toBuilder().id(runId).build(),
+            params._headers(),
+            params._queryParams(),
+            requestOptions,
+        )
+        return CompletableFuture.completedFuture(null)
+    }
 
     override fun ingestBatch(
         params: RunIngestBatchParams,
@@ -100,6 +132,25 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<RunUpdate2Response> =
         // patch /api/v1/runs/{run_id}
         withRawResponse().update2(params, requestOptions).thenApply { it.parse() }
+
+    override fun flush(): CompletableFuture<Void?> =
+        CompletableFuture.runAsync { batchQueue.flush() }.thenApply { null }
+
+    private fun shouldUpdateSynchronously(params: RunUpdateParams): Boolean =
+        !clientOptions.autoBatchTracing || !params.runId().isPresent
+
+    private fun updateSynchronously(
+        params: RunUpdateParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<Void?> =
+        withRawResponse().update(params, requestOptions).thenApply {
+            it.parse()
+            null
+        }
+
+    internal fun shutdown() {
+        batchQueue.shutdown()
+    }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunServiceAsync.WithRawResponse {

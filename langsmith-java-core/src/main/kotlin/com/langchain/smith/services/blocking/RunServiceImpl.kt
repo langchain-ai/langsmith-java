@@ -2,6 +2,7 @@
 
 package com.langchain.smith.services.blocking
 
+import com.langchain.smith.client.AutoBatchQueue
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
@@ -32,6 +33,7 @@ import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.blocking.runs.RuleService
 import com.langchain.smith.services.blocking.runs.RuleServiceImpl
+import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -43,6 +45,19 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     private val rules: RuleService by lazy { RuleServiceImpl(clientOptions) }
 
+    private val batchQueue: AutoBatchQueue by lazy {
+        AutoBatchQueue(
+            sendBatch = { params, requestOptions ->
+                try {
+                    withRawResponse().ingestBatch(params, requestOptions).parse()
+                    CompletableFuture.completedFuture(null)
+                } catch (e: Exception) {
+                    CompletableFuture<Void?>().also { it.completeExceptionally(e) }
+                }
+            }
+        )
+    }
+
     override fun withRawResponse(): RunService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
@@ -50,23 +65,47 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun rules(): RuleService = rules
 
-    override fun create(
-        params: RunCreateParams,
-        requestOptions: RequestOptions,
-    ): RunCreateResponse =
-        // post /runs
-        withRawResponse().create(params, requestOptions).parse()
+    override fun create(params: RunCreateParams, requestOptions: RequestOptions) {
+        if (clientOptions.autoBatchTracing) {
+            batchQueue.post(params.run(), params._headers(), params._queryParams(), requestOptions)
+        } else {
+            withRawResponse().create(params, requestOptions).parse()
+        }
+    }
 
     override fun retrieve(params: RunRetrieveParams, requestOptions: RequestOptions): RunSchema =
-        // get /api/v1/runs/{run_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    override fun update(
-        params: RunUpdateParams,
-        requestOptions: RequestOptions,
-    ): RunUpdateResponse =
-        // patch /runs/{run_id}
+    override fun update(params: RunUpdateParams, requestOptions: RequestOptions) {
+        if (shouldUpdateSynchronously(params)) {
+            updateSynchronously(params, requestOptions)
+            return
+        }
+
+        val runId = checkRequired("runId", params.runId().getOrNull())
+
+        batchQueue.patch(
+            params.run().toBuilder().id(runId).build(),
+            params._headers(),
+            params._queryParams(),
+            requestOptions,
+        )
+    }
+
+    override fun flush() {
+        batchQueue.flush()
+    }
+
+    private fun shouldUpdateSynchronously(params: RunUpdateParams): Boolean =
+        !clientOptions.autoBatchTracing || !params.runId().isPresent
+
+    private fun updateSynchronously(params: RunUpdateParams, requestOptions: RequestOptions) {
         withRawResponse().update(params, requestOptions).parse()
+    }
+
+    internal fun shutdown() {
+        batchQueue.shutdown()
+    }
 
     override fun ingestBatch(
         params: RunIngestBatchParams,

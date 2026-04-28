@@ -107,6 +107,8 @@ private constructor(
      * Defaults to 2.
      */
     @get:JvmName("maxRetries") val maxRetries: Int,
+    /** Whether run create/update calls should be automatically batched for tracing. */
+    @get:JvmName("autoBatchTracing") val autoBatchTracing: Boolean,
     private val apiKey: String?,
     private val tenantId: String?,
     private val bearerToken: String?,
@@ -177,6 +179,7 @@ private constructor(
         private var responseValidation: Boolean = false
         private var timeout: Timeout = Timeout.default()
         private var maxRetries: Int = 2
+        private var autoBatchTracing: Boolean = true
         private var apiKey: String? = null
         private var tenantId: String? = null
         private var bearerToken: String? = null
@@ -196,6 +199,7 @@ private constructor(
             responseValidation = clientOptions.responseValidation
             timeout = clientOptions.timeout
             maxRetries = clientOptions.maxRetries
+            autoBatchTracing = clientOptions.autoBatchTracing
             apiKey = clientOptions.apiKey
             tenantId = clientOptions.tenantId
             bearerToken = clientOptions.bearerToken
@@ -319,6 +323,16 @@ private constructor(
          * Defaults to 2.
          */
         fun maxRetries(maxRetries: Int) = apply { this.maxRetries = maxRetries }
+
+        /**
+         * Whether run create/update calls should be automatically batched for tracing.
+         *
+         * Defaults to true. Set to false to send run create/update calls synchronously through the
+         * single-run endpoints.
+         */
+        fun autoBatchTracing(autoBatchTracing: Boolean) = apply {
+            this.autoBatchTracing = autoBatchTracing
+        }
 
         fun apiKey(apiKey: String?) = apply { this.apiKey = apiKey }
 
@@ -554,6 +568,7 @@ private constructor(
                 responseValidation,
                 timeout,
                 maxRetries,
+                autoBatchTracing,
                 apiKey,
                 tenantId,
                 bearerToken,

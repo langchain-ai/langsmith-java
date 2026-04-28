@@ -85,8 +85,7 @@ internal class RunServiceAsyncTest {
                     .build()
             )
 
-        val run = runFuture.get()
-        run.validate()
+        runFuture.get()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -187,8 +186,7 @@ internal class RunServiceAsyncTest {
                     .build()
             )
 
-        val run = runFuture.get()
-        run.validate()
+        runFuture.get()
     }
 
     @Disabled("Mock server tests are disabled")
