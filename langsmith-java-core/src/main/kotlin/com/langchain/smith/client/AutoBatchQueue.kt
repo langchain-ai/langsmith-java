@@ -338,34 +338,27 @@ class AutoBatchQueue(
                 return MergeResult(posts = posts, patches = patches)
             }
 
-            val postsById = linkedMapOf<String, Run>()
-            val postsWithoutId = mutableListOf<Run>()
-            for (post in posts) {
-                val id = post.id().getOrNull()
-                if (id == null) {
-                    postsWithoutId.add(post)
-                } else {
-                    postsById[id] = post
+            val postsById =
+                posts.mapNotNull { post -> post.id().getOrNull()?.let { it to post } }.toMap()
+            val postsWithoutId = posts.filter { it.id().getOrNull() == null }
+            val patchesByPostId =
+                patches.mapNotNull { patch ->
+                    patch.id().getOrNull()?.takeIf(postsById::containsKey)?.let { it to patch }
                 }
-            }
-
-            val standalonePatches = mutableListOf<Run>()
-            val mergedRunIds = mutableListOf<String>()
-            for (patch in patches) {
-                val id = patch.id().getOrNull()
-                val post = id?.let(postsById::get)
-                if (id != null && post != null) {
-                    postsById[id] = mergePostAndPatch(post, patch)
-                    mergedRunIds.add(id)
-                } else {
-                    standalonePatches.add(patch)
+            val patchesByPostIdMap = patchesByPostId.toMap()
+            val standalonePatches =
+                patches.filter { patch ->
+                    patch.id().getOrNull()?.let(postsById::containsKey) != true
                 }
-            }
 
             return MergeResult(
-                posts = postsWithoutId + postsById.values,
+                posts =
+                    postsWithoutId +
+                        postsById.map { (id, post) ->
+                            patchesByPostIdMap[id]?.let { mergePostAndPatch(post, it) } ?: post
+                        },
                 patches = standalonePatches,
-                mergedRunIds = mergedRunIds,
+                mergedRunIds = patchesByPostId.map { it.first },
             )
         }
 
