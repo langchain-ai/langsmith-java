@@ -2,6 +2,8 @@
 
 package com.langchain.smith.services.blocking
 
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.containing
 import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.okJson
@@ -20,6 +22,7 @@ import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunRetrieveParams
 import com.langchain.smith.models.runs.RunStatsQueryParams
 import com.langchain.smith.models.runs.RunTypeEnum
+import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunsFilterDataSourceTypeEnum
 import com.langchain.smith.models.sessions.RunStatsGroupBy
 import java.time.OffsetDateTime
@@ -38,7 +41,7 @@ internal class RunServiceTest {
                 .willReturn(
                     okJson(
                         """
-                        {"batch_ingest_config":{"size_limit":2,"size_limit_bytes":20971520}}
+                        {"batch_ingest_config":{"size_limit":2,"size_limit_bytes":20971520,"use_multipart_endpoint":false}}
                         """
                             .trimIndent()
                     )
@@ -59,6 +62,300 @@ internal class RunServiceTest {
             runService.flush()
 
             verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(2, postRequestedFor(urlPathEqualTo("/runs/batch")))
+            verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun `auto batch queue defaults to multipart when info omits multipart flag`(
+        wmRuntimeInfo: WireMockRuntimeInfo
+    ) {
+        stubFor(
+            get(urlPathEqualTo("/api/v1/info"))
+                .willReturn(
+                    okJson(
+                        """
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520}}
+                        """
+                            .trimIndent()
+                    )
+                )
+        )
+        stubFor(post(urlPathEqualTo("/runs/multipart")).willReturn(okJson("{}")))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val runService = client.runs()
+
+        try {
+            runService.create(testRun("r1"))
+            runService.flush()
+
+            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(1, postRequestedFor(urlPathEqualTo("/runs/multipart")))
+            verify(0, postRequestedFor(urlPathEqualTo("/runs/batch")))
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun `auto batch queue uses server multipart ingest endpoint`(
+        wmRuntimeInfo: WireMockRuntimeInfo
+    ) {
+        stubFor(
+            get(urlPathEqualTo("/api/v1/info"))
+                .willReturn(
+                    okJson(
+                        """
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        """
+                            .trimIndent()
+                    )
+                )
+        )
+        stubFor(post(urlPathEqualTo("/runs/multipart")).willReturn(okJson("{}")))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val runService = client.runs()
+
+        try {
+            runService.create(
+                testRun("r1")
+                    .toBuilder()
+                    .inputs(
+                        Run.Inputs.builder()
+                            .putAdditionalProperty("question", JsonValue.from("hello"))
+                            .build()
+                    )
+                    .events(
+                        listOf(
+                            Run.Event.builder()
+                                .putAdditionalProperty("event", JsonValue.from("started"))
+                                .build()
+                        )
+                    )
+                    .extra(
+                        Run.Extra.builder()
+                            .putAdditionalProperty("metadata", JsonValue.from("value"))
+                            .build()
+                    )
+                    .error("boom")
+                    .serialized(
+                        Run.Serialized.builder()
+                            .putAdditionalProperty("lc", JsonValue.from(1))
+                            .build()
+                    )
+                    .build()
+            )
+            runService.update(
+                RunUpdateParams.builder()
+                    .runId("r1")
+                    .run(
+                        Run.builder()
+                            .traceId("r1")
+                            .dottedOrder("order")
+                            .outputs(
+                                Run.Outputs.builder()
+                                    .putAdditionalProperty("answer", JsonValue.from("world"))
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            runService.flush()
+
+            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(
+                1,
+                postRequestedFor(urlPathEqualTo("/runs/multipart"))
+                    .withHeader("Content-Type", containing("multipart/form-data"))
+                    .withRequestBody(containing("Content-Type: application/json; length="))
+                    .withRequestBody(containing("name=\"post.r1\""))
+                    .withRequestBody(containing("name=\"post.r1.inputs\""))
+                    .withRequestBody(containing("name=\"post.r1.outputs\""))
+                    .withRequestBody(containing("name=\"post.r1.events\""))
+                    .withRequestBody(containing("name=\"post.r1.extra\""))
+                    .withRequestBody(containing("name=\"post.r1.error\""))
+                    .withRequestBody(containing("name=\"post.r1.serialized\"")),
+            )
+            verify(0, postRequestedFor(urlPathEqualTo("/runs/batch")))
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun `auto batch queue uses multipart patch parts for updates`(
+        wmRuntimeInfo: WireMockRuntimeInfo
+    ) {
+        stubFor(
+            get(urlPathEqualTo("/api/v1/info"))
+                .willReturn(
+                    okJson(
+                        """
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        """
+                            .trimIndent()
+                    )
+                )
+        )
+        stubFor(post(urlPathEqualTo("/runs/multipart")).willReturn(okJson("{}")))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val runService = client.runs()
+
+        try {
+            runService.update(
+                RunUpdateParams.builder()
+                    .runId("r1")
+                    .run(
+                        Run.builder()
+                            .traceId("r1")
+                            .dottedOrder("order")
+                            .outputs(
+                                Run.Outputs.builder()
+                                    .putAdditionalProperty("answer", JsonValue.from("world"))
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
+            runService.flush()
+
+            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(
+                1,
+                postRequestedFor(urlPathEqualTo("/runs/multipart"))
+                    .withHeader("Content-Type", containing("multipart/form-data"))
+                    .withRequestBody(containing("name=\"patch.r1\""))
+                    .withRequestBody(containing("name=\"patch.r1.outputs\"")),
+            )
+            verify(0, postRequestedFor(urlPathEqualTo("/runs/batch")))
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun `auto batch queue falls back to json batch when multipart required fields are missing`(
+        wmRuntimeInfo: WireMockRuntimeInfo
+    ) {
+        stubFor(
+            get(urlPathEqualTo("/api/v1/info"))
+                .willReturn(
+                    okJson(
+                        """
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        """
+                            .trimIndent()
+                    )
+                )
+        )
+        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(okJson("{}")))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val runService = client.runs()
+
+        try {
+            runService.create(
+                Run.builder().id("r1").name("missing required multipart fields").build()
+            )
+            runService.flush()
+
+            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
+            verify(1, postRequestedFor(urlPathEqualTo("/runs/batch")))
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun `auto batch queue does not treat json batch fallback 404 as multipart 404`(
+        wmRuntimeInfo: WireMockRuntimeInfo
+    ) {
+        stubFor(
+            get(urlPathEqualTo("/api/v1/info"))
+                .willReturn(
+                    okJson(
+                        """
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        """
+                            .trimIndent()
+                    )
+                )
+        )
+        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(aResponse().withStatus(404)))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val runService = client.runs()
+
+        try {
+            runService.create(
+                Run.builder().id("r1").name("missing required multipart fields").build()
+            )
+            runService.flush()
+
+            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
+            verify(1, postRequestedFor(urlPathEqualTo("/runs/batch")))
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
+    fun `auto batch queue falls back when multipart ingest endpoint is missing`(
+        wmRuntimeInfo: WireMockRuntimeInfo
+    ) {
+        stubFor(
+            get(urlPathEqualTo("/api/v1/info"))
+                .willReturn(
+                    okJson(
+                        """
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        """
+                            .trimIndent()
+                    )
+                )
+        )
+        stubFor(post(urlPathEqualTo("/runs/multipart")).willReturn(aResponse().withStatus(404)))
+        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(okJson("{}")))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val runService = client.runs()
+
+        try {
+            runService.create(testRun("r1"))
+            runService.flush()
+            runService.create(testRun("r2"))
+            runService.flush()
+
+            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(1, postRequestedFor(urlPathEqualTo("/runs/multipart")))
             verify(2, postRequestedFor(urlPathEqualTo("/runs/batch")))
         } finally {
             client.close()

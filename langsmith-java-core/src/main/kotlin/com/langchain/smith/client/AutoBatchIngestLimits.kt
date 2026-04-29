@@ -6,6 +6,7 @@ import kotlin.jvm.optionals.getOrNull
 internal data class AutoBatchIngestLimits(
     val batchSizeLimit: Int = AutoBatchQueue.DEFAULT_BATCH_SIZE_LIMIT,
     val batchSizeLimitBytes: Int = AutoBatchQueue.DEFAULT_BATCH_SIZE_LIMIT_BYTES,
+    val useMultipartEndpoint: Boolean = true,
 )
 
 internal fun BatchIngestConfig?.toAutoBatchIngestLimits(): AutoBatchIngestLimits =
@@ -16,4 +17,5 @@ internal fun BatchIngestConfig?.toAutoBatchIngestLimits(): AutoBatchIngestLimits
         batchSizeLimitBytes =
             this?.sizeLimitBytes()?.getOrNull()?.takeIf { it > 0 && it <= Int.MAX_VALUE }?.toInt()
                 ?: AutoBatchQueue.DEFAULT_BATCH_SIZE_LIMIT_BYTES,
+        useMultipartEndpoint = this?.useMultipartEndpoint()?.getOrNull() ?: true,
     )

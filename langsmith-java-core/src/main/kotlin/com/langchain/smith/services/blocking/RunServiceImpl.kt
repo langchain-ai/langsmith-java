@@ -5,6 +5,7 @@ package com.langchain.smith.services.blocking
 import com.langchain.smith.client.AutoBatchIngestLimits
 import com.langchain.smith.client.AutoBatchQueue
 import com.langchain.smith.client.toAutoBatchIngestLimits
+import com.langchain.smith.client.toRunMultipartFormData
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.checkRequired
@@ -19,6 +20,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.errors.NotFoundException
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
@@ -37,35 +39,56 @@ import com.langchain.smith.services.blocking.annotationqueues.InfoServiceImpl
 import com.langchain.smith.services.blocking.runs.RuleService
 import com.langchain.smith.services.blocking.runs.RuleServiceImpl
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 import org.slf4j.LoggerFactory
 
 class RunServiceImpl internal constructor(private val clientOptions: ClientOptions) : RunService {
 
-    private val withRawResponse: RunService.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+    private val withRawResponse: WithRawResponseImpl by lazy { WithRawResponseImpl(clientOptions) }
 
     private val rules: RuleService by lazy { RuleServiceImpl(clientOptions) }
+    private val multipartDisabled = AtomicBoolean(false)
 
     private val batchQueue: AutoBatchQueue by lazy {
         val limits = fetchAutoBatchIngestLimits()
         AutoBatchQueue(
-            sendBatch = { params, requestOptions ->
-                try {
-                    withRawResponse().ingestBatch(params, requestOptions).parse()
-                    CompletableFuture.completedFuture(null)
-                } catch (e: Exception) {
-                    CompletableFuture<Void?>().also { it.completeExceptionally(e) }
-                }
-            },
+            sendBatch = { params, requestOptions -> sendAutoBatch(params, requestOptions, limits) },
             batchSizeLimit = limits.batchSizeLimit,
             batchSizeLimitBytes = limits.batchSizeLimitBytes,
         )
     }
 
     override fun withRawResponse(): RunService.WithRawResponse = withRawResponse
+
+    private fun sendAutoBatch(
+        params: RunIngestBatchParams,
+        requestOptions: RequestOptions,
+        limits: AutoBatchIngestLimits,
+    ): CompletableFuture<Void?> =
+        try {
+            if (limits.useMultipartEndpoint && !multipartDisabled.get()) {
+                val sentMultipart =
+                    try {
+                        // If the multipart endpoint is unavailable on this server, fall back to
+                        // legacy JSON batch ingest and keep using it for future auto-batches.
+                        withRawResponse.ingestMultipartBatch(params, requestOptions)
+                    } catch (e: NotFoundException) {
+                        multipartDisabled.set(true)
+                        withRawResponse().ingestBatch(params, requestOptions).parse()
+                        true
+                    }
+                if (!sentMultipart) {
+                    withRawResponse().ingestBatch(params, requestOptions).parse()
+                }
+            } else {
+                withRawResponse().ingestBatch(params, requestOptions).parse()
+            }
+            CompletableFuture.completedFuture(null)
+        } catch (e: Exception) {
+            CompletableFuture<Void?>().also { it.completeExceptionally(e) }
+        }
 
     private fun fetchAutoBatchIngestLimits() =
         try {
@@ -289,6 +312,30 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                         }
                     }
             }
+        }
+
+        internal fun ingestMultipartBatch(
+            params: RunIngestBatchParams,
+            requestOptions: RequestOptions,
+        ): Boolean {
+            val body = params.toRunMultipartFormData(clientOptions.jsonMapper)
+            if (body == null) {
+                // Some queued runs do not have the fields required by multipart ingest; fall
+                // back to legacy JSON batch ingest for this batch only.
+                return false
+            }
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("runs", "multipart")
+                    .body(body)
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            errorHandler.handle(response).use {}
+            return true
         }
 
         private val queryHandler: Handler<RunQueryResponse> =
