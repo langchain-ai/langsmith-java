@@ -4,7 +4,6 @@
 
 package com.langchain.smith.core.http
 
-import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
@@ -35,31 +34,26 @@ internal inline fun <reified T> json(jsonMapper: JsonMapper, value: T): HttpRequ
     }
 
 @JvmSynthetic
-internal fun <T> zstdJson(jsonMapper: JsonMapper, value: T): HttpRequestBody =
+internal fun zstd(body: HttpRequestBody): HttpRequestBody =
     object : HttpRequestBody {
 
         override fun writeTo(outputStream: OutputStream) {
             val zstdOutputStream =
                 ZstdOutputStream(NonClosingOutputStream(outputStream)).setCloseFrameOnFlush(true)
-            val generator =
-                jsonMapper.factory
-                    .createGenerator(zstdOutputStream)
-                    .disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET)
             try {
-                jsonMapper.writeValue(generator, value)
-                generator.flush()
+                body.writeTo(zstdOutputStream)
             } finally {
                 zstdOutputStream.close()
             }
         }
 
-        override fun contentType(): String = "application/json"
+        override fun contentType(): String? = body.contentType()
 
         override fun contentLength(): Long = -1L
 
-        override fun repeatable(): Boolean = true
+        override fun repeatable(): Boolean = body.repeatable()
 
-        override fun close() {}
+        override fun close() = body.close()
     }
 
 @JvmSynthetic

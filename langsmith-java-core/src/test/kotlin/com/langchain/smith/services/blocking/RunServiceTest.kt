@@ -36,6 +36,7 @@ import java.io.ByteArrayInputStream
 import java.time.OffsetDateTime
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicReference
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -47,7 +48,7 @@ internal class RunServiceTest {
     @Test
     fun `auto batch queue uses server batch ingest size limit`(wmRuntimeInfo: WireMockRuntimeInfo) {
         stubFor(
-            get(urlPathEqualTo("/api/v1/info"))
+            get(urlPathEqualTo("/info"))
                 .willReturn(
                     okJson(
                         """
@@ -71,7 +72,7 @@ internal class RunServiceTest {
             runService.create(testRun("r3"))
             runService.flush()
 
-            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(2, postRequestedFor(urlPathEqualTo("/runs/batch")))
             verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
         } finally {
@@ -84,7 +85,7 @@ internal class RunServiceTest {
         wmRuntimeInfo: WireMockRuntimeInfo
     ) {
         stubFor(
-            get(urlPathEqualTo("/api/v1/info"))
+            get(urlPathEqualTo("/info"))
                 .willReturn(
                     okJson(
                         """
@@ -106,7 +107,7 @@ internal class RunServiceTest {
             runService.create(testRun("r1"))
             runService.flush()
 
-            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(2, getRequestedFor(urlPathEqualTo("/info")))
             verify(1, postRequestedFor(urlPathEqualTo("/runs/multipart")))
             verify(0, postRequestedFor(urlPathEqualTo("/runs/batch")))
         } finally {
@@ -119,11 +120,11 @@ internal class RunServiceTest {
         wmRuntimeInfo: WireMockRuntimeInfo
     ) {
         stubFor(
-            get(urlPathEqualTo("/api/v1/info"))
+            get(urlPathEqualTo("/info"))
                 .willReturn(
                     okJson(
                         """
-                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true},"instance_flags":{"zstd_compression_enabled":false}}
                         """
                             .trimIndent()
                     )
@@ -184,7 +185,7 @@ internal class RunServiceTest {
             )
             runService.flush()
 
-            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(2, getRequestedFor(urlPathEqualTo("/info")))
             verify(
                 1,
                 postRequestedFor(urlPathEqualTo("/runs/multipart"))
@@ -209,11 +210,11 @@ internal class RunServiceTest {
         wmRuntimeInfo: WireMockRuntimeInfo
     ) {
         stubFor(
-            get(urlPathEqualTo("/api/v1/info"))
+            get(urlPathEqualTo("/info"))
                 .willReturn(
                     okJson(
                         """
-                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true},"instance_flags":{"zstd_compression_enabled":false}}
                         """
                             .trimIndent()
                     )
@@ -246,7 +247,7 @@ internal class RunServiceTest {
             )
             runService.flush()
 
-            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(2, getRequestedFor(urlPathEqualTo("/info")))
             verify(
                 1,
                 postRequestedFor(urlPathEqualTo("/runs/multipart"))
@@ -265,11 +266,11 @@ internal class RunServiceTest {
         wmRuntimeInfo: WireMockRuntimeInfo
     ) {
         stubFor(
-            get(urlPathEqualTo("/api/v1/info"))
+            get(urlPathEqualTo("/info"))
                 .willReturn(
                     okJson(
                         """
-                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true},"instance_flags":{"zstd_compression_enabled":false}}
                         """
                             .trimIndent()
                     )
@@ -289,7 +290,7 @@ internal class RunServiceTest {
             )
             runService.flush()
 
-            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
             verify(1, postRequestedFor(urlPathEqualTo("/runs/batch")))
         } finally {
@@ -302,11 +303,11 @@ internal class RunServiceTest {
         wmRuntimeInfo: WireMockRuntimeInfo
     ) {
         stubFor(
-            get(urlPathEqualTo("/api/v1/info"))
+            get(urlPathEqualTo("/info"))
                 .willReturn(
                     okJson(
                         """
-                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true},"instance_flags":{"zstd_compression_enabled":false}}
                         """
                             .trimIndent()
                     )
@@ -326,7 +327,7 @@ internal class RunServiceTest {
             )
             runService.flush()
 
-            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
             verify(1, postRequestedFor(urlPathEqualTo("/runs/batch")))
         } finally {
@@ -339,11 +340,11 @@ internal class RunServiceTest {
         wmRuntimeInfo: WireMockRuntimeInfo
     ) {
         stubFor(
-            get(urlPathEqualTo("/api/v1/info"))
+            get(urlPathEqualTo("/info"))
                 .willReturn(
                     okJson(
                         """
-                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true},"instance_flags":{"zstd_compression_enabled":false}}
                         """
                             .trimIndent()
                     )
@@ -364,12 +365,84 @@ internal class RunServiceTest {
             runService.create(testRun("r2"))
             runService.flush()
 
-            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(2, getRequestedFor(urlPathEqualTo("/info")))
             verify(1, postRequestedFor(urlPathEqualTo("/runs/multipart")))
             verify(2, postRequestedFor(urlPathEqualTo("/runs/batch")))
         } finally {
             client.close()
         }
+    }
+
+    @Test
+    fun ingestBatch_sendsUncompressedJsonBodyWhenCompressionSupported() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest)
+        val runService = runService(httpClient)
+
+        runService.ingestBatch(
+            RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
+        )
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "batch")
+        assertThat(request.headers.values("Content-Encoding")).isEmpty()
+        assertThat(body.contentType()).isEqualTo("application/json")
+        assertThat(body.repeatable()).isTrue()
+        assertThat(readBody(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+    }
+
+    @Test
+    fun `auto batch queue sends streaming zstd multipart body by default`() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest)
+        val runService = autoBatchRunService(httpClient)
+
+        runService.create(testRun("run-id"))
+        runService.flush()
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "multipart")
+        assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+        assertThat(body.contentType()).startsWith("multipart/form-data")
+        assertThat(body.contentLength()).isEqualTo(-1L)
+        assertThat(body.repeatable()).isTrue()
+        assertThat(decompress(body)).contains("name=\"post.run-id\"")
+    }
+
+    @Test
+    fun `auto batch queue sends uncompressed multipart body when server disables zstd`() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest, zstdCompressionEnabled = false)
+        val runService = autoBatchRunService(httpClient)
+
+        runService.create(testRun("run-id"))
+        runService.flush()
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "multipart")
+        assertThat(request.headers.values("Content-Encoding")).isEmpty()
+        assertThat(body.contentType()).startsWith("multipart/form-data")
+        assertThat(body.repeatable()).isTrue()
+        assertThat(readBody(body)).contains("name=\"post.run-id\"")
+    }
+
+    @Test
+    fun `auto batch queue sends streaming zstd multipart body when info request fails`() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest, failInfoRequest = true)
+        val runService = autoBatchRunService(httpClient)
+
+        runService.create(testRun("run-id"))
+        runService.flush()
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "multipart")
+        assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+        assertThat(decompress(body)).contains("name=\"post.run-id\"")
     }
 
     private fun testRun(id: String): Run =
@@ -645,9 +718,18 @@ internal class RunServiceTest {
             )
             .withRawResponse()
 
+    private fun autoBatchRunService(httpClient: HttpClient): RunService =
+        RunServiceImpl(
+            ClientOptions.builder()
+                .httpClient(httpClient)
+                .baseUrl("https://example.com")
+                .checkJacksonVersionCompatibility(false)
+                .build()
+        )
+
     private fun capturingHttpClient(
         capturedRequest: AtomicReference<HttpRequest>,
-        zstdCompressionEnabled: Boolean = true,
+        zstdCompressionEnabled: Boolean? = null,
         failInfoRequest: Boolean = false,
     ): HttpClient =
         object : HttpClient {
@@ -684,10 +766,14 @@ internal class RunServiceTest {
             override fun close() {}
         }
 
-    private fun infoResponse(zstdCompressionEnabled: Boolean): HttpResponse =
-        jsonResponse(
-            """{"version":"test","instance_flags":{"zstd_compression_enabled":$zstdCompressionEnabled}}"""
+    private fun infoResponse(zstdCompressionEnabled: Boolean?): HttpResponse {
+        val instanceFlags =
+            zstdCompressionEnabled?.let { ",\"instance_flags\":{\"zstd_compression_enabled\":$it}" }
+                ?: ""
+        return jsonResponse(
+            """{"version":"test","batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520}$instanceFlags}"""
         )
+    }
 
     private fun okResponse(): HttpResponse = jsonResponse("{}")
 

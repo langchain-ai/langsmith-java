@@ -19,7 +19,7 @@ import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
-import com.langchain.smith.core.http.zstdJson
+import com.langchain.smith.core.http.zstd
 import com.langchain.smith.core.prepare
 import com.langchain.smith.errors.NotFoundException
 import com.langchain.smith.models.annotationqueues.info.InfoListParams
@@ -41,9 +41,8 @@ import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.blocking.annotationqueues.InfoServiceImpl
 import com.langchain.smith.services.blocking.runs.RuleService
 import com.langchain.smith.services.blocking.runs.RuleServiceImpl
-import com.langchain.smith.services.isRunCompressionDisabled
-import com.langchain.smith.services.isZstdAvailable
 import com.langchain.smith.services.isZstdCompressionEnabled
+import com.langchain.smith.services.shouldDefaultRunCompressionEnabled
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.Consumer
@@ -197,7 +196,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
         private fun fetchZstdCompressionEnabled(): Boolean {
             try {
-                if (isRunCompressionDisabled() || !isZstdAvailable()) {
+                if (!shouldDefaultRunCompressionEnabled()) {
                     return false
                 }
                 val params = InfoListParams.none()
@@ -217,7 +216,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                     )
                 }
             } catch (_: Exception) {
-                return false
+                return shouldDefaultRunCompressionEnabled()
             }
         }
 
@@ -330,19 +329,14 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             params: RunIngestBatchParams,
             requestOptions: RequestOptions,
         ): HttpResponseFor<RunIngestBatchResponse> {
-            val requestBuilder =
+            val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("runs", "batch")
-            if (zstdCompressionEnabled) {
-                requestBuilder
-                    .putHeader("Content-Encoding", "zstd")
-                    .body(zstdJson(clientOptions.jsonMapper, params._body()))
-            } else {
-                requestBuilder.body(json(clientOptions.jsonMapper, params._body()))
-            }
-            val request = requestBuilder.build().prepare(clientOptions, params)
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
@@ -366,14 +360,17 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 // back to legacy JSON batch ingest for this batch only.
                 return false
             }
-            val request =
+            val requestBuilder =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("runs", "multipart")
-                    .body(body)
-                    .build()
-                    .prepare(clientOptions, params)
+            if (zstdCompressionEnabled) {
+                requestBuilder.putHeader("Content-Encoding", "zstd").body(zstd(body))
+            } else {
+                requestBuilder.body(body)
+            }
+            val request = requestBuilder.build().prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             errorHandler.handle(response).use {}

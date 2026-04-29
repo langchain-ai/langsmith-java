@@ -23,6 +23,7 @@ import com.langchain.smith.models.sessions.RunStatsGroupBy
 import java.io.ByteArrayInputStream
 import java.time.OffsetDateTime
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.parallel.ResourceLock
 internal class RunServiceAsyncTest {
 
     @Test
-    fun ingestBatch_sendsStreamingZstdJsonBodyWhenSupported() {
+    fun ingestBatch_sendsUncompressedJsonBodyWhenCompressionSupported() {
         val capturedRequest = AtomicReference<HttpRequest>()
         val httpClient = capturingHttpClient(capturedRequest)
         val runService = runService(httpClient)
@@ -47,75 +48,82 @@ internal class RunServiceAsyncTest {
         val request = capturedRequest.get()
         val body = request.body!!
         assertThat(request.pathSegments).containsExactly("runs", "batch")
-        assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+        assertThat(request.headers.values("Content-Encoding")).isEmpty()
         assertThat(body.contentType()).isEqualTo("application/json")
+        assertThat(body.repeatable()).isTrue()
+        assertThat(readBody(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+    }
+
+    @Test
+    fun autoBatch_sendsStreamingZstdMultipartBodyByDefault() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest)
+        val runService = autoBatchRunService(httpClient)
+
+        runService.create(testRun("run-id")).get()
+        runService.flush().get()
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "multipart")
+        assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+        assertThat(body.contentType()).startsWith("multipart/form-data")
         assertThat(body.contentLength()).isEqualTo(-1L)
         assertThat(body.repeatable()).isTrue()
-        assertThat(decompress(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+        assertThat(decompress(body)).contains("name=\"post.run-id\"")
     }
 
     @Test
-    fun ingestBatch_sendsUncompressedJsonBodyWhenZstdUnsupported() {
+    fun autoBatch_sendsUncompressedMultipartBodyWhenZstdUnsupported() {
         val capturedRequest = AtomicReference<HttpRequest>()
         val httpClient = capturingHttpClient(capturedRequest, zstdCompressionEnabled = false)
-        val runService = runService(httpClient)
+        val runService = autoBatchRunService(httpClient)
 
-        runService
-            .ingestBatch(
-                RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
-            )
-            .get()
+        runService.create(testRun("run-id")).get()
+        runService.flush().get()
 
         val request = capturedRequest.get()
         val body = request.body!!
-        assertThat(request.pathSegments).containsExactly("runs", "batch")
+        assertThat(request.pathSegments).containsExactly("runs", "multipart")
         assertThat(request.headers.values("Content-Encoding")).isEmpty()
-        assertThat(body.contentType()).isEqualTo("application/json")
+        assertThat(body.contentType()).startsWith("multipart/form-data")
         assertThat(body.repeatable()).isTrue()
-        assertThat(readBody(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+        assertThat(readBody(body)).contains("name=\"post.run-id\"")
     }
 
     @Test
-    fun ingestBatch_sendsUncompressedJsonBodyWhenInfoRequestFails() {
+    fun autoBatch_sendsStreamingZstdMultipartBodyWhenInfoRequestFails() {
         val capturedRequest = AtomicReference<HttpRequest>()
         val httpClient = capturingHttpClient(capturedRequest, failInfoRequest = true)
-        val runService = runService(httpClient)
+        val runService = autoBatchRunService(httpClient)
 
-        runService
-            .ingestBatch(
-                RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
-            )
-            .get()
+        runService.create(testRun("run-id")).get()
+        runService.flush().get()
 
         val request = capturedRequest.get()
         val body = request.body!!
-        assertThat(request.pathSegments).containsExactly("runs", "batch")
-        assertThat(request.headers.values("Content-Encoding")).isEmpty()
-        assertThat(readBody(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+        assertThat(request.pathSegments).containsExactly("runs", "multipart")
+        assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+        assertThat(decompress(body)).contains("name=\"post.run-id\"")
     }
 
     @Test
-    fun ingestBatch_sendsUncompressedJsonBodyWhenRunCompressionDisabled() {
+    fun autoBatch_sendsUncompressedMultipartBodyWhenRunCompressionDisabled() {
         val previousValue = System.getProperty("langchain.langsmithDisableRunCompression")
         System.setProperty("langchain.langsmithDisableRunCompression", "true")
         try {
             val capturedRequest = AtomicReference<HttpRequest>()
             val httpClient = capturingHttpClient(capturedRequest)
-            val runService = runService(httpClient)
+            val runService = autoBatchRunService(httpClient)
 
-            runService
-                .ingestBatch(
-                    RunIngestBatchParams.builder()
-                        .addPost(Run.builder().id("run-id").build())
-                        .build()
-                )
-                .get()
+            runService.create(testRun("run-id")).get()
+            runService.flush().get()
 
             val request = capturedRequest.get()
             val body = request.body!!
-            assertThat(request.pathSegments).containsExactly("runs", "batch")
+            assertThat(request.pathSegments).containsExactly("runs", "multipart")
             assertThat(request.headers.values("Content-Encoding")).isEmpty()
-            assertThat(readBody(body)).contains("\"post\":[{\"id\":\"run-id\"}")
+            assertThat(readBody(body)).contains("name=\"post.run-id\"")
         } finally {
             if (previousValue == null) {
                 System.clearProperty("langchain.langsmithDisableRunCompression")
@@ -123,6 +131,43 @@ internal class RunServiceAsyncTest {
                 System.setProperty("langchain.langsmithDisableRunCompression", previousValue)
             }
         }
+    }
+
+    @Test
+    fun autoBatch_fallsBackToJsonBatchWhenMultipartEndpointIsMissing() {
+        val requests = ConcurrentLinkedQueue<List<String>>()
+        val httpClient =
+            object : HttpClient {
+                override fun execute(
+                    request: HttpRequest,
+                    requestOptions: RequestOptions,
+                ): HttpResponse = error("Unexpected blocking request")
+
+                override fun executeAsync(
+                    request: HttpRequest,
+                    requestOptions: RequestOptions,
+                ): CompletableFuture<HttpResponse> {
+                    if (request.pathSegments == listOf("info")) {
+                        return CompletableFuture.completedFuture(infoResponse(false))
+                    }
+                    requests.add(request.pathSegments)
+                    return CompletableFuture.completedFuture(
+                        if (request.pathSegments == listOf("runs", "multipart")) {
+                            jsonResponse("{}", statusCode = 404)
+                        } else {
+                            okResponse()
+                        }
+                    )
+                }
+
+                override fun close() {}
+            }
+        val runService = autoBatchRunService(httpClient)
+
+        runService.create(testRun("run-id")).get()
+        runService.flush().get()
+
+        assertThat(requests).containsExactly(listOf("runs", "multipart"), listOf("runs", "batch"))
     }
 
     @Disabled("Mock server tests are disabled")
@@ -543,9 +588,21 @@ internal class RunServiceAsyncTest {
             )
             .withRawResponse()
 
+    private fun autoBatchRunService(httpClient: HttpClient): RunServiceAsync =
+        RunServiceAsyncImpl(
+            ClientOptions.builder()
+                .httpClient(httpClient)
+                .baseUrl("https://example.com")
+                .checkJacksonVersionCompatibility(false)
+                .build()
+        )
+
+    private fun testRun(id: String): Run =
+        Run.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
+
     private fun capturingHttpClient(
         capturedRequest: AtomicReference<HttpRequest>,
-        zstdCompressionEnabled: Boolean = true,
+        zstdCompressionEnabled: Boolean? = null,
         failInfoRequest: Boolean = false,
     ): HttpClient =
         object : HttpClient {
@@ -553,7 +610,9 @@ internal class RunServiceAsyncTest {
                 request: HttpRequest,
                 requestOptions: RequestOptions,
             ): HttpResponse {
-                if (request.pathSegments == listOf("info")) {
+                if (
+                    request.pathSegments == listOf("info") || request.pathSegments == listOf("info")
+                ) {
                     if (failInfoRequest) {
                         throw RuntimeException("failed to fetch info")
                     }
@@ -567,7 +626,9 @@ internal class RunServiceAsyncTest {
                 request: HttpRequest,
                 requestOptions: RequestOptions,
             ): CompletableFuture<HttpResponse> {
-                if (request.pathSegments == listOf("info")) {
+                if (
+                    request.pathSegments == listOf("info") || request.pathSegments == listOf("info")
+                ) {
                     if (failInfoRequest) {
                         val future = CompletableFuture<HttpResponse>()
                         future.completeExceptionally(RuntimeException("failed to fetch info"))
@@ -582,16 +643,20 @@ internal class RunServiceAsyncTest {
             override fun close() {}
         }
 
-    private fun infoResponse(zstdCompressionEnabled: Boolean): HttpResponse =
-        jsonResponse(
-            """{"version":"test","instance_flags":{"zstd_compression_enabled":$zstdCompressionEnabled}}"""
+    private fun infoResponse(zstdCompressionEnabled: Boolean?): HttpResponse {
+        val instanceFlags =
+            zstdCompressionEnabled?.let { ",\"instance_flags\":{\"zstd_compression_enabled\":$it}" }
+                ?: ""
+        return jsonResponse(
+            """{"version":"test","batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520}$instanceFlags}"""
         )
+    }
 
     private fun okResponse(): HttpResponse = jsonResponse("{}")
 
-    private fun jsonResponse(json: String): HttpResponse =
+    private fun jsonResponse(json: String, statusCode: Int = 200): HttpResponse =
         object : HttpResponse {
-            override fun statusCode(): Int = 200
+            override fun statusCode(): Int = statusCode
 
             override fun headers(): Headers = Headers.builder().build()
 

@@ -290,6 +290,9 @@ class AutoBatchQueue(
      * Drains up to [maxItems] queued operations and returns batch params grouped by request
      * options.
      *
+     * Multipart ingest compression is applied at send time; legacy `/runs/batch` remains
+     * uncompressed.
+     *
      * TODO: Support multipart ingest endpoint for large payloads with attachments.
      */
     private fun drainUpTo(maxItems: Int): DrainResult {

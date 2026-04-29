@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test
 internal class HttpRequestBodiesTest {
 
     @Test
-    fun zstdJson_streamsCompressedJson() {
-        val body = zstdJson(jsonMapper(), mapOf("post" to listOf(mapOf("id" to "run-id"))))
+    fun zstd_streamsCompressedBody() {
+        val body = zstd(json(jsonMapper(), mapOf("post" to listOf(mapOf("id" to "run-id")))))
 
         val output1 = ByteArrayOutputStream()
         body.writeTo(output1)

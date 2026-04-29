@@ -35,7 +35,7 @@ class InfoServiceAsyncImpl internal constructor(private val clientOptions: Clien
         params: InfoListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<InfoListResponse> =
-        // get /api/v1/info
+        // get /info
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -62,7 +62,7 @@ class InfoServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "info")
+                    .addPathSegment("info")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

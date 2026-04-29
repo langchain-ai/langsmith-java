@@ -11,6 +11,9 @@ internal fun isRunCompressionDisabled(): Boolean =
 
 internal fun isZstdAvailable(): Boolean = zstdAvailable
 
+internal fun shouldDefaultRunCompressionEnabled(): Boolean =
+    !isRunCompressionDisabled() && isZstdAvailable()
+
 private val zstdAvailable: Boolean by lazy {
     try {
         Zstd.compress(byteArrayOf()).isNotEmpty()
@@ -20,13 +23,14 @@ private val zstdAvailable: Boolean by lazy {
 }
 
 internal fun isZstdCompressionEnabled(info: InfoListResponse): Boolean =
+    // Default on; the server must explicitly return false to disable compression.
     info
         .instanceFlags()
         .getOrNull()
         ?._additionalProperties()
         ?.get("zstd_compression_enabled")
         ?.asBoolean()
-        ?.getOrNull() == true
+        ?.getOrNull() ?: true
 
 private val TRUISH_VALUES = setOf("1", "true", "t", "yes", "y", "on")
 
