@@ -69,12 +69,17 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     ): CompletableFuture<Void?> =
         try {
             if (limits.useMultipartEndpoint && !multipartDisabled.get()) {
-                try {
-                    // If the multipart endpoint is unavailable on this server, fall back to
-                    // legacy JSON batch ingest and keep using it for future auto-batches.
-                    withRawResponse.ingestMultipartBatch(params, requestOptions)
-                } catch (e: NotFoundException) {
-                    multipartDisabled.set(true)
+                val sentMultipart =
+                    try {
+                        // If the multipart endpoint is unavailable on this server, fall back to
+                        // legacy JSON batch ingest and keep using it for future auto-batches.
+                        withRawResponse.ingestMultipartBatch(params, requestOptions)
+                    } catch (e: NotFoundException) {
+                        multipartDisabled.set(true)
+                        withRawResponse().ingestBatch(params, requestOptions).parse()
+                        true
+                    }
+                if (!sentMultipart) {
                     withRawResponse().ingestBatch(params, requestOptions).parse()
                 }
             } else {
@@ -312,13 +317,12 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         internal fun ingestMultipartBatch(
             params: RunIngestBatchParams,
             requestOptions: RequestOptions,
-        ) {
+        ): Boolean {
             val body = params.toRunMultipartFormData(clientOptions.jsonMapper)
             if (body == null) {
                 // Some queued runs do not have the fields required by multipart ingest; fall
                 // back to legacy JSON batch ingest for this batch only.
-                ingestBatch(params, requestOptions).parse()
-                return
+                return false
             }
             val request =
                 HttpRequest.builder()
@@ -331,6 +335,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)
             errorHandler.handle(response).use {}
+            return true
         }
 
         private val queryHandler: Handler<RunQueryResponse> =

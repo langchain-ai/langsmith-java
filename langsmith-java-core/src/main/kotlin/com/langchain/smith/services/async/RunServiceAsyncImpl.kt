@@ -81,9 +81,13 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             }
 
         return multipartFuture
-            .handle { _, throwable ->
+            .handle { sentMultipart, throwable ->
                 if (throwable == null) {
-                    CompletableFuture.completedFuture<Void?>(null)
+                    if (sentMultipart) {
+                        CompletableFuture.completedFuture<Void?>(null)
+                    } else {
+                        sendJsonBatch(params, requestOptions)
+                    }
                 } else {
                     val cause = (throwable as? CompletionException)?.cause ?: throwable
                     if (cause is NotFoundException) {
@@ -373,15 +377,12 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         internal fun ingestMultipartBatch(
             params: RunIngestBatchParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<Void?> {
+        ): CompletableFuture<Boolean> {
             val body = params.toRunMultipartFormData(clientOptions.jsonMapper)
             if (body == null) {
                 // Some queued runs do not have the fields required by multipart ingest; fall
                 // back to legacy JSON batch ingest for this batch only.
-                return ingestBatch(params, requestOptions).thenApply {
-                    it.parse()
-                    null
-                }
+                return CompletableFuture.completedFuture(false)
             }
             val request =
                 HttpRequest.builder()
@@ -396,7 +397,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).use {}
-                    null
+                    true
                 }
         }
 

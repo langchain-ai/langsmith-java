@@ -288,6 +288,43 @@ internal class RunServiceTest {
     }
 
     @Test
+    fun `auto batch queue does not treat json batch fallback 404 as multipart 404`(
+        wmRuntimeInfo: WireMockRuntimeInfo
+    ) {
+        stubFor(
+            get(urlPathEqualTo("/api/v1/info"))
+                .willReturn(
+                    okJson(
+                        """
+                        {"batch_ingest_config":{"size_limit":100,"size_limit_bytes":20971520,"use_multipart_endpoint":true}}
+                        """
+                            .trimIndent()
+                    )
+                )
+        )
+        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(aResponse().withStatus(404)))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val runService = client.runs()
+
+        try {
+            runService.create(
+                Run.builder().id("r1").name("missing required multipart fields").build()
+            )
+            runService.flush()
+
+            verify(1, getRequestedFor(urlPathEqualTo("/api/v1/info")))
+            verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
+            verify(1, postRequestedFor(urlPathEqualTo("/runs/batch")))
+        } finally {
+            client.close()
+        }
+    }
+
+    @Test
     fun `auto batch queue falls back when multipart ingest endpoint is missing`(
         wmRuntimeInfo: WireMockRuntimeInfo
     ) {
