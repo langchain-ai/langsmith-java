@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.jvm.optionals.getOrNull
 import org.slf4j.LoggerFactory
 
@@ -122,14 +123,13 @@ class AutoBatchQueue(
      * After calling this, the queue will no longer accept new operations.
      */
     fun shutdown() {
-        enqueueShutdownLock.lock()
-        try {
-            // Serialize with enqueue's check-and-add so flush cannot miss an item that observed
-            // shutdown=false but has not yet been queued.
-            if (!shutdown.compareAndSet(false, true)) return
-        } finally {
-            enqueueShutdownLock.unlock()
-        }
+        val startedShutdown =
+            enqueueShutdownLock.withLock {
+                // Serialize with enqueue's check-and-add so flush cannot miss an item that observed
+                // shutdown=false but has not yet been queued.
+                shutdown.compareAndSet(false, true)
+            }
+        if (!startedShutdown) return
 
         flush()
         coordinator.shutdown()
@@ -173,9 +173,8 @@ class AutoBatchQueue(
         queryParams: QueryParams,
         requestOptions: RequestOptions,
     ) {
-        val count = run {
-            enqueueShutdownLock.lock()
-            try {
+        val count =
+            enqueueShutdownLock.withLock {
                 check(!shutdown.get()) { "AutoBatchQueue is shut down" }
                 items.add(
                     BatchItem(
@@ -187,10 +186,7 @@ class AutoBatchQueue(
                     )
                 )
                 queuedCount.incrementAndGet()
-            } finally {
-                enqueueShutdownLock.unlock()
             }
-        }
 
         afterEnqueue(count)
     }
@@ -204,40 +200,36 @@ class AutoBatchQueue(
     }
 
     private fun scheduleFlush() {
-        delayedFlushLock.lock()
-        try {
-            val now = System.nanoTime()
-            val firstQueuedAt = firstQueuedAtNanos ?: now.also { firstQueuedAtNanos = it }
-            val elapsedMs = TimeUnit.NANOSECONDS.toMillis(now - firstQueuedAt)
-            val remainingMaxDelayMs = (maxAggregationDelayMs - elapsedMs).coerceAtLeast(0)
-            val delayMs = minOf(aggregationDelayMs, remainingMaxDelayMs)
+        delayedFlushLock.withLock {
+            try {
+                val now = System.nanoTime()
+                val firstQueuedAt = firstQueuedAtNanos ?: now.also { firstQueuedAtNanos = it }
+                val elapsedMs = TimeUnit.NANOSECONDS.toMillis(now - firstQueuedAt)
+                val remainingMaxDelayMs = (maxAggregationDelayMs - elapsedMs).coerceAtLeast(0)
+                val delayMs = minOf(aggregationDelayMs, remainingMaxDelayMs)
 
-            delayedFlushFuture?.cancel(false)
-            delayedFlushFuture =
-                coordinator.schedule(
-                    {
-                        clearDelayedFlushState()
-                        drainAndSubmitSends()
-                    },
-                    delayMs,
-                    TimeUnit.MILLISECONDS,
-                )
-        } catch (e: RejectedExecutionException) {
-            delayedFlushFuture = null
-            firstQueuedAtNanos = null
-            logger.warn("Batch queue coordinator rejected delayed flush", e)
-        } finally {
-            delayedFlushLock.unlock()
+                delayedFlushFuture?.cancel(false)
+                delayedFlushFuture =
+                    coordinator.schedule(
+                        {
+                            clearDelayedFlushState()
+                            drainAndSubmitSends()
+                        },
+                        delayMs,
+                        TimeUnit.MILLISECONDS,
+                    )
+            } catch (e: RejectedExecutionException) {
+                delayedFlushFuture = null
+                firstQueuedAtNanos = null
+                logger.warn("Batch queue coordinator rejected delayed flush", e)
+            }
         }
     }
 
     private fun clearDelayedFlushState() {
-        delayedFlushLock.lock()
-        try {
+        delayedFlushLock.withLock {
             delayedFlushFuture = null
             firstQueuedAtNanos = null
-        } finally {
-            delayedFlushLock.unlock()
         }
     }
 
@@ -251,13 +243,10 @@ class AutoBatchQueue(
     }
 
     private fun cancelDelayedFlush() {
-        delayedFlushLock.lock()
-        try {
+        delayedFlushLock.withLock {
             delayedFlushFuture?.cancel(false)
             delayedFlushFuture = null
             firstQueuedAtNanos = null
-        } finally {
-            delayedFlushLock.unlock()
         }
     }
 
