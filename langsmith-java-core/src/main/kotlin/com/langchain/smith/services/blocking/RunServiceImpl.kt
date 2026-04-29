@@ -22,7 +22,6 @@ import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.http.zstd
 import com.langchain.smith.core.prepare
 import com.langchain.smith.errors.NotFoundException
-import com.langchain.smith.models.annotationqueues.info.InfoListParams
 import com.langchain.smith.models.annotationqueues.info.InfoListResponse
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
@@ -51,7 +50,11 @@ import org.slf4j.LoggerFactory
 
 class RunServiceImpl internal constructor(private val clientOptions: ClientOptions) : RunService {
 
-    private val withRawResponse: WithRawResponseImpl by lazy { WithRawResponseImpl(clientOptions) }
+    private val serverInfo: InfoListResponse? by lazy { fetchServerInfo() }
+
+    private val withRawResponse: WithRawResponseImpl by lazy {
+        WithRawResponseImpl(clientOptions) { serverInfo }
+    }
 
     private val rules: RuleService by lazy { RuleServiceImpl(clientOptions) }
     private val multipartDisabled = AtomicBoolean(false)
@@ -95,20 +98,19 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             CompletableFuture<Void?>().also { it.completeExceptionally(e) }
         }
 
-    private fun fetchAutoBatchIngestLimits() =
+    private fun fetchServerInfo(): InfoListResponse? =
         try {
-            InfoServiceImpl(clientOptions)
-                .list()
-                .batchIngestConfig()
-                .getOrNull()
-                .toAutoBatchIngestLimits()
+            InfoServiceImpl(clientOptions).list()
         } catch (e: Exception) {
             logger.warn(
-                "Failed to fetch LangSmith batch ingest config; using default batch limits",
+                "Failed to fetch LangSmith server info; using default batch limits and compression settings",
                 e,
             )
-            AutoBatchIngestLimits()
+            null
         }
+
+    private fun fetchAutoBatchIngestLimits(): AutoBatchIngestLimits =
+        serverInfo?.batchIngestConfig()?.getOrNull().toAutoBatchIngestLimits()
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
         RunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
@@ -183,40 +185,26 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         // patch /api/v1/runs/{run_id}
         withRawResponse().update2(params, requestOptions).parse()
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        RunService.WithRawResponse {
+    class WithRawResponseImpl
+    internal constructor(
+        private val clientOptions: ClientOptions,
+        private val getServerInfo: () -> InfoListResponse? = { null },
+    ) : RunService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
-        private val infoHandler: Handler<InfoListResponse> =
-            jsonHandler<InfoListResponse>(clientOptions.jsonMapper)
-
         private val zstdCompressionEnabled: Boolean by lazy { fetchZstdCompressionEnabled() }
 
         private fun fetchZstdCompressionEnabled(): Boolean {
-            try {
-                if (!shouldDefaultRunCompressionEnabled()) {
-                    return false
-                }
-                val params = InfoListParams.none()
-                val request =
-                    HttpRequest.builder()
-                        .method(HttpMethod.GET)
-                        .baseUrl(clientOptions.baseUrl())
-                        .addPathSegment("info")
-                        .putHeader("Accept", "application/json")
-                        .build()
-                        .prepare(clientOptions, params)
-                val requestOptions =
-                    RequestOptions.none().applyDefaults(RequestOptions.from(clientOptions))
-                return clientOptions.httpClient.execute(request, requestOptions).use { response ->
-                    isZstdCompressionEnabled(
-                        errorHandler.handle(response).let { infoHandler.handle(it) }
-                    )
-                }
+            if (!shouldDefaultRunCompressionEnabled()) {
+                return false
+            }
+            return try {
+                getServerInfo()?.let(::isZstdCompressionEnabled)
+                    ?: shouldDefaultRunCompressionEnabled()
             } catch (_: Exception) {
-                return shouldDefaultRunCompressionEnabled()
+                shouldDefaultRunCompressionEnabled()
             }
         }
 

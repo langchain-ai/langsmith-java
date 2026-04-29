@@ -107,7 +107,7 @@ internal class RunServiceTest {
             runService.create(testRun("r1"))
             runService.flush()
 
-            verify(2, getRequestedFor(urlPathEqualTo("/info")))
+            verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(1, postRequestedFor(urlPathEqualTo("/runs/multipart")))
             verify(0, postRequestedFor(urlPathEqualTo("/runs/batch")))
         } finally {
@@ -185,7 +185,7 @@ internal class RunServiceTest {
             )
             runService.flush()
 
-            verify(2, getRequestedFor(urlPathEqualTo("/info")))
+            verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(
                 1,
                 postRequestedFor(urlPathEqualTo("/runs/multipart"))
@@ -247,7 +247,7 @@ internal class RunServiceTest {
             )
             runService.flush()
 
-            verify(2, getRequestedFor(urlPathEqualTo("/info")))
+            verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(
                 1,
                 postRequestedFor(urlPathEqualTo("/runs/multipart"))
@@ -365,7 +365,7 @@ internal class RunServiceTest {
             runService.create(testRun("r2"))
             runService.flush()
 
-            verify(2, getRequestedFor(urlPathEqualTo("/info")))
+            verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(1, postRequestedFor(urlPathEqualTo("/runs/multipart")))
             verify(2, postRequestedFor(urlPathEqualTo("/runs/batch")))
         } finally {

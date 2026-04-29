@@ -610,9 +610,7 @@ internal class RunServiceAsyncTest {
                 request: HttpRequest,
                 requestOptions: RequestOptions,
             ): HttpResponse {
-                if (
-                    request.pathSegments == listOf("info") || request.pathSegments == listOf("info")
-                ) {
+                if (request.pathSegments == listOf("info")) {
                     if (failInfoRequest) {
                         throw RuntimeException("failed to fetch info")
                     }
@@ -626,9 +624,7 @@ internal class RunServiceAsyncTest {
                 request: HttpRequest,
                 requestOptions: RequestOptions,
             ): CompletableFuture<HttpResponse> {
-                if (
-                    request.pathSegments == listOf("info") || request.pathSegments == listOf("info")
-                ) {
+                if (request.pathSegments == listOf("info")) {
                     if (failInfoRequest) {
                         val future = CompletableFuture<HttpResponse>()
                         future.completeExceptionally(RuntimeException("failed to fetch info"))
