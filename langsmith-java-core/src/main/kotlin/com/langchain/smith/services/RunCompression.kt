@@ -5,9 +5,7 @@ import com.langchain.smith.models.annotationqueues.info.InfoListResponse
 import kotlin.jvm.optionals.getOrNull
 
 internal fun isRunCompressionDisabled(): Boolean =
-    isTruish(System.getProperty("langchain.langsmithDisableRunCompression")) ||
-        isTruish(System.getenv("LANGSMITH_DISABLE_RUN_COMPRESSION")) ||
-        isTruish(System.getenv("DISABLE_RUN_COMPRESSION"))
+    isTruish(System.getenv("LANGSMITH_DISABLE_RUN_COMPRESSION"))
 
 internal fun isZstdAvailable(): Boolean = zstdAvailable
 

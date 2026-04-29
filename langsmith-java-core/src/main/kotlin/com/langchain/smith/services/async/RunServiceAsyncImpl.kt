@@ -55,7 +55,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     private val serverInfo: CompletableFuture<InfoListResponse?> by lazy { fetchServerInfo() }
 
     private val withRawResponse: WithRawResponseImpl by lazy {
-        WithRawResponseImpl(clientOptions) { serverInfo }
+        WithRawResponseImpl(clientOptions = clientOptions, getServerInfo = { serverInfo })
     }
 
     private val rules: RuleServiceAsync by lazy { RuleServiceAsyncImpl(clientOptions) }

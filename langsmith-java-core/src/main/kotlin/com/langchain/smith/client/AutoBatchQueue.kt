@@ -293,7 +293,7 @@ class AutoBatchQueue(
      * Multipart ingest compression is applied at send time; legacy `/runs/batch` remains
      * uncompressed.
      *
-     * TODO: Support multipart ingest endpoint for large payloads with attachments.
+     * TODO: Support attachment parts in multipart ingest.
      */
     private fun drainUpTo(maxItems: Int): DrainResult {
         val openGroups = linkedMapOf<RequestOptionsKey, BatchGroup>()

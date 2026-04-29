@@ -53,7 +53,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     private val serverInfo: InfoListResponse? by lazy { fetchServerInfo() }
 
     private val withRawResponse: WithRawResponseImpl by lazy {
-        WithRawResponseImpl(clientOptions) { serverInfo }
+        WithRawResponseImpl(clientOptions = clientOptions, getServerInfo = { serverInfo })
     }
 
     private val rules: RuleService by lazy { RuleServiceImpl(clientOptions) }

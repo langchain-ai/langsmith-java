@@ -28,9 +28,7 @@ import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.parallel.ResourceLock
 
-@ResourceLock("langsmithDisableRunCompression")
 internal class RunServiceAsyncTest {
 
     @Test
@@ -108,7 +106,7 @@ internal class RunServiceAsyncTest {
     }
 
     @Test
-    fun autoBatch_sendsUncompressedMultipartBodyWhenRunCompressionDisabled() {
+    fun autoBatch_ignoresLegacyRunCompressionDisableProperty() {
         val previousValue = System.getProperty("langchain.langsmithDisableRunCompression")
         System.setProperty("langchain.langsmithDisableRunCompression", "true")
         try {
@@ -122,8 +120,8 @@ internal class RunServiceAsyncTest {
             val request = capturedRequest.get()
             val body = request.body!!
             assertThat(request.pathSegments).containsExactly("runs", "multipart")
-            assertThat(request.headers.values("Content-Encoding")).isEmpty()
-            assertThat(readBody(body)).contains("name=\"post.run-id\"")
+            assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+            assertThat(decompress(body)).contains("name=\"post.run-id\"")
         } finally {
             if (previousValue == null) {
                 System.clearProperty("langchain.langsmithDisableRunCompression")
