@@ -233,7 +233,12 @@ Tests skip gracefully via `assumeTrue` if keys are missing.
 
 ## Code style
 
-- For cross-method concurrency coordination, prefer an explicit named `ReentrantLock` with `lock()` / `try` / `finally { unlock() }` over `synchronized` when review clarity matters. Keep the locked section minimal and do slow/blocking work outside the lock.
+- For cross-method concurrency coordination, prefer an explicit named `ReentrantLock` over `synchronized` when review clarity matters. Use Kotlin's `withLock { ... }` extension instead of manual `lock()` / `try` / `finally { unlock() }` unless explicit lock management is required. Keep the locked section minimal and do slow/blocking work outside the lock.
+- Choose the simplest concurrency primitive that fits the state being protected:
+  - Use atomic types (`AtomicBoolean`, `AtomicInteger`, etc.) for simple flags, counters, and compare-and-set state.
+  - Use `synchronized` only for small, local critical sections where a named lock would not improve clarity.
+  - Use `ReentrantReadWriteLock` when reads are frequent, writes are infrequent, and concurrent reads materially help.
+  - Use coroutine `Mutex.withLock { ... }` for coroutine-based concurrency instead of blocking thread locks.
 - `toString()` should be single-line, following the `ClassName{field=value, field=value}` convention used by the rest of the SDK.
 - Avoid `@Suppress("UNCHECKED_CAST")` — restructure code to use safe patterns (`as? String`, `is Map<*, *>` with `entries.associate`, etc). When unavoidable (e.g. generic type erasure after an `is` check), add a comment explaining why the cast is safe.
 - Use named arguments for constructor/function calls with 2+ parameters, especially when types could be confused:
