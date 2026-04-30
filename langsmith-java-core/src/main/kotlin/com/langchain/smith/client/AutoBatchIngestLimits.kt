@@ -1,6 +1,6 @@
 package com.langchain.smith.client
 
-import com.langchain.smith.models.annotationqueues.info.InfoListResponse.BatchIngestConfig
+import com.langchain.smith.models.info.InfoListResponse.BatchIngestConfig
 import kotlin.jvm.optionals.getOrNull
 
 internal data class AutoBatchIngestLimits(

@@ -19,8 +19,10 @@ import com.langchain.smith.core.http.HttpResponse.Handler
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
+import com.langchain.smith.core.http.zstd
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.errors.NotFoundException
+import com.langchain.smith.models.info.InfoListResponse
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
@@ -35,9 +37,10 @@ import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
-import com.langchain.smith.services.async.annotationqueues.InfoServiceAsyncImpl
 import com.langchain.smith.services.async.runs.RuleServiceAsync
 import com.langchain.smith.services.async.runs.RuleServiceAsyncImpl
+import com.langchain.smith.services.isZstdCompressionEnabled
+import com.langchain.smith.services.shouldDefaultRunCompressionEnabled
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 import java.util.concurrent.atomic.AtomicBoolean
@@ -48,7 +51,11 @@ import org.slf4j.LoggerFactory
 class RunServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     RunServiceAsync {
 
-    private val withRawResponse: WithRawResponseImpl by lazy { WithRawResponseImpl(clientOptions) }
+    private val serverInfo: CompletableFuture<InfoListResponse?> by lazy { fetchServerInfo() }
+
+    private val withRawResponse: WithRawResponseImpl by lazy {
+        WithRawResponseImpl(clientOptions = clientOptions, getServerInfo = { serverInfo })
+    }
 
     private val rules: RuleServiceAsync by lazy { RuleServiceAsyncImpl(clientOptions) }
     private val multipartDisabled = AtomicBoolean(false)
@@ -110,17 +117,36 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             null
         }
 
-    private fun fetchAutoBatchIngestLimits() =
+    private fun fetchServerInfo(): CompletableFuture<InfoListResponse?> =
         try {
-            InfoServiceAsyncImpl(clientOptions)
-                .list()
-                .get()
-                .batchIngestConfig()
-                .getOrNull()
-                .toAutoBatchIngestLimits()
+            InfoServiceAsyncImpl(clientOptions).list().handle { info, throwable ->
+                if (throwable != null) {
+                    logger.warn(
+                        "Failed to fetch LangSmith server info; using default batch limits and compression settings",
+                        throwable,
+                    )
+                    null
+                } else {
+                    info
+                }
+            }
         } catch (e: Exception) {
             logger.warn(
-                "Failed to fetch LangSmith batch ingest config; using default batch limits",
+                "Failed to fetch LangSmith server info; using default batch limits and compression settings",
+                e,
+            )
+            CompletableFuture.completedFuture(null)
+        }
+
+    private fun fetchAutoBatchIngestLimits(): AutoBatchIngestLimits =
+        try {
+            serverInfo.get()?.batchIngestConfig()?.getOrNull().toAutoBatchIngestLimits()
+        } catch (e: InterruptedException) {
+            Thread.currentThread().interrupt()
+            AutoBatchIngestLimits()
+        } catch (e: Exception) {
+            logger.warn(
+                "Failed to fetch LangSmith server info; using default batch limits and compression settings",
                 e,
             )
             AutoBatchIngestLimits()
@@ -226,11 +252,36 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             CompletableFuture<T>().also { it.completeExceptionally(throwable) }
     }
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        RunServiceAsync.WithRawResponse {
+    class WithRawResponseImpl
+    internal constructor(
+        private val clientOptions: ClientOptions,
+        private val getServerInfo: () -> CompletableFuture<InfoListResponse?> = {
+            CompletableFuture.completedFuture(null)
+        },
+    ) : RunServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        private val zstdCompressionEnabled: CompletableFuture<Boolean> by lazy {
+            fetchZstdCompressionEnabled()
+        }
+
+        private fun fetchZstdCompressionEnabled(): CompletableFuture<Boolean> {
+            if (!shouldDefaultRunCompressionEnabled()) {
+                return CompletableFuture.completedFuture(false)
+            }
+            return try {
+                getServerInfo()
+                    .thenApply { info ->
+                        info?.let(::isZstdCompressionEnabled)
+                            ?: shouldDefaultRunCompressionEnabled()
+                    }
+                    .exceptionally { shouldDefaultRunCompressionEnabled() }
+            } catch (_: Exception) {
+                CompletableFuture.completedFuture(shouldDefaultRunCompressionEnabled())
+            }
+        }
 
         private val rules: RuleServiceAsync.WithRawResponse by lazy {
             RuleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -384,16 +435,25 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 // back to legacy JSON batch ingest for this batch only.
                 return CompletableFuture.completedFuture(false)
             }
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs", "multipart")
-                    .body(body)
-                    .build()
-                    .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
+            return zstdCompressionEnabled
+                .thenCompose { zstdCompressionEnabled ->
+                    val requestBuilder =
+                        HttpRequest.builder()
+                            .method(HttpMethod.POST)
+                            .baseUrl(clientOptions.baseUrl())
+                            .addPathSegments("runs", "multipart")
+                    if (zstdCompressionEnabled) {
+                        requestBuilder.putHeader("Content-Encoding", "zstd").body(zstd(body))
+                    } else {
+                        requestBuilder.body(body)
+                    }
+                    logger.debug(
+                        "Sending LangSmith run batch to multipart ingest endpoint (zstd compression: {})",
+                        if (zstdCompressionEnabled) "enabled" else "disabled",
+                    )
+                    requestBuilder.build().prepareAsync(clientOptions, params)
+                }
                 .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
                 .thenApply { response ->
                     errorHandler.handle(response).use {}

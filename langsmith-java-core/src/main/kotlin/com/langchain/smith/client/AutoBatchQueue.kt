@@ -290,8 +290,10 @@ class AutoBatchQueue(
      * Drains up to [maxItems] queued operations and returns batch params grouped by request
      * options.
      *
-     * TODO: Support multipart ingest endpoint for large payloads with attachments.
-     * TODO: Support gzip compression for batch requests.
+     * Multipart ingest compression is applied at send time; legacy `/runs/batch` remains
+     * uncompressed.
+     *
+     * TODO: Support attachment parts in multipart ingest.
      */
     private fun drainUpTo(maxItems: Int): DrainResult {
         val openGroups = linkedMapOf<RequestOptionsKey, BatchGroup>()
