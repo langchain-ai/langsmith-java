@@ -7,6 +7,7 @@ package com.langchain.smith.core.http
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.node.JsonNodeType
+import com.github.luben.zstd.ZstdOutputStream
 import com.langchain.smith.core.MultipartField
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
@@ -30,6 +31,25 @@ internal inline fun <reified T> json(jsonMapper: JsonMapper, value: T): HttpRequ
         override fun repeatable(): Boolean = true
 
         override fun close() {}
+    }
+
+@JvmSynthetic
+internal fun zstd(body: HttpRequestBody): HttpRequestBody =
+    object : HttpRequestBody {
+
+        override fun writeTo(outputStream: OutputStream) {
+            ZstdOutputStream(NonClosingOutputStream(outputStream)).setCloseFrameOnFlush(true).use {
+                body.writeTo(it)
+            }
+        }
+
+        override fun contentType(): String? = body.contentType()
+
+        override fun contentLength(): Long = -1L
+
+        override fun repeatable(): Boolean = body.repeatable()
+
+        override fun close() = body.close()
     }
 
 @JvmSynthetic
@@ -99,6 +119,18 @@ internal fun multipartFormData(
             }
         }
         .build()
+
+private class NonClosingOutputStream(private val delegate: OutputStream) : OutputStream() {
+    override fun write(b: Int) = delegate.write(b)
+
+    override fun write(b: ByteArray) = delegate.write(b)
+
+    override fun write(b: ByteArray, off: Int, len: Int) = delegate.write(b, off, len)
+
+    override fun flush() = delegate.flush()
+
+    override fun close() = Unit
+}
 
 private fun serializePart(name: String, node: JsonNode): Sequence<Pair<String, InputStream>> =
     when (node.nodeType) {

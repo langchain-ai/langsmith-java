@@ -97,8 +97,6 @@ internal constructor(@JvmSynthetic internal val okHttpClient: okhttp3.OkHttpClie
             clientBuilder.addNetworkInterceptor(
                 HttpLoggingInterceptor().setLevel(logLevel).apply {
                     redactHeader("X-API-Key")
-                    redactHeader("X-Organization-Id")
-                    redactHeader("Authorization")
                     redactHeader("X-Tenant-Id")
                 }
             )

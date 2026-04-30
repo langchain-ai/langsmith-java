@@ -12,11 +12,7 @@ internal class ValidateServiceTest {
     @Test
     fun create() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val validateService = client.examples().validate()
 
         val exampleValidationResult = validateService.create()
@@ -28,11 +24,7 @@ internal class ValidateServiceTest {
     @Test
     fun bulk() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val validateService = client.examples().validate()
 
         val exampleValidationResults = validateService.bulk()

@@ -17,7 +17,6 @@ internal class ShareServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val shareServiceAsync = client.datasets().share()
 
@@ -40,7 +39,6 @@ internal class ShareServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val shareServiceAsync = client.datasets().share()
 
@@ -59,7 +57,6 @@ internal class ShareServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val shareServiceAsync = client.datasets().share()
 

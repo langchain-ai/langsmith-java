@@ -13,11 +13,7 @@ internal class ConfigServiceTest {
     @Test
     fun delete() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val configService = client.feedback().configs()
 
         configService.delete(ConfigDeleteParams.builder().feedbackKey("feedback_key").build())

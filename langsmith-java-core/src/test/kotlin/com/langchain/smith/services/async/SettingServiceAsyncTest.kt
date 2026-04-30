@@ -15,7 +15,6 @@ internal class SettingServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val settingServiceAsync = client.settings()
 

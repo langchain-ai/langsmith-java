@@ -24,6 +24,7 @@ private constructor(
     private val offset: Long?,
     private val query: String?,
     private val repoType: RepoType?,
+    private val repoTypes: List<RepoType>?,
     private val sortDirection: SortDirection?,
     private val sortField: SortField?,
     private val tagValueId: List<String>?,
@@ -50,6 +51,8 @@ private constructor(
     fun query(): Optional<String> = Optional.ofNullable(query)
 
     fun repoType(): Optional<RepoType> = Optional.ofNullable(repoType)
+
+    fun repoTypes(): Optional<List<RepoType>> = Optional.ofNullable(repoTypes)
 
     fun sortDirection(): Optional<SortDirection> = Optional.ofNullable(sortDirection)
 
@@ -95,6 +98,7 @@ private constructor(
         private var offset: Long? = null
         private var query: String? = null
         private var repoType: RepoType? = null
+        private var repoTypes: MutableList<RepoType>? = null
         private var sortDirection: SortDirection? = null
         private var sortField: SortField? = null
         private var tagValueId: MutableList<String>? = null
@@ -116,6 +120,7 @@ private constructor(
             offset = repoListParams.offset
             query = repoListParams.query
             repoType = repoListParams.repoType
+            repoTypes = repoListParams.repoTypes?.toMutableList()
             sortDirection = repoListParams.sortDirection
             sortField = repoListParams.sortField
             tagValueId = repoListParams.tagValueId?.toMutableList()
@@ -184,6 +189,22 @@ private constructor(
 
         /** Alias for calling [Builder.repoType] with `repoType.orElse(null)`. */
         fun repoType(repoType: Optional<RepoType>) = repoType(repoType.getOrNull())
+
+        fun repoTypes(repoTypes: List<RepoType>?) = apply {
+            this.repoTypes = repoTypes?.toMutableList()
+        }
+
+        /** Alias for calling [Builder.repoTypes] with `repoTypes.orElse(null)`. */
+        fun repoTypes(repoTypes: Optional<List<RepoType>>) = repoTypes(repoTypes.getOrNull())
+
+        /**
+         * Adds a single [RepoType] to [repoTypes].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addRepoType(repoType: RepoType) = apply {
+            repoTypes = (repoTypes ?: mutableListOf()).apply { add(repoType) }
+        }
 
         fun sortDirection(sortDirection: SortDirection?) = apply {
             this.sortDirection = sortDirection
@@ -384,6 +405,7 @@ private constructor(
                 offset,
                 query,
                 repoType,
+                repoTypes?.toImmutable(),
                 sortDirection,
                 sortField,
                 tagValueId?.toImmutable(),
@@ -410,6 +432,7 @@ private constructor(
                 offset?.let { put("offset", it.toString()) }
                 query?.let { put("query", it) }
                 repoType?.let { put("repo_type", it.toString()) }
+                repoTypes?.let { put("repo_types", it.joinToString(",") { it.toString() }) }
                 sortDirection?.let { put("sort_direction", it.toString()) }
                 sortField?.let { put("sort_field", it.toString()) }
                 tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
@@ -1115,6 +1138,7 @@ private constructor(
             offset == other.offset &&
             query == other.query &&
             repoType == other.repoType &&
+            repoTypes == other.repoTypes &&
             sortDirection == other.sortDirection &&
             sortField == other.sortField &&
             tagValueId == other.tagValueId &&
@@ -1137,6 +1161,7 @@ private constructor(
             offset,
             query,
             repoType,
+            repoTypes,
             sortDirection,
             sortField,
             tagValueId,
@@ -1151,5 +1176,5 @@ private constructor(
         )
 
     override fun toString() =
-        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, repoType=$repoType, sortDirection=$sortDirection, sortField=$sortField, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, repoType=$repoType, repoTypes=$repoTypes, sortDirection=$sortDirection, sortField=$sortField, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

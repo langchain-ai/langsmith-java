@@ -60,7 +60,6 @@ internal class ErrorHandlingTest {
                 .baseUrl(wmRuntimeInfo.httpBaseUrl)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
     }
 

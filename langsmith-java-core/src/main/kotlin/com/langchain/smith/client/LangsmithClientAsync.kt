@@ -6,13 +6,17 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.async.AnnotationQueueServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsync
+import com.langchain.smith.services.async.EvaluatorServiceAsync
 import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsync
+import com.langchain.smith.services.async.InfoServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
 import com.langchain.smith.services.async.RunServiceAsync
+import com.langchain.smith.services.async.SandboxServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsync
+import com.langchain.smith.services.async.WorkspaceServiceAsync
 import java.util.function.Consumer
 
 /**
@@ -59,17 +63,25 @@ interface LangsmithClientAsync {
 
     fun runs(): RunServiceAsync
 
+    fun evaluators(): EvaluatorServiceAsync
+
     fun feedback(): FeedbackServiceAsync
 
     fun public_(): PublicServiceAsync
 
     fun annotationQueues(): AnnotationQueueServiceAsync
 
+    fun info(): InfoServiceAsync
+
+    fun workspaces(): WorkspaceServiceAsync
+
     fun repos(): RepoServiceAsync
 
     fun commits(): CommitServiceAsync
 
     fun settings(): SettingServiceAsync
+
+    fun sandboxes(): SandboxServiceAsync
 
     /**
      * Closes this client, relinquishing any underlying resources.
@@ -106,16 +118,24 @@ interface LangsmithClientAsync {
 
         fun runs(): RunServiceAsync.WithRawResponse
 
+        fun evaluators(): EvaluatorServiceAsync.WithRawResponse
+
         fun feedback(): FeedbackServiceAsync.WithRawResponse
 
         fun public_(): PublicServiceAsync.WithRawResponse
 
         fun annotationQueues(): AnnotationQueueServiceAsync.WithRawResponse
 
+        fun info(): InfoServiceAsync.WithRawResponse
+
+        fun workspaces(): WorkspaceServiceAsync.WithRawResponse
+
         fun repos(): RepoServiceAsync.WithRawResponse
 
         fun commits(): CommitServiceAsync.WithRawResponse
 
         fun settings(): SettingServiceAsync.WithRawResponse
+
+        fun sandboxes(): SandboxServiceAsync.WithRawResponse
     }
 }

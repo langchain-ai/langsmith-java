@@ -20,7 +20,6 @@ internal class PlaygroundExperimentServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val playgroundExperimentServiceAsync = client.datasets().playgroundExperiment()
 
@@ -89,7 +88,6 @@ internal class PlaygroundExperimentServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val playgroundExperimentServiceAsync = client.datasets().playgroundExperiment()
 

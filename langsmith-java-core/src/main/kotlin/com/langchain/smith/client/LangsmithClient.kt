@@ -6,13 +6,17 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.blocking.AnnotationQueueService
 import com.langchain.smith.services.blocking.CommitService
 import com.langchain.smith.services.blocking.DatasetService
+import com.langchain.smith.services.blocking.EvaluatorService
 import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.FeedbackService
+import com.langchain.smith.services.blocking.InfoService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
 import com.langchain.smith.services.blocking.RunService
+import com.langchain.smith.services.blocking.SandboxService
 import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SettingService
+import com.langchain.smith.services.blocking.WorkspaceService
 import java.util.function.Consumer
 
 /**
@@ -59,17 +63,25 @@ interface LangsmithClient {
 
     fun runs(): RunService
 
+    fun evaluators(): EvaluatorService
+
     fun feedback(): FeedbackService
 
     fun public_(): PublicService
 
     fun annotationQueues(): AnnotationQueueService
 
+    fun info(): InfoService
+
+    fun workspaces(): WorkspaceService
+
     fun repos(): RepoService
 
     fun commits(): CommitService
 
     fun settings(): SettingService
+
+    fun sandboxes(): SandboxService
 
     /**
      * Closes this client, relinquishing any underlying resources.
@@ -102,16 +114,24 @@ interface LangsmithClient {
 
         fun runs(): RunService.WithRawResponse
 
+        fun evaluators(): EvaluatorService.WithRawResponse
+
         fun feedback(): FeedbackService.WithRawResponse
 
         fun public_(): PublicService.WithRawResponse
 
         fun annotationQueues(): AnnotationQueueService.WithRawResponse
 
+        fun info(): InfoService.WithRawResponse
+
+        fun workspaces(): WorkspaceService.WithRawResponse
+
         fun repos(): RepoService.WithRawResponse
 
         fun commits(): CommitService.WithRawResponse
 
         fun settings(): SettingService.WithRawResponse
+
+        fun sandboxes(): SandboxService.WithRawResponse
     }
 }

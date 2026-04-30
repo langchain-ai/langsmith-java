@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.dokka") version "2.0.0"
+    id("org.jetbrains.dokka") version "2.2.0"
 }
 
 repositories {
@@ -8,7 +8,7 @@ repositories {
 
 allprojects {
     group = "com.langchain.smith"
-    version = "0.1.0-alpha.28" // x-release-please-version
+    version = "0.1.0-beta.0" // x-release-please-version
 }
 
 subprojects {

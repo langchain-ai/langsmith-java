@@ -21,7 +21,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.annotationQueues().runs()
 
@@ -44,7 +43,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.annotationQueues().runs()
 
@@ -69,7 +67,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.annotationQueues().runs()
 
@@ -96,7 +93,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.annotationQueues().runs()
 
@@ -121,7 +117,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.annotationQueues().runs()
 

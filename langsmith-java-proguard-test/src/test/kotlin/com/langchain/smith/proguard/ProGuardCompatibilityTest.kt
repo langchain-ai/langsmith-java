@@ -49,23 +49,23 @@ internal class ProGuardCompatibilityTest {
     @Test
     fun client() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
 
         assertThat(client).isNotNull()
         assertThat(client.sessions()).isNotNull()
         assertThat(client.examples()).isNotNull()
         assertThat(client.datasets()).isNotNull()
         assertThat(client.runs()).isNotNull()
+        assertThat(client.evaluators()).isNotNull()
         assertThat(client.feedback()).isNotNull()
         assertThat(client.public_()).isNotNull()
         assertThat(client.annotationQueues()).isNotNull()
+        assertThat(client.info()).isNotNull()
+        assertThat(client.workspaces()).isNotNull()
         assertThat(client.repos()).isNotNull()
         assertThat(client.commits()).isNotNull()
         assertThat(client.settings()).isNotNull()
+        assertThat(client.sandboxes()).isNotNull()
     }
 
     @Test

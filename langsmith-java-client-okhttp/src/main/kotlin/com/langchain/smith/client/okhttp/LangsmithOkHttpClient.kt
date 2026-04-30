@@ -271,6 +271,16 @@ class LangsmithOkHttpClient private constructor() {
          */
         fun maxRetries(maxRetries: Int) = apply { clientOptions.maxRetries(maxRetries) }
 
+        /**
+         * Whether run create/update calls should be automatically batched for tracing.
+         *
+         * Defaults to true. Set to false to send run create/update calls synchronously through the
+         * single-run endpoints.
+         */
+        fun autoBatchTracing(autoBatchTracing: Boolean) = apply {
+            clientOptions.autoBatchTracing(autoBatchTracing)
+        }
+
         fun apiKey(apiKey: String?) = apply { clientOptions.apiKey(apiKey) }
 
         /** Alias for calling [Builder.apiKey] with `apiKey.orElse(null)`. */
@@ -280,23 +290,6 @@ class LangsmithOkHttpClient private constructor() {
 
         /** Alias for calling [Builder.tenantId] with `tenantId.orElse(null)`. */
         fun tenantId(tenantId: Optional<String>) = tenantId(tenantId.getOrNull())
-
-        /**
-         * Bearer tokens are used to authenticate from the UI. Must also specify x-tenant-id or
-         * x-organization-id (for org scoped apis).
-         */
-        fun bearerToken(bearerToken: String?) = apply { clientOptions.bearerToken(bearerToken) }
-
-        /** Alias for calling [Builder.bearerToken] with `bearerToken.orElse(null)`. */
-        fun bearerToken(bearerToken: Optional<String>) = bearerToken(bearerToken.getOrNull())
-
-        fun organizationId(organizationId: String?) = apply {
-            clientOptions.organizationId(organizationId)
-        }
-
-        /** Alias for calling [Builder.organizationId] with `organizationId.orElse(null)`. */
-        fun organizationId(organizationId: Optional<String>) =
-            organizationId(organizationId.getOrNull())
 
         fun headers(headers: Headers) = apply { clientOptions.headers(headers) }
 

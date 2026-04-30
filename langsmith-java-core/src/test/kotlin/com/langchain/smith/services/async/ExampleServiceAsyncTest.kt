@@ -24,7 +24,6 @@ internal class ExampleServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val exampleServiceAsync = client.examples()
 
@@ -68,7 +67,6 @@ internal class ExampleServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val exampleServiceAsync = client.examples()
 
@@ -92,7 +90,6 @@ internal class ExampleServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val exampleServiceAsync = client.examples()
 
@@ -142,7 +139,6 @@ internal class ExampleServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val exampleServiceAsync = client.examples()
 
@@ -159,7 +155,6 @@ internal class ExampleServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val exampleServiceAsync = client.examples()
 
@@ -176,7 +171,6 @@ internal class ExampleServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val exampleServiceAsync = client.examples()
 
@@ -198,7 +192,6 @@ internal class ExampleServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val exampleServiceAsync = client.examples()
 
@@ -225,7 +218,6 @@ internal class ExampleServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val exampleServiceAsync = client.examples()
 

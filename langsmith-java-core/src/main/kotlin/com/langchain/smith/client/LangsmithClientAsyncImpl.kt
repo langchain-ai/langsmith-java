@@ -10,20 +10,28 @@ import com.langchain.smith.services.async.CommitServiceAsync
 import com.langchain.smith.services.async.CommitServiceAsyncImpl
 import com.langchain.smith.services.async.DatasetServiceAsync
 import com.langchain.smith.services.async.DatasetServiceAsyncImpl
+import com.langchain.smith.services.async.EvaluatorServiceAsync
+import com.langchain.smith.services.async.EvaluatorServiceAsyncImpl
 import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.ExampleServiceAsyncImpl
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsyncImpl
+import com.langchain.smith.services.async.InfoServiceAsync
+import com.langchain.smith.services.async.InfoServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsyncImpl
 import com.langchain.smith.services.async.RepoServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsyncImpl
 import com.langchain.smith.services.async.RunServiceAsync
 import com.langchain.smith.services.async.RunServiceAsyncImpl
+import com.langchain.smith.services.async.SandboxServiceAsync
+import com.langchain.smith.services.async.SandboxServiceAsyncImpl
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsyncImpl
 import com.langchain.smith.services.async.SettingServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsyncImpl
+import com.langchain.smith.services.async.WorkspaceServiceAsync
+import com.langchain.smith.services.async.WorkspaceServiceAsyncImpl
 import java.util.function.Consumer
 
 class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : LangsmithClientAsync {
@@ -37,7 +45,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
                 .build()
 
     // Pass the original clientOptions so that this client sets its own User-Agent.
-    private val sync: LangsmithClient by lazy { LangsmithClientImpl(clientOptions) }
+    private val sync = lazy { LangsmithClientImpl(clientOptions) }
 
     private val withRawResponse: LangsmithClientAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
@@ -55,7 +63,11 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         DatasetServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
+    private val runs = lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
+
+    private val evaluators: EvaluatorServiceAsync by lazy {
+        EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
 
     private val feedback: FeedbackServiceAsync by lazy {
         FeedbackServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -69,6 +81,12 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         AnnotationQueueServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val info: InfoServiceAsync by lazy { InfoServiceAsyncImpl(clientOptionsWithUserAgent) }
+
+    private val workspaces: WorkspaceServiceAsync by lazy {
+        WorkspaceServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val repos: RepoServiceAsync by lazy { RepoServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val commits: CommitServiceAsync by lazy {
@@ -79,7 +97,11 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         SettingServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    override fun sync(): LangsmithClient = sync
+    private val sandboxes: SandboxServiceAsync by lazy {
+        SandboxServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
+    override fun sync(): LangsmithClient = sync.value
 
     override fun withRawResponse(): LangsmithClientAsync.WithRawResponse = withRawResponse
 
@@ -92,7 +114,9 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun datasets(): DatasetServiceAsync = datasets
 
-    override fun runs(): RunServiceAsync = runs
+    override fun runs(): RunServiceAsync = runs.value
+
+    override fun evaluators(): EvaluatorServiceAsync = evaluators
 
     override fun feedback(): FeedbackServiceAsync = feedback
 
@@ -100,13 +124,28 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun annotationQueues(): AnnotationQueueServiceAsync = annotationQueues
 
+    override fun info(): InfoServiceAsync = info
+
+    override fun workspaces(): WorkspaceServiceAsync = workspaces
+
     override fun repos(): RepoServiceAsync = repos
 
     override fun commits(): CommitServiceAsync = commits
 
     override fun settings(): SettingServiceAsync = settings
 
-    override fun close() = clientOptions.close()
+    override fun sandboxes(): SandboxServiceAsync = sandboxes
+
+    override fun close() {
+        if (runs.isInitialized()) {
+            runs.value.shutdown()
+        }
+        if (sync.isInitialized()) {
+            sync.value.close()
+        } else {
+            clientOptions.close()
+        }
+    }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClientAsync.WithRawResponse {
@@ -127,6 +166,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             RunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val evaluators: EvaluatorServiceAsync.WithRawResponse by lazy {
+            EvaluatorServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val feedback: FeedbackServiceAsync.WithRawResponse by lazy {
             FeedbackServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -139,6 +182,14 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             AnnotationQueueServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val info: InfoServiceAsync.WithRawResponse by lazy {
+            InfoServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val workspaces: WorkspaceServiceAsync.WithRawResponse by lazy {
+            WorkspaceServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val repos: RepoServiceAsync.WithRawResponse by lazy {
             RepoServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -149,6 +200,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         private val settings: SettingServiceAsync.WithRawResponse by lazy {
             SettingServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val sandboxes: SandboxServiceAsync.WithRawResponse by lazy {
+            SandboxServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         override fun withOptions(
@@ -166,6 +221,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         override fun runs(): RunServiceAsync.WithRawResponse = runs
 
+        override fun evaluators(): EvaluatorServiceAsync.WithRawResponse = evaluators
+
         override fun feedback(): FeedbackServiceAsync.WithRawResponse = feedback
 
         override fun public_(): PublicServiceAsync.WithRawResponse = public_
@@ -173,10 +230,16 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun annotationQueues(): AnnotationQueueServiceAsync.WithRawResponse =
             annotationQueues
 
+        override fun info(): InfoServiceAsync.WithRawResponse = info
+
+        override fun workspaces(): WorkspaceServiceAsync.WithRawResponse = workspaces
+
         override fun repos(): RepoServiceAsync.WithRawResponse = repos
 
         override fun commits(): CommitServiceAsync.WithRawResponse = commits
 
         override fun settings(): SettingServiceAsync.WithRawResponse = settings
+
+        override fun sandboxes(): SandboxServiceAsync.WithRawResponse = sandboxes
     }
 }

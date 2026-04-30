@@ -2,14 +2,32 @@
 
 package com.langchain.smith.core.http
 
+import com.github.luben.zstd.ZstdInputStream
 import com.langchain.smith.core.MultipartField
 import com.langchain.smith.core.jsonMapper
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class HttpRequestBodiesTest {
+
+    @Test
+    fun zstd_streamsCompressedBody() {
+        val body = zstd(json(jsonMapper(), mapOf("post" to listOf(mapOf("id" to "run-id")))))
+
+        val output1 = ByteArrayOutputStream()
+        body.writeTo(output1)
+        val output2 = ByteArrayOutputStream()
+        body.writeTo(output2)
+
+        assertThat(body.contentType()).isEqualTo("application/json")
+        assertThat(body.contentLength()).isEqualTo(-1L)
+        assertThat(body.repeatable()).isTrue()
+        assertThat(decompress(output1.toByteArray())).isEqualTo("{\"post\":[{\"id\":\"run-id\"}]}")
+        assertThat(decompress(output2.toByteArray())).isEqualTo("{\"post\":[{\"id\":\"run-id\"}]}")
+    }
 
     @Test
     fun multipartFormData_serializesFieldWithFilename() {
@@ -726,4 +744,9 @@ internal class HttpRequestBodiesTest {
 
     private fun boundary(body: HttpRequestBody): String =
         body.contentType()!!.substringAfter("multipart/form-data; boundary=")
+
+    private fun decompress(bytes: ByteArray): String =
+        ZstdInputStream(ByteArrayInputStream(bytes)).bufferedReader(Charsets.UTF_8).use {
+            it.readText()
+        }
 }
