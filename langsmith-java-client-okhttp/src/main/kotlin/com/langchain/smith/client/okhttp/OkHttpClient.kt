@@ -98,8 +98,6 @@ internal constructor(@JvmSynthetic internal val okHttpClient: okhttp3.OkHttpClie
                 HttpLoggingInterceptor().setLevel(logLevel).apply {
                     redactHeader("X-API-Key")
                     redactHeader("X-Tenant-Id")
-                    redactHeader("Authorization")
-                    redactHeader("X-Organization-Id")
                 }
             )
         }

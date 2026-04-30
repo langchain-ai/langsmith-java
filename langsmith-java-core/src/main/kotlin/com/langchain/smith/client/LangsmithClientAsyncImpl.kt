@@ -16,6 +16,8 @@ import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.ExampleServiceAsyncImpl
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsyncImpl
+import com.langchain.smith.services.async.InfoServiceAsync
+import com.langchain.smith.services.async.InfoServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsyncImpl
 import com.langchain.smith.services.async.RepoServiceAsync
@@ -28,6 +30,8 @@ import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsyncImpl
 import com.langchain.smith.services.async.SettingServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsyncImpl
+import com.langchain.smith.services.async.WorkspaceServiceAsync
+import com.langchain.smith.services.async.WorkspaceServiceAsyncImpl
 import java.util.function.Consumer
 
 class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : LangsmithClientAsync {
@@ -77,6 +81,12 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         AnnotationQueueServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val info: InfoServiceAsync by lazy { InfoServiceAsyncImpl(clientOptionsWithUserAgent) }
+
+    private val workspaces: WorkspaceServiceAsync by lazy {
+        WorkspaceServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val repos: RepoServiceAsync by lazy { RepoServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val commits: CommitServiceAsync by lazy {
@@ -113,6 +123,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun public_(): PublicServiceAsync = public_
 
     override fun annotationQueues(): AnnotationQueueServiceAsync = annotationQueues
+
+    override fun info(): InfoServiceAsync = info
+
+    override fun workspaces(): WorkspaceServiceAsync = workspaces
 
     override fun repos(): RepoServiceAsync = repos
 
@@ -168,6 +182,14 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             AnnotationQueueServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val info: InfoServiceAsync.WithRawResponse by lazy {
+            InfoServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val workspaces: WorkspaceServiceAsync.WithRawResponse by lazy {
+            WorkspaceServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val repos: RepoServiceAsync.WithRawResponse by lazy {
             RepoServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -207,6 +229,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         override fun annotationQueues(): AnnotationQueueServiceAsync.WithRawResponse =
             annotationQueues
+
+        override fun info(): InfoServiceAsync.WithRawResponse = info
+
+        override fun workspaces(): WorkspaceServiceAsync.WithRawResponse = workspaces
 
         override fun repos(): RepoServiceAsync.WithRawResponse = repos
 

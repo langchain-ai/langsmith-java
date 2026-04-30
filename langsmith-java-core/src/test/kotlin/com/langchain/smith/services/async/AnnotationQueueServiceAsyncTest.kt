@@ -26,7 +26,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -44,7 +43,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -97,7 +95,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -115,7 +112,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -171,7 +167,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -195,7 +190,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -220,7 +214,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -243,7 +236,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -260,7 +252,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -278,7 +269,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -302,7 +292,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -325,7 +314,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 
@@ -349,7 +337,6 @@ internal class AnnotationQueueServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val annotationQueueServiceAsync = client.annotationQueues()
 

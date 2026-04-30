@@ -18,7 +18,6 @@ internal class ComparativeServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val comparativeServiceAsync = client.datasets().comparative()
 
@@ -51,7 +50,6 @@ internal class ComparativeServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val comparativeServiceAsync = client.datasets().comparative()
 

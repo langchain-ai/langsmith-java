@@ -11,7 +11,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Delete a snapshot by ID. The ext4 rootfs is removed from JuiceFS asynchronously. */
+/** Delete a snapshot by ID. The underlying storage is reclaimed asynchronously. */
 class SnapshotDeleteParams
 private constructor(
     private val snapshotId: String?,

@@ -19,7 +19,6 @@ internal class BulkServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val bulkServiceAsync = client.examples().bulk()
 
@@ -65,7 +64,6 @@ internal class BulkServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val bulkServiceAsync = client.examples().bulk()
 

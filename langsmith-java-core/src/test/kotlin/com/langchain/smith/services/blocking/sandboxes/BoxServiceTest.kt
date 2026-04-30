@@ -17,11 +17,7 @@ internal class BoxServiceTest {
     @Test
     fun create() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         val box =
@@ -82,7 +78,6 @@ internal class BoxServiceTest {
                     )
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
-                    .templateName("template_name")
                     .timeout(0L)
                     .ttlSeconds(0L)
                     .vcpus(0L)
@@ -97,11 +92,7 @@ internal class BoxServiceTest {
     @Test
     fun retrieve() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         val box = boxService.retrieve("name")
@@ -113,11 +104,7 @@ internal class BoxServiceTest {
     @Test
     fun update() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         val box =
@@ -189,11 +176,7 @@ internal class BoxServiceTest {
     @Test
     fun list() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         val boxes =
@@ -205,7 +188,6 @@ internal class BoxServiceTest {
                     .sortBy("sort_by")
                     .sortDirection("sort_direction")
                     .status("status")
-                    .templateName("template_name")
                     .build()
             )
 
@@ -216,11 +198,7 @@ internal class BoxServiceTest {
     @Test
     fun delete() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         boxService.delete("name")
@@ -230,11 +208,7 @@ internal class BoxServiceTest {
     @Test
     fun createSnapshot() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         val response =
@@ -253,11 +227,7 @@ internal class BoxServiceTest {
     @Test
     fun generateServiceUrl() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         val response =
@@ -276,11 +246,7 @@ internal class BoxServiceTest {
     @Test
     fun getStatus() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         val response = boxService.getStatus("name")
@@ -292,11 +258,7 @@ internal class BoxServiceTest {
     @Test
     fun start() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         val response = boxService.start("name")
@@ -308,11 +270,7 @@ internal class BoxServiceTest {
     @Test
     fun stop() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
         boxService.stop("name")

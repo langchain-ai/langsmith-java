@@ -17,7 +17,6 @@ internal class ExperimentServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val experimentServiceAsync = client.datasets().experiments()
 

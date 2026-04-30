@@ -18,11 +18,7 @@ internal class RunServiceTest {
     @Test
     fun create() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.annotationQueues().runs()
 
         val runs =
@@ -40,11 +36,7 @@ internal class RunServiceTest {
     @Test
     fun update() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.annotationQueues().runs()
 
         val run =
@@ -64,11 +56,7 @@ internal class RunServiceTest {
     @Test
     fun list() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.annotationQueues().runs()
 
         val runSchemaWithAnnotationQueueInfos =
@@ -90,11 +78,7 @@ internal class RunServiceTest {
     @Test
     fun deleteAll() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.annotationQueues().runs()
 
         val response =
@@ -114,11 +98,7 @@ internal class RunServiceTest {
     @Test
     fun deleteQueue() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.annotationQueues().runs()
 
         val response =

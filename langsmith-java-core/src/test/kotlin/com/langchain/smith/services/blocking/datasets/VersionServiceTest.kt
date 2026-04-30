@@ -14,11 +14,7 @@ internal class VersionServiceTest {
     @Test
     fun list() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val versionService = client.datasets().versions()
 
         val page = versionService.list("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -30,11 +26,7 @@ internal class VersionServiceTest {
     @Test
     fun retrieveDiff() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val versionService = client.datasets().versions()
 
         val response =

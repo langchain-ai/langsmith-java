@@ -19,7 +19,6 @@ internal class RepoServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val repoServiceAsync = client.repos()
 
@@ -47,7 +46,6 @@ internal class RepoServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val repoServiceAsync = client.repos()
 
@@ -67,7 +65,6 @@ internal class RepoServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val repoServiceAsync = client.repos()
 
@@ -96,7 +93,6 @@ internal class RepoServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val repoServiceAsync = client.repos()
 
@@ -113,7 +109,6 @@ internal class RepoServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val repoServiceAsync = client.repos()
 

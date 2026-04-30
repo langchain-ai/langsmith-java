@@ -4,9 +4,7 @@ package com.langchain.smith.services.async
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.async.sandboxes.BoxServiceAsync
-import com.langchain.smith.services.async.sandboxes.PoolServiceAsync
 import com.langchain.smith.services.async.sandboxes.SnapshotServiceAsync
-import com.langchain.smith.services.async.sandboxes.TemplateServiceAsync
 import java.util.function.Consumer
 
 interface SandboxServiceAsync {
@@ -25,11 +23,7 @@ interface SandboxServiceAsync {
 
     fun boxes(): BoxServiceAsync
 
-    fun pools(): PoolServiceAsync
-
     fun snapshots(): SnapshotServiceAsync
-
-    fun templates(): TemplateServiceAsync
 
     /**
      * A view of [SandboxServiceAsync] that provides access to raw HTTP responses for each method.
@@ -47,10 +41,6 @@ interface SandboxServiceAsync {
 
         fun boxes(): BoxServiceAsync.WithRawResponse
 
-        fun pools(): PoolServiceAsync.WithRawResponse
-
         fun snapshots(): SnapshotServiceAsync.WithRawResponse
-
-        fun templates(): TemplateServiceAsync.WithRawResponse
     }
 }

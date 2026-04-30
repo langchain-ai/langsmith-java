@@ -15,7 +15,6 @@ internal class PublicServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val publicServiceAsync = client.public_()
 
