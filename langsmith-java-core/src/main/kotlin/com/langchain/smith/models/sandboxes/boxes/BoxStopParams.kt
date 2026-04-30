@@ -12,8 +12,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Stop a ready Firecracker sandbox. This endpoint is not idempotent; the rootfs is preserved on
- * JuiceFS for later restart.
+ * Stop a ready sandbox. This endpoint is not idempotent; the filesystem is preserved for later
+ * restart.
  */
 class BoxStopParams
 private constructor(

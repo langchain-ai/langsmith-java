@@ -30,6 +30,7 @@ private constructor(
     private val sortBy: SessionSortableColumns?,
     private val sortByDesc: Boolean?,
     private val sortByFeedbackKey: String?,
+    private val statsSelect: List<String>?,
     private val statsStartTime: OffsetDateTime?,
     private val tagValueId: List<String>?,
     private val useApproxStats: Boolean?,
@@ -67,6 +68,8 @@ private constructor(
     fun sortByDesc(): Optional<Boolean> = Optional.ofNullable(sortByDesc)
 
     fun sortByFeedbackKey(): Optional<String> = Optional.ofNullable(sortByFeedbackKey)
+
+    fun statsSelect(): Optional<List<String>> = Optional.ofNullable(statsSelect)
 
     fun statsStartTime(): Optional<OffsetDateTime> = Optional.ofNullable(statsStartTime)
 
@@ -110,6 +113,7 @@ private constructor(
         private var sortBy: SessionSortableColumns? = null
         private var sortByDesc: Boolean? = null
         private var sortByFeedbackKey: String? = null
+        private var statsSelect: MutableList<String>? = null
         private var statsStartTime: OffsetDateTime? = null
         private var tagValueId: MutableList<String>? = null
         private var useApproxStats: Boolean? = null
@@ -134,6 +138,7 @@ private constructor(
             sortBy = sessionListParams.sortBy
             sortByDesc = sessionListParams.sortByDesc
             sortByFeedbackKey = sessionListParams.sortByFeedbackKey
+            statsSelect = sessionListParams.statsSelect?.toMutableList()
             statsStartTime = sessionListParams.statsStartTime
             tagValueId = sessionListParams.tagValueId?.toMutableList()
             useApproxStats = sessionListParams.useApproxStats
@@ -283,6 +288,22 @@ private constructor(
         /** Alias for calling [Builder.sortByFeedbackKey] with `sortByFeedbackKey.orElse(null)`. */
         fun sortByFeedbackKey(sortByFeedbackKey: Optional<String>) =
             sortByFeedbackKey(sortByFeedbackKey.getOrNull())
+
+        fun statsSelect(statsSelect: List<String>?) = apply {
+            this.statsSelect = statsSelect?.toMutableList()
+        }
+
+        /** Alias for calling [Builder.statsSelect] with `statsSelect.orElse(null)`. */
+        fun statsSelect(statsSelect: Optional<List<String>>) = statsSelect(statsSelect.getOrNull())
+
+        /**
+         * Adds a single [String] to [Builder.statsSelect].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addStatsSelect(statsSelect: String) = apply {
+            this.statsSelect = (this.statsSelect ?: mutableListOf()).apply { add(statsSelect) }
+        }
 
         fun statsStartTime(statsStartTime: OffsetDateTime?) = apply {
             this.statsStartTime = statsStartTime
@@ -448,6 +469,7 @@ private constructor(
                 sortBy,
                 sortByDesc,
                 sortByFeedbackKey,
+                statsSelect?.toImmutable(),
                 statsStartTime,
                 tagValueId?.toImmutable(),
                 useApproxStats,
@@ -483,6 +505,7 @@ private constructor(
                 sortBy?.let { put("sort_by", it.toString()) }
                 sortByDesc?.let { put("sort_by_desc", it.toString()) }
                 sortByFeedbackKey?.let { put("sort_by_feedback_key", it) }
+                statsSelect?.let { put("stats_select", it.joinToString(",")) }
                 statsStartTime?.let {
                     put("stats_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
                 }
@@ -513,6 +536,7 @@ private constructor(
             sortBy == other.sortBy &&
             sortByDesc == other.sortByDesc &&
             sortByFeedbackKey == other.sortByFeedbackKey &&
+            statsSelect == other.statsSelect &&
             statsStartTime == other.statsStartTime &&
             tagValueId == other.tagValueId &&
             useApproxStats == other.useApproxStats &&
@@ -538,6 +562,7 @@ private constructor(
             sortBy,
             sortByDesc,
             sortByFeedbackKey,
+            statsSelect,
             statsStartTime,
             tagValueId,
             useApproxStats,
@@ -547,5 +572,5 @@ private constructor(
         )
 
     override fun toString() =
-        "SessionListParams{id=$id, datasetVersion=$datasetVersion, facets=$facets, filter=$filter, includeStats=$includeStats, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, referenceDataset=$referenceDataset, referenceFree=$referenceFree, sortBy=$sortBy, sortByDesc=$sortByDesc, sortByFeedbackKey=$sortByFeedbackKey, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SessionListParams{id=$id, datasetVersion=$datasetVersion, facets=$facets, filter=$filter, includeStats=$includeStats, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, referenceDataset=$referenceDataset, referenceFree=$referenceFree, sortBy=$sortBy, sortByDesc=$sortByDesc, sortByFeedbackKey=$sortByFeedbackKey, statsSelect=$statsSelect, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

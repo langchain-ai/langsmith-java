@@ -28,6 +28,7 @@ internal class SessionListParamsTest {
             .sortBy(SessionSortableColumns.NAME)
             .sortByDesc(true)
             .sortByFeedbackKey("sort_by_feedback_key")
+            .addStatsSelect("string")
             .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .useApproxStats(true)
@@ -54,6 +55,7 @@ internal class SessionListParamsTest {
                 .sortBy(SessionSortableColumns.NAME)
                 .sortByDesc(true)
                 .sortByFeedbackKey("sort_by_feedback_key")
+                .addStatsSelect("string")
                 .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .useApproxStats(true)
@@ -93,6 +95,7 @@ internal class SessionListParamsTest {
                 .sortBy(SessionSortableColumns.NAME)
                 .sortByDesc(true)
                 .sortByFeedbackKey("sort_by_feedback_key")
+                .addStatsSelect("string")
                 .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .useApproxStats(true)
@@ -122,6 +125,7 @@ internal class SessionListParamsTest {
                     .put("sort_by", "name")
                     .put("sort_by_desc", "true")
                     .put("sort_by_feedback_key", "sort_by_feedback_key")
+                    .put("stats_select", listOf("string").joinToString(","))
                     .put("stats_start_time", "2019-12-27T18:11:19.117Z")
                     .put(
                         "tag_value_id",

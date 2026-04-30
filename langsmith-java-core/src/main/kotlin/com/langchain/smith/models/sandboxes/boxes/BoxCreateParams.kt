@@ -24,9 +24,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Create a new sandbox. The snapshot may be identified by `snapshot_id` (UUID) or by
- * `snapshot_name` (tenant-scoped unique name); exactly one of `template_name`, `snapshot_id`, or
- * `snapshot_name` must be set. Optionally blocks until ready or timeout.
+ * Create a new sandbox from a snapshot. The snapshot may be identified by `snapshot_id` (UUID) or
+ * by `snapshot_name` (tenant-scoped unique name); exactly one must be set. Optionally blocks until
+ * ready or timeout.
  */
 class BoxCreateParams
 private constructor(
@@ -76,14 +76,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun snapshotName(): Optional<String> = body.snapshotName()
-
-    /**
-     * required for Kata path
-     *
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun templateName(): Optional<String> = body.templateName()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -157,13 +149,6 @@ private constructor(
      * Unlike [snapshotName], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _snapshotName(): JsonField<String> = body._snapshotName()
-
-    /**
-     * Returns the raw JSON value of [templateName].
-     *
-     * Unlike [templateName], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _templateName(): JsonField<String> = body._templateName()
 
     /**
      * Returns the raw JSON value of [timeout].
@@ -320,20 +305,6 @@ private constructor(
          */
         fun snapshotName(snapshotName: JsonField<String>) = apply {
             body.snapshotName(snapshotName)
-        }
-
-        /** required for Kata path */
-        fun templateName(templateName: String) = apply { body.templateName(templateName) }
-
-        /**
-         * Sets [Builder.templateName] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.templateName] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun templateName(templateName: JsonField<String>) = apply {
-            body.templateName(templateName)
         }
 
         fun timeout(timeout: Long) = apply { body.timeout(timeout) }
@@ -521,7 +492,6 @@ private constructor(
         private val proxyConfig: JsonField<ProxyConfig>,
         private val snapshotId: JsonField<String>,
         private val snapshotName: JsonField<String>,
-        private val templateName: JsonField<String>,
         private val timeout: JsonField<Long>,
         private val ttlSeconds: JsonField<Long>,
         private val vcpus: JsonField<Long>,
@@ -548,9 +518,6 @@ private constructor(
             @JsonProperty("snapshot_name")
             @ExcludeMissing
             snapshotName: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("template_name")
-            @ExcludeMissing
-            templateName: JsonField<String> = JsonMissing.of(),
             @JsonProperty("timeout") @ExcludeMissing timeout: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("ttl_seconds")
             @ExcludeMissing
@@ -567,7 +534,6 @@ private constructor(
             proxyConfig,
             snapshotId,
             snapshotName,
-            templateName,
             timeout,
             ttlSeconds,
             vcpus,
@@ -616,14 +582,6 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun snapshotName(): Optional<String> = snapshotName.getOptional("snapshot_name")
-
-        /**
-         * required for Kata path
-         *
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun templateName(): Optional<String> = templateName.getOptional("template_name")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -712,16 +670,6 @@ private constructor(
         fun _snapshotName(): JsonField<String> = snapshotName
 
         /**
-         * Returns the raw JSON value of [templateName].
-         *
-         * Unlike [templateName], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("template_name")
-        @ExcludeMissing
-        fun _templateName(): JsonField<String> = templateName
-
-        /**
          * Returns the raw JSON value of [timeout].
          *
          * Unlike [timeout], this method doesn't throw if the JSON field has an unexpected type.
@@ -780,7 +728,6 @@ private constructor(
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
             private var snapshotId: JsonField<String> = JsonMissing.of()
             private var snapshotName: JsonField<String> = JsonMissing.of()
-            private var templateName: JsonField<String> = JsonMissing.of()
             private var timeout: JsonField<Long> = JsonMissing.of()
             private var ttlSeconds: JsonField<Long> = JsonMissing.of()
             private var vcpus: JsonField<Long> = JsonMissing.of()
@@ -796,7 +743,6 @@ private constructor(
                 proxyConfig = body.proxyConfig
                 snapshotId = body.snapshotId
                 snapshotName = body.snapshotName
-                templateName = body.templateName
                 timeout = body.timeout
                 ttlSeconds = body.ttlSeconds
                 vcpus = body.vcpus
@@ -890,20 +836,6 @@ private constructor(
                 this.snapshotName = snapshotName
             }
 
-            /** required for Kata path */
-            fun templateName(templateName: String) = templateName(JsonField.of(templateName))
-
-            /**
-             * Sets [Builder.templateName] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.templateName] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun templateName(templateName: JsonField<String>) = apply {
-                this.templateName = templateName
-            }
-
             fun timeout(timeout: Long) = timeout(JsonField.of(timeout))
 
             /**
@@ -983,7 +915,6 @@ private constructor(
                     proxyConfig,
                     snapshotId,
                     snapshotName,
-                    templateName,
                     timeout,
                     ttlSeconds,
                     vcpus,
@@ -1006,7 +937,6 @@ private constructor(
             proxyConfig().ifPresent { it.validate() }
             snapshotId()
             snapshotName()
-            templateName()
             timeout()
             ttlSeconds()
             vcpus()
@@ -1037,7 +967,6 @@ private constructor(
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
                 (if (snapshotName.asKnown().isPresent) 1 else 0) +
-                (if (templateName.asKnown().isPresent) 1 else 0) +
                 (if (timeout.asKnown().isPresent) 1 else 0) +
                 (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
                 (if (vcpus.asKnown().isPresent) 1 else 0) +
@@ -1056,7 +985,6 @@ private constructor(
                 proxyConfig == other.proxyConfig &&
                 snapshotId == other.snapshotId &&
                 snapshotName == other.snapshotName &&
-                templateName == other.templateName &&
                 timeout == other.timeout &&
                 ttlSeconds == other.ttlSeconds &&
                 vcpus == other.vcpus &&
@@ -1073,7 +1001,6 @@ private constructor(
                 proxyConfig,
                 snapshotId,
                 snapshotName,
-                templateName,
                 timeout,
                 ttlSeconds,
                 vcpus,
@@ -1085,7 +1012,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, snapshotName=$snapshotName, templateName=$templateName, timeout=$timeout, ttlSeconds=$ttlSeconds, vcpus=$vcpus, waitForReady=$waitForReady, additionalProperties=$additionalProperties}"
+            "Body{fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, snapshotName=$snapshotName, timeout=$timeout, ttlSeconds=$ttlSeconds, vcpus=$vcpus, waitForReady=$waitForReady, additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig
@@ -1614,9 +1541,6 @@ private constructor(
             fun matchHosts(): List<String> = matchHosts.getRequired("match_hosts")
 
             /**
-             * TTLSeconds is how long resolved headers are cached before the proxy re-invokes URL.
-             * Must be between 60 and 3600 seconds.
-             *
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
@@ -1744,10 +1668,6 @@ private constructor(
                         }
                 }
 
-                /**
-                 * TTLSeconds is how long resolved headers are cached before the proxy re-invokes
-                 * URL. Must be between 60 and 3600 seconds.
-                 */
                 fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
 
                 /**

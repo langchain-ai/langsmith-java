@@ -92,7 +92,7 @@ interface SnapshotService {
     fun list(requestOptions: RequestOptions): SnapshotListResponse =
         list(SnapshotListParams.none(), requestOptions)
 
-    /** Delete a snapshot by ID. The ext4 rootfs is removed from JuiceFS asynchronously. */
+    /** Delete a snapshot by ID. The underlying storage is reclaimed asynchronously. */
     fun delete(snapshotId: String) = delete(snapshotId, SnapshotDeleteParams.none())
 
     /** @see delete */

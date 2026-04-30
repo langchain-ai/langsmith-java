@@ -12,8 +12,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Start a stopped or failed Firecracker sandbox. This endpoint is not idempotent; it returns 202
- * immediately, then you can poll status for readiness.
+ * Start a stopped or failed sandbox. This endpoint is not idempotent; it returns 202 immediately,
+ * then you can poll status for readiness.
  */
 class BoxStartParams
 private constructor(

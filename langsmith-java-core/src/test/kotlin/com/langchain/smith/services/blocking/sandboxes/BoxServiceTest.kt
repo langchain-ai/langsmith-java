@@ -82,7 +82,6 @@ internal class BoxServiceTest {
                     )
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
-                    .templateName("template_name")
                     .timeout(0L)
                     .ttlSeconds(0L)
                     .vcpus(0L)
@@ -205,7 +204,6 @@ internal class BoxServiceTest {
                     .sortBy("sort_by")
                     .sortDirection("sort_direction")
                     .status("status")
-                    .templateName("template_name")
                     .build()
             )
 
