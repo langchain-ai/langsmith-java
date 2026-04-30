@@ -21,7 +21,6 @@ private constructor(
     private val sortBy: String?,
     private val sortDirection: String?,
     private val status: String?,
-    private val templateName: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -35,7 +34,7 @@ private constructor(
     /** Pagination offset */
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
-    /** Sort column (name, status, template_name, created_at) */
+    /** Sort column (name, status, created_at) */
     fun sortBy(): Optional<String> = Optional.ofNullable(sortBy)
 
     /** Sort direction (asc, desc) */
@@ -43,9 +42,6 @@ private constructor(
 
     /** Filter by status (provisioning, ready, failed, stopped) */
     fun status(): Optional<String> = Optional.ofNullable(status)
-
-    /** Filter by exact template name */
-    fun templateName(): Optional<String> = Optional.ofNullable(templateName)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -72,7 +68,6 @@ private constructor(
         private var sortBy: String? = null
         private var sortDirection: String? = null
         private var status: String? = null
-        private var templateName: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -84,7 +79,6 @@ private constructor(
             sortBy = boxListParams.sortBy
             sortDirection = boxListParams.sortDirection
             status = boxListParams.status
-            templateName = boxListParams.templateName
             additionalHeaders = boxListParams.additionalHeaders.toBuilder()
             additionalQueryParams = boxListParams.additionalQueryParams.toBuilder()
         }
@@ -121,7 +115,7 @@ private constructor(
         /** Alias for calling [Builder.offset] with `offset.orElse(null)`. */
         fun offset(offset: Optional<Long>) = offset(offset.getOrNull())
 
-        /** Sort column (name, status, template_name, created_at) */
+        /** Sort column (name, status, created_at) */
         fun sortBy(sortBy: String?) = apply { this.sortBy = sortBy }
 
         /** Alias for calling [Builder.sortBy] with `sortBy.orElse(null)`. */
@@ -139,12 +133,6 @@ private constructor(
 
         /** Alias for calling [Builder.status] with `status.orElse(null)`. */
         fun status(status: Optional<String>) = status(status.getOrNull())
-
-        /** Filter by exact template name */
-        fun templateName(templateName: String?) = apply { this.templateName = templateName }
-
-        /** Alias for calling [Builder.templateName] with `templateName.orElse(null)`. */
-        fun templateName(templateName: Optional<String>) = templateName(templateName.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -257,7 +245,6 @@ private constructor(
                 sortBy,
                 sortDirection,
                 status,
-                templateName,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -274,7 +261,6 @@ private constructor(
                 sortBy?.let { put("sort_by", it) }
                 sortDirection?.let { put("sort_direction", it) }
                 status?.let { put("status", it) }
-                templateName?.let { put("template_name", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -291,7 +277,6 @@ private constructor(
             sortBy == other.sortBy &&
             sortDirection == other.sortDirection &&
             status == other.status &&
-            templateName == other.templateName &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -304,11 +289,10 @@ private constructor(
             sortBy,
             sortDirection,
             status,
-            templateName,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "BoxListParams{limit=$limit, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortDirection=$sortDirection, status=$status, templateName=$templateName, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "BoxListParams{limit=$limit, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortDirection=$sortDirection, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

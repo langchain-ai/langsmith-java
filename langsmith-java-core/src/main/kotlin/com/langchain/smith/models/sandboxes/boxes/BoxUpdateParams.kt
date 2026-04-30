@@ -1305,9 +1305,6 @@ private constructor(
             fun matchHosts(): List<String> = matchHosts.getRequired("match_hosts")
 
             /**
-             * TTLSeconds is how long resolved headers are cached before the proxy re-invokes URL.
-             * Must be between 60 and 3600 seconds.
-             *
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
@@ -1435,10 +1432,6 @@ private constructor(
                         }
                 }
 
-                /**
-                 * TTLSeconds is how long resolved headers are cached before the proxy re-invokes
-                 * URL. Must be between 60 and 3600 seconds.
-                 */
                 fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
 
                 /**

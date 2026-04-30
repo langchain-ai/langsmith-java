@@ -97,7 +97,7 @@ interface SnapshotServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<SnapshotListResponse> =
         list(SnapshotListParams.none(), requestOptions)
 
-    /** Delete a snapshot by ID. The ext4 rootfs is removed from JuiceFS asynchronously. */
+    /** Delete a snapshot by ID. The underlying storage is reclaimed asynchronously. */
     fun delete(snapshotId: String): CompletableFuture<Void?> =
         delete(snapshotId, SnapshotDeleteParams.none())
 

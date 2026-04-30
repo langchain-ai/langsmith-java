@@ -42,9 +42,9 @@ interface BoxService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BoxService
 
     /**
-     * Create a new sandbox. The snapshot may be identified by `snapshot_id` (UUID) or by
-     * `snapshot_name` (tenant-scoped unique name); exactly one of `template_name`, `snapshot_id`,
-     * or `snapshot_name` must be set. Optionally blocks until ready or timeout.
+     * Create a new sandbox from a snapshot. The snapshot may be identified by `snapshot_id` (UUID)
+     * or by `snapshot_name` (tenant-scoped unique name); exactly one must be set. Optionally blocks
+     * until ready or timeout.
      */
     fun create(): BoxCreateResponse = create(BoxCreateParams.none())
 
@@ -141,7 +141,7 @@ interface BoxService {
     fun list(requestOptions: RequestOptions): BoxListResponse =
         list(BoxListParams.none(), requestOptions)
 
-    /** Delete a sandbox claim by name. Deletes both the K8s CRD and the DB record. */
+    /** Delete a sandbox claim by name. Deletes the Firecracker pod/service and DB record. */
     fun delete(name: String) = delete(name, BoxDeleteParams.none())
 
     /** @see delete */
@@ -262,8 +262,8 @@ interface BoxService {
         getStatus(name, BoxGetStatusParams.none(), requestOptions)
 
     /**
-     * Start a stopped or failed Firecracker sandbox. This endpoint is not idempotent; it returns
-     * 202 immediately, then you can poll status for readiness.
+     * Start a stopped or failed sandbox. This endpoint is not idempotent; it returns 202
+     * immediately, then you can poll status for readiness.
      */
     fun start(name: String): BoxStartResponse = start(name, BoxStartParams.none())
 
@@ -292,8 +292,8 @@ interface BoxService {
         start(name, BoxStartParams.none(), requestOptions)
 
     /**
-     * Stop a ready Firecracker sandbox. This endpoint is not idempotent; the rootfs is preserved on
-     * JuiceFS for later restart.
+     * Stop a ready sandbox. This endpoint is not idempotent; the filesystem is preserved for later
+     * restart.
      */
     fun stop(name: String) = stop(name, BoxStopParams.none())
 

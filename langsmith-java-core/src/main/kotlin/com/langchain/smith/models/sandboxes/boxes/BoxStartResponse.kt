@@ -32,10 +32,10 @@ private constructor(
     private val memBytes: JsonField<Long>,
     private val name: JsonField<String>,
     private val proxyConfig: JsonField<ProxyConfig>,
+    private val sizeClass: JsonField<String>,
     private val snapshotId: JsonField<String>,
     private val status: JsonField<String>,
     private val statusMessage: JsonField<String>,
-    private val templateName: JsonField<String>,
     private val ttlSeconds: JsonField<Long>,
     private val updatedAt: JsonField<String>,
     private val vcpus: JsonField<Long>,
@@ -61,6 +61,7 @@ private constructor(
         @JsonProperty("proxy_config")
         @ExcludeMissing
         proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
+        @JsonProperty("size_class") @ExcludeMissing sizeClass: JsonField<String> = JsonMissing.of(),
         @JsonProperty("snapshot_id")
         @ExcludeMissing
         snapshotId: JsonField<String> = JsonMissing.of(),
@@ -68,9 +69,6 @@ private constructor(
         @JsonProperty("status_message")
         @ExcludeMissing
         statusMessage: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("template_name")
-        @ExcludeMissing
-        templateName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("ttl_seconds") @ExcludeMissing ttlSeconds: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
@@ -84,10 +82,10 @@ private constructor(
         memBytes,
         name,
         proxyConfig,
+        sizeClass,
         snapshotId,
         status,
         statusMessage,
-        templateName,
         ttlSeconds,
         updatedAt,
         vcpus,
@@ -152,6 +150,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun sizeClass(): Optional<String> = sizeClass.getOptional("size_class")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun snapshotId(): Optional<String> = snapshotId.getOptional("snapshot_id")
 
     /**
@@ -165,12 +169,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun statusMessage(): Optional<String> = statusMessage.getOptional("status_message")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun templateName(): Optional<String> = templateName.getOptional("template_name")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -262,6 +260,13 @@ private constructor(
     fun _proxyConfig(): JsonField<ProxyConfig> = proxyConfig
 
     /**
+     * Returns the raw JSON value of [sizeClass].
+     *
+     * Unlike [sizeClass], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("size_class") @ExcludeMissing fun _sizeClass(): JsonField<String> = sizeClass
+
+    /**
      * Returns the raw JSON value of [snapshotId].
      *
      * Unlike [snapshotId], this method doesn't throw if the JSON field has an unexpected type.
@@ -283,15 +288,6 @@ private constructor(
     @JsonProperty("status_message")
     @ExcludeMissing
     fun _statusMessage(): JsonField<String> = statusMessage
-
-    /**
-     * Returns the raw JSON value of [templateName].
-     *
-     * Unlike [templateName], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("template_name")
-    @ExcludeMissing
-    fun _templateName(): JsonField<String> = templateName
 
     /**
      * Returns the raw JSON value of [ttlSeconds].
@@ -344,10 +340,10 @@ private constructor(
         private var memBytes: JsonField<Long> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
+        private var sizeClass: JsonField<String> = JsonMissing.of()
         private var snapshotId: JsonField<String> = JsonMissing.of()
         private var status: JsonField<String> = JsonMissing.of()
         private var statusMessage: JsonField<String> = JsonMissing.of()
-        private var templateName: JsonField<String> = JsonMissing.of()
         private var ttlSeconds: JsonField<Long> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
         private var vcpus: JsonField<Long> = JsonMissing.of()
@@ -364,10 +360,10 @@ private constructor(
             memBytes = boxStartResponse.memBytes
             name = boxStartResponse.name
             proxyConfig = boxStartResponse.proxyConfig
+            sizeClass = boxStartResponse.sizeClass
             snapshotId = boxStartResponse.snapshotId
             status = boxStartResponse.status
             statusMessage = boxStartResponse.statusMessage
-            templateName = boxStartResponse.templateName
             ttlSeconds = boxStartResponse.ttlSeconds
             updatedAt = boxStartResponse.updatedAt
             vcpus = boxStartResponse.vcpus
@@ -478,6 +474,17 @@ private constructor(
             this.proxyConfig = proxyConfig
         }
 
+        fun sizeClass(sizeClass: String) = sizeClass(JsonField.of(sizeClass))
+
+        /**
+         * Sets [Builder.sizeClass] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sizeClass] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun sizeClass(sizeClass: JsonField<String>) = apply { this.sizeClass = sizeClass }
+
         fun snapshotId(snapshotId: String) = snapshotId(JsonField.of(snapshotId))
 
         /**
@@ -510,19 +517,6 @@ private constructor(
          */
         fun statusMessage(statusMessage: JsonField<String>) = apply {
             this.statusMessage = statusMessage
-        }
-
-        fun templateName(templateName: String) = templateName(JsonField.of(templateName))
-
-        /**
-         * Sets [Builder.templateName] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.templateName] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun templateName(templateName: JsonField<String>) = apply {
-            this.templateName = templateName
         }
 
         fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
@@ -591,10 +585,10 @@ private constructor(
                 memBytes,
                 name,
                 proxyConfig,
+                sizeClass,
                 snapshotId,
                 status,
                 statusMessage,
-                templateName,
                 ttlSeconds,
                 updatedAt,
                 vcpus,
@@ -618,10 +612,10 @@ private constructor(
         memBytes()
         name()
         proxyConfig().ifPresent { it.validate() }
+        sizeClass()
         snapshotId()
         status()
         statusMessage()
-        templateName()
         ttlSeconds()
         updatedAt()
         vcpus()
@@ -652,10 +646,10 @@ private constructor(
             (if (memBytes.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (sizeClass.asKnown().isPresent) 1 else 0) +
             (if (snapshotId.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (statusMessage.asKnown().isPresent) 1 else 0) +
-            (if (templateName.asKnown().isPresent) 1 else 0) +
             (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (vcpus.asKnown().isPresent) 1 else 0)
@@ -1186,9 +1180,6 @@ private constructor(
             fun matchHosts(): List<String> = matchHosts.getRequired("match_hosts")
 
             /**
-             * TTLSeconds is how long resolved headers are cached before the proxy re-invokes URL.
-             * Must be between 60 and 3600 seconds.
-             *
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
@@ -1316,10 +1307,6 @@ private constructor(
                         }
                 }
 
-                /**
-                 * TTLSeconds is how long resolved headers are cached before the proxy re-invokes
-                 * URL. Must be between 60 and 3600 seconds.
-                 */
                 fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
 
                 /**
@@ -2687,10 +2674,10 @@ private constructor(
             memBytes == other.memBytes &&
             name == other.name &&
             proxyConfig == other.proxyConfig &&
+            sizeClass == other.sizeClass &&
             snapshotId == other.snapshotId &&
             status == other.status &&
             statusMessage == other.statusMessage &&
-            templateName == other.templateName &&
             ttlSeconds == other.ttlSeconds &&
             updatedAt == other.updatedAt &&
             vcpus == other.vcpus &&
@@ -2708,10 +2695,10 @@ private constructor(
             memBytes,
             name,
             proxyConfig,
+            sizeClass,
             snapshotId,
             status,
             statusMessage,
-            templateName,
             ttlSeconds,
             updatedAt,
             vcpus,
@@ -2722,5 +2709,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxStartResponse{id=$id, createdAt=$createdAt, dataplaneUrl=$dataplaneUrl, expiresAt=$expiresAt, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, templateName=$templateName, ttlSeconds=$ttlSeconds, updatedAt=$updatedAt, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "BoxStartResponse{id=$id, createdAt=$createdAt, dataplaneUrl=$dataplaneUrl, expiresAt=$expiresAt, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, ttlSeconds=$ttlSeconds, updatedAt=$updatedAt, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

@@ -17,7 +17,6 @@ internal class BoxListParamsTest {
             .sortBy("sort_by")
             .sortDirection("sort_direction")
             .status("status")
-            .templateName("template_name")
             .build()
     }
 
@@ -31,7 +30,6 @@ internal class BoxListParamsTest {
                 .sortBy("sort_by")
                 .sortDirection("sort_direction")
                 .status("status")
-                .templateName("template_name")
                 .build()
 
         val queryParams = params._queryParams()
@@ -45,7 +43,6 @@ internal class BoxListParamsTest {
                     .put("sort_by", "sort_by")
                     .put("sort_direction", "sort_direction")
                     .put("status", "status")
-                    .put("template_name", "template_name")
                     .build()
             )
     }
