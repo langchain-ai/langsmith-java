@@ -38,12 +38,8 @@ internal fun zstd(body: HttpRequestBody): HttpRequestBody =
     object : HttpRequestBody {
 
         override fun writeTo(outputStream: OutputStream) {
-            val zstdOutputStream =
-                ZstdOutputStream(NonClosingOutputStream(outputStream)).setCloseFrameOnFlush(true)
-            try {
-                body.writeTo(zstdOutputStream)
-            } finally {
-                zstdOutputStream.close()
+            ZstdOutputStream(NonClosingOutputStream(outputStream)).setCloseFrameOnFlush(true).use {
+                body.writeTo(it)
             }
         }
 
