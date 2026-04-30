@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.2 (2026-04-30)
+
+Full Changelog: [v0.1.0-beta.1...v0.1.0-beta.2](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.1...v0.1.0-beta.2)
+
+### Bug Fixes
+
+* Fix another build issue ([#141](https://github.com/langchain-ai/langsmith-java/issues/141)) ([46baa8a](https://github.com/langchain-ai/langsmith-java/commit/46baa8a73e2770e190966d237996135b7fb6b0a3))
+
 ## 0.1.0-beta.1 (2026-04-30)
 
 Full Changelog: [v0.1.0-beta.0...v0.1.0-beta.1](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.0...v0.1.0-beta.1)
