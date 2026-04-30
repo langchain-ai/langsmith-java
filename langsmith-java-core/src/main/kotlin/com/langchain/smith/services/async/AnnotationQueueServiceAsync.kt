@@ -30,6 +30,7 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueUpdateResponse
 import com.langchain.smith.models.annotationqueues.RunSchemaWithAnnotationQueueInfo
 import com.langchain.smith.services.async.annotationqueues.InfoServiceAsync
 import com.langchain.smith.services.async.annotationqueues.RunServiceAsync
+import com.langchain.smith.services.async.annotationqueues.WorkspaceServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -50,6 +51,8 @@ interface AnnotationQueueServiceAsync {
     fun runs(): RunServiceAsync
 
     fun info(): InfoServiceAsync
+
+    fun workspaces(): WorkspaceServiceAsync
 
     /** Get Annotation Queue */
     fun retrieve(queueId: String): CompletableFuture<AnnotationQueueRetrieveResponse> =
@@ -500,6 +503,8 @@ interface AnnotationQueueServiceAsync {
         fun runs(): RunServiceAsync.WithRawResponse
 
         fun info(): InfoServiceAsync.WithRawResponse
+
+        fun workspaces(): WorkspaceServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}`, but is
