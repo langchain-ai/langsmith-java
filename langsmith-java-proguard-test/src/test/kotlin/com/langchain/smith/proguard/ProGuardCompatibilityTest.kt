@@ -64,6 +64,8 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.feedback()).isNotNull()
         assertThat(client.public_()).isNotNull()
         assertThat(client.annotationQueues()).isNotNull()
+        assertThat(client.info()).isNotNull()
+        assertThat(client.workspaces()).isNotNull()
         assertThat(client.repos()).isNotNull()
         assertThat(client.commits()).isNotNull()
         assertThat(client.settings()).isNotNull()

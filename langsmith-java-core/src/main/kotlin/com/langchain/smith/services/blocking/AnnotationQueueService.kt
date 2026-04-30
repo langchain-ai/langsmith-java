@@ -29,9 +29,7 @@ import com.langchain.smith.models.annotationqueues.AnnotationQueueSizeSchema
 import com.langchain.smith.models.annotationqueues.AnnotationQueueUpdateParams
 import com.langchain.smith.models.annotationqueues.AnnotationQueueUpdateResponse
 import com.langchain.smith.models.annotationqueues.RunSchemaWithAnnotationQueueInfo
-import com.langchain.smith.services.blocking.annotationqueues.InfoService
 import com.langchain.smith.services.blocking.annotationqueues.RunService
-import com.langchain.smith.services.blocking.annotationqueues.WorkspaceService
 import java.util.function.Consumer
 
 interface AnnotationQueueService {
@@ -49,10 +47,6 @@ interface AnnotationQueueService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): AnnotationQueueService
 
     fun runs(): RunService
-
-    fun info(): InfoService
-
-    fun workspaces(): WorkspaceService
 
     /** Get Annotation Queue */
     fun retrieve(queueId: String): AnnotationQueueRetrieveResponse =
@@ -457,10 +451,6 @@ interface AnnotationQueueService {
         ): AnnotationQueueService.WithRawResponse
 
         fun runs(): RunService.WithRawResponse
-
-        fun info(): InfoService.WithRawResponse
-
-        fun workspaces(): WorkspaceService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}`, but is
