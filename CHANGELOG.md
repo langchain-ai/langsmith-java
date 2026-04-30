@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.1.0-beta.0 (2026-04-30)
+
+Full Changelog: [v0.1.0-alpha.28...v0.1.0-beta.0](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.28...v0.1.0-beta.0)
+
+### Features
+
+* Add autobatch tracing mode ([#134](https://github.com/langchain-ai/langsmith-java/issues/134)) ([230959e](https://github.com/langchain-ai/langsmith-java/commit/230959e124ec705648c4cd1e48da915d945154b8))
+* Add multipart batching ([#138](https://github.com/langchain-ai/langsmith-java/issues/138)) ([288221c](https://github.com/langchain-ai/langsmith-java/commit/288221c44835d472eb9f0ff59d1f22d0ec150ccb))
+* Add zstd compression to runs service ([#136](https://github.com/langchain-ai/langsmith-java/issues/136)) ([e412191](https://github.com/langchain-ai/langsmith-java/commit/e4121913a5d5a8a6de2a16e272925c947694e7c0))
+* **api:** add workspaces ([cc88cdf](https://github.com/langchain-ai/langsmith-java/commit/cc88cdf706b9f2ff7a1e66e00273af027c60f203))
+* **api:** api update ([c3252b8](https://github.com/langchain-ai/langsmith-java/commit/c3252b8becd6ee89c95dc6ae39bf701d76629e18))
+* **api:** api update ([af1ba52](https://github.com/langchain-ai/langsmith-java/commit/af1ba5242ec894847e0dc007674681858cb37a42))
+* **api:** api update ([e1cca2b](https://github.com/langchain-ai/langsmith-java/commit/e1cca2b004858451074865be8b9fb4e532f2f5f5))
+* **api:** api update ([fd1fc58](https://github.com/langchain-ai/langsmith-java/commit/fd1fc5830a739a88c221e682d1520612c0e45e66))
+* **api:** api update ([b487509](https://github.com/langchain-ai/langsmith-java/commit/b4875093d10d752fcc8c3757e33d6c2bbe334c15))
+* **api:** api update ([0758583](https://github.com/langchain-ai/langsmith-java/commit/0758583e5cc42b465c662a2897fff92a6fd61394))
+* **api:** api update ([1310303](https://github.com/langchain-ai/langsmith-java/commit/131030331c0bab2568498a2bff96112f0fe46fee))
+* **api:** manual updates ([0be4215](https://github.com/langchain-ai/langsmith-java/commit/0be4215e63ce63ee562ce1c48b001a6848cce704))
+* **api:** manual updates ([f35b312](https://github.com/langchain-ai/langsmith-java/commit/f35b31249d59265e74d6d33f4e3298fe416757ae))
+* **api:** sandbox apis ([bd21a1d](https://github.com/langchain-ai/langsmith-java/commit/bd21a1df96b708ac04712aaed7ef1a95505cf1f1))
+* **evaluators:** add list evaluators (GET /api/v1/runs/rules) ([be32489](https://github.com/langchain-ai/langsmith-java/commit/be324893c09e4ab6e2176dda1d2f6a6cf15413e6))
+* Make autobatch queue denote batches by payload size, add aggregation delay ([#137](https://github.com/langchain-ai/langsmith-java/issues/137)) ([2fb72ae](https://github.com/langchain-ai/langsmith-java/commit/2fb72ae9681964dd2e798642d88ded506c8189b5))
+* Merge enqueued posts and patches to optimize batching ([#135](https://github.com/langchain-ai/langsmith-java/issues/135)) ([d65e301](https://github.com/langchain-ai/langsmith-java/commit/d65e3019910bb077ea59056aa37c9d0ef30bfb1a))
+* support setting headers via env ([567af0c](https://github.com/langchain-ai/langsmith-java/commit/567af0c1eba8bf2dc6648529c11260f36e586bd3))
+
+
+### Chores
+
+* **deps:** bump the minor-and-patch group across 1 directory with 5 updates ([#123](https://github.com/langchain-ai/langsmith-java/issues/123)) ([1f88790](https://github.com/langchain-ai/langsmith-java/commit/1f887908d8d851dc641905b7beb8cf4f7cf935b1))
+
 ## 0.1.0-alpha.28 (2026-04-14)
 
 Full Changelog: [v0.1.0-alpha.27...v0.1.0-alpha.28](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-alpha.27...v0.1.0-alpha.28)
