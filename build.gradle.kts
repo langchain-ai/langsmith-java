@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.dokka") version "2.2.0"
+    id("org.jetbrains.dokka-javadoc") version "2.2.0"
 }
 
 repositories {
@@ -22,15 +23,5 @@ subprojects {
         description = "Verifies all source files are formatted."
     }
     apply(plugin = "org.jetbrains.dokka")
-}
-
-subprojects {
-    apply(plugin = "org.jetbrains.dokka")
-}
-
-// Avoid race conditions between `dokkaJavadocCollector` and `dokkaJavadocJar` tasks
-tasks.named("dokkaJavadocCollector").configure {
-    subprojects.flatMap { it.tasks }
-        .filter { it.project.name != "langsmith-java" && it.name == "dokkaJavadocJar" }
-        .forEach { mustRunAfter(it) }
+    apply(plugin = "org.jetbrains.dokka-javadoc")
 }
