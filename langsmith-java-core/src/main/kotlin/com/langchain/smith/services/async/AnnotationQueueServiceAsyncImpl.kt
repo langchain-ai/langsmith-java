@@ -44,6 +44,8 @@ import com.langchain.smith.services.async.annotationqueues.InfoServiceAsync
 import com.langchain.smith.services.async.annotationqueues.InfoServiceAsyncImpl
 import com.langchain.smith.services.async.annotationqueues.RunServiceAsync
 import com.langchain.smith.services.async.annotationqueues.RunServiceAsyncImpl
+import com.langchain.smith.services.async.annotationqueues.WorkspaceServiceAsync
+import com.langchain.smith.services.async.annotationqueues.WorkspaceServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -59,6 +61,10 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
 
     private val info: InfoServiceAsync by lazy { InfoServiceAsyncImpl(clientOptions) }
 
+    private val workspaces: WorkspaceServiceAsync by lazy {
+        WorkspaceServiceAsyncImpl(clientOptions)
+    }
+
     override fun withRawResponse(): AnnotationQueueServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(
@@ -69,6 +75,8 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
     override fun runs(): RunServiceAsync = runs
 
     override fun info(): InfoServiceAsync = info
+
+    override fun workspaces(): WorkspaceServiceAsync = workspaces
 
     override fun retrieve(
         params: AnnotationQueueRetrieveParams,
@@ -175,6 +183,10 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
             InfoServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val workspaces: WorkspaceServiceAsync.WithRawResponse by lazy {
+            WorkspaceServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): AnnotationQueueServiceAsync.WithRawResponse =
@@ -185,6 +197,8 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         override fun runs(): RunServiceAsync.WithRawResponse = runs
 
         override fun info(): InfoServiceAsync.WithRawResponse = info
+
+        override fun workspaces(): WorkspaceServiceAsync.WithRawResponse = workspaces
 
         private val retrieveHandler: Handler<AnnotationQueueRetrieveResponse> =
             jsonHandler<AnnotationQueueRetrieveResponse>(clientOptions.jsonMapper)
