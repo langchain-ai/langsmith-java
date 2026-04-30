@@ -23,11 +23,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun retrieve() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueue =
@@ -40,11 +36,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun update() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueue =
@@ -92,11 +84,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun delete() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueue = annotationQueueService.delete("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -108,11 +96,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun annotationQueues() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueueSchema =
@@ -163,11 +147,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun createRunStatus() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val response =
@@ -186,11 +166,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun export() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val response =
@@ -210,11 +186,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun populate() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val response =
@@ -232,11 +204,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun retrieveAnnotationQueues() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val page = annotationQueueService.retrieveAnnotationQueues()
@@ -248,11 +216,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun retrieveQueues() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueueSchemata =
@@ -265,11 +229,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun retrieveRun() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val runSchemaWithAnnotationQueueInfo =
@@ -288,11 +248,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun retrieveSize() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueueSizeSchema =
@@ -310,11 +266,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun retrieveTotalArchived() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueueSizeSchema =
@@ -333,11 +285,7 @@ internal class AnnotationQueueServiceTest {
     @Test
     fun retrieveTotalSize() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val annotationQueueService = client.annotationQueues()
 
         val annotationQueueSizeSchema =

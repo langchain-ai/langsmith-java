@@ -21,11 +21,7 @@ internal class SessionServiceTest {
     @Test
     fun create() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val sessionService = client.sessions()
 
         val tracerSessionWithoutVirtualFields =
@@ -55,11 +51,7 @@ internal class SessionServiceTest {
     @Test
     fun retrieve() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val sessionService = client.sessions()
 
         val tracerSession =
@@ -79,11 +71,7 @@ internal class SessionServiceTest {
     @Test
     fun update() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val sessionService = client.sessions()
 
         val tracerSessionWithoutVirtualFields =
@@ -110,11 +98,7 @@ internal class SessionServiceTest {
     @Test
     fun list() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val sessionService = client.sessions()
 
         val page = sessionService.list()
@@ -126,11 +110,7 @@ internal class SessionServiceTest {
     @Test
     fun delete() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val sessionService = client.sessions()
 
         val session = sessionService.delete("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -142,11 +122,7 @@ internal class SessionServiceTest {
     @Test
     fun dashboard() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val sessionService = client.sessions()
 
         val customChartsSection =

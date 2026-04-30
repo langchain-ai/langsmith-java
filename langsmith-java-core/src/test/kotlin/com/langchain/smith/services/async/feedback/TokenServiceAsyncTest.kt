@@ -22,7 +22,6 @@ internal class TokenServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val tokenServiceAsync = client.feedback().tokens()
 
@@ -60,7 +59,6 @@ internal class TokenServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val tokenServiceAsync = client.feedback().tokens()
 
@@ -86,7 +84,6 @@ internal class TokenServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val tokenServiceAsync = client.feedback().tokens()
 
@@ -121,7 +118,6 @@ internal class TokenServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val tokenServiceAsync = client.feedback().tokens()
 

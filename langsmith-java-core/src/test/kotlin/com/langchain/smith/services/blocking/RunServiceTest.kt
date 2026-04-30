@@ -369,11 +369,7 @@ internal class RunServiceTest {
     @Test
     fun retrieve() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.runs()
 
         val runSchema =
@@ -395,11 +391,7 @@ internal class RunServiceTest {
     @Test
     fun ingestBatch() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.runs()
 
         val response =
@@ -521,11 +513,7 @@ internal class RunServiceTest {
     @Test
     fun query() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.runs()
 
         val response =
@@ -565,11 +553,7 @@ internal class RunServiceTest {
     @Test
     fun stats() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.runs()
 
         val response =
@@ -613,11 +597,7 @@ internal class RunServiceTest {
     @Test
     fun update2() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.runs()
 
         val response = runService.update2("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

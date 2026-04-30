@@ -12,11 +12,7 @@ internal class InfoServiceTest {
     @Test
     fun list() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val infoService = client.info()
 
         val infos = infoService.list()

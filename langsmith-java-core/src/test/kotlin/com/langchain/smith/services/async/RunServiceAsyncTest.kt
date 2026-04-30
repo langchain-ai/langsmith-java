@@ -26,7 +26,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.runs()
 
@@ -95,7 +94,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.runs()
 
@@ -122,7 +120,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.runs()
 
@@ -196,7 +193,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.runs()
 
@@ -323,7 +319,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.runs()
 
@@ -368,7 +363,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.runs()
 
@@ -417,7 +411,6 @@ internal class RunServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val runServiceAsync = client.runs()
 

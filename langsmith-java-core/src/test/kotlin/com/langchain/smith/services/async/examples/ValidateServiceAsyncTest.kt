@@ -15,7 +15,6 @@ internal class ValidateServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val validateServiceAsync = client.examples().validate()
 
@@ -32,7 +31,6 @@ internal class ValidateServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val validateServiceAsync = client.examples().validate()
 

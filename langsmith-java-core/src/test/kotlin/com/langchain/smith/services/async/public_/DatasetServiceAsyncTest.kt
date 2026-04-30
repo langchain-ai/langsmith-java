@@ -18,7 +18,6 @@ internal class DatasetServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val datasetServiceAsync = client.public_().datasets()
 
@@ -44,7 +43,6 @@ internal class DatasetServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val datasetServiceAsync = client.public_().datasets()
 
@@ -61,7 +59,6 @@ internal class DatasetServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val datasetServiceAsync = client.public_().datasets()
 
@@ -78,7 +75,6 @@ internal class DatasetServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val datasetServiceAsync = client.public_().datasets()
 
@@ -95,7 +91,6 @@ internal class DatasetServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val datasetServiceAsync = client.public_().datasets()
 

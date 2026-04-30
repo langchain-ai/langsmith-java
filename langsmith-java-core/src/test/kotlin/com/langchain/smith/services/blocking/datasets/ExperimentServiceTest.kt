@@ -14,11 +14,7 @@ internal class ExperimentServiceTest {
     @Test
     fun grouped() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val experimentService = client.datasets().experiments()
 
         val response =

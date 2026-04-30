@@ -14,11 +14,7 @@ internal class ShareServiceTest {
     @Test
     fun create() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val shareService = client.datasets().share()
 
         val datasetShareSchema =
@@ -36,11 +32,7 @@ internal class ShareServiceTest {
     @Test
     fun retrieve() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val shareService = client.datasets().share()
 
         val datasetShareSchema = shareService.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -53,11 +45,7 @@ internal class ShareServiceTest {
     @Test
     fun deleteAll() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val shareService = client.datasets().share()
 
         val response = shareService.deleteAll("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

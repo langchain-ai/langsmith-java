@@ -12,11 +12,7 @@ internal class PublicServiceTest {
     @Test
     fun retrieveFeedbacks() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val publicService = client.public_()
 
         val page = publicService.retrieveFeedbacks("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

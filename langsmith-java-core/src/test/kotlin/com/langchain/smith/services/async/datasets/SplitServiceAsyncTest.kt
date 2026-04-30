@@ -18,7 +18,6 @@ internal class SplitServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val splitServiceAsync = client.datasets().splits()
 
@@ -42,7 +41,6 @@ internal class SplitServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val splitServiceAsync = client.datasets().splits()
 

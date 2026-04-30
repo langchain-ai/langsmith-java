@@ -15,7 +15,6 @@ internal class InfoServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val infoServiceAsync = client.info()
 

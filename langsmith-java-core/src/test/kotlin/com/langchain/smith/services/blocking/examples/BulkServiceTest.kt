@@ -16,11 +16,7 @@ internal class BulkServiceTest {
     @Test
     fun create() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val bulkService = client.examples().bulk()
 
         val examples =
@@ -61,11 +57,7 @@ internal class BulkServiceTest {
     @Test
     fun patchAll() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val bulkService = client.examples().bulk()
 
         val response =
