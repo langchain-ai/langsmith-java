@@ -20,7 +20,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -100,7 +99,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -117,7 +115,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -194,7 +191,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -221,7 +217,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -237,7 +232,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -261,7 +255,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -285,7 +278,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -302,7 +294,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
@@ -319,7 +310,6 @@ internal class BoxServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 

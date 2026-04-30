@@ -18,11 +18,7 @@ internal class FeedbackServiceTest {
     @Test
     fun create() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val feedbackService = client.feedback()
 
         val feedbackSchema =
@@ -80,11 +76,7 @@ internal class FeedbackServiceTest {
     @Test
     fun retrieve() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val feedbackService = client.feedback()
 
         val feedbackSchema =
@@ -102,11 +94,7 @@ internal class FeedbackServiceTest {
     @Test
     fun update() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val feedbackService = client.feedback()
 
         val feedbackSchema =
@@ -144,11 +132,7 @@ internal class FeedbackServiceTest {
     @Test
     fun list() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val feedbackService = client.feedback()
 
         val page = feedbackService.list()
@@ -160,11 +144,7 @@ internal class FeedbackServiceTest {
     @Test
     fun delete() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val feedbackService = client.feedback()
 
         val feedback = feedbackService.delete("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

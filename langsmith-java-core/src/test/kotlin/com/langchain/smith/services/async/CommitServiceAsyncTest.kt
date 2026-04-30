@@ -19,7 +19,6 @@ internal class CommitServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val commitServiceAsync = client.commits()
 
@@ -46,7 +45,6 @@ internal class CommitServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val commitServiceAsync = client.commits()
 
@@ -74,7 +72,6 @@ internal class CommitServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val commitServiceAsync = client.commits()
 

@@ -26,11 +26,7 @@ internal class DatasetServiceTest {
     @Test
     fun create() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val dataset =
@@ -75,11 +71,7 @@ internal class DatasetServiceTest {
     @Test
     fun retrieve() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val dataset = datasetService.retrieve("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -91,11 +83,7 @@ internal class DatasetServiceTest {
     @Test
     fun update() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val dataset =
@@ -163,11 +151,7 @@ internal class DatasetServiceTest {
     @Test
     fun list() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val page = datasetService.list()
@@ -179,11 +163,7 @@ internal class DatasetServiceTest {
     @Test
     fun delete() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val dataset = datasetService.delete("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -195,11 +175,7 @@ internal class DatasetServiceTest {
     @Test
     fun clone() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val response =
@@ -220,11 +196,7 @@ internal class DatasetServiceTest {
     @Test
     fun retrieveCsv() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val response =
@@ -242,11 +214,7 @@ internal class DatasetServiceTest {
     @Test
     fun retrieveJsonl() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val response =
@@ -264,11 +232,7 @@ internal class DatasetServiceTest {
     @Test
     fun retrieveOpenAI() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val response =
@@ -286,11 +250,7 @@ internal class DatasetServiceTest {
     @Test
     fun retrieveOpenAIFt() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val response =
@@ -308,11 +268,7 @@ internal class DatasetServiceTest {
     @Test
     fun retrieveVersion() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val datasetVersion =
@@ -331,11 +287,7 @@ internal class DatasetServiceTest {
     @Test
     fun updateTags() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val datasetVersion =
@@ -354,11 +306,7 @@ internal class DatasetServiceTest {
     @Test
     fun upload() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.datasets()
 
         val dataset =

@@ -17,7 +17,6 @@ internal class VersionServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val versionServiceAsync = client.datasets().versions()
 
@@ -34,7 +33,6 @@ internal class VersionServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val versionServiceAsync = client.datasets().versions()
 

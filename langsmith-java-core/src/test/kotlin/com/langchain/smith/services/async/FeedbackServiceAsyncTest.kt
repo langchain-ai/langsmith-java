@@ -21,7 +21,6 @@ internal class FeedbackServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val feedbackServiceAsync = client.feedback()
 
@@ -84,7 +83,6 @@ internal class FeedbackServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val feedbackServiceAsync = client.feedback()
 
@@ -107,7 +105,6 @@ internal class FeedbackServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val feedbackServiceAsync = client.feedback()
 
@@ -150,7 +147,6 @@ internal class FeedbackServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val feedbackServiceAsync = client.feedback()
 
@@ -167,7 +163,6 @@ internal class FeedbackServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val feedbackServiceAsync = client.feedback()
 

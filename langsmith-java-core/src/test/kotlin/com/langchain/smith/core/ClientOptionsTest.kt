@@ -24,7 +24,6 @@ internal class ClientOptionsTest {
                 .putHeader("User-Agent", "My User Agent")
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
 
         assertThat(clientOptions.headers.values("User-Agent")).containsExactly("My User Agent")
@@ -37,7 +36,6 @@ internal class ClientOptionsTest {
                 .httpClient(httpClient)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
 
         clientOptions = clientOptions.toBuilder().apiKey("another My API Key").build()
@@ -52,7 +50,6 @@ internal class ClientOptionsTest {
                 .httpClient(httpClient)
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         verify(httpClient, never()).close()
 

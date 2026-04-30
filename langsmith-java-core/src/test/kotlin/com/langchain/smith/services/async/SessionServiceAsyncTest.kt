@@ -24,7 +24,6 @@ internal class SessionServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val sessionServiceAsync = client.sessions()
 
@@ -59,7 +58,6 @@ internal class SessionServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val sessionServiceAsync = client.sessions()
 
@@ -84,7 +82,6 @@ internal class SessionServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val sessionServiceAsync = client.sessions()
 
@@ -116,7 +113,6 @@ internal class SessionServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val sessionServiceAsync = client.sessions()
 
@@ -133,7 +129,6 @@ internal class SessionServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val sessionServiceAsync = client.sessions()
 
@@ -150,7 +145,6 @@ internal class SessionServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val sessionServiceAsync = client.sessions()
 

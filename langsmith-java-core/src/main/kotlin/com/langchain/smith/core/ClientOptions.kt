@@ -109,8 +109,6 @@ private constructor(
     @get:JvmName("maxRetries") val maxRetries: Int,
     private val apiKey: String?,
     private val tenantId: String?,
-    private val bearerToken: String?,
-    private val organizationId: String?,
 ) {
 
     init {
@@ -129,14 +127,6 @@ private constructor(
     fun apiKey(): Optional<String> = Optional.ofNullable(apiKey)
 
     fun tenantId(): Optional<String> = Optional.ofNullable(tenantId)
-
-    /**
-     * Bearer tokens are used to authenticate from the UI. Must also specify x-tenant-id or
-     * x-organization-id (for org scoped apis).
-     */
-    fun bearerToken(): Optional<String> = Optional.ofNullable(bearerToken)
-
-    fun organizationId(): Optional<String> = Optional.ofNullable(organizationId)
 
     fun toBuilder() = Builder().from(this)
 
@@ -179,8 +169,6 @@ private constructor(
         private var maxRetries: Int = 2
         private var apiKey: String? = null
         private var tenantId: String? = null
-        private var bearerToken: String? = null
-        private var organizationId: String? = null
 
         @JvmSynthetic
         internal fun from(clientOptions: ClientOptions) = apply {
@@ -198,8 +186,6 @@ private constructor(
             maxRetries = clientOptions.maxRetries
             apiKey = clientOptions.apiKey
             tenantId = clientOptions.tenantId
-            bearerToken = clientOptions.bearerToken
-            organizationId = clientOptions.organizationId
         }
 
         /**
@@ -330,21 +316,6 @@ private constructor(
         /** Alias for calling [Builder.tenantId] with `tenantId.orElse(null)`. */
         fun tenantId(tenantId: Optional<String>) = tenantId(tenantId.getOrNull())
 
-        /**
-         * Bearer tokens are used to authenticate from the UI. Must also specify x-tenant-id or
-         * x-organization-id (for org scoped apis).
-         */
-        fun bearerToken(bearerToken: String?) = apply { this.bearerToken = bearerToken }
-
-        /** Alias for calling [Builder.bearerToken] with `bearerToken.orElse(null)`. */
-        fun bearerToken(bearerToken: Optional<String>) = bearerToken(bearerToken.getOrNull())
-
-        fun organizationId(organizationId: String?) = apply { this.organizationId = organizationId }
-
-        /** Alias for calling [Builder.organizationId] with `organizationId.orElse(null)`. */
-        fun organizationId(organizationId: Optional<String>) =
-            organizationId(organizationId.getOrNull())
-
         fun headers(headers: Headers) = apply {
             this.headers.clear()
             putAllHeaders(headers)
@@ -432,13 +403,11 @@ private constructor(
          *
          * See this table for the available options:
          *
-         * |Setter          |System property                    |Environment variable       |Required|Default value                       |
-         * |----------------|-----------------------------------|---------------------------|--------|------------------------------------|
-         * |`apiKey`        |`langchain.langsmithApiKey`        |`LANGSMITH_API_KEY`        |false   |-                                   |
-         * |`tenantId`      |`langchain.langsmithTenantId`      |`LANGSMITH_TENANT_ID`      |false   |-                                   |
-         * |`bearerToken`   |`langchain.langsmithBearerToken`   |`LANGSMITH_BEARER_TOKEN`   |false   |-                                   |
-         * |`organizationId`|`langchain.langsmithOrganizationId`|`LANGSMITH_ORGANIZATION_ID`|false   |-                                   |
-         * |`baseUrl`       |`langchain.baseUrl`                |`LANGCHAIN_BASE_URL`       |true    |`"https://api.smith.langchain.com/"`|
+         * |Setter    |System property              |Environment variable |Required|Default value                       |
+         * |----------|-----------------------------|---------------------|--------|------------------------------------|
+         * |`apiKey`  |`langchain.langsmithApiKey`  |`LANGSMITH_API_KEY`  |false   |-                                   |
+         * |`tenantId`|`langchain.langsmithTenantId`|`LANGSMITH_TENANT_ID`|false   |-                                   |
+         * |`baseUrl` |`langchain.baseUrl`          |`LANGCHAIN_BASE_URL` |true    |`"https://api.smith.langchain.com/"`|
          *
          * System properties take precedence over environment variables.
          */
@@ -451,12 +420,6 @@ private constructor(
             (System.getProperty("langchain.langsmithTenantId")
                     ?: System.getenv("LANGSMITH_TENANT_ID"))
                 ?.let { tenantId(it) }
-            (System.getProperty("langchain.langsmithBearerToken")
-                    ?: System.getenv("LANGSMITH_BEARER_TOKEN"))
-                ?.let { bearerToken(it) }
-            (System.getProperty("langchain.langsmithOrganizationId")
-                    ?: System.getenv("LANGSMITH_ORGANIZATION_ID"))
-                ?.let { organizationId(it) }
             System.getenv("LANGCHAIN_CUSTOM_HEADERS")?.let { customHeadersEnv ->
                 for (line in customHeadersEnv.split("\n")) {
                     val colon = line.indexOf(':')
@@ -524,16 +487,6 @@ private constructor(
                     headers.replace("X-Tenant-Id", it)
                 }
             }
-            bearerToken?.let {
-                if (!it.isEmpty()) {
-                    headers.replace("Authorization", "Bearer $it")
-                }
-            }
-            organizationId?.let {
-                if (!it.isEmpty()) {
-                    headers.replace("X-Organization-Id", it)
-                }
-            }
 
             return ClientOptions(
                 httpClient,
@@ -556,8 +509,6 @@ private constructor(
                 maxRetries,
                 apiKey,
                 tenantId,
-                bearerToken,
-                organizationId,
             )
         }
     }

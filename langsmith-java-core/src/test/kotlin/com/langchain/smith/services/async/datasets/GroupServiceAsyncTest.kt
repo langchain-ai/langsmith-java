@@ -17,7 +17,6 @@ internal class GroupServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val groupServiceAsync = client.datasets().group()
 

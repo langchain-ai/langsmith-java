@@ -23,7 +23,6 @@ internal class InsightServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val insightServiceAsync = client.sessions().insights()
 
@@ -78,7 +77,6 @@ internal class InsightServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val insightServiceAsync = client.sessions().insights()
 
@@ -102,7 +100,6 @@ internal class InsightServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val insightServiceAsync = client.sessions().insights()
 
@@ -119,7 +116,6 @@ internal class InsightServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val insightServiceAsync = client.sessions().insights()
 
@@ -142,7 +138,6 @@ internal class InsightServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val insightServiceAsync = client.sessions().insights()
 
@@ -165,7 +160,6 @@ internal class InsightServiceAsyncTest {
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
                 .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
                 .build()
         val insightServiceAsync = client.sessions().insights()
 

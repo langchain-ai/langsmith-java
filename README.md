@@ -52,8 +52,8 @@ import com.langchain.smith.models.sessions.CustomChartsSection;
 import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
 import com.langchain.smith.models.sessions.SessionDashboardParams;
 
-// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
+// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
@@ -71,8 +71,8 @@ Configure the client using system properties or environment variables:
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
-// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
+// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 ```
 
@@ -85,7 +85,6 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 LangsmithClient client = LangsmithOkHttpClient.builder()
     .apiKey("My API Key")
     .tenantId("My Tenant ID")
-    .organizationId("My Organization ID")
     .build();
 ```
 
@@ -96,8 +95,8 @@ import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
 LangsmithClient client = LangsmithOkHttpClient.builder()
-    // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
-    // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
+    // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
+    // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
     .fromEnv()
     .apiKey("My API Key")
     .build();
@@ -105,13 +104,11 @@ LangsmithClient client = LangsmithOkHttpClient.builder()
 
 See this table for the available options:
 
-| Setter           | System property                     | Environment variable        | Required | Default value                        |
-| ---------------- | ----------------------------------- | --------------------------- | -------- | ------------------------------------ |
-| `apiKey`         | `langchain.langsmithApiKey`         | `LANGSMITH_API_KEY`         | false    | -                                    |
-| `tenantId`       | `langchain.langsmithTenantId`       | `LANGSMITH_TENANT_ID`       | false    | -                                    |
-| `bearerToken`    | `langchain.langsmithBearerToken`    | `LANGSMITH_BEARER_TOKEN`    | false    | -                                    |
-| `organizationId` | `langchain.langsmithOrganizationId` | `LANGSMITH_ORGANIZATION_ID` | false    | -                                    |
-| `baseUrl`        | `langchain.baseUrl`                 | `LANGCHAIN_BASE_URL`        | true     | `"https://api.smith.langchain.com/"` |
+| Setter     | System property               | Environment variable  | Required | Default value                        |
+| ---------- | ----------------------------- | --------------------- | -------- | ------------------------------------ |
+| `apiKey`   | `langchain.langsmithApiKey`   | `LANGSMITH_API_KEY`   | false    | -                                    |
+| `tenantId` | `langchain.langsmithTenantId` | `LANGSMITH_TENANT_ID` | false    | -                                    |
+| `baseUrl`  | `langchain.baseUrl`           | `LANGCHAIN_BASE_URL`  | true     | `"https://api.smith.langchain.com/"` |
 
 System properties take precedence over environment variables.
 
@@ -160,8 +157,8 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
 import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
+// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
@@ -181,8 +178,8 @@ import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
 import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
-// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId`, `langchain.langsmithBearerToken`, `langchain.langsmithOrganizationId` and `langchain.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID`, `LANGSMITH_BEARER_TOKEN`, `LANGSMITH_ORGANIZATION_ID` and `LANGCHAIN_BASE_URL` environment variables
+// Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClientAsync client = LangsmithOkHttpClientAsync.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()

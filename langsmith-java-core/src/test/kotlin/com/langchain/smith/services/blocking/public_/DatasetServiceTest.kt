@@ -15,11 +15,7 @@ internal class DatasetServiceTest {
     @Test
     fun list() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.public_().datasets()
 
         val datasets =
@@ -40,11 +36,7 @@ internal class DatasetServiceTest {
     @Test
     fun listComparative() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.public_().datasets()
 
         val page = datasetService.listComparative("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -56,11 +48,7 @@ internal class DatasetServiceTest {
     @Test
     fun listFeedback() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.public_().datasets()
 
         val page = datasetService.listFeedback("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -72,11 +60,7 @@ internal class DatasetServiceTest {
     @Test
     fun listSessions() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.public_().datasets()
 
         val page = datasetService.listSessions("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -88,11 +72,7 @@ internal class DatasetServiceTest {
     @Test
     fun retrieveSessionsBulk() {
         val client =
-            LangsmithOkHttpClient.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .organizationId("My Organization ID")
-                .build()
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val datasetService = client.public_().datasets()
 
         val tracerSessions =
