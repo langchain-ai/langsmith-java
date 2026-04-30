@@ -22,7 +22,7 @@ import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.http.zstd
 import com.langchain.smith.core.prepare
 import com.langchain.smith.errors.NotFoundException
-import com.langchain.smith.models.annotationqueues.info.InfoListResponse
+import com.langchain.smith.models.info.InfoListResponse
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
@@ -37,7 +37,6 @@ import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
-import com.langchain.smith.services.blocking.annotationqueues.InfoServiceImpl
 import com.langchain.smith.services.blocking.runs.RuleService
 import com.langchain.smith.services.blocking.runs.RuleServiceImpl
 import com.langchain.smith.services.isZstdCompressionEnabled
@@ -358,6 +357,10 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             } else {
                 requestBuilder.body(body)
             }
+            logger.debug(
+                "Sending LangSmith run batch to multipart ingest endpoint (zstd compression: {})",
+                if (zstdCompressionEnabled) "enabled" else "disabled",
+            )
             val request = requestBuilder.build().prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
             val response = clientOptions.httpClient.execute(request, requestOptions)

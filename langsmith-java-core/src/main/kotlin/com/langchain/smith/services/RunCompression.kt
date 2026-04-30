@@ -1,7 +1,7 @@
 package com.langchain.smith.services
 
 import com.github.luben.zstd.Zstd
-import com.langchain.smith.models.annotationqueues.info.InfoListResponse
+import com.langchain.smith.models.info.InfoListResponse
 import kotlin.jvm.optionals.getOrNull
 
 internal fun isRunCompressionDisabled(): Boolean =
