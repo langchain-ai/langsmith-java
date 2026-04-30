@@ -16,6 +16,8 @@ import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.ExampleServiceImpl
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.FeedbackServiceImpl
+import com.langchain.smith.services.blocking.InfoService
+import com.langchain.smith.services.blocking.InfoServiceImpl
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.PublicServiceImpl
 import com.langchain.smith.services.blocking.RepoService
@@ -28,6 +30,8 @@ import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SessionServiceImpl
 import com.langchain.smith.services.blocking.SettingService
 import com.langchain.smith.services.blocking.SettingServiceImpl
+import com.langchain.smith.services.blocking.WorkspaceService
+import com.langchain.smith.services.blocking.WorkspaceServiceImpl
 import java.util.function.Consumer
 
 class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithClient {
@@ -69,6 +73,12 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         AnnotationQueueServiceImpl(clientOptionsWithUserAgent)
     }
 
+    private val info: InfoService by lazy { InfoServiceImpl(clientOptionsWithUserAgent) }
+
+    private val workspaces: WorkspaceService by lazy {
+        WorkspaceServiceImpl(clientOptionsWithUserAgent)
+    }
+
     private val repos: RepoService by lazy { RepoServiceImpl(clientOptionsWithUserAgent) }
 
     private val commits: CommitService by lazy { CommitServiceImpl(clientOptionsWithUserAgent) }
@@ -99,6 +109,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun public_(): PublicService = public_
 
     override fun annotationQueues(): AnnotationQueueService = annotationQueues
+
+    override fun info(): InfoService = info
+
+    override fun workspaces(): WorkspaceService = workspaces
 
     override fun repos(): RepoService = repos
 
@@ -145,6 +159,14 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             AnnotationQueueServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val info: InfoService.WithRawResponse by lazy {
+            InfoServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val workspaces: WorkspaceService.WithRawResponse by lazy {
+            WorkspaceServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val repos: RepoService.WithRawResponse by lazy {
             RepoServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -183,6 +205,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun public_(): PublicService.WithRawResponse = public_
 
         override fun annotationQueues(): AnnotationQueueService.WithRawResponse = annotationQueues
+
+        override fun info(): InfoService.WithRawResponse = info
+
+        override fun workspaces(): WorkspaceService.WithRawResponse = workspaces
 
         override fun repos(): RepoService.WithRawResponse = repos
 

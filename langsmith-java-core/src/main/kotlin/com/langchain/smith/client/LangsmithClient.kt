@@ -9,12 +9,14 @@ import com.langchain.smith.services.blocking.DatasetService
 import com.langchain.smith.services.blocking.EvaluatorService
 import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.FeedbackService
+import com.langchain.smith.services.blocking.InfoService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
 import com.langchain.smith.services.blocking.RunService
 import com.langchain.smith.services.blocking.SandboxService
 import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SettingService
+import com.langchain.smith.services.blocking.WorkspaceService
 import java.util.function.Consumer
 
 /**
@@ -69,6 +71,10 @@ interface LangsmithClient {
 
     fun annotationQueues(): AnnotationQueueService
 
+    fun info(): InfoService
+
+    fun workspaces(): WorkspaceService
+
     fun repos(): RepoService
 
     fun commits(): CommitService
@@ -115,6 +121,10 @@ interface LangsmithClient {
         fun public_(): PublicService.WithRawResponse
 
         fun annotationQueues(): AnnotationQueueService.WithRawResponse
+
+        fun info(): InfoService.WithRawResponse
+
+        fun workspaces(): WorkspaceService.WithRawResponse
 
         fun repos(): RepoService.WithRawResponse
 
