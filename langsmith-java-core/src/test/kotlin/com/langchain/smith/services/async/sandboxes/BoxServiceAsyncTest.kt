@@ -81,10 +81,8 @@ internal class BoxServiceAsyncTest {
                     )
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
-                    .timeout(0L)
                     .ttlSeconds(0L)
                     .vcpus(0L)
-                    .waitForReady(true)
                     .build()
             )
 

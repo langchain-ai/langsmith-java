@@ -61,10 +61,8 @@ internal class BoxCreateParamsTest {
             )
             .snapshotId("snapshot_id")
             .snapshotName("snapshot_name")
-            .timeout(0L)
             .ttlSeconds(0L)
             .vcpus(0L)
-            .waitForReady(true)
             .build()
     }
 
@@ -125,10 +123,8 @@ internal class BoxCreateParamsTest {
                 )
                 .snapshotId("snapshot_id")
                 .snapshotName("snapshot_name")
-                .timeout(0L)
                 .ttlSeconds(0L)
                 .vcpus(0L)
-                .waitForReady(true)
                 .build()
 
         val body = params._body()
@@ -185,10 +181,8 @@ internal class BoxCreateParamsTest {
             )
         assertThat(body.snapshotId()).contains("snapshot_id")
         assertThat(body.snapshotName()).contains("snapshot_name")
-        assertThat(body.timeout()).contains(0L)
         assertThat(body.ttlSeconds()).contains(0L)
         assertThat(body.vcpus()).contains(0L)
-        assertThat(body.waitForReady()).contains(true)
     }
 
     @Test

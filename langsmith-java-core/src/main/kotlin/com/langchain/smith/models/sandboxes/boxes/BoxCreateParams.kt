@@ -25,8 +25,7 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Create a new sandbox from a snapshot. The snapshot may be identified by `snapshot_id` (UUID) or
- * by `snapshot_name` (tenant-scoped unique name); exactly one must be set. Optionally blocks until
- * ready or timeout.
+ * by `snapshot_name` (tenant-scoped unique name); exactly one must be set.
  */
 class BoxCreateParams
 private constructor(
@@ -81,12 +80,6 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun timeout(): Optional<Long> = body.timeout()
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
     fun ttlSeconds(): Optional<Long> = body.ttlSeconds()
 
     /**
@@ -94,12 +87,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun vcpus(): Optional<Long> = body.vcpus()
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun waitForReady(): Optional<Boolean> = body.waitForReady()
 
     /**
      * Returns the raw JSON value of [fsCapacityBytes].
@@ -151,13 +138,6 @@ private constructor(
     fun _snapshotName(): JsonField<String> = body._snapshotName()
 
     /**
-     * Returns the raw JSON value of [timeout].
-     *
-     * Unlike [timeout], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _timeout(): JsonField<Long> = body._timeout()
-
-    /**
      * Returns the raw JSON value of [ttlSeconds].
      *
      * Unlike [ttlSeconds], this method doesn't throw if the JSON field has an unexpected type.
@@ -170,13 +150,6 @@ private constructor(
      * Unlike [vcpus], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _vcpus(): JsonField<Long> = body._vcpus()
-
-    /**
-     * Returns the raw JSON value of [waitForReady].
-     *
-     * Unlike [waitForReady], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _waitForReady(): JsonField<Boolean> = body._waitForReady()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -307,16 +280,6 @@ private constructor(
             body.snapshotName(snapshotName)
         }
 
-        fun timeout(timeout: Long) = apply { body.timeout(timeout) }
-
-        /**
-         * Sets [Builder.timeout] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.timeout] with a well-typed [Long] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun timeout(timeout: JsonField<Long>) = apply { body.timeout(timeout) }
-
         fun ttlSeconds(ttlSeconds: Long) = apply { body.ttlSeconds(ttlSeconds) }
 
         /**
@@ -336,19 +299,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun vcpus(vcpus: JsonField<Long>) = apply { body.vcpus(vcpus) }
-
-        fun waitForReady(waitForReady: Boolean) = apply { body.waitForReady(waitForReady) }
-
-        /**
-         * Sets [Builder.waitForReady] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.waitForReady] with a well-typed [Boolean] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun waitForReady(waitForReady: JsonField<Boolean>) = apply {
-            body.waitForReady(waitForReady)
-        }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -492,10 +442,8 @@ private constructor(
         private val proxyConfig: JsonField<ProxyConfig>,
         private val snapshotId: JsonField<String>,
         private val snapshotName: JsonField<String>,
-        private val timeout: JsonField<Long>,
         private val ttlSeconds: JsonField<Long>,
         private val vcpus: JsonField<Long>,
-        private val waitForReady: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -518,14 +466,10 @@ private constructor(
             @JsonProperty("snapshot_name")
             @ExcludeMissing
             snapshotName: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("timeout") @ExcludeMissing timeout: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("ttl_seconds")
             @ExcludeMissing
             ttlSeconds: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("wait_for_ready")
-            @ExcludeMissing
-            waitForReady: JsonField<Boolean> = JsonMissing.of(),
         ) : this(
             fsCapacityBytes,
             idleTtlSeconds,
@@ -534,10 +478,8 @@ private constructor(
             proxyConfig,
             snapshotId,
             snapshotName,
-            timeout,
             ttlSeconds,
             vcpus,
-            waitForReady,
             mutableMapOf(),
         )
 
@@ -587,12 +529,6 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun timeout(): Optional<Long> = timeout.getOptional("timeout")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
         fun ttlSeconds(): Optional<Long> = ttlSeconds.getOptional("ttl_seconds")
 
         /**
@@ -600,12 +536,6 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun vcpus(): Optional<Long> = vcpus.getOptional("vcpus")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun waitForReady(): Optional<Boolean> = waitForReady.getOptional("wait_for_ready")
 
         /**
          * Returns the raw JSON value of [fsCapacityBytes].
@@ -670,13 +600,6 @@ private constructor(
         fun _snapshotName(): JsonField<String> = snapshotName
 
         /**
-         * Returns the raw JSON value of [timeout].
-         *
-         * Unlike [timeout], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("timeout") @ExcludeMissing fun _timeout(): JsonField<Long> = timeout
-
-        /**
          * Returns the raw JSON value of [ttlSeconds].
          *
          * Unlike [ttlSeconds], this method doesn't throw if the JSON field has an unexpected type.
@@ -689,16 +612,6 @@ private constructor(
          * Unlike [vcpus], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("vcpus") @ExcludeMissing fun _vcpus(): JsonField<Long> = vcpus
-
-        /**
-         * Returns the raw JSON value of [waitForReady].
-         *
-         * Unlike [waitForReady], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("wait_for_ready")
-        @ExcludeMissing
-        fun _waitForReady(): JsonField<Boolean> = waitForReady
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -728,10 +641,8 @@ private constructor(
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
             private var snapshotId: JsonField<String> = JsonMissing.of()
             private var snapshotName: JsonField<String> = JsonMissing.of()
-            private var timeout: JsonField<Long> = JsonMissing.of()
             private var ttlSeconds: JsonField<Long> = JsonMissing.of()
             private var vcpus: JsonField<Long> = JsonMissing.of()
-            private var waitForReady: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -743,10 +654,8 @@ private constructor(
                 proxyConfig = body.proxyConfig
                 snapshotId = body.snapshotId
                 snapshotName = body.snapshotName
-                timeout = body.timeout
                 ttlSeconds = body.ttlSeconds
                 vcpus = body.vcpus
-                waitForReady = body.waitForReady
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -836,17 +745,6 @@ private constructor(
                 this.snapshotName = snapshotName
             }
 
-            fun timeout(timeout: Long) = timeout(JsonField.of(timeout))
-
-            /**
-             * Sets [Builder.timeout] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.timeout] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun timeout(timeout: JsonField<Long>) = apply { this.timeout = timeout }
-
             fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
 
             /**
@@ -868,19 +766,6 @@ private constructor(
              * value.
              */
             fun vcpus(vcpus: JsonField<Long>) = apply { this.vcpus = vcpus }
-
-            fun waitForReady(waitForReady: Boolean) = waitForReady(JsonField.of(waitForReady))
-
-            /**
-             * Sets [Builder.waitForReady] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.waitForReady] with a well-typed [Boolean] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun waitForReady(waitForReady: JsonField<Boolean>) = apply {
-                this.waitForReady = waitForReady
-            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -915,10 +800,8 @@ private constructor(
                     proxyConfig,
                     snapshotId,
                     snapshotName,
-                    timeout,
                     ttlSeconds,
                     vcpus,
-                    waitForReady,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -937,10 +820,8 @@ private constructor(
             proxyConfig().ifPresent { it.validate() }
             snapshotId()
             snapshotName()
-            timeout()
             ttlSeconds()
             vcpus()
-            waitForReady()
             validated = true
         }
 
@@ -967,10 +848,8 @@ private constructor(
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
                 (if (snapshotName.asKnown().isPresent) 1 else 0) +
-                (if (timeout.asKnown().isPresent) 1 else 0) +
                 (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
-                (if (vcpus.asKnown().isPresent) 1 else 0) +
-                (if (waitForReady.asKnown().isPresent) 1 else 0)
+                (if (vcpus.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -985,10 +864,8 @@ private constructor(
                 proxyConfig == other.proxyConfig &&
                 snapshotId == other.snapshotId &&
                 snapshotName == other.snapshotName &&
-                timeout == other.timeout &&
                 ttlSeconds == other.ttlSeconds &&
                 vcpus == other.vcpus &&
-                waitForReady == other.waitForReady &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -1001,10 +878,8 @@ private constructor(
                 proxyConfig,
                 snapshotId,
                 snapshotName,
-                timeout,
                 ttlSeconds,
                 vcpus,
-                waitForReady,
                 additionalProperties,
             )
         }
@@ -1012,7 +887,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, snapshotName=$snapshotName, timeout=$timeout, ttlSeconds=$ttlSeconds, vcpus=$vcpus, waitForReady=$waitForReady, additionalProperties=$additionalProperties}"
+            "Body{fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, snapshotName=$snapshotName, ttlSeconds=$ttlSeconds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig
