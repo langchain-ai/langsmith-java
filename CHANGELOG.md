@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-beta.3 (2026-05-01)
+
+Full Changelog: [v0.1.0-beta.2...v0.1.0-beta.3](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.2...v0.1.0-beta.3)
+
 ## 0.1.0-beta.2 (2026-04-30)
 
 Full Changelog: [v0.1.0-beta.1...v0.1.0-beta.2](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.1...v0.1.0-beta.2)
