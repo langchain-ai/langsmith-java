@@ -1,5 +1,15 @@
 .prism.log
 .stdy.log
+.env
+.env.*
+*.pem
+*.key
+*.crt
+credentials.json
+node_modules/
+__pycache__/
+.venv/
+.DS_Store
 .gradle
 .idea
 .kotlin

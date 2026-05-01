@@ -111,6 +111,7 @@ private constructor(
     @get:JvmName("autoBatchTracing") val autoBatchTracing: Boolean,
     private val apiKey: String?,
     private val tenantId: String?,
+    private val oauthAccessToken: String?,
 ) {
 
     init {
@@ -172,6 +173,7 @@ private constructor(
         private var autoBatchTracing: Boolean = true
         private var apiKey: String? = null
         private var tenantId: String? = null
+        private var oauthAccessToken: String? = null
 
         @JvmSynthetic
         internal fun from(clientOptions: ClientOptions) = apply {
@@ -190,6 +192,7 @@ private constructor(
             autoBatchTracing = clientOptions.autoBatchTracing
             apiKey = clientOptions.apiKey
             tenantId = clientOptions.tenantId
+            oauthAccessToken = clientOptions.oauthAccessToken
         }
 
         /**
@@ -426,14 +429,9 @@ private constructor(
          * System properties take precedence over environment variables.
          */
         fun fromEnv() = apply {
-            (System.getProperty("langchain.baseUrl") ?: System.getenv("LANGSMITH_ENDPOINT"))?.let {
-                baseUrl(it)
-            }
-            (System.getProperty("langchain.langsmithApiKey") ?: System.getenv("LANGSMITH_API_KEY"))
-                ?.let { apiKey(it) }
-            (System.getProperty("langchain.langsmithTenantId")
-                    ?: System.getenv("LANGSMITH_TENANT_ID"))
-                ?.let { tenantId(it) }
+            langsmithEndpoint()?.let { baseUrl(it) }
+            langsmithApiKey()?.let { apiKey(it) }
+            langsmithTenantId()?.let { tenantId(it) }
             System.getenv("LANGCHAIN_CUSTOM_HEADERS")?.let { customHeadersEnv ->
                 for (line in customHeadersEnv.split("\n")) {
                     val colon = line.indexOf(':')
@@ -442,6 +440,8 @@ private constructor(
                     }
                 }
             }
+            loadProfileClientConfig(jsonMapper, clock, baseUrl, profileNameOverride = profileName())
+                ?.let { applyProfileConfig(it) }
         }
 
         /**
@@ -491,16 +491,26 @@ private constructor(
             // We replace after all the default headers to allow end-users to overwrite them.
             headers.replaceAll(this.headers.build())
             queryParams.replaceAll(this.queryParams.build())
-            apiKey?.let {
-                if (!it.isEmpty()) {
+            apiKey
+                ?.takeIf { it.isNotEmpty() }
+                ?.let {
+                    headers.remove("Authorization")
                     headers.replace("X-API-Key", it)
                 }
+            if (apiKey.isNullOrEmpty()) {
+                oauthAccessToken
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.let {
+                        val currentHeaders = headers.build()
+                        if (
+                            currentHeaders.values("X-API-Key").all(String::isBlank) &&
+                                currentHeaders.values("Authorization").all(String::isBlank)
+                        ) {
+                            headers.replace("Authorization", "Bearer $it")
+                        }
+                    }
             }
-            tenantId?.let {
-                if (!it.isEmpty()) {
-                    headers.replace("X-Tenant-Id", it)
-                }
-            }
+            tenantId?.takeIf { it.isNotEmpty() }?.let { headers.replace("X-Tenant-Id", it) }
 
             return ClientOptions(
                 httpClient,
@@ -524,8 +534,48 @@ private constructor(
                 autoBatchTracing,
                 apiKey,
                 tenantId,
+                oauthAccessToken,
             )
         }
+
+        private fun applyProfileConfig(profile: ProfileClientConfig) {
+            if (baseUrl.isNullOrBlank()) {
+                profile.baseUrl?.let { baseUrl(it) }
+            }
+            if (tenantId.isNullOrBlank()) {
+                profile.tenantId?.let { tenantId(it) }
+            }
+            if (!apiKey.isNullOrBlank() || hasAuthHeader()) {
+                return
+            }
+            if (!profile.oauthAccessToken.isNullOrBlank()) {
+                oauthAccessToken = profile.oauthAccessToken
+            } else if (!profile.apiKey.isNullOrBlank()) {
+                apiKey(profile.apiKey)
+            }
+        }
+
+        private fun hasAuthHeader(): Boolean {
+            val currentHeaders = headers.build()
+            return currentHeaders.values("X-API-Key").any { it.isNotBlank() } ||
+                currentHeaders.values("Authorization").any { it.isNotBlank() }
+        }
+
+        private fun langsmithEndpoint(): String? =
+            System.getProperty("langchain.baseUrl")
+                ?: System.getenv("LANGSMITH_ENDPOINT")
+                ?: System.getenv("LANGCHAIN_ENDPOINT")
+
+        private fun langsmithApiKey(): String? =
+            System.getProperty("langchain.langsmithApiKey")
+                ?: System.getenv("LANGSMITH_API_KEY")
+                ?: System.getenv("LANGCHAIN_API_KEY")
+
+        private fun langsmithTenantId(): String? =
+            System.getProperty("langchain.langsmithTenantId")
+                ?: System.getenv("LANGSMITH_TENANT_ID")
+                ?: System.getenv("LANGSMITH_WORKSPACE_ID")
+                ?: System.getenv("LANGCHAIN_WORKSPACE_ID")
     }
 
     /**
