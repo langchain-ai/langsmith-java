@@ -3,6 +3,9 @@ package com.langchain.smith.core
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
+import com.langchain.smith.core.http.HttpClient
+import com.langchain.smith.core.http.HttpRequest
+import com.langchain.smith.core.http.HttpResponse
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -15,12 +18,14 @@ import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.OffsetDateTime
+import java.util.concurrent.CompletableFuture
 
 internal data class ProfileClientConfig(
     val baseUrl: String?,
     val apiKey: String?,
     val tenantId: String?,
     val oauthAccessToken: String?,
+    val profileAuth: ProfileAuth?,
 )
 
 private const val OAUTH_CLIENT_ID = "langsmith-cli"
@@ -30,7 +35,6 @@ private val TOKEN_REFRESH_TIMEOUT: Duration = Duration.ofSeconds(10)
 internal fun loadProfileClientConfig(
     jsonMapper: JsonMapper,
     clock: Clock,
-    baseUrlOverride: String?,
     configPathOverride: Path? = null,
     profileNameOverride: String? = null,
 ): ProfileClientConfig? {
@@ -49,23 +53,21 @@ internal fun loadProfileClientConfig(
             ?: "default"
     val profile = profiles[profileName] as? ObjectNode ?: return null
 
-    refreshProfileOAuthTokenIfNeeded(
-        jsonMapper,
-        clock,
-        configPath,
-        config,
-        profile,
-        baseUrlOverride,
-    )
-
     val oauth = profile["oauth"]
     val oauthAccessToken = text(oauth?.get("access_token"))
+    val oauthRefreshToken = text(oauth?.get("refresh_token"))
 
     return ProfileClientConfig(
         baseUrl = text(profile["api_url"]),
         apiKey = text(profile["api_key"]),
         tenantId = text(profile["workspace_id"]),
         oauthAccessToken = oauthAccessToken,
+        profileAuth =
+            if (oauthAccessToken != null || oauthRefreshToken != null) {
+                ProfileAuth(jsonMapper, clock, configPath, config, profile)
+            } else {
+                null
+            },
     )
 }
 
@@ -80,38 +82,6 @@ internal fun profileConfigPath(): Path {
 internal fun profileName(): String? =
     (System.getProperty("langchain.langsmithProfile") ?: System.getenv("LANGSMITH_PROFILE"))
         ?.takeIf { it.isNotBlank() }
-
-private fun refreshProfileOAuthTokenIfNeeded(
-    jsonMapper: JsonMapper,
-    clock: Clock,
-    configPath: Path,
-    config: ObjectNode,
-    profile: ObjectNode,
-    baseUrlOverride: String?,
-) {
-    val oauth = profile["oauth"] as? ObjectNode ?: return
-    if (!shouldRefreshProfileToken(oauth, clock)) {
-        return
-    }
-    val refreshToken = text(oauth["refresh_token"]) ?: return
-    val tokenEndpointBaseUrl =
-        baseUrlOverride ?: text(profile["api_url"]) ?: ClientOptions.PRODUCTION_URL
-    val tokenResponse =
-        refreshProfileOAuthToken(jsonMapper, tokenEndpointBaseUrl, refreshToken) ?: return
-
-    oauth.put("access_token", tokenResponse.accessToken)
-    tokenResponse.refreshToken?.let { oauth.put("refresh_token", it) }
-    tokenResponse.expiresInSeconds?.let {
-        oauth.put("expires_at", clock.instant().plusSeconds(it).toString())
-    }
-    oauth.remove("token_type")
-    oauth.remove("bearer_token")
-
-    runCatching {
-        configPath.parent?.let { Files.createDirectories(it) }
-        jsonMapper.writerWithDefaultPrettyPrinter().writeValue(configPath.toFile(), config)
-    }
-}
 
 private fun shouldRefreshProfileToken(oauth: ObjectNode, clock: Clock): Boolean {
     if (text(oauth["refresh_token"]) == null) {
@@ -189,6 +159,112 @@ private fun expiresAt(node: JsonNode?): Instant? =
     }
 
 private fun String.trimQuotes(): String = trim().trim('"', '\'')
+
+internal class ProfileAuth(
+    private val jsonMapper: JsonMapper,
+    private val clock: Clock,
+    private val configPath: Path,
+    private val config: ObjectNode,
+    private val profile: ObjectNode,
+) {
+    private val managedAuthorizationValues = mutableSetOf<String>()
+
+    init {
+        rememberProfileAuthHeader(authHeaderFromProfile())
+    }
+
+    @Synchronized
+    fun currentAuthHeader(): Pair<String, String>? =
+        authHeaderFromProfile().also { rememberProfileAuthHeader(it) }
+
+    @Synchronized
+    fun isProfileAuthorizationHeader(value: String): Boolean =
+        managedAuthorizationValues.contains(value)
+
+    @Synchronized
+    fun authHeader(baseUrlOverride: String?): Pair<String, String>? {
+        val oauth = profile["oauth"] as? ObjectNode
+        if (oauth != null && shouldRefreshProfileToken(oauth, clock)) {
+            val refreshToken = text(oauth["refresh_token"])
+            if (refreshToken != null) {
+                val tokenEndpointBaseUrl =
+                    baseUrlOverride ?: text(profile["api_url"]) ?: ClientOptions.PRODUCTION_URL
+                val tokenResponse =
+                    refreshProfileOAuthToken(jsonMapper, tokenEndpointBaseUrl, refreshToken)
+                if (tokenResponse != null) {
+                    oauth.put("access_token", tokenResponse.accessToken)
+                    tokenResponse.refreshToken?.let { oauth.put("refresh_token", it) }
+                    tokenResponse.expiresInSeconds?.let {
+                        oauth.put("expires_at", clock.instant().plusSeconds(it).toString())
+                    }
+                    oauth.remove("token_type")
+                    oauth.remove("bearer_token")
+                    saveConfig()
+                }
+            }
+        }
+        return authHeaderFromProfile().also { rememberProfileAuthHeader(it) }
+    }
+
+    private fun authHeaderFromProfile(): Pair<String, String>? {
+        val oauth = profile["oauth"] as? ObjectNode
+        text(oauth?.get("access_token"))?.let {
+            return "Authorization" to "Bearer $it"
+        }
+        text(profile["api_key"])?.let {
+            return "X-API-Key" to it
+        }
+        return null
+    }
+
+    private fun rememberProfileAuthHeader(header: Pair<String, String>?) {
+        if (header?.first?.equals("Authorization", ignoreCase = true) == true) {
+            managedAuthorizationValues.add(header.second)
+        }
+    }
+
+    private fun saveConfig() {
+        runCatching {
+            configPath.parent?.let { Files.createDirectories(it) }
+            jsonMapper.writerWithDefaultPrettyPrinter().writeValue(configPath.toFile(), config)
+        }
+    }
+}
+
+internal class ProfileAuthHttpClient(
+    private val delegate: HttpClient,
+    private val profileAuth: ProfileAuth,
+) : HttpClient {
+    override fun execute(request: HttpRequest, requestOptions: RequestOptions): HttpResponse =
+        delegate.execute(prepareProfileAuthRequest(request), requestOptions)
+
+    override fun executeAsync(
+        request: HttpRequest,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<HttpResponse> =
+        delegate.executeAsync(prepareProfileAuthRequest(request), requestOptions)
+
+    override fun close() = delegate.close()
+
+    private fun prepareProfileAuthRequest(request: HttpRequest): HttpRequest {
+        if (request.headers.values("X-API-Key").any(String::isNotBlank)) {
+            return request.toBuilder().removeHeaders("Authorization").build()
+        }
+        val authorizationValues = request.headers.values("Authorization").filter(String::isNotBlank)
+        if (
+            authorizationValues.isNotEmpty() &&
+                authorizationValues.none { profileAuth.isProfileAuthorizationHeader(it) }
+        ) {
+            return request
+        }
+        val (name, value) = profileAuth.authHeader(request.baseUrl) ?: return request
+        val builder = request.toBuilder()
+        if (name.equals("X-API-Key", ignoreCase = true)) {
+            builder.removeHeaders("Authorization")
+        }
+        return builder.replaceHeaders(name, value).build()
+    }
+}
 
 private data class OAuthTokenResponse(
     val accessToken: String,

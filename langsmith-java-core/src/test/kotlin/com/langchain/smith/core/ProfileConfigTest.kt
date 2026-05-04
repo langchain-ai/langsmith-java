@@ -1,6 +1,13 @@
 package com.langchain.smith.core
 
+import com.langchain.smith.core.http.Headers
+import com.langchain.smith.core.http.HttpClient
+import com.langchain.smith.core.http.HttpMethod
+import com.langchain.smith.core.http.HttpRequest
+import com.langchain.smith.core.http.HttpResponse
 import com.sun.net.httpserver.HttpServer
+import java.io.ByteArrayInputStream
+import java.io.InputStream
 import java.net.InetSocketAddress
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -8,6 +15,7 @@ import java.nio.file.Path
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
+import java.util.concurrent.CompletableFuture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -45,7 +53,6 @@ internal class ProfileConfigTest {
             loadProfileClientConfig(
                 jsonMapper = jsonMapper(),
                 clock = clock,
-                baseUrlOverride = null,
                 configPathOverride = configPath,
             )
 
@@ -78,7 +85,6 @@ internal class ProfileConfigTest {
             loadProfileClientConfig(
                 jsonMapper = jsonMapper(),
                 clock = clock,
-                baseUrlOverride = null,
                 configPathOverride = configPath,
             )
 
@@ -87,7 +93,7 @@ internal class ProfileConfigTest {
     }
 
     @Test
-    fun loadProfileClientConfigRefreshesExpiredOauthToken() {
+    fun profileAuthRefreshesExpiredOauthTokenBeforeRequest() {
         val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
         var requestBody = ""
         server.createContext("/oauth/token") { exchange ->
@@ -137,22 +143,74 @@ internal class ProfileConfigTest {
                 loadProfileClientConfig(
                     jsonMapper = jsonMapper(),
                     clock = clock,
-                    baseUrlOverride = null,
                     configPathOverride = configPath,
                 )
 
-            val updatedConfig = String(Files.readAllBytes(configPath), StandardCharsets.UTF_8)
-            assertThat(config?.oauthAccessToken).isEqualTo("new-access-token")
+            assertThat(config?.oauthAccessToken).isEqualTo("old-access-token")
+            assertThat(requestBody).isEmpty()
+
+            val authHeader = config?.profileAuth?.authHeader("http://127.0.0.1:$port/api/v1/")
+
+            assertThat(authHeader).isEqualTo("Authorization" to "Bearer new-access-token")
             assertThat(requestBody).contains("grant_type=refresh_token")
             assertThat(requestBody).contains("client_id=langsmith-cli")
             assertThat(requestBody).contains("refresh_token=old-refresh-token")
-            assertThat(updatedConfig).contains("new-refresh-token")
-            assertThat(updatedConfig).doesNotContain("token_type")
-            assertThat(updatedConfig).doesNotContain("bearer_token")
+            val refreshedConfig = String(Files.readAllBytes(configPath), StandardCharsets.UTF_8)
+            assertThat(refreshedConfig).contains("new-refresh-token")
+            assertThat(refreshedConfig).doesNotContain("token_type")
+            assertThat(refreshedConfig).doesNotContain("bearer_token")
+
+            val capturedAuthHeaders = mutableListOf<String?>()
+            val profileHttpClient =
+                ProfileAuthHttpClient(
+                    object : HttpClient {
+                        override fun execute(
+                            request: HttpRequest,
+                            requestOptions: RequestOptions,
+                        ): HttpResponse {
+                            capturedAuthHeaders.add(
+                                request.headers.values("Authorization").firstOrNull()
+                            )
+                            return emptyResponse()
+                        }
+
+                        override fun executeAsync(
+                            request: HttpRequest,
+                            requestOptions: RequestOptions,
+                        ): CompletableFuture<HttpResponse> =
+                            CompletableFuture.completedFuture(execute(request, requestOptions))
+
+                        override fun close() {}
+                    },
+                    config!!.profileAuth!!,
+                )
+            val staleProfileRequest =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl("http://127.0.0.1:$port/api/v1/")
+                    .replaceHeaders("Authorization", "Bearer old-access-token")
+                    .build()
+
+            profileHttpClient.execute(staleProfileRequest).close()
+            profileHttpClient.execute(staleProfileRequest).close()
+
+            assertThat(capturedAuthHeaders)
+                .containsExactly("Bearer new-access-token", "Bearer new-access-token")
         } finally {
             server.stop(0)
         }
     }
+
+    private fun emptyResponse(): HttpResponse =
+        object : HttpResponse {
+            override fun statusCode(): Int = 200
+
+            override fun headers(): Headers = Headers.builder().build()
+
+            override fun body(): InputStream = ByteArrayInputStream(ByteArray(0))
+
+            override fun close() {}
+        }
 
     private fun writeConfig(contents: String): Path {
         val configPath = tempDir.resolve("config.json")
