@@ -43,8 +43,7 @@ interface BoxServiceAsync {
 
     /**
      * Create a new sandbox from a snapshot. The snapshot may be identified by `snapshot_id` (UUID)
-     * or by `snapshot_name` (tenant-scoped unique name); exactly one must be set. Optionally blocks
-     * until ready or timeout.
+     * or by `snapshot_name` (tenant-scoped unique name); exactly one must be set.
      */
     fun create(): CompletableFuture<BoxCreateResponse> = create(BoxCreateParams.none())
 
@@ -289,10 +288,7 @@ interface BoxServiceAsync {
     ): CompletableFuture<BoxGetStatusResponse> =
         getStatus(name, BoxGetStatusParams.none(), requestOptions)
 
-    /**
-     * Start a stopped or failed sandbox. This endpoint is not idempotent; it returns 202
-     * immediately, then you can poll status for readiness.
-     */
+    /** Start a stopped or failed sandbox. This endpoint is not idempotent. */
     fun start(name: String): CompletableFuture<BoxStartResponse> =
         start(name, BoxStartParams.none())
 

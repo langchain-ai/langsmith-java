@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0-beta.4 (2026-05-04)
+
+Full Changelog: [v0.1.0-beta.3...v0.1.0-beta.4](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.3...v0.1.0-beta.4)
+
+### Features
+
+* **api:** api update ([4dc8a79](https://github.com/langchain-ai/langsmith-java/commit/4dc8a7912f8b1b449ad65c24bdf74b667dde30f4))
+
 ## 0.1.0-beta.3 (2026-05-01)
 
 Full Changelog: [v0.1.0-beta.2...v0.1.0-beta.3](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.2...v0.1.0-beta.3)

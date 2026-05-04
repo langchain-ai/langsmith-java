@@ -112,6 +112,7 @@ private constructor(
     private val apiKey: String?,
     private val tenantId: String?,
     private val oauthAccessToken: String?,
+    private val profileAuth: ProfileAuth?,
 ) {
 
     init {
@@ -174,6 +175,7 @@ private constructor(
         private var apiKey: String? = null
         private var tenantId: String? = null
         private var oauthAccessToken: String? = null
+        private var profileAuth: ProfileAuth? = null
 
         @JvmSynthetic
         internal fun from(clientOptions: ClientOptions) = apply {
@@ -193,6 +195,7 @@ private constructor(
             apiKey = clientOptions.apiKey
             tenantId = clientOptions.tenantId
             oauthAccessToken = clientOptions.oauthAccessToken
+            profileAuth = clientOptions.profileAuth
         }
 
         /**
@@ -440,8 +443,9 @@ private constructor(
                     }
                 }
             }
-            loadProfileClientConfig(jsonMapper, clock, baseUrl, profileNameOverride = profileName())
-                ?.let { applyProfileConfig(it) }
+            loadProfileClientConfig(jsonMapper, clock, profileNameOverride = profileName())?.let {
+                applyProfileConfig(it)
+            }
         }
 
         /**
@@ -512,14 +516,18 @@ private constructor(
             }
             tenantId?.takeIf { it.isNotEmpty() }?.let { headers.replace("X-Tenant-Id", it) }
 
-            return ClientOptions(
-                httpClient,
+            val retryingHttpClient =
                 RetryingHttpClient.builder()
                     .httpClient(httpClient)
                     .sleeper(sleeper)
                     .clock(clock)
                     .maxRetries(maxRetries)
-                    .build(),
+                    .build()
+
+            return ClientOptions(
+                httpClient,
+                profileAuth?.let { ProfileAuthHttpClient(retryingHttpClient, it) }
+                    ?: retryingHttpClient,
                 checkJacksonVersionCompatibility,
                 jsonMapper,
                 streamHandlerExecutor,
@@ -535,6 +543,7 @@ private constructor(
                 apiKey,
                 tenantId,
                 oauthAccessToken,
+                profileAuth,
             )
         }
 
@@ -550,6 +559,9 @@ private constructor(
             }
             if (!profile.oauthAccessToken.isNullOrBlank()) {
                 oauthAccessToken = profile.oauthAccessToken
+                profileAuth = profile.profileAuth
+            } else if (profile.profileAuth != null) {
+                profileAuth = profile.profileAuth
             } else if (!profile.apiKey.isNullOrBlank()) {
                 apiKey(profile.apiKey)
             }
