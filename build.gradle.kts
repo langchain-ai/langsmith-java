@@ -22,6 +22,15 @@ subprojects {
         group = "Verification"
         description = "Verifies all source files are formatted."
     }
+}
+
+subprojects {
     apply(plugin = "org.jetbrains.dokka")
-    apply(plugin = "org.jetbrains.dokka-javadoc")
+}
+
+// Avoid race conditions between `dokkaJavadocCollector` and `dokkaJavadocJar` tasks
+tasks.named("dokkaJavadocCollector").configure {
+    subprojects.flatMap { it.tasks }
+        .filter { it.project.name != "langsmith-java" && it.name == "dokkaJavadocJar" }
+        .forEach { mustRunAfter(it) }
 }
