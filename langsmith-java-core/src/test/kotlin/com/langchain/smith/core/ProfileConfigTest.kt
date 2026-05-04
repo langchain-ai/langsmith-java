@@ -149,7 +149,7 @@ internal class ProfileConfigTest {
             assertThat(config?.oauthAccessToken).isEqualTo("old-access-token")
             assertThat(requestBody).isEmpty()
 
-            val authHeader = config?.profileAuth?.authHeader("http://127.0.0.1:$port/api/v1/")
+            val authHeader = config?.profileAuth?.authHeader()
 
             assertThat(authHeader).isEqualTo("Authorization" to "Bearer new-access-token")
             assertThat(requestBody).contains("grant_type=refresh_token")

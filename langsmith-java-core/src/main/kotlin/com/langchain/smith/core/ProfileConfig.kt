@@ -182,13 +182,12 @@ internal class ProfileAuth(
         managedAuthorizationValues.contains(value)
 
     @Synchronized
-    fun authHeader(baseUrlOverride: String?): Pair<String, String>? {
+    fun authHeader(): Pair<String, String>? {
         val oauth = profile["oauth"] as? ObjectNode
         if (oauth != null && shouldRefreshProfileToken(oauth, clock)) {
             val refreshToken = text(oauth["refresh_token"])
             if (refreshToken != null) {
-                val tokenEndpointBaseUrl =
-                    baseUrlOverride ?: text(profile["api_url"]) ?: ClientOptions.PRODUCTION_URL
+                val tokenEndpointBaseUrl = text(profile["api_url"]) ?: ClientOptions.PRODUCTION_URL
                 val tokenResponse =
                     refreshProfileOAuthToken(jsonMapper, tokenEndpointBaseUrl, refreshToken)
                 if (tokenResponse != null) {
@@ -257,7 +256,7 @@ internal class ProfileAuthHttpClient(
         ) {
             return request
         }
-        val (name, value) = profileAuth.authHeader(request.baseUrl) ?: return request
+        val (name, value) = profileAuth.authHeader() ?: return request
         val builder = request.toBuilder()
         if (name.equals("X-API-Key", ignoreCase = true)) {
             builder.removeHeaders("Authorization")
