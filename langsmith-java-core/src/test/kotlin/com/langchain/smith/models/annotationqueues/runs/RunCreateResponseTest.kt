@@ -19,6 +19,7 @@ internal class RunCreateResponseTest {
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .lastReviewedTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .sourceProposedExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         assertThat(runCreateResponse.id()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -28,6 +29,8 @@ internal class RunCreateResponseTest {
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(runCreateResponse.lastReviewedTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(runCreateResponse.sourceProposedExampleId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
 
     @Test
@@ -40,6 +43,7 @@ internal class RunCreateResponseTest {
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .lastReviewedTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .sourceProposedExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         val roundtrippedRunCreateResponse =
