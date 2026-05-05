@@ -60,6 +60,7 @@ private constructor(
     private val numFewShotExamples: JsonField<Long>,
     private val sessionId: JsonField<String>,
     private val sessionName: JsonField<String>,
+    private val spendLimit: JsonField<SpendLimit>,
     private val traceFilter: JsonField<String>,
     private val isTransient: JsonField<Boolean>,
     private val treeFilter: JsonField<String>,
@@ -162,6 +163,9 @@ private constructor(
         @JsonProperty("session_name")
         @ExcludeMissing
         sessionName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("spend_limit")
+        @ExcludeMissing
+        spendLimit: JsonField<SpendLimit> = JsonMissing.of(),
         @JsonProperty("trace_filter")
         @ExcludeMissing
         traceFilter: JsonField<String> = JsonMissing.of(),
@@ -210,6 +214,7 @@ private constructor(
         numFewShotExamples,
         sessionId,
         sessionName,
+        spendLimit,
         traceFilter,
         isTransient,
         treeFilter,
@@ -435,6 +440,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun sessionName(): Optional<String> = sessionName.getOptional("session_name")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun spendLimit(): Optional<SpendLimit> = spendLimit.getOptional("spend_limit")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -770,6 +781,15 @@ private constructor(
     fun _sessionName(): JsonField<String> = sessionName
 
     /**
+     * Returns the raw JSON value of [spendLimit].
+     *
+     * Unlike [spendLimit], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("spend_limit")
+    @ExcludeMissing
+    fun _spendLimit(): JsonField<SpendLimit> = spendLimit
+
+    /**
      * Returns the raw JSON value of [traceFilter].
      *
      * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
@@ -872,6 +892,7 @@ private constructor(
         private var numFewShotExamples: JsonField<Long> = JsonMissing.of()
         private var sessionId: JsonField<String> = JsonMissing.of()
         private var sessionName: JsonField<String> = JsonMissing.of()
+        private var spendLimit: JsonField<SpendLimit> = JsonMissing.of()
         private var traceFilter: JsonField<String> = JsonMissing.of()
         private var isTransient: JsonField<Boolean> = JsonMissing.of()
         private var treeFilter: JsonField<String> = JsonMissing.of()
@@ -915,6 +936,7 @@ private constructor(
             numFewShotExamples = evaluator.numFewShotExamples
             sessionId = evaluator.sessionId
             sessionName = evaluator.sessionName
+            spendLimit = evaluator.spendLimit
             traceFilter = evaluator.traceFilter
             isTransient = evaluator.isTransient
             treeFilter = evaluator.treeFilter
@@ -1526,6 +1548,20 @@ private constructor(
          */
         fun sessionName(sessionName: JsonField<String>) = apply { this.sessionName = sessionName }
 
+        fun spendLimit(spendLimit: SpendLimit?) = spendLimit(JsonField.ofNullable(spendLimit))
+
+        /** Alias for calling [Builder.spendLimit] with `spendLimit.orElse(null)`. */
+        fun spendLimit(spendLimit: Optional<SpendLimit>) = spendLimit(spendLimit.getOrNull())
+
+        /**
+         * Sets [Builder.spendLimit] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.spendLimit] with a well-typed [SpendLimit] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun spendLimit(spendLimit: JsonField<SpendLimit>) = apply { this.spendLimit = spendLimit }
+
         fun traceFilter(traceFilter: String?) = traceFilter(JsonField.ofNullable(traceFilter))
 
         /** Alias for calling [Builder.traceFilter] with `traceFilter.orElse(null)`. */
@@ -1654,6 +1690,7 @@ private constructor(
                 numFewShotExamples,
                 sessionId,
                 sessionName,
+                spendLimit,
                 traceFilter,
                 isTransient,
                 treeFilter,
@@ -1712,6 +1749,7 @@ private constructor(
         numFewShotExamples()
         sessionId()
         sessionName()
+        spendLimit().ifPresent { it.validate() }
         traceFilter()
         isTransient()
         treeFilter()
@@ -1769,6 +1807,7 @@ private constructor(
             (if (numFewShotExamples.asKnown().isPresent) 1 else 0) +
             (if (sessionId.asKnown().isPresent) 1 else 0) +
             (if (sessionName.asKnown().isPresent) 1 else 0) +
+            (spendLimit.asKnown().getOrNull()?.validity() ?: 0) +
             (if (traceFilter.asKnown().isPresent) 1 else 0) +
             (if (isTransient.asKnown().isPresent) 1 else 0) +
             (if (treeFilter.asKnown().isPresent) 1 else 0) +
@@ -1904,6 +1943,342 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    class SpendLimit
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val limitUsd: JsonField<String>,
+        private val window: JsonField<Window>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("limit_usd")
+            @ExcludeMissing
+            limitUsd: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("window") @ExcludeMissing window: JsonField<Window> = JsonMissing.of(),
+        ) : this(limitUsd, window, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun limitUsd(): String = limitUsd.getRequired("limit_usd")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun window(): Window = window.getRequired("window")
+
+        /**
+         * Returns the raw JSON value of [limitUsd].
+         *
+         * Unlike [limitUsd], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("limit_usd") @ExcludeMissing fun _limitUsd(): JsonField<String> = limitUsd
+
+        /**
+         * Returns the raw JSON value of [window].
+         *
+         * Unlike [window], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("window") @ExcludeMissing fun _window(): JsonField<Window> = window
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [SpendLimit].
+             *
+             * The following fields are required:
+             * ```java
+             * .limitUsd()
+             * .window()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [SpendLimit]. */
+        class Builder internal constructor() {
+
+            private var limitUsd: JsonField<String>? = null
+            private var window: JsonField<Window>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(spendLimit: SpendLimit) = apply {
+                limitUsd = spendLimit.limitUsd
+                window = spendLimit.window
+                additionalProperties = spendLimit.additionalProperties.toMutableMap()
+            }
+
+            fun limitUsd(limitUsd: String) = limitUsd(JsonField.of(limitUsd))
+
+            /**
+             * Sets [Builder.limitUsd] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.limitUsd] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun limitUsd(limitUsd: JsonField<String>) = apply { this.limitUsd = limitUsd }
+
+            fun window(window: Window) = window(JsonField.of(window))
+
+            /**
+             * Sets [Builder.window] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.window] with a well-typed [Window] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun window(window: JsonField<Window>) = apply { this.window = window }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [SpendLimit].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .limitUsd()
+             * .window()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): SpendLimit =
+                SpendLimit(
+                    checkRequired("limitUsd", limitUsd),
+                    checkRequired("window", window),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): SpendLimit = apply {
+            if (validated) {
+                return@apply
+            }
+
+            limitUsd()
+            window().validate()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (limitUsd.asKnown().isPresent) 1 else 0) +
+                (window.asKnown().getOrNull()?.validity() ?: 0)
+
+        class Window @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val WEEKLY = of("weekly")
+
+                @JvmStatic fun of(value: String) = Window(JsonField.of(value))
+            }
+
+            /** An enum containing [Window]'s known values. */
+            enum class Known {
+                WEEKLY
+            }
+
+            /**
+             * An enum containing [Window]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Window] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                WEEKLY,
+                /**
+                 * An enum member indicating that [Window] was instantiated with an unknown value.
+                 */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    WEEKLY -> Value.WEEKLY
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    WEEKLY -> Known.WEEKLY
+                    else -> throw LangChainInvalidDataException("Unknown Window: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Window = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Window && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is SpendLimit &&
+                limitUsd == other.limitUsd &&
+                window == other.window &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(limitUsd, window, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "SpendLimit{limitUsd=$limitUsd, window=$window, additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -1945,6 +2320,7 @@ private constructor(
             numFewShotExamples == other.numFewShotExamples &&
             sessionId == other.sessionId &&
             sessionName == other.sessionName &&
+            spendLimit == other.spendLimit &&
             traceFilter == other.traceFilter &&
             isTransient == other.isTransient &&
             treeFilter == other.treeFilter &&
@@ -1989,6 +2365,7 @@ private constructor(
             numFewShotExamples,
             sessionId,
             sessionName,
+            spendLimit,
             traceFilter,
             isTransient,
             treeFilter,
@@ -2000,5 +2377,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }
