@@ -147,6 +147,7 @@ internal class ProfileConfigTest {
                 )
 
             assertThat(config?.oauthAccessToken).isEqualTo("old-access-token")
+            assertThat(config?.oauthRefreshToken).isEqualTo("old-refresh-token")
             assertThat(requestBody).isEmpty()
 
             val authHeader = config?.profileAuth?.authHeader()
