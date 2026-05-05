@@ -15,6 +15,7 @@ import com.langchain.smith.models.repos.RepoListPage
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
+import com.langchain.smith.services.blocking.repos.DirectoryService
 import java.util.function.Consumer
 
 interface RepoService {
@@ -30,6 +31,8 @@ interface RepoService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService
+
+    fun directories(): DirectoryService
 
     /** Create a repo. */
     fun create(params: RepoCreateParams): CreateRepoResponse = create(params, RequestOptions.none())
@@ -127,6 +130,8 @@ interface RepoService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService.WithRawResponse
+
+        fun directories(): DirectoryService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/repos`, but is otherwise the same as

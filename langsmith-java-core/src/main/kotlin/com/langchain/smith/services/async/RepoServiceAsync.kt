@@ -14,6 +14,7 @@ import com.langchain.smith.models.repos.RepoListPageAsync
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
+import com.langchain.smith.services.async.repos.DirectoryServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -30,6 +31,8 @@ interface RepoServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync
+
+    fun directories(): DirectoryServiceAsync
 
     /** Create a repo. */
     fun create(params: RepoCreateParams): CompletableFuture<CreateRepoResponse> =
@@ -133,6 +136,8 @@ interface RepoServiceAsync {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync.WithRawResponse
+
+        fun directories(): DirectoryServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/repos`, but is otherwise the same as
