@@ -25,6 +25,7 @@ internal data class ProfileClientConfig(
     val apiKey: String?,
     val tenantId: String?,
     val oauthAccessToken: String?,
+    val oauthRefreshToken: String?,
     val profileAuth: ProfileAuth?,
 )
 
@@ -62,6 +63,7 @@ internal fun loadProfileClientConfig(
         apiKey = text(profile["api_key"]),
         tenantId = text(profile["workspace_id"]),
         oauthAccessToken = oauthAccessToken,
+        oauthRefreshToken = oauthRefreshToken,
         profileAuth =
             if (oauthAccessToken != null || oauthRefreshToken != null) {
                 ProfileAuth(jsonMapper, clock, configPath, config, profile)
