@@ -26,6 +26,8 @@ import com.langchain.smith.models.repos.RepoListPageResponse
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
+import com.langchain.smith.services.async.repos.DirectoryServiceAsync
+import com.langchain.smith.services.async.repos.DirectoryServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -37,10 +39,16 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
         WithRawResponseImpl(clientOptions)
     }
 
+    private val directories: DirectoryServiceAsync by lazy {
+        DirectoryServiceAsyncImpl(clientOptions)
+    }
+
     override fun withRawResponse(): RepoServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoServiceAsync =
         RepoServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun directories(): DirectoryServiceAsync = directories
 
     override fun create(
         params: RepoCreateParams,
@@ -83,12 +91,18 @@ class RepoServiceAsyncImpl internal constructor(private val clientOptions: Clien
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val directories: DirectoryServiceAsync.WithRawResponse by lazy {
+            DirectoryServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): RepoServiceAsync.WithRawResponse =
             RepoServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun directories(): DirectoryServiceAsync.WithRawResponse = directories
 
         private val createHandler: Handler<CreateRepoResponse> =
             jsonHandler<CreateRepoResponse>(clientOptions.jsonMapper)
