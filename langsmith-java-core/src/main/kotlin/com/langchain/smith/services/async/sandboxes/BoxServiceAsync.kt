@@ -152,7 +152,10 @@ interface BoxServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<BoxListResponse> =
         list(BoxListParams.none(), requestOptions)
 
-    /** Delete a sandbox claim by name. Deletes the Firecracker pod/service and DB record. */
+    /**
+     * Delete a sandbox claim by name or UUID. Tears down the sandbox runtime and removes the DB
+     * record.
+     */
     fun delete(name: String): CompletableFuture<Void?> = delete(name, BoxDeleteParams.none())
 
     /** @see delete */
