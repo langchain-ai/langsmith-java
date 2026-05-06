@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    kotlin("jvm") version "2.3.0"
+    kotlin("jvm") version "2.3.21"
     id("com.vanniktech.maven.publish") version "0.36.0"
 }
 
@@ -16,6 +16,6 @@ java {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.21")
     implementation("com.vanniktech:gradle-maven-publish-plugin:0.36.0")
 }
