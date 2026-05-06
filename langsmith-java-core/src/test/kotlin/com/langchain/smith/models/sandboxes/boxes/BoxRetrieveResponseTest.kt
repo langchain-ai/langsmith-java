@@ -15,6 +15,7 @@ internal class BoxRetrieveResponseTest {
             BoxRetrieveResponse.builder()
                 .id("id")
                 .createdAt("created_at")
+                .createdBy("created_by")
                 .dataplaneUrl("dataplane_url")
                 .expiresAt("expires_at")
                 .fsCapacityBytes(0L)
@@ -76,11 +77,13 @@ internal class BoxRetrieveResponseTest {
                 .statusMessage("status_message")
                 .ttlSeconds(0L)
                 .updatedAt("updated_at")
+                .updatedBy("updated_by")
                 .vcpus(0L)
                 .build()
 
         assertThat(boxRetrieveResponse.id()).contains("id")
         assertThat(boxRetrieveResponse.createdAt()).contains("created_at")
+        assertThat(boxRetrieveResponse.createdBy()).contains("created_by")
         assertThat(boxRetrieveResponse.dataplaneUrl()).contains("dataplane_url")
         assertThat(boxRetrieveResponse.expiresAt()).contains("expires_at")
         assertThat(boxRetrieveResponse.fsCapacityBytes()).contains(0L)
@@ -141,6 +144,7 @@ internal class BoxRetrieveResponseTest {
         assertThat(boxRetrieveResponse.statusMessage()).contains("status_message")
         assertThat(boxRetrieveResponse.ttlSeconds()).contains(0L)
         assertThat(boxRetrieveResponse.updatedAt()).contains("updated_at")
+        assertThat(boxRetrieveResponse.updatedBy()).contains("updated_by")
         assertThat(boxRetrieveResponse.vcpus()).contains(0L)
     }
 
@@ -151,6 +155,7 @@ internal class BoxRetrieveResponseTest {
             BoxRetrieveResponse.builder()
                 .id("id")
                 .createdAt("created_at")
+                .createdBy("created_by")
                 .dataplaneUrl("dataplane_url")
                 .expiresAt("expires_at")
                 .fsCapacityBytes(0L)
@@ -212,6 +217,7 @@ internal class BoxRetrieveResponseTest {
                 .statusMessage("status_message")
                 .ttlSeconds(0L)
                 .updatedAt("updated_at")
+                .updatedBy("updated_by")
                 .vcpus(0L)
                 .build()
 

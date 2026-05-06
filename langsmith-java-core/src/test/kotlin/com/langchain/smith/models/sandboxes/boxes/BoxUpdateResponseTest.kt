@@ -15,6 +15,7 @@ internal class BoxUpdateResponseTest {
             BoxUpdateResponse.builder()
                 .id("id")
                 .createdAt("created_at")
+                .createdBy("created_by")
                 .dataplaneUrl("dataplane_url")
                 .expiresAt("expires_at")
                 .fsCapacityBytes(0L)
@@ -75,11 +76,13 @@ internal class BoxUpdateResponseTest {
                 .statusMessage("status_message")
                 .ttlSeconds(0L)
                 .updatedAt("updated_at")
+                .updatedBy("updated_by")
                 .vcpus(0L)
                 .build()
 
         assertThat(boxUpdateResponse.id()).contains("id")
         assertThat(boxUpdateResponse.createdAt()).contains("created_at")
+        assertThat(boxUpdateResponse.createdBy()).contains("created_by")
         assertThat(boxUpdateResponse.dataplaneUrl()).contains("dataplane_url")
         assertThat(boxUpdateResponse.expiresAt()).contains("expires_at")
         assertThat(boxUpdateResponse.fsCapacityBytes()).contains(0L)
@@ -138,6 +141,7 @@ internal class BoxUpdateResponseTest {
         assertThat(boxUpdateResponse.statusMessage()).contains("status_message")
         assertThat(boxUpdateResponse.ttlSeconds()).contains(0L)
         assertThat(boxUpdateResponse.updatedAt()).contains("updated_at")
+        assertThat(boxUpdateResponse.updatedBy()).contains("updated_by")
         assertThat(boxUpdateResponse.vcpus()).contains(0L)
     }
 
@@ -148,6 +152,7 @@ internal class BoxUpdateResponseTest {
             BoxUpdateResponse.builder()
                 .id("id")
                 .createdAt("created_at")
+                .createdBy("created_by")
                 .dataplaneUrl("dataplane_url")
                 .expiresAt("expires_at")
                 .fsCapacityBytes(0L)
@@ -208,6 +213,7 @@ internal class BoxUpdateResponseTest {
                 .statusMessage("status_message")
                 .ttlSeconds(0L)
                 .updatedAt("updated_at")
+                .updatedBy("updated_by")
                 .vcpus(0L)
                 .build()
 

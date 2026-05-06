@@ -206,6 +206,7 @@ private constructor(
     private constructor(
         private val id: JsonField<String>,
         private val createdAt: JsonField<String>,
+        private val createdBy: JsonField<String>,
         private val dataplaneUrl: JsonField<String>,
         private val expiresAt: JsonField<String>,
         private val fsCapacityBytes: JsonField<Long>,
@@ -219,6 +220,7 @@ private constructor(
         private val statusMessage: JsonField<String>,
         private val ttlSeconds: JsonField<Long>,
         private val updatedAt: JsonField<String>,
+        private val updatedBy: JsonField<String>,
         private val vcpus: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -229,6 +231,9 @@ private constructor(
             @JsonProperty("created_at")
             @ExcludeMissing
             createdAt: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("created_by")
+            @ExcludeMissing
+            createdBy: JsonField<String> = JsonMissing.of(),
             @JsonProperty("dataplane_url")
             @ExcludeMissing
             dataplaneUrl: JsonField<String> = JsonMissing.of(),
@@ -262,10 +267,14 @@ private constructor(
             @JsonProperty("updated_at")
             @ExcludeMissing
             updatedAt: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("updated_by")
+            @ExcludeMissing
+            updatedBy: JsonField<String> = JsonMissing.of(),
             @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
         ) : this(
             id,
             createdAt,
+            createdBy,
             dataplaneUrl,
             expiresAt,
             fsCapacityBytes,
@@ -279,6 +288,7 @@ private constructor(
             statusMessage,
             ttlSeconds,
             updatedAt,
+            updatedBy,
             vcpus,
             mutableMapOf(),
         )
@@ -294,6 +304,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun createdAt(): Optional<String> = createdAt.getOptional("created_at")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun createdBy(): Optional<String> = createdBy.getOptional("created_by")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -377,6 +393,12 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
+        fun updatedBy(): Optional<String> = updatedBy.getOptional("updated_by")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
         fun vcpus(): Optional<Long> = vcpus.getOptional("vcpus")
 
         /**
@@ -392,6 +414,13 @@ private constructor(
          * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("created_at") @ExcludeMissing fun _createdAt(): JsonField<String> = createdAt
+
+        /**
+         * Returns the raw JSON value of [createdBy].
+         *
+         * Unlike [createdBy], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("created_by") @ExcludeMissing fun _createdBy(): JsonField<String> = createdBy
 
         /**
          * Returns the raw JSON value of [dataplaneUrl].
@@ -501,6 +530,13 @@ private constructor(
         @JsonProperty("updated_at") @ExcludeMissing fun _updatedAt(): JsonField<String> = updatedAt
 
         /**
+         * Returns the raw JSON value of [updatedBy].
+         *
+         * Unlike [updatedBy], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("updated_by") @ExcludeMissing fun _updatedBy(): JsonField<String> = updatedBy
+
+        /**
          * Returns the raw JSON value of [vcpus].
          *
          * Unlike [vcpus], this method doesn't throw if the JSON field has an unexpected type.
@@ -530,6 +566,7 @@ private constructor(
 
             private var id: JsonField<String> = JsonMissing.of()
             private var createdAt: JsonField<String> = JsonMissing.of()
+            private var createdBy: JsonField<String> = JsonMissing.of()
             private var dataplaneUrl: JsonField<String> = JsonMissing.of()
             private var expiresAt: JsonField<String> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
@@ -543,6 +580,7 @@ private constructor(
             private var statusMessage: JsonField<String> = JsonMissing.of()
             private var ttlSeconds: JsonField<Long> = JsonMissing.of()
             private var updatedAt: JsonField<String> = JsonMissing.of()
+            private var updatedBy: JsonField<String> = JsonMissing.of()
             private var vcpus: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -550,6 +588,7 @@ private constructor(
             internal fun from(sandbox: Sandbox) = apply {
                 id = sandbox.id
                 createdAt = sandbox.createdAt
+                createdBy = sandbox.createdBy
                 dataplaneUrl = sandbox.dataplaneUrl
                 expiresAt = sandbox.expiresAt
                 fsCapacityBytes = sandbox.fsCapacityBytes
@@ -563,6 +602,7 @@ private constructor(
                 statusMessage = sandbox.statusMessage
                 ttlSeconds = sandbox.ttlSeconds
                 updatedAt = sandbox.updatedAt
+                updatedBy = sandbox.updatedBy
                 vcpus = sandbox.vcpus
                 additionalProperties = sandbox.additionalProperties.toMutableMap()
             }
@@ -588,6 +628,17 @@ private constructor(
              * supported value.
              */
             fun createdAt(createdAt: JsonField<String>) = apply { this.createdAt = createdAt }
+
+            fun createdBy(createdBy: String) = createdBy(JsonField.of(createdBy))
+
+            /**
+             * Sets [Builder.createdBy] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.createdBy] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun createdBy(createdBy: JsonField<String>) = apply { this.createdBy = createdBy }
 
             fun dataplaneUrl(dataplaneUrl: String) = dataplaneUrl(JsonField.of(dataplaneUrl))
 
@@ -743,6 +794,17 @@ private constructor(
              */
             fun updatedAt(updatedAt: JsonField<String>) = apply { this.updatedAt = updatedAt }
 
+            fun updatedBy(updatedBy: String) = updatedBy(JsonField.of(updatedBy))
+
+            /**
+             * Sets [Builder.updatedBy] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.updatedBy] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun updatedBy(updatedBy: JsonField<String>) = apply { this.updatedBy = updatedBy }
+
             fun vcpus(vcpus: Long) = vcpus(JsonField.of(vcpus))
 
             /**
@@ -782,6 +844,7 @@ private constructor(
                 Sandbox(
                     id,
                     createdAt,
+                    createdBy,
                     dataplaneUrl,
                     expiresAt,
                     fsCapacityBytes,
@@ -795,6 +858,7 @@ private constructor(
                     statusMessage,
                     ttlSeconds,
                     updatedAt,
+                    updatedBy,
                     vcpus,
                     additionalProperties.toMutableMap(),
                 )
@@ -818,6 +882,7 @@ private constructor(
 
             id()
             createdAt()
+            createdBy()
             dataplaneUrl()
             expiresAt()
             fsCapacityBytes()
@@ -831,6 +896,7 @@ private constructor(
             statusMessage()
             ttlSeconds()
             updatedAt()
+            updatedBy()
             vcpus()
             validated = true
         }
@@ -853,6 +919,7 @@ private constructor(
         internal fun validity(): Int =
             (if (id.asKnown().isPresent) 1 else 0) +
                 (if (createdAt.asKnown().isPresent) 1 else 0) +
+                (if (createdBy.asKnown().isPresent) 1 else 0) +
                 (if (dataplaneUrl.asKnown().isPresent) 1 else 0) +
                 (if (expiresAt.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
@@ -866,6 +933,7 @@ private constructor(
                 (if (statusMessage.asKnown().isPresent) 1 else 0) +
                 (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
                 (if (updatedAt.asKnown().isPresent) 1 else 0) +
+                (if (updatedBy.asKnown().isPresent) 1 else 0) +
                 (if (vcpus.asKnown().isPresent) 1 else 0)
 
         class ProxyConfig
@@ -2999,6 +3067,7 @@ private constructor(
             return other is Sandbox &&
                 id == other.id &&
                 createdAt == other.createdAt &&
+                createdBy == other.createdBy &&
                 dataplaneUrl == other.dataplaneUrl &&
                 expiresAt == other.expiresAt &&
                 fsCapacityBytes == other.fsCapacityBytes &&
@@ -3012,6 +3081,7 @@ private constructor(
                 statusMessage == other.statusMessage &&
                 ttlSeconds == other.ttlSeconds &&
                 updatedAt == other.updatedAt &&
+                updatedBy == other.updatedBy &&
                 vcpus == other.vcpus &&
                 additionalProperties == other.additionalProperties
         }
@@ -3020,6 +3090,7 @@ private constructor(
             Objects.hash(
                 id,
                 createdAt,
+                createdBy,
                 dataplaneUrl,
                 expiresAt,
                 fsCapacityBytes,
@@ -3033,6 +3104,7 @@ private constructor(
                 statusMessage,
                 ttlSeconds,
                 updatedAt,
+                updatedBy,
                 vcpus,
                 additionalProperties,
             )
@@ -3041,7 +3113,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Sandbox{id=$id, createdAt=$createdAt, dataplaneUrl=$dataplaneUrl, expiresAt=$expiresAt, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, ttlSeconds=$ttlSeconds, updatedAt=$updatedAt, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Sandbox{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, expiresAt=$expiresAt, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, ttlSeconds=$ttlSeconds, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
