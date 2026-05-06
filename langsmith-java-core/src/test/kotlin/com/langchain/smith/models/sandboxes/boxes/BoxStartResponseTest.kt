@@ -15,6 +15,7 @@ internal class BoxStartResponseTest {
             BoxStartResponse.builder()
                 .id("id")
                 .createdAt("created_at")
+                .createdBy("created_by")
                 .dataplaneUrl("dataplane_url")
                 .expiresAt("expires_at")
                 .fsCapacityBytes(0L)
@@ -74,11 +75,13 @@ internal class BoxStartResponseTest {
                 .statusMessage("status_message")
                 .ttlSeconds(0L)
                 .updatedAt("updated_at")
+                .updatedBy("updated_by")
                 .vcpus(0L)
                 .build()
 
         assertThat(boxStartResponse.id()).contains("id")
         assertThat(boxStartResponse.createdAt()).contains("created_at")
+        assertThat(boxStartResponse.createdBy()).contains("created_by")
         assertThat(boxStartResponse.dataplaneUrl()).contains("dataplane_url")
         assertThat(boxStartResponse.expiresAt()).contains("expires_at")
         assertThat(boxStartResponse.fsCapacityBytes()).contains(0L)
@@ -137,6 +140,7 @@ internal class BoxStartResponseTest {
         assertThat(boxStartResponse.statusMessage()).contains("status_message")
         assertThat(boxStartResponse.ttlSeconds()).contains(0L)
         assertThat(boxStartResponse.updatedAt()).contains("updated_at")
+        assertThat(boxStartResponse.updatedBy()).contains("updated_by")
         assertThat(boxStartResponse.vcpus()).contains(0L)
     }
 
@@ -147,6 +151,7 @@ internal class BoxStartResponseTest {
             BoxStartResponse.builder()
                 .id("id")
                 .createdAt("created_at")
+                .createdBy("created_by")
                 .dataplaneUrl("dataplane_url")
                 .expiresAt("expires_at")
                 .fsCapacityBytes(0L)
@@ -206,6 +211,7 @@ internal class BoxStartResponseTest {
                 .statusMessage("status_message")
                 .ttlSeconds(0L)
                 .updatedAt("updated_at")
+                .updatedBy("updated_by")
                 .vcpus(0L)
                 .build()
 
