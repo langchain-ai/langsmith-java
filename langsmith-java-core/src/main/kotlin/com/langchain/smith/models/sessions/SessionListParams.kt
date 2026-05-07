@@ -30,6 +30,7 @@ private constructor(
     private val sortBy: SessionSortableColumns?,
     private val sortByDesc: Boolean?,
     private val sortByFeedbackKey: String?,
+    private val statsFilter: String?,
     private val statsSelect: List<String>?,
     private val statsStartTime: OffsetDateTime?,
     private val tagValueId: List<String>?,
@@ -68,6 +69,8 @@ private constructor(
     fun sortByDesc(): Optional<Boolean> = Optional.ofNullable(sortByDesc)
 
     fun sortByFeedbackKey(): Optional<String> = Optional.ofNullable(sortByFeedbackKey)
+
+    fun statsFilter(): Optional<String> = Optional.ofNullable(statsFilter)
 
     fun statsSelect(): Optional<List<String>> = Optional.ofNullable(statsSelect)
 
@@ -113,6 +116,7 @@ private constructor(
         private var sortBy: SessionSortableColumns? = null
         private var sortByDesc: Boolean? = null
         private var sortByFeedbackKey: String? = null
+        private var statsFilter: String? = null
         private var statsSelect: MutableList<String>? = null
         private var statsStartTime: OffsetDateTime? = null
         private var tagValueId: MutableList<String>? = null
@@ -138,6 +142,7 @@ private constructor(
             sortBy = sessionListParams.sortBy
             sortByDesc = sessionListParams.sortByDesc
             sortByFeedbackKey = sessionListParams.sortByFeedbackKey
+            statsFilter = sessionListParams.statsFilter
             statsSelect = sessionListParams.statsSelect?.toMutableList()
             statsStartTime = sessionListParams.statsStartTime
             tagValueId = sessionListParams.tagValueId?.toMutableList()
@@ -288,6 +293,11 @@ private constructor(
         /** Alias for calling [Builder.sortByFeedbackKey] with `sortByFeedbackKey.orElse(null)`. */
         fun sortByFeedbackKey(sortByFeedbackKey: Optional<String>) =
             sortByFeedbackKey(sortByFeedbackKey.getOrNull())
+
+        fun statsFilter(statsFilter: String?) = apply { this.statsFilter = statsFilter }
+
+        /** Alias for calling [Builder.statsFilter] with `statsFilter.orElse(null)`. */
+        fun statsFilter(statsFilter: Optional<String>) = statsFilter(statsFilter.getOrNull())
 
         fun statsSelect(statsSelect: List<String>?) = apply {
             this.statsSelect = statsSelect?.toMutableList()
@@ -469,6 +479,7 @@ private constructor(
                 sortBy,
                 sortByDesc,
                 sortByFeedbackKey,
+                statsFilter,
                 statsSelect?.toImmutable(),
                 statsStartTime,
                 tagValueId?.toImmutable(),
@@ -505,6 +516,7 @@ private constructor(
                 sortBy?.let { put("sort_by", it.toString()) }
                 sortByDesc?.let { put("sort_by_desc", it.toString()) }
                 sortByFeedbackKey?.let { put("sort_by_feedback_key", it) }
+                statsFilter?.let { put("stats_filter", it) }
                 statsSelect?.let { put("stats_select", it.joinToString(",")) }
                 statsStartTime?.let {
                     put("stats_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
@@ -536,6 +548,7 @@ private constructor(
             sortBy == other.sortBy &&
             sortByDesc == other.sortByDesc &&
             sortByFeedbackKey == other.sortByFeedbackKey &&
+            statsFilter == other.statsFilter &&
             statsSelect == other.statsSelect &&
             statsStartTime == other.statsStartTime &&
             tagValueId == other.tagValueId &&
@@ -562,6 +575,7 @@ private constructor(
             sortBy,
             sortByDesc,
             sortByFeedbackKey,
+            statsFilter,
             statsSelect,
             statsStartTime,
             tagValueId,
@@ -572,5 +586,5 @@ private constructor(
         )
 
     override fun toString() =
-        "SessionListParams{id=$id, datasetVersion=$datasetVersion, facets=$facets, filter=$filter, includeStats=$includeStats, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, referenceDataset=$referenceDataset, referenceFree=$referenceFree, sortBy=$sortBy, sortByDesc=$sortByDesc, sortByFeedbackKey=$sortByFeedbackKey, statsSelect=$statsSelect, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SessionListParams{id=$id, datasetVersion=$datasetVersion, facets=$facets, filter=$filter, includeStats=$includeStats, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, referenceDataset=$referenceDataset, referenceFree=$referenceFree, sortBy=$sortBy, sortByDesc=$sortByDesc, sortByFeedbackKey=$sortByFeedbackKey, statsFilter=$statsFilter, statsSelect=$statsSelect, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
