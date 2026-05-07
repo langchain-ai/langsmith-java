@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.langchain.smith.client.LangsmithClientAsync
 import com.langchain.smith.client.LangsmithClientAsyncImpl
 import com.langchain.smith.core.ClientOptions
+import com.langchain.smith.core.LogLevel
 import com.langchain.smith.core.Sleeper
 import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.AsyncStreamResponse
@@ -289,6 +290,15 @@ class LangsmithOkHttpClientAsync private constructor() {
          * Defaults to 2.
          */
         fun maxRetries(maxRetries: Int) = apply { clientOptions.maxRetries(maxRetries) }
+
+        /**
+         * The level at which to log request and response information.
+         *
+         * [fromEnv] will set the level from environment variables. See [LogLevel.fromEnv].
+         *
+         * Defaults to [LogLevel.fromEnv].
+         */
+        fun logLevel(logLevel: LogLevel) = apply { clientOptions.logLevel(logLevel) }
 
         fun apiKey(apiKey: String?) = apply { clientOptions.apiKey(apiKey) }
 
