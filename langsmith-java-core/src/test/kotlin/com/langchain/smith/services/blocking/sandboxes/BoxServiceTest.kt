@@ -23,6 +23,7 @@ internal class BoxServiceTest {
         val box =
             boxService.create(
                 BoxCreateParams.builder()
+                    .deleteAfterStopSeconds(0L)
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
@@ -40,6 +41,7 @@ internal class BoxServiceTest {
                                     .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
+                                    .fullRequest(true)
                                     .addRequestHeader(
                                         BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
                                             .name("name")
@@ -78,7 +80,6 @@ internal class BoxServiceTest {
                     )
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
-                    .ttlSeconds(0L)
                     .vcpus(0L)
                     .build()
             )
@@ -109,6 +110,7 @@ internal class BoxServiceTest {
             boxService.update(
                 BoxUpdateParams.builder()
                     .pathName("name")
+                    .deleteAfterStopSeconds(0L)
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
@@ -126,6 +128,7 @@ internal class BoxServiceTest {
                                     .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
+                                    .fullRequest(true)
                                     .addRequestHeader(
                                         BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
                                             .bodyName("name")
@@ -162,7 +165,6 @@ internal class BoxServiceTest {
                             )
                             .build()
                     )
-                    .ttlSeconds(0L)
                     .vcpus(0L)
                     .build()
             )

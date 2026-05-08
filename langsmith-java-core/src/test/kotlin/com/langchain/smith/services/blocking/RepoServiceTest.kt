@@ -28,6 +28,7 @@ internal class RepoServiceTest {
                     .readme("readme")
                     .repoType(RepoCreateParams.RepoType.PROMPT)
                     .restrictedMode(true)
+                    .source(RepoCreateParams.Source.INTERNAL)
                     .addTag("string")
                     .build()
             )

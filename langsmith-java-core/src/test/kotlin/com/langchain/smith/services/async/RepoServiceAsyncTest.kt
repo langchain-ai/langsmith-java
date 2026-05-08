@@ -31,6 +31,7 @@ internal class RepoServiceAsyncTest {
                     .readme("readme")
                     .repoType(RepoCreateParams.RepoType.PROMPT)
                     .restrictedMode(true)
+                    .source(RepoCreateParams.Source.INTERNAL)
                     .addTag("string")
                     .build()
             )

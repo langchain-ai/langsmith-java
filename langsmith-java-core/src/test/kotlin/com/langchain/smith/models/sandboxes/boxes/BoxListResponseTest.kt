@@ -21,7 +21,7 @@ internal class BoxListResponseTest {
                         .createdAt("created_at")
                         .createdBy("created_by")
                         .dataplaneUrl("dataplane_url")
-                        .expiresAt("expires_at")
+                        .deleteAfterStopSeconds(0L)
                         .fsCapacityBytes(0L)
                         .idleTtlSeconds(0L)
                         .memBytes(0L)
@@ -39,6 +39,7 @@ internal class BoxListResponseTest {
                                         .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
+                                        .fullRequest(true)
                                         .addRequestHeader(
                                             BoxListResponse.Sandbox.ProxyConfig.Callback
                                                 .RequestHeader
@@ -84,7 +85,7 @@ internal class BoxListResponseTest {
                         .snapshotId("snapshot_id")
                         .status("status")
                         .statusMessage("status_message")
-                        .ttlSeconds(0L)
+                        .stoppedAt("stopped_at")
                         .updatedAt("updated_at")
                         .updatedBy("updated_by")
                         .vcpus(0L)
@@ -100,7 +101,7 @@ internal class BoxListResponseTest {
                     .createdAt("created_at")
                     .createdBy("created_by")
                     .dataplaneUrl("dataplane_url")
-                    .expiresAt("expires_at")
+                    .deleteAfterStopSeconds(0L)
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
@@ -118,6 +119,7 @@ internal class BoxListResponseTest {
                                     .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
+                                    .fullRequest(true)
                                     .addRequestHeader(
                                         BoxListResponse.Sandbox.ProxyConfig.Callback.RequestHeader
                                             .builder()
@@ -160,7 +162,7 @@ internal class BoxListResponseTest {
                     .snapshotId("snapshot_id")
                     .status("status")
                     .statusMessage("status_message")
-                    .ttlSeconds(0L)
+                    .stoppedAt("stopped_at")
                     .updatedAt("updated_at")
                     .updatedBy("updated_by")
                     .vcpus(0L)
@@ -180,7 +182,7 @@ internal class BoxListResponseTest {
                         .createdAt("created_at")
                         .createdBy("created_by")
                         .dataplaneUrl("dataplane_url")
-                        .expiresAt("expires_at")
+                        .deleteAfterStopSeconds(0L)
                         .fsCapacityBytes(0L)
                         .idleTtlSeconds(0L)
                         .memBytes(0L)
@@ -198,6 +200,7 @@ internal class BoxListResponseTest {
                                         .addMatchHost("string")
                                         .ttlSeconds(60L)
                                         .url("url")
+                                        .fullRequest(true)
                                         .addRequestHeader(
                                             BoxListResponse.Sandbox.ProxyConfig.Callback
                                                 .RequestHeader
@@ -243,7 +246,7 @@ internal class BoxListResponseTest {
                         .snapshotId("snapshot_id")
                         .status("status")
                         .statusMessage("status_message")
-                        .ttlSeconds(0L)
+                        .stoppedAt("stopped_at")
                         .updatedAt("updated_at")
                         .updatedBy("updated_by")
                         .vcpus(0L)
