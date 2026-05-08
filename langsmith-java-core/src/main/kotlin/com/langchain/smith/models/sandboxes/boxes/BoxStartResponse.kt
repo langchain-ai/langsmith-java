@@ -27,7 +27,7 @@ private constructor(
     private val createdAt: JsonField<String>,
     private val createdBy: JsonField<String>,
     private val dataplaneUrl: JsonField<String>,
-    private val expiresAt: JsonField<String>,
+    private val deleteAfterStopSeconds: JsonField<Long>,
     private val fsCapacityBytes: JsonField<Long>,
     private val idleTtlSeconds: JsonField<Long>,
     private val memBytes: JsonField<Long>,
@@ -37,7 +37,7 @@ private constructor(
     private val snapshotId: JsonField<String>,
     private val status: JsonField<String>,
     private val statusMessage: JsonField<String>,
-    private val ttlSeconds: JsonField<Long>,
+    private val stoppedAt: JsonField<String>,
     private val updatedAt: JsonField<String>,
     private val updatedBy: JsonField<String>,
     private val vcpus: JsonField<Long>,
@@ -52,7 +52,9 @@ private constructor(
         @JsonProperty("dataplane_url")
         @ExcludeMissing
         dataplaneUrl: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("expires_at") @ExcludeMissing expiresAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("delete_after_stop_seconds")
+        @ExcludeMissing
+        deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("fs_capacity_bytes")
         @ExcludeMissing
         fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
@@ -72,7 +74,7 @@ private constructor(
         @JsonProperty("status_message")
         @ExcludeMissing
         statusMessage: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("ttl_seconds") @ExcludeMissing ttlSeconds: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("stopped_at") @ExcludeMissing stoppedAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("updated_by") @ExcludeMissing updatedBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
@@ -81,7 +83,7 @@ private constructor(
         createdAt,
         createdBy,
         dataplaneUrl,
-        expiresAt,
+        deleteAfterStopSeconds,
         fsCapacityBytes,
         idleTtlSeconds,
         memBytes,
@@ -91,7 +93,7 @@ private constructor(
         snapshotId,
         status,
         statusMessage,
-        ttlSeconds,
+        stoppedAt,
         updatedAt,
         updatedBy,
         vcpus,
@@ -126,7 +128,8 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun expiresAt(): Optional<String> = expiresAt.getOptional("expires_at")
+    fun deleteAfterStopSeconds(): Optional<Long> =
+        deleteAfterStopSeconds.getOptional("delete_after_stop_seconds")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -186,7 +189,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun ttlSeconds(): Optional<Long> = ttlSeconds.getOptional("ttl_seconds")
+    fun stoppedAt(): Optional<String> = stoppedAt.getOptional("stopped_at")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -237,11 +240,14 @@ private constructor(
     fun _dataplaneUrl(): JsonField<String> = dataplaneUrl
 
     /**
-     * Returns the raw JSON value of [expiresAt].
+     * Returns the raw JSON value of [deleteAfterStopSeconds].
      *
-     * Unlike [expiresAt], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [deleteAfterStopSeconds], this method doesn't throw if the JSON field has an
+     * unexpected type.
      */
-    @JsonProperty("expires_at") @ExcludeMissing fun _expiresAt(): JsonField<String> = expiresAt
+    @JsonProperty("delete_after_stop_seconds")
+    @ExcludeMissing
+    fun _deleteAfterStopSeconds(): JsonField<Long> = deleteAfterStopSeconds
 
     /**
      * Returns the raw JSON value of [fsCapacityBytes].
@@ -315,11 +321,11 @@ private constructor(
     fun _statusMessage(): JsonField<String> = statusMessage
 
     /**
-     * Returns the raw JSON value of [ttlSeconds].
+     * Returns the raw JSON value of [stoppedAt].
      *
-     * Unlike [ttlSeconds], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [stoppedAt], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("ttl_seconds") @ExcludeMissing fun _ttlSeconds(): JsonField<Long> = ttlSeconds
+    @JsonProperty("stopped_at") @ExcludeMissing fun _stoppedAt(): JsonField<String> = stoppedAt
 
     /**
      * Returns the raw JSON value of [updatedAt].
@@ -367,7 +373,7 @@ private constructor(
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var createdBy: JsonField<String> = JsonMissing.of()
         private var dataplaneUrl: JsonField<String> = JsonMissing.of()
-        private var expiresAt: JsonField<String> = JsonMissing.of()
+        private var deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of()
         private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
         private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
         private var memBytes: JsonField<Long> = JsonMissing.of()
@@ -377,7 +383,7 @@ private constructor(
         private var snapshotId: JsonField<String> = JsonMissing.of()
         private var status: JsonField<String> = JsonMissing.of()
         private var statusMessage: JsonField<String> = JsonMissing.of()
-        private var ttlSeconds: JsonField<Long> = JsonMissing.of()
+        private var stoppedAt: JsonField<String> = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
         private var updatedBy: JsonField<String> = JsonMissing.of()
         private var vcpus: JsonField<Long> = JsonMissing.of()
@@ -389,7 +395,7 @@ private constructor(
             createdAt = boxStartResponse.createdAt
             createdBy = boxStartResponse.createdBy
             dataplaneUrl = boxStartResponse.dataplaneUrl
-            expiresAt = boxStartResponse.expiresAt
+            deleteAfterStopSeconds = boxStartResponse.deleteAfterStopSeconds
             fsCapacityBytes = boxStartResponse.fsCapacityBytes
             idleTtlSeconds = boxStartResponse.idleTtlSeconds
             memBytes = boxStartResponse.memBytes
@@ -399,7 +405,7 @@ private constructor(
             snapshotId = boxStartResponse.snapshotId
             status = boxStartResponse.status
             statusMessage = boxStartResponse.statusMessage
-            ttlSeconds = boxStartResponse.ttlSeconds
+            stoppedAt = boxStartResponse.stoppedAt
             updatedAt = boxStartResponse.updatedAt
             updatedBy = boxStartResponse.updatedBy
             vcpus = boxStartResponse.vcpus
@@ -451,16 +457,19 @@ private constructor(
             this.dataplaneUrl = dataplaneUrl
         }
 
-        fun expiresAt(expiresAt: String) = expiresAt(JsonField.of(expiresAt))
+        fun deleteAfterStopSeconds(deleteAfterStopSeconds: Long) =
+            deleteAfterStopSeconds(JsonField.of(deleteAfterStopSeconds))
 
         /**
-         * Sets [Builder.expiresAt] to an arbitrary JSON value.
+         * Sets [Builder.deleteAfterStopSeconds] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.expiresAt] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.deleteAfterStopSeconds] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun expiresAt(expiresAt: JsonField<String>) = apply { this.expiresAt = expiresAt }
+        fun deleteAfterStopSeconds(deleteAfterStopSeconds: JsonField<Long>) = apply {
+            this.deleteAfterStopSeconds = deleteAfterStopSeconds
+        }
 
         fun fsCapacityBytes(fsCapacityBytes: Long) = fsCapacityBytes(JsonField.of(fsCapacityBytes))
 
@@ -566,15 +575,16 @@ private constructor(
             this.statusMessage = statusMessage
         }
 
-        fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
+        fun stoppedAt(stoppedAt: String) = stoppedAt(JsonField.of(stoppedAt))
 
         /**
-         * Sets [Builder.ttlSeconds] to an arbitrary JSON value.
+         * Sets [Builder.stoppedAt] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.ttlSeconds] with a well-typed [Long] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.stoppedAt] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun ttlSeconds(ttlSeconds: JsonField<Long>) = apply { this.ttlSeconds = ttlSeconds }
+        fun stoppedAt(stoppedAt: JsonField<String>) = apply { this.stoppedAt = stoppedAt }
 
         fun updatedAt(updatedAt: String) = updatedAt(JsonField.of(updatedAt))
 
@@ -638,7 +648,7 @@ private constructor(
                 createdAt,
                 createdBy,
                 dataplaneUrl,
-                expiresAt,
+                deleteAfterStopSeconds,
                 fsCapacityBytes,
                 idleTtlSeconds,
                 memBytes,
@@ -648,7 +658,7 @@ private constructor(
                 snapshotId,
                 status,
                 statusMessage,
-                ttlSeconds,
+                stoppedAt,
                 updatedAt,
                 updatedBy,
                 vcpus,
@@ -675,7 +685,7 @@ private constructor(
         createdAt()
         createdBy()
         dataplaneUrl()
-        expiresAt()
+        deleteAfterStopSeconds()
         fsCapacityBytes()
         idleTtlSeconds()
         memBytes()
@@ -685,7 +695,7 @@ private constructor(
         snapshotId()
         status()
         statusMessage()
-        ttlSeconds()
+        stoppedAt()
         updatedAt()
         updatedBy()
         vcpus()
@@ -711,7 +721,7 @@ private constructor(
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (createdBy.asKnown().isPresent) 1 else 0) +
             (if (dataplaneUrl.asKnown().isPresent) 1 else 0) +
-            (if (expiresAt.asKnown().isPresent) 1 else 0) +
+            (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
             (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
             (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
             (if (memBytes.asKnown().isPresent) 1 else 0) +
@@ -721,7 +731,7 @@ private constructor(
             (if (snapshotId.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (statusMessage.asKnown().isPresent) 1 else 0) +
-            (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
+            (if (stoppedAt.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (updatedBy.asKnown().isPresent) 1 else 0) +
             (if (vcpus.asKnown().isPresent) 1 else 0)
@@ -1245,6 +1255,7 @@ private constructor(
             private val matchHosts: JsonField<List<String>>,
             private val ttlSeconds: JsonField<Long>,
             private val url: JsonField<String>,
+            private val fullRequest: JsonField<Boolean>,
             private val requestHeaders: JsonField<List<RequestHeader>>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
@@ -1258,10 +1269,13 @@ private constructor(
                 @ExcludeMissing
                 ttlSeconds: JsonField<Long> = JsonMissing.of(),
                 @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("full_request")
+                @ExcludeMissing
+                fullRequest: JsonField<Boolean> = JsonMissing.of(),
                 @JsonProperty("request_headers")
                 @ExcludeMissing
                 requestHeaders: JsonField<List<RequestHeader>> = JsonMissing.of(),
-            ) : this(matchHosts, ttlSeconds, url, requestHeaders, mutableMapOf())
+            ) : this(matchHosts, ttlSeconds, url, fullRequest, requestHeaders, mutableMapOf())
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -1283,6 +1297,12 @@ private constructor(
              *   value).
              */
             fun url(): String = url.getRequired("url")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun fullRequest(): Optional<Boolean> = fullRequest.getOptional("full_request")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -1317,6 +1337,16 @@ private constructor(
              * Unlike [url], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("url") @ExcludeMissing fun _url(): JsonField<String> = url
+
+            /**
+             * Returns the raw JSON value of [fullRequest].
+             *
+             * Unlike [fullRequest], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("full_request")
+            @ExcludeMissing
+            fun _fullRequest(): JsonField<Boolean> = fullRequest
 
             /**
              * Returns the raw JSON value of [requestHeaders].
@@ -1361,6 +1391,7 @@ private constructor(
                 private var matchHosts: JsonField<MutableList<String>>? = null
                 private var ttlSeconds: JsonField<Long>? = null
                 private var url: JsonField<String>? = null
+                private var fullRequest: JsonField<Boolean> = JsonMissing.of()
                 private var requestHeaders: JsonField<MutableList<RequestHeader>>? = null
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -1369,6 +1400,7 @@ private constructor(
                     matchHosts = callback.matchHosts.map { it.toMutableList() }
                     ttlSeconds = callback.ttlSeconds
                     url = callback.url
+                    fullRequest = callback.fullRequest
                     requestHeaders = callback.requestHeaders.map { it.toMutableList() }
                     additionalProperties = callback.additionalProperties.toMutableMap()
                 }
@@ -1419,6 +1451,19 @@ private constructor(
                  * supported value.
                  */
                 fun url(url: JsonField<String>) = apply { this.url = url }
+
+                fun fullRequest(fullRequest: Boolean) = fullRequest(JsonField.of(fullRequest))
+
+                /**
+                 * Sets [Builder.fullRequest] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.fullRequest] with a well-typed [Boolean] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun fullRequest(fullRequest: JsonField<Boolean>) = apply {
+                    this.fullRequest = fullRequest
+                }
 
                 fun requestHeaders(requestHeaders: List<RequestHeader>) =
                     requestHeaders(JsonField.of(requestHeaders))
@@ -1487,6 +1532,7 @@ private constructor(
                         checkRequired("matchHosts", matchHosts).map { it.toImmutable() },
                         checkRequired("ttlSeconds", ttlSeconds),
                         checkRequired("url", url),
+                        fullRequest,
                         (requestHeaders ?: JsonMissing.of()).map { it.toImmutable() },
                         additionalProperties.toMutableMap(),
                     )
@@ -1512,6 +1558,7 @@ private constructor(
                 matchHosts()
                 ttlSeconds()
                 url()
+                fullRequest()
                 requestHeaders().ifPresent { it.forEach { it.validate() } }
                 validated = true
             }
@@ -1535,6 +1582,7 @@ private constructor(
                 (matchHosts.asKnown().getOrNull()?.size ?: 0) +
                     (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
                     (if (url.asKnown().isPresent) 1 else 0) +
+                    (if (fullRequest.asKnown().isPresent) 1 else 0) +
                     (requestHeaders.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
             class RequestHeader
@@ -1978,18 +2026,26 @@ private constructor(
                     matchHosts == other.matchHosts &&
                     ttlSeconds == other.ttlSeconds &&
                     url == other.url &&
+                    fullRequest == other.fullRequest &&
                     requestHeaders == other.requestHeaders &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(matchHosts, ttlSeconds, url, requestHeaders, additionalProperties)
+                Objects.hash(
+                    matchHosts,
+                    ttlSeconds,
+                    url,
+                    fullRequest,
+                    requestHeaders,
+                    additionalProperties,
+                )
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Callback{matchHosts=$matchHosts, ttlSeconds=$ttlSeconds, url=$url, requestHeaders=$requestHeaders, additionalProperties=$additionalProperties}"
+                "Callback{matchHosts=$matchHosts, ttlSeconds=$ttlSeconds, url=$url, fullRequest=$fullRequest, requestHeaders=$requestHeaders, additionalProperties=$additionalProperties}"
         }
 
         class Rule
@@ -2820,7 +2876,7 @@ private constructor(
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
             dataplaneUrl == other.dataplaneUrl &&
-            expiresAt == other.expiresAt &&
+            deleteAfterStopSeconds == other.deleteAfterStopSeconds &&
             fsCapacityBytes == other.fsCapacityBytes &&
             idleTtlSeconds == other.idleTtlSeconds &&
             memBytes == other.memBytes &&
@@ -2830,7 +2886,7 @@ private constructor(
             snapshotId == other.snapshotId &&
             status == other.status &&
             statusMessage == other.statusMessage &&
-            ttlSeconds == other.ttlSeconds &&
+            stoppedAt == other.stoppedAt &&
             updatedAt == other.updatedAt &&
             updatedBy == other.updatedBy &&
             vcpus == other.vcpus &&
@@ -2843,7 +2899,7 @@ private constructor(
             createdAt,
             createdBy,
             dataplaneUrl,
-            expiresAt,
+            deleteAfterStopSeconds,
             fsCapacityBytes,
             idleTtlSeconds,
             memBytes,
@@ -2853,7 +2909,7 @@ private constructor(
             snapshotId,
             status,
             statusMessage,
-            ttlSeconds,
+            stoppedAt,
             updatedAt,
             updatedBy,
             vcpus,
@@ -2864,5 +2920,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxStartResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, expiresAt=$expiresAt, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, ttlSeconds=$ttlSeconds, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "BoxStartResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }
