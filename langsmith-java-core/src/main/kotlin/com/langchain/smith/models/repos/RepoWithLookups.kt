@@ -51,6 +51,7 @@ private constructor(
     private val originalRepoId: JsonField<String>,
     private val readme: JsonField<String>,
     private val restrictedMode: JsonField<Boolean>,
+    private val source: JsonField<Source>,
     private val upstreamRepoFullName: JsonField<String>,
     private val upstreamRepoId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -109,6 +110,7 @@ private constructor(
         @JsonProperty("restricted_mode")
         @ExcludeMissing
         restrictedMode: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("source") @ExcludeMissing source: JsonField<Source> = JsonMissing.of(),
         @JsonProperty("upstream_repo_full_name")
         @ExcludeMissing
         upstreamRepoFullName: JsonField<String> = JsonMissing.of(),
@@ -141,6 +143,7 @@ private constructor(
         originalRepoId,
         readme,
         restrictedMode,
+        source,
         upstreamRepoFullName,
         upstreamRepoId,
         mutableMapOf(),
@@ -299,6 +302,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun restrictedMode(): Optional<Boolean> = restrictedMode.getOptional("restricted_mode")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun source(): Optional<Source> = source.getOptional("source")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -511,6 +520,13 @@ private constructor(
     fun _restrictedMode(): JsonField<Boolean> = restrictedMode
 
     /**
+     * Returns the raw JSON value of [source].
+     *
+     * Unlike [source], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("source") @ExcludeMissing fun _source(): JsonField<Source> = source
+
+    /**
      * Returns the raw JSON value of [upstreamRepoFullName].
      *
      * Unlike [upstreamRepoFullName], this method doesn't throw if the JSON field has an unexpected
@@ -596,6 +612,7 @@ private constructor(
         private var originalRepoId: JsonField<String> = JsonMissing.of()
         private var readme: JsonField<String> = JsonMissing.of()
         private var restrictedMode: JsonField<Boolean> = JsonMissing.of()
+        private var source: JsonField<Source> = JsonMissing.of()
         private var upstreamRepoFullName: JsonField<String> = JsonMissing.of()
         private var upstreamRepoId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -627,6 +644,7 @@ private constructor(
             originalRepoId = repoWithLookups.originalRepoId
             readme = repoWithLookups.readme
             restrictedMode = repoWithLookups.restrictedMode
+            source = repoWithLookups.source
             upstreamRepoFullName = repoWithLookups.upstreamRepoFullName
             upstreamRepoId = repoWithLookups.upstreamRepoId
             additionalProperties = repoWithLookups.additionalProperties.toMutableMap()
@@ -987,6 +1005,19 @@ private constructor(
             this.restrictedMode = restrictedMode
         }
 
+        fun source(source: Source?) = source(JsonField.ofNullable(source))
+
+        /** Alias for calling [Builder.source] with `source.orElse(null)`. */
+        fun source(source: Optional<Source>) = source(source.getOrNull())
+
+        /**
+         * Sets [Builder.source] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.source] with a well-typed [Source] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun source(source: JsonField<Source>) = apply { this.source = source }
+
         fun upstreamRepoFullName(upstreamRepoFullName: String?) =
             upstreamRepoFullName(JsonField.ofNullable(upstreamRepoFullName))
 
@@ -1098,6 +1129,7 @@ private constructor(
                 originalRepoId,
                 readme,
                 restrictedMode,
+                source,
                 upstreamRepoFullName,
                 upstreamRepoId,
                 additionalProperties.toMutableMap(),
@@ -1136,6 +1168,7 @@ private constructor(
         originalRepoId()
         readme()
         restrictedMode()
+        source().ifPresent { it.validate() }
         upstreamRepoFullName()
         upstreamRepoId()
         validated = true
@@ -1181,6 +1214,7 @@ private constructor(
             (if (originalRepoId.asKnown().isPresent) 1 else 0) +
             (if (readme.asKnown().isPresent) 1 else 0) +
             (if (restrictedMode.asKnown().isPresent) 1 else 0) +
+            (source.asKnown().getOrNull()?.validity() ?: 0) +
             (if (upstreamRepoFullName.asKnown().isPresent) 1 else 0) +
             (if (upstreamRepoId.asKnown().isPresent) 1 else 0)
 
@@ -1323,6 +1357,142 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    class Source @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val INTERNAL = of("internal")
+
+            @JvmField val EXTERNAL = of("external")
+
+            @JvmStatic fun of(value: String) = Source(JsonField.of(value))
+        }
+
+        /** An enum containing [Source]'s known values. */
+        enum class Known {
+            INTERNAL,
+            EXTERNAL,
+        }
+
+        /**
+         * An enum containing [Source]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Source] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            INTERNAL,
+            EXTERNAL,
+            /** An enum member indicating that [Source] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                INTERNAL -> Value.INTERNAL
+                EXTERNAL -> Value.EXTERNAL
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                INTERNAL -> Known.INTERNAL
+                EXTERNAL -> Known.EXTERNAL
+                else -> throw LangChainInvalidDataException("Unknown Source: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Source = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Source && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -1354,6 +1524,7 @@ private constructor(
             originalRepoId == other.originalRepoId &&
             readme == other.readme &&
             restrictedMode == other.restrictedMode &&
+            source == other.source &&
             upstreamRepoFullName == other.upstreamRepoFullName &&
             upstreamRepoId == other.upstreamRepoId &&
             additionalProperties == other.additionalProperties
@@ -1386,6 +1557,7 @@ private constructor(
             originalRepoId,
             readme,
             restrictedMode,
+            source,
             upstreamRepoFullName,
             upstreamRepoId,
             additionalProperties,
@@ -1395,5 +1567,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RepoWithLookups{id=$id, createdAt=$createdAt, fullName=$fullName, isArchived=$isArchived, isPublic=$isPublic, numCommits=$numCommits, numDownloads=$numDownloads, numLikes=$numLikes, numViews=$numViews, owner=$owner, repoHandle=$repoHandle, repoType=$repoType, tags=$tags, tenantId=$tenantId, updatedAt=$updatedAt, commitTags=$commitTags, createdBy=$createdBy, description=$description, lastCommitHash=$lastCommitHash, latestCommitManifest=$latestCommitManifest, likedByAuthUser=$likedByAuthUser, originalRepoFullName=$originalRepoFullName, originalRepoId=$originalRepoId, readme=$readme, restrictedMode=$restrictedMode, upstreamRepoFullName=$upstreamRepoFullName, upstreamRepoId=$upstreamRepoId, additionalProperties=$additionalProperties}"
+        "RepoWithLookups{id=$id, createdAt=$createdAt, fullName=$fullName, isArchived=$isArchived, isPublic=$isPublic, numCommits=$numCommits, numDownloads=$numDownloads, numLikes=$numLikes, numViews=$numViews, owner=$owner, repoHandle=$repoHandle, repoType=$repoType, tags=$tags, tenantId=$tenantId, updatedAt=$updatedAt, commitTags=$commitTags, createdBy=$createdBy, description=$description, lastCommitHash=$lastCommitHash, latestCommitManifest=$latestCommitManifest, likedByAuthUser=$likedByAuthUser, originalRepoFullName=$originalRepoFullName, originalRepoId=$originalRepoId, readme=$readme, restrictedMode=$restrictedMode, source=$source, upstreamRepoFullName=$upstreamRepoFullName, upstreamRepoId=$upstreamRepoId, additionalProperties=$additionalProperties}"
 }

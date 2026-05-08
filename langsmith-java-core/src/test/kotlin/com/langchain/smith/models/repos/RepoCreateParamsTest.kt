@@ -17,6 +17,7 @@ internal class RepoCreateParamsTest {
             .readme("readme")
             .repoType(RepoCreateParams.RepoType.PROMPT)
             .restrictedMode(true)
+            .source(RepoCreateParams.Source.INTERNAL)
             .addTag("string")
             .build()
     }
@@ -31,6 +32,7 @@ internal class RepoCreateParamsTest {
                 .readme("readme")
                 .repoType(RepoCreateParams.RepoType.PROMPT)
                 .restrictedMode(true)
+                .source(RepoCreateParams.Source.INTERNAL)
                 .addTag("string")
                 .build()
 
@@ -42,6 +44,7 @@ internal class RepoCreateParamsTest {
         assertThat(body.readme()).contains("readme")
         assertThat(body.repoType()).contains(RepoCreateParams.RepoType.PROMPT)
         assertThat(body.restrictedMode()).contains(true)
+        assertThat(body.source()).contains(RepoCreateParams.Source.INTERNAL)
         assertThat(body.tags().getOrNull()).containsExactly("string")
     }
 

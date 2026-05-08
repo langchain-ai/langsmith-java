@@ -27,6 +27,7 @@ private constructor(
     private val repoTypes: List<RepoType>?,
     private val sortDirection: SortDirection?,
     private val sortField: SortField?,
+    private val source: Source?,
     private val tagValueId: List<String>?,
     private val tags: List<String>?,
     private val tenantHandle: String?,
@@ -57,6 +58,8 @@ private constructor(
     fun sortDirection(): Optional<SortDirection> = Optional.ofNullable(sortDirection)
 
     fun sortField(): Optional<SortField> = Optional.ofNullable(sortField)
+
+    fun source(): Optional<Source> = Optional.ofNullable(source)
 
     fun tagValueId(): Optional<List<String>> = Optional.ofNullable(tagValueId)
 
@@ -101,6 +104,7 @@ private constructor(
         private var repoTypes: MutableList<RepoType>? = null
         private var sortDirection: SortDirection? = null
         private var sortField: SortField? = null
+        private var source: Source? = null
         private var tagValueId: MutableList<String>? = null
         private var tags: MutableList<String>? = null
         private var tenantHandle: String? = null
@@ -123,6 +127,7 @@ private constructor(
             repoTypes = repoListParams.repoTypes?.toMutableList()
             sortDirection = repoListParams.sortDirection
             sortField = repoListParams.sortField
+            source = repoListParams.source
             tagValueId = repoListParams.tagValueId?.toMutableList()
             tags = repoListParams.tags?.toMutableList()
             tenantHandle = repoListParams.tenantHandle
@@ -218,6 +223,11 @@ private constructor(
 
         /** Alias for calling [Builder.sortField] with `sortField.orElse(null)`. */
         fun sortField(sortField: Optional<SortField>) = sortField(sortField.getOrNull())
+
+        fun source(source: Source?) = apply { this.source = source }
+
+        /** Alias for calling [Builder.source] with `source.orElse(null)`. */
+        fun source(source: Optional<Source>) = source(source.getOrNull())
 
         fun tagValueId(tagValueId: List<String>?) = apply {
             this.tagValueId = tagValueId?.toMutableList()
@@ -408,6 +418,7 @@ private constructor(
                 repoTypes?.toImmutable(),
                 sortDirection,
                 sortField,
+                source,
                 tagValueId?.toImmutable(),
                 tags?.toImmutable(),
                 tenantHandle,
@@ -435,6 +446,7 @@ private constructor(
                 repoTypes?.let { put("repo_types", it.joinToString(",") { it.toString() }) }
                 sortDirection?.let { put("sort_direction", it.toString()) }
                 sortField?.let { put("sort_field", it.toString()) }
+                source?.let { put("source", it.toString()) }
                 tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
                 tags?.let { put("tags", it.joinToString(",")) }
                 tenantHandle?.let { put("tenant_handle", it) }
@@ -1125,6 +1137,142 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    class Source @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val INTERNAL = of("internal")
+
+            @JvmField val EXTERNAL = of("external")
+
+            @JvmStatic fun of(value: String) = Source(JsonField.of(value))
+        }
+
+        /** An enum containing [Source]'s known values. */
+        enum class Known {
+            INTERNAL,
+            EXTERNAL,
+        }
+
+        /**
+         * An enum containing [Source]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Source] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            INTERNAL,
+            EXTERNAL,
+            /** An enum member indicating that [Source] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                INTERNAL -> Value.INTERNAL
+                EXTERNAL -> Value.EXTERNAL
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                INTERNAL -> Known.INTERNAL
+                EXTERNAL -> Known.EXTERNAL
+                else -> throw LangChainInvalidDataException("Unknown Source: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Source = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Source && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -1141,6 +1289,7 @@ private constructor(
             repoTypes == other.repoTypes &&
             sortDirection == other.sortDirection &&
             sortField == other.sortField &&
+            source == other.source &&
             tagValueId == other.tagValueId &&
             tags == other.tags &&
             tenantHandle == other.tenantHandle &&
@@ -1164,6 +1313,7 @@ private constructor(
             repoTypes,
             sortDirection,
             sortField,
+            source,
             tagValueId,
             tags,
             tenantHandle,
@@ -1176,5 +1326,5 @@ private constructor(
         )
 
     override fun toString() =
-        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, repoType=$repoType, repoTypes=$repoTypes, sortDirection=$sortDirection, sortField=$sortField, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, repoType=$repoType, repoTypes=$repoTypes, sortDirection=$sortDirection, sortField=$sortField, source=$source, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

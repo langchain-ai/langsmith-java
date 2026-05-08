@@ -21,6 +21,7 @@ internal class RepoListParamsTest {
             .addRepoType(RepoListParams.RepoType.PROMPT)
             .sortDirection(RepoListParams.SortDirection.ASC)
             .sortField(RepoListParams.SortField.NUM_LIKES)
+            .source(RepoListParams.Source.INTERNAL)
             .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addTag("string")
             .tenantHandle("tenant_handle")
@@ -45,6 +46,7 @@ internal class RepoListParamsTest {
                 .addRepoType(RepoListParams.RepoType.PROMPT)
                 .sortDirection(RepoListParams.SortDirection.ASC)
                 .sortField(RepoListParams.SortField.NUM_LIKES)
+                .source(RepoListParams.Source.INTERNAL)
                 .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addTag("string")
                 .tenantHandle("tenant_handle")
@@ -69,6 +71,7 @@ internal class RepoListParamsTest {
                     .put("repo_types", listOf("prompt").joinToString(","))
                     .put("sort_direction", "asc")
                     .put("sort_field", "num_likes")
+                    .put("source", "internal")
                     .put(
                         "tag_value_id",
                         listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","),
