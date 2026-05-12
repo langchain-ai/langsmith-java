@@ -256,18 +256,6 @@ internal class BoxServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun start() {
-        val client =
-            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
-        val boxService = client.sandboxes().boxes()
-
-        val response = boxService.start("name")
-
-        response.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
     fun stop() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()

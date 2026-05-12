@@ -19,7 +19,7 @@ internal class RunStatsResponseTest {
     fun ofRunStats() {
         val runStats =
             RunStatsResponse.RunStats.builder()
-                .completionCost("completion_cost")
+                .completionCost(0.0)
                 .completionCostDetails(
                     RunStatsResponse.RunStats.CompletionCostDetails.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -33,8 +33,8 @@ internal class RunStatsResponseTest {
                 .completionTokens(0L)
                 .completionTokensP50(0L)
                 .completionTokensP99(0L)
-                .costP50("cost_p50")
-                .costP99("cost_p99")
+                .costP50(0.0)
+                .costP99(0.0)
                 .errorRate(0.0)
                 .feedbackStats(
                     RunStatsResponse.RunStats.FeedbackStats.builder()
@@ -47,7 +47,7 @@ internal class RunStatsResponseTest {
                 .latencyP50(0.0)
                 .latencyP99(0.0)
                 .medianTokens(0L)
-                .promptCost("prompt_cost")
+                .promptCost(0.0)
                 .promptCostDetails(
                     RunStatsResponse.RunStats.PromptCostDetails.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -69,7 +69,7 @@ internal class RunStatsResponseTest {
                 )
                 .streamingRate(0.0)
                 .tokensP99(0L)
-                .totalCost("total_cost")
+                .totalCost(0.0)
                 .totalTokens(0L)
                 .build()
 
@@ -85,7 +85,7 @@ internal class RunStatsResponseTest {
         val runStatsResponse =
             RunStatsResponse.ofRunStats(
                 RunStatsResponse.RunStats.builder()
-                    .completionCost("completion_cost")
+                    .completionCost(0.0)
                     .completionCostDetails(
                         RunStatsResponse.RunStats.CompletionCostDetails.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -99,8 +99,8 @@ internal class RunStatsResponseTest {
                     .completionTokens(0L)
                     .completionTokensP50(0L)
                     .completionTokensP99(0L)
-                    .costP50("cost_p50")
-                    .costP99("cost_p99")
+                    .costP50(0.0)
+                    .costP99(0.0)
                     .errorRate(0.0)
                     .feedbackStats(
                         RunStatsResponse.RunStats.FeedbackStats.builder()
@@ -113,7 +113,7 @@ internal class RunStatsResponseTest {
                     .latencyP50(0.0)
                     .latencyP99(0.0)
                     .medianTokens(0L)
-                    .promptCost("prompt_cost")
+                    .promptCost(0.0)
                     .promptCostDetails(
                         RunStatsResponse.RunStats.PromptCostDetails.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -135,7 +135,7 @@ internal class RunStatsResponseTest {
                     )
                     .streamingRate(0.0)
                     .tokensP99(0L)
-                    .totalCost("total_cost")
+                    .totalCost(0.0)
                     .totalTokens(0L)
                     .build()
             )
@@ -157,14 +157,14 @@ internal class RunStatsResponseTest {
                     "foo",
                     JsonValue.from(
                         mapOf(
-                            "completion_cost" to "completion_cost",
+                            "completion_cost" to 0,
                             "completion_cost_details" to mapOf("foo" to "bar"),
                             "completion_token_details" to mapOf("foo" to "bar"),
                             "completion_tokens" to 0,
                             "completion_tokens_p50" to 0,
                             "completion_tokens_p99" to 0,
-                            "cost_p50" to "cost_p50",
-                            "cost_p99" to "cost_p99",
+                            "cost_p50" to 0,
+                            "cost_p99" to 0,
                             "error_rate" to 0,
                             "feedback_stats" to mapOf("foo" to "bar"),
                             "first_token_p50" to 0,
@@ -173,7 +173,7 @@ internal class RunStatsResponseTest {
                             "latency_p50" to 0,
                             "latency_p99" to 0,
                             "median_tokens" to 0,
-                            "prompt_cost" to "prompt_cost",
+                            "prompt_cost" to 0,
                             "prompt_cost_details" to mapOf("foo" to "bar"),
                             "prompt_token_details" to mapOf("foo" to "bar"),
                             "prompt_tokens" to 0,
@@ -183,7 +183,7 @@ internal class RunStatsResponseTest {
                             "run_facets" to listOf(mapOf("foo" to "bar")),
                             "streaming_rate" to 0,
                             "tokens_p99" to 0,
-                            "total_cost" to "total_cost",
+                            "total_cost" to 0,
                             "total_tokens" to 0,
                         )
                     ),
@@ -206,14 +206,14 @@ internal class RunStatsResponseTest {
                         "foo",
                         JsonValue.from(
                             mapOf(
-                                "completion_cost" to "completion_cost",
+                                "completion_cost" to 0,
                                 "completion_cost_details" to mapOf("foo" to "bar"),
                                 "completion_token_details" to mapOf("foo" to "bar"),
                                 "completion_tokens" to 0,
                                 "completion_tokens_p50" to 0,
                                 "completion_tokens_p99" to 0,
-                                "cost_p50" to "cost_p50",
-                                "cost_p99" to "cost_p99",
+                                "cost_p50" to 0,
+                                "cost_p99" to 0,
                                 "error_rate" to 0,
                                 "feedback_stats" to mapOf("foo" to "bar"),
                                 "first_token_p50" to 0,
@@ -222,7 +222,7 @@ internal class RunStatsResponseTest {
                                 "latency_p50" to 0,
                                 "latency_p99" to 0,
                                 "median_tokens" to 0,
-                                "prompt_cost" to "prompt_cost",
+                                "prompt_cost" to 0,
                                 "prompt_cost_details" to mapOf("foo" to "bar"),
                                 "prompt_token_details" to mapOf("foo" to "bar"),
                                 "prompt_tokens" to 0,
@@ -232,7 +232,7 @@ internal class RunStatsResponseTest {
                                 "run_facets" to listOf(mapOf("foo" to "bar")),
                                 "streaming_rate" to 0,
                                 "tokens_p99" to 0,
-                                "total_cost" to "total_cost",
+                                "total_cost" to 0,
                                 "total_tokens" to 0,
                             )
                         ),

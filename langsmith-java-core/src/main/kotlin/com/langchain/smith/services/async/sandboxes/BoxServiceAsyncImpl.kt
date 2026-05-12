@@ -30,8 +30,6 @@ import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxListResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveResponse
-import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
-import com.langchain.smith.models.sandboxes.boxes.BoxStartResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateResponse
@@ -106,13 +104,6 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<BoxGetStatusResponse> =
         // get /v2/sandboxes/boxes/{name}/status
         withRawResponse().getStatus(params, requestOptions).thenApply { it.parse() }
-
-    override fun start(
-        params: BoxStartParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<BoxStartResponse> =
-        // post /v2/sandboxes/boxes/{name}/start
-        withRawResponse().start(params, requestOptions).thenApply { it.parse() }
 
     override fun stop(
         params: BoxStopParams,
@@ -387,40 +378,6 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                     errorHandler.handle(response).parseable {
                         response
                             .use { getStatusHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val startHandler: Handler<BoxStartResponse> =
-            jsonHandler<BoxStartResponse>(clientOptions.jsonMapper)
-
-        override fun start(
-            params: BoxStartParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("name", params.name().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "start")
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { startHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
