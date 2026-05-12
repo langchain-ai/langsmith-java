@@ -24,8 +24,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Create a new sandbox using server defaults. Set `snapshot_id` or `snapshot_name` only when
- * booting from a reusable snapshot.
+ * Create a new sandbox from a snapshot. Provide at most one of `snapshot_id` or `snapshot_name`; if
+ * neither is provided, the server uses the default static blueprint.
  */
 class BoxCreateParams
 private constructor(

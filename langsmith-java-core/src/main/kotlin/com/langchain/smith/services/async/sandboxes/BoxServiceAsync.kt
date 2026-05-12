@@ -19,8 +19,6 @@ import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxListResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveResponse
-import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
-import com.langchain.smith.models.sandboxes.boxes.BoxStartResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateResponse
@@ -42,8 +40,8 @@ interface BoxServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BoxServiceAsync
 
     /**
-     * Create a new sandbox using server defaults. Set `snapshot_id` or `snapshot_name` only when
-     * booting from a reusable snapshot.
+     * Create a new sandbox from a snapshot. Provide at most one of `snapshot_id` or
+     * `snapshot_name`; if neither is provided, the server uses the default static blueprint.
      */
     fun create(): CompletableFuture<BoxCreateResponse> = create(BoxCreateParams.none())
 
@@ -290,38 +288,6 @@ interface BoxServiceAsync {
         requestOptions: RequestOptions,
     ): CompletableFuture<BoxGetStatusResponse> =
         getStatus(name, BoxGetStatusParams.none(), requestOptions)
-
-    /** Start a stopped or failed sandbox. This endpoint is not idempotent. */
-    fun start(name: String): CompletableFuture<BoxStartResponse> =
-        start(name, BoxStartParams.none())
-
-    /** @see start */
-    fun start(
-        name: String,
-        params: BoxStartParams = BoxStartParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxStartResponse> =
-        start(params.toBuilder().name(name).build(), requestOptions)
-
-    /** @see start */
-    fun start(
-        name: String,
-        params: BoxStartParams = BoxStartParams.none(),
-    ): CompletableFuture<BoxStartResponse> = start(name, params, RequestOptions.none())
-
-    /** @see start */
-    fun start(
-        params: BoxStartParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxStartResponse>
-
-    /** @see start */
-    fun start(params: BoxStartParams): CompletableFuture<BoxStartResponse> =
-        start(params, RequestOptions.none())
-
-    /** @see start */
-    fun start(name: String, requestOptions: RequestOptions): CompletableFuture<BoxStartResponse> =
-        start(name, BoxStartParams.none(), requestOptions)
 
     /**
      * Stop a ready sandbox. This endpoint is not idempotent; the filesystem is preserved for later
@@ -639,45 +605,6 @@ interface BoxServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<BoxGetStatusResponse>> =
             getStatus(name, BoxGetStatusParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/start`, but is otherwise
-         * the same as [BoxServiceAsync.start].
-         */
-        fun start(name: String): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
-            start(name, BoxStartParams.none())
-
-        /** @see start */
-        fun start(
-            name: String,
-            params: BoxStartParams = BoxStartParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
-            start(params.toBuilder().name(name).build(), requestOptions)
-
-        /** @see start */
-        fun start(
-            name: String,
-            params: BoxStartParams = BoxStartParams.none(),
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
-            start(name, params, RequestOptions.none())
-
-        /** @see start */
-        fun start(
-            params: BoxStartParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>>
-
-        /** @see start */
-        fun start(params: BoxStartParams): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
-            start(params, RequestOptions.none())
-
-        /** @see start */
-        fun start(
-            name: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
-            start(name, BoxStartParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/stop`, but is otherwise
