@@ -12,7 +12,6 @@ import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
-import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
@@ -24,8 +23,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Create a new sandbox from a snapshot. The snapshot may be identified by `snapshot_id` (UUID) or
- * by `snapshot_name` (tenant-scoped unique name); exactly one must be set.
+ * Create a new sandbox using server defaults. Set `snapshot_id` or `snapshot_name` only when
+ * booting from a reusable snapshot.
  */
 class BoxCreateParams
 private constructor(
