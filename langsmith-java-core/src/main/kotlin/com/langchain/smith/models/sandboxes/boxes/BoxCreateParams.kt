@@ -86,6 +86,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun tagValueIds(): Optional<List<String>> = body.tagValueIds()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun vcpus(): Optional<Long> = body.vcpus()
 
     /**
@@ -144,6 +150,13 @@ private constructor(
      * Unlike [snapshotName], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _snapshotName(): JsonField<String> = body._snapshotName()
+
+    /**
+     * Returns the raw JSON value of [tagValueIds].
+     *
+     * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _tagValueIds(): JsonField<List<String>> = body._tagValueIds()
 
     /**
      * Returns the raw JSON value of [vcpus].
@@ -295,6 +308,26 @@ private constructor(
         fun snapshotName(snapshotName: JsonField<String>) = apply {
             body.snapshotName(snapshotName)
         }
+
+        fun tagValueIds(tagValueIds: List<String>) = apply { body.tagValueIds(tagValueIds) }
+
+        /**
+         * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+            body.tagValueIds(tagValueIds)
+        }
+
+        /**
+         * Adds a single [String] to [tagValueIds].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply { body.addTagValueId(tagValueId) }
 
         fun vcpus(vcpus: Long) = apply { body.vcpus(vcpus) }
 
@@ -449,6 +482,7 @@ private constructor(
         private val proxyConfig: JsonField<ProxyConfig>,
         private val snapshotId: JsonField<String>,
         private val snapshotName: JsonField<String>,
+        private val tagValueIds: JsonField<List<String>>,
         private val vcpus: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -475,6 +509,9 @@ private constructor(
             @JsonProperty("snapshot_name")
             @ExcludeMissing
             snapshotName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("tag_value_ids")
+            @ExcludeMissing
+            tagValueIds: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
         ) : this(
             deleteAfterStopSeconds,
@@ -485,6 +522,7 @@ private constructor(
             proxyConfig,
             snapshotId,
             snapshotName,
+            tagValueIds,
             vcpus,
             mutableMapOf(),
         )
@@ -537,6 +575,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun snapshotName(): Optional<String> = snapshotName.getOptional("snapshot_name")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tagValueIds(): Optional<List<String>> = tagValueIds.getOptional("tag_value_ids")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -617,6 +661,15 @@ private constructor(
         fun _snapshotName(): JsonField<String> = snapshotName
 
         /**
+         * Returns the raw JSON value of [tagValueIds].
+         *
+         * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tag_value_ids")
+        @ExcludeMissing
+        fun _tagValueIds(): JsonField<List<String>> = tagValueIds
+
+        /**
          * Returns the raw JSON value of [vcpus].
          *
          * Unlike [vcpus], this method doesn't throw if the JSON field has an unexpected type.
@@ -652,6 +705,7 @@ private constructor(
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
             private var snapshotId: JsonField<String> = JsonMissing.of()
             private var snapshotName: JsonField<String> = JsonMissing.of()
+            private var tagValueIds: JsonField<MutableList<String>>? = null
             private var vcpus: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -665,6 +719,7 @@ private constructor(
                 proxyConfig = body.proxyConfig
                 snapshotId = body.snapshotId
                 snapshotName = body.snapshotName
+                tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 vcpus = body.vcpus
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -769,6 +824,31 @@ private constructor(
                 this.snapshotName = snapshotName
             }
 
+            fun tagValueIds(tagValueIds: List<String>) = tagValueIds(JsonField.of(tagValueIds))
+
+            /**
+             * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+                this.tagValueIds = tagValueIds.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [tagValueIds].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTagValueId(tagValueId: String) = apply {
+                tagValueIds =
+                    (tagValueIds ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("tagValueIds", it).add(tagValueId)
+                    }
+            }
+
             fun vcpus(vcpus: Long) = vcpus(JsonField.of(vcpus))
 
             /**
@@ -814,6 +894,7 @@ private constructor(
                     proxyConfig,
                     snapshotId,
                     snapshotName,
+                    (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
                     vcpus,
                     additionalProperties.toMutableMap(),
                 )
@@ -843,6 +924,7 @@ private constructor(
             proxyConfig().ifPresent { it.validate() }
             snapshotId()
             snapshotName()
+            tagValueIds()
             vcpus()
             validated = true
         }
@@ -871,6 +953,7 @@ private constructor(
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
                 (if (snapshotName.asKnown().isPresent) 1 else 0) +
+                (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
                 (if (vcpus.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -887,6 +970,7 @@ private constructor(
                 proxyConfig == other.proxyConfig &&
                 snapshotId == other.snapshotId &&
                 snapshotName == other.snapshotName &&
+                tagValueIds == other.tagValueIds &&
                 vcpus == other.vcpus &&
                 additionalProperties == other.additionalProperties
         }
@@ -901,6 +985,7 @@ private constructor(
                 proxyConfig,
                 snapshotId,
                 snapshotName,
+                tagValueIds,
                 vcpus,
                 additionalProperties,
             )
@@ -909,7 +994,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, snapshotName=$snapshotName, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig
