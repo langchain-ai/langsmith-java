@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.0-beta.5 (2026-05-13)
+
+Full Changelog: [v0.1.0-beta.4...v0.1.0-beta.5](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.4...v0.1.0-beta.5)
+
+### Features
+
+* **sandbox:** make snapshot optional ([#152](https://github.com/langchain-ai/langsmith-java/issues/152)) ([5849b16](https://github.com/langchain-ai/langsmith-java/commit/5849b1695ec4504460205c80cabf8d443fd8a5f0))
+
+
+### Chores
+
+* **deps:** bump actions/github-script from 8 to 9 ([#144](https://github.com/langchain-ai/langsmith-java/issues/144)) ([c3f8fbd](https://github.com/langchain-ai/langsmith-java/commit/c3f8fbd5449fb5f52529166fd9b2db5eb8dbe24a))
+* **deps:** bump gradle/actions ([#143](https://github.com/langchain-ai/langsmith-java/issues/143)) ([fd8a8ae](https://github.com/langchain-ai/langsmith-java/commit/fd8a8aef399ba3784c6d459c758e7a06f6ee5e98))
+* **deps:** bump the minor-and-patch group across 1 directory with 3 updates ([#145](https://github.com/langchain-ai/langsmith-java/issues/145)) ([c4a883d](https://github.com/langchain-ai/langsmith-java/commit/c4a883dfd2e89373180f88c7149c13ef426996ee))
+
 ## 0.1.0-beta.4 (2026-05-04)
 
 Full Changelog: [v0.1.0-beta.3...v0.1.0-beta.4](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.3...v0.1.0-beta.4)
