@@ -30,6 +30,8 @@ import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxListResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveResponse
+import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
+import com.langchain.smith.models.sandboxes.boxes.BoxStartResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateResponse
@@ -97,6 +99,10 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
     ): BoxGetStatusResponse =
         // get /v2/sandboxes/boxes/{name}/status
         withRawResponse().getStatus(params, requestOptions).parse()
+
+    override fun start(params: BoxStartParams, requestOptions: RequestOptions): BoxStartResponse =
+        // post /v2/sandboxes/boxes/{name}/start
+        withRawResponse().start(params, requestOptions).parse()
 
     override fun stop(params: BoxStopParams, requestOptions: RequestOptions) {
         // post /v2/sandboxes/boxes/{name}/stop
@@ -343,6 +349,37 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             return errorHandler.handle(response).parseable {
                 response
                     .use { getStatusHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val startHandler: Handler<BoxStartResponse> =
+            jsonHandler<BoxStartResponse>(clientOptions.jsonMapper)
+
+        override fun start(
+            params: BoxStartParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<BoxStartResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "start")
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { startHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

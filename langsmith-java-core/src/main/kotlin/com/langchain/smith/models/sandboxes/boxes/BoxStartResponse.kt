@@ -11,11 +11,8 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.core.Params
 import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.checkRequired
-import com.langchain.smith.core.http.Headers
-import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
@@ -23,64 +20,224 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update a sandbox claim's display name. The name must be unique within the tenant. */
-class BoxUpdateParams
+class BoxStartResponse
+@JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val pathName: String?,
-    private val body: Body,
-    private val additionalHeaders: Headers,
-    private val additionalQueryParams: QueryParams,
-) : Params {
+    private val id: JsonField<String>,
+    private val createdAt: JsonField<String>,
+    private val createdBy: JsonField<String>,
+    private val dataplaneUrl: JsonField<String>,
+    private val deleteAfterStopSeconds: JsonField<Long>,
+    private val fsCapacityBytes: JsonField<Long>,
+    private val idleTtlSeconds: JsonField<Long>,
+    private val memBytes: JsonField<Long>,
+    private val name: JsonField<String>,
+    private val proxyConfig: JsonField<ProxyConfig>,
+    private val sizeClass: JsonField<String>,
+    private val snapshotId: JsonField<String>,
+    private val status: JsonField<String>,
+    private val statusMessage: JsonField<String>,
+    private val stoppedAt: JsonField<String>,
+    private val updatedAt: JsonField<String>,
+    private val updatedBy: JsonField<String>,
+    private val vcpus: JsonField<Long>,
+    private val additionalProperties: MutableMap<String, JsonValue>,
+) {
 
-    fun pathName(): Optional<String> = Optional.ofNullable(pathName)
+    @JsonCreator
+    private constructor(
+        @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("created_at") @ExcludeMissing createdAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("dataplane_url")
+        @ExcludeMissing
+        dataplaneUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("delete_after_stop_seconds")
+        @ExcludeMissing
+        deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("fs_capacity_bytes")
+        @ExcludeMissing
+        fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("idle_ttl_seconds")
+        @ExcludeMissing
+        idleTtlSeconds: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("mem_bytes") @ExcludeMissing memBytes: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("proxy_config")
+        @ExcludeMissing
+        proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
+        @JsonProperty("size_class") @ExcludeMissing sizeClass: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("snapshot_id")
+        @ExcludeMissing
+        snapshotId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("status_message")
+        @ExcludeMissing
+        statusMessage: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("stopped_at") @ExcludeMissing stoppedAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("updated_by") @ExcludeMissing updatedBy: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
+    ) : this(
+        id,
+        createdAt,
+        createdBy,
+        dataplaneUrl,
+        deleteAfterStopSeconds,
+        fsCapacityBytes,
+        idleTtlSeconds,
+        memBytes,
+        name,
+        proxyConfig,
+        sizeClass,
+        snapshotId,
+        status,
+        statusMessage,
+        stoppedAt,
+        updatedAt,
+        updatedBy,
+        vcpus,
+        mutableMapOf(),
+    )
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun deleteAfterStopSeconds(): Optional<Long> = body.deleteAfterStopSeconds()
+    fun id(): Optional<String> = id.getOptional("id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun fsCapacityBytes(): Optional<Long> = body.fsCapacityBytes()
+    fun createdAt(): Optional<String> = createdAt.getOptional("created_at")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun idleTtlSeconds(): Optional<Long> = body.idleTtlSeconds()
+    fun createdBy(): Optional<String> = createdBy.getOptional("created_by")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun memBytes(): Optional<Long> = body.memBytes()
+    fun dataplaneUrl(): Optional<String> = dataplaneUrl.getOptional("dataplane_url")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun bodyName(): Optional<String> = body.bodyName()
+    fun deleteAfterStopSeconds(): Optional<Long> =
+        deleteAfterStopSeconds.getOptional("delete_after_stop_seconds")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun proxyConfig(): Optional<ProxyConfig> = body.proxyConfig()
+    fun fsCapacityBytes(): Optional<Long> = fsCapacityBytes.getOptional("fs_capacity_bytes")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun tagValueIds(): Optional<List<String>> = body.tagValueIds()
+    fun idleTtlSeconds(): Optional<Long> = idleTtlSeconds.getOptional("idle_ttl_seconds")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun vcpus(): Optional<Long> = body.vcpus()
+    fun memBytes(): Optional<Long> = memBytes.getOptional("mem_bytes")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun name(): Optional<String> = name.getOptional("name")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun proxyConfig(): Optional<ProxyConfig> = proxyConfig.getOptional("proxy_config")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun sizeClass(): Optional<String> = sizeClass.getOptional("size_class")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun snapshotId(): Optional<String> = snapshotId.getOptional("snapshot_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun status(): Optional<String> = status.getOptional("status")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun statusMessage(): Optional<String> = statusMessage.getOptional("status_message")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun stoppedAt(): Optional<String> = stoppedAt.getOptional("stopped_at")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun updatedAt(): Optional<String> = updatedAt.getOptional("updated_at")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun updatedBy(): Optional<String> = updatedBy.getOptional("updated_by")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun vcpus(): Optional<Long> = vcpus.getOptional("vcpus")
+
+    /**
+     * Returns the raw JSON value of [id].
+     *
+     * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [createdAt].
+     *
+     * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("created_at") @ExcludeMissing fun _createdAt(): JsonField<String> = createdAt
+
+    /**
+     * Returns the raw JSON value of [createdBy].
+     *
+     * Unlike [createdBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("created_by") @ExcludeMissing fun _createdBy(): JsonField<String> = createdBy
+
+    /**
+     * Returns the raw JSON value of [dataplaneUrl].
+     *
+     * Unlike [dataplaneUrl], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("dataplane_url")
+    @ExcludeMissing
+    fun _dataplaneUrl(): JsonField<String> = dataplaneUrl
 
     /**
      * Returns the raw JSON value of [deleteAfterStopSeconds].
@@ -88,113 +245,220 @@ private constructor(
      * Unlike [deleteAfterStopSeconds], this method doesn't throw if the JSON field has an
      * unexpected type.
      */
-    fun _deleteAfterStopSeconds(): JsonField<Long> = body._deleteAfterStopSeconds()
+    @JsonProperty("delete_after_stop_seconds")
+    @ExcludeMissing
+    fun _deleteAfterStopSeconds(): JsonField<Long> = deleteAfterStopSeconds
 
     /**
      * Returns the raw JSON value of [fsCapacityBytes].
      *
      * Unlike [fsCapacityBytes], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _fsCapacityBytes(): JsonField<Long> = body._fsCapacityBytes()
+    @JsonProperty("fs_capacity_bytes")
+    @ExcludeMissing
+    fun _fsCapacityBytes(): JsonField<Long> = fsCapacityBytes
 
     /**
      * Returns the raw JSON value of [idleTtlSeconds].
      *
      * Unlike [idleTtlSeconds], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _idleTtlSeconds(): JsonField<Long> = body._idleTtlSeconds()
+    @JsonProperty("idle_ttl_seconds")
+    @ExcludeMissing
+    fun _idleTtlSeconds(): JsonField<Long> = idleTtlSeconds
 
     /**
      * Returns the raw JSON value of [memBytes].
      *
      * Unlike [memBytes], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _memBytes(): JsonField<Long> = body._memBytes()
+    @JsonProperty("mem_bytes") @ExcludeMissing fun _memBytes(): JsonField<Long> = memBytes
 
     /**
-     * Returns the raw JSON value of [bodyName].
+     * Returns the raw JSON value of [name].
      *
-     * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _bodyName(): JsonField<String> = body._bodyName()
+    @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
     /**
      * Returns the raw JSON value of [proxyConfig].
      *
      * Unlike [proxyConfig], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _proxyConfig(): JsonField<ProxyConfig> = body._proxyConfig()
+    @JsonProperty("proxy_config")
+    @ExcludeMissing
+    fun _proxyConfig(): JsonField<ProxyConfig> = proxyConfig
 
     /**
-     * Returns the raw JSON value of [tagValueIds].
+     * Returns the raw JSON value of [sizeClass].
      *
-     * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sizeClass], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _tagValueIds(): JsonField<List<String>> = body._tagValueIds()
+    @JsonProperty("size_class") @ExcludeMissing fun _sizeClass(): JsonField<String> = sizeClass
+
+    /**
+     * Returns the raw JSON value of [snapshotId].
+     *
+     * Unlike [snapshotId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("snapshot_id") @ExcludeMissing fun _snapshotId(): JsonField<String> = snapshotId
+
+    /**
+     * Returns the raw JSON value of [status].
+     *
+     * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<String> = status
+
+    /**
+     * Returns the raw JSON value of [statusMessage].
+     *
+     * Unlike [statusMessage], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("status_message")
+    @ExcludeMissing
+    fun _statusMessage(): JsonField<String> = statusMessage
+
+    /**
+     * Returns the raw JSON value of [stoppedAt].
+     *
+     * Unlike [stoppedAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("stopped_at") @ExcludeMissing fun _stoppedAt(): JsonField<String> = stoppedAt
+
+    /**
+     * Returns the raw JSON value of [updatedAt].
+     *
+     * Unlike [updatedAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("updated_at") @ExcludeMissing fun _updatedAt(): JsonField<String> = updatedAt
+
+    /**
+     * Returns the raw JSON value of [updatedBy].
+     *
+     * Unlike [updatedBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("updated_by") @ExcludeMissing fun _updatedBy(): JsonField<String> = updatedBy
 
     /**
      * Returns the raw JSON value of [vcpus].
      *
      * Unlike [vcpus], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _vcpus(): JsonField<Long> = body._vcpus()
+    @JsonProperty("vcpus") @ExcludeMissing fun _vcpus(): JsonField<Long> = vcpus
 
-    fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
+    @JsonAnySetter
+    private fun putAdditionalProperty(key: String, value: JsonValue) {
+        additionalProperties.put(key, value)
+    }
 
-    /** Additional headers to send with the request. */
-    fun _additionalHeaders(): Headers = additionalHeaders
-
-    /** Additional query param to send with the request. */
-    fun _additionalQueryParams(): QueryParams = additionalQueryParams
+    @JsonAnyGetter
+    @ExcludeMissing
+    fun _additionalProperties(): Map<String, JsonValue> =
+        Collections.unmodifiableMap(additionalProperties)
 
     fun toBuilder() = Builder().from(this)
 
     companion object {
 
-        @JvmStatic fun none(): BoxUpdateParams = builder().build()
-
-        /** Returns a mutable builder for constructing an instance of [BoxUpdateParams]. */
+        /** Returns a mutable builder for constructing an instance of [BoxStartResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [BoxUpdateParams]. */
+    /** A builder for [BoxStartResponse]. */
     class Builder internal constructor() {
 
-        private var pathName: String? = null
-        private var body: Body.Builder = Body.builder()
-        private var additionalHeaders: Headers.Builder = Headers.builder()
-        private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
+        private var id: JsonField<String> = JsonMissing.of()
+        private var createdAt: JsonField<String> = JsonMissing.of()
+        private var createdBy: JsonField<String> = JsonMissing.of()
+        private var dataplaneUrl: JsonField<String> = JsonMissing.of()
+        private var deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of()
+        private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
+        private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
+        private var memBytes: JsonField<Long> = JsonMissing.of()
+        private var name: JsonField<String> = JsonMissing.of()
+        private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
+        private var sizeClass: JsonField<String> = JsonMissing.of()
+        private var snapshotId: JsonField<String> = JsonMissing.of()
+        private var status: JsonField<String> = JsonMissing.of()
+        private var statusMessage: JsonField<String> = JsonMissing.of()
+        private var stoppedAt: JsonField<String> = JsonMissing.of()
+        private var updatedAt: JsonField<String> = JsonMissing.of()
+        private var updatedBy: JsonField<String> = JsonMissing.of()
+        private var vcpus: JsonField<Long> = JsonMissing.of()
+        private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(boxUpdateParams: BoxUpdateParams) = apply {
-            pathName = boxUpdateParams.pathName
-            body = boxUpdateParams.body.toBuilder()
-            additionalHeaders = boxUpdateParams.additionalHeaders.toBuilder()
-            additionalQueryParams = boxUpdateParams.additionalQueryParams.toBuilder()
+        internal fun from(boxStartResponse: BoxStartResponse) = apply {
+            id = boxStartResponse.id
+            createdAt = boxStartResponse.createdAt
+            createdBy = boxStartResponse.createdBy
+            dataplaneUrl = boxStartResponse.dataplaneUrl
+            deleteAfterStopSeconds = boxStartResponse.deleteAfterStopSeconds
+            fsCapacityBytes = boxStartResponse.fsCapacityBytes
+            idleTtlSeconds = boxStartResponse.idleTtlSeconds
+            memBytes = boxStartResponse.memBytes
+            name = boxStartResponse.name
+            proxyConfig = boxStartResponse.proxyConfig
+            sizeClass = boxStartResponse.sizeClass
+            snapshotId = boxStartResponse.snapshotId
+            status = boxStartResponse.status
+            statusMessage = boxStartResponse.statusMessage
+            stoppedAt = boxStartResponse.stoppedAt
+            updatedAt = boxStartResponse.updatedAt
+            updatedBy = boxStartResponse.updatedBy
+            vcpus = boxStartResponse.vcpus
+            additionalProperties = boxStartResponse.additionalProperties.toMutableMap()
         }
 
-        fun pathName(pathName: String?) = apply { this.pathName = pathName }
-
-        /** Alias for calling [Builder.pathName] with `pathName.orElse(null)`. */
-        fun pathName(pathName: Optional<String>) = pathName(pathName.getOrNull())
+        fun id(id: String) = id(JsonField.of(id))
 
         /**
-         * Sets the entire request body.
+         * Sets [Builder.id] to an arbitrary JSON value.
          *
-         * This is generally only useful if you are already constructing the body separately.
-         * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [deleteAfterStopSeconds]
-         * - [fsCapacityBytes]
-         * - [idleTtlSeconds]
-         * - [memBytes]
-         * - [bodyName]
-         * - etc.
+         * You should usually call [Builder.id] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun body(body: Body) = apply { this.body = body.toBuilder() }
+        fun id(id: JsonField<String>) = apply { this.id = id }
 
-        fun deleteAfterStopSeconds(deleteAfterStopSeconds: Long) = apply {
-            body.deleteAfterStopSeconds(deleteAfterStopSeconds)
+        fun createdAt(createdAt: String) = createdAt(JsonField.of(createdAt))
+
+        /**
+         * Sets [Builder.createdAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.createdAt] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun createdAt(createdAt: JsonField<String>) = apply { this.createdAt = createdAt }
+
+        fun createdBy(createdBy: String) = createdBy(JsonField.of(createdBy))
+
+        /**
+         * Sets [Builder.createdBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.createdBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun createdBy(createdBy: JsonField<String>) = apply { this.createdBy = createdBy }
+
+        fun dataplaneUrl(dataplaneUrl: String) = dataplaneUrl(JsonField.of(dataplaneUrl))
+
+        /**
+         * Sets [Builder.dataplaneUrl] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.dataplaneUrl] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun dataplaneUrl(dataplaneUrl: JsonField<String>) = apply {
+            this.dataplaneUrl = dataplaneUrl
         }
+
+        fun deleteAfterStopSeconds(deleteAfterStopSeconds: Long) =
+            deleteAfterStopSeconds(JsonField.of(deleteAfterStopSeconds))
 
         /**
          * Sets [Builder.deleteAfterStopSeconds] to an arbitrary JSON value.
@@ -204,10 +468,10 @@ private constructor(
          * supported value.
          */
         fun deleteAfterStopSeconds(deleteAfterStopSeconds: JsonField<Long>) = apply {
-            body.deleteAfterStopSeconds(deleteAfterStopSeconds)
+            this.deleteAfterStopSeconds = deleteAfterStopSeconds
         }
 
-        fun fsCapacityBytes(fsCapacityBytes: Long) = apply { body.fsCapacityBytes(fsCapacityBytes) }
+        fun fsCapacityBytes(fsCapacityBytes: Long) = fsCapacityBytes(JsonField.of(fsCapacityBytes))
 
         /**
          * Sets [Builder.fsCapacityBytes] to an arbitrary JSON value.
@@ -217,10 +481,10 @@ private constructor(
          * value.
          */
         fun fsCapacityBytes(fsCapacityBytes: JsonField<Long>) = apply {
-            body.fsCapacityBytes(fsCapacityBytes)
+            this.fsCapacityBytes = fsCapacityBytes
         }
 
-        fun idleTtlSeconds(idleTtlSeconds: Long) = apply { body.idleTtlSeconds(idleTtlSeconds) }
+        fun idleTtlSeconds(idleTtlSeconds: Long) = idleTtlSeconds(JsonField.of(idleTtlSeconds))
 
         /**
          * Sets [Builder.idleTtlSeconds] to an arbitrary JSON value.
@@ -230,10 +494,10 @@ private constructor(
          * value.
          */
         fun idleTtlSeconds(idleTtlSeconds: JsonField<Long>) = apply {
-            body.idleTtlSeconds(idleTtlSeconds)
+            this.idleTtlSeconds = idleTtlSeconds
         }
 
-        fun memBytes(memBytes: Long) = apply { body.memBytes(memBytes) }
+        fun memBytes(memBytes: Long) = memBytes(JsonField.of(memBytes))
 
         /**
          * Sets [Builder.memBytes] to an arbitrary JSON value.
@@ -241,19 +505,19 @@ private constructor(
          * You should usually call [Builder.memBytes] with a well-typed [Long] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun memBytes(memBytes: JsonField<Long>) = apply { body.memBytes(memBytes) }
+        fun memBytes(memBytes: JsonField<Long>) = apply { this.memBytes = memBytes }
 
-        fun bodyName(bodyName: String) = apply { body.bodyName(bodyName) }
+        fun name(name: String) = name(JsonField.of(name))
 
         /**
-         * Sets [Builder.bodyName] to an arbitrary JSON value.
+         * Sets [Builder.name] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.bodyName] with a well-typed [String] value instead. This
+         * You should usually call [Builder.name] with a well-typed [String] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun bodyName(bodyName: JsonField<String>) = apply { body.bodyName(bodyName) }
+        fun name(name: JsonField<String>) = apply { this.name = name }
 
-        fun proxyConfig(proxyConfig: ProxyConfig) = apply { body.proxyConfig(proxyConfig) }
+        fun proxyConfig(proxyConfig: ProxyConfig) = proxyConfig(JsonField.of(proxyConfig))
 
         /**
          * Sets [Builder.proxyConfig] to an arbitrary JSON value.
@@ -263,30 +527,88 @@ private constructor(
          * supported value.
          */
         fun proxyConfig(proxyConfig: JsonField<ProxyConfig>) = apply {
-            body.proxyConfig(proxyConfig)
+            this.proxyConfig = proxyConfig
         }
 
-        fun tagValueIds(tagValueIds: List<String>) = apply { body.tagValueIds(tagValueIds) }
+        fun sizeClass(sizeClass: String) = sizeClass(JsonField.of(sizeClass))
 
         /**
-         * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+         * Sets [Builder.sizeClass] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.sizeClass] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
-            body.tagValueIds(tagValueIds)
+        fun sizeClass(sizeClass: JsonField<String>) = apply { this.sizeClass = sizeClass }
+
+        fun snapshotId(snapshotId: String) = snapshotId(JsonField.of(snapshotId))
+
+        /**
+         * Sets [Builder.snapshotId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.snapshotId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun snapshotId(snapshotId: JsonField<String>) = apply { this.snapshotId = snapshotId }
+
+        fun status(status: String) = status(JsonField.of(status))
+
+        /**
+         * Sets [Builder.status] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.status] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun status(status: JsonField<String>) = apply { this.status = status }
+
+        fun statusMessage(statusMessage: String) = statusMessage(JsonField.of(statusMessage))
+
+        /**
+         * Sets [Builder.statusMessage] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.statusMessage] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun statusMessage(statusMessage: JsonField<String>) = apply {
+            this.statusMessage = statusMessage
         }
 
-        /**
-         * Adds a single [String] to [tagValueIds].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addTagValueId(tagValueId: String) = apply { body.addTagValueId(tagValueId) }
+        fun stoppedAt(stoppedAt: String) = stoppedAt(JsonField.of(stoppedAt))
 
-        fun vcpus(vcpus: Long) = apply { body.vcpus(vcpus) }
+        /**
+         * Sets [Builder.stoppedAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.stoppedAt] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun stoppedAt(stoppedAt: JsonField<String>) = apply { this.stoppedAt = stoppedAt }
+
+        fun updatedAt(updatedAt: String) = updatedAt(JsonField.of(updatedAt))
+
+        /**
+         * Sets [Builder.updatedAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.updatedAt] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun updatedAt(updatedAt: JsonField<String>) = apply { this.updatedAt = updatedAt }
+
+        fun updatedBy(updatedBy: String) = updatedBy(JsonField.of(updatedBy))
+
+        /**
+         * Sets [Builder.updatedBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.updatedBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun updatedBy(updatedBy: JsonField<String>) = apply { this.updatedBy = updatedBy }
+
+        fun vcpus(vcpus: Long) = vcpus(JsonField.of(vcpus))
 
         /**
          * Sets [Builder.vcpus] to an arbitrary JSON value.
@@ -294,597 +616,125 @@ private constructor(
          * You should usually call [Builder.vcpus] with a well-typed [Long] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun vcpus(vcpus: JsonField<Long>) = apply { body.vcpus(vcpus) }
+        fun vcpus(vcpus: JsonField<Long>) = apply { this.vcpus = vcpus }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            body.additionalProperties(additionalBodyProperties)
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.clear()
+            putAllAdditionalProperties(additionalProperties)
         }
 
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            body.putAdditionalProperty(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                body.putAllAdditionalProperties(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply { body.removeAdditionalProperty(key) }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            body.removeAllAdditionalProperties(keys)
-        }
-
-        fun additionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
-
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
-
-        fun putAdditionalHeader(name: String, value: String) = apply {
-            additionalHeaders.put(name, value)
-        }
-
-        fun putAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.put(name, values)
-        }
-
-        fun putAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
-
-        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
-
-        fun replaceAdditionalHeaders(name: String, value: String) = apply {
-            additionalHeaders.replace(name, value)
-        }
-
-        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.replace(name, values)
-        }
-
-        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
-
-        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
-
-        fun removeAdditionalHeaders(name: String) = apply { additionalHeaders.remove(name) }
-
-        fun removeAllAdditionalHeaders(names: Set<String>) = apply {
-            additionalHeaders.removeAll(names)
-        }
-
-        fun additionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
-
-        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
-
-        fun putAdditionalQueryParam(key: String, value: String) = apply {
-            additionalQueryParams.put(key, value)
-        }
-
-        fun putAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.put(key, values)
-        }
-
-        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.putAll(additionalQueryParams)
-        }
-
-        fun putAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply {
-                this.additionalQueryParams.putAll(additionalQueryParams)
-            }
-
-        fun replaceAdditionalQueryParams(key: String, value: String) = apply {
-            additionalQueryParams.replace(key, value)
-        }
-
-        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.replace(key, values)
-        }
-
-        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.replaceAll(additionalQueryParams)
-        }
-
-        fun replaceAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
-            apply {
-                this.additionalQueryParams.replaceAll(additionalQueryParams)
-            }
-
-        fun removeAdditionalQueryParams(key: String) = apply { additionalQueryParams.remove(key) }
-
-        fun removeAllAdditionalQueryParams(keys: Set<String>) = apply {
-            additionalQueryParams.removeAll(keys)
-        }
-
-        /**
-         * Returns an immutable instance of [BoxUpdateParams].
-         *
-         * Further updates to this [Builder] will not mutate the returned instance.
-         */
-        fun build(): BoxUpdateParams =
-            BoxUpdateParams(
-                pathName,
-                body.build(),
-                additionalHeaders.build(),
-                additionalQueryParams.build(),
-            )
-    }
-
-    fun _body(): Body = body
-
-    fun _pathParam(index: Int): String =
-        when (index) {
-            0 -> pathName ?: ""
-            else -> ""
-        }
-
-    override fun _headers(): Headers = additionalHeaders
-
-    override fun _queryParams(): QueryParams = additionalQueryParams
-
-    class Body
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
-        private val deleteAfterStopSeconds: JsonField<Long>,
-        private val fsCapacityBytes: JsonField<Long>,
-        private val idleTtlSeconds: JsonField<Long>,
-        private val memBytes: JsonField<Long>,
-        private val bodyName: JsonField<String>,
-        private val proxyConfig: JsonField<ProxyConfig>,
-        private val tagValueIds: JsonField<List<String>>,
-        private val vcpus: JsonField<Long>,
-        private val additionalProperties: MutableMap<String, JsonValue>,
-    ) {
-
-        @JsonCreator
-        private constructor(
-            @JsonProperty("delete_after_stop_seconds")
-            @ExcludeMissing
-            deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("fs_capacity_bytes")
-            @ExcludeMissing
-            fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("idle_ttl_seconds")
-            @ExcludeMissing
-            idleTtlSeconds: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("mem_bytes") @ExcludeMissing memBytes: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("name") @ExcludeMissing bodyName: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("proxy_config")
-            @ExcludeMissing
-            proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
-            @JsonProperty("tag_value_ids")
-            @ExcludeMissing
-            tagValueIds: JsonField<List<String>> = JsonMissing.of(),
-            @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
-        ) : this(
-            deleteAfterStopSeconds,
-            fsCapacityBytes,
-            idleTtlSeconds,
-            memBytes,
-            bodyName,
-            proxyConfig,
-            tagValueIds,
-            vcpus,
-            mutableMapOf(),
-        )
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun deleteAfterStopSeconds(): Optional<Long> =
-            deleteAfterStopSeconds.getOptional("delete_after_stop_seconds")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun fsCapacityBytes(): Optional<Long> = fsCapacityBytes.getOptional("fs_capacity_bytes")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun idleTtlSeconds(): Optional<Long> = idleTtlSeconds.getOptional("idle_ttl_seconds")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun memBytes(): Optional<Long> = memBytes.getOptional("mem_bytes")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun bodyName(): Optional<String> = bodyName.getOptional("name")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun proxyConfig(): Optional<ProxyConfig> = proxyConfig.getOptional("proxy_config")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun tagValueIds(): Optional<List<String>> = tagValueIds.getOptional("tag_value_ids")
-
-        /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun vcpus(): Optional<Long> = vcpus.getOptional("vcpus")
-
-        /**
-         * Returns the raw JSON value of [deleteAfterStopSeconds].
-         *
-         * Unlike [deleteAfterStopSeconds], this method doesn't throw if the JSON field has an
-         * unexpected type.
-         */
-        @JsonProperty("delete_after_stop_seconds")
-        @ExcludeMissing
-        fun _deleteAfterStopSeconds(): JsonField<Long> = deleteAfterStopSeconds
-
-        /**
-         * Returns the raw JSON value of [fsCapacityBytes].
-         *
-         * Unlike [fsCapacityBytes], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("fs_capacity_bytes")
-        @ExcludeMissing
-        fun _fsCapacityBytes(): JsonField<Long> = fsCapacityBytes
-
-        /**
-         * Returns the raw JSON value of [idleTtlSeconds].
-         *
-         * Unlike [idleTtlSeconds], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("idle_ttl_seconds")
-        @ExcludeMissing
-        fun _idleTtlSeconds(): JsonField<Long> = idleTtlSeconds
-
-        /**
-         * Returns the raw JSON value of [memBytes].
-         *
-         * Unlike [memBytes], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("mem_bytes") @ExcludeMissing fun _memBytes(): JsonField<Long> = memBytes
-
-        /**
-         * Returns the raw JSON value of [bodyName].
-         *
-         * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("name") @ExcludeMissing fun _bodyName(): JsonField<String> = bodyName
-
-        /**
-         * Returns the raw JSON value of [proxyConfig].
-         *
-         * Unlike [proxyConfig], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("proxy_config")
-        @ExcludeMissing
-        fun _proxyConfig(): JsonField<ProxyConfig> = proxyConfig
-
-        /**
-         * Returns the raw JSON value of [tagValueIds].
-         *
-         * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("tag_value_ids")
-        @ExcludeMissing
-        fun _tagValueIds(): JsonField<List<String>> = tagValueIds
-
-        /**
-         * Returns the raw JSON value of [vcpus].
-         *
-         * Unlike [vcpus], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("vcpus") @ExcludeMissing fun _vcpus(): JsonField<Long> = vcpus
-
-        @JsonAnySetter
-        private fun putAdditionalProperty(key: String, value: JsonValue) {
+        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
             additionalProperties.put(key, value)
         }
 
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /** Returns a mutable builder for constructing an instance of [Body]. */
-            @JvmStatic fun builder() = Builder()
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+            this.additionalProperties.putAll(additionalProperties)
         }
 
-        /** A builder for [Body]. */
-        class Builder internal constructor() {
+        fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
 
-            private var deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of()
-            private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
-            private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
-            private var memBytes: JsonField<Long> = JsonMissing.of()
-            private var bodyName: JsonField<String> = JsonMissing.of()
-            private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
-            private var tagValueIds: JsonField<MutableList<String>>? = null
-            private var vcpus: JsonField<Long> = JsonMissing.of()
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(body: Body) = apply {
-                deleteAfterStopSeconds = body.deleteAfterStopSeconds
-                fsCapacityBytes = body.fsCapacityBytes
-                idleTtlSeconds = body.idleTtlSeconds
-                memBytes = body.memBytes
-                bodyName = body.bodyName
-                proxyConfig = body.proxyConfig
-                tagValueIds = body.tagValueIds.map { it.toMutableList() }
-                vcpus = body.vcpus
-                additionalProperties = body.additionalProperties.toMutableMap()
-            }
-
-            fun deleteAfterStopSeconds(deleteAfterStopSeconds: Long) =
-                deleteAfterStopSeconds(JsonField.of(deleteAfterStopSeconds))
-
-            /**
-             * Sets [Builder.deleteAfterStopSeconds] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.deleteAfterStopSeconds] with a well-typed [Long]
-             * value instead. This method is primarily for setting the field to an undocumented or
-             * not yet supported value.
-             */
-            fun deleteAfterStopSeconds(deleteAfterStopSeconds: JsonField<Long>) = apply {
-                this.deleteAfterStopSeconds = deleteAfterStopSeconds
-            }
-
-            fun fsCapacityBytes(fsCapacityBytes: Long) =
-                fsCapacityBytes(JsonField.of(fsCapacityBytes))
-
-            /**
-             * Sets [Builder.fsCapacityBytes] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.fsCapacityBytes] with a well-typed [Long] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun fsCapacityBytes(fsCapacityBytes: JsonField<Long>) = apply {
-                this.fsCapacityBytes = fsCapacityBytes
-            }
-
-            fun idleTtlSeconds(idleTtlSeconds: Long) = idleTtlSeconds(JsonField.of(idleTtlSeconds))
-
-            /**
-             * Sets [Builder.idleTtlSeconds] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.idleTtlSeconds] with a well-typed [Long] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun idleTtlSeconds(idleTtlSeconds: JsonField<Long>) = apply {
-                this.idleTtlSeconds = idleTtlSeconds
-            }
-
-            fun memBytes(memBytes: Long) = memBytes(JsonField.of(memBytes))
-
-            /**
-             * Sets [Builder.memBytes] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.memBytes] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun memBytes(memBytes: JsonField<Long>) = apply { this.memBytes = memBytes }
-
-            fun bodyName(bodyName: String) = bodyName(JsonField.of(bodyName))
-
-            /**
-             * Sets [Builder.bodyName] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.bodyName] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun bodyName(bodyName: JsonField<String>) = apply { this.bodyName = bodyName }
-
-            fun proxyConfig(proxyConfig: ProxyConfig) = proxyConfig(JsonField.of(proxyConfig))
-
-            /**
-             * Sets [Builder.proxyConfig] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.proxyConfig] with a well-typed [ProxyConfig] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun proxyConfig(proxyConfig: JsonField<ProxyConfig>) = apply {
-                this.proxyConfig = proxyConfig
-            }
-
-            fun tagValueIds(tagValueIds: List<String>) = tagValueIds(JsonField.of(tagValueIds))
-
-            /**
-             * Sets [Builder.tagValueIds] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
-                this.tagValueIds = tagValueIds.map { it.toMutableList() }
-            }
-
-            /**
-             * Adds a single [String] to [tagValueIds].
-             *
-             * @throws IllegalStateException if the field was previously set to a non-list.
-             */
-            fun addTagValueId(tagValueId: String) = apply {
-                tagValueIds =
-                    (tagValueIds ?: JsonField.of(mutableListOf())).also {
-                        checkKnown("tagValueIds", it).add(tagValueId)
-                    }
-            }
-
-            fun vcpus(vcpus: Long) = vcpus(JsonField.of(vcpus))
-
-            /**
-             * Sets [Builder.vcpus] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.vcpus] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
-             */
-            fun vcpus(vcpus: JsonField<Long>) = apply { this.vcpus = vcpus }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [Body].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             */
-            fun build(): Body =
-                Body(
-                    deleteAfterStopSeconds,
-                    fsCapacityBytes,
-                    idleTtlSeconds,
-                    memBytes,
-                    bodyName,
-                    proxyConfig,
-                    (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
-                    vcpus,
-                    additionalProperties.toMutableMap(),
-                )
+        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+            keys.forEach(::removeAdditionalProperty)
         }
-
-        private var validated: Boolean = false
 
         /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
+         * Returns an immutable instance of [BoxStartResponse].
          *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
+         * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun validate(): Body = apply {
-            if (validated) {
-                return@apply
-            }
-
-            deleteAfterStopSeconds()
-            fsCapacityBytes()
-            idleTtlSeconds()
-            memBytes()
-            bodyName()
-            proxyConfig().ifPresent { it.validate() }
-            tagValueIds()
-            vcpus()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
-                (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
-                (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
-                (if (memBytes.asKnown().isPresent) 1 else 0) +
-                (if (bodyName.asKnown().isPresent) 1 else 0) +
-                (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
-                (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
-                (if (vcpus.asKnown().isPresent) 1 else 0)
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Body &&
-                deleteAfterStopSeconds == other.deleteAfterStopSeconds &&
-                fsCapacityBytes == other.fsCapacityBytes &&
-                idleTtlSeconds == other.idleTtlSeconds &&
-                memBytes == other.memBytes &&
-                bodyName == other.bodyName &&
-                proxyConfig == other.proxyConfig &&
-                tagValueIds == other.tagValueIds &&
-                vcpus == other.vcpus &&
-                additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy {
-            Objects.hash(
+        fun build(): BoxStartResponse =
+            BoxStartResponse(
+                id,
+                createdAt,
+                createdBy,
+                dataplaneUrl,
                 deleteAfterStopSeconds,
                 fsCapacityBytes,
                 idleTtlSeconds,
                 memBytes,
-                bodyName,
+                name,
                 proxyConfig,
-                tagValueIds,
+                sizeClass,
+                snapshotId,
+                status,
+                statusMessage,
+                stoppedAt,
+                updatedAt,
+                updatedBy,
                 vcpus,
-                additionalProperties,
+                additionalProperties.toMutableMap(),
             )
+    }
+
+    private var validated: Boolean = false
+
+    /**
+     * Validates that the types of all values in this object match their expected types recursively.
+     *
+     * This method is _not_ forwards compatible with new types from the API for existing fields.
+     *
+     * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+     *   expected type.
+     */
+    fun validate(): BoxStartResponse = apply {
+        if (validated) {
+            return@apply
         }
 
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() =
-            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, bodyName=$bodyName, proxyConfig=$proxyConfig, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        id()
+        createdAt()
+        createdBy()
+        dataplaneUrl()
+        deleteAfterStopSeconds()
+        fsCapacityBytes()
+        idleTtlSeconds()
+        memBytes()
+        name()
+        proxyConfig().ifPresent { it.validate() }
+        sizeClass()
+        snapshotId()
+        status()
+        statusMessage()
+        stoppedAt()
+        updatedAt()
+        updatedBy()
+        vcpus()
+        validated = true
     }
+
+    fun isValid(): Boolean =
+        try {
+            validate()
+            true
+        } catch (e: LangChainInvalidDataException) {
+            false
+        }
+
+    /**
+     * Returns a score indicating how many valid values are contained in this object recursively.
+     *
+     * Used for best match union deserialization.
+     */
+    @JvmSynthetic
+    internal fun validity(): Int =
+        (if (id.asKnown().isPresent) 1 else 0) +
+            (if (createdAt.asKnown().isPresent) 1 else 0) +
+            (if (createdBy.asKnown().isPresent) 1 else 0) +
+            (if (dataplaneUrl.asKnown().isPresent) 1 else 0) +
+            (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
+            (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
+            (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
+            (if (memBytes.asKnown().isPresent) 1 else 0) +
+            (if (name.asKnown().isPresent) 1 else 0) +
+            (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (sizeClass.asKnown().isPresent) 1 else 0) +
+            (if (snapshotId.asKnown().isPresent) 1 else 0) +
+            (if (status.asKnown().isPresent) 1 else 0) +
+            (if (statusMessage.asKnown().isPresent) 1 else 0) +
+            (if (stoppedAt.asKnown().isPresent) 1 else 0) +
+            (if (updatedAt.asKnown().isPresent) 1 else 0) +
+            (if (updatedBy.asKnown().isPresent) 1 else 0) +
+            (if (vcpus.asKnown().isPresent) 1 else 0)
 
     class ProxyConfig
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -1738,7 +1588,7 @@ private constructor(
             class RequestHeader
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
-                private val bodyName: JsonField<String>,
+                private val name: JsonField<String>,
                 private val type: JsonField<Type>,
                 private val isSet: JsonField<Boolean>,
                 private val value: JsonField<String>,
@@ -1749,7 +1599,7 @@ private constructor(
                 private constructor(
                     @JsonProperty("name")
                     @ExcludeMissing
-                    bodyName: JsonField<String> = JsonMissing.of(),
+                    name: JsonField<String> = JsonMissing.of(),
                     @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
                     @JsonProperty("is_set")
                     @ExcludeMissing
@@ -1757,14 +1607,14 @@ private constructor(
                     @JsonProperty("value")
                     @ExcludeMissing
                     value: JsonField<String> = JsonMissing.of(),
-                ) : this(bodyName, type, isSet, value, mutableMapOf())
+                ) : this(name, type, isSet, value, mutableMapOf())
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
                  *   is unexpectedly missing or null (e.g. if the server responded with an
                  *   unexpected value).
                  */
-                fun bodyName(): String = bodyName.getRequired("name")
+                fun name(): String = name.getRequired("name")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
@@ -1786,12 +1636,12 @@ private constructor(
                 fun value(): Optional<String> = value.getOptional("value")
 
                 /**
-                 * Returns the raw JSON value of [bodyName].
+                 * Returns the raw JSON value of [name].
                  *
-                 * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected
+                 * Unlike [name], this method doesn't throw if the JSON field has an unexpected
                  * type.
                  */
-                @JsonProperty("name") @ExcludeMissing fun _bodyName(): JsonField<String> = bodyName
+                @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
                 /**
                  * Returns the raw JSON value of [type].
@@ -1836,7 +1686,7 @@ private constructor(
                      *
                      * The following fields are required:
                      * ```java
-                     * .bodyName()
+                     * .name()
                      * .type()
                      * ```
                      */
@@ -1846,7 +1696,7 @@ private constructor(
                 /** A builder for [RequestHeader]. */
                 class Builder internal constructor() {
 
-                    private var bodyName: JsonField<String>? = null
+                    private var name: JsonField<String>? = null
                     private var type: JsonField<Type>? = null
                     private var isSet: JsonField<Boolean> = JsonMissing.of()
                     private var value: JsonField<String> = JsonMissing.of()
@@ -1854,23 +1704,23 @@ private constructor(
 
                     @JvmSynthetic
                     internal fun from(requestHeader: RequestHeader) = apply {
-                        bodyName = requestHeader.bodyName
+                        name = requestHeader.name
                         type = requestHeader.type
                         isSet = requestHeader.isSet
                         value = requestHeader.value
                         additionalProperties = requestHeader.additionalProperties.toMutableMap()
                     }
 
-                    fun bodyName(bodyName: String) = bodyName(JsonField.of(bodyName))
+                    fun name(name: String) = name(JsonField.of(name))
 
                     /**
-                     * Sets [Builder.bodyName] to an arbitrary JSON value.
+                     * Sets [Builder.name] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.bodyName] with a well-typed [String] value
+                     * You should usually call [Builder.name] with a well-typed [String] value
                      * instead. This method is primarily for setting the field to an undocumented or
                      * not yet supported value.
                      */
-                    fun bodyName(bodyName: JsonField<String>) = apply { this.bodyName = bodyName }
+                    fun name(name: JsonField<String>) = apply { this.name = name }
 
                     fun type(type: Type) = type(JsonField.of(type))
 
@@ -1934,7 +1784,7 @@ private constructor(
                      *
                      * The following fields are required:
                      * ```java
-                     * .bodyName()
+                     * .name()
                      * .type()
                      * ```
                      *
@@ -1942,7 +1792,7 @@ private constructor(
                      */
                     fun build(): RequestHeader =
                         RequestHeader(
-                            checkRequired("bodyName", bodyName),
+                            checkRequired("name", name),
                             checkRequired("type", type),
                             isSet,
                             value,
@@ -1967,7 +1817,7 @@ private constructor(
                         return@apply
                     }
 
-                    bodyName()
+                    name()
                     type().validate()
                     isSet()
                     value()
@@ -1990,7 +1840,7 @@ private constructor(
                  */
                 @JvmSynthetic
                 internal fun validity(): Int =
-                    (if (bodyName.asKnown().isPresent) 1 else 0) +
+                    (if (name.asKnown().isPresent) 1 else 0) +
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (isSet.asKnown().isPresent) 1 else 0) +
                         (if (value.asKnown().isPresent) 1 else 0)
@@ -2150,7 +2000,7 @@ private constructor(
                     }
 
                     return other is RequestHeader &&
-                        bodyName == other.bodyName &&
+                        name == other.name &&
                         type == other.type &&
                         isSet == other.isSet &&
                         value == other.value &&
@@ -2158,13 +2008,13 @@ private constructor(
                 }
 
                 private val hashCode: Int by lazy {
-                    Objects.hash(bodyName, type, isSet, value, additionalProperties)
+                    Objects.hash(name, type, isSet, value, additionalProperties)
                 }
 
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "RequestHeader{bodyName=$bodyName, type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
+                    "RequestHeader{name=$name, type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
             }
 
             override fun equals(other: Any?): Boolean {
@@ -2202,7 +2052,7 @@ private constructor(
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
             private val matchHosts: JsonField<List<String>>,
-            private val bodyName: JsonField<String>,
+            private val name: JsonField<String>,
             private val enabled: JsonField<Boolean>,
             private val headers: JsonField<List<Header>>,
             private val matchPaths: JsonField<List<String>>,
@@ -2214,9 +2064,7 @@ private constructor(
                 @JsonProperty("match_hosts")
                 @ExcludeMissing
                 matchHosts: JsonField<List<String>> = JsonMissing.of(),
-                @JsonProperty("name")
-                @ExcludeMissing
-                bodyName: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("enabled")
                 @ExcludeMissing
                 enabled: JsonField<Boolean> = JsonMissing.of(),
@@ -2226,7 +2074,7 @@ private constructor(
                 @JsonProperty("match_paths")
                 @ExcludeMissing
                 matchPaths: JsonField<List<String>> = JsonMissing.of(),
-            ) : this(matchHosts, bodyName, enabled, headers, matchPaths, mutableMapOf())
+            ) : this(matchHosts, name, enabled, headers, matchPaths, mutableMapOf())
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -2240,7 +2088,7 @@ private constructor(
              *   unexpectedly missing or null (e.g. if the server responded with an unexpected
              *   value).
              */
-            fun bodyName(): String = bodyName.getRequired("name")
+            fun name(): String = name.getRequired("name")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -2271,12 +2119,11 @@ private constructor(
             fun _matchHosts(): JsonField<List<String>> = matchHosts
 
             /**
-             * Returns the raw JSON value of [bodyName].
+             * Returns the raw JSON value of [name].
              *
-             * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("name") @ExcludeMissing fun _bodyName(): JsonField<String> = bodyName
+            @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
             /**
              * Returns the raw JSON value of [enabled].
@@ -2324,7 +2171,7 @@ private constructor(
                  * The following fields are required:
                  * ```java
                  * .matchHosts()
-                 * .bodyName()
+                 * .name()
                  * ```
                  */
                 @JvmStatic fun builder() = Builder()
@@ -2334,7 +2181,7 @@ private constructor(
             class Builder internal constructor() {
 
                 private var matchHosts: JsonField<MutableList<String>>? = null
-                private var bodyName: JsonField<String>? = null
+                private var name: JsonField<String>? = null
                 private var enabled: JsonField<Boolean> = JsonMissing.of()
                 private var headers: JsonField<MutableList<Header>>? = null
                 private var matchPaths: JsonField<MutableList<String>>? = null
@@ -2343,7 +2190,7 @@ private constructor(
                 @JvmSynthetic
                 internal fun from(rule: Rule) = apply {
                     matchHosts = rule.matchHosts.map { it.toMutableList() }
-                    bodyName = rule.bodyName
+                    name = rule.name
                     enabled = rule.enabled
                     headers = rule.headers.map { it.toMutableList() }
                     matchPaths = rule.matchPaths.map { it.toMutableList() }
@@ -2375,16 +2222,16 @@ private constructor(
                         }
                 }
 
-                fun bodyName(bodyName: String) = bodyName(JsonField.of(bodyName))
+                fun name(name: String) = name(JsonField.of(name))
 
                 /**
-                 * Sets [Builder.bodyName] to an arbitrary JSON value.
+                 * Sets [Builder.name] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.bodyName] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.name] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun bodyName(bodyName: JsonField<String>) = apply { this.bodyName = bodyName }
+                fun name(name: JsonField<String>) = apply { this.name = name }
 
                 fun enabled(enabled: Boolean) = enabled(JsonField.of(enabled))
 
@@ -2477,7 +2324,7 @@ private constructor(
                  * The following fields are required:
                  * ```java
                  * .matchHosts()
-                 * .bodyName()
+                 * .name()
                  * ```
                  *
                  * @throws IllegalStateException if any required field is unset.
@@ -2485,7 +2332,7 @@ private constructor(
                 fun build(): Rule =
                     Rule(
                         checkRequired("matchHosts", matchHosts).map { it.toImmutable() },
-                        checkRequired("bodyName", bodyName),
+                        checkRequired("name", name),
                         enabled,
                         (headers ?: JsonMissing.of()).map { it.toImmutable() },
                         (matchPaths ?: JsonMissing.of()).map { it.toImmutable() },
@@ -2511,7 +2358,7 @@ private constructor(
                 }
 
                 matchHosts()
-                bodyName()
+                name()
                 enabled()
                 headers().ifPresent { it.forEach { it.validate() } }
                 matchPaths()
@@ -2535,7 +2382,7 @@ private constructor(
             @JvmSynthetic
             internal fun validity(): Int =
                 (matchHosts.asKnown().getOrNull()?.size ?: 0) +
-                    (if (bodyName.asKnown().isPresent) 1 else 0) +
+                    (if (name.asKnown().isPresent) 1 else 0) +
                     (if (enabled.asKnown().isPresent) 1 else 0) +
                     (headers.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                     (matchPaths.asKnown().getOrNull()?.size ?: 0)
@@ -2543,7 +2390,7 @@ private constructor(
             class Header
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
-                private val bodyName: JsonField<String>,
+                private val name: JsonField<String>,
                 private val type: JsonField<Type>,
                 private val isSet: JsonField<Boolean>,
                 private val value: JsonField<String>,
@@ -2554,7 +2401,7 @@ private constructor(
                 private constructor(
                     @JsonProperty("name")
                     @ExcludeMissing
-                    bodyName: JsonField<String> = JsonMissing.of(),
+                    name: JsonField<String> = JsonMissing.of(),
                     @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
                     @JsonProperty("is_set")
                     @ExcludeMissing
@@ -2562,14 +2409,14 @@ private constructor(
                     @JsonProperty("value")
                     @ExcludeMissing
                     value: JsonField<String> = JsonMissing.of(),
-                ) : this(bodyName, type, isSet, value, mutableMapOf())
+                ) : this(name, type, isSet, value, mutableMapOf())
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
                  *   is unexpectedly missing or null (e.g. if the server responded with an
                  *   unexpected value).
                  */
-                fun bodyName(): String = bodyName.getRequired("name")
+                fun name(): String = name.getRequired("name")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
@@ -2591,12 +2438,12 @@ private constructor(
                 fun value(): Optional<String> = value.getOptional("value")
 
                 /**
-                 * Returns the raw JSON value of [bodyName].
+                 * Returns the raw JSON value of [name].
                  *
-                 * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected
+                 * Unlike [name], this method doesn't throw if the JSON field has an unexpected
                  * type.
                  */
-                @JsonProperty("name") @ExcludeMissing fun _bodyName(): JsonField<String> = bodyName
+                @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
                 /**
                  * Returns the raw JSON value of [type].
@@ -2641,7 +2488,7 @@ private constructor(
                      *
                      * The following fields are required:
                      * ```java
-                     * .bodyName()
+                     * .name()
                      * .type()
                      * ```
                      */
@@ -2651,7 +2498,7 @@ private constructor(
                 /** A builder for [Header]. */
                 class Builder internal constructor() {
 
-                    private var bodyName: JsonField<String>? = null
+                    private var name: JsonField<String>? = null
                     private var type: JsonField<Type>? = null
                     private var isSet: JsonField<Boolean> = JsonMissing.of()
                     private var value: JsonField<String> = JsonMissing.of()
@@ -2659,23 +2506,23 @@ private constructor(
 
                     @JvmSynthetic
                     internal fun from(header: Header) = apply {
-                        bodyName = header.bodyName
+                        name = header.name
                         type = header.type
                         isSet = header.isSet
                         value = header.value
                         additionalProperties = header.additionalProperties.toMutableMap()
                     }
 
-                    fun bodyName(bodyName: String) = bodyName(JsonField.of(bodyName))
+                    fun name(name: String) = name(JsonField.of(name))
 
                     /**
-                     * Sets [Builder.bodyName] to an arbitrary JSON value.
+                     * Sets [Builder.name] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.bodyName] with a well-typed [String] value
+                     * You should usually call [Builder.name] with a well-typed [String] value
                      * instead. This method is primarily for setting the field to an undocumented or
                      * not yet supported value.
                      */
-                    fun bodyName(bodyName: JsonField<String>) = apply { this.bodyName = bodyName }
+                    fun name(name: JsonField<String>) = apply { this.name = name }
 
                     fun type(type: Type) = type(JsonField.of(type))
 
@@ -2739,7 +2586,7 @@ private constructor(
                      *
                      * The following fields are required:
                      * ```java
-                     * .bodyName()
+                     * .name()
                      * .type()
                      * ```
                      *
@@ -2747,7 +2594,7 @@ private constructor(
                      */
                     fun build(): Header =
                         Header(
-                            checkRequired("bodyName", bodyName),
+                            checkRequired("name", name),
                             checkRequired("type", type),
                             isSet,
                             value,
@@ -2772,7 +2619,7 @@ private constructor(
                         return@apply
                     }
 
-                    bodyName()
+                    name()
                     type().validate()
                     isSet()
                     value()
@@ -2795,7 +2642,7 @@ private constructor(
                  */
                 @JvmSynthetic
                 internal fun validity(): Int =
-                    (if (bodyName.asKnown().isPresent) 1 else 0) +
+                    (if (name.asKnown().isPresent) 1 else 0) +
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (isSet.asKnown().isPresent) 1 else 0) +
                         (if (value.asKnown().isPresent) 1 else 0)
@@ -2955,7 +2802,7 @@ private constructor(
                     }
 
                     return other is Header &&
-                        bodyName == other.bodyName &&
+                        name == other.name &&
                         type == other.type &&
                         isSet == other.isSet &&
                         value == other.value &&
@@ -2963,13 +2810,13 @@ private constructor(
                 }
 
                 private val hashCode: Int by lazy {
-                    Objects.hash(bodyName, type, isSet, value, additionalProperties)
+                    Objects.hash(name, type, isSet, value, additionalProperties)
                 }
 
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "Header{bodyName=$bodyName, type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
+                    "Header{name=$name, type=$type, isSet=$isSet, value=$value, additionalProperties=$additionalProperties}"
             }
 
             override fun equals(other: Any?): Boolean {
@@ -2979,7 +2826,7 @@ private constructor(
 
                 return other is Rule &&
                     matchHosts == other.matchHosts &&
-                    bodyName == other.bodyName &&
+                    name == other.name &&
                     enabled == other.enabled &&
                     headers == other.headers &&
                     matchPaths == other.matchPaths &&
@@ -2987,20 +2834,13 @@ private constructor(
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(
-                    matchHosts,
-                    bodyName,
-                    enabled,
-                    headers,
-                    matchPaths,
-                    additionalProperties,
-                )
+                Objects.hash(matchHosts, name, enabled, headers, matchPaths, additionalProperties)
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Rule{matchHosts=$matchHosts, bodyName=$bodyName, enabled=$enabled, headers=$headers, matchPaths=$matchPaths, additionalProperties=$additionalProperties}"
+                "Rule{matchHosts=$matchHosts, name=$name, enabled=$enabled, headers=$headers, matchPaths=$matchPaths, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {
@@ -3031,16 +2871,54 @@ private constructor(
             return true
         }
 
-        return other is BoxUpdateParams &&
-            pathName == other.pathName &&
-            body == other.body &&
-            additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams
+        return other is BoxStartResponse &&
+            id == other.id &&
+            createdAt == other.createdAt &&
+            createdBy == other.createdBy &&
+            dataplaneUrl == other.dataplaneUrl &&
+            deleteAfterStopSeconds == other.deleteAfterStopSeconds &&
+            fsCapacityBytes == other.fsCapacityBytes &&
+            idleTtlSeconds == other.idleTtlSeconds &&
+            memBytes == other.memBytes &&
+            name == other.name &&
+            proxyConfig == other.proxyConfig &&
+            sizeClass == other.sizeClass &&
+            snapshotId == other.snapshotId &&
+            status == other.status &&
+            statusMessage == other.statusMessage &&
+            stoppedAt == other.stoppedAt &&
+            updatedAt == other.updatedAt &&
+            updatedBy == other.updatedBy &&
+            vcpus == other.vcpus &&
+            additionalProperties == other.additionalProperties
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(pathName, body, additionalHeaders, additionalQueryParams)
+    private val hashCode: Int by lazy {
+        Objects.hash(
+            id,
+            createdAt,
+            createdBy,
+            dataplaneUrl,
+            deleteAfterStopSeconds,
+            fsCapacityBytes,
+            idleTtlSeconds,
+            memBytes,
+            name,
+            proxyConfig,
+            sizeClass,
+            snapshotId,
+            status,
+            statusMessage,
+            stoppedAt,
+            updatedAt,
+            updatedBy,
+            vcpus,
+            additionalProperties,
+        )
+    }
+
+    override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxUpdateParams{pathName=$pathName, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "BoxStartResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

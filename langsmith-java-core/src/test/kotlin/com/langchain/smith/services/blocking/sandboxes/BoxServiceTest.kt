@@ -80,6 +80,7 @@ internal class BoxServiceTest {
                     )
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
+                    .addTagValueId("string")
                     .vcpus(0L)
                     .build()
             )
@@ -165,6 +166,7 @@ internal class BoxServiceTest {
                             )
                             .build()
                     )
+                    .addTagValueId("string")
                     .vcpus(0L)
                     .build()
             )
@@ -250,6 +252,18 @@ internal class BoxServiceTest {
         val boxService = client.sandboxes().boxes()
 
         val response = boxService.getStatus("name")
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun start() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val boxService = client.sandboxes().boxes()
+
+        val response = boxService.start("name")
 
         response.validate()
     }

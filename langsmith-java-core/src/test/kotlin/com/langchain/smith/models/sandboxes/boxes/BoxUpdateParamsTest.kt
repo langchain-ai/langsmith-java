@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.boxes
 
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -62,6 +63,7 @@ internal class BoxUpdateParamsTest {
                     )
                     .build()
             )
+            .addTagValueId("string")
             .vcpus(0L)
             .build()
     }
@@ -133,6 +135,7 @@ internal class BoxUpdateParamsTest {
                         )
                         .build()
                 )
+                .addTagValueId("string")
                 .vcpus(0L)
                 .build()
 
@@ -190,6 +193,7 @@ internal class BoxUpdateParamsTest {
                     )
                     .build()
             )
+        assertThat(body.tagValueIds().getOrNull()).containsExactly("string")
         assertThat(body.vcpus()).contains(0L)
     }
 
