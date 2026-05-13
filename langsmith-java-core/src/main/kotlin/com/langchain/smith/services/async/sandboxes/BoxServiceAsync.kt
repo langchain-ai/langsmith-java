@@ -42,8 +42,8 @@ interface BoxServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BoxServiceAsync
 
     /**
-     * Create a new sandbox from a snapshot. The snapshot may be identified by `snapshot_id` (UUID)
-     * or by `snapshot_name` (tenant-scoped unique name); exactly one must be set.
+     * Create a new sandbox using server defaults. Set `snapshot_id` or `snapshot_name` only when
+     * booting from a reusable snapshot.
      */
     fun create(): CompletableFuture<BoxCreateResponse> = create(BoxCreateParams.none())
 
