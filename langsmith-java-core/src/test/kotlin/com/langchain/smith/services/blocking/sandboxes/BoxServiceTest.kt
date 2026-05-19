@@ -78,6 +78,7 @@ internal class BoxServiceTest {
                             )
                             .build()
                     )
+                    .restoreMemory(true)
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
                     .addTagValueId("string")
@@ -219,6 +220,7 @@ internal class BoxServiceTest {
                     .pathName("name")
                     .bodyName("name")
                     .checkpoint("checkpoint")
+                    .includeMemory(true)
                     .build()
             )
 

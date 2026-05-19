@@ -13,6 +13,7 @@ internal class BoxCreateSnapshotParamsTest {
             .pathName("name")
             .bodyName("name")
             .checkpoint("checkpoint")
+            .includeMemory(true)
             .build()
     }
 
@@ -32,12 +33,14 @@ internal class BoxCreateSnapshotParamsTest {
                 .pathName("name")
                 .bodyName("name")
                 .checkpoint("checkpoint")
+                .includeMemory(true)
                 .build()
 
         val body = params._body()
 
         assertThat(body.bodyName()).isEqualTo("name")
         assertThat(body.checkpoint()).contains("checkpoint")
+        assertThat(body.includeMemory()).contains(true)
     }
 
     @Test
