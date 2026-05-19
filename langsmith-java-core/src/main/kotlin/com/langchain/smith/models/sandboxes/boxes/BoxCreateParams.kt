@@ -71,6 +71,21 @@ private constructor(
     fun proxyConfig(): Optional<ProxyConfig> = body.proxyConfig()
 
     /**
+     * RestoreMemory, when non-nil, overrides the server default for whether to resume the sandbox
+     * from its captured memory snapshot.
+     *
+     * true → resume from the memory snapshot if it exists; cold-boot the sandbox otherwise. false →
+     * always cold-boot, even if a memory snapshot exists. nil → use the server default.
+     *
+     * Applies to this request only; a later stop+start of the same sandbox reverts to the server
+     * default.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun restoreMemory(): Optional<Boolean> = body.restoreMemory()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -136,6 +151,13 @@ private constructor(
      * Unlike [proxyConfig], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _proxyConfig(): JsonField<ProxyConfig> = body._proxyConfig()
+
+    /**
+     * Returns the raw JSON value of [restoreMemory].
+     *
+     * Unlike [restoreMemory], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _restoreMemory(): JsonField<Boolean> = body._restoreMemory()
 
     /**
      * Returns the raw JSON value of [snapshotId].
@@ -283,6 +305,29 @@ private constructor(
          */
         fun proxyConfig(proxyConfig: JsonField<ProxyConfig>) = apply {
             body.proxyConfig(proxyConfig)
+        }
+
+        /**
+         * RestoreMemory, when non-nil, overrides the server default for whether to resume the
+         * sandbox from its captured memory snapshot.
+         *
+         * true → resume from the memory snapshot if it exists; cold-boot the sandbox otherwise.
+         * false → always cold-boot, even if a memory snapshot exists. nil → use the server default.
+         *
+         * Applies to this request only; a later stop+start of the same sandbox reverts to the
+         * server default.
+         */
+        fun restoreMemory(restoreMemory: Boolean) = apply { body.restoreMemory(restoreMemory) }
+
+        /**
+         * Sets [Builder.restoreMemory] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.restoreMemory] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun restoreMemory(restoreMemory: JsonField<Boolean>) = apply {
+            body.restoreMemory(restoreMemory)
         }
 
         fun snapshotId(snapshotId: String) = apply { body.snapshotId(snapshotId) }
@@ -480,6 +525,7 @@ private constructor(
         private val memBytes: JsonField<Long>,
         private val name: JsonField<String>,
         private val proxyConfig: JsonField<ProxyConfig>,
+        private val restoreMemory: JsonField<Boolean>,
         private val snapshotId: JsonField<String>,
         private val snapshotName: JsonField<String>,
         private val tagValueIds: JsonField<List<String>>,
@@ -503,6 +549,9 @@ private constructor(
             @JsonProperty("proxy_config")
             @ExcludeMissing
             proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
+            @JsonProperty("restore_memory")
+            @ExcludeMissing
+            restoreMemory: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("snapshot_id")
             @ExcludeMissing
             snapshotId: JsonField<String> = JsonMissing.of(),
@@ -520,6 +569,7 @@ private constructor(
             memBytes,
             name,
             proxyConfig,
+            restoreMemory,
             snapshotId,
             snapshotName,
             tagValueIds,
@@ -563,6 +613,21 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun proxyConfig(): Optional<ProxyConfig> = proxyConfig.getOptional("proxy_config")
+
+        /**
+         * RestoreMemory, when non-nil, overrides the server default for whether to resume the
+         * sandbox from its captured memory snapshot.
+         *
+         * true → resume from the memory snapshot if it exists; cold-boot the sandbox otherwise.
+         * false → always cold-boot, even if a memory snapshot exists. nil → use the server default.
+         *
+         * Applies to this request only; a later stop+start of the same sandbox reverts to the
+         * server default.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun restoreMemory(): Optional<Boolean> = restoreMemory.getOptional("restore_memory")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -642,6 +707,16 @@ private constructor(
         fun _proxyConfig(): JsonField<ProxyConfig> = proxyConfig
 
         /**
+         * Returns the raw JSON value of [restoreMemory].
+         *
+         * Unlike [restoreMemory], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("restore_memory")
+        @ExcludeMissing
+        fun _restoreMemory(): JsonField<Boolean> = restoreMemory
+
+        /**
          * Returns the raw JSON value of [snapshotId].
          *
          * Unlike [snapshotId], this method doesn't throw if the JSON field has an unexpected type.
@@ -703,6 +778,7 @@ private constructor(
             private var memBytes: JsonField<Long> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
+            private var restoreMemory: JsonField<Boolean> = JsonMissing.of()
             private var snapshotId: JsonField<String> = JsonMissing.of()
             private var snapshotName: JsonField<String> = JsonMissing.of()
             private var tagValueIds: JsonField<MutableList<String>>? = null
@@ -717,6 +793,7 @@ private constructor(
                 memBytes = body.memBytes
                 name = body.name
                 proxyConfig = body.proxyConfig
+                restoreMemory = body.restoreMemory
                 snapshotId = body.snapshotId
                 snapshotName = body.snapshotName
                 tagValueIds = body.tagValueIds.map { it.toMutableList() }
@@ -798,6 +875,30 @@ private constructor(
              */
             fun proxyConfig(proxyConfig: JsonField<ProxyConfig>) = apply {
                 this.proxyConfig = proxyConfig
+            }
+
+            /**
+             * RestoreMemory, when non-nil, overrides the server default for whether to resume the
+             * sandbox from its captured memory snapshot.
+             *
+             * true → resume from the memory snapshot if it exists; cold-boot the sandbox otherwise.
+             * false → always cold-boot, even if a memory snapshot exists. nil → use the server
+             * default.
+             *
+             * Applies to this request only; a later stop+start of the same sandbox reverts to the
+             * server default.
+             */
+            fun restoreMemory(restoreMemory: Boolean) = restoreMemory(JsonField.of(restoreMemory))
+
+            /**
+             * Sets [Builder.restoreMemory] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.restoreMemory] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun restoreMemory(restoreMemory: JsonField<Boolean>) = apply {
+                this.restoreMemory = restoreMemory
             }
 
             fun snapshotId(snapshotId: String) = snapshotId(JsonField.of(snapshotId))
@@ -892,6 +993,7 @@ private constructor(
                     memBytes,
                     name,
                     proxyConfig,
+                    restoreMemory,
                     snapshotId,
                     snapshotName,
                     (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
@@ -922,6 +1024,7 @@ private constructor(
             memBytes()
             name()
             proxyConfig().ifPresent { it.validate() }
+            restoreMemory()
             snapshotId()
             snapshotName()
             tagValueIds()
@@ -951,6 +1054,7 @@ private constructor(
                 (if (memBytes.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (restoreMemory.asKnown().isPresent) 1 else 0) +
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
                 (if (snapshotName.asKnown().isPresent) 1 else 0) +
                 (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
@@ -968,6 +1072,7 @@ private constructor(
                 memBytes == other.memBytes &&
                 name == other.name &&
                 proxyConfig == other.proxyConfig &&
+                restoreMemory == other.restoreMemory &&
                 snapshotId == other.snapshotId &&
                 snapshotName == other.snapshotName &&
                 tagValueIds == other.tagValueIds &&
@@ -983,6 +1088,7 @@ private constructor(
                 memBytes,
                 name,
                 proxyConfig,
+                restoreMemory,
                 snapshotId,
                 snapshotName,
                 tagValueIds,
@@ -994,7 +1100,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig

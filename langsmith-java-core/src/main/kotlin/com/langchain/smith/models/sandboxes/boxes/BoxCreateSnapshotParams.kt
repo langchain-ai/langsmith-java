@@ -49,6 +49,17 @@ private constructor(
     fun checkpoint(): Optional<String> = body.checkpoint()
 
     /**
+     * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem clone.
+     * Only honored when the sandbox is running AND Checkpoint is omitted (i.e. a fresh in-VM
+     * checkpoint is requested). Defaults to false to keep snapshots small unless memory restore is
+     * explicitly desired.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun includeMemory(): Optional<Boolean> = body.includeMemory()
+
+    /**
      * Returns the raw JSON value of [bodyName].
      *
      * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
@@ -61,6 +72,13 @@ private constructor(
      * Unlike [checkpoint], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _checkpoint(): JsonField<String> = body._checkpoint()
+
+    /**
+     * Returns the raw JSON value of [includeMemory].
+     *
+     * Unlike [includeMemory], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _includeMemory(): JsonField<Boolean> = body._includeMemory()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -113,6 +131,7 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [bodyName]
          * - [checkpoint]
+         * - [includeMemory]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -137,6 +156,25 @@ private constructor(
          * value.
          */
         fun checkpoint(checkpoint: JsonField<String>) = apply { body.checkpoint(checkpoint) }
+
+        /**
+         * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem
+         * clone. Only honored when the sandbox is running AND Checkpoint is omitted (i.e. a fresh
+         * in-VM checkpoint is requested). Defaults to false to keep snapshots small unless memory
+         * restore is explicitly desired.
+         */
+        fun includeMemory(includeMemory: Boolean) = apply { body.includeMemory(includeMemory) }
+
+        /**
+         * Sets [Builder.includeMemory] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.includeMemory] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun includeMemory(includeMemory: JsonField<Boolean>) = apply {
+            body.includeMemory(includeMemory)
+        }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -293,6 +331,7 @@ private constructor(
     private constructor(
         private val bodyName: JsonField<String>,
         private val checkpoint: JsonField<String>,
+        private val includeMemory: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -302,7 +341,10 @@ private constructor(
             @JsonProperty("checkpoint")
             @ExcludeMissing
             checkpoint: JsonField<String> = JsonMissing.of(),
-        ) : this(bodyName, checkpoint, mutableMapOf())
+            @JsonProperty("include_memory")
+            @ExcludeMissing
+            includeMemory: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(bodyName, checkpoint, includeMemory, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -319,6 +361,17 @@ private constructor(
         fun checkpoint(): Optional<String> = checkpoint.getOptional("checkpoint")
 
         /**
+         * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem
+         * clone. Only honored when the sandbox is running AND Checkpoint is omitted (i.e. a fresh
+         * in-VM checkpoint is requested). Defaults to false to keep snapshots small unless memory
+         * restore is explicitly desired.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun includeMemory(): Optional<Boolean> = includeMemory.getOptional("include_memory")
+
+        /**
          * Returns the raw JSON value of [bodyName].
          *
          * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
@@ -333,6 +386,16 @@ private constructor(
         @JsonProperty("checkpoint")
         @ExcludeMissing
         fun _checkpoint(): JsonField<String> = checkpoint
+
+        /**
+         * Returns the raw JSON value of [includeMemory].
+         *
+         * Unlike [includeMemory], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("include_memory")
+        @ExcludeMissing
+        fun _includeMemory(): JsonField<Boolean> = includeMemory
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -364,12 +427,14 @@ private constructor(
 
             private var bodyName: JsonField<String>? = null
             private var checkpoint: JsonField<String> = JsonMissing.of()
+            private var includeMemory: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 bodyName = body.bodyName
                 checkpoint = body.checkpoint
+                includeMemory = body.includeMemory
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -395,6 +460,25 @@ private constructor(
              * supported value.
              */
             fun checkpoint(checkpoint: JsonField<String>) = apply { this.checkpoint = checkpoint }
+
+            /**
+             * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem
+             * clone. Only honored when the sandbox is running AND Checkpoint is omitted (i.e. a
+             * fresh in-VM checkpoint is requested). Defaults to false to keep snapshots small
+             * unless memory restore is explicitly desired.
+             */
+            fun includeMemory(includeMemory: Boolean) = includeMemory(JsonField.of(includeMemory))
+
+            /**
+             * Sets [Builder.includeMemory] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.includeMemory] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun includeMemory(includeMemory: JsonField<Boolean>) = apply {
+                this.includeMemory = includeMemory
+            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -431,6 +515,7 @@ private constructor(
                 Body(
                     checkRequired("bodyName", bodyName),
                     checkpoint,
+                    includeMemory,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -453,6 +538,7 @@ private constructor(
 
             bodyName()
             checkpoint()
+            includeMemory()
             validated = true
         }
 
@@ -473,7 +559,8 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (bodyName.asKnown().isPresent) 1 else 0) +
-                (if (checkpoint.asKnown().isPresent) 1 else 0)
+                (if (checkpoint.asKnown().isPresent) 1 else 0) +
+                (if (includeMemory.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -483,17 +570,18 @@ private constructor(
             return other is Body &&
                 bodyName == other.bodyName &&
                 checkpoint == other.checkpoint &&
+                includeMemory == other.includeMemory &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(bodyName, checkpoint, additionalProperties)
+            Objects.hash(bodyName, checkpoint, includeMemory, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{bodyName=$bodyName, checkpoint=$checkpoint, additionalProperties=$additionalProperties}"
+            "Body{bodyName=$bodyName, checkpoint=$checkpoint, includeMemory=$includeMemory, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
