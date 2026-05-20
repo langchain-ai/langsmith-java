@@ -8,7 +8,7 @@ import io.opentelemetry.sdk.common.CompletableResultCode
 import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor
-import io.opentelemetry.semconv.ResourceAttributes
+import io.opentelemetry.semconv.ServiceAttributes
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
@@ -46,8 +46,8 @@ private constructor(
             val resource =
                 Resource.getDefault()
                     .toBuilder()
-                    .put(ResourceAttributes.SERVICE_NAME, serviceName)
-                    .put(ResourceAttributes.SERVICE_VERSION, INSTRUMENTATION_VERSION)
+                    .put(ServiceAttributes.SERVICE_NAME, serviceName)
+                    .put(ServiceAttributes.SERVICE_VERSION, INSTRUMENTATION_VERSION)
                     .build()
 
             if (!config.enabled) {

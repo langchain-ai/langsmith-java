@@ -48,10 +48,10 @@ dependencies {
     implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
 
     // OpenTelemetry dependencies
-    api("io.opentelemetry:opentelemetry-api:1.32.0")
-    api("io.opentelemetry:opentelemetry-sdk:1.32.0")
-    api("io.opentelemetry:opentelemetry-exporter-otlp:1.32.0")
-    api("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
+    api("io.opentelemetry:opentelemetry-api:1.62.0")
+    api("io.opentelemetry:opentelemetry-sdk:1.62.0")
+    api("io.opentelemetry:opentelemetry-exporter-otlp:1.62.0")
+    api("io.opentelemetry.semconv:opentelemetry-semconv:1.41.1")
 
     // OpenAI SDK (for wrapOpenAI tracing wrapper)
     api("com.openai:openai-java:4.30.0")
@@ -71,12 +71,12 @@ dependencies {
     // These constraints apply to the test scope only and do not affect published artifacts.
     constraints {
         // CVE-2024-13009, CVE-2025-5115, CVE-2024-22201, CVE-2023-36478
-        testImplementation("org.eclipse.jetty:jetty-server") { version { require("9.4.57.v20241219") } }
-        testImplementation("org.eclipse.jetty.http2:http2-common") { version { require("9.4.57.v20241219") } }
-        testImplementation("org.eclipse.jetty.http2:http2-hpack") { version { require("9.4.57.v20241219") } }
-        // CVE-2023-6481, CVE-2023-6378
-        testImplementation("ch.qos.logback:logback-core") { version { require("1.2.13") } }
-        testImplementation("ch.qos.logback:logback-classic") { version { require("1.2.13") } }
+        testImplementation("org.eclipse.jetty:jetty-server") { version { require("9.4.58.v20250814") } }
+        testImplementation("org.eclipse.jetty.http2:http2-common") { version { require("9.4.58.v20250814") } }
+        testImplementation("org.eclipse.jetty.http2:http2-hpack") { version { require("9.4.58.v20250814") } }
+        // CVE-2023-6481, CVE-2023-6378, CVE-2025-11226, CVE-2024-12798, CVE-2024-12801, CVE-2026-1225
+        testImplementation("ch.qos.logback:logback-core") { version { require("1.5.32") } }
+        testImplementation("ch.qos.logback:logback-classic") { version { require("1.5.32") } }
         // CVE-2025-48976, CVE-2023-24998
         testImplementation("commons-fileupload:commons-fileupload") { version { require("1.6.0") } }
         // CVE-2024-47554
