@@ -1,6 +1,6 @@
 # Security Fix Plan — langsmith-java
 
-Validated 2026-05-20 against open Dependabot alerts.
+Validated 2026-05-21 against open Dependabot alerts.
 
 ## Status
 
@@ -12,6 +12,9 @@ Validated 2026-05-20 against open Dependabot alerts.
 | Logback 1.2.13 → 1.5.32 | P4 | Test + example scope (non-published) | ✅ Done |
 | Spring 5.3.34 → 5.3.39 | P5 | Example module only (non-published) | ✅ Done |
 | SnakeYAML 1.31 → 1.32 | P6 | Example module only (non-published) | ✅ Done |
+| opennlp-tools 2.5.4 → 2.5.9 | P7 | Test scope only (from langchain4j test dep) | ✅ Done |
+| Bouncy Castle 1.80/1.80.2 → 1.84 (bcprov/bcpg/bcpkix) | P8 | Test scope + buildSrc (signing) | ✅ Done |
+| plexus-utils 4.0.2 → 4.0.3 | P9 | buildSrc (Gradle plugin infra) | ✅ Done |
 | Spring Boot 3.x upgrade (example) | Upstream | Removes 17 no-fix-available alerts | ⏳ Future |
 
 ## Alerts Already Fixed (Stale — Can Be Dismissed)

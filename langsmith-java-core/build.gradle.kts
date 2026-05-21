@@ -83,6 +83,14 @@ dependencies {
         testImplementation("commons-io:commons-io") { version { require("2.14.0") } }
         // CVE-2023-1370
         testImplementation("net.minidev:json-smart") { version { require("2.4.9") } }
+        // CVE-2026-40682, CVE-2026-42027, CVE-2026-42440 (XXE + arbitrary class instantiation + OOM DoS)
+        // opennlp-tools 2.5.4 is a transitive dep of langchain4j:1.12.2; fix is 2.5.9.
+        testImplementation("org.apache.opennlp:opennlp-tools") { version { require("2.5.9") } }
+        // CVE-2026-5598, CVE-2026-3505, CVE-2026-0636, CVE-2026-5588
+        // Bouncy Castle 1.80/1.80.2 → 1.84 (covert timing channel, resource consumption, LDAP injection, broken crypto)
+        testImplementation("org.bouncycastle:bcprov-jdk18on") { version { require("1.84") } }
+        testImplementation("org.bouncycastle:bcpg-jdk18on") { version { require("1.84") } }
+        testImplementation("org.bouncycastle:bcpkix-jdk18on") { version { require("1.84") } }
     }
 
     testImplementation(kotlin("test"))
