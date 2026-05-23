@@ -10,8 +10,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * List sandbox claims for the authenticated tenant, with optional filtering, sorting, and
- * pagination.
+ * List sandboxes for the authenticated tenant, with optional filtering, sorting, and pagination.
  */
 class BoxListParams
 private constructor(

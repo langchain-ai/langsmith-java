@@ -10,17 +10,29 @@ internal class WorkspaceListParamsTest {
 
     @Test
     fun create() {
-        WorkspaceListParams.builder().includeDeleted(true).build()
+        WorkspaceListParams.builder()
+            .dataPlaneId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .includeDeleted(true)
+            .build()
     }
 
     @Test
     fun queryParams() {
-        val params = WorkspaceListParams.builder().includeDeleted(true).build()
+        val params =
+            WorkspaceListParams.builder()
+                .dataPlaneId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .includeDeleted(true)
+                .build()
 
         val queryParams = params._queryParams()
 
         assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("include_deleted", "true").build())
+            .isEqualTo(
+                QueryParams.builder()
+                    .put("data_plane_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("include_deleted", "true")
+                    .build()
+            )
     }
 
     @Test
