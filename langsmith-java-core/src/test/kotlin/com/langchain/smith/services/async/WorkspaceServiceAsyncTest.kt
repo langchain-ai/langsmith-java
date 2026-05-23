@@ -67,7 +67,12 @@ internal class WorkspaceServiceAsyncTest {
         val workspaceServiceAsync = client.workspaces()
 
         val workspacesFuture =
-            workspaceServiceAsync.list(WorkspaceListParams.builder().includeDeleted(true).build())
+            workspaceServiceAsync.list(
+                WorkspaceListParams.builder()
+                    .dataPlaneId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .includeDeleted(true)
+                    .build()
+            )
 
         val workspaces = workspacesFuture.get()
         workspaces.forEach { it.validate() }

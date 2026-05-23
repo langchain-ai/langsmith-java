@@ -11,9 +11,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/**
- * Delete a sandbox claim by name or UUID. Tears down the sandbox runtime and removes the DB record.
- */
+/** Delete a sandbox by name or UUID. Tears down the sandbox runtime and removes the DB record. */
 class BoxDeleteParams
 private constructor(
     private val name: String?,

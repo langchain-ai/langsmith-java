@@ -9,7 +9,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Retrieve a sandbox claim by name. Stale provisioning claims are auto-failed. */
+/** Retrieve a sandbox by name. Stale provisioning sandboxes are auto-failed. */
 class BoxRetrieveParams
 private constructor(
     private val name: String?,

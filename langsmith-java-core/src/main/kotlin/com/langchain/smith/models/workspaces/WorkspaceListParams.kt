@@ -14,10 +14,13 @@ import kotlin.jvm.optionals.getOrNull
  */
 class WorkspaceListParams
 private constructor(
+    private val dataPlaneId: String?,
     private val includeDeleted: Boolean?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    fun dataPlaneId(): Optional<String> = Optional.ofNullable(dataPlaneId)
 
     fun includeDeleted(): Optional<Boolean> = Optional.ofNullable(includeDeleted)
 
@@ -40,16 +43,23 @@ private constructor(
     /** A builder for [WorkspaceListParams]. */
     class Builder internal constructor() {
 
+        private var dataPlaneId: String? = null
         private var includeDeleted: Boolean? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(workspaceListParams: WorkspaceListParams) = apply {
+            dataPlaneId = workspaceListParams.dataPlaneId
             includeDeleted = workspaceListParams.includeDeleted
             additionalHeaders = workspaceListParams.additionalHeaders.toBuilder()
             additionalQueryParams = workspaceListParams.additionalQueryParams.toBuilder()
         }
+
+        fun dataPlaneId(dataPlaneId: String?) = apply { this.dataPlaneId = dataPlaneId }
+
+        /** Alias for calling [Builder.dataPlaneId] with `dataPlaneId.orElse(null)`. */
+        fun dataPlaneId(dataPlaneId: Optional<String>) = dataPlaneId(dataPlaneId.getOrNull())
 
         fun includeDeleted(includeDeleted: Boolean?) = apply {
             this.includeDeleted = includeDeleted
@@ -171,6 +181,7 @@ private constructor(
          */
         fun build(): WorkspaceListParams =
             WorkspaceListParams(
+                dataPlaneId,
                 includeDeleted,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -182,6 +193,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                dataPlaneId?.let { put("data_plane_id", it) }
                 includeDeleted?.let { put("include_deleted", it.toString()) }
                 putAll(additionalQueryParams)
             }
@@ -193,14 +205,15 @@ private constructor(
         }
 
         return other is WorkspaceListParams &&
+            dataPlaneId == other.dataPlaneId &&
             includeDeleted == other.includeDeleted &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(includeDeleted, additionalHeaders, additionalQueryParams)
+        Objects.hash(dataPlaneId, includeDeleted, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "WorkspaceListParams{includeDeleted=$includeDeleted, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "WorkspaceListParams{dataPlaneId=$dataPlaneId, includeDeleted=$includeDeleted, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

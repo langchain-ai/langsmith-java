@@ -9,7 +9,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Retrieve the lightweight status of a sandbox claim for polling. */
+/** Retrieve the lightweight status of a sandbox for polling. */
 class BoxGetStatusParams
 private constructor(
     private val name: String?,
