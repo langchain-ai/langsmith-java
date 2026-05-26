@@ -220,6 +220,8 @@ internal class BoxServiceTest {
                     .pathName("name")
                     .bodyName("name")
                     .checkpoint("checkpoint")
+                    .dockerImage("docker_image")
+                    .fsCapacityBytes(0L)
                     .includeMemory(true)
                     .build()
             )
