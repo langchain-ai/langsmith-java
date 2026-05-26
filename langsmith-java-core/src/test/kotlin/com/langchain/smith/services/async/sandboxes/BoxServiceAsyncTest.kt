@@ -244,6 +244,8 @@ internal class BoxServiceAsyncTest {
                     .pathName("name")
                     .bodyName("name")
                     .checkpoint("checkpoint")
+                    .dockerImage("docker_image")
+                    .fsCapacityBytes(0L)
                     .includeMemory(true)
                     .build()
             )
