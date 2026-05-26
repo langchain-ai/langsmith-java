@@ -7,7 +7,6 @@ Full Changelog: [v0.1.0-beta.5...v0.1.0-beta.6](https://github.com/langchain-ai/
 ### Bug Fixes
 
 * patch security alerts — OTel, Tomcat, Jetty, Logback, Spring, SnakeYAML ([#153](https://github.com/langchain-ai/langsmith-java/issues/153)) ([dfa5469](https://github.com/langchain-ai/langsmith-java/commit/dfa54697292c14a987320ba776b580ee25c58f94))
-
 ## 0.1.0-beta.5 (2026-05-13)
 
 Full Changelog: [v0.1.0-beta.4...v0.1.0-beta.5](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.4...v0.1.0-beta.5)

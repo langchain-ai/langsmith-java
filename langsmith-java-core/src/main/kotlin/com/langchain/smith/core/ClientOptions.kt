@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.langchain.smith.core.http.AsyncStreamResponse
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.HttpClient
+import com.langchain.smith.core.http.LoggingHttpClient
 import com.langchain.smith.core.http.PhantomReachableClosingHttpClient
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.http.RetryingHttpClient
@@ -109,6 +110,14 @@ private constructor(
     @get:JvmName("maxRetries") val maxRetries: Int,
     /** Whether run create/update calls should be automatically batched for tracing. */
     @get:JvmName("autoBatchTracing") val autoBatchTracing: Boolean,
+    /**
+     * The level at which to log request and response information.
+     *
+     * [fromEnv] will set the level from environment variables. See [LogLevel.fromEnv].
+     *
+     * Defaults to [LogLevel.fromEnv].
+     */
+    @get:JvmName("logLevel") val logLevel: LogLevel,
     private val apiKey: String?,
     private val tenantId: String?,
     private val oauthAccessToken: String?,
@@ -172,6 +181,8 @@ private constructor(
         private var timeout: Timeout = Timeout.default()
         private var maxRetries: Int = 2
         private var autoBatchTracing: Boolean = true
+
+        private var logLevel: LogLevel = LogLevel.fromEnv()
         private var apiKey: String? = null
         private var tenantId: String? = null
         private var oauthAccessToken: String? = null
@@ -192,6 +203,7 @@ private constructor(
             timeout = clientOptions.timeout
             maxRetries = clientOptions.maxRetries
             autoBatchTracing = clientOptions.autoBatchTracing
+            logLevel = clientOptions.logLevel
             apiKey = clientOptions.apiKey
             tenantId = clientOptions.tenantId
             oauthAccessToken = clientOptions.oauthAccessToken
@@ -326,6 +338,15 @@ private constructor(
             this.autoBatchTracing = autoBatchTracing
         }
 
+        /**
+         * The level at which to log request and response information.
+         *
+         * [fromEnv] will set the level from environment variables. See [LogLevel.fromEnv].
+         *
+         * Defaults to [LogLevel.fromEnv].
+         */
+        fun logLevel(logLevel: LogLevel) = apply { this.logLevel = logLevel }
+
         fun apiKey(apiKey: String?) = apply { this.apiKey = apiKey }
 
         /** Alias for calling [Builder.apiKey] with `apiKey.orElse(null)`. */
@@ -432,6 +453,7 @@ private constructor(
          * System properties take precedence over environment variables.
          */
         fun fromEnv() = apply {
+            logLevel(LogLevel.fromEnv())
             langsmithEndpoint()?.let { baseUrl(it) }
             langsmithApiKey()?.let { apiKey(it) }
             langsmithTenantId()?.let { tenantId(it) }
@@ -518,7 +540,13 @@ private constructor(
 
             val retryingHttpClient =
                 RetryingHttpClient.builder()
-                    .httpClient(httpClient)
+                    .httpClient(
+                        LoggingHttpClient.builder()
+                            .httpClient(httpClient)
+                            .clock(clock)
+                            .level(logLevel)
+                            .build()
+                    )
                     .sleeper(sleeper)
                     .clock(clock)
                     .maxRetries(maxRetries)
@@ -540,6 +568,7 @@ private constructor(
                 timeout,
                 maxRetries,
                 autoBatchTracing,
+                logLevel,
                 apiKey,
                 tenantId,
                 oauthAccessToken,

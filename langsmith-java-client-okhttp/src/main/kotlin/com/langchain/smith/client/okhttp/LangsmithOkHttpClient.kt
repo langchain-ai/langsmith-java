@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.LangsmithClientImpl
 import com.langchain.smith.core.ClientOptions
+import com.langchain.smith.core.LogLevel
 import com.langchain.smith.core.Sleeper
 import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.AsyncStreamResponse
@@ -280,6 +281,15 @@ class LangsmithOkHttpClient private constructor() {
         fun autoBatchTracing(autoBatchTracing: Boolean) = apply {
             clientOptions.autoBatchTracing(autoBatchTracing)
         }
+
+        /**
+         * The level at which to log request and response information.
+         *
+         * [fromEnv] will set the level from environment variables. See [LogLevel.fromEnv].
+         *
+         * Defaults to [LogLevel.fromEnv].
+         */
+        fun logLevel(logLevel: LogLevel) = apply { clientOptions.logLevel(logLevel) }
 
         fun apiKey(apiKey: String?) = apply { clientOptions.apiKey(apiKey) }
 
