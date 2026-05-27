@@ -26,6 +26,8 @@ import com.langchain.smith.models.repos.RepoListPageResponse
 import com.langchain.smith.models.repos.RepoListParams
 import com.langchain.smith.models.repos.RepoRetrieveParams
 import com.langchain.smith.models.repos.RepoUpdateParams
+import com.langchain.smith.services.blocking.repos.DirectoryService
+import com.langchain.smith.services.blocking.repos.DirectoryServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -35,10 +37,14 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
         WithRawResponseImpl(clientOptions)
     }
 
+    private val directories: DirectoryService by lazy { DirectoryServiceImpl(clientOptions) }
+
     override fun withRawResponse(): RepoService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RepoService =
         RepoServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun directories(): DirectoryService = directories
 
     override fun create(
         params: RepoCreateParams,
@@ -78,12 +84,18 @@ class RepoServiceImpl internal constructor(private val clientOptions: ClientOpti
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val directories: DirectoryService.WithRawResponse by lazy {
+            DirectoryServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): RepoService.WithRawResponse =
             RepoServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun directories(): DirectoryService.WithRawResponse = directories
 
         private val createHandler: Handler<CreateRepoResponse> =
             jsonHandler<CreateRepoResponse>(clientOptions.jsonMapper)

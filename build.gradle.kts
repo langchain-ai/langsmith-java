@@ -9,7 +9,7 @@ repositories {
 
 allprojects {
     group = "com.langchain.smith"
-    version = "0.1.0-beta.6" // x-release-please-version
+    version = "0.1.0-beta.7" // x-release-please-version
 }
 
 subprojects {
@@ -22,6 +22,16 @@ subprojects {
         group = "Verification"
         description = "Verifies all source files are formatted."
     }
+}
+
+subprojects {
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.jetbrains.dokka-javadoc")
+}
+
+// Avoid race conditions between `dokkaJavadocCollector` and `dokkaJavadocJar` tasks
+tasks.named("dokkaJavadocCollector").configure {
+    subprojects.flatMap { it.tasks }
+        .filter { it.project.name != "langsmith-java" && it.name == "dokkaJavadocJar" }
+        .forEach { mustRunAfter(it) }
 }

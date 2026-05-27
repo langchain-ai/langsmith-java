@@ -26,6 +26,7 @@ internal class BoxServiceAsyncTest {
         val boxFuture =
             boxServiceAsync.create(
                 BoxCreateParams.builder()
+                    .deleteAfterStopSeconds(0L)
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
@@ -43,6 +44,7 @@ internal class BoxServiceAsyncTest {
                                     .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
+                                    .fullRequest(true)
                                     .addRequestHeader(
                                         BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
                                             .name("name")
@@ -79,9 +81,10 @@ internal class BoxServiceAsyncTest {
                             )
                             .build()
                     )
+                    .restoreMemory(true)
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
-                    .ttlSeconds(0L)
+                    .addTagValueId("string")
                     .vcpus(0L)
                     .build()
             )
@@ -120,6 +123,7 @@ internal class BoxServiceAsyncTest {
             boxServiceAsync.update(
                 BoxUpdateParams.builder()
                     .pathName("name")
+                    .deleteAfterStopSeconds(0L)
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
@@ -137,6 +141,7 @@ internal class BoxServiceAsyncTest {
                                     .addMatchHost("string")
                                     .ttlSeconds(60L)
                                     .url("url")
+                                    .fullRequest(true)
                                     .addRequestHeader(
                                         BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
                                             .bodyName("name")
@@ -173,7 +178,7 @@ internal class BoxServiceAsyncTest {
                             )
                             .build()
                     )
-                    .ttlSeconds(0L)
+                    .addTagValueId("string")
                     .vcpus(0L)
                     .build()
             )
@@ -239,6 +244,9 @@ internal class BoxServiceAsyncTest {
                     .pathName("name")
                     .bodyName("name")
                     .checkpoint("checkpoint")
+                    .dockerImage("docker_image")
+                    .fsCapacityBytes(0L)
+                    .includeMemory(true)
                     .build()
             )
 

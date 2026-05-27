@@ -2,10 +2,14 @@
 
 package com.langchain.smith.models.sessions
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.langchain.smith.core.Enum
+import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
+import com.langchain.smith.errors.LangChainInvalidDataException
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Objects
@@ -30,6 +34,8 @@ private constructor(
     private val sortBy: SessionSortableColumns?,
     private val sortByDesc: Boolean?,
     private val sortByFeedbackKey: String?,
+    private val sortByFeedbackSource: SortByFeedbackSource?,
+    private val statsFilter: String?,
     private val statsSelect: List<String>?,
     private val statsStartTime: OffsetDateTime?,
     private val tagValueId: List<String>?,
@@ -68,6 +74,11 @@ private constructor(
     fun sortByDesc(): Optional<Boolean> = Optional.ofNullable(sortByDesc)
 
     fun sortByFeedbackKey(): Optional<String> = Optional.ofNullable(sortByFeedbackKey)
+
+    fun sortByFeedbackSource(): Optional<SortByFeedbackSource> =
+        Optional.ofNullable(sortByFeedbackSource)
+
+    fun statsFilter(): Optional<String> = Optional.ofNullable(statsFilter)
 
     fun statsSelect(): Optional<List<String>> = Optional.ofNullable(statsSelect)
 
@@ -113,6 +124,8 @@ private constructor(
         private var sortBy: SessionSortableColumns? = null
         private var sortByDesc: Boolean? = null
         private var sortByFeedbackKey: String? = null
+        private var sortByFeedbackSource: SortByFeedbackSource? = null
+        private var statsFilter: String? = null
         private var statsSelect: MutableList<String>? = null
         private var statsStartTime: OffsetDateTime? = null
         private var tagValueId: MutableList<String>? = null
@@ -138,6 +151,8 @@ private constructor(
             sortBy = sessionListParams.sortBy
             sortByDesc = sessionListParams.sortByDesc
             sortByFeedbackKey = sessionListParams.sortByFeedbackKey
+            sortByFeedbackSource = sessionListParams.sortByFeedbackSource
+            statsFilter = sessionListParams.statsFilter
             statsSelect = sessionListParams.statsSelect?.toMutableList()
             statsStartTime = sessionListParams.statsStartTime
             tagValueId = sessionListParams.tagValueId?.toMutableList()
@@ -288,6 +303,22 @@ private constructor(
         /** Alias for calling [Builder.sortByFeedbackKey] with `sortByFeedbackKey.orElse(null)`. */
         fun sortByFeedbackKey(sortByFeedbackKey: Optional<String>) =
             sortByFeedbackKey(sortByFeedbackKey.getOrNull())
+
+        fun sortByFeedbackSource(sortByFeedbackSource: SortByFeedbackSource?) = apply {
+            this.sortByFeedbackSource = sortByFeedbackSource
+        }
+
+        /**
+         * Alias for calling [Builder.sortByFeedbackSource] with
+         * `sortByFeedbackSource.orElse(null)`.
+         */
+        fun sortByFeedbackSource(sortByFeedbackSource: Optional<SortByFeedbackSource>) =
+            sortByFeedbackSource(sortByFeedbackSource.getOrNull())
+
+        fun statsFilter(statsFilter: String?) = apply { this.statsFilter = statsFilter }
+
+        /** Alias for calling [Builder.statsFilter] with `statsFilter.orElse(null)`. */
+        fun statsFilter(statsFilter: Optional<String>) = statsFilter(statsFilter.getOrNull())
 
         fun statsSelect(statsSelect: List<String>?) = apply {
             this.statsSelect = statsSelect?.toMutableList()
@@ -469,6 +500,8 @@ private constructor(
                 sortBy,
                 sortByDesc,
                 sortByFeedbackKey,
+                sortByFeedbackSource,
+                statsFilter,
                 statsSelect?.toImmutable(),
                 statsStartTime,
                 tagValueId?.toImmutable(),
@@ -505,6 +538,8 @@ private constructor(
                 sortBy?.let { put("sort_by", it.toString()) }
                 sortByDesc?.let { put("sort_by_desc", it.toString()) }
                 sortByFeedbackKey?.let { put("sort_by_feedback_key", it) }
+                sortByFeedbackSource?.let { put("sort_by_feedback_source", it.toString()) }
+                statsFilter?.let { put("stats_filter", it) }
                 statsSelect?.let { put("stats_select", it.joinToString(",")) }
                 statsStartTime?.let {
                     put("stats_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
@@ -514,6 +549,148 @@ private constructor(
                 putAll(additionalQueryParams)
             }
             .build()
+
+    class SortByFeedbackSource
+    @JsonCreator
+    private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val SESSION = of("session")
+
+            @JvmField val RUN = of("run")
+
+            @JvmStatic fun of(value: String) = SortByFeedbackSource(JsonField.of(value))
+        }
+
+        /** An enum containing [SortByFeedbackSource]'s known values. */
+        enum class Known {
+            SESSION,
+            RUN,
+        }
+
+        /**
+         * An enum containing [SortByFeedbackSource]'s known values, as well as an [_UNKNOWN]
+         * member.
+         *
+         * An instance of [SortByFeedbackSource] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            SESSION,
+            RUN,
+            /**
+             * An enum member indicating that [SortByFeedbackSource] was instantiated with an
+             * unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                SESSION -> Value.SESSION
+                RUN -> Value.RUN
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                SESSION -> Known.SESSION
+                RUN -> Known.RUN
+                else -> throw LangChainInvalidDataException("Unknown SortByFeedbackSource: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): SortByFeedbackSource = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is SortByFeedbackSource && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -536,6 +713,8 @@ private constructor(
             sortBy == other.sortBy &&
             sortByDesc == other.sortByDesc &&
             sortByFeedbackKey == other.sortByFeedbackKey &&
+            sortByFeedbackSource == other.sortByFeedbackSource &&
+            statsFilter == other.statsFilter &&
             statsSelect == other.statsSelect &&
             statsStartTime == other.statsStartTime &&
             tagValueId == other.tagValueId &&
@@ -562,6 +741,8 @@ private constructor(
             sortBy,
             sortByDesc,
             sortByFeedbackKey,
+            sortByFeedbackSource,
+            statsFilter,
             statsSelect,
             statsStartTime,
             tagValueId,
@@ -572,5 +753,5 @@ private constructor(
         )
 
     override fun toString() =
-        "SessionListParams{id=$id, datasetVersion=$datasetVersion, facets=$facets, filter=$filter, includeStats=$includeStats, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, referenceDataset=$referenceDataset, referenceFree=$referenceFree, sortBy=$sortBy, sortByDesc=$sortByDesc, sortByFeedbackKey=$sortByFeedbackKey, statsSelect=$statsSelect, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SessionListParams{id=$id, datasetVersion=$datasetVersion, facets=$facets, filter=$filter, includeStats=$includeStats, limit=$limit, metadata=$metadata, name=$name, nameContains=$nameContains, offset=$offset, referenceDataset=$referenceDataset, referenceFree=$referenceFree, sortBy=$sortBy, sortByDesc=$sortByDesc, sortByFeedbackKey=$sortByFeedbackKey, sortByFeedbackSource=$sortByFeedbackSource, statsFilter=$statsFilter, statsSelect=$statsSelect, statsStartTime=$statsStartTime, tagValueId=$tagValueId, useApproxStats=$useApproxStats, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

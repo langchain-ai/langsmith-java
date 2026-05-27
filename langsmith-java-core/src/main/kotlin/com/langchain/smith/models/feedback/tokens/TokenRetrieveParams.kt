@@ -283,6 +283,9 @@ private constructor(
 
         fun asBool(): Boolean = bool.getOrThrow("bool")
 
+        /**
+         * Maps this instance's current variant to a value of type [T] using the given [visitor].
+         */
         fun <T> accept(visitor: Visitor<T>): T =
             when {
                 number != null -> visitor.visitNumber(number)
@@ -348,6 +351,9 @@ private constructor(
 
         fun asString(): String = string.getOrThrow("string")
 
+        /**
+         * Maps this instance's current variant to a value of type [T] using the given [visitor].
+         */
         fun <T> accept(visitor: Visitor<T>): T =
             when {
                 number != null -> visitor.visitNumber(number)

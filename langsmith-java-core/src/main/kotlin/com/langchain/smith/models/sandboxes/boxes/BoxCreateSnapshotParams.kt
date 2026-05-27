@@ -49,6 +49,33 @@ private constructor(
     fun checkpoint(): Optional<String> = body.checkpoint()
 
     /**
+     * sandbox-local Docker image to export
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun dockerImage(): Optional<String> = body.dockerImage()
+
+    /**
+     * required for Docker image export unless the sandbox has a capacity
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun fsCapacityBytes(): Optional<Long> = body.fsCapacityBytes()
+
+    /**
+     * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem clone.
+     * Only honored when the sandbox is running AND Checkpoint is omitted (i.e. a fresh in-VM
+     * checkpoint is requested). Defaults to false to keep snapshots small unless memory restore is
+     * explicitly desired.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun includeMemory(): Optional<Boolean> = body.includeMemory()
+
+    /**
      * Returns the raw JSON value of [bodyName].
      *
      * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
@@ -61,6 +88,27 @@ private constructor(
      * Unlike [checkpoint], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _checkpoint(): JsonField<String> = body._checkpoint()
+
+    /**
+     * Returns the raw JSON value of [dockerImage].
+     *
+     * Unlike [dockerImage], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _dockerImage(): JsonField<String> = body._dockerImage()
+
+    /**
+     * Returns the raw JSON value of [fsCapacityBytes].
+     *
+     * Unlike [fsCapacityBytes], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _fsCapacityBytes(): JsonField<Long> = body._fsCapacityBytes()
+
+    /**
+     * Returns the raw JSON value of [includeMemory].
+     *
+     * Unlike [includeMemory], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _includeMemory(): JsonField<Boolean> = body._includeMemory()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -113,6 +161,10 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [bodyName]
          * - [checkpoint]
+         * - [dockerImage]
+         * - [fsCapacityBytes]
+         * - [includeMemory]
+         * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -137,6 +189,51 @@ private constructor(
          * value.
          */
         fun checkpoint(checkpoint: JsonField<String>) = apply { body.checkpoint(checkpoint) }
+
+        /** sandbox-local Docker image to export */
+        fun dockerImage(dockerImage: String) = apply { body.dockerImage(dockerImage) }
+
+        /**
+         * Sets [Builder.dockerImage] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.dockerImage] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun dockerImage(dockerImage: JsonField<String>) = apply { body.dockerImage(dockerImage) }
+
+        /** required for Docker image export unless the sandbox has a capacity */
+        fun fsCapacityBytes(fsCapacityBytes: Long) = apply { body.fsCapacityBytes(fsCapacityBytes) }
+
+        /**
+         * Sets [Builder.fsCapacityBytes] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.fsCapacityBytes] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun fsCapacityBytes(fsCapacityBytes: JsonField<Long>) = apply {
+            body.fsCapacityBytes(fsCapacityBytes)
+        }
+
+        /**
+         * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem
+         * clone. Only honored when the sandbox is running AND Checkpoint is omitted (i.e. a fresh
+         * in-VM checkpoint is requested). Defaults to false to keep snapshots small unless memory
+         * restore is explicitly desired.
+         */
+        fun includeMemory(includeMemory: Boolean) = apply { body.includeMemory(includeMemory) }
+
+        /**
+         * Sets [Builder.includeMemory] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.includeMemory] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun includeMemory(includeMemory: JsonField<Boolean>) = apply {
+            body.includeMemory(includeMemory)
+        }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -293,6 +390,9 @@ private constructor(
     private constructor(
         private val bodyName: JsonField<String>,
         private val checkpoint: JsonField<String>,
+        private val dockerImage: JsonField<String>,
+        private val fsCapacityBytes: JsonField<Long>,
+        private val includeMemory: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -302,7 +402,16 @@ private constructor(
             @JsonProperty("checkpoint")
             @ExcludeMissing
             checkpoint: JsonField<String> = JsonMissing.of(),
-        ) : this(bodyName, checkpoint, mutableMapOf())
+            @JsonProperty("docker_image")
+            @ExcludeMissing
+            dockerImage: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("fs_capacity_bytes")
+            @ExcludeMissing
+            fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("include_memory")
+            @ExcludeMissing
+            includeMemory: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(bodyName, checkpoint, dockerImage, fsCapacityBytes, includeMemory, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -319,6 +428,33 @@ private constructor(
         fun checkpoint(): Optional<String> = checkpoint.getOptional("checkpoint")
 
         /**
+         * sandbox-local Docker image to export
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun dockerImage(): Optional<String> = dockerImage.getOptional("docker_image")
+
+        /**
+         * required for Docker image export unless the sandbox has a capacity
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun fsCapacityBytes(): Optional<Long> = fsCapacityBytes.getOptional("fs_capacity_bytes")
+
+        /**
+         * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem
+         * clone. Only honored when the sandbox is running AND Checkpoint is omitted (i.e. a fresh
+         * in-VM checkpoint is requested). Defaults to false to keep snapshots small unless memory
+         * restore is explicitly desired.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun includeMemory(): Optional<Boolean> = includeMemory.getOptional("include_memory")
+
+        /**
          * Returns the raw JSON value of [bodyName].
          *
          * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
@@ -333,6 +469,35 @@ private constructor(
         @JsonProperty("checkpoint")
         @ExcludeMissing
         fun _checkpoint(): JsonField<String> = checkpoint
+
+        /**
+         * Returns the raw JSON value of [dockerImage].
+         *
+         * Unlike [dockerImage], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("docker_image")
+        @ExcludeMissing
+        fun _dockerImage(): JsonField<String> = dockerImage
+
+        /**
+         * Returns the raw JSON value of [fsCapacityBytes].
+         *
+         * Unlike [fsCapacityBytes], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("fs_capacity_bytes")
+        @ExcludeMissing
+        fun _fsCapacityBytes(): JsonField<Long> = fsCapacityBytes
+
+        /**
+         * Returns the raw JSON value of [includeMemory].
+         *
+         * Unlike [includeMemory], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("include_memory")
+        @ExcludeMissing
+        fun _includeMemory(): JsonField<Boolean> = includeMemory
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -364,12 +529,18 @@ private constructor(
 
             private var bodyName: JsonField<String>? = null
             private var checkpoint: JsonField<String> = JsonMissing.of()
+            private var dockerImage: JsonField<String> = JsonMissing.of()
+            private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
+            private var includeMemory: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 bodyName = body.bodyName
                 checkpoint = body.checkpoint
+                dockerImage = body.dockerImage
+                fsCapacityBytes = body.fsCapacityBytes
+                includeMemory = body.includeMemory
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -395,6 +566,54 @@ private constructor(
              * supported value.
              */
             fun checkpoint(checkpoint: JsonField<String>) = apply { this.checkpoint = checkpoint }
+
+            /** sandbox-local Docker image to export */
+            fun dockerImage(dockerImage: String) = dockerImage(JsonField.of(dockerImage))
+
+            /**
+             * Sets [Builder.dockerImage] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.dockerImage] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun dockerImage(dockerImage: JsonField<String>) = apply {
+                this.dockerImage = dockerImage
+            }
+
+            /** required for Docker image export unless the sandbox has a capacity */
+            fun fsCapacityBytes(fsCapacityBytes: Long) =
+                fsCapacityBytes(JsonField.of(fsCapacityBytes))
+
+            /**
+             * Sets [Builder.fsCapacityBytes] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.fsCapacityBytes] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun fsCapacityBytes(fsCapacityBytes: JsonField<Long>) = apply {
+                this.fsCapacityBytes = fsCapacityBytes
+            }
+
+            /**
+             * IncludeMemory, when true, captures a full VM memory snapshot alongside the filesystem
+             * clone. Only honored when the sandbox is running AND Checkpoint is omitted (i.e. a
+             * fresh in-VM checkpoint is requested). Defaults to false to keep snapshots small
+             * unless memory restore is explicitly desired.
+             */
+            fun includeMemory(includeMemory: Boolean) = includeMemory(JsonField.of(includeMemory))
+
+            /**
+             * Sets [Builder.includeMemory] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.includeMemory] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun includeMemory(includeMemory: JsonField<Boolean>) = apply {
+                this.includeMemory = includeMemory
+            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -431,12 +650,24 @@ private constructor(
                 Body(
                     checkRequired("bodyName", bodyName),
                     checkpoint,
+                    dockerImage,
+                    fsCapacityBytes,
+                    includeMemory,
                     additionalProperties.toMutableMap(),
                 )
         }
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Body = apply {
             if (validated) {
                 return@apply
@@ -444,6 +675,9 @@ private constructor(
 
             bodyName()
             checkpoint()
+            dockerImage()
+            fsCapacityBytes()
+            includeMemory()
             validated = true
         }
 
@@ -464,7 +698,10 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (bodyName.asKnown().isPresent) 1 else 0) +
-                (if (checkpoint.asKnown().isPresent) 1 else 0)
+                (if (checkpoint.asKnown().isPresent) 1 else 0) +
+                (if (dockerImage.asKnown().isPresent) 1 else 0) +
+                (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
+                (if (includeMemory.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -474,17 +711,27 @@ private constructor(
             return other is Body &&
                 bodyName == other.bodyName &&
                 checkpoint == other.checkpoint &&
+                dockerImage == other.dockerImage &&
+                fsCapacityBytes == other.fsCapacityBytes &&
+                includeMemory == other.includeMemory &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(bodyName, checkpoint, additionalProperties)
+            Objects.hash(
+                bodyName,
+                checkpoint,
+                dockerImage,
+                fsCapacityBytes,
+                includeMemory,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{bodyName=$bodyName, checkpoint=$checkpoint, additionalProperties=$additionalProperties}"
+            "Body{bodyName=$bodyName, checkpoint=$checkpoint, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, includeMemory=$includeMemory, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

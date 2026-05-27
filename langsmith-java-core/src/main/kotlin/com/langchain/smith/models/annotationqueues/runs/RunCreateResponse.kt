@@ -26,6 +26,7 @@ private constructor(
     private val runId: JsonField<String>,
     private val addedAt: JsonField<OffsetDateTime>,
     private val lastReviewedTime: JsonField<OffsetDateTime>,
+    private val sourceProposedExampleId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -40,7 +41,10 @@ private constructor(
         @JsonProperty("last_reviewed_time")
         @ExcludeMissing
         lastReviewedTime: JsonField<OffsetDateTime> = JsonMissing.of(),
-    ) : this(id, queueId, runId, addedAt, lastReviewedTime, mutableMapOf())
+        @JsonProperty("source_proposed_example_id")
+        @ExcludeMissing
+        sourceProposedExampleId: JsonField<String> = JsonMissing.of(),
+    ) : this(id, queueId, runId, addedAt, lastReviewedTime, sourceProposedExampleId, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -72,6 +76,13 @@ private constructor(
      */
     fun lastReviewedTime(): Optional<OffsetDateTime> =
         lastReviewedTime.getOptional("last_reviewed_time")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun sourceProposedExampleId(): Optional<String> =
+        sourceProposedExampleId.getOptional("source_proposed_example_id")
 
     /**
      * Returns the raw JSON value of [id].
@@ -111,6 +122,16 @@ private constructor(
     @ExcludeMissing
     fun _lastReviewedTime(): JsonField<OffsetDateTime> = lastReviewedTime
 
+    /**
+     * Returns the raw JSON value of [sourceProposedExampleId].
+     *
+     * Unlike [sourceProposedExampleId], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("source_proposed_example_id")
+    @ExcludeMissing
+    fun _sourceProposedExampleId(): JsonField<String> = sourceProposedExampleId
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -146,6 +167,7 @@ private constructor(
         private var runId: JsonField<String>? = null
         private var addedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var lastReviewedTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var sourceProposedExampleId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -155,6 +177,7 @@ private constructor(
             runId = runCreateResponse.runId
             addedAt = runCreateResponse.addedAt
             lastReviewedTime = runCreateResponse.lastReviewedTime
+            sourceProposedExampleId = runCreateResponse.sourceProposedExampleId
             additionalProperties = runCreateResponse.additionalProperties.toMutableMap()
         }
 
@@ -217,6 +240,27 @@ private constructor(
             this.lastReviewedTime = lastReviewedTime
         }
 
+        fun sourceProposedExampleId(sourceProposedExampleId: String?) =
+            sourceProposedExampleId(JsonField.ofNullable(sourceProposedExampleId))
+
+        /**
+         * Alias for calling [Builder.sourceProposedExampleId] with
+         * `sourceProposedExampleId.orElse(null)`.
+         */
+        fun sourceProposedExampleId(sourceProposedExampleId: Optional<String>) =
+            sourceProposedExampleId(sourceProposedExampleId.getOrNull())
+
+        /**
+         * Sets [Builder.sourceProposedExampleId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sourceProposedExampleId] with a well-typed [String]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun sourceProposedExampleId(sourceProposedExampleId: JsonField<String>) = apply {
+            this.sourceProposedExampleId = sourceProposedExampleId
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -257,12 +301,21 @@ private constructor(
                 checkRequired("runId", runId),
                 addedAt,
                 lastReviewedTime,
+                sourceProposedExampleId,
                 additionalProperties.toMutableMap(),
             )
     }
 
     private var validated: Boolean = false
 
+    /**
+     * Validates that the types of all values in this object match their expected types recursively.
+     *
+     * This method is _not_ forwards compatible with new types from the API for existing fields.
+     *
+     * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+     *   expected type.
+     */
     fun validate(): RunCreateResponse = apply {
         if (validated) {
             return@apply
@@ -273,6 +326,7 @@ private constructor(
         runId()
         addedAt()
         lastReviewedTime()
+        sourceProposedExampleId()
         validated = true
     }
 
@@ -295,7 +349,8 @@ private constructor(
             (if (queueId.asKnown().isPresent) 1 else 0) +
             (if (runId.asKnown().isPresent) 1 else 0) +
             (if (addedAt.asKnown().isPresent) 1 else 0) +
-            (if (lastReviewedTime.asKnown().isPresent) 1 else 0)
+            (if (lastReviewedTime.asKnown().isPresent) 1 else 0) +
+            (if (sourceProposedExampleId.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -308,15 +363,24 @@ private constructor(
             runId == other.runId &&
             addedAt == other.addedAt &&
             lastReviewedTime == other.lastReviewedTime &&
+            sourceProposedExampleId == other.sourceProposedExampleId &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(id, queueId, runId, addedAt, lastReviewedTime, additionalProperties)
+        Objects.hash(
+            id,
+            queueId,
+            runId,
+            addedAt,
+            lastReviewedTime,
+            sourceProposedExampleId,
+            additionalProperties,
+        )
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunCreateResponse{id=$id, queueId=$queueId, runId=$runId, addedAt=$addedAt, lastReviewedTime=$lastReviewedTime, additionalProperties=$additionalProperties}"
+        "RunCreateResponse{id=$id, queueId=$queueId, runId=$runId, addedAt=$addedAt, lastReviewedTime=$lastReviewedTime, sourceProposedExampleId=$sourceProposedExampleId, additionalProperties=$additionalProperties}"
 }

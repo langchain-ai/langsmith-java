@@ -23,7 +23,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update a sandbox claim's display name. The name must be unique within the tenant. */
+/** Update a sandbox's display name. The name must be unique within the tenant. */
 class BoxUpdateParams
 private constructor(
     private val pathName: String?,
@@ -33,6 +33,12 @@ private constructor(
 ) : Params {
 
     fun pathName(): Optional<String> = Optional.ofNullable(pathName)
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun deleteAfterStopSeconds(): Optional<Long> = body.deleteAfterStopSeconds()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -68,13 +74,21 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun ttlSeconds(): Optional<Long> = body.ttlSeconds()
+    fun tagValueIds(): Optional<List<String>> = body.tagValueIds()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun vcpus(): Optional<Long> = body.vcpus()
+
+    /**
+     * Returns the raw JSON value of [deleteAfterStopSeconds].
+     *
+     * Unlike [deleteAfterStopSeconds], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    fun _deleteAfterStopSeconds(): JsonField<Long> = body._deleteAfterStopSeconds()
 
     /**
      * Returns the raw JSON value of [fsCapacityBytes].
@@ -112,11 +126,11 @@ private constructor(
     fun _proxyConfig(): JsonField<ProxyConfig> = body._proxyConfig()
 
     /**
-     * Returns the raw JSON value of [ttlSeconds].
+     * Returns the raw JSON value of [tagValueIds].
      *
-     * Unlike [ttlSeconds], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _ttlSeconds(): JsonField<Long> = body._ttlSeconds()
+    fun _tagValueIds(): JsonField<List<String>> = body._tagValueIds()
 
     /**
      * Returns the raw JSON value of [vcpus].
@@ -169,14 +183,29 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [deleteAfterStopSeconds]
          * - [fsCapacityBytes]
          * - [idleTtlSeconds]
          * - [memBytes]
          * - [bodyName]
-         * - [proxyConfig]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        fun deleteAfterStopSeconds(deleteAfterStopSeconds: Long) = apply {
+            body.deleteAfterStopSeconds(deleteAfterStopSeconds)
+        }
+
+        /**
+         * Sets [Builder.deleteAfterStopSeconds] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.deleteAfterStopSeconds] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun deleteAfterStopSeconds(deleteAfterStopSeconds: JsonField<Long>) = apply {
+            body.deleteAfterStopSeconds(deleteAfterStopSeconds)
+        }
 
         fun fsCapacityBytes(fsCapacityBytes: Long) = apply { body.fsCapacityBytes(fsCapacityBytes) }
 
@@ -237,15 +266,25 @@ private constructor(
             body.proxyConfig(proxyConfig)
         }
 
-        fun ttlSeconds(ttlSeconds: Long) = apply { body.ttlSeconds(ttlSeconds) }
+        fun tagValueIds(tagValueIds: List<String>) = apply { body.tagValueIds(tagValueIds) }
 
         /**
-         * Sets [Builder.ttlSeconds] to an arbitrary JSON value.
+         * Sets [Builder.tagValueIds] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.ttlSeconds] with a well-typed [Long] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun ttlSeconds(ttlSeconds: JsonField<Long>) = apply { body.ttlSeconds(ttlSeconds) }
+        fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+            body.tagValueIds(tagValueIds)
+        }
+
+        /**
+         * Adds a single [String] to [tagValueIds].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply { body.addTagValueId(tagValueId) }
 
         fun vcpus(vcpus: Long) = apply { body.vcpus(vcpus) }
 
@@ -403,18 +442,22 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val deleteAfterStopSeconds: JsonField<Long>,
         private val fsCapacityBytes: JsonField<Long>,
         private val idleTtlSeconds: JsonField<Long>,
         private val memBytes: JsonField<Long>,
         private val bodyName: JsonField<String>,
         private val proxyConfig: JsonField<ProxyConfig>,
-        private val ttlSeconds: JsonField<Long>,
+        private val tagValueIds: JsonField<List<String>>,
         private val vcpus: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
+            @JsonProperty("delete_after_stop_seconds")
+            @ExcludeMissing
+            deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("fs_capacity_bytes")
             @ExcludeMissing
             fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
@@ -426,20 +469,28 @@ private constructor(
             @JsonProperty("proxy_config")
             @ExcludeMissing
             proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
-            @JsonProperty("ttl_seconds")
+            @JsonProperty("tag_value_ids")
             @ExcludeMissing
-            ttlSeconds: JsonField<Long> = JsonMissing.of(),
+            tagValueIds: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
         ) : this(
+            deleteAfterStopSeconds,
             fsCapacityBytes,
             idleTtlSeconds,
             memBytes,
             bodyName,
             proxyConfig,
-            ttlSeconds,
+            tagValueIds,
             vcpus,
             mutableMapOf(),
         )
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun deleteAfterStopSeconds(): Optional<Long> =
+            deleteAfterStopSeconds.getOptional("delete_after_stop_seconds")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -475,13 +526,23 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun ttlSeconds(): Optional<Long> = ttlSeconds.getOptional("ttl_seconds")
+        fun tagValueIds(): Optional<List<String>> = tagValueIds.getOptional("tag_value_ids")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun vcpus(): Optional<Long> = vcpus.getOptional("vcpus")
+
+        /**
+         * Returns the raw JSON value of [deleteAfterStopSeconds].
+         *
+         * Unlike [deleteAfterStopSeconds], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("delete_after_stop_seconds")
+        @ExcludeMissing
+        fun _deleteAfterStopSeconds(): JsonField<Long> = deleteAfterStopSeconds
 
         /**
          * Returns the raw JSON value of [fsCapacityBytes].
@@ -527,11 +588,13 @@ private constructor(
         fun _proxyConfig(): JsonField<ProxyConfig> = proxyConfig
 
         /**
-         * Returns the raw JSON value of [ttlSeconds].
+         * Returns the raw JSON value of [tagValueIds].
          *
-         * Unlike [ttlSeconds], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("ttl_seconds") @ExcludeMissing fun _ttlSeconds(): JsonField<Long> = ttlSeconds
+        @JsonProperty("tag_value_ids")
+        @ExcludeMissing
+        fun _tagValueIds(): JsonField<List<String>> = tagValueIds
 
         /**
          * Returns the raw JSON value of [vcpus].
@@ -561,25 +624,41 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
             private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
             private var memBytes: JsonField<Long> = JsonMissing.of()
             private var bodyName: JsonField<String> = JsonMissing.of()
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
-            private var ttlSeconds: JsonField<Long> = JsonMissing.of()
+            private var tagValueIds: JsonField<MutableList<String>>? = null
             private var vcpus: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                deleteAfterStopSeconds = body.deleteAfterStopSeconds
                 fsCapacityBytes = body.fsCapacityBytes
                 idleTtlSeconds = body.idleTtlSeconds
                 memBytes = body.memBytes
                 bodyName = body.bodyName
                 proxyConfig = body.proxyConfig
-                ttlSeconds = body.ttlSeconds
+                tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 vcpus = body.vcpus
                 additionalProperties = body.additionalProperties.toMutableMap()
+            }
+
+            fun deleteAfterStopSeconds(deleteAfterStopSeconds: Long) =
+                deleteAfterStopSeconds(JsonField.of(deleteAfterStopSeconds))
+
+            /**
+             * Sets [Builder.deleteAfterStopSeconds] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.deleteAfterStopSeconds] with a well-typed [Long]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun deleteAfterStopSeconds(deleteAfterStopSeconds: JsonField<Long>) = apply {
+                this.deleteAfterStopSeconds = deleteAfterStopSeconds
             }
 
             fun fsCapacityBytes(fsCapacityBytes: Long) =
@@ -644,16 +723,30 @@ private constructor(
                 this.proxyConfig = proxyConfig
             }
 
-            fun ttlSeconds(ttlSeconds: Long) = ttlSeconds(JsonField.of(ttlSeconds))
+            fun tagValueIds(tagValueIds: List<String>) = tagValueIds(JsonField.of(tagValueIds))
 
             /**
-             * Sets [Builder.ttlSeconds] to an arbitrary JSON value.
+             * Sets [Builder.tagValueIds] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.ttlSeconds] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun ttlSeconds(ttlSeconds: JsonField<Long>) = apply { this.ttlSeconds = ttlSeconds }
+            fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+                this.tagValueIds = tagValueIds.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [tagValueIds].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTagValueId(tagValueId: String) = apply {
+                tagValueIds =
+                    (tagValueIds ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("tagValueIds", it).add(tagValueId)
+                    }
+            }
 
             fun vcpus(vcpus: Long) = vcpus(JsonField.of(vcpus))
 
@@ -692,12 +785,13 @@ private constructor(
              */
             fun build(): Body =
                 Body(
+                    deleteAfterStopSeconds,
                     fsCapacityBytes,
                     idleTtlSeconds,
                     memBytes,
                     bodyName,
                     proxyConfig,
-                    ttlSeconds,
+                    (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
                     vcpus,
                     additionalProperties.toMutableMap(),
                 )
@@ -705,17 +799,27 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Body = apply {
             if (validated) {
                 return@apply
             }
 
+            deleteAfterStopSeconds()
             fsCapacityBytes()
             idleTtlSeconds()
             memBytes()
             bodyName()
             proxyConfig().ifPresent { it.validate() }
-            ttlSeconds()
+            tagValueIds()
             vcpus()
             validated = true
         }
@@ -736,12 +840,13 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
+            (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
+                (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
                 (if (memBytes.asKnown().isPresent) 1 else 0) +
                 (if (bodyName.asKnown().isPresent) 1 else 0) +
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
+                (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
                 (if (vcpus.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -750,24 +855,26 @@ private constructor(
             }
 
             return other is Body &&
+                deleteAfterStopSeconds == other.deleteAfterStopSeconds &&
                 fsCapacityBytes == other.fsCapacityBytes &&
                 idleTtlSeconds == other.idleTtlSeconds &&
                 memBytes == other.memBytes &&
                 bodyName == other.bodyName &&
                 proxyConfig == other.proxyConfig &&
-                ttlSeconds == other.ttlSeconds &&
+                tagValueIds == other.tagValueIds &&
                 vcpus == other.vcpus &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
             Objects.hash(
+                deleteAfterStopSeconds,
                 fsCapacityBytes,
                 idleTtlSeconds,
                 memBytes,
                 bodyName,
                 proxyConfig,
-                ttlSeconds,
+                tagValueIds,
                 vcpus,
                 additionalProperties,
             )
@@ -776,7 +883,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, bodyName=$bodyName, proxyConfig=$proxyConfig, ttlSeconds=$ttlSeconds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, bodyName=$bodyName, proxyConfig=$proxyConfig, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig
@@ -1021,6 +1128,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): ProxyConfig = apply {
             if (validated) {
                 return@apply
@@ -1223,6 +1339,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): AccessControl = apply {
                 if (validated) {
                     return@apply
@@ -1279,6 +1405,7 @@ private constructor(
             private val matchHosts: JsonField<List<String>>,
             private val ttlSeconds: JsonField<Long>,
             private val url: JsonField<String>,
+            private val fullRequest: JsonField<Boolean>,
             private val requestHeaders: JsonField<List<RequestHeader>>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
@@ -1292,10 +1419,13 @@ private constructor(
                 @ExcludeMissing
                 ttlSeconds: JsonField<Long> = JsonMissing.of(),
                 @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("full_request")
+                @ExcludeMissing
+                fullRequest: JsonField<Boolean> = JsonMissing.of(),
                 @JsonProperty("request_headers")
                 @ExcludeMissing
                 requestHeaders: JsonField<List<RequestHeader>> = JsonMissing.of(),
-            ) : this(matchHosts, ttlSeconds, url, requestHeaders, mutableMapOf())
+            ) : this(matchHosts, ttlSeconds, url, fullRequest, requestHeaders, mutableMapOf())
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -1317,6 +1447,12 @@ private constructor(
              *   value).
              */
             fun url(): String = url.getRequired("url")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun fullRequest(): Optional<Boolean> = fullRequest.getOptional("full_request")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -1351,6 +1487,16 @@ private constructor(
              * Unlike [url], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("url") @ExcludeMissing fun _url(): JsonField<String> = url
+
+            /**
+             * Returns the raw JSON value of [fullRequest].
+             *
+             * Unlike [fullRequest], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("full_request")
+            @ExcludeMissing
+            fun _fullRequest(): JsonField<Boolean> = fullRequest
 
             /**
              * Returns the raw JSON value of [requestHeaders].
@@ -1395,6 +1541,7 @@ private constructor(
                 private var matchHosts: JsonField<MutableList<String>>? = null
                 private var ttlSeconds: JsonField<Long>? = null
                 private var url: JsonField<String>? = null
+                private var fullRequest: JsonField<Boolean> = JsonMissing.of()
                 private var requestHeaders: JsonField<MutableList<RequestHeader>>? = null
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -1403,6 +1550,7 @@ private constructor(
                     matchHosts = callback.matchHosts.map { it.toMutableList() }
                     ttlSeconds = callback.ttlSeconds
                     url = callback.url
+                    fullRequest = callback.fullRequest
                     requestHeaders = callback.requestHeaders.map { it.toMutableList() }
                     additionalProperties = callback.additionalProperties.toMutableMap()
                 }
@@ -1453,6 +1601,19 @@ private constructor(
                  * supported value.
                  */
                 fun url(url: JsonField<String>) = apply { this.url = url }
+
+                fun fullRequest(fullRequest: Boolean) = fullRequest(JsonField.of(fullRequest))
+
+                /**
+                 * Sets [Builder.fullRequest] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.fullRequest] with a well-typed [Boolean] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun fullRequest(fullRequest: JsonField<Boolean>) = apply {
+                    this.fullRequest = fullRequest
+                }
 
                 fun requestHeaders(requestHeaders: List<RequestHeader>) =
                     requestHeaders(JsonField.of(requestHeaders))
@@ -1521,6 +1682,7 @@ private constructor(
                         checkRequired("matchHosts", matchHosts).map { it.toImmutable() },
                         checkRequired("ttlSeconds", ttlSeconds),
                         checkRequired("url", url),
+                        fullRequest,
                         (requestHeaders ?: JsonMissing.of()).map { it.toImmutable() },
                         additionalProperties.toMutableMap(),
                     )
@@ -1528,6 +1690,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): Callback = apply {
                 if (validated) {
                     return@apply
@@ -1536,6 +1708,7 @@ private constructor(
                 matchHosts()
                 ttlSeconds()
                 url()
+                fullRequest()
                 requestHeaders().ifPresent { it.forEach { it.validate() } }
                 validated = true
             }
@@ -1559,6 +1732,7 @@ private constructor(
                 (matchHosts.asKnown().getOrNull()?.size ?: 0) +
                     (if (ttlSeconds.asKnown().isPresent) 1 else 0) +
                     (if (url.asKnown().isPresent) 1 else 0) +
+                    (if (fullRequest.asKnown().isPresent) 1 else 0) +
                     (requestHeaders.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
             class RequestHeader
@@ -1778,6 +1952,16 @@ private constructor(
 
                 private var validated: Boolean = false
 
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
                 fun validate(): RequestHeader = apply {
                     if (validated) {
                         return@apply
@@ -1911,6 +2095,16 @@ private constructor(
 
                     private var validated: Boolean = false
 
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
                     fun validate(): Type = apply {
                         if (validated) {
                             return@apply
@@ -1982,18 +2176,26 @@ private constructor(
                     matchHosts == other.matchHosts &&
                     ttlSeconds == other.ttlSeconds &&
                     url == other.url &&
+                    fullRequest == other.fullRequest &&
                     requestHeaders == other.requestHeaders &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(matchHosts, ttlSeconds, url, requestHeaders, additionalProperties)
+                Objects.hash(
+                    matchHosts,
+                    ttlSeconds,
+                    url,
+                    fullRequest,
+                    requestHeaders,
+                    additionalProperties,
+                )
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Callback{matchHosts=$matchHosts, ttlSeconds=$ttlSeconds, url=$url, requestHeaders=$requestHeaders, additionalProperties=$additionalProperties}"
+                "Callback{matchHosts=$matchHosts, ttlSeconds=$ttlSeconds, url=$url, fullRequest=$fullRequest, requestHeaders=$requestHeaders, additionalProperties=$additionalProperties}"
         }
 
         class Rule
@@ -2293,6 +2495,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): Rule = apply {
                 if (validated) {
                     return@apply
@@ -2545,6 +2757,16 @@ private constructor(
 
                 private var validated: Boolean = false
 
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
                 fun validate(): Header = apply {
                     if (validated) {
                         return@apply
@@ -2678,6 +2900,16 @@ private constructor(
 
                     private var validated: Boolean = false
 
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
                     fun validate(): Type = apply {
                         if (validated) {
                             return@apply

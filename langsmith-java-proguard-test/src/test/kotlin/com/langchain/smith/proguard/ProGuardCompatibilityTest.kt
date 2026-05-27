@@ -240,7 +240,7 @@ internal class ProGuardCompatibilityTest {
         val runStatsResponse =
             RunStatsResponse.ofRunStats(
                 RunStatsResponse.RunStats.builder()
-                    .completionCost("completion_cost")
+                    .completionCost(0.0)
                     .completionCostDetails(
                         RunStatsResponse.RunStats.CompletionCostDetails.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -254,8 +254,8 @@ internal class ProGuardCompatibilityTest {
                     .completionTokens(0L)
                     .completionTokensP50(0L)
                     .completionTokensP99(0L)
-                    .costP50("cost_p50")
-                    .costP99("cost_p99")
+                    .costP50(0.0)
+                    .costP99(0.0)
                     .errorRate(0.0)
                     .feedbackStats(
                         RunStatsResponse.RunStats.FeedbackStats.builder()
@@ -268,7 +268,7 @@ internal class ProGuardCompatibilityTest {
                     .latencyP50(0.0)
                     .latencyP99(0.0)
                     .medianTokens(0L)
-                    .promptCost("prompt_cost")
+                    .promptCost(0.0)
                     .promptCostDetails(
                         RunStatsResponse.RunStats.PromptCostDetails.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -290,7 +290,7 @@ internal class ProGuardCompatibilityTest {
                     )
                     .streamingRate(0.0)
                     .tokensP99(0L)
-                    .totalCost("total_cost")
+                    .totalCost(0.0)
                     .totalTokens(0L)
                     .build()
             )

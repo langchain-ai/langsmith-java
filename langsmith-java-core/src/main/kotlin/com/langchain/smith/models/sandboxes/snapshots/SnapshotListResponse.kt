@@ -163,6 +163,14 @@ private constructor(
 
     private var validated: Boolean = false
 
+    /**
+     * Validates that the types of all values in this object match their expected types recursively.
+     *
+     * This method is _not_ forwards compatible with new types from the API for existing fields.
+     *
+     * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+     *   expected type.
+     */
     fun validate(): SnapshotListResponse = apply {
         if (validated) {
             return@apply
@@ -201,6 +209,7 @@ private constructor(
         private val fsCapacityBytes: JsonField<Long>,
         private val fsUsedBytes: JsonField<Long>,
         private val imageDigest: JsonField<String>,
+        private val memorySnapshotSizeBytes: JsonField<Long>,
         private val name: JsonField<String>,
         private val registryId: JsonField<String>,
         private val sourceSandboxId: JsonField<String>,
@@ -231,6 +240,9 @@ private constructor(
             @JsonProperty("image_digest")
             @ExcludeMissing
             imageDigest: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("memory_snapshot_size_bytes")
+            @ExcludeMissing
+            memorySnapshotSizeBytes: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
             @JsonProperty("registry_id")
             @ExcludeMissing
@@ -253,6 +265,7 @@ private constructor(
             fsCapacityBytes,
             fsUsedBytes,
             imageDigest,
+            memorySnapshotSizeBytes,
             name,
             registryId,
             sourceSandboxId,
@@ -303,6 +316,17 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun imageDigest(): Optional<String> = imageDigest.getOptional("image_digest")
+
+        /**
+         * MemorySnapshotSizeBytes is non-nil iff the snapshot was captured with VM memory state. A
+         * non-nil value is the canonical signal that this snapshot can warm-restore from memory;
+         * nil means rootfs only.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun memorySnapshotSizeBytes(): Optional<Long> =
+            memorySnapshotSizeBytes.getOptional("memory_snapshot_size_bytes")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -399,6 +423,16 @@ private constructor(
         fun _imageDigest(): JsonField<String> = imageDigest
 
         /**
+         * Returns the raw JSON value of [memorySnapshotSizeBytes].
+         *
+         * Unlike [memorySnapshotSizeBytes], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("memory_snapshot_size_bytes")
+        @ExcludeMissing
+        fun _memorySnapshotSizeBytes(): JsonField<Long> = memorySnapshotSizeBytes
+
+        /**
          * Returns the raw JSON value of [name].
          *
          * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
@@ -476,6 +510,7 @@ private constructor(
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
             private var fsUsedBytes: JsonField<Long> = JsonMissing.of()
             private var imageDigest: JsonField<String> = JsonMissing.of()
+            private var memorySnapshotSizeBytes: JsonField<Long> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
             private var registryId: JsonField<String> = JsonMissing.of()
             private var sourceSandboxId: JsonField<String> = JsonMissing.of()
@@ -493,6 +528,7 @@ private constructor(
                 fsCapacityBytes = snapshot.fsCapacityBytes
                 fsUsedBytes = snapshot.fsUsedBytes
                 imageDigest = snapshot.imageDigest
+                memorySnapshotSizeBytes = snapshot.memorySnapshotSizeBytes
                 name = snapshot.name
                 registryId = snapshot.registryId
                 sourceSandboxId = snapshot.sourceSandboxId
@@ -584,6 +620,25 @@ private constructor(
              */
             fun imageDigest(imageDigest: JsonField<String>) = apply {
                 this.imageDigest = imageDigest
+            }
+
+            /**
+             * MemorySnapshotSizeBytes is non-nil iff the snapshot was captured with VM memory
+             * state. A non-nil value is the canonical signal that this snapshot can warm-restore
+             * from memory; nil means rootfs only.
+             */
+            fun memorySnapshotSizeBytes(memorySnapshotSizeBytes: Long) =
+                memorySnapshotSizeBytes(JsonField.of(memorySnapshotSizeBytes))
+
+            /**
+             * Sets [Builder.memorySnapshotSizeBytes] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.memorySnapshotSizeBytes] with a well-typed [Long]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun memorySnapshotSizeBytes(memorySnapshotSizeBytes: JsonField<Long>) = apply {
+                this.memorySnapshotSizeBytes = memorySnapshotSizeBytes
             }
 
             fun name(name: String) = name(JsonField.of(name))
@@ -690,6 +745,7 @@ private constructor(
                     fsCapacityBytes,
                     fsUsedBytes,
                     imageDigest,
+                    memorySnapshotSizeBytes,
                     name,
                     registryId,
                     sourceSandboxId,
@@ -702,6 +758,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Snapshot = apply {
             if (validated) {
                 return@apply
@@ -714,6 +779,7 @@ private constructor(
             fsCapacityBytes()
             fsUsedBytes()
             imageDigest()
+            memorySnapshotSizeBytes()
             name()
             registryId()
             sourceSandboxId()
@@ -746,6 +812,7 @@ private constructor(
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (fsUsedBytes.asKnown().isPresent) 1 else 0) +
                 (if (imageDigest.asKnown().isPresent) 1 else 0) +
+                (if (memorySnapshotSizeBytes.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (if (registryId.asKnown().isPresent) 1 else 0) +
                 (if (sourceSandboxId.asKnown().isPresent) 1 else 0) +
@@ -766,6 +833,7 @@ private constructor(
                 fsCapacityBytes == other.fsCapacityBytes &&
                 fsUsedBytes == other.fsUsedBytes &&
                 imageDigest == other.imageDigest &&
+                memorySnapshotSizeBytes == other.memorySnapshotSizeBytes &&
                 name == other.name &&
                 registryId == other.registryId &&
                 sourceSandboxId == other.sourceSandboxId &&
@@ -784,6 +852,7 @@ private constructor(
                 fsCapacityBytes,
                 fsUsedBytes,
                 imageDigest,
+                memorySnapshotSizeBytes,
                 name,
                 registryId,
                 sourceSandboxId,
@@ -797,7 +866,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Snapshot{id=$id, createdAt=$createdAt, createdBy=$createdBy, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+            "Snapshot{id=$id, createdAt=$createdAt, createdBy=$createdBy, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

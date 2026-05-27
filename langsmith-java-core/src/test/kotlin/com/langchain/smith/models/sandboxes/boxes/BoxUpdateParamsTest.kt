@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.boxes
 
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -11,6 +12,7 @@ internal class BoxUpdateParamsTest {
     fun create() {
         BoxUpdateParams.builder()
             .pathName("name")
+            .deleteAfterStopSeconds(0L)
             .fsCapacityBytes(0L)
             .idleTtlSeconds(0L)
             .memBytes(0L)
@@ -28,6 +30,7 @@ internal class BoxUpdateParamsTest {
                             .addMatchHost("string")
                             .ttlSeconds(60L)
                             .url("url")
+                            .fullRequest(true)
                             .addRequestHeader(
                                 BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
                                     .bodyName("name")
@@ -60,7 +63,7 @@ internal class BoxUpdateParamsTest {
                     )
                     .build()
             )
-            .ttlSeconds(0L)
+            .addTagValueId("string")
             .vcpus(0L)
             .build()
     }
@@ -79,6 +82,7 @@ internal class BoxUpdateParamsTest {
         val params =
             BoxUpdateParams.builder()
                 .pathName("name")
+                .deleteAfterStopSeconds(0L)
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
                 .memBytes(0L)
@@ -96,6 +100,7 @@ internal class BoxUpdateParamsTest {
                                 .addMatchHost("string")
                                 .ttlSeconds(60L)
                                 .url("url")
+                                .fullRequest(true)
                                 .addRequestHeader(
                                     BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
                                         .bodyName("name")
@@ -130,12 +135,13 @@ internal class BoxUpdateParamsTest {
                         )
                         .build()
                 )
-                .ttlSeconds(0L)
+                .addTagValueId("string")
                 .vcpus(0L)
                 .build()
 
         val body = params._body()
 
+        assertThat(body.deleteAfterStopSeconds()).contains(0L)
         assertThat(body.fsCapacityBytes()).contains(0L)
         assertThat(body.idleTtlSeconds()).contains(0L)
         assertThat(body.memBytes()).contains(0L)
@@ -154,6 +160,7 @@ internal class BoxUpdateParamsTest {
                             .addMatchHost("string")
                             .ttlSeconds(60L)
                             .url("url")
+                            .fullRequest(true)
                             .addRequestHeader(
                                 BoxUpdateParams.ProxyConfig.Callback.RequestHeader.builder()
                                     .bodyName("name")
@@ -186,7 +193,7 @@ internal class BoxUpdateParamsTest {
                     )
                     .build()
             )
-        assertThat(body.ttlSeconds()).contains(0L)
+        assertThat(body.tagValueIds().getOrNull()).containsExactly("string")
         assertThat(body.vcpus()).contains(0L)
     }
 

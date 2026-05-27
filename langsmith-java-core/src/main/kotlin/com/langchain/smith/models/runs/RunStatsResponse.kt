@@ -53,6 +53,35 @@ private constructor(
 
     fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
+    /**
+     * Maps this instance's current variant to a value of type [T] using the given [visitor].
+     *
+     * Note that this method is _not_ forwards compatible with new variants from the API, unless
+     * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of the
+     * SDK gracefully, consider overriding [Visitor.unknown]:
+     * ```java
+     * import com.langchain.smith.core.JsonValue;
+     * import java.util.Optional;
+     *
+     * Optional<String> result = runStatsResponse.accept(new RunStatsResponse.Visitor<Optional<String>>() {
+     *     @Override
+     *     public Optional<String> visitRunStats(RunStats runStats) {
+     *         return Optional.of(runStats.toString());
+     *     }
+     *
+     *     // ...
+     *
+     *     @Override
+     *     public Optional<String> unknown(JsonValue json) {
+     *         // Or inspect the `json`.
+     *         return Optional.empty();
+     *     }
+     * });
+     * ```
+     *
+     * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor] and
+     *   the current variant is unknown.
+     */
     fun <T> accept(visitor: Visitor<T>): T =
         when {
             runStats != null -> visitor.visitRunStats(runStats)
@@ -62,6 +91,14 @@ private constructor(
 
     private var validated: Boolean = false
 
+    /**
+     * Validates that the types of all values in this object match their expected types recursively.
+     *
+     * This method is _not_ forwards compatible with new types from the API for existing fields.
+     *
+     * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+     *   expected type.
+     */
     fun validate(): RunStatsResponse = apply {
         if (validated) {
             return@apply
@@ -208,14 +245,14 @@ private constructor(
     class RunStats
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val completionCost: JsonField<String>,
+        private val completionCost: JsonField<Double>,
         private val completionCostDetails: JsonField<CompletionCostDetails>,
         private val completionTokenDetails: JsonField<CompletionTokenDetails>,
         private val completionTokens: JsonField<Long>,
         private val completionTokensP50: JsonField<Long>,
         private val completionTokensP99: JsonField<Long>,
-        private val costP50: JsonField<String>,
-        private val costP99: JsonField<String>,
+        private val costP50: JsonField<Double>,
+        private val costP99: JsonField<Double>,
         private val errorRate: JsonField<Double>,
         private val feedbackStats: JsonField<FeedbackStats>,
         private val firstTokenP50: JsonField<Double>,
@@ -224,7 +261,7 @@ private constructor(
         private val latencyP50: JsonField<Double>,
         private val latencyP99: JsonField<Double>,
         private val medianTokens: JsonField<Long>,
-        private val promptCost: JsonField<String>,
+        private val promptCost: JsonField<Double>,
         private val promptCostDetails: JsonField<PromptCostDetails>,
         private val promptTokenDetails: JsonField<PromptTokenDetails>,
         private val promptTokens: JsonField<Long>,
@@ -234,7 +271,7 @@ private constructor(
         private val runFacets: JsonField<List<RunFacet>>,
         private val streamingRate: JsonField<Double>,
         private val tokensP99: JsonField<Long>,
-        private val totalCost: JsonField<String>,
+        private val totalCost: JsonField<Double>,
         private val totalTokens: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -243,7 +280,7 @@ private constructor(
         private constructor(
             @JsonProperty("completion_cost")
             @ExcludeMissing
-            completionCost: JsonField<String> = JsonMissing.of(),
+            completionCost: JsonField<Double> = JsonMissing.of(),
             @JsonProperty("completion_cost_details")
             @ExcludeMissing
             completionCostDetails: JsonField<CompletionCostDetails> = JsonMissing.of(),
@@ -259,8 +296,8 @@ private constructor(
             @JsonProperty("completion_tokens_p99")
             @ExcludeMissing
             completionTokensP99: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("cost_p50") @ExcludeMissing costP50: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("cost_p99") @ExcludeMissing costP99: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("cost_p50") @ExcludeMissing costP50: JsonField<Double> = JsonMissing.of(),
+            @JsonProperty("cost_p99") @ExcludeMissing costP99: JsonField<Double> = JsonMissing.of(),
             @JsonProperty("error_rate")
             @ExcludeMissing
             errorRate: JsonField<Double> = JsonMissing.of(),
@@ -287,7 +324,7 @@ private constructor(
             medianTokens: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("prompt_cost")
             @ExcludeMissing
-            promptCost: JsonField<String> = JsonMissing.of(),
+            promptCost: JsonField<Double> = JsonMissing.of(),
             @JsonProperty("prompt_cost_details")
             @ExcludeMissing
             promptCostDetails: JsonField<PromptCostDetails> = JsonMissing.of(),
@@ -315,7 +352,7 @@ private constructor(
             tokensP99: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("total_cost")
             @ExcludeMissing
-            totalCost: JsonField<String> = JsonMissing.of(),
+            totalCost: JsonField<Double> = JsonMissing.of(),
             @JsonProperty("total_tokens")
             @ExcludeMissing
             totalTokens: JsonField<Long> = JsonMissing.of(),
@@ -355,7 +392,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun completionCost(): Optional<String> = completionCost.getOptional("completion_cost")
+        fun completionCost(): Optional<Double> = completionCost.getOptional("completion_cost")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -395,13 +432,13 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun costP50(): Optional<String> = costP50.getOptional("cost_p50")
+        fun costP50(): Optional<Double> = costP50.getOptional("cost_p50")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun costP99(): Optional<String> = costP99.getOptional("cost_p99")
+        fun costP99(): Optional<Double> = costP99.getOptional("cost_p99")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -456,7 +493,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun promptCost(): Optional<String> = promptCost.getOptional("prompt_cost")
+        fun promptCost(): Optional<Double> = promptCost.getOptional("prompt_cost")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -518,7 +555,7 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun totalCost(): Optional<String> = totalCost.getOptional("total_cost")
+        fun totalCost(): Optional<Double> = totalCost.getOptional("total_cost")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -534,7 +571,7 @@ private constructor(
          */
         @JsonProperty("completion_cost")
         @ExcludeMissing
-        fun _completionCost(): JsonField<String> = completionCost
+        fun _completionCost(): JsonField<Double> = completionCost
 
         /**
          * Returns the raw JSON value of [completionCostDetails].
@@ -591,14 +628,14 @@ private constructor(
          *
          * Unlike [costP50], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("cost_p50") @ExcludeMissing fun _costP50(): JsonField<String> = costP50
+        @JsonProperty("cost_p50") @ExcludeMissing fun _costP50(): JsonField<Double> = costP50
 
         /**
          * Returns the raw JSON value of [costP99].
          *
          * Unlike [costP99], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("cost_p99") @ExcludeMissing fun _costP99(): JsonField<String> = costP99
+        @JsonProperty("cost_p99") @ExcludeMissing fun _costP99(): JsonField<Double> = costP99
 
         /**
          * Returns the raw JSON value of [errorRate].
@@ -682,7 +719,7 @@ private constructor(
          */
         @JsonProperty("prompt_cost")
         @ExcludeMissing
-        fun _promptCost(): JsonField<String> = promptCost
+        fun _promptCost(): JsonField<Double> = promptCost
 
         /**
          * Returns the raw JSON value of [promptCostDetails].
@@ -772,7 +809,7 @@ private constructor(
          *
          * Unlike [totalCost], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("total_cost") @ExcludeMissing fun _totalCost(): JsonField<String> = totalCost
+        @JsonProperty("total_cost") @ExcludeMissing fun _totalCost(): JsonField<Double> = totalCost
 
         /**
          * Returns the raw JSON value of [totalTokens].
@@ -804,14 +841,14 @@ private constructor(
         /** A builder for [RunStats]. */
         class Builder internal constructor() {
 
-            private var completionCost: JsonField<String> = JsonMissing.of()
+            private var completionCost: JsonField<Double> = JsonMissing.of()
             private var completionCostDetails: JsonField<CompletionCostDetails> = JsonMissing.of()
             private var completionTokenDetails: JsonField<CompletionTokenDetails> = JsonMissing.of()
             private var completionTokens: JsonField<Long> = JsonMissing.of()
             private var completionTokensP50: JsonField<Long> = JsonMissing.of()
             private var completionTokensP99: JsonField<Long> = JsonMissing.of()
-            private var costP50: JsonField<String> = JsonMissing.of()
-            private var costP99: JsonField<String> = JsonMissing.of()
+            private var costP50: JsonField<Double> = JsonMissing.of()
+            private var costP99: JsonField<Double> = JsonMissing.of()
             private var errorRate: JsonField<Double> = JsonMissing.of()
             private var feedbackStats: JsonField<FeedbackStats> = JsonMissing.of()
             private var firstTokenP50: JsonField<Double> = JsonMissing.of()
@@ -820,7 +857,7 @@ private constructor(
             private var latencyP50: JsonField<Double> = JsonMissing.of()
             private var latencyP99: JsonField<Double> = JsonMissing.of()
             private var medianTokens: JsonField<Long> = JsonMissing.of()
-            private var promptCost: JsonField<String> = JsonMissing.of()
+            private var promptCost: JsonField<Double> = JsonMissing.of()
             private var promptCostDetails: JsonField<PromptCostDetails> = JsonMissing.of()
             private var promptTokenDetails: JsonField<PromptTokenDetails> = JsonMissing.of()
             private var promptTokens: JsonField<Long> = JsonMissing.of()
@@ -830,7 +867,7 @@ private constructor(
             private var runFacets: JsonField<MutableList<RunFacet>>? = null
             private var streamingRate: JsonField<Double> = JsonMissing.of()
             private var tokensP99: JsonField<Long> = JsonMissing.of()
-            private var totalCost: JsonField<String> = JsonMissing.of()
+            private var totalCost: JsonField<Double> = JsonMissing.of()
             private var totalTokens: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -867,21 +904,28 @@ private constructor(
                 additionalProperties = runStats.additionalProperties.toMutableMap()
             }
 
-            fun completionCost(completionCost: String?) =
+            fun completionCost(completionCost: Double?) =
                 completionCost(JsonField.ofNullable(completionCost))
 
+            /**
+             * Alias for [Builder.completionCost].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun completionCost(completionCost: Double) = completionCost(completionCost as Double?)
+
             /** Alias for calling [Builder.completionCost] with `completionCost.orElse(null)`. */
-            fun completionCost(completionCost: Optional<String>) =
+            fun completionCost(completionCost: Optional<Double>) =
                 completionCost(completionCost.getOrNull())
 
             /**
              * Sets [Builder.completionCost] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.completionCost] with a well-typed [String] value
+             * You should usually call [Builder.completionCost] with a well-typed [Double] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun completionCost(completionCost: JsonField<String>) = apply {
+            fun completionCost(completionCost: JsonField<Double>) = apply {
                 this.completionCost = completionCost
             }
 
@@ -1015,33 +1059,47 @@ private constructor(
                 this.completionTokensP99 = completionTokensP99
             }
 
-            fun costP50(costP50: String?) = costP50(JsonField.ofNullable(costP50))
+            fun costP50(costP50: Double?) = costP50(JsonField.ofNullable(costP50))
+
+            /**
+             * Alias for [Builder.costP50].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun costP50(costP50: Double) = costP50(costP50 as Double?)
 
             /** Alias for calling [Builder.costP50] with `costP50.orElse(null)`. */
-            fun costP50(costP50: Optional<String>) = costP50(costP50.getOrNull())
+            fun costP50(costP50: Optional<Double>) = costP50(costP50.getOrNull())
 
             /**
              * Sets [Builder.costP50] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.costP50] with a well-typed [String] value instead.
+             * You should usually call [Builder.costP50] with a well-typed [Double] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun costP50(costP50: JsonField<String>) = apply { this.costP50 = costP50 }
+            fun costP50(costP50: JsonField<Double>) = apply { this.costP50 = costP50 }
 
-            fun costP99(costP99: String?) = costP99(JsonField.ofNullable(costP99))
+            fun costP99(costP99: Double?) = costP99(JsonField.ofNullable(costP99))
+
+            /**
+             * Alias for [Builder.costP99].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun costP99(costP99: Double) = costP99(costP99 as Double?)
 
             /** Alias for calling [Builder.costP99] with `costP99.orElse(null)`. */
-            fun costP99(costP99: Optional<String>) = costP99(costP99.getOrNull())
+            fun costP99(costP99: Optional<Double>) = costP99(costP99.getOrNull())
 
             /**
              * Sets [Builder.costP99] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.costP99] with a well-typed [String] value instead.
+             * You should usually call [Builder.costP99] with a well-typed [Double] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun costP99(costP99: JsonField<String>) = apply { this.costP99 = costP99 }
+            fun costP99(costP99: JsonField<Double>) = apply { this.costP99 = costP99 }
 
             fun errorRate(errorRate: Double?) = errorRate(JsonField.ofNullable(errorRate))
 
@@ -1217,19 +1275,26 @@ private constructor(
                 this.medianTokens = medianTokens
             }
 
-            fun promptCost(promptCost: String?) = promptCost(JsonField.ofNullable(promptCost))
+            fun promptCost(promptCost: Double?) = promptCost(JsonField.ofNullable(promptCost))
+
+            /**
+             * Alias for [Builder.promptCost].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun promptCost(promptCost: Double) = promptCost(promptCost as Double?)
 
             /** Alias for calling [Builder.promptCost] with `promptCost.orElse(null)`. */
-            fun promptCost(promptCost: Optional<String>) = promptCost(promptCost.getOrNull())
+            fun promptCost(promptCost: Optional<Double>) = promptCost(promptCost.getOrNull())
 
             /**
              * Sets [Builder.promptCost] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.promptCost] with a well-typed [String] value
+             * You should usually call [Builder.promptCost] with a well-typed [Double] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun promptCost(promptCost: JsonField<String>) = apply { this.promptCost = promptCost }
+            fun promptCost(promptCost: JsonField<Double>) = apply { this.promptCost = promptCost }
 
             fun promptCostDetails(promptCostDetails: PromptCostDetails?) =
                 promptCostDetails(JsonField.ofNullable(promptCostDetails))
@@ -1440,19 +1505,26 @@ private constructor(
              */
             fun tokensP99(tokensP99: JsonField<Long>) = apply { this.tokensP99 = tokensP99 }
 
-            fun totalCost(totalCost: String?) = totalCost(JsonField.ofNullable(totalCost))
+            fun totalCost(totalCost: Double?) = totalCost(JsonField.ofNullable(totalCost))
+
+            /**
+             * Alias for [Builder.totalCost].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun totalCost(totalCost: Double) = totalCost(totalCost as Double?)
 
             /** Alias for calling [Builder.totalCost] with `totalCost.orElse(null)`. */
-            fun totalCost(totalCost: Optional<String>) = totalCost(totalCost.getOrNull())
+            fun totalCost(totalCost: Optional<Double>) = totalCost(totalCost.getOrNull())
 
             /**
              * Sets [Builder.totalCost] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.totalCost] with a well-typed [String] value instead.
+             * You should usually call [Builder.totalCost] with a well-typed [Double] value instead.
              * This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun totalCost(totalCost: JsonField<String>) = apply { this.totalCost = totalCost }
+            fun totalCost(totalCost: JsonField<Double>) = apply { this.totalCost = totalCost }
 
             fun totalTokens(totalTokens: Long?) = totalTokens(JsonField.ofNullable(totalTokens))
 
@@ -1535,6 +1607,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): RunStats = apply {
             if (validated) {
                 return@apply
@@ -1681,6 +1762,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): CompletionCostDetails = apply {
                 if (validated) {
                     return@apply
@@ -1790,6 +1881,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): CompletionTokenDetails = apply {
                 if (validated) {
                     return@apply
@@ -1894,6 +1995,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): FeedbackStats = apply {
                 if (validated) {
                     return@apply
@@ -1999,6 +2110,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): PromptCostDetails = apply {
                 if (validated) {
                     return@apply
@@ -2106,6 +2227,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): PromptTokenDetails = apply {
                 if (validated) {
                     return@apply
@@ -2210,6 +2341,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): RunFacet = apply {
                 if (validated) {
                     return@apply
@@ -2386,6 +2527,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): UnionMember1 = apply {
             if (validated) {
                 return@apply

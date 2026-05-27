@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.boxes
 
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -10,6 +11,7 @@ internal class BoxCreateParamsTest {
     @Test
     fun create() {
         BoxCreateParams.builder()
+            .deleteAfterStopSeconds(0L)
             .fsCapacityBytes(0L)
             .idleTtlSeconds(0L)
             .memBytes(0L)
@@ -27,6 +29,7 @@ internal class BoxCreateParamsTest {
                             .addMatchHost("string")
                             .ttlSeconds(60L)
                             .url("url")
+                            .fullRequest(true)
                             .addRequestHeader(
                                 BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
                                     .name("name")
@@ -59,9 +62,10 @@ internal class BoxCreateParamsTest {
                     )
                     .build()
             )
+            .restoreMemory(true)
             .snapshotId("snapshot_id")
             .snapshotName("snapshot_name")
-            .ttlSeconds(0L)
+            .addTagValueId("string")
             .vcpus(0L)
             .build()
     }
@@ -70,6 +74,7 @@ internal class BoxCreateParamsTest {
     fun body() {
         val params =
             BoxCreateParams.builder()
+                .deleteAfterStopSeconds(0L)
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
                 .memBytes(0L)
@@ -87,6 +92,7 @@ internal class BoxCreateParamsTest {
                                 .addMatchHost("string")
                                 .ttlSeconds(60L)
                                 .url("url")
+                                .fullRequest(true)
                                 .addRequestHeader(
                                     BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
                                         .name("name")
@@ -121,14 +127,16 @@ internal class BoxCreateParamsTest {
                         )
                         .build()
                 )
+                .restoreMemory(true)
                 .snapshotId("snapshot_id")
                 .snapshotName("snapshot_name")
-                .ttlSeconds(0L)
+                .addTagValueId("string")
                 .vcpus(0L)
                 .build()
 
         val body = params._body()
 
+        assertThat(body.deleteAfterStopSeconds()).contains(0L)
         assertThat(body.fsCapacityBytes()).contains(0L)
         assertThat(body.idleTtlSeconds()).contains(0L)
         assertThat(body.memBytes()).contains(0L)
@@ -147,6 +155,7 @@ internal class BoxCreateParamsTest {
                             .addMatchHost("string")
                             .ttlSeconds(60L)
                             .url("url")
+                            .fullRequest(true)
                             .addRequestHeader(
                                 BoxCreateParams.ProxyConfig.Callback.RequestHeader.builder()
                                     .name("name")
@@ -179,9 +188,10 @@ internal class BoxCreateParamsTest {
                     )
                     .build()
             )
+        assertThat(body.restoreMemory()).contains(true)
         assertThat(body.snapshotId()).contains("snapshot_id")
         assertThat(body.snapshotName()).contains("snapshot_name")
-        assertThat(body.ttlSeconds()).contains(0L)
+        assertThat(body.tagValueIds().getOrNull()).containsExactly("string")
         assertThat(body.vcpus()).contains(0L)
     }
 

@@ -13,6 +13,9 @@ internal class BoxCreateSnapshotParamsTest {
             .pathName("name")
             .bodyName("name")
             .checkpoint("checkpoint")
+            .dockerImage("docker_image")
+            .fsCapacityBytes(0L)
+            .includeMemory(true)
             .build()
     }
 
@@ -32,12 +35,18 @@ internal class BoxCreateSnapshotParamsTest {
                 .pathName("name")
                 .bodyName("name")
                 .checkpoint("checkpoint")
+                .dockerImage("docker_image")
+                .fsCapacityBytes(0L)
+                .includeMemory(true)
                 .build()
 
         val body = params._body()
 
         assertThat(body.bodyName()).isEqualTo("name")
         assertThat(body.checkpoint()).contains("checkpoint")
+        assertThat(body.dockerImage()).contains("docker_image")
+        assertThat(body.fsCapacityBytes()).contains(0L)
+        assertThat(body.includeMemory()).contains(true)
     }
 
     @Test

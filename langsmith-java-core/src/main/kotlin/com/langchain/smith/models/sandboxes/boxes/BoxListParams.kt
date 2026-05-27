@@ -10,8 +10,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * List sandbox claims for the authenticated tenant, with optional filtering, sorting, and
- * pagination.
+ * List sandboxes for the authenticated tenant, with optional filtering, sorting, and pagination.
  */
 class BoxListParams
 private constructor(
@@ -40,7 +39,7 @@ private constructor(
     /** Sort direction (asc, desc) */
     fun sortDirection(): Optional<String> = Optional.ofNullable(sortDirection)
 
-    /** Filter by status (provisioning, ready, failed, stopped) */
+    /** Filter by status (provisioning, ready, failed, stopped, deleting) */
     fun status(): Optional<String> = Optional.ofNullable(status)
 
     /** Additional headers to send with the request. */
@@ -128,7 +127,7 @@ private constructor(
         fun sortDirection(sortDirection: Optional<String>) =
             sortDirection(sortDirection.getOrNull())
 
-        /** Filter by status (provisioning, ready, failed, stopped) */
+        /** Filter by status (provisioning, ready, failed, stopped, deleting) */
         fun status(status: String?) = apply { this.status = status }
 
         /** Alias for calling [Builder.status] with `status.orElse(null)`. */

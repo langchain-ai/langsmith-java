@@ -76,6 +76,7 @@ private constructor(
     private val s3Urls: JsonField<S3Urls>,
     private val serialized: JsonField<Serialized>,
     private val shareToken: JsonField<String>,
+    private val sourceProposedExampleId: JsonField<String>,
     private val startTime: JsonField<OffsetDateTime>,
     private val tags: JsonField<List<String>>,
     private val threadId: JsonField<String>,
@@ -218,6 +219,9 @@ private constructor(
         @JsonProperty("share_token")
         @ExcludeMissing
         shareToken: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("source_proposed_example_id")
+        @ExcludeMissing
+        sourceProposedExampleId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("start_time")
         @ExcludeMissing
         startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -294,6 +298,7 @@ private constructor(
         s3Urls,
         serialized,
         shareToken,
+        sourceProposedExampleId,
         startTime,
         tags,
         threadId,
@@ -618,6 +623,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun shareToken(): Optional<String> = shareToken.getOptional("share_token")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun sourceProposedExampleId(): Optional<String> =
+        sourceProposedExampleId.getOptional("source_proposed_example_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -1107,6 +1119,16 @@ private constructor(
     @JsonProperty("share_token") @ExcludeMissing fun _shareToken(): JsonField<String> = shareToken
 
     /**
+     * Returns the raw JSON value of [sourceProposedExampleId].
+     *
+     * Unlike [sourceProposedExampleId], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("source_proposed_example_id")
+    @ExcludeMissing
+    fun _sourceProposedExampleId(): JsonField<String> = sourceProposedExampleId
+
+    /**
      * Returns the raw JSON value of [startTime].
      *
      * Unlike [startTime], this method doesn't throw if the JSON field has an unexpected type.
@@ -1283,6 +1305,7 @@ private constructor(
         private var s3Urls: JsonField<S3Urls> = JsonMissing.of()
         private var serialized: JsonField<Serialized> = JsonMissing.of()
         private var shareToken: JsonField<String> = JsonMissing.of()
+        private var sourceProposedExampleId: JsonField<String> = JsonMissing.of()
         private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var tags: JsonField<MutableList<String>>? = null
         private var threadId: JsonField<String> = JsonMissing.of()
@@ -1353,6 +1376,7 @@ private constructor(
                 s3Urls = runSchemaWithAnnotationQueueInfo.s3Urls
                 serialized = runSchemaWithAnnotationQueueInfo.serialized
                 shareToken = runSchemaWithAnnotationQueueInfo.shareToken
+                sourceProposedExampleId = runSchemaWithAnnotationQueueInfo.sourceProposedExampleId
                 startTime = runSchemaWithAnnotationQueueInfo.startTime
                 tags = runSchemaWithAnnotationQueueInfo.tags.map { it.toMutableList() }
                 threadId = runSchemaWithAnnotationQueueInfo.threadId
@@ -2212,6 +2236,27 @@ private constructor(
          */
         fun shareToken(shareToken: JsonField<String>) = apply { this.shareToken = shareToken }
 
+        fun sourceProposedExampleId(sourceProposedExampleId: String?) =
+            sourceProposedExampleId(JsonField.ofNullable(sourceProposedExampleId))
+
+        /**
+         * Alias for calling [Builder.sourceProposedExampleId] with
+         * `sourceProposedExampleId.orElse(null)`.
+         */
+        fun sourceProposedExampleId(sourceProposedExampleId: Optional<String>) =
+            sourceProposedExampleId(sourceProposedExampleId.getOrNull())
+
+        /**
+         * Sets [Builder.sourceProposedExampleId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sourceProposedExampleId] with a well-typed [String]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun sourceProposedExampleId(sourceProposedExampleId: JsonField<String>) = apply {
+            this.sourceProposedExampleId = sourceProposedExampleId
+        }
+
         fun startTime(startTime: OffsetDateTime) = startTime(JsonField.of(startTime))
 
         /**
@@ -2481,6 +2526,7 @@ private constructor(
                 s3Urls,
                 serialized,
                 shareToken,
+                sourceProposedExampleId,
                 startTime,
                 (tags ?: JsonMissing.of()).map { it.toImmutable() },
                 threadId,
@@ -2498,6 +2544,14 @@ private constructor(
 
     private var validated: Boolean = false
 
+    /**
+     * Validates that the types of all values in this object match their expected types recursively.
+     *
+     * This method is _not_ forwards compatible with new types from the API for existing fields.
+     *
+     * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+     *   expected type.
+     */
     fun validate(): RunSchemaWithAnnotationQueueInfo = apply {
         if (validated) {
             return@apply
@@ -2553,6 +2607,7 @@ private constructor(
         s3Urls().ifPresent { it.validate() }
         serialized().ifPresent { it.validate() }
         shareToken()
+        sourceProposedExampleId()
         startTime()
         tags()
         threadId()
@@ -2632,6 +2687,7 @@ private constructor(
             (s3Urls.asKnown().getOrNull()?.validity() ?: 0) +
             (serialized.asKnown().getOrNull()?.validity() ?: 0) +
             (if (shareToken.asKnown().isPresent) 1 else 0) +
+            (if (sourceProposedExampleId.asKnown().isPresent) 1 else 0) +
             (if (startTime.asKnown().isPresent) 1 else 0) +
             (tags.asKnown().getOrNull()?.size ?: 0) +
             (if (threadId.asKnown().isPresent) 1 else 0) +
@@ -2705,6 +2761,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): CompletionCostDetails = apply {
             if (validated) {
                 return@apply
@@ -2809,6 +2874,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): CompletionTokenDetails = apply {
             if (validated) {
                 return@apply
@@ -2910,6 +2984,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Event = apply {
             if (validated) {
                 return@apply
@@ -3009,6 +3092,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Extra = apply {
             if (validated) {
                 return@apply
@@ -3108,6 +3200,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): FeedbackStats = apply {
             if (validated) {
                 return@apply
@@ -3207,6 +3308,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Inputs = apply {
             if (validated) {
                 return@apply
@@ -3306,6 +3416,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): InputsS3Urls = apply {
             if (validated) {
                 return@apply
@@ -3405,6 +3524,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Message = apply {
             if (validated) {
                 return@apply
@@ -3504,6 +3632,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Outputs = apply {
             if (validated) {
                 return@apply
@@ -3603,6 +3740,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): OutputsS3Urls = apply {
             if (validated) {
                 return@apply
@@ -3702,6 +3848,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): PromptCostDetails = apply {
             if (validated) {
                 return@apply
@@ -3801,6 +3956,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): PromptTokenDetails = apply {
             if (validated) {
                 return@apply
@@ -3900,6 +4064,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): S3Urls = apply {
             if (validated) {
                 return@apply
@@ -3999,6 +4172,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Serialized = apply {
             if (validated) {
                 return@apply
@@ -4131,6 +4313,15 @@ private constructor(
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): TraceTier = apply {
             if (validated) {
                 return@apply
@@ -4225,6 +4416,7 @@ private constructor(
             s3Urls == other.s3Urls &&
             serialized == other.serialized &&
             shareToken == other.shareToken &&
+            sourceProposedExampleId == other.sourceProposedExampleId &&
             startTime == other.startTime &&
             tags == other.tags &&
             threadId == other.threadId &&
@@ -4291,6 +4483,7 @@ private constructor(
             s3Urls,
             serialized,
             shareToken,
+            sourceProposedExampleId,
             startTime,
             tags,
             threadId,
@@ -4309,5 +4502,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunSchemaWithAnnotationQueueInfo{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, queueRunId=$queueRunId, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, addedAt=$addedAt, childRunIds=$childRunIds, completedBy=$completedBy, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, effectiveAddedAt=$effectiveAddedAt, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, lastReviewedTime=$lastReviewedTime, manifestId=$manifestId, manifestS3Id=$manifestS3Id, messages=$messages, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, reservedBy=$reservedBy, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
+        "RunSchemaWithAnnotationQueueInfo{id=$id, appPath=$appPath, dottedOrder=$dottedOrder, name=$name, queueRunId=$queueRunId, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, addedAt=$addedAt, childRunIds=$childRunIds, completedBy=$completedBy, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, directChildRunIds=$directChildRunIds, effectiveAddedAt=$effectiveAddedAt, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inDataset=$inDataset, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, lastQueuedAt=$lastQueuedAt, lastReviewedTime=$lastReviewedTime, manifestId=$manifestId, manifestS3Id=$manifestS3Id, messages=$messages, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, parentRunIds=$parentRunIds, priceModelId=$priceModelId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, reservedBy=$reservedBy, s3Urls=$s3Urls, serialized=$serialized, shareToken=$shareToken, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, tags=$tags, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceFirstReceivedAt=$traceFirstReceivedAt, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, traceTier=$traceTier, traceUpgrade=$traceUpgrade, ttlSeconds=$ttlSeconds, additionalProperties=$additionalProperties}"
 }

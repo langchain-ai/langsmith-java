@@ -100,8 +100,16 @@ private constructor(
          * `Body.ofRunsAnnotationQueueRunAddSchemaArray(runsAnnotationQueueRunAddSchemaArray)`.
          */
         fun bodyOfRunsAnnotationQueueRunAddSchemaArray(
-            runsAnnotationQueueRunAddSchemaArray: List<Body.AnnotationQueueRunAddSchema>
+            runsAnnotationQueueRunAddSchemaArray: List<Body.AddRunToQueueRequest>
         ) = body(Body.ofRunsAnnotationQueueRunAddSchemaArray(runsAnnotationQueueRunAddSchemaArray))
+
+        /**
+         * Alias for calling [body] with
+         * `Body.ofAnnotationQueueRunAddSchemas(annotationQueueRunAddSchemas)`.
+         */
+        fun bodyOfAnnotationQueueRunAddSchemas(
+            annotationQueueRunAddSchemas: List<Body.AnnotationQueueRunAddSchema>
+        ) = body(Body.ofAnnotationQueueRunAddSchemas(annotationQueueRunAddSchemas))
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -239,27 +247,65 @@ private constructor(
     class Body
     private constructor(
         private val runsUuidArray: List<String>? = null,
-        private val runsAnnotationQueueRunAddSchemaArray: List<AnnotationQueueRunAddSchema>? = null,
+        private val runsAnnotationQueueRunAddSchemaArray: List<AddRunToQueueRequest>? = null,
+        private val annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>? = null,
         private val _json: JsonValue? = null,
     ) {
 
         fun runsUuidArray(): Optional<List<String>> = Optional.ofNullable(runsUuidArray)
 
-        fun runsAnnotationQueueRunAddSchemaArray(): Optional<List<AnnotationQueueRunAddSchema>> =
+        fun runsAnnotationQueueRunAddSchemaArray(): Optional<List<AddRunToQueueRequest>> =
             Optional.ofNullable(runsAnnotationQueueRunAddSchemaArray)
+
+        fun annotationQueueRunAddSchemas(): Optional<List<AnnotationQueueRunAddSchema>> =
+            Optional.ofNullable(annotationQueueRunAddSchemas)
 
         fun isRunsUuidArray(): Boolean = runsUuidArray != null
 
         fun isRunsAnnotationQueueRunAddSchemaArray(): Boolean =
             runsAnnotationQueueRunAddSchemaArray != null
 
+        fun isAnnotationQueueRunAddSchemas(): Boolean = annotationQueueRunAddSchemas != null
+
         fun asRunsUuidArray(): List<String> = runsUuidArray.getOrThrow("runsUuidArray")
 
-        fun asRunsAnnotationQueueRunAddSchemaArray(): List<AnnotationQueueRunAddSchema> =
+        fun asRunsAnnotationQueueRunAddSchemaArray(): List<AddRunToQueueRequest> =
             runsAnnotationQueueRunAddSchemaArray.getOrThrow("runsAnnotationQueueRunAddSchemaArray")
+
+        fun asAnnotationQueueRunAddSchemas(): List<AnnotationQueueRunAddSchema> =
+            annotationQueueRunAddSchemas.getOrThrow("annotationQueueRunAddSchemas")
 
         fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
+        /**
+         * Maps this instance's current variant to a value of type [T] using the given [visitor].
+         *
+         * Note that this method is _not_ forwards compatible with new variants from the API, unless
+         * [visitor] overrides [Visitor.unknown]. To handle variants not known to this version of
+         * the SDK gracefully, consider overriding [Visitor.unknown]:
+         * ```java
+         * import com.langchain.smith.core.JsonValue;
+         * import java.util.Optional;
+         *
+         * Optional<String> result = body.accept(new Body.Visitor<Optional<String>>() {
+         *     @Override
+         *     public Optional<String> visitRunsUuidArray(List<String> runsUuidArray) {
+         *         return Optional.of(runsUuidArray.toString());
+         *     }
+         *
+         *     // ...
+         *
+         *     @Override
+         *     public Optional<String> unknown(JsonValue json) {
+         *         // Or inspect the `json`.
+         *         return Optional.empty();
+         *     }
+         * });
+         * ```
+         *
+         * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in [visitor]
+         *   and the current variant is unknown.
+         */
         fun <T> accept(visitor: Visitor<T>): T =
             when {
                 runsUuidArray != null -> visitor.visitRunsUuidArray(runsUuidArray)
@@ -267,11 +313,22 @@ private constructor(
                     visitor.visitRunsAnnotationQueueRunAddSchemaArray(
                         runsAnnotationQueueRunAddSchemaArray
                     )
+                annotationQueueRunAddSchemas != null ->
+                    visitor.visitAnnotationQueueRunAddSchemas(annotationQueueRunAddSchemas)
                 else -> visitor.unknown(_json)
             }
 
         private var validated: Boolean = false
 
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
         fun validate(): Body = apply {
             if (validated) {
                 return@apply
@@ -282,9 +339,15 @@ private constructor(
                     override fun visitRunsUuidArray(runsUuidArray: List<String>) {}
 
                     override fun visitRunsAnnotationQueueRunAddSchemaArray(
-                        runsAnnotationQueueRunAddSchemaArray: List<AnnotationQueueRunAddSchema>
+                        runsAnnotationQueueRunAddSchemaArray: List<AddRunToQueueRequest>
                     ) {
                         runsAnnotationQueueRunAddSchemaArray.forEach { it.validate() }
+                    }
+
+                    override fun visitAnnotationQueueRunAddSchemas(
+                        annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>
+                    ) {
+                        annotationQueueRunAddSchemas.forEach { it.validate() }
                     }
                 }
             )
@@ -313,8 +376,12 @@ private constructor(
                         runsUuidArray.size
 
                     override fun visitRunsAnnotationQueueRunAddSchemaArray(
-                        runsAnnotationQueueRunAddSchemaArray: List<AnnotationQueueRunAddSchema>
+                        runsAnnotationQueueRunAddSchemaArray: List<AddRunToQueueRequest>
                     ) = runsAnnotationQueueRunAddSchemaArray.sumOf { it.validity().toInt() }
+
+                    override fun visitAnnotationQueueRunAddSchemas(
+                        annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>
+                    ) = annotationQueueRunAddSchemas.sumOf { it.validity().toInt() }
 
                     override fun unknown(json: JsonValue?) = 0
                 }
@@ -327,17 +394,25 @@ private constructor(
 
             return other is Body &&
                 runsUuidArray == other.runsUuidArray &&
-                runsAnnotationQueueRunAddSchemaArray == other.runsAnnotationQueueRunAddSchemaArray
+                runsAnnotationQueueRunAddSchemaArray ==
+                    other.runsAnnotationQueueRunAddSchemaArray &&
+                annotationQueueRunAddSchemas == other.annotationQueueRunAddSchemas
         }
 
         override fun hashCode(): Int =
-            Objects.hash(runsUuidArray, runsAnnotationQueueRunAddSchemaArray)
+            Objects.hash(
+                runsUuidArray,
+                runsAnnotationQueueRunAddSchemaArray,
+                annotationQueueRunAddSchemas,
+            )
 
         override fun toString(): String =
             when {
                 runsUuidArray != null -> "Body{runsUuidArray=$runsUuidArray}"
                 runsAnnotationQueueRunAddSchemaArray != null ->
                     "Body{runsAnnotationQueueRunAddSchemaArray=$runsAnnotationQueueRunAddSchemaArray}"
+                annotationQueueRunAddSchemas != null ->
+                    "Body{annotationQueueRunAddSchemas=$annotationQueueRunAddSchemas}"
                 _json != null -> "Body{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid Body")
             }
@@ -350,12 +425,17 @@ private constructor(
 
             @JvmStatic
             fun ofRunsAnnotationQueueRunAddSchemaArray(
-                runsAnnotationQueueRunAddSchemaArray: List<AnnotationQueueRunAddSchema>
+                runsAnnotationQueueRunAddSchemaArray: List<AddRunToQueueRequest>
             ) =
                 Body(
                     runsAnnotationQueueRunAddSchemaArray =
                         runsAnnotationQueueRunAddSchemaArray.toImmutable()
                 )
+
+            @JvmStatic
+            fun ofAnnotationQueueRunAddSchemas(
+                annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>
+            ) = Body(annotationQueueRunAddSchemas = annotationQueueRunAddSchemas.toImmutable())
         }
 
         /** An interface that defines how to map each variant of [Body] to a value of type [T]. */
@@ -364,7 +444,11 @@ private constructor(
             fun visitRunsUuidArray(runsUuidArray: List<String>): T
 
             fun visitRunsAnnotationQueueRunAddSchemaArray(
-                runsAnnotationQueueRunAddSchemaArray: List<AnnotationQueueRunAddSchema>
+                runsAnnotationQueueRunAddSchemaArray: List<AddRunToQueueRequest>
+            ): T
+
+            fun visitAnnotationQueueRunAddSchemas(
+                annotationQueueRunAddSchemas: List<AnnotationQueueRunAddSchema>
             ): T
 
             /**
@@ -391,13 +475,15 @@ private constructor(
                             tryDeserialize(node, jacksonTypeRef<List<String>>())?.let {
                                 Body(runsUuidArray = it, _json = json)
                             },
+                            tryDeserialize(node, jacksonTypeRef<List<AddRunToQueueRequest>>())
+                                ?.let {
+                                    Body(runsAnnotationQueueRunAddSchemaArray = it, _json = json)
+                                },
                             tryDeserialize(
                                     node,
                                     jacksonTypeRef<List<AnnotationQueueRunAddSchema>>(),
                                 )
-                                ?.let {
-                                    Body(runsAnnotationQueueRunAddSchemaArray = it, _json = json)
-                                },
+                                ?.let { Body(annotationQueueRunAddSchemas = it, _json = json) },
                         )
                         .filterNotNull()
                         .allMaxBy { it.validity() }
@@ -426,10 +512,240 @@ private constructor(
                     value.runsUuidArray != null -> generator.writeObject(value.runsUuidArray)
                     value.runsAnnotationQueueRunAddSchemaArray != null ->
                         generator.writeObject(value.runsAnnotationQueueRunAddSchemaArray)
+                    value.annotationQueueRunAddSchemas != null ->
+                        generator.writeObject(value.annotationQueueRunAddSchemas)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid Body")
                 }
             }
+        }
+
+        /**
+         * Add a single run to AQ (CH path) with an optional back-pointer to the issues-agent
+         * proposal that seeded this add. Use when bulk-adding runs that come from different
+         * proposals — each row carries its own source_proposed_example_id. For unrelated bulk adds,
+         * prefer plain List[UUID] on the same endpoint.
+         */
+        class AddRunToQueueRequest
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val runId: JsonField<String>,
+            private val sourceProposedExampleId: JsonField<String>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("run_id") @ExcludeMissing runId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("source_proposed_example_id")
+                @ExcludeMissing
+                sourceProposedExampleId: JsonField<String> = JsonMissing.of(),
+            ) : this(runId, sourceProposedExampleId, mutableMapOf())
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun runId(): String = runId.getRequired("run_id")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun sourceProposedExampleId(): Optional<String> =
+                sourceProposedExampleId.getOptional("source_proposed_example_id")
+
+            /**
+             * Returns the raw JSON value of [runId].
+             *
+             * Unlike [runId], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("run_id") @ExcludeMissing fun _runId(): JsonField<String> = runId
+
+            /**
+             * Returns the raw JSON value of [sourceProposedExampleId].
+             *
+             * Unlike [sourceProposedExampleId], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("source_proposed_example_id")
+            @ExcludeMissing
+            fun _sourceProposedExampleId(): JsonField<String> = sourceProposedExampleId
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [AddRunToQueueRequest].
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .runId()
+                 * ```
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [AddRunToQueueRequest]. */
+            class Builder internal constructor() {
+
+                private var runId: JsonField<String>? = null
+                private var sourceProposedExampleId: JsonField<String> = JsonMissing.of()
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(addRunToQueueRequest: AddRunToQueueRequest) = apply {
+                    runId = addRunToQueueRequest.runId
+                    sourceProposedExampleId = addRunToQueueRequest.sourceProposedExampleId
+                    additionalProperties = addRunToQueueRequest.additionalProperties.toMutableMap()
+                }
+
+                fun runId(runId: String) = runId(JsonField.of(runId))
+
+                /**
+                 * Sets [Builder.runId] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.runId] with a well-typed [String] value instead.
+                 * This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
+                 */
+                fun runId(runId: JsonField<String>) = apply { this.runId = runId }
+
+                fun sourceProposedExampleId(sourceProposedExampleId: String?) =
+                    sourceProposedExampleId(JsonField.ofNullable(sourceProposedExampleId))
+
+                /**
+                 * Alias for calling [Builder.sourceProposedExampleId] with
+                 * `sourceProposedExampleId.orElse(null)`.
+                 */
+                fun sourceProposedExampleId(sourceProposedExampleId: Optional<String>) =
+                    sourceProposedExampleId(sourceProposedExampleId.getOrNull())
+
+                /**
+                 * Sets [Builder.sourceProposedExampleId] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.sourceProposedExampleId] with a well-typed
+                 * [String] value instead. This method is primarily for setting the field to an
+                 * undocumented or not yet supported value.
+                 */
+                fun sourceProposedExampleId(sourceProposedExampleId: JsonField<String>) = apply {
+                    this.sourceProposedExampleId = sourceProposedExampleId
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [AddRunToQueueRequest].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .runId()
+                 * ```
+                 *
+                 * @throws IllegalStateException if any required field is unset.
+                 */
+                fun build(): AddRunToQueueRequest =
+                    AddRunToQueueRequest(
+                        checkRequired("runId", runId),
+                        sourceProposedExampleId,
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): AddRunToQueueRequest = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                runId()
+                sourceProposedExampleId()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (if (runId.asKnown().isPresent) 1 else 0) +
+                    (if (sourceProposedExampleId.asKnown().isPresent) 1 else 0)
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is AddRunToQueueRequest &&
+                    runId == other.runId &&
+                    sourceProposedExampleId == other.sourceProposedExampleId &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(runId, sourceProposedExampleId, additionalProperties)
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "AddRunToQueueRequest{runId=$runId, sourceProposedExampleId=$sourceProposedExampleId, additionalProperties=$additionalProperties}"
         }
 
         /** Deprecated: use plain UUID list or AddRunToQueueByKeyRequest instead. */
@@ -776,6 +1092,16 @@ private constructor(
 
             private var validated: Boolean = false
 
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
             fun validate(): AnnotationQueueRunAddSchema = apply {
                 if (validated) {
                     return@apply
@@ -907,6 +1233,16 @@ private constructor(
 
                 private var validated: Boolean = false
 
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
                 fun validate(): TraceTier = apply {
                     if (validated) {
                         return@apply

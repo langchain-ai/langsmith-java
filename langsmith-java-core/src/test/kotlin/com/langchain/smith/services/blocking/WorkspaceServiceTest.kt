@@ -56,7 +56,12 @@ internal class WorkspaceServiceTest {
         val workspaceService = client.workspaces()
 
         val workspaces =
-            workspaceService.list(WorkspaceListParams.builder().includeDeleted(true).build())
+            workspaceService.list(
+                WorkspaceListParams.builder()
+                    .dataPlaneId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .includeDeleted(true)
+                    .build()
+            )
 
         workspaces.forEach { it.validate() }
     }

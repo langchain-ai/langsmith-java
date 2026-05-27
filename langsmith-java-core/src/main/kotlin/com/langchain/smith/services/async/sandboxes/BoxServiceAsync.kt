@@ -42,8 +42,8 @@ interface BoxServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): BoxServiceAsync
 
     /**
-     * Create a new sandbox using server defaults. Set `snapshot_id` or `snapshot_name` only when
-     * booting from a reusable snapshot.
+     * Create a new sandbox from a snapshot. Provide at most one of `snapshot_id` or
+     * `snapshot_name`; if neither is provided, the server uses the default static blueprint.
      */
     fun create(): CompletableFuture<BoxCreateResponse> = create(BoxCreateParams.none())
 
@@ -62,7 +62,7 @@ interface BoxServiceAsync {
     fun create(requestOptions: RequestOptions): CompletableFuture<BoxCreateResponse> =
         create(BoxCreateParams.none(), requestOptions)
 
-    /** Retrieve a sandbox claim by name. Stale provisioning claims are auto-failed. */
+    /** Retrieve a sandbox by name. Stale provisioning sandboxes are auto-failed. */
     fun retrieve(name: String): CompletableFuture<BoxRetrieveResponse> =
         retrieve(name, BoxRetrieveParams.none())
 
@@ -97,7 +97,7 @@ interface BoxServiceAsync {
     ): CompletableFuture<BoxRetrieveResponse> =
         retrieve(name, BoxRetrieveParams.none(), requestOptions)
 
-    /** Update a sandbox claim's display name. The name must be unique within the tenant. */
+    /** Update a sandbox's display name. The name must be unique within the tenant. */
     fun update(pathName: String): CompletableFuture<BoxUpdateResponse> =
         update(pathName, BoxUpdateParams.none())
 
@@ -133,7 +133,7 @@ interface BoxServiceAsync {
         update(pathName, BoxUpdateParams.none(), requestOptions)
 
     /**
-     * List sandbox claims for the authenticated tenant, with optional filtering, sorting, and
+     * List sandboxes for the authenticated tenant, with optional filtering, sorting, and
      * pagination.
      */
     fun list(): CompletableFuture<BoxListResponse> = list(BoxListParams.none())
@@ -152,7 +152,9 @@ interface BoxServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<BoxListResponse> =
         list(BoxListParams.none(), requestOptions)
 
-    /** Delete a sandbox claim by name. Deletes the Firecracker pod/service and DB record. */
+    /**
+     * Delete a sandbox by name or UUID. Tears down the sandbox runtime and removes the DB record.
+     */
     fun delete(name: String): CompletableFuture<Void?> = delete(name, BoxDeleteParams.none())
 
     /** @see delete */
@@ -253,7 +255,7 @@ interface BoxServiceAsync {
     ): CompletableFuture<BoxGenerateServiceUrlResponse> =
         generateServiceUrl(name, BoxGenerateServiceUrlParams.none(), requestOptions)
 
-    /** Retrieve the lightweight status of a sandbox claim for polling. */
+    /** Retrieve the lightweight status of a sandbox for polling. */
     fun getStatus(name: String): CompletableFuture<BoxGetStatusResponse> =
         getStatus(name, BoxGetStatusParams.none())
 
