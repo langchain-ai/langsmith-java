@@ -33,6 +33,7 @@ private constructor(
     private val description: JsonField<String>,
     private val endTime: JsonField<OffsetDateTime>,
     private val errorRate: JsonField<Double>,
+    private val experimentProgress: JsonField<ExperimentProgress>,
     private val extra: JsonField<Extra>,
     private val feedbackStats: JsonField<FeedbackStats>,
     private val firstTokenP50: JsonField<Double>,
@@ -77,6 +78,9 @@ private constructor(
         @ExcludeMissing
         endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("error_rate") @ExcludeMissing errorRate: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("experiment_progress")
+        @ExcludeMissing
+        experimentProgress: JsonField<ExperimentProgress> = JsonMissing.of(),
         @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
         @JsonProperty("feedback_stats")
         @ExcludeMissing
@@ -141,6 +145,7 @@ private constructor(
         description,
         endTime,
         errorRate,
+        experimentProgress,
         extra,
         feedbackStats,
         firstTokenP50,
@@ -212,6 +217,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun errorRate(): Optional<Double> = errorRate.getOptional("error_rate")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun experimentProgress(): Optional<ExperimentProgress> =
+        experimentProgress.getOptional("experiment_progress")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -406,6 +418,16 @@ private constructor(
      * Unlike [errorRate], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("error_rate") @ExcludeMissing fun _errorRate(): JsonField<Double> = errorRate
+
+    /**
+     * Returns the raw JSON value of [experimentProgress].
+     *
+     * Unlike [experimentProgress], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("experiment_progress")
+    @ExcludeMissing
+    fun _experimentProgress(): JsonField<ExperimentProgress> = experimentProgress
 
     /**
      * Returns the raw JSON value of [extra].
@@ -619,6 +641,7 @@ private constructor(
         private var description: JsonField<String> = JsonMissing.of()
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var errorRate: JsonField<Double> = JsonMissing.of()
+        private var experimentProgress: JsonField<ExperimentProgress> = JsonMissing.of()
         private var extra: JsonField<Extra> = JsonMissing.of()
         private var feedbackStats: JsonField<FeedbackStats> = JsonMissing.of()
         private var firstTokenP50: JsonField<Double> = JsonMissing.of()
@@ -652,6 +675,7 @@ private constructor(
             description = tracerSession.description
             endTime = tracerSession.endTime
             errorRate = tracerSession.errorRate
+            experimentProgress = tracerSession.experimentProgress
             extra = tracerSession.extra
             feedbackStats = tracerSession.feedbackStats
             firstTokenP50 = tracerSession.firstTokenP50
@@ -805,6 +829,26 @@ private constructor(
          * value.
          */
         fun errorRate(errorRate: JsonField<Double>) = apply { this.errorRate = errorRate }
+
+        fun experimentProgress(experimentProgress: ExperimentProgress?) =
+            experimentProgress(JsonField.ofNullable(experimentProgress))
+
+        /**
+         * Alias for calling [Builder.experimentProgress] with `experimentProgress.orElse(null)`.
+         */
+        fun experimentProgress(experimentProgress: Optional<ExperimentProgress>) =
+            experimentProgress(experimentProgress.getOrNull())
+
+        /**
+         * Sets [Builder.experimentProgress] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.experimentProgress] with a well-typed
+         * [ExperimentProgress] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun experimentProgress(experimentProgress: JsonField<ExperimentProgress>) = apply {
+            this.experimentProgress = experimentProgress
+        }
 
         fun extra(extra: Extra?) = extra(JsonField.ofNullable(extra))
 
@@ -1252,6 +1296,7 @@ private constructor(
                 description,
                 endTime,
                 errorRate,
+                experimentProgress,
                 extra,
                 feedbackStats,
                 firstTokenP50,
@@ -1300,6 +1345,7 @@ private constructor(
         description()
         endTime()
         errorRate()
+        experimentProgress().ifPresent { it.validate() }
         extra().ifPresent { it.validate() }
         feedbackStats().ifPresent { it.validate() }
         firstTokenP50()
@@ -1347,6 +1393,7 @@ private constructor(
             (if (description.asKnown().isPresent) 1 else 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (errorRate.asKnown().isPresent) 1 else 0) +
+            (experimentProgress.asKnown().getOrNull()?.validity() ?: 0) +
             (extra.asKnown().getOrNull()?.validity() ?: 0) +
             (feedbackStats.asKnown().getOrNull()?.validity() ?: 0) +
             (if (firstTokenP50.asKnown().isPresent) 1 else 0) +
@@ -1368,6 +1415,383 @@ private constructor(
             (if (totalCost.asKnown().isPresent) 1 else 0) +
             (if (totalTokens.asKnown().isPresent) 1 else 0) +
             (traceTier.asKnown().getOrNull()?.validity() ?: 0)
+
+    class ExperimentProgress
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val evaluatorProgress: JsonField<EvaluatorProgress>,
+        private val expectedRunCount: JsonField<Long>,
+        private val runProgress: JsonField<Double>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("evaluator_progress")
+            @ExcludeMissing
+            evaluatorProgress: JsonField<EvaluatorProgress> = JsonMissing.of(),
+            @JsonProperty("expected_run_count")
+            @ExcludeMissing
+            expectedRunCount: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("run_progress")
+            @ExcludeMissing
+            runProgress: JsonField<Double> = JsonMissing.of(),
+        ) : this(evaluatorProgress, expectedRunCount, runProgress, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun evaluatorProgress(): EvaluatorProgress =
+            evaluatorProgress.getRequired("evaluator_progress")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun expectedRunCount(): Long = expectedRunCount.getRequired("expected_run_count")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun runProgress(): Double = runProgress.getRequired("run_progress")
+
+        /**
+         * Returns the raw JSON value of [evaluatorProgress].
+         *
+         * Unlike [evaluatorProgress], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("evaluator_progress")
+        @ExcludeMissing
+        fun _evaluatorProgress(): JsonField<EvaluatorProgress> = evaluatorProgress
+
+        /**
+         * Returns the raw JSON value of [expectedRunCount].
+         *
+         * Unlike [expectedRunCount], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("expected_run_count")
+        @ExcludeMissing
+        fun _expectedRunCount(): JsonField<Long> = expectedRunCount
+
+        /**
+         * Returns the raw JSON value of [runProgress].
+         *
+         * Unlike [runProgress], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("run_progress")
+        @ExcludeMissing
+        fun _runProgress(): JsonField<Double> = runProgress
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [ExperimentProgress].
+             *
+             * The following fields are required:
+             * ```java
+             * .evaluatorProgress()
+             * .expectedRunCount()
+             * .runProgress()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [ExperimentProgress]. */
+        class Builder internal constructor() {
+
+            private var evaluatorProgress: JsonField<EvaluatorProgress>? = null
+            private var expectedRunCount: JsonField<Long>? = null
+            private var runProgress: JsonField<Double>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(experimentProgress: ExperimentProgress) = apply {
+                evaluatorProgress = experimentProgress.evaluatorProgress
+                expectedRunCount = experimentProgress.expectedRunCount
+                runProgress = experimentProgress.runProgress
+                additionalProperties = experimentProgress.additionalProperties.toMutableMap()
+            }
+
+            fun evaluatorProgress(evaluatorProgress: EvaluatorProgress) =
+                evaluatorProgress(JsonField.of(evaluatorProgress))
+
+            /**
+             * Sets [Builder.evaluatorProgress] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.evaluatorProgress] with a well-typed
+             * [EvaluatorProgress] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
+             */
+            fun evaluatorProgress(evaluatorProgress: JsonField<EvaluatorProgress>) = apply {
+                this.evaluatorProgress = evaluatorProgress
+            }
+
+            fun expectedRunCount(expectedRunCount: Long) =
+                expectedRunCount(JsonField.of(expectedRunCount))
+
+            /**
+             * Sets [Builder.expectedRunCount] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.expectedRunCount] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun expectedRunCount(expectedRunCount: JsonField<Long>) = apply {
+                this.expectedRunCount = expectedRunCount
+            }
+
+            fun runProgress(runProgress: Double) = runProgress(JsonField.of(runProgress))
+
+            /**
+             * Sets [Builder.runProgress] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.runProgress] with a well-typed [Double] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun runProgress(runProgress: JsonField<Double>) = apply {
+                this.runProgress = runProgress
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [ExperimentProgress].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .evaluatorProgress()
+             * .expectedRunCount()
+             * .runProgress()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): ExperimentProgress =
+                ExperimentProgress(
+                    checkRequired("evaluatorProgress", evaluatorProgress),
+                    checkRequired("expectedRunCount", expectedRunCount),
+                    checkRequired("runProgress", runProgress),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): ExperimentProgress = apply {
+            if (validated) {
+                return@apply
+            }
+
+            evaluatorProgress().validate()
+            expectedRunCount()
+            runProgress()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (evaluatorProgress.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (expectedRunCount.asKnown().isPresent) 1 else 0) +
+                (if (runProgress.asKnown().isPresent) 1 else 0)
+
+        class EvaluatorProgress
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [EvaluatorProgress].
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [EvaluatorProgress]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(evaluatorProgress: EvaluatorProgress) = apply {
+                    additionalProperties = evaluatorProgress.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [EvaluatorProgress].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): EvaluatorProgress =
+                    EvaluatorProgress(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): EvaluatorProgress = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is EvaluatorProgress &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "EvaluatorProgress{additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ExperimentProgress &&
+                evaluatorProgress == other.evaluatorProgress &&
+                expectedRunCount == other.expectedRunCount &&
+                runProgress == other.runProgress &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(evaluatorProgress, expectedRunCount, runProgress, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "ExperimentProgress{evaluatorProgress=$evaluatorProgress, expectedRunCount=$expectedRunCount, runProgress=$runProgress, additionalProperties=$additionalProperties}"
+    }
 
     class Extra
     @JsonCreator
@@ -1955,6 +2379,7 @@ private constructor(
             description == other.description &&
             endTime == other.endTime &&
             errorRate == other.errorRate &&
+            experimentProgress == other.experimentProgress &&
             extra == other.extra &&
             feedbackStats == other.feedbackStats &&
             firstTokenP50 == other.firstTokenP50 &&
@@ -1989,6 +2414,7 @@ private constructor(
             description,
             endTime,
             errorRate,
+            experimentProgress,
             extra,
             feedbackStats,
             firstTokenP50,
@@ -2017,5 +2443,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "TracerSession{id=$id, tenantId=$tenantId, completionCost=$completionCost, completionTokens=$completionTokens, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, errorRate=$errorRate, extra=$extra, feedbackStats=$feedbackStats, firstTokenP50=$firstTokenP50, firstTokenP99=$firstTokenP99, lastRunStartTime=$lastRunStartTime, lastRunStartTimeLive=$lastRunStartTimeLive, latencyP50=$latencyP50, latencyP99=$latencyP99, name=$name, promptCost=$promptCost, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, runCount=$runCount, runFacets=$runFacets, sessionFeedbackStats=$sessionFeedbackStats, startTime=$startTime, streamingRate=$streamingRate, testRunNumber=$testRunNumber, totalCost=$totalCost, totalTokens=$totalTokens, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+        "TracerSession{id=$id, tenantId=$tenantId, completionCost=$completionCost, completionTokens=$completionTokens, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, errorRate=$errorRate, experimentProgress=$experimentProgress, extra=$extra, feedbackStats=$feedbackStats, firstTokenP50=$firstTokenP50, firstTokenP99=$firstTokenP99, lastRunStartTime=$lastRunStartTime, lastRunStartTimeLive=$lastRunStartTimeLive, latencyP50=$latencyP50, latencyP99=$latencyP99, name=$name, promptCost=$promptCost, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, runCount=$runCount, runFacets=$runFacets, sessionFeedbackStats=$sessionFeedbackStats, startTime=$startTime, streamingRate=$streamingRate, testRunNumber=$testRunNumber, totalCost=$totalCost, totalTokens=$totalTokens, traceTier=$traceTier, additionalProperties=$additionalProperties}"
 }
