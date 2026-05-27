@@ -352,7 +352,6 @@ private constructor(
          */
         fun logLevel(logLevel: LogLevel) = apply { this.logLevel = logLevel }
 
-
         fun apiKey(apiKey: String?) = apply { this.apiKey = apiKey }
 
         /** Alias for calling [Builder.apiKey] with `apiKey.orElse(null)`. */
