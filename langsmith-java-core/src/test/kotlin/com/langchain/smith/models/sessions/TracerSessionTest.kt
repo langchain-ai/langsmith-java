@@ -24,6 +24,17 @@ internal class TracerSessionTest {
                 .description("description")
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .errorRate(0.0)
+                .experimentProgress(
+                    TracerSession.ExperimentProgress.builder()
+                        .evaluatorProgress(
+                            TracerSession.ExperimentProgress.EvaluatorProgress.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .expectedRunCount(0L)
+                        .runProgress(0.0)
+                        .build()
+                )
                 .extra(
                     TracerSession.Extra.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -73,6 +84,18 @@ internal class TracerSessionTest {
         assertThat(tracerSession.endTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(tracerSession.errorRate()).contains(0.0)
+        assertThat(tracerSession.experimentProgress())
+            .contains(
+                TracerSession.ExperimentProgress.builder()
+                    .evaluatorProgress(
+                        TracerSession.ExperimentProgress.EvaluatorProgress.builder()
+                            .putAdditionalProperty("foo", JsonValue.from(0))
+                            .build()
+                    )
+                    .expectedRunCount(0L)
+                    .runProgress(0.0)
+                    .build()
+            )
         assertThat(tracerSession.extra())
             .contains(
                 TracerSession.Extra.builder()
@@ -133,6 +156,17 @@ internal class TracerSessionTest {
                 .description("description")
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .errorRate(0.0)
+                .experimentProgress(
+                    TracerSession.ExperimentProgress.builder()
+                        .evaluatorProgress(
+                            TracerSession.ExperimentProgress.EvaluatorProgress.builder()
+                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                .build()
+                        )
+                        .expectedRunCount(0L)
+                        .runProgress(0.0)
+                        .build()
+                )
                 .extra(
                     TracerSession.Extra.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
