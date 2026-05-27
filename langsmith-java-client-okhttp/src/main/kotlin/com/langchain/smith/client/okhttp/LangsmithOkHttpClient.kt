@@ -310,7 +310,6 @@ class LangsmithOkHttpClient private constructor() {
          */
         fun logLevel(logLevel: LogLevel) = apply { clientOptions.logLevel(logLevel) }
 
-
         fun apiKey(apiKey: String?) = apply { clientOptions.apiKey(apiKey) }
 
         /** Alias for calling [Builder.apiKey] with `apiKey.orElse(null)`. */

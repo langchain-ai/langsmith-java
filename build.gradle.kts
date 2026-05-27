@@ -26,6 +26,7 @@ subprojects {
 
 subprojects {
     apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "org.jetbrains.dokka-javadoc")
 }
 
 // Avoid race conditions between `dokkaJavadocCollector` and `dokkaJavadocJar` tasks
