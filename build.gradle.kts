@@ -9,7 +9,7 @@ repositories {
 
 allprojects {
     group = "com.langchain.smith"
-    version = "0.1.0-beta.6" // x-release-please-version
+    version = "0.1.0-beta.7" // x-release-please-version
 }
 
 subprojects {

@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.1.0-beta.7 (2026-05-27)
+
+Full Changelog: [v0.1.0-beta.6...v0.1.0-beta.7](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.6...v0.1.0-beta.7)
+
+### Features
+
+* **api:** api update ([cad4993](https://github.com/langchain-ai/langsmith-java/commit/cad499356e3a38d660814b7ceed92eafbcf2989d))
+* **api:** api update ([84e287c](https://github.com/langchain-ai/langsmith-java/commit/84e287ca9be34e45b80fd0d33c3ebc1dd1ca0f32))
+* **api:** api update ([ce44c3b](https://github.com/langchain-ai/langsmith-java/commit/ce44c3b540624598c9152b8d1d469bb28ec5c67e))
+* **api:** api update ([81f7b39](https://github.com/langchain-ai/langsmith-java/commit/81f7b3937992f117bc573e968e9d5988c5bb5399))
+* **api:** api update ([3d0c992](https://github.com/langchain-ai/langsmith-java/commit/3d0c992f4c4772d5a3e294ebeba2b28a641b21ed))
+* **api:** api update ([b991c00](https://github.com/langchain-ai/langsmith-java/commit/b991c00c14ee68cffd2df17c6d6bdbc6c780cfd1))
+* **api:** api update ([104d3c6](https://github.com/langchain-ai/langsmith-java/commit/104d3c65623d66f24f90589df3ee04586fa8d913))
+* **api:** api update ([e01a424](https://github.com/langchain-ai/langsmith-java/commit/e01a42416bef9d17a897900e70cbef70e13ad552))
+* **api:** api update ([e1443b6](https://github.com/langchain-ai/langsmith-java/commit/e1443b69ab955cbdcee618449f11bc3cdd41add4))
+* **api:** api update ([9deafad](https://github.com/langchain-ai/langsmith-java/commit/9deafade612c0e7c163bf13fae4c2d27751122be))
+* **api:** api update ([7e7c479](https://github.com/langchain-ai/langsmith-java/commit/7e7c479912229f27ae96878f2e939971b5fff829))
+* **api:** api update ([b5a3200](https://github.com/langchain-ai/langsmith-java/commit/b5a32009fc34eb5a04d70205c19bf973414d800f))
+* **api:** api update ([3ab0c6c](https://github.com/langchain-ai/langsmith-java/commit/3ab0c6c5482c2378fc1d2a2b8657248ec218a501))
+* **client:** support proxy authentication ([d9e3ab5](https://github.com/langchain-ai/langsmith-java/commit/d9e3ab5b34a8fc2321fb1f9f86910517ec30dbdb))
+* **sdk:** add hub directories endpoints to Stainless config ([b3dbb81](https://github.com/langchain-ai/langsmith-java/commit/b3dbb81bd63f8b21fce99d345cf9c73345626451))
+
+
+### Bug Fixes
+
+* **go:** avoid panic when http.DefaultTransport is wrapped ([aba9578](https://github.com/langchain-ai/langsmith-java/commit/aba9578496866a723d85540da2d9f9bc6418027a))
+* **go:** avoid panic when http.DefaultTransport is wrapped ([9ea7653](https://github.com/langchain-ai/langsmith-java/commit/9ea76536a054185cbfdad5ddad7036b2e5d46137))
+* restore dokka-javadoc plugin application to subprojects ([#157](https://github.com/langchain-ai/langsmith-java/issues/157)) ([1df1c4a](https://github.com/langchain-ai/langsmith-java/commit/1df1c4aacd6c3cc9477576403a1da641bd20302d))
+
+
+### Performance Improvements
+
+* **client:** create one json mapper ([e68229b](https://github.com/langchain-ai/langsmith-java/commit/e68229b7009315bf60149df92e4af5f0b083c012))
+
+
+### Chores
+
+* **internal:** codegen related update ([5e551de](https://github.com/langchain-ai/langsmith-java/commit/5e551de99e03fb34a737f3fcac3ee6a08fab8863))
+* **internal:** renormalize gradlew.bat line endings ([4738606](https://github.com/langchain-ai/langsmith-java/commit/4738606db159ecc8ad5088714e3100c0e7972f52))
+* remove duplicated dokka setup ([b1af8d8](https://github.com/langchain-ai/langsmith-java/commit/b1af8d842d8aa3b1a47cb00ffa22d71134b0d883))
+
+
+### Documentation
+
+* clarify forwards compat behavior ([d4b4164](https://github.com/langchain-ai/langsmith-java/commit/d4b41649cb18523851c353c6a47b83b492e0c8e5))
+
 ## 0.1.0-beta.6 (2026-05-20)
 
 Full Changelog: [v0.1.0-beta.5...v0.1.0-beta.6](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.5...v0.1.0-beta.6)
