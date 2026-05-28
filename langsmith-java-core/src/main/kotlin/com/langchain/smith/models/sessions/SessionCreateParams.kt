@@ -12,6 +12,7 @@ import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
@@ -61,13 +62,37 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun evaluatorKeys(): Optional<List<String>> = body.evaluatorKeys()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun extra(): Optional<Extra> = body.extra()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun kickedOffBy(): Optional<String> = body.kickedOffBy()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun name(): Optional<String> = body.name()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun numExamples(): Optional<Long> = body.numExamples()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun numRepetitions(): Optional<Long> = body.numRepetitions()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -117,6 +142,13 @@ private constructor(
     fun _endTime(): JsonField<OffsetDateTime> = body._endTime()
 
     /**
+     * Returns the raw JSON value of [evaluatorKeys].
+     *
+     * Unlike [evaluatorKeys], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _evaluatorKeys(): JsonField<List<String>> = body._evaluatorKeys()
+
+    /**
      * Returns the raw JSON value of [extra].
      *
      * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
@@ -124,11 +156,32 @@ private constructor(
     fun _extra(): JsonField<Extra> = body._extra()
 
     /**
+     * Returns the raw JSON value of [kickedOffBy].
+     *
+     * Unlike [kickedOffBy], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _kickedOffBy(): JsonField<String> = body._kickedOffBy()
+
+    /**
      * Returns the raw JSON value of [name].
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _name(): JsonField<String> = body._name()
+
+    /**
+     * Returns the raw JSON value of [numExamples].
+     *
+     * Unlike [numExamples], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _numExamples(): JsonField<Long> = body._numExamples()
+
+    /**
+     * Returns the raw JSON value of [numRepetitions].
+     *
+     * Unlike [numRepetitions], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _numRepetitions(): JsonField<Long> = body._numRepetitions()
 
     /**
      * Returns the raw JSON value of [referenceDatasetId].
@@ -207,7 +260,7 @@ private constructor(
          * - [defaultDatasetId]
          * - [description]
          * - [endTime]
-         * - [extra]
+         * - [evaluatorKeys]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -272,6 +325,32 @@ private constructor(
          */
         fun endTime(endTime: JsonField<OffsetDateTime>) = apply { body.endTime(endTime) }
 
+        fun evaluatorKeys(evaluatorKeys: List<String>?) = apply {
+            body.evaluatorKeys(evaluatorKeys)
+        }
+
+        /** Alias for calling [Builder.evaluatorKeys] with `evaluatorKeys.orElse(null)`. */
+        fun evaluatorKeys(evaluatorKeys: Optional<List<String>>) =
+            evaluatorKeys(evaluatorKeys.getOrNull())
+
+        /**
+         * Sets [Builder.evaluatorKeys] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.evaluatorKeys] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun evaluatorKeys(evaluatorKeys: JsonField<List<String>>) = apply {
+            body.evaluatorKeys(evaluatorKeys)
+        }
+
+        /**
+         * Adds a single [String] to [evaluatorKeys].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addEvaluatorKey(evaluatorKey: String) = apply { body.addEvaluatorKey(evaluatorKey) }
+
         fun extra(extra: Extra?) = apply { body.extra(extra) }
 
         /** Alias for calling [Builder.extra] with `extra.orElse(null)`. */
@@ -285,6 +364,20 @@ private constructor(
          */
         fun extra(extra: JsonField<Extra>) = apply { body.extra(extra) }
 
+        fun kickedOffBy(kickedOffBy: String?) = apply { body.kickedOffBy(kickedOffBy) }
+
+        /** Alias for calling [Builder.kickedOffBy] with `kickedOffBy.orElse(null)`. */
+        fun kickedOffBy(kickedOffBy: Optional<String>) = kickedOffBy(kickedOffBy.getOrNull())
+
+        /**
+         * Sets [Builder.kickedOffBy] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.kickedOffBy] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun kickedOffBy(kickedOffBy: JsonField<String>) = apply { body.kickedOffBy(kickedOffBy) }
+
         fun name(name: String) = apply { body.name(name) }
 
         /**
@@ -294,6 +387,51 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        fun numExamples(numExamples: Long?) = apply { body.numExamples(numExamples) }
+
+        /**
+         * Alias for [Builder.numExamples].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun numExamples(numExamples: Long) = numExamples(numExamples as Long?)
+
+        /** Alias for calling [Builder.numExamples] with `numExamples.orElse(null)`. */
+        fun numExamples(numExamples: Optional<Long>) = numExamples(numExamples.getOrNull())
+
+        /**
+         * Sets [Builder.numExamples] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.numExamples] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun numExamples(numExamples: JsonField<Long>) = apply { body.numExamples(numExamples) }
+
+        fun numRepetitions(numRepetitions: Long?) = apply { body.numRepetitions(numRepetitions) }
+
+        /**
+         * Alias for [Builder.numRepetitions].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun numRepetitions(numRepetitions: Long) = numRepetitions(numRepetitions as Long?)
+
+        /** Alias for calling [Builder.numRepetitions] with `numRepetitions.orElse(null)`. */
+        fun numRepetitions(numRepetitions: Optional<Long>) =
+            numRepetitions(numRepetitions.getOrNull())
+
+        /**
+         * Sets [Builder.numRepetitions] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.numRepetitions] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun numRepetitions(numRepetitions: JsonField<Long>) = apply {
+            body.numRepetitions(numRepetitions)
+        }
 
         fun referenceDatasetId(referenceDatasetId: String?) = apply {
             body.referenceDatasetId(referenceDatasetId)
@@ -492,8 +630,12 @@ private constructor(
         private val defaultDatasetId: JsonField<String>,
         private val description: JsonField<String>,
         private val endTime: JsonField<OffsetDateTime>,
+        private val evaluatorKeys: JsonField<List<String>>,
         private val extra: JsonField<Extra>,
+        private val kickedOffBy: JsonField<String>,
         private val name: JsonField<String>,
+        private val numExamples: JsonField<Long>,
+        private val numRepetitions: JsonField<Long>,
         private val referenceDatasetId: JsonField<String>,
         private val startTime: JsonField<OffsetDateTime>,
         private val traceTier: JsonField<TraceTier>,
@@ -512,8 +654,20 @@ private constructor(
             @JsonProperty("end_time")
             @ExcludeMissing
             endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("evaluator_keys")
+            @ExcludeMissing
+            evaluatorKeys: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("extra") @ExcludeMissing extra: JsonField<Extra> = JsonMissing.of(),
+            @JsonProperty("kicked_off_by")
+            @ExcludeMissing
+            kickedOffBy: JsonField<String> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("num_examples")
+            @ExcludeMissing
+            numExamples: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("num_repetitions")
+            @ExcludeMissing
+            numRepetitions: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("reference_dataset_id")
             @ExcludeMissing
             referenceDatasetId: JsonField<String> = JsonMissing.of(),
@@ -528,8 +682,12 @@ private constructor(
             defaultDatasetId,
             description,
             endTime,
+            evaluatorKeys,
             extra,
+            kickedOffBy,
             name,
+            numExamples,
+            numRepetitions,
             referenceDatasetId,
             startTime,
             traceTier,
@@ -565,13 +723,37 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
+        fun evaluatorKeys(): Optional<List<String>> = evaluatorKeys.getOptional("evaluator_keys")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
         fun extra(): Optional<Extra> = extra.getOptional("extra")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
+        fun kickedOffBy(): Optional<String> = kickedOffBy.getOptional("kicked_off_by")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
         fun name(): Optional<String> = name.getOptional("name")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun numExamples(): Optional<Long> = numExamples.getOptional("num_examples")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun numRepetitions(): Optional<Long> = numRepetitions.getOptional("num_repetitions")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -628,6 +810,16 @@ private constructor(
         fun _endTime(): JsonField<OffsetDateTime> = endTime
 
         /**
+         * Returns the raw JSON value of [evaluatorKeys].
+         *
+         * Unlike [evaluatorKeys], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("evaluator_keys")
+        @ExcludeMissing
+        fun _evaluatorKeys(): JsonField<List<String>> = evaluatorKeys
+
+        /**
          * Returns the raw JSON value of [extra].
          *
          * Unlike [extra], this method doesn't throw if the JSON field has an unexpected type.
@@ -635,11 +827,39 @@ private constructor(
         @JsonProperty("extra") @ExcludeMissing fun _extra(): JsonField<Extra> = extra
 
         /**
+         * Returns the raw JSON value of [kickedOffBy].
+         *
+         * Unlike [kickedOffBy], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("kicked_off_by")
+        @ExcludeMissing
+        fun _kickedOffBy(): JsonField<String> = kickedOffBy
+
+        /**
          * Returns the raw JSON value of [name].
          *
          * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+        /**
+         * Returns the raw JSON value of [numExamples].
+         *
+         * Unlike [numExamples], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("num_examples")
+        @ExcludeMissing
+        fun _numExamples(): JsonField<Long> = numExamples
+
+        /**
+         * Returns the raw JSON value of [numRepetitions].
+         *
+         * Unlike [numRepetitions], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("num_repetitions")
+        @ExcludeMissing
+        fun _numRepetitions(): JsonField<Long> = numRepetitions
 
         /**
          * Returns the raw JSON value of [referenceDatasetId].
@@ -694,8 +914,12 @@ private constructor(
             private var defaultDatasetId: JsonField<String> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
             private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var evaluatorKeys: JsonField<MutableList<String>>? = null
             private var extra: JsonField<Extra> = JsonMissing.of()
+            private var kickedOffBy: JsonField<String> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
+            private var numExamples: JsonField<Long> = JsonMissing.of()
+            private var numRepetitions: JsonField<Long> = JsonMissing.of()
             private var referenceDatasetId: JsonField<String> = JsonMissing.of()
             private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var traceTier: JsonField<TraceTier> = JsonMissing.of()
@@ -707,8 +931,12 @@ private constructor(
                 defaultDatasetId = body.defaultDatasetId
                 description = body.description
                 endTime = body.endTime
+                evaluatorKeys = body.evaluatorKeys.map { it.toMutableList() }
                 extra = body.extra
+                kickedOffBy = body.kickedOffBy
                 name = body.name
+                numExamples = body.numExamples
+                numRepetitions = body.numRepetitions
                 referenceDatasetId = body.referenceDatasetId
                 startTime = body.startTime
                 traceTier = body.traceTier
@@ -779,6 +1007,36 @@ private constructor(
              */
             fun endTime(endTime: JsonField<OffsetDateTime>) = apply { this.endTime = endTime }
 
+            fun evaluatorKeys(evaluatorKeys: List<String>?) =
+                evaluatorKeys(JsonField.ofNullable(evaluatorKeys))
+
+            /** Alias for calling [Builder.evaluatorKeys] with `evaluatorKeys.orElse(null)`. */
+            fun evaluatorKeys(evaluatorKeys: Optional<List<String>>) =
+                evaluatorKeys(evaluatorKeys.getOrNull())
+
+            /**
+             * Sets [Builder.evaluatorKeys] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.evaluatorKeys] with a well-typed `List<String>`
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun evaluatorKeys(evaluatorKeys: JsonField<List<String>>) = apply {
+                this.evaluatorKeys = evaluatorKeys.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [evaluatorKeys].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addEvaluatorKey(evaluatorKey: String) = apply {
+                evaluatorKeys =
+                    (evaluatorKeys ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("evaluatorKeys", it).add(evaluatorKey)
+                    }
+            }
+
             fun extra(extra: Extra?) = extra(JsonField.ofNullable(extra))
 
             /** Alias for calling [Builder.extra] with `extra.orElse(null)`. */
@@ -793,6 +1051,22 @@ private constructor(
              */
             fun extra(extra: JsonField<Extra>) = apply { this.extra = extra }
 
+            fun kickedOffBy(kickedOffBy: String?) = kickedOffBy(JsonField.ofNullable(kickedOffBy))
+
+            /** Alias for calling [Builder.kickedOffBy] with `kickedOffBy.orElse(null)`. */
+            fun kickedOffBy(kickedOffBy: Optional<String>) = kickedOffBy(kickedOffBy.getOrNull())
+
+            /**
+             * Sets [Builder.kickedOffBy] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.kickedOffBy] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun kickedOffBy(kickedOffBy: JsonField<String>) = apply {
+                this.kickedOffBy = kickedOffBy
+            }
+
             fun name(name: String) = name(JsonField.of(name))
 
             /**
@@ -803,6 +1077,52 @@ private constructor(
              * value.
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
+
+            fun numExamples(numExamples: Long?) = numExamples(JsonField.ofNullable(numExamples))
+
+            /**
+             * Alias for [Builder.numExamples].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun numExamples(numExamples: Long) = numExamples(numExamples as Long?)
+
+            /** Alias for calling [Builder.numExamples] with `numExamples.orElse(null)`. */
+            fun numExamples(numExamples: Optional<Long>) = numExamples(numExamples.getOrNull())
+
+            /**
+             * Sets [Builder.numExamples] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.numExamples] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun numExamples(numExamples: JsonField<Long>) = apply { this.numExamples = numExamples }
+
+            fun numRepetitions(numRepetitions: Long?) =
+                numRepetitions(JsonField.ofNullable(numRepetitions))
+
+            /**
+             * Alias for [Builder.numRepetitions].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun numRepetitions(numRepetitions: Long) = numRepetitions(numRepetitions as Long?)
+
+            /** Alias for calling [Builder.numRepetitions] with `numRepetitions.orElse(null)`. */
+            fun numRepetitions(numRepetitions: Optional<Long>) =
+                numRepetitions(numRepetitions.getOrNull())
+
+            /**
+             * Sets [Builder.numRepetitions] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.numRepetitions] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun numRepetitions(numRepetitions: JsonField<Long>) = apply {
+                this.numRepetitions = numRepetitions
+            }
 
             fun referenceDatasetId(referenceDatasetId: String?) =
                 referenceDatasetId(JsonField.ofNullable(referenceDatasetId))
@@ -882,8 +1202,12 @@ private constructor(
                     defaultDatasetId,
                     description,
                     endTime,
+                    (evaluatorKeys ?: JsonMissing.of()).map { it.toImmutable() },
                     extra,
+                    kickedOffBy,
                     name,
+                    numExamples,
+                    numRepetitions,
                     referenceDatasetId,
                     startTime,
                     traceTier,
@@ -911,8 +1235,12 @@ private constructor(
             defaultDatasetId()
             description()
             endTime()
+            evaluatorKeys()
             extra().ifPresent { it.validate() }
+            kickedOffBy()
             name()
+            numExamples()
+            numRepetitions()
             referenceDatasetId()
             startTime()
             traceTier().ifPresent { it.validate() }
@@ -939,8 +1267,12 @@ private constructor(
                 (if (defaultDatasetId.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (endTime.asKnown().isPresent) 1 else 0) +
+                (evaluatorKeys.asKnown().getOrNull()?.size ?: 0) +
                 (extra.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (kickedOffBy.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
+                (if (numExamples.asKnown().isPresent) 1 else 0) +
+                (if (numRepetitions.asKnown().isPresent) 1 else 0) +
                 (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
                 (if (startTime.asKnown().isPresent) 1 else 0) +
                 (traceTier.asKnown().getOrNull()?.validity() ?: 0)
@@ -955,8 +1287,12 @@ private constructor(
                 defaultDatasetId == other.defaultDatasetId &&
                 description == other.description &&
                 endTime == other.endTime &&
+                evaluatorKeys == other.evaluatorKeys &&
                 extra == other.extra &&
+                kickedOffBy == other.kickedOffBy &&
                 name == other.name &&
+                numExamples == other.numExamples &&
+                numRepetitions == other.numRepetitions &&
                 referenceDatasetId == other.referenceDatasetId &&
                 startTime == other.startTime &&
                 traceTier == other.traceTier &&
@@ -969,8 +1305,12 @@ private constructor(
                 defaultDatasetId,
                 description,
                 endTime,
+                evaluatorKeys,
                 extra,
+                kickedOffBy,
                 name,
+                numExamples,
+                numRepetitions,
                 referenceDatasetId,
                 startTime,
                 traceTier,
@@ -981,7 +1321,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{id=$id, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, extra=$extra, name=$name, referenceDatasetId=$referenceDatasetId, startTime=$startTime, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+            "Body{id=$id, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, evaluatorKeys=$evaluatorKeys, extra=$extra, kickedOffBy=$kickedOffBy, name=$name, numExamples=$numExamples, numRepetitions=$numRepetitions, referenceDatasetId=$referenceDatasetId, startTime=$startTime, traceTier=$traceTier, additionalProperties=$additionalProperties}"
     }
 
     class Extra

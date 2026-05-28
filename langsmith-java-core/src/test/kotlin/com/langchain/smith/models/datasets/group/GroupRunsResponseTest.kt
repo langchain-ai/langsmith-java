@@ -214,6 +214,19 @@ internal class GroupRunsResponseTest {
                                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .errorRate(0.0)
                                 .exampleCount(0L)
+                                .experimentProgress(
+                                    GroupRunsResponse.Group.Session.ExperimentProgress.builder()
+                                        .evaluatorProgress(
+                                            GroupRunsResponse.Group.Session.ExperimentProgress
+                                                .EvaluatorProgress
+                                                .builder()
+                                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                                .build()
+                                        )
+                                        .expectedRunCount(0L)
+                                        .runProgress(0.0)
+                                        .build()
+                                )
                                 .extra(
                                     GroupRunsResponse.Group.Session.Extra.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -471,6 +484,19 @@ internal class GroupRunsResponseTest {
                             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .errorRate(0.0)
                             .exampleCount(0L)
+                            .experimentProgress(
+                                GroupRunsResponse.Group.Session.ExperimentProgress.builder()
+                                    .evaluatorProgress(
+                                        GroupRunsResponse.Group.Session.ExperimentProgress
+                                            .EvaluatorProgress
+                                            .builder()
+                                            .putAdditionalProperty("foo", JsonValue.from(0))
+                                            .build()
+                                    )
+                                    .expectedRunCount(0L)
+                                    .runProgress(0.0)
+                                    .build()
+                            )
                             .extra(
                                 GroupRunsResponse.Group.Session.Extra.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -734,6 +760,19 @@ internal class GroupRunsResponseTest {
                                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .errorRate(0.0)
                                 .exampleCount(0L)
+                                .experimentProgress(
+                                    GroupRunsResponse.Group.Session.ExperimentProgress.builder()
+                                        .evaluatorProgress(
+                                            GroupRunsResponse.Group.Session.ExperimentProgress
+                                                .EvaluatorProgress
+                                                .builder()
+                                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                                .build()
+                                        )
+                                        .expectedRunCount(0L)
+                                        .runProgress(0.0)
+                                        .build()
+                                )
                                 .extra(
                                     GroupRunsResponse.Group.Session.Extra.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))

@@ -5,6 +5,7 @@ package com.langchain.smith.models.sessions
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.http.QueryParams
 import java.time.OffsetDateTime
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -18,12 +19,16 @@ internal class SessionCreateParamsTest {
             .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .description("description")
             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+            .addEvaluatorKey("string")
             .extra(
                 SessionCreateParams.Extra.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+            .kickedOffBy("kicked_off_by")
             .name("name")
+            .numExamples(0L)
+            .numRepetitions(0L)
             .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
@@ -39,12 +44,16 @@ internal class SessionCreateParamsTest {
                 .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .addEvaluatorKey("string")
                 .extra(
                     SessionCreateParams.Extra.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .kickedOffBy("kicked_off_by")
                 .name("name")
+                .numExamples(0L)
+                .numRepetitions(0L)
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
@@ -73,12 +82,16 @@ internal class SessionCreateParamsTest {
                 .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .description("description")
                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .addEvaluatorKey("string")
                 .extra(
                     SessionCreateParams.Extra.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .kickedOffBy("kicked_off_by")
                 .name("name")
+                .numExamples(0L)
+                .numRepetitions(0L)
                 .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
@@ -90,13 +103,17 @@ internal class SessionCreateParamsTest {
         assertThat(body.defaultDatasetId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.description()).contains("description")
         assertThat(body.endTime()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(body.evaluatorKeys().getOrNull()).containsExactly("string")
         assertThat(body.extra())
             .contains(
                 SessionCreateParams.Extra.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+        assertThat(body.kickedOffBy()).contains("kicked_off_by")
         assertThat(body.name()).contains("name")
+        assertThat(body.numExamples()).contains(0L)
+        assertThat(body.numRepetitions()).contains(0L)
         assertThat(body.referenceDatasetId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.startTime()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(body.traceTier()).contains(SessionCreateParams.TraceTier.LONGLIVED)
