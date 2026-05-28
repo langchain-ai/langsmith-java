@@ -4,15 +4,12 @@ name: Publish Sonatype
 on:
   workflow_dispatch:
 
-<<<<<<< HEAD
-=======
   release:
     types: [published]
 
 permissions:
   contents: read
 
->>>>>>> f63fb541 (Apply custom code)
 jobs:
   publish:
     name: publish

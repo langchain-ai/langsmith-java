@@ -1,8 +1,4 @@
 plugins {
-<<<<<<< HEAD
-    id("langchain.java")
-=======
->>>>>>> f63fb541 (Apply custom code)
     application
     kotlin("jvm")
     id("org.jetbrains.kotlin.plugin.spring") version "2.1.20"
@@ -13,16 +9,10 @@ repositories {
     mavenCentral()
 }
 
-<<<<<<< HEAD
-dependencies {
-    implementation(project(":langsmith-java-core"))
-    implementation(project(":langsmith-java-client-okhttp"))
-=======
 // Align with Kotlin JVM target (Kotlin plugin applies Java plugin; keep targets consistent)
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
->>>>>>> f63fb541 (Apply custom code)
 }
 
 dependencies {
