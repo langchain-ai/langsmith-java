@@ -15,6 +15,7 @@ import kotlin.jvm.optionals.getOrNull
  */
 class SnapshotListParams
 private constructor(
+    private val createdBy: String?,
     private val limit: Long?,
     private val nameContains: String?,
     private val offset: Long?,
@@ -24,6 +25,9 @@ private constructor(
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    /** Filter by creator identity. Only 'me' is supported. */
+    fun createdBy(): Optional<String> = Optional.ofNullable(createdBy)
 
     /** Maximum number of results */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
@@ -62,6 +66,7 @@ private constructor(
     /** A builder for [SnapshotListParams]. */
     class Builder internal constructor() {
 
+        private var createdBy: String? = null
         private var limit: Long? = null
         private var nameContains: String? = null
         private var offset: Long? = null
@@ -73,6 +78,7 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(snapshotListParams: SnapshotListParams) = apply {
+            createdBy = snapshotListParams.createdBy
             limit = snapshotListParams.limit
             nameContains = snapshotListParams.nameContains
             offset = snapshotListParams.offset
@@ -82,6 +88,12 @@ private constructor(
             additionalHeaders = snapshotListParams.additionalHeaders.toBuilder()
             additionalQueryParams = snapshotListParams.additionalQueryParams.toBuilder()
         }
+
+        /** Filter by creator identity. Only 'me' is supported. */
+        fun createdBy(createdBy: String?) = apply { this.createdBy = createdBy }
+
+        /** Alias for calling [Builder.createdBy] with `createdBy.orElse(null)`. */
+        fun createdBy(createdBy: Optional<String>) = createdBy(createdBy.getOrNull())
 
         /** Maximum number of results */
         fun limit(limit: Long?) = apply { this.limit = limit }
@@ -239,6 +251,7 @@ private constructor(
          */
         fun build(): SnapshotListParams =
             SnapshotListParams(
+                createdBy,
                 limit,
                 nameContains,
                 offset,
@@ -255,6 +268,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                createdBy?.let { put("created_by", it) }
                 limit?.let { put("limit", it.toString()) }
                 nameContains?.let { put("name_contains", it) }
                 offset?.let { put("offset", it.toString()) }
@@ -271,6 +285,7 @@ private constructor(
         }
 
         return other is SnapshotListParams &&
+            createdBy == other.createdBy &&
             limit == other.limit &&
             nameContains == other.nameContains &&
             offset == other.offset &&
@@ -283,6 +298,7 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
+            createdBy,
             limit,
             nameContains,
             offset,
@@ -294,5 +310,5 @@ private constructor(
         )
 
     override fun toString() =
-        "SnapshotListParams{limit=$limit, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortDirection=$sortDirection, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SnapshotListParams{createdBy=$createdBy, limit=$limit, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortDirection=$sortDirection, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

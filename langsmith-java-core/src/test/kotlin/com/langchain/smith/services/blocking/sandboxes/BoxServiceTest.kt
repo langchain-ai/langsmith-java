@@ -65,8 +65,13 @@ internal class BoxServiceTest {
                             .addNoProxy("string")
                             .addRule(
                                 BoxCreateParams.ProxyConfig.Rule.builder()
-                                    .addMatchHost("string")
                                     .name("name")
+                                    .aws(
+                                        BoxCreateParams.ProxyConfig.Rule.Aws.builder()
+                                            .accessKeyId("access_key_id")
+                                            .secretAccessKey("secret_access_key")
+                                            .build()
+                                    )
                                     .enabled(true)
                                     .addHeader(
                                         BoxCreateParams.ProxyConfig.Rule.Header.builder()
@@ -79,7 +84,9 @@ internal class BoxServiceTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .addMatchHost("string")
                                     .addMatchPath("string")
+                                    .type("type")
                                     .build()
                             )
                             .build()
@@ -154,8 +161,13 @@ internal class BoxServiceTest {
                             .addNoProxy("string")
                             .addRule(
                                 BoxUpdateParams.ProxyConfig.Rule.builder()
-                                    .addMatchHost("string")
                                     .bodyName("name")
+                                    .aws(
+                                        BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
+                                            .accessKeyId("access_key_id")
+                                            .secretAccessKey("secret_access_key")
+                                            .build()
+                                    )
                                     .enabled(true)
                                     .addHeader(
                                         BoxUpdateParams.ProxyConfig.Rule.Header.builder()
@@ -168,7 +180,9 @@ internal class BoxServiceTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .addMatchHost("string")
                                     .addMatchPath("string")
+                                    .type("type")
                                     .build()
                             )
                             .build()
@@ -191,6 +205,7 @@ internal class BoxServiceTest {
         val boxes =
             boxService.list(
                 BoxListParams.builder()
+                    .createdBy("created_by")
                     .limit(0L)
                     .nameContains("name_contains")
                     .offset(0L)

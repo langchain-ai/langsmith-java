@@ -53,8 +53,13 @@ internal class BoxRetrieveResponseTest {
                         .addNoProxy("string")
                         .addRule(
                             BoxRetrieveResponse.ProxyConfig.Rule.builder()
-                                .addMatchHost("string")
                                 .name("name")
+                                .aws(
+                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
+                                        .accessKeyId("access_key_id")
+                                        .secretAccessKey("secret_access_key")
+                                        .build()
+                                )
                                 .enabled(true)
                                 .addHeader(
                                     BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
@@ -67,7 +72,9 @@ internal class BoxRetrieveResponseTest {
                                         .value("value")
                                         .build()
                                 )
+                                .addMatchHost("string")
                                 .addMatchPath("string")
+                                .type("type")
                                 .build()
                         )
                         .build()
@@ -122,8 +129,13 @@ internal class BoxRetrieveResponseTest {
                     .addNoProxy("string")
                     .addRule(
                         BoxRetrieveResponse.ProxyConfig.Rule.builder()
-                            .addMatchHost("string")
                             .name("name")
+                            .aws(
+                                BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
+                                    .accessKeyId("access_key_id")
+                                    .secretAccessKey("secret_access_key")
+                                    .build()
+                            )
                             .enabled(true)
                             .addHeader(
                                 BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
@@ -135,7 +147,9 @@ internal class BoxRetrieveResponseTest {
                                     .value("value")
                                     .build()
                             )
+                            .addMatchHost("string")
                             .addMatchPath("string")
+                            .type("type")
                             .build()
                     )
                     .build()
@@ -195,8 +209,13 @@ internal class BoxRetrieveResponseTest {
                         .addNoProxy("string")
                         .addRule(
                             BoxRetrieveResponse.ProxyConfig.Rule.builder()
-                                .addMatchHost("string")
                                 .name("name")
+                                .aws(
+                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
+                                        .accessKeyId("access_key_id")
+                                        .secretAccessKey("secret_access_key")
+                                        .build()
+                                )
                                 .enabled(true)
                                 .addHeader(
                                     BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
@@ -209,7 +228,9 @@ internal class BoxRetrieveResponseTest {
                                         .value("value")
                                         .build()
                                 )
+                                .addMatchHost("string")
                                 .addMatchPath("string")
+                                .type("type")
                                 .build()
                         )
                         .build()

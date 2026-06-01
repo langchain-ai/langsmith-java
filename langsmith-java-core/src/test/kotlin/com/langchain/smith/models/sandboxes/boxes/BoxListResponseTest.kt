@@ -60,8 +60,13 @@ internal class BoxListResponseTest {
                                 .addNoProxy("string")
                                 .addRule(
                                     BoxListResponse.Sandbox.ProxyConfig.Rule.builder()
-                                        .addMatchHost("string")
                                         .name("name")
+                                        .aws(
+                                            BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
+                                                .accessKeyId("access_key_id")
+                                                .secretAccessKey("secret_access_key")
+                                                .build()
+                                        )
                                         .enabled(true)
                                         .addHeader(
                                             BoxListResponse.Sandbox.ProxyConfig.Rule.Header
@@ -76,7 +81,9 @@ internal class BoxListResponseTest {
                                                 .value("value")
                                                 .build()
                                         )
+                                        .addMatchHost("string")
                                         .addMatchPath("string")
+                                        .type("type")
                                         .build()
                                 )
                                 .build()
@@ -139,8 +146,13 @@ internal class BoxListResponseTest {
                             .addNoProxy("string")
                             .addRule(
                                 BoxListResponse.Sandbox.ProxyConfig.Rule.builder()
-                                    .addMatchHost("string")
                                     .name("name")
+                                    .aws(
+                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
+                                            .accessKeyId("access_key_id")
+                                            .secretAccessKey("secret_access_key")
+                                            .build()
+                                    )
                                     .enabled(true)
                                     .addHeader(
                                         BoxListResponse.Sandbox.ProxyConfig.Rule.Header.builder()
@@ -153,7 +165,9 @@ internal class BoxListResponseTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .addMatchHost("string")
                                     .addMatchPath("string")
+                                    .type("type")
                                     .build()
                             )
                             .build()
@@ -221,8 +235,13 @@ internal class BoxListResponseTest {
                                 .addNoProxy("string")
                                 .addRule(
                                     BoxListResponse.Sandbox.ProxyConfig.Rule.builder()
-                                        .addMatchHost("string")
                                         .name("name")
+                                        .aws(
+                                            BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
+                                                .accessKeyId("access_key_id")
+                                                .secretAccessKey("secret_access_key")
+                                                .build()
+                                        )
                                         .enabled(true)
                                         .addHeader(
                                             BoxListResponse.Sandbox.ProxyConfig.Rule.Header
@@ -237,7 +256,9 @@ internal class BoxListResponseTest {
                                                 .value("value")
                                                 .build()
                                         )
+                                        .addMatchHost("string")
                                         .addMatchPath("string")
+                                        .type("type")
                                         .build()
                                 )
                                 .build()
