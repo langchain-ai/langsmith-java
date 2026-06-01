@@ -52,6 +52,7 @@ internal class SnapshotServiceTest {
         val snapshots =
             snapshotService.list(
                 SnapshotListParams.builder()
+                    .createdBy("created_by")
                     .limit(0L)
                     .nameContains("name_contains")
                     .offset(0L)

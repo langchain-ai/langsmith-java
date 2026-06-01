@@ -11,6 +11,7 @@ internal class BoxListParamsTest {
     @Test
     fun create() {
         BoxListParams.builder()
+            .createdBy("created_by")
             .limit(0L)
             .nameContains("name_contains")
             .offset(0L)
@@ -24,6 +25,7 @@ internal class BoxListParamsTest {
     fun queryParams() {
         val params =
             BoxListParams.builder()
+                .createdBy("created_by")
                 .limit(0L)
                 .nameContains("name_contains")
                 .offset(0L)
@@ -37,6 +39,7 @@ internal class BoxListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
+                    .put("created_by", "created_by")
                     .put("limit", "0")
                     .put("name_contains", "name_contains")
                     .put("offset", "0")
