@@ -3,6 +3,7 @@
 package com.langchain.smith.services.blocking.sandboxes
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
@@ -24,6 +25,11 @@ internal class BoxServiceTest {
             boxService.create(
                 BoxCreateParams.builder()
                     .deleteAfterStopSeconds(0L)
+                    .envVars(
+                        BoxCreateParams.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
