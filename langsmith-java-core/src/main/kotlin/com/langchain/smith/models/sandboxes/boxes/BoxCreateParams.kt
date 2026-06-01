@@ -44,6 +44,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun envVars(): Optional<EnvVars> = body.envVars()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun fsCapacityBytes(): Optional<Long> = body.fsCapacityBytes()
 
     /**
@@ -116,6 +122,13 @@ private constructor(
      * unexpected type.
      */
     fun _deleteAfterStopSeconds(): JsonField<Long> = body._deleteAfterStopSeconds()
+
+    /**
+     * Returns the raw JSON value of [envVars].
+     *
+     * Unlike [envVars], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _envVars(): JsonField<EnvVars> = body._envVars()
 
     /**
      * Returns the raw JSON value of [fsCapacityBytes].
@@ -225,10 +238,10 @@ private constructor(
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [deleteAfterStopSeconds]
+         * - [envVars]
          * - [fsCapacityBytes]
          * - [idleTtlSeconds]
          * - [memBytes]
-         * - [name]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -247,6 +260,16 @@ private constructor(
         fun deleteAfterStopSeconds(deleteAfterStopSeconds: JsonField<Long>) = apply {
             body.deleteAfterStopSeconds(deleteAfterStopSeconds)
         }
+
+        fun envVars(envVars: EnvVars) = apply { body.envVars(envVars) }
+
+        /**
+         * Sets [Builder.envVars] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.envVars] with a well-typed [EnvVars] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun envVars(envVars: JsonField<EnvVars>) = apply { body.envVars(envVars) }
 
         fun fsCapacityBytes(fsCapacityBytes: Long) = apply { body.fsCapacityBytes(fsCapacityBytes) }
 
@@ -520,6 +543,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val deleteAfterStopSeconds: JsonField<Long>,
+        private val envVars: JsonField<EnvVars>,
         private val fsCapacityBytes: JsonField<Long>,
         private val idleTtlSeconds: JsonField<Long>,
         private val memBytes: JsonField<Long>,
@@ -538,6 +562,9 @@ private constructor(
             @JsonProperty("delete_after_stop_seconds")
             @ExcludeMissing
             deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("env_vars")
+            @ExcludeMissing
+            envVars: JsonField<EnvVars> = JsonMissing.of(),
             @JsonProperty("fs_capacity_bytes")
             @ExcludeMissing
             fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
@@ -564,6 +591,7 @@ private constructor(
             @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
         ) : this(
             deleteAfterStopSeconds,
+            envVars,
             fsCapacityBytes,
             idleTtlSeconds,
             memBytes,
@@ -583,6 +611,12 @@ private constructor(
          */
         fun deleteAfterStopSeconds(): Optional<Long> =
             deleteAfterStopSeconds.getOptional("delete_after_stop_seconds")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun envVars(): Optional<EnvVars> = envVars.getOptional("env_vars")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -662,6 +696,13 @@ private constructor(
         @JsonProperty("delete_after_stop_seconds")
         @ExcludeMissing
         fun _deleteAfterStopSeconds(): JsonField<Long> = deleteAfterStopSeconds
+
+        /**
+         * Returns the raw JSON value of [envVars].
+         *
+         * Unlike [envVars], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("env_vars") @ExcludeMissing fun _envVars(): JsonField<EnvVars> = envVars
 
         /**
          * Returns the raw JSON value of [fsCapacityBytes].
@@ -773,6 +814,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of()
+            private var envVars: JsonField<EnvVars> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
             private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
             private var memBytes: JsonField<Long> = JsonMissing.of()
@@ -788,6 +830,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 deleteAfterStopSeconds = body.deleteAfterStopSeconds
+                envVars = body.envVars
                 fsCapacityBytes = body.fsCapacityBytes
                 idleTtlSeconds = body.idleTtlSeconds
                 memBytes = body.memBytes
@@ -814,6 +857,17 @@ private constructor(
             fun deleteAfterStopSeconds(deleteAfterStopSeconds: JsonField<Long>) = apply {
                 this.deleteAfterStopSeconds = deleteAfterStopSeconds
             }
+
+            fun envVars(envVars: EnvVars) = envVars(JsonField.of(envVars))
+
+            /**
+             * Sets [Builder.envVars] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.envVars] with a well-typed [EnvVars] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun envVars(envVars: JsonField<EnvVars>) = apply { this.envVars = envVars }
 
             fun fsCapacityBytes(fsCapacityBytes: Long) =
                 fsCapacityBytes(JsonField.of(fsCapacityBytes))
@@ -988,6 +1042,7 @@ private constructor(
             fun build(): Body =
                 Body(
                     deleteAfterStopSeconds,
+                    envVars,
                     fsCapacityBytes,
                     idleTtlSeconds,
                     memBytes,
@@ -1019,6 +1074,7 @@ private constructor(
             }
 
             deleteAfterStopSeconds()
+            envVars().ifPresent { it.validate() }
             fsCapacityBytes()
             idleTtlSeconds()
             memBytes()
@@ -1049,6 +1105,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
+                (envVars.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
                 (if (memBytes.asKnown().isPresent) 1 else 0) +
@@ -1067,6 +1124,7 @@ private constructor(
 
             return other is Body &&
                 deleteAfterStopSeconds == other.deleteAfterStopSeconds &&
+                envVars == other.envVars &&
                 fsCapacityBytes == other.fsCapacityBytes &&
                 idleTtlSeconds == other.idleTtlSeconds &&
                 memBytes == other.memBytes &&
@@ -1083,6 +1141,7 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 deleteAfterStopSeconds,
+                envVars,
                 fsCapacityBytes,
                 idleTtlSeconds,
                 memBytes,
@@ -1100,7 +1159,115 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+    }
+
+    class EnvVars
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [EnvVars]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [EnvVars]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(envVars: EnvVars) = apply {
+                additionalProperties = envVars.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [EnvVars].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): EnvVars = EnvVars(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): EnvVars = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is EnvVars && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "EnvVars{additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig

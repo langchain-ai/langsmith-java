@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.boxes
 
+import com.langchain.smith.core.JsonValue
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -12,6 +13,11 @@ internal class BoxCreateParamsTest {
     fun create() {
         BoxCreateParams.builder()
             .deleteAfterStopSeconds(0L)
+            .envVars(
+                BoxCreateParams.EnvVars.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
             .fsCapacityBytes(0L)
             .idleTtlSeconds(0L)
             .memBytes(0L)
@@ -75,6 +81,11 @@ internal class BoxCreateParamsTest {
         val params =
             BoxCreateParams.builder()
                 .deleteAfterStopSeconds(0L)
+                .envVars(
+                    BoxCreateParams.EnvVars.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
                 .memBytes(0L)
@@ -137,6 +148,12 @@ internal class BoxCreateParamsTest {
         val body = params._body()
 
         assertThat(body.deleteAfterStopSeconds()).contains(0L)
+        assertThat(body.envVars())
+            .contains(
+                BoxCreateParams.EnvVars.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
         assertThat(body.fsCapacityBytes()).contains(0L)
         assertThat(body.idleTtlSeconds()).contains(0L)
         assertThat(body.memBytes()).contains(0L)
