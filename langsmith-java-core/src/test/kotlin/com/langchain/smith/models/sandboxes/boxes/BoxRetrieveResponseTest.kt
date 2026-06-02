@@ -56,8 +56,32 @@ internal class BoxRetrieveResponseTest {
                                 .name("name")
                                 .aws(
                                     BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId("access_key_id")
-                                        .secretAccessKey("secret_access_key")
+                                        .accessKeyId(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
                                         .build()
                                 )
                                 .enabled(true)
@@ -132,8 +156,31 @@ internal class BoxRetrieveResponseTest {
                             .name("name")
                             .aws(
                                 BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId("access_key_id")
-                                    .secretAccessKey("secret_access_key")
+                                    .accessKeyId(
+                                        BoxRetrieveResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .secretAccessKey(
+                                        BoxRetrieveResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                    .SecretAccessKey
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
                                     .build()
                             )
                             .enabled(true)
@@ -212,8 +259,32 @@ internal class BoxRetrieveResponseTest {
                                 .name("name")
                                 .aws(
                                     BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId("access_key_id")
-                                        .secretAccessKey("secret_access_key")
+                                        .accessKeyId(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
                                         .build()
                                 )
                                 .enabled(true)

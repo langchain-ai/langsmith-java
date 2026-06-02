@@ -55,8 +55,29 @@ internal class BoxCreateParamsTest {
                             .name("name")
                             .aws(
                                 BoxCreateParams.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId("access_key_id")
-                                    .secretAccessKey("secret_access_key")
+                                    .accessKeyId(
+                                        BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
+                                            .type(
+                                                BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .secretAccessKey(
+                                        BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                            .builder()
+                                            .type(
+                                                BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
                                     .build()
                             )
                             .enabled(true)
@@ -130,8 +151,31 @@ internal class BoxCreateParamsTest {
                                 .name("name")
                                 .aws(
                                     BoxCreateParams.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId("access_key_id")
-                                        .secretAccessKey("secret_access_key")
+                                        .accessKeyId(
+                                            BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxCreateParams.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
                                         .build()
                                 )
                                 .enabled(true)
@@ -206,8 +250,29 @@ internal class BoxCreateParamsTest {
                             .name("name")
                             .aws(
                                 BoxCreateParams.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId("access_key_id")
-                                    .secretAccessKey("secret_access_key")
+                                    .accessKeyId(
+                                        BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
+                                            .type(
+                                                BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .secretAccessKey(
+                                        BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                            .builder()
+                                            .type(
+                                                BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
                                     .build()
                             )
                             .enabled(true)
