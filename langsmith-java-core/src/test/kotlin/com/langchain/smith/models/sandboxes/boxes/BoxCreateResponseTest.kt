@@ -56,32 +56,8 @@ internal class BoxCreateResponseTest {
                                 .name("name")
                                 .aws(
                                     BoxCreateResponse.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId(
-                                            BoxCreateResponse.ProxyConfig.Rule.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    BoxCreateResponse.ProxyConfig.Rule.Aws
-                                                        .AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            BoxCreateResponse.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    BoxCreateResponse.ProxyConfig.Rule.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                        .accessKeyId("access_key_id")
+                                        .secretAccessKey("secret_access_key")
                                         .build()
                                 )
                                 .enabled(true)
@@ -155,30 +131,8 @@ internal class BoxCreateResponseTest {
                             .name("name")
                             .aws(
                                 BoxCreateResponse.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId(
-                                        BoxCreateResponse.ProxyConfig.Rule.Aws.AccessKeyId.builder()
-                                            .type(
-                                                BoxCreateResponse.ProxyConfig.Rule.Aws.AccessKeyId
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
-                                    .secretAccessKey(
-                                        BoxCreateResponse.ProxyConfig.Rule.Aws.SecretAccessKey
-                                            .builder()
-                                            .type(
-                                                BoxCreateResponse.ProxyConfig.Rule.Aws
-                                                    .SecretAccessKey
-                                                    .Type
-                                                    .PLAINTEXT
-                                            )
-                                            .isSet(true)
-                                            .value("value")
-                                            .build()
-                                    )
+                                    .accessKeyId("access_key_id")
+                                    .secretAccessKey("secret_access_key")
                                     .build()
                             )
                             .enabled(true)
@@ -255,32 +209,8 @@ internal class BoxCreateResponseTest {
                                 .name("name")
                                 .aws(
                                     BoxCreateResponse.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId(
-                                            BoxCreateResponse.ProxyConfig.Rule.Aws.AccessKeyId
-                                                .builder()
-                                                .type(
-                                                    BoxCreateResponse.ProxyConfig.Rule.Aws
-                                                        .AccessKeyId
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
-                                        .secretAccessKey(
-                                            BoxCreateResponse.ProxyConfig.Rule.Aws.SecretAccessKey
-                                                .builder()
-                                                .type(
-                                                    BoxCreateResponse.ProxyConfig.Rule.Aws
-                                                        .SecretAccessKey
-                                                        .Type
-                                                        .PLAINTEXT
-                                                )
-                                                .isSet(true)
-                                                .value("value")
-                                                .build()
-                                        )
+                                        .accessKeyId("access_key_id")
+                                        .secretAccessKey("secret_access_key")
                                         .build()
                                 )
                                 .enabled(true)
