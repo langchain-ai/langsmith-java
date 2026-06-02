@@ -63,8 +63,36 @@ internal class BoxListResponseTest {
                                         .name("name")
                                         .aws(
                                             BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
-                                                .accessKeyId("access_key_id")
-                                                .secretAccessKey("secret_access_key")
+                                                .accessKeyId(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Aws
+                                                                .AccessKeyId
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .secretAccessKey(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Aws
+                                                                .SecretAccessKey
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
                                                 .build()
                                         )
                                         .enabled(true)
@@ -149,8 +177,34 @@ internal class BoxListResponseTest {
                                     .name("name")
                                     .aws(
                                         BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
-                                            .accessKeyId("access_key_id")
-                                            .secretAccessKey("secret_access_key")
+                                            .accessKeyId(
+                                                BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                    .AccessKeyId
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                            .AccessKeyId
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .secretAccessKey(
+                                                BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                    .SecretAccessKey
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                            .SecretAccessKey
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
                                             .build()
                                     )
                                     .enabled(true)
@@ -238,8 +292,36 @@ internal class BoxListResponseTest {
                                         .name("name")
                                         .aws(
                                             BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
-                                                .accessKeyId("access_key_id")
-                                                .secretAccessKey("secret_access_key")
+                                                .accessKeyId(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Aws
+                                                                .AccessKeyId
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .secretAccessKey(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Aws
+                                                                .SecretAccessKey
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
                                                 .build()
                                         )
                                         .enabled(true)

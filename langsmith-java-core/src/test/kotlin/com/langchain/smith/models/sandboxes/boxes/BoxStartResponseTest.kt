@@ -55,8 +55,32 @@ internal class BoxStartResponseTest {
                                 .name("name")
                                 .aws(
                                     BoxStartResponse.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId("access_key_id")
-                                        .secretAccessKey("secret_access_key")
+                                        .accessKeyId(
+                                            BoxStartResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxStartResponse.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxStartResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxStartResponse.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
                                         .build()
                                 )
                                 .enabled(true)
@@ -130,8 +154,30 @@ internal class BoxStartResponseTest {
                             .name("name")
                             .aws(
                                 BoxStartResponse.ProxyConfig.Rule.Aws.builder()
-                                    .accessKeyId("access_key_id")
-                                    .secretAccessKey("secret_access_key")
+                                    .accessKeyId(
+                                        BoxStartResponse.ProxyConfig.Rule.Aws.AccessKeyId.builder()
+                                            .type(
+                                                BoxStartResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .secretAccessKey(
+                                        BoxStartResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                            .builder()
+                                            .type(
+                                                BoxStartResponse.ProxyConfig.Rule.Aws
+                                                    .SecretAccessKey
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
                                     .build()
                             )
                             .enabled(true)
@@ -207,8 +253,32 @@ internal class BoxStartResponseTest {
                                 .name("name")
                                 .aws(
                                     BoxStartResponse.ProxyConfig.Rule.Aws.builder()
-                                        .accessKeyId("access_key_id")
-                                        .secretAccessKey("secret_access_key")
+                                        .accessKeyId(
+                                            BoxStartResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxStartResponse.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxStartResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxStartResponse.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
                                         .build()
                                 )
                                 .enabled(true)
