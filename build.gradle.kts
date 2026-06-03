@@ -1,5 +1,6 @@
 plugins {
-    id("org.jetbrains.dokka") version "2.0.0"
+    id("org.jetbrains.dokka") version "2.2.0"
+    id("org.jetbrains.dokka-javadoc") version "2.2.0"
 }
 
 repositories {
@@ -25,6 +26,7 @@ subprojects {
 
 subprojects {
     apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "org.jetbrains.dokka-javadoc")
 }
 
 // Avoid race conditions between `dokkaJavadocCollector` and `dokkaJavadocJar` tasks

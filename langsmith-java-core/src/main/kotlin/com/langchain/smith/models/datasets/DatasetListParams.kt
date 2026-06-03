@@ -378,7 +378,9 @@ private constructor(
                             put("data_type", dataTypes.joinToString(",") { it.toString() })
                         }
 
-                        override fun visitDataType(dataType: DataType) {
+                        override fun visitDataType(
+                            dataType: com.langchain.smith.models.datasets.DataType
+                        ) {
                             put("data_type", dataType.toString())
                         }
                     }
@@ -409,7 +411,8 @@ private constructor(
         fun dataTypes(): Optional<List<DataType>> = Optional.ofNullable(dataTypes)
 
         /** Enum for dataset data types. */
-        fun dataType(): Optional<DataType> = Optional.ofNullable(dataType)
+        fun dataType(): Optional<com.langchain.smith.models.datasets.DataType> =
+            Optional.ofNullable(dataType)
 
         fun isDataTypes(): Boolean = dataTypes != null
 
@@ -418,7 +421,8 @@ private constructor(
         fun asDataTypes(): List<DataType> = dataTypes.getOrThrow("dataTypes")
 
         /** Enum for dataset data types. */
-        fun asDataType(): DataType = dataType.getOrThrow("dataType")
+        fun asDataType(): com.langchain.smith.models.datasets.DataType =
+            dataType.getOrThrow("dataType")
 
         /**
          * Maps this instance's current variant to a value of type [T] using the given [visitor].
@@ -465,7 +469,7 @@ private constructor(
             fun visitDataTypes(dataTypes: List<DataType>): T
 
             /** Enum for dataset data types. */
-            fun visitDataType(dataType: DataType): T
+            fun visitDataType(dataType: com.langchain.smith.models.datasets.DataType): T
         }
     }
 

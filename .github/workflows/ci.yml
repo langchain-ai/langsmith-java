@@ -14,6 +14,9 @@ on:
       - 'stl-preview-head/**'
       - 'stl-preview-base/**'
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     timeout-minutes: 15
@@ -34,7 +37,7 @@ jobs:
           cache: gradle
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4.4.3
+        uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e # v6
 
       - name: Run lints
         run: ./scripts/lint
@@ -61,11 +64,13 @@ jobs:
           cache: gradle
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4.4.3
+        uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e # v6
 
       - name: Build SDK
         run: ./scripts/build
 
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3
 
-
-
+      - name: Run tests
+        run: ./scripts/test

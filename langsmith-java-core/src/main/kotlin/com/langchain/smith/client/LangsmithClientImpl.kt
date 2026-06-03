@@ -41,7 +41,7 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         else
             clientOptions
                 .toBuilder()
-                .putHeader("User-Agent", "${javaClass.simpleName}/Java ${getPackageVersion()}")
+                .putHeader("User-Agent", "langsmith-java/${getPackageVersion()}")
                 .build()
 
     // Pass the original clientOptions so that this client sets its own User-Agent.
@@ -57,7 +57,7 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val datasets: DatasetService by lazy { DatasetServiceImpl(clientOptionsWithUserAgent) }
 
-    private val runs: RunService by lazy { RunServiceImpl(clientOptionsWithUserAgent) }
+    private val runs = lazy { RunServiceImpl(clientOptionsWithUserAgent) }
 
     private val evaluators: EvaluatorService by lazy {
         EvaluatorServiceImpl(clientOptionsWithUserAgent)
@@ -100,7 +100,7 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     override fun datasets(): DatasetService = datasets
 
-    override fun runs(): RunService = runs
+    override fun runs(): RunService = runs.value
 
     override fun evaluators(): EvaluatorService = evaluators
 
@@ -122,7 +122,12 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     override fun sandboxes(): SandboxService = sandboxes
 
-    override fun close() = clientOptions.close()
+    override fun close() {
+        if (runs.isInitialized()) {
+            runs.value.shutdown()
+        }
+        clientOptions.close()
+    }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClient.WithRawResponse {

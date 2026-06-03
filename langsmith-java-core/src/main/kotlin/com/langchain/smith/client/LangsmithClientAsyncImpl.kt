@@ -41,11 +41,11 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         else
             clientOptions
                 .toBuilder()
-                .putHeader("User-Agent", "${javaClass.simpleName}/Java ${getPackageVersion()}")
+                .putHeader("User-Agent", "langsmith-java/${getPackageVersion()}")
                 .build()
 
     // Pass the original clientOptions so that this client sets its own User-Agent.
-    private val sync: LangsmithClient by lazy { LangsmithClientImpl(clientOptions) }
+    private val sync = lazy { LangsmithClientImpl(clientOptions) }
 
     private val withRawResponse: LangsmithClientAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
@@ -63,7 +63,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         DatasetServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
+    private val runs = lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
 
     private val evaluators: EvaluatorServiceAsync by lazy {
         EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -101,7 +101,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         SandboxServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    override fun sync(): LangsmithClient = sync
+    override fun sync(): LangsmithClient = sync.value
 
     override fun withRawResponse(): LangsmithClientAsync.WithRawResponse = withRawResponse
 
@@ -114,7 +114,7 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun datasets(): DatasetServiceAsync = datasets
 
-    override fun runs(): RunServiceAsync = runs
+    override fun runs(): RunServiceAsync = runs.value
 
     override fun evaluators(): EvaluatorServiceAsync = evaluators
 
@@ -136,7 +136,16 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun sandboxes(): SandboxServiceAsync = sandboxes
 
-    override fun close() = clientOptions.close()
+    override fun close() {
+        if (runs.isInitialized()) {
+            runs.value.shutdown()
+        }
+        if (sync.isInitialized()) {
+            sync.value.close()
+        } else {
+            clientOptions.close()
+        }
+    }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClientAsync.WithRawResponse {

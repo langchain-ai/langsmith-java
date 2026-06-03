@@ -5,16 +5,12 @@ package com.langchain.smith.errors
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
-import com.langchain.smith.core.jsonMapper
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class NotFoundException
 private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    LangChainServiceException(
-        "404: ${if (body.isMissing()) "Unknown" else jsonMapper().writeValueAsString(body)}",
-        cause,
-    ) {
+    LangChainServiceException(formatMessage(404, body), cause) {
 
     override fun statusCode(): Int = 404
 

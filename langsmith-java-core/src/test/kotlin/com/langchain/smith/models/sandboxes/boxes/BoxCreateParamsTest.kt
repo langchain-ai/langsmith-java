@@ -303,5 +303,8 @@ internal class BoxCreateParamsTest {
         val params = BoxCreateParams.builder().build()
 
         val body = params._body()
+
+        assertThat(body.snapshotId()).isEmpty()
+        assertThat(body.snapshotName()).isEmpty()
     }
 }

@@ -52,7 +52,7 @@ interface InfoServiceAsync {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): InfoServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/info`, but is otherwise the same as
+         * Returns a raw HTTP response for `get /info`, but is otherwise the same as
          * [InfoServiceAsync.list].
          */
         fun list(): CompletableFuture<HttpResponseFor<InfoListResponse>> =
