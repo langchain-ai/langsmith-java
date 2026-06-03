@@ -4,16 +4,10 @@ name: Publish Sonatype
 on:
   workflow_dispatch:
 
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-
 jobs:
   publish:
     name: publish
-    runs-on: ubuntu-latest-l-oss
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -28,18 +22,14 @@ jobs:
           cache: gradle
 
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3
+        uses: gradle/gradle-build-action@a8f75513eafdebd8141bd1cd4e30fcd194af8dfa # v2.12.0
 
       - name: Publish to Sonatype
         run: |-
           export -- GPG_SIGNING_KEY_ID
           printenv -- GPG_SIGNING_KEY | gpg --batch --passphrase-fd 3 --import 3<<< "$GPG_SIGNING_PASSWORD"
           GPG_SIGNING_KEY_ID="$(gpg --with-colons --list-keys | awk -F : -- '/^pub:/ { getline; print "0x" substr($10, length($10) - 7) }')"
-          export ORG_GRADLE_PROJECT_signingInMemoryKey="$GPG_SIGNING_KEY"
-          export ORG_GRADLE_PROJECT_signingInMemoryKeyId="$GPG_SIGNING_KEY_ID"
-          export ORG_GRADLE_PROJECT_signingInMemoryKeyPassword="$GPG_SIGNING_PASSWORD"
-          # Keep publish execution serial to avoid Gradle/Dokka task graph race conditions.
-          ./gradlew publishAndReleaseToMavenCentral --stacktrace -PmavenCentralUsername="$SONATYPE_USERNAME" -PmavenCentralPassword="$SONATYPE_PASSWORD" --no-configuration-cache --no-parallel
+          ./gradlew publishAndReleaseToMavenCentral --stacktrace -PmavenCentralUsername="$SONATYPE_USERNAME" -PmavenCentralPassword="$SONATYPE_PASSWORD" --no-configuration-cache
         env:
           SONATYPE_USERNAME: ${{ secrets.LANGCHAIN_SONATYPE_USERNAME || secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.LANGCHAIN_SONATYPE_PASSWORD || secrets.SONATYPE_PASSWORD }}

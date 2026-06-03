@@ -111,8 +111,6 @@ private constructor(
      * Defaults to 2.
      */
     @get:JvmName("maxRetries") val maxRetries: Int,
-    /** Whether run create/update calls should be automatically batched for tracing. */
-    @get:JvmName("autoBatchTracing") val autoBatchTracing: Boolean,
     /**
      * The level at which to log request and response information.
      *
@@ -123,8 +121,6 @@ private constructor(
     @get:JvmName("logLevel") val logLevel: LogLevel,
     private val apiKey: String?,
     private val tenantId: String?,
-    private val oauthAccessToken: String?,
-    private val profileAuth: ProfileAuth?,
 ) {
 
     init {
@@ -183,12 +179,9 @@ private constructor(
         private var responseValidation: Boolean = false
         private var timeout: Timeout = Timeout.default()
         private var maxRetries: Int = 2
-        private var autoBatchTracing: Boolean = true
         private var logLevel: LogLevel = LogLevel.fromEnv()
         private var apiKey: String? = null
         private var tenantId: String? = null
-        private var oauthAccessToken: String? = null
-        private var profileAuth: ProfileAuth? = null
 
         @JvmSynthetic
         internal fun from(clientOptions: ClientOptions) = apply {
@@ -204,12 +197,9 @@ private constructor(
             responseValidation = clientOptions.responseValidation
             timeout = clientOptions.timeout
             maxRetries = clientOptions.maxRetries
-            autoBatchTracing = clientOptions.autoBatchTracing
             logLevel = clientOptions.logLevel
             apiKey = clientOptions.apiKey
             tenantId = clientOptions.tenantId
-            oauthAccessToken = clientOptions.oauthAccessToken
-            profileAuth = clientOptions.profileAuth
         }
 
         /**
@@ -334,16 +324,6 @@ private constructor(
         fun maxRetries(maxRetries: Int) = apply { this.maxRetries = maxRetries }
 
         /**
-         * Whether run create/update calls should be automatically batched for tracing.
-         *
-         * Defaults to true. Set to false to send run create/update calls synchronously through the
-         * single-run endpoints.
-         */
-        fun autoBatchTracing(autoBatchTracing: Boolean) = apply {
-            this.autoBatchTracing = autoBatchTracing
-        }
-
-        /**
          * The level at which to log request and response information.
          *
          * [fromEnv] will set the level from environment variables. See [LogLevel.fromEnv].
@@ -453,15 +433,20 @@ private constructor(
          * |----------|-----------------------------|---------------------|--------|------------------------------------|
          * |`apiKey`  |`langchain.langsmithApiKey`  |`LANGSMITH_API_KEY`  |false   |-                                   |
          * |`tenantId`|`langchain.langsmithTenantId`|`LANGSMITH_TENANT_ID`|false   |-                                   |
-         * |`baseUrl` |`langchain.baseUrl`          |`LANGSMITH_ENDPOINT` |true    |`"https://api.smith.langchain.com/"`|
+         * |`baseUrl` |`langchain.baseUrl`          |`LANGCHAIN_BASE_URL` |true    |`"https://api.smith.langchain.com/"`|
          *
          * System properties take precedence over environment variables.
          */
         fun fromEnv() = apply {
             logLevel(LogLevel.fromEnv())
-            langsmithEndpoint()?.let { baseUrl(it) }
-            langsmithApiKey()?.let { apiKey(it) }
-            langsmithTenantId()?.let { tenantId(it) }
+            (System.getProperty("langchain.baseUrl") ?: System.getenv("LANGCHAIN_BASE_URL"))?.let {
+                baseUrl(it)
+            }
+            (System.getProperty("langchain.langsmithApiKey") ?: System.getenv("LANGSMITH_API_KEY"))
+                ?.let { apiKey(it) }
+            (System.getProperty("langchain.langsmithTenantId")
+                    ?: System.getenv("LANGSMITH_TENANT_ID"))
+                ?.let { tenantId(it) }
             System.getenv("LANGCHAIN_CUSTOM_HEADERS")?.let { customHeadersEnv ->
                 for (line in customHeadersEnv.split("\n")) {
                     val colon = line.indexOf(':')
@@ -469,9 +454,6 @@ private constructor(
                         putHeader(line.substring(0, colon).trim(), line.substring(colon + 1).trim())
                     }
                 }
-            }
-            loadProfileClientConfig(jsonMapper, clock, profileNameOverride = profileName())?.let {
-                applyProfileConfig(it)
             }
         }
 
@@ -522,28 +504,19 @@ private constructor(
             // We replace after all the default headers to allow end-users to overwrite them.
             headers.replaceAll(this.headers.build())
             queryParams.replaceAll(this.queryParams.build())
-            apiKey
-                ?.takeIf { it.isNotEmpty() }
-                ?.let {
-                    headers.remove("Authorization")
+            apiKey?.let {
+                if (!it.isEmpty()) {
                     headers.replace("X-API-Key", it)
                 }
-            if (apiKey.isNullOrEmpty()) {
-                oauthAccessToken
-                    ?.takeIf { it.isNotEmpty() }
-                    ?.let {
-                        val currentHeaders = headers.build()
-                        if (
-                            currentHeaders.values("X-API-Key").all(String::isBlank) &&
-                                currentHeaders.values("Authorization").all(String::isBlank)
-                        ) {
-                            headers.replace("Authorization", "Bearer $it")
-                        }
-                    }
             }
-            tenantId?.takeIf { it.isNotEmpty() }?.let { headers.replace("X-Tenant-Id", it) }
+            tenantId?.let {
+                if (!it.isEmpty()) {
+                    headers.replace("X-Tenant-Id", it)
+                }
+            }
 
-            val retryingHttpClient =
+            return ClientOptions(
+                httpClient,
                 RetryingHttpClient.builder()
                     .httpClient(
                         LoggingHttpClient.builder()
@@ -555,12 +528,7 @@ private constructor(
                     .sleeper(sleeper)
                     .clock(clock)
                     .maxRetries(maxRetries)
-                    .build()
-
-            return ClientOptions(
-                httpClient,
-                profileAuth?.let { ProfileAuthHttpClient(retryingHttpClient, it) }
-                    ?: retryingHttpClient,
+                    .build(),
                 checkJacksonVersionCompatibility,
                 jsonMapper,
                 streamHandlerExecutor,
@@ -572,56 +540,11 @@ private constructor(
                 responseValidation,
                 timeout,
                 maxRetries,
-                autoBatchTracing,
                 logLevel,
                 apiKey,
                 tenantId,
-                oauthAccessToken,
-                profileAuth,
             )
         }
-
-        private fun applyProfileConfig(profile: ProfileClientConfig) {
-            if (baseUrl.isNullOrBlank()) {
-                profile.baseUrl?.let { baseUrl(it) }
-            }
-            if (tenantId.isNullOrBlank()) {
-                profile.tenantId?.let { tenantId(it) }
-            }
-            if (!apiKey.isNullOrBlank() || hasAuthHeader()) {
-                return
-            }
-            if (!profile.oauthAccessToken.isNullOrBlank()) {
-                oauthAccessToken = profile.oauthAccessToken
-                profileAuth = profile.profileAuth
-            } else if (profile.profileAuth != null) {
-                profileAuth = profile.profileAuth
-            } else if (!profile.apiKey.isNullOrBlank()) {
-                apiKey(profile.apiKey)
-            }
-        }
-
-        private fun hasAuthHeader(): Boolean {
-            val currentHeaders = headers.build()
-            return currentHeaders.values("X-API-Key").any { it.isNotBlank() } ||
-                currentHeaders.values("Authorization").any { it.isNotBlank() }
-        }
-
-        private fun langsmithEndpoint(): String? =
-            System.getProperty("langchain.baseUrl")
-                ?: System.getenv("LANGSMITH_ENDPOINT")
-                ?: System.getenv("LANGCHAIN_ENDPOINT")
-
-        private fun langsmithApiKey(): String? =
-            System.getProperty("langchain.langsmithApiKey")
-                ?: System.getenv("LANGSMITH_API_KEY")
-                ?: System.getenv("LANGCHAIN_API_KEY")
-
-        private fun langsmithTenantId(): String? =
-            System.getProperty("langchain.langsmithTenantId")
-                ?: System.getenv("LANGSMITH_TENANT_ID")
-                ?: System.getenv("LANGSMITH_WORKSPACE_ID")
-                ?: System.getenv("LANGCHAIN_WORKSPACE_ID")
     }
 
     /**

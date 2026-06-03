@@ -589,7 +589,7 @@ private constructor(
 
     override fun hashCode() = values.hashCode()
 
-    override fun toString() = "[object Object]"
+    override fun toString() = values.toString()
 
     companion object {
 

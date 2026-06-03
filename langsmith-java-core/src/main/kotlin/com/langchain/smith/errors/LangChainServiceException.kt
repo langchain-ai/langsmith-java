@@ -2,7 +2,6 @@
 
 package com.langchain.smith.errors
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.http.Headers
 
@@ -15,19 +14,4 @@ protected constructor(message: String, cause: Throwable? = null) :
     abstract fun headers(): Headers
 
     abstract fun body(): JsonValue
-
-    companion object {
-
-        /** Formats a status code and [JsonValue] error body into an error message. */
-        @JvmStatic
-        fun formatMessage(statusCode: Int, body: JsonValue): String {
-            val bodyStr =
-                try {
-                    ObjectMapper().writeValueAsString(body)
-                } catch (_: Exception) {
-                    body.toString()
-                }
-            return "$statusCode: $bodyStr"
-        }
-    }
 }

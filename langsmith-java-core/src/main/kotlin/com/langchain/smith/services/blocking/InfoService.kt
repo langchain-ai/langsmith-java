@@ -52,7 +52,7 @@ interface InfoService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): InfoService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /info`, but is otherwise the same as
+         * Returns a raw HTTP response for `get /api/v1/info`, but is otherwise the same as
          * [InfoService.list].
          */
         @MustBeClosed fun list(): HttpResponseFor<InfoListResponse> = list(InfoListParams.none())

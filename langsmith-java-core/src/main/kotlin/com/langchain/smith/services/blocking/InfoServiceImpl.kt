@@ -30,7 +30,7 @@ class InfoServiceImpl internal constructor(private val clientOptions: ClientOpti
         InfoServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun list(params: InfoListParams, requestOptions: RequestOptions): InfoListResponse =
-        // get /info
+        // get /api/v1/info
         withRawResponse().list(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -57,7 +57,7 @@ class InfoServiceImpl internal constructor(private val clientOptions: ClientOpti
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegment("info")
+                    .addPathSegments("api", "v1", "info")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

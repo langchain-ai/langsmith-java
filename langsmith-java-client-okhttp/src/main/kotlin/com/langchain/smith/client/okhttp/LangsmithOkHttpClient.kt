@@ -292,16 +292,6 @@ class LangsmithOkHttpClient private constructor() {
         fun maxRetries(maxRetries: Int) = apply { clientOptions.maxRetries(maxRetries) }
 
         /**
-         * Whether run create/update calls should be automatically batched for tracing.
-         *
-         * Defaults to true. Set to false to send run create/update calls synchronously through the
-         * single-run endpoints.
-         */
-        fun autoBatchTracing(autoBatchTracing: Boolean) = apply {
-            clientOptions.autoBatchTracing(autoBatchTracing)
-        }
-
-        /**
          * The level at which to log request and response information.
          *
          * [fromEnv] will set the level from environment variables. See [LogLevel.fromEnv].

@@ -1,4 +1,4 @@
-# LangSmith Java SDK
+# LangChain Java API Library
 
 <!-- x-release-please-start-version -->
 
@@ -7,13 +7,13 @@
 
 <!-- x-release-please-end -->
 
-The [LangSmith](https://www.langchain.com/langsmith/observability) Java SDK provides convenient access to the LangSmith [REST API](https://api.smith.langchain.com/docs) from applications written in Java.
+The LangChain Java SDK provides convenient access to the LangChain REST API from applications written in Java.
 
-To learn more about LangSmith, check out the [docs](https://docs.smith.langchain.com/).
+It is generated with [Stainless](https://www.stainless.com/).
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [docs.smith.langchain.com](https://docs.smith.langchain.com/). Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-beta.7).
+Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-beta.7).
 
 <!-- x-release-please-end -->
 
@@ -48,52 +48,20 @@ This library requires Java 8 or later.
 ```java
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
-import com.langchain.smith.models.runs.RunQueryParams;
+import com.langchain.smith.models.sessions.CustomChartsSection;
+import com.langchain.smith.models.sessions.CustomChartsSectionRequest;
+import com.langchain.smith.models.sessions.SessionDashboardParams;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGSMITH_ENDPOINT` environment variables
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
-RunQueryParams params = RunQueryParams.builder()
-    .addSession("1ffaeba7-541e-469f-bae7-df3208ea3d45")
-    .limit(10L)
+SessionDashboardParams params = SessionDashboardParams.builder()
+    .sessionId("1ffaeba7-541e-469f-bae7-df3208ea3d45")
+    .customChartsSectionRequest(CustomChartsSectionRequest.builder().build())
     .build();
-var response = client.runs().query(params);
-
-// Print runs
-System.out.println("Found " + response.runs().size() + " runs:");
-for (var run : response.runs()) {
-    System.out.println("Run ID: " + run.id());
-    System.out.println("Run Name: " + run.name());
-    System.out.println("---");
-}
+CustomChartsSection customChartsSection = client.sessions().dashboard(params);
 ```
-
-## Examples
-
-This repository includes runnable examples in the `langsmith-java-example` module to help you get started.
-
-### Running Examples
-
-Examples can be run using Gradle:
-
-```bash
-# Set required environment variables
-export LANGSMITH_API_KEY="your-api-key"
-export LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
-
-# Run a specific example
-./gradlew :langsmith-java-example:run -Pexample=ListRuns
-```
-
-### Available Examples
-
-```bash
-export LANGSMITH_PROJECT_ID="your-project-id"
-./gradlew :langsmith-java-example:run -Pexample=ListRuns
-```
-
-All examples are available in [`langsmith-java-example`](langsmith-java-example).
 
 ## Client configuration
 
@@ -104,7 +72,7 @@ import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGSMITH_ENDPOINT` environment variables
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 ```
 
@@ -128,7 +96,7 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
 
 LangsmithClient client = LangsmithOkHttpClient.builder()
     // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
-    // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGSMITH_ENDPOINT` environment variables
+    // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
     .fromEnv()
     .apiKey("My API Key")
     .build();
@@ -140,7 +108,7 @@ See this table for the available options:
 | ---------- | ----------------------------- | --------------------- | -------- | ------------------------------------ |
 | `apiKey`   | `langchain.langsmithApiKey`   | `LANGSMITH_API_KEY`   | false    | -                                    |
 | `tenantId` | `langchain.langsmithTenantId` | `LANGSMITH_TENANT_ID` | false    | -                                    |
-| `baseUrl`  | `langchain.baseUrl`           | `LANGSMITH_ENDPOINT`  | true     | `"https://api.smith.langchain.com/"` |
+| `baseUrl`  | `langchain.baseUrl`           | `LANGCHAIN_BASE_URL`  | true     | `"https://api.smith.langchain.com/"` |
 
 System properties take precedence over environment variables.
 
@@ -190,7 +158,7 @@ import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGSMITH_ENDPOINT` environment variables
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
@@ -211,7 +179,7 @@ import com.langchain.smith.models.sessions.SessionDashboardParams;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
-// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGSMITH_ENDPOINT` environment variables
+// Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGCHAIN_BASE_URL` environment variables
 LangsmithClientAsync client = LangsmithOkHttpClientAsync.fromEnv();
 
 SessionDashboardParams params = SessionDashboardParams.builder()
@@ -523,7 +491,7 @@ LangsmithClient client = LangsmithOkHttpClient.builder()
 
 ### Timeouts
 
-Requests time out after 90 seconds by default.
+Requests time out after 1.5 minutes by default.
 
 To set a custom timeout, configure the method call using the `timeout` method:
 

@@ -41,30 +41,28 @@ interface RunServiceAsync {
 
     fun rules(): RuleServiceAsync
 
-    /** Flushes any queued runs, completing when all pending requests have been sent. */
-    fun flush(): CompletableFuture<Void?> = CompletableFuture.completedFuture(null)
-
     /**
      * Queues a single run for ingestion. The request body must be a JSON-encoded run object that
      * follows the Run schema.
      */
-    fun create(params: RunCreateParams): CompletableFuture<Void?> =
+    fun create(params: RunCreateParams): CompletableFuture<RunCreateResponse> =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    ): CompletableFuture<RunCreateResponse>
 
     /** @see create */
     fun create(
         run: Run,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?> = create(RunCreateParams.builder().run(run).build(), requestOptions)
+    ): CompletableFuture<RunCreateResponse> =
+        create(RunCreateParams.builder().run(run).build(), requestOptions)
 
     /** @see create */
-    fun create(run: Run): CompletableFuture<Void?> = create(run, RequestOptions.none())
+    fun create(run: Run): CompletableFuture<RunCreateResponse> = create(run, RequestOptions.none())
 
     /** Get a specific run. */
     fun retrieve(runId: String): CompletableFuture<RunSchema> =
@@ -102,7 +100,7 @@ interface RunServiceAsync {
      * Updates a run identified by its ID. The body should contain only the fields to be changed;
      * unknown fields are ignored.
      */
-    fun update(runId: String, params: RunUpdateParams): CompletableFuture<Void?> =
+    fun update(runId: String, params: RunUpdateParams): CompletableFuture<RunUpdateResponse> =
         update(runId, params, RequestOptions.none())
 
     /** @see update */
@@ -110,17 +108,18 @@ interface RunServiceAsync {
         runId: String,
         params: RunUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?> = update(params.toBuilder().runId(runId).build(), requestOptions)
+    ): CompletableFuture<RunUpdateResponse> =
+        update(params.toBuilder().runId(runId).build(), requestOptions)
 
     /** @see update */
-    fun update(params: RunUpdateParams): CompletableFuture<Void?> =
+    fun update(params: RunUpdateParams): CompletableFuture<RunUpdateResponse> =
         update(params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    ): CompletableFuture<RunUpdateResponse>
 
     /**
      * Ingests a batch of runs in a single JSON payload. The payload must have `post` and/or `patch`

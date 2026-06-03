@@ -9,8 +9,8 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.guardsquare:proguard-gradle:7.8.0")
-        classpath("com.android.tools:r8:9.1.31")
+        classpath("com.guardsquare:proguard-gradle:7.4.2")
+        classpath("com.android.tools:r8:8.3.37")
     }
 }
 
@@ -33,7 +33,7 @@ val proguardJar by tasks.registering(proguard.gradle.ProGuardTask::class) {
     dependsOn(tasks.shadowJar)
     notCompatibleWithConfigurationCache("ProGuard")
 
-    injars(tasks.shadowJar.flatMap { it.archiveFile })
+    injars(tasks.shadowJar)
     outjars(proguardJarPath)
     printmapping("${layout.buildDirectory.get()}/proguard-mapping.txt")
 
