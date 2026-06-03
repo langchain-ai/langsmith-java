@@ -1,4 +1,4 @@
 configured_endpoints: 125
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/langsmith/langsmith-api-867668f0c0d89ca746c8a5ed98e7f51a6e115bc660e2f72c0a42fa39adf60a3c.yml
-openapi_spec_hash: 544faa8f6efc056be1cb2565c9d67b99
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/langsmith/langsmith-api-25973e6440b54a281f42588f9b887109accd15e287e50185f06a1604979f577b.yml
+openapi_spec_hash: c9a76d9310f188c2cde4f39483026b97
 config_hash: ae3cb858ab7acded1d7ada7b913179d4
