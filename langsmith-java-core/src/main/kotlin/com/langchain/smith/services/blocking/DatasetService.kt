@@ -32,7 +32,6 @@ import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
 import com.langchain.smith.services.blocking.datasets.ExperimentService
 import com.langchain.smith.services.blocking.datasets.GroupService
-import com.langchain.smith.services.blocking.datasets.PlaygroundExperimentService
 import com.langchain.smith.services.blocking.datasets.RunService
 import com.langchain.smith.services.blocking.datasets.ShareService
 import com.langchain.smith.services.blocking.datasets.SplitService
@@ -66,8 +65,6 @@ interface DatasetService {
     fun comparative(): ComparativeService
 
     fun splits(): SplitService
-
-    fun playgroundExperiment(): PlaygroundExperimentService
 
     /** Create a new dataset. */
     fun create(params: DatasetCreateParams): Dataset = create(params, RequestOptions.none())
@@ -420,8 +417,6 @@ interface DatasetService {
         fun comparative(): ComparativeService.WithRawResponse
 
         fun splits(): SplitService.WithRawResponse
-
-        fun playgroundExperiment(): PlaygroundExperimentService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/datasets`, but is otherwise the same as
