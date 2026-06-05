@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.0-beta.8 (2026-06-05)
+
+Full Changelog: [v0.1.0-beta.7...v0.1.0-beta.8](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.7...v0.1.0-beta.8)
+
+### Features
+
+* **api:** api update ([dec07dc](https://github.com/langchain-ai/langsmith-java/commit/dec07dc3b667afbe864155471c6647b99bc36abe))
+* **api:** api update ([0332245](https://github.com/langchain-ai/langsmith-java/commit/0332245947157b3a168dfb0175c9703a7e399db2))
+* **api:** api update ([d736005](https://github.com/langchain-ai/langsmith-java/commit/d73600500cce9879ae77250bf594a4454587e8e1))
+* **api:** api update ([e442355](https://github.com/langchain-ai/langsmith-java/commit/e442355601926735c63d46fd7c27e20e2193dfba))
+* **api:** api update ([91dd951](https://github.com/langchain-ai/langsmith-java/commit/91dd95195a5664b214b234c330d61ec062ed016b))
+
+
+### Chores
+
+* **deps:** bump gradle-wrapper in the minor-and-patch group ([#160](https://github.com/langchain-ai/langsmith-java/issues/160)) ([6fad098](https://github.com/langchain-ai/langsmith-java/commit/6fad098c82d0c6d60eded6b1c3f3cffde184188f))
+
 ## 0.1.0-beta.7 (2026-05-27)
 
 Full Changelog: [v0.1.0-beta.6...v0.1.0-beta.7](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.6...v0.1.0-beta.7)
