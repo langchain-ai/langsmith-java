@@ -110,6 +110,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun tagValueIds(): Optional<List<String>> = body.tagValueIds()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun traceTier(): Optional<TraceTier> = body.traceTier()
 
     /**
@@ -197,6 +203,13 @@ private constructor(
      * Unlike [startTime], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _startTime(): JsonField<OffsetDateTime> = body._startTime()
+
+    /**
+     * Returns the raw JSON value of [tagValueIds].
+     *
+     * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _tagValueIds(): JsonField<List<String>> = body._tagValueIds()
 
     /**
      * Returns the raw JSON value of [traceTier].
@@ -465,6 +478,29 @@ private constructor(
          */
         fun startTime(startTime: JsonField<OffsetDateTime>) = apply { body.startTime(startTime) }
 
+        fun tagValueIds(tagValueIds: List<String>?) = apply { body.tagValueIds(tagValueIds) }
+
+        /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+        fun tagValueIds(tagValueIds: Optional<List<String>>) = tagValueIds(tagValueIds.getOrNull())
+
+        /**
+         * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+            body.tagValueIds(tagValueIds)
+        }
+
+        /**
+         * Adds a single [String] to [tagValueIds].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply { body.addTagValueId(tagValueId) }
+
         fun traceTier(traceTier: TraceTier?) = apply { body.traceTier(traceTier) }
 
         /** Alias for calling [Builder.traceTier] with `traceTier.orElse(null)`. */
@@ -638,6 +674,7 @@ private constructor(
         private val numRepetitions: JsonField<Long>,
         private val referenceDatasetId: JsonField<String>,
         private val startTime: JsonField<OffsetDateTime>,
+        private val tagValueIds: JsonField<List<String>>,
         private val traceTier: JsonField<TraceTier>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -674,6 +711,9 @@ private constructor(
             @JsonProperty("start_time")
             @ExcludeMissing
             startTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("tag_value_ids")
+            @ExcludeMissing
+            tagValueIds: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("trace_tier")
             @ExcludeMissing
             traceTier: JsonField<TraceTier> = JsonMissing.of(),
@@ -690,6 +730,7 @@ private constructor(
             numRepetitions,
             referenceDatasetId,
             startTime,
+            tagValueIds,
             traceTier,
             mutableMapOf(),
         )
@@ -767,6 +808,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tagValueIds(): Optional<List<String>> = tagValueIds.getOptional("tag_value_ids")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -881,6 +928,15 @@ private constructor(
         fun _startTime(): JsonField<OffsetDateTime> = startTime
 
         /**
+         * Returns the raw JSON value of [tagValueIds].
+         *
+         * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tag_value_ids")
+        @ExcludeMissing
+        fun _tagValueIds(): JsonField<List<String>> = tagValueIds
+
+        /**
          * Returns the raw JSON value of [traceTier].
          *
          * Unlike [traceTier], this method doesn't throw if the JSON field has an unexpected type.
@@ -922,6 +978,7 @@ private constructor(
             private var numRepetitions: JsonField<Long> = JsonMissing.of()
             private var referenceDatasetId: JsonField<String> = JsonMissing.of()
             private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var tagValueIds: JsonField<MutableList<String>>? = null
             private var traceTier: JsonField<TraceTier> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -939,6 +996,7 @@ private constructor(
                 numRepetitions = body.numRepetitions
                 referenceDatasetId = body.referenceDatasetId
                 startTime = body.startTime
+                tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 traceTier = body.traceTier
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -1158,6 +1216,36 @@ private constructor(
                 this.startTime = startTime
             }
 
+            fun tagValueIds(tagValueIds: List<String>?) =
+                tagValueIds(JsonField.ofNullable(tagValueIds))
+
+            /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+            fun tagValueIds(tagValueIds: Optional<List<String>>) =
+                tagValueIds(tagValueIds.getOrNull())
+
+            /**
+             * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+                this.tagValueIds = tagValueIds.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [tagValueIds].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTagValueId(tagValueId: String) = apply {
+                tagValueIds =
+                    (tagValueIds ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("tagValueIds", it).add(tagValueId)
+                    }
+            }
+
             fun traceTier(traceTier: TraceTier?) = traceTier(JsonField.ofNullable(traceTier))
 
             /** Alias for calling [Builder.traceTier] with `traceTier.orElse(null)`. */
@@ -1210,6 +1298,7 @@ private constructor(
                     numRepetitions,
                     referenceDatasetId,
                     startTime,
+                    (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
                     traceTier,
                     additionalProperties.toMutableMap(),
                 )
@@ -1243,6 +1332,7 @@ private constructor(
             numRepetitions()
             referenceDatasetId()
             startTime()
+            tagValueIds()
             traceTier().ifPresent { it.validate() }
             validated = true
         }
@@ -1275,6 +1365,7 @@ private constructor(
                 (if (numRepetitions.asKnown().isPresent) 1 else 0) +
                 (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
                 (if (startTime.asKnown().isPresent) 1 else 0) +
+                (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
                 (traceTier.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -1295,6 +1386,7 @@ private constructor(
                 numRepetitions == other.numRepetitions &&
                 referenceDatasetId == other.referenceDatasetId &&
                 startTime == other.startTime &&
+                tagValueIds == other.tagValueIds &&
                 traceTier == other.traceTier &&
                 additionalProperties == other.additionalProperties
         }
@@ -1313,6 +1405,7 @@ private constructor(
                 numRepetitions,
                 referenceDatasetId,
                 startTime,
+                tagValueIds,
                 traceTier,
                 additionalProperties,
             )
@@ -1321,7 +1414,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{id=$id, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, evaluatorKeys=$evaluatorKeys, extra=$extra, kickedOffBy=$kickedOffBy, name=$name, numExamples=$numExamples, numRepetitions=$numRepetitions, referenceDatasetId=$referenceDatasetId, startTime=$startTime, traceTier=$traceTier, additionalProperties=$additionalProperties}"
+            "Body{id=$id, defaultDatasetId=$defaultDatasetId, description=$description, endTime=$endTime, evaluatorKeys=$evaluatorKeys, extra=$extra, kickedOffBy=$kickedOffBy, name=$name, numExamples=$numExamples, numRepetitions=$numRepetitions, referenceDatasetId=$referenceDatasetId, startTime=$startTime, tagValueIds=$tagValueIds, traceTier=$traceTier, additionalProperties=$additionalProperties}"
     }
 
     class Extra
