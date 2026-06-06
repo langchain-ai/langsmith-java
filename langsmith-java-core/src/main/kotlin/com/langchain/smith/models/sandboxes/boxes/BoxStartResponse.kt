@@ -31,6 +31,7 @@ private constructor(
     private val fsCapacityBytes: JsonField<Long>,
     private val idleTtlSeconds: JsonField<Long>,
     private val memBytes: JsonField<Long>,
+    private val mounts: JsonField<List<Mount>>,
     private val name: JsonField<String>,
     private val proxyConfig: JsonField<ProxyConfig>,
     private val sizeClass: JsonField<String>,
@@ -62,6 +63,7 @@ private constructor(
         @ExcludeMissing
         idleTtlSeconds: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("mem_bytes") @ExcludeMissing memBytes: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("mounts") @ExcludeMissing mounts: JsonField<List<Mount>> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("proxy_config")
         @ExcludeMissing
@@ -87,6 +89,7 @@ private constructor(
         fsCapacityBytes,
         idleTtlSeconds,
         memBytes,
+        mounts,
         name,
         proxyConfig,
         sizeClass,
@@ -148,6 +151,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun memBytes(): Optional<Long> = memBytes.getOptional("mem_bytes")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun mounts(): Optional<List<Mount>> = mounts.getOptional("mounts")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -275,6 +284,13 @@ private constructor(
     @JsonProperty("mem_bytes") @ExcludeMissing fun _memBytes(): JsonField<Long> = memBytes
 
     /**
+     * Returns the raw JSON value of [mounts].
+     *
+     * Unlike [mounts], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("mounts") @ExcludeMissing fun _mounts(): JsonField<List<Mount>> = mounts
+
+    /**
      * Returns the raw JSON value of [name].
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
@@ -377,6 +393,7 @@ private constructor(
         private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
         private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
         private var memBytes: JsonField<Long> = JsonMissing.of()
+        private var mounts: JsonField<MutableList<Mount>>? = null
         private var name: JsonField<String> = JsonMissing.of()
         private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
         private var sizeClass: JsonField<String> = JsonMissing.of()
@@ -399,6 +416,7 @@ private constructor(
             fsCapacityBytes = boxStartResponse.fsCapacityBytes
             idleTtlSeconds = boxStartResponse.idleTtlSeconds
             memBytes = boxStartResponse.memBytes
+            mounts = boxStartResponse.mounts.map { it.toMutableList() }
             name = boxStartResponse.name
             proxyConfig = boxStartResponse.proxyConfig
             sizeClass = boxStartResponse.sizeClass
@@ -506,6 +524,31 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun memBytes(memBytes: JsonField<Long>) = apply { this.memBytes = memBytes }
+
+        fun mounts(mounts: List<Mount>) = mounts(JsonField.of(mounts))
+
+        /**
+         * Sets [Builder.mounts] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.mounts] with a well-typed `List<Mount>` value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun mounts(mounts: JsonField<List<Mount>>) = apply {
+            this.mounts = mounts.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [Mount] to [mounts].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addMount(mount: Mount) = apply {
+            mounts =
+                (mounts ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("mounts", it).add(mount)
+                }
+        }
 
         fun name(name: String) = name(JsonField.of(name))
 
@@ -652,6 +695,7 @@ private constructor(
                 fsCapacityBytes,
                 idleTtlSeconds,
                 memBytes,
+                (mounts ?: JsonMissing.of()).map { it.toImmutable() },
                 name,
                 proxyConfig,
                 sizeClass,
@@ -689,6 +733,7 @@ private constructor(
         fsCapacityBytes()
         idleTtlSeconds()
         memBytes()
+        mounts().ifPresent { it.forEach { it.validate() } }
         name()
         proxyConfig().ifPresent { it.validate() }
         sizeClass()
@@ -725,6 +770,7 @@ private constructor(
             (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
             (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
             (if (memBytes.asKnown().isPresent) 1 else 0) +
+            (mounts.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sizeClass.asKnown().isPresent) 1 else 0) +
@@ -735,6 +781,1003 @@ private constructor(
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (updatedBy.asKnown().isPresent) 1 else 0) +
             (if (vcpus.asKnown().isPresent) 1 else 0)
+
+    class Mount
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val id: JsonField<String>,
+        private val mountPath: JsonField<String>,
+        private val s3: JsonField<S3>,
+        private val type: JsonField<Type>,
+        private val cache: JsonField<Cache>,
+        private val readOnly: JsonField<Boolean>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("mount_path")
+            @ExcludeMissing
+            mountPath: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("s3") @ExcludeMissing s3: JsonField<S3> = JsonMissing.of(),
+            @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
+            @JsonProperty("cache") @ExcludeMissing cache: JsonField<Cache> = JsonMissing.of(),
+            @JsonProperty("read_only")
+            @ExcludeMissing
+            readOnly: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(id, mountPath, s3, type, cache, readOnly, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun id(): String = id.getRequired("id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun mountPath(): String = mountPath.getRequired("mount_path")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun s3(): S3 = s3.getRequired("s3")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun type(): Type = type.getRequired("type")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun cache(): Optional<Cache> = cache.getOptional("cache")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun readOnly(): Optional<Boolean> = readOnly.getOptional("read_only")
+
+        /**
+         * Returns the raw JSON value of [id].
+         *
+         * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+        /**
+         * Returns the raw JSON value of [mountPath].
+         *
+         * Unlike [mountPath], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("mount_path") @ExcludeMissing fun _mountPath(): JsonField<String> = mountPath
+
+        /**
+         * Returns the raw JSON value of [s3].
+         *
+         * Unlike [s3], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("s3") @ExcludeMissing fun _s3(): JsonField<S3> = s3
+
+        /**
+         * Returns the raw JSON value of [type].
+         *
+         * Unlike [type], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+        /**
+         * Returns the raw JSON value of [cache].
+         *
+         * Unlike [cache], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("cache") @ExcludeMissing fun _cache(): JsonField<Cache> = cache
+
+        /**
+         * Returns the raw JSON value of [readOnly].
+         *
+         * Unlike [readOnly], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("read_only") @ExcludeMissing fun _readOnly(): JsonField<Boolean> = readOnly
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Mount].
+             *
+             * The following fields are required:
+             * ```java
+             * .id()
+             * .mountPath()
+             * .s3()
+             * .type()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Mount]. */
+        class Builder internal constructor() {
+
+            private var id: JsonField<String>? = null
+            private var mountPath: JsonField<String>? = null
+            private var s3: JsonField<S3>? = null
+            private var type: JsonField<Type>? = null
+            private var cache: JsonField<Cache> = JsonMissing.of()
+            private var readOnly: JsonField<Boolean> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(mount: Mount) = apply {
+                id = mount.id
+                mountPath = mount.mountPath
+                s3 = mount.s3
+                type = mount.type
+                cache = mount.cache
+                readOnly = mount.readOnly
+                additionalProperties = mount.additionalProperties.toMutableMap()
+            }
+
+            fun id(id: String) = id(JsonField.of(id))
+
+            /**
+             * Sets [Builder.id] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.id] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun id(id: JsonField<String>) = apply { this.id = id }
+
+            fun mountPath(mountPath: String) = mountPath(JsonField.of(mountPath))
+
+            /**
+             * Sets [Builder.mountPath] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.mountPath] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun mountPath(mountPath: JsonField<String>) = apply { this.mountPath = mountPath }
+
+            fun s3(s3: S3) = s3(JsonField.of(s3))
+
+            /**
+             * Sets [Builder.s3] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.s3] with a well-typed [S3] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun s3(s3: JsonField<S3>) = apply { this.s3 = s3 }
+
+            fun type(type: Type) = type(JsonField.of(type))
+
+            /**
+             * Sets [Builder.type] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.type] with a well-typed [Type] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+            fun cache(cache: Cache) = cache(JsonField.of(cache))
+
+            /**
+             * Sets [Builder.cache] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.cache] with a well-typed [Cache] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun cache(cache: JsonField<Cache>) = apply { this.cache = cache }
+
+            fun readOnly(readOnly: Boolean) = readOnly(JsonField.of(readOnly))
+
+            /**
+             * Sets [Builder.readOnly] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.readOnly] with a well-typed [Boolean] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun readOnly(readOnly: JsonField<Boolean>) = apply { this.readOnly = readOnly }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Mount].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .id()
+             * .mountPath()
+             * .s3()
+             * .type()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Mount =
+                Mount(
+                    checkRequired("id", id),
+                    checkRequired("mountPath", mountPath),
+                    checkRequired("s3", s3),
+                    checkRequired("type", type),
+                    cache,
+                    readOnly,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Mount = apply {
+            if (validated) {
+                return@apply
+            }
+
+            id()
+            mountPath()
+            s3().validate()
+            type().validate()
+            cache().ifPresent { it.validate() }
+            readOnly()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (id.asKnown().isPresent) 1 else 0) +
+                (if (mountPath.asKnown().isPresent) 1 else 0) +
+                (s3.asKnown().getOrNull()?.validity() ?: 0) +
+                (type.asKnown().getOrNull()?.validity() ?: 0) +
+                (cache.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (readOnly.asKnown().isPresent) 1 else 0)
+
+        class S3
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val bucket: JsonField<String>,
+            private val endpointUrl: JsonField<String>,
+            private val region: JsonField<String>,
+            private val pathStyle: JsonField<Boolean>,
+            private val prefix: JsonField<String>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("bucket")
+                @ExcludeMissing
+                bucket: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("endpoint_url")
+                @ExcludeMissing
+                endpointUrl: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("region")
+                @ExcludeMissing
+                region: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("path_style")
+                @ExcludeMissing
+                pathStyle: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("prefix") @ExcludeMissing prefix: JsonField<String> = JsonMissing.of(),
+            ) : this(bucket, endpointUrl, region, pathStyle, prefix, mutableMapOf())
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun bucket(): String = bucket.getRequired("bucket")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun endpointUrl(): String = endpointUrl.getRequired("endpoint_url")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun region(): String = region.getRequired("region")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun pathStyle(): Optional<Boolean> = pathStyle.getOptional("path_style")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun prefix(): Optional<String> = prefix.getOptional("prefix")
+
+            /**
+             * Returns the raw JSON value of [bucket].
+             *
+             * Unlike [bucket], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("bucket") @ExcludeMissing fun _bucket(): JsonField<String> = bucket
+
+            /**
+             * Returns the raw JSON value of [endpointUrl].
+             *
+             * Unlike [endpointUrl], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("endpoint_url")
+            @ExcludeMissing
+            fun _endpointUrl(): JsonField<String> = endpointUrl
+
+            /**
+             * Returns the raw JSON value of [region].
+             *
+             * Unlike [region], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("region") @ExcludeMissing fun _region(): JsonField<String> = region
+
+            /**
+             * Returns the raw JSON value of [pathStyle].
+             *
+             * Unlike [pathStyle], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("path_style")
+            @ExcludeMissing
+            fun _pathStyle(): JsonField<Boolean> = pathStyle
+
+            /**
+             * Returns the raw JSON value of [prefix].
+             *
+             * Unlike [prefix], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("prefix") @ExcludeMissing fun _prefix(): JsonField<String> = prefix
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [S3].
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .bucket()
+                 * .endpointUrl()
+                 * .region()
+                 * ```
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [S3]. */
+            class Builder internal constructor() {
+
+                private var bucket: JsonField<String>? = null
+                private var endpointUrl: JsonField<String>? = null
+                private var region: JsonField<String>? = null
+                private var pathStyle: JsonField<Boolean> = JsonMissing.of()
+                private var prefix: JsonField<String> = JsonMissing.of()
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(s3: S3) = apply {
+                    bucket = s3.bucket
+                    endpointUrl = s3.endpointUrl
+                    region = s3.region
+                    pathStyle = s3.pathStyle
+                    prefix = s3.prefix
+                    additionalProperties = s3.additionalProperties.toMutableMap()
+                }
+
+                fun bucket(bucket: String) = bucket(JsonField.of(bucket))
+
+                /**
+                 * Sets [Builder.bucket] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.bucket] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun bucket(bucket: JsonField<String>) = apply { this.bucket = bucket }
+
+                fun endpointUrl(endpointUrl: String) = endpointUrl(JsonField.of(endpointUrl))
+
+                /**
+                 * Sets [Builder.endpointUrl] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.endpointUrl] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun endpointUrl(endpointUrl: JsonField<String>) = apply {
+                    this.endpointUrl = endpointUrl
+                }
+
+                fun region(region: String) = region(JsonField.of(region))
+
+                /**
+                 * Sets [Builder.region] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.region] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun region(region: JsonField<String>) = apply { this.region = region }
+
+                fun pathStyle(pathStyle: Boolean) = pathStyle(JsonField.of(pathStyle))
+
+                /**
+                 * Sets [Builder.pathStyle] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.pathStyle] with a well-typed [Boolean] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun pathStyle(pathStyle: JsonField<Boolean>) = apply { this.pathStyle = pathStyle }
+
+                fun prefix(prefix: String) = prefix(JsonField.of(prefix))
+
+                /**
+                 * Sets [Builder.prefix] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.prefix] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun prefix(prefix: JsonField<String>) = apply { this.prefix = prefix }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [S3].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .bucket()
+                 * .endpointUrl()
+                 * .region()
+                 * ```
+                 *
+                 * @throws IllegalStateException if any required field is unset.
+                 */
+                fun build(): S3 =
+                    S3(
+                        checkRequired("bucket", bucket),
+                        checkRequired("endpointUrl", endpointUrl),
+                        checkRequired("region", region),
+                        pathStyle,
+                        prefix,
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): S3 = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                bucket()
+                endpointUrl()
+                region()
+                pathStyle()
+                prefix()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (if (bucket.asKnown().isPresent) 1 else 0) +
+                    (if (endpointUrl.asKnown().isPresent) 1 else 0) +
+                    (if (region.asKnown().isPresent) 1 else 0) +
+                    (if (pathStyle.asKnown().isPresent) 1 else 0) +
+                    (if (prefix.asKnown().isPresent) 1 else 0)
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is S3 &&
+                    bucket == other.bucket &&
+                    endpointUrl == other.endpointUrl &&
+                    region == other.region &&
+                    pathStyle == other.pathStyle &&
+                    prefix == other.prefix &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(bucket, endpointUrl, region, pathStyle, prefix, additionalProperties)
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "S3{bucket=$bucket, endpointUrl=$endpointUrl, region=$region, pathStyle=$pathStyle, prefix=$prefix, additionalProperties=$additionalProperties}"
+        }
+
+        class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val S3 = of("s3")
+
+                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+            }
+
+            /** An enum containing [Type]'s known values. */
+            enum class Known {
+                S3
+            }
+
+            /**
+             * An enum containing [Type]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [Type] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                S3,
+                /** An enum member indicating that [Type] was instantiated with an unknown value. */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    S3 -> Value.S3
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    S3 -> Known.S3
+                    else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Type = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Type && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        class Cache
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val maxSizeBytes: JsonField<Long>,
+            private val writebackSeconds: JsonField<Long>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("max_size_bytes")
+                @ExcludeMissing
+                maxSizeBytes: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("writeback_seconds")
+                @ExcludeMissing
+                writebackSeconds: JsonField<Long> = JsonMissing.of(),
+            ) : this(maxSizeBytes, writebackSeconds, mutableMapOf())
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun maxSizeBytes(): Optional<Long> = maxSizeBytes.getOptional("max_size_bytes")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun writebackSeconds(): Optional<Long> =
+                writebackSeconds.getOptional("writeback_seconds")
+
+            /**
+             * Returns the raw JSON value of [maxSizeBytes].
+             *
+             * Unlike [maxSizeBytes], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("max_size_bytes")
+            @ExcludeMissing
+            fun _maxSizeBytes(): JsonField<Long> = maxSizeBytes
+
+            /**
+             * Returns the raw JSON value of [writebackSeconds].
+             *
+             * Unlike [writebackSeconds], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("writeback_seconds")
+            @ExcludeMissing
+            fun _writebackSeconds(): JsonField<Long> = writebackSeconds
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [Cache]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Cache]. */
+            class Builder internal constructor() {
+
+                private var maxSizeBytes: JsonField<Long> = JsonMissing.of()
+                private var writebackSeconds: JsonField<Long> = JsonMissing.of()
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(cache: Cache) = apply {
+                    maxSizeBytes = cache.maxSizeBytes
+                    writebackSeconds = cache.writebackSeconds
+                    additionalProperties = cache.additionalProperties.toMutableMap()
+                }
+
+                fun maxSizeBytes(maxSizeBytes: Long) = maxSizeBytes(JsonField.of(maxSizeBytes))
+
+                /**
+                 * Sets [Builder.maxSizeBytes] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.maxSizeBytes] with a well-typed [Long] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun maxSizeBytes(maxSizeBytes: JsonField<Long>) = apply {
+                    this.maxSizeBytes = maxSizeBytes
+                }
+
+                fun writebackSeconds(writebackSeconds: Long) =
+                    writebackSeconds(JsonField.of(writebackSeconds))
+
+                /**
+                 * Sets [Builder.writebackSeconds] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.writebackSeconds] with a well-typed [Long] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun writebackSeconds(writebackSeconds: JsonField<Long>) = apply {
+                    this.writebackSeconds = writebackSeconds
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Cache].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): Cache =
+                    Cache(maxSizeBytes, writebackSeconds, additionalProperties.toMutableMap())
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Cache = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                maxSizeBytes()
+                writebackSeconds()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (if (maxSizeBytes.asKnown().isPresent) 1 else 0) +
+                    (if (writebackSeconds.asKnown().isPresent) 1 else 0)
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Cache &&
+                    maxSizeBytes == other.maxSizeBytes &&
+                    writebackSeconds == other.writebackSeconds &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy {
+                Objects.hash(maxSizeBytes, writebackSeconds, additionalProperties)
+            }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Cache{maxSizeBytes=$maxSizeBytes, writebackSeconds=$writebackSeconds, additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Mount &&
+                id == other.id &&
+                mountPath == other.mountPath &&
+                s3 == other.s3 &&
+                type == other.type &&
+                cache == other.cache &&
+                readOnly == other.readOnly &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(id, mountPath, s3, type, cache, readOnly, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Mount{id=$id, mountPath=$mountPath, s3=$s3, type=$type, cache=$cache, readOnly=$readOnly, additionalProperties=$additionalProperties}"
+    }
 
     class ProxyConfig
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -3976,6 +5019,7 @@ private constructor(
             fsCapacityBytes == other.fsCapacityBytes &&
             idleTtlSeconds == other.idleTtlSeconds &&
             memBytes == other.memBytes &&
+            mounts == other.mounts &&
             name == other.name &&
             proxyConfig == other.proxyConfig &&
             sizeClass == other.sizeClass &&
@@ -3999,6 +5043,7 @@ private constructor(
             fsCapacityBytes,
             idleTtlSeconds,
             memBytes,
+            mounts,
             name,
             proxyConfig,
             sizeClass,
@@ -4016,5 +5061,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxStartResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "BoxStartResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mounts=$mounts, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }
