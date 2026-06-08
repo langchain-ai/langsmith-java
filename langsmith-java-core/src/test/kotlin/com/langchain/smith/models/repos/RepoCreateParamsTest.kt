@@ -18,6 +18,7 @@ internal class RepoCreateParamsTest {
             .repoType(RepoCreateParams.RepoType.PROMPT)
             .restrictedMode(true)
             .source(RepoCreateParams.Source.INTERNAL)
+            .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addTag("string")
             .build()
     }
@@ -33,6 +34,7 @@ internal class RepoCreateParamsTest {
                 .repoType(RepoCreateParams.RepoType.PROMPT)
                 .restrictedMode(true)
                 .source(RepoCreateParams.Source.INTERNAL)
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addTag("string")
                 .build()
 
@@ -45,6 +47,8 @@ internal class RepoCreateParamsTest {
         assertThat(body.repoType()).contains(RepoCreateParams.RepoType.PROMPT)
         assertThat(body.restrictedMode()).contains(true)
         assertThat(body.source()).contains(RepoCreateParams.Source.INTERNAL)
+        assertThat(body.tagValueIds().getOrNull())
+            .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.tags().getOrNull()).containsExactly("string")
     }
 
