@@ -77,6 +77,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun tagValueIds(): Optional<List<String>> = body.tagValueIds()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun tags(): Optional<List<String>> = body.tags()
 
     /**
@@ -127,6 +133,13 @@ private constructor(
      * Unlike [source], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _source(): JsonField<Source> = body._source()
+
+    /**
+     * Returns the raw JSON value of [tagValueIds].
+     *
+     * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _tagValueIds(): JsonField<List<String>> = body._tagValueIds()
 
     /**
      * Returns the raw JSON value of [tags].
@@ -283,6 +296,29 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun source(source: JsonField<Source>) = apply { body.source(source) }
+
+        fun tagValueIds(tagValueIds: List<String>?) = apply { body.tagValueIds(tagValueIds) }
+
+        /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+        fun tagValueIds(tagValueIds: Optional<List<String>>) = tagValueIds(tagValueIds.getOrNull())
+
+        /**
+         * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+            body.tagValueIds(tagValueIds)
+        }
+
+        /**
+         * Adds a single [String] to [tagValueIds].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply { body.addTagValueId(tagValueId) }
 
         fun tags(tags: List<String>?) = apply { body.tags(tags) }
 
@@ -456,6 +492,7 @@ private constructor(
         private val repoType: JsonField<RepoType>,
         private val restrictedMode: JsonField<Boolean>,
         private val source: JsonField<Source>,
+        private val tagValueIds: JsonField<List<String>>,
         private val tags: JsonField<List<String>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -479,6 +516,9 @@ private constructor(
             @ExcludeMissing
             restrictedMode: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("source") @ExcludeMissing source: JsonField<Source> = JsonMissing.of(),
+            @JsonProperty("tag_value_ids")
+            @ExcludeMissing
+            tagValueIds: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("tags") @ExcludeMissing tags: JsonField<List<String>> = JsonMissing.of(),
         ) : this(
             isPublic,
@@ -488,6 +528,7 @@ private constructor(
             repoType,
             restrictedMode,
             source,
+            tagValueIds,
             tags,
             mutableMapOf(),
         )
@@ -533,6 +574,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun source(): Optional<Source> = source.getOptional("source")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tagValueIds(): Optional<List<String>> = tagValueIds.getOptional("tag_value_ids")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -597,6 +644,15 @@ private constructor(
         @JsonProperty("source") @ExcludeMissing fun _source(): JsonField<Source> = source
 
         /**
+         * Returns the raw JSON value of [tagValueIds].
+         *
+         * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tag_value_ids")
+        @ExcludeMissing
+        fun _tagValueIds(): JsonField<List<String>> = tagValueIds
+
+        /**
          * Returns the raw JSON value of [tags].
          *
          * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
@@ -639,6 +695,7 @@ private constructor(
             private var repoType: JsonField<RepoType> = JsonMissing.of()
             private var restrictedMode: JsonField<Boolean> = JsonMissing.of()
             private var source: JsonField<Source> = JsonMissing.of()
+            private var tagValueIds: JsonField<MutableList<String>>? = null
             private var tags: JsonField<MutableList<String>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -651,6 +708,7 @@ private constructor(
                 repoType = body.repoType
                 restrictedMode = body.restrictedMode
                 source = body.source
+                tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 tags = body.tags.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -757,6 +815,36 @@ private constructor(
              */
             fun source(source: JsonField<Source>) = apply { this.source = source }
 
+            fun tagValueIds(tagValueIds: List<String>?) =
+                tagValueIds(JsonField.ofNullable(tagValueIds))
+
+            /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+            fun tagValueIds(tagValueIds: Optional<List<String>>) =
+                tagValueIds(tagValueIds.getOrNull())
+
+            /**
+             * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+                this.tagValueIds = tagValueIds.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [tagValueIds].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTagValueId(tagValueId: String) = apply {
+                tagValueIds =
+                    (tagValueIds ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("tagValueIds", it).add(tagValueId)
+                    }
+            }
+
             fun tags(tags: List<String>?) = tags(JsonField.ofNullable(tags))
 
             /** Alias for calling [Builder.tags] with `tags.orElse(null)`. */
@@ -824,6 +912,7 @@ private constructor(
                     repoType,
                     restrictedMode,
                     source,
+                    (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
                     (tags ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -852,6 +941,7 @@ private constructor(
             repoType().ifPresent { it.validate() }
             restrictedMode()
             source().ifPresent { it.validate() }
+            tagValueIds()
             tags()
             validated = true
         }
@@ -879,6 +969,7 @@ private constructor(
                 (repoType.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (restrictedMode.asKnown().isPresent) 1 else 0) +
                 (source.asKnown().getOrNull()?.validity() ?: 0) +
+                (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
                 (tags.asKnown().getOrNull()?.size ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -894,6 +985,7 @@ private constructor(
                 repoType == other.repoType &&
                 restrictedMode == other.restrictedMode &&
                 source == other.source &&
+                tagValueIds == other.tagValueIds &&
                 tags == other.tags &&
                 additionalProperties == other.additionalProperties
         }
@@ -907,6 +999,7 @@ private constructor(
                 repoType,
                 restrictedMode,
                 source,
+                tagValueIds,
                 tags,
                 additionalProperties,
             )
@@ -915,7 +1008,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{isPublic=$isPublic, repoHandle=$repoHandle, description=$description, readme=$readme, repoType=$repoType, restrictedMode=$restrictedMode, source=$source, tags=$tags, additionalProperties=$additionalProperties}"
+            "Body{isPublic=$isPublic, repoHandle=$repoHandle, description=$description, readme=$readme, repoType=$repoType, restrictedMode=$restrictedMode, source=$source, tagValueIds=$tagValueIds, tags=$tags, additionalProperties=$additionalProperties}"
     }
 
     class RepoType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
