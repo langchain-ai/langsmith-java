@@ -4,6 +4,7 @@ package com.langchain.smith.models.sandboxes.boxes
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.jsonMapper
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -21,6 +22,29 @@ internal class BoxStartResponseTest {
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
                 .memBytes(0L)
+                .addMount(
+                    BoxStartResponse.Mount.builder()
+                        .id("id")
+                        .mountPath("mount_path")
+                        .s3(
+                            BoxStartResponse.Mount.S3.builder()
+                                .bucket("bucket")
+                                .endpointUrl("endpoint_url")
+                                .region("region")
+                                .pathStyle(true)
+                                .prefix("prefix")
+                                .build()
+                        )
+                        .type(BoxStartResponse.Mount.Type.S3)
+                        .cache(
+                            BoxStartResponse.Mount.Cache.builder()
+                                .maxSizeBytes(0L)
+                                .writebackSeconds(0L)
+                                .build()
+                        )
+                        .readOnly(true)
+                        .build()
+                )
                 .name("name")
                 .proxyConfig(
                     BoxStartResponse.ProxyConfig.builder()
@@ -119,6 +143,30 @@ internal class BoxStartResponseTest {
         assertThat(boxStartResponse.fsCapacityBytes()).contains(0L)
         assertThat(boxStartResponse.idleTtlSeconds()).contains(0L)
         assertThat(boxStartResponse.memBytes()).contains(0L)
+        assertThat(boxStartResponse.mounts().getOrNull())
+            .containsExactly(
+                BoxStartResponse.Mount.builder()
+                    .id("id")
+                    .mountPath("mount_path")
+                    .s3(
+                        BoxStartResponse.Mount.S3.builder()
+                            .bucket("bucket")
+                            .endpointUrl("endpoint_url")
+                            .region("region")
+                            .pathStyle(true)
+                            .prefix("prefix")
+                            .build()
+                    )
+                    .type(BoxStartResponse.Mount.Type.S3)
+                    .cache(
+                        BoxStartResponse.Mount.Cache.builder()
+                            .maxSizeBytes(0L)
+                            .writebackSeconds(0L)
+                            .build()
+                    )
+                    .readOnly(true)
+                    .build()
+            )
         assertThat(boxStartResponse.name()).contains("name")
         assertThat(boxStartResponse.proxyConfig())
             .contains(
@@ -219,6 +267,29 @@ internal class BoxStartResponseTest {
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
                 .memBytes(0L)
+                .addMount(
+                    BoxStartResponse.Mount.builder()
+                        .id("id")
+                        .mountPath("mount_path")
+                        .s3(
+                            BoxStartResponse.Mount.S3.builder()
+                                .bucket("bucket")
+                                .endpointUrl("endpoint_url")
+                                .region("region")
+                                .pathStyle(true)
+                                .prefix("prefix")
+                                .build()
+                        )
+                        .type(BoxStartResponse.Mount.Type.S3)
+                        .cache(
+                            BoxStartResponse.Mount.Cache.builder()
+                                .maxSizeBytes(0L)
+                                .writebackSeconds(0L)
+                                .build()
+                        )
+                        .readOnly(true)
+                        .build()
+                )
                 .name("name")
                 .proxyConfig(
                     BoxStartResponse.ProxyConfig.builder()
