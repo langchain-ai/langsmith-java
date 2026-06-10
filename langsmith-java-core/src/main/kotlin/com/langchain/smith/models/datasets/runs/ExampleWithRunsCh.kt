@@ -675,6 +675,7 @@ private constructor(
         private val executionOrder: JsonField<Long>,
         private val extra: JsonField<Extra>,
         private val feedbackStats: JsonField<FeedbackStats>,
+        private val firstTokenTime: JsonField<OffsetDateTime>,
         private val inputs: JsonField<Inputs>,
         private val inputsPreview: JsonField<String>,
         private val inputsS3Urls: JsonField<InputsS3Urls>,
@@ -734,6 +735,9 @@ private constructor(
             @JsonProperty("feedback_stats")
             @ExcludeMissing
             feedbackStats: JsonField<FeedbackStats> = JsonMissing.of(),
+            @JsonProperty("first_token_time")
+            @ExcludeMissing
+            firstTokenTime: JsonField<OffsetDateTime> = JsonMissing.of(),
             @JsonProperty("inputs") @ExcludeMissing inputs: JsonField<Inputs> = JsonMissing.of(),
             @JsonProperty("inputs_preview")
             @ExcludeMissing
@@ -803,6 +807,7 @@ private constructor(
             executionOrder,
             extra,
             feedbackStats,
+            firstTokenTime,
             inputs,
             inputsPreview,
             inputsS3Urls,
@@ -923,6 +928,13 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun feedbackStats(): Optional<FeedbackStats> = feedbackStats.getOptional("feedback_stats")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun firstTokenTime(): Optional<OffsetDateTime> =
+            firstTokenTime.getOptional("first_token_time")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1176,6 +1188,16 @@ private constructor(
         fun _feedbackStats(): JsonField<FeedbackStats> = feedbackStats
 
         /**
+         * Returns the raw JSON value of [firstTokenTime].
+         *
+         * Unlike [firstTokenTime], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("first_token_time")
+        @ExcludeMissing
+        fun _firstTokenTime(): JsonField<OffsetDateTime> = firstTokenTime
+
+        /**
          * Returns the raw JSON value of [inputs].
          *
          * Unlike [inputs], this method doesn't throw if the JSON field has an unexpected type.
@@ -1403,6 +1425,7 @@ private constructor(
             private var executionOrder: JsonField<Long> = JsonMissing.of()
             private var extra: JsonField<Extra> = JsonMissing.of()
             private var feedbackStats: JsonField<FeedbackStats> = JsonMissing.of()
+            private var firstTokenTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var inputs: JsonField<Inputs> = JsonMissing.of()
             private var inputsPreview: JsonField<String> = JsonMissing.of()
             private var inputsS3Urls: JsonField<InputsS3Urls> = JsonMissing.of()
@@ -1443,6 +1466,7 @@ private constructor(
                 executionOrder = run.executionOrder
                 extra = run.extra
                 feedbackStats = run.feedbackStats
+                firstTokenTime = run.firstTokenTime
                 inputs = run.inputs
                 inputsPreview = run.inputsPreview
                 inputsS3Urls = run.inputsS3Urls
@@ -1708,6 +1732,24 @@ private constructor(
              */
             fun feedbackStats(feedbackStats: JsonField<FeedbackStats>) = apply {
                 this.feedbackStats = feedbackStats
+            }
+
+            fun firstTokenTime(firstTokenTime: OffsetDateTime?) =
+                firstTokenTime(JsonField.ofNullable(firstTokenTime))
+
+            /** Alias for calling [Builder.firstTokenTime] with `firstTokenTime.orElse(null)`. */
+            fun firstTokenTime(firstTokenTime: Optional<OffsetDateTime>) =
+                firstTokenTime(firstTokenTime.getOrNull())
+
+            /**
+             * Sets [Builder.firstTokenTime] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.firstTokenTime] with a well-typed [OffsetDateTime]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun firstTokenTime(firstTokenTime: JsonField<OffsetDateTime>) = apply {
+                this.firstTokenTime = firstTokenTime
             }
 
             fun inputs(inputs: Inputs?) = inputs(JsonField.ofNullable(inputs))
@@ -2114,6 +2156,7 @@ private constructor(
                     executionOrder,
                     extra,
                     feedbackStats,
+                    firstTokenTime,
                     inputs,
                     inputsPreview,
                     inputsS3Urls,
@@ -2170,6 +2213,7 @@ private constructor(
             executionOrder()
             extra().ifPresent { it.validate() }
             feedbackStats().ifPresent { it.validate() }
+            firstTokenTime()
             inputs().ifPresent { it.validate() }
             inputsPreview()
             inputsS3Urls().ifPresent { it.validate() }
@@ -2225,6 +2269,7 @@ private constructor(
                 (if (executionOrder.asKnown().isPresent) 1 else 0) +
                 (extra.asKnown().getOrNull()?.validity() ?: 0) +
                 (feedbackStats.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (firstTokenTime.asKnown().isPresent) 1 else 0) +
                 (inputs.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (inputsPreview.asKnown().isPresent) 1 else 0) +
                 (inputsS3Urls.asKnown().getOrNull()?.validity() ?: 0) +
@@ -3276,6 +3321,7 @@ private constructor(
                 executionOrder == other.executionOrder &&
                 extra == other.extra &&
                 feedbackStats == other.feedbackStats &&
+                firstTokenTime == other.firstTokenTime &&
                 inputs == other.inputs &&
                 inputsPreview == other.inputsPreview &&
                 inputsS3Urls == other.inputsS3Urls &&
@@ -3317,6 +3363,7 @@ private constructor(
                 executionOrder,
                 extra,
                 feedbackStats,
+                firstTokenTime,
                 inputs,
                 inputsPreview,
                 inputsS3Urls,
@@ -3344,7 +3391,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Run{id=$id, name=$name, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, appPath=$appPath, completionCost=$completionCost, completionTokens=$completionTokens, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, manifestId=$manifestId, manifestS3Id=$manifestS3Id, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, promptCost=$promptCost, promptTokens=$promptTokens, referenceExampleId=$referenceExampleId, s3Urls=$s3Urls, serialized=$serialized, startTime=$startTime, tags=$tags, totalCost=$totalCost, totalTokens=$totalTokens, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, additionalProperties=$additionalProperties}"
+            "Run{id=$id, name=$name, runType=$runType, sessionId=$sessionId, status=$status, traceId=$traceId, appPath=$appPath, completionCost=$completionCost, completionTokens=$completionTokens, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, events=$events, executionOrder=$executionOrder, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, inputsS3Urls=$inputsS3Urls, manifestId=$manifestId, manifestS3Id=$manifestS3Id, outputs=$outputs, outputsPreview=$outputsPreview, outputsS3Urls=$outputsS3Urls, parentRunId=$parentRunId, promptCost=$promptCost, promptTokens=$promptTokens, referenceExampleId=$referenceExampleId, s3Urls=$s3Urls, serialized=$serialized, startTime=$startTime, tags=$tags, totalCost=$totalCost, totalTokens=$totalTokens, traceMaxStartTime=$traceMaxStartTime, traceMinStartTime=$traceMinStartTime, additionalProperties=$additionalProperties}"
     }
 
     class AttachmentUrls
