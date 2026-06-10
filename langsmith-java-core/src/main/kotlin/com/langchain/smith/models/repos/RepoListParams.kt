@@ -18,6 +18,7 @@ import kotlin.jvm.optionals.getOrNull
 class RepoListParams
 private constructor(
     private val hasCommits: Boolean?,
+    private val includeOwners: Boolean?,
     private val isArchived: IsArchived?,
     private val isPublic: IsPublic?,
     private val limit: Long?,
@@ -40,6 +41,8 @@ private constructor(
 ) : Params {
 
     fun hasCommits(): Optional<Boolean> = Optional.ofNullable(hasCommits)
+
+    fun includeOwners(): Optional<Boolean> = Optional.ofNullable(includeOwners)
 
     fun isArchived(): Optional<IsArchived> = Optional.ofNullable(isArchived)
 
@@ -95,6 +98,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var hasCommits: Boolean? = null
+        private var includeOwners: Boolean? = null
         private var isArchived: IsArchived? = null
         private var isPublic: IsPublic? = null
         private var limit: Long? = null
@@ -118,6 +122,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(repoListParams: RepoListParams) = apply {
             hasCommits = repoListParams.hasCommits
+            includeOwners = repoListParams.includeOwners
             isArchived = repoListParams.isArchived
             isPublic = repoListParams.isPublic
             limit = repoListParams.limit
@@ -150,6 +155,19 @@ private constructor(
 
         /** Alias for calling [Builder.hasCommits] with `hasCommits.orElse(null)`. */
         fun hasCommits(hasCommits: Optional<Boolean>) = hasCommits(hasCommits.getOrNull())
+
+        fun includeOwners(includeOwners: Boolean?) = apply { this.includeOwners = includeOwners }
+
+        /**
+         * Alias for [Builder.includeOwners].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includeOwners(includeOwners: Boolean) = includeOwners(includeOwners as Boolean?)
+
+        /** Alias for calling [Builder.includeOwners] with `includeOwners.orElse(null)`. */
+        fun includeOwners(includeOwners: Optional<Boolean>) =
+            includeOwners(includeOwners.getOrNull())
 
         fun isArchived(isArchived: IsArchived?) = apply { this.isArchived = isArchived }
 
@@ -412,6 +430,7 @@ private constructor(
         fun build(): RepoListParams =
             RepoListParams(
                 hasCommits,
+                includeOwners,
                 isArchived,
                 isPublic,
                 limit,
@@ -440,6 +459,7 @@ private constructor(
         QueryParams.builder()
             .apply {
                 hasCommits?.let { put("has_commits", it.toString()) }
+                includeOwners?.let { put("include_owners", it.toString()) }
                 isArchived?.let { put("is_archived", it.toString()) }
                 isPublic?.let { put("is_public", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
@@ -1480,6 +1500,7 @@ private constructor(
 
         return other is RepoListParams &&
             hasCommits == other.hasCommits &&
+            includeOwners == other.includeOwners &&
             isArchived == other.isArchived &&
             isPublic == other.isPublic &&
             limit == other.limit &&
@@ -1504,6 +1525,7 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             hasCommits,
+            includeOwners,
             isArchived,
             isPublic,
             limit,
@@ -1526,5 +1548,5 @@ private constructor(
         )
 
     override fun toString() =
-        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, singleRepoType=$singleRepoType, repoTypes=$repoTypes, sortDirection=$sortDirection, sortField=$sortField, source=$source, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RepoListParams{hasCommits=$hasCommits, includeOwners=$includeOwners, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, singleRepoType=$singleRepoType, repoTypes=$repoTypes, sortDirection=$sortDirection, sortField=$sortField, source=$source, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
