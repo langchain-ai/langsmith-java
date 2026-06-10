@@ -54,6 +54,7 @@ internal class ExampleWithRunsChTest {
                                 .putAdditionalProperty("foo", JsonValue.from(mapOf("foo" to "bar")))
                                 .build()
                         )
+                        .firstTokenTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .inputs(
                             ExampleWithRunsCh.Run.Inputs.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -160,6 +161,7 @@ internal class ExampleWithRunsChTest {
                             .putAdditionalProperty("foo", JsonValue.from(mapOf("foo" to "bar")))
                             .build()
                     )
+                    .firstTokenTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .inputs(
                         ExampleWithRunsCh.Run.Inputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -274,6 +276,7 @@ internal class ExampleWithRunsChTest {
                                 .putAdditionalProperty("foo", JsonValue.from(mapOf("foo" to "bar")))
                                 .build()
                         )
+                        .firstTokenTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .inputs(
                             ExampleWithRunsCh.Run.Inputs.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
