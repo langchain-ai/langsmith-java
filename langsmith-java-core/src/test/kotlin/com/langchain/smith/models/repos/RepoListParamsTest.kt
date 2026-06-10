@@ -12,6 +12,7 @@ internal class RepoListParamsTest {
     fun create() {
         RepoListParams.builder()
             .hasCommits(true)
+            .includeOwners(true)
             .isArchived(RepoListParams.IsArchived.TRUE)
             .isPublic(RepoListParams.IsPublic.TRUE)
             .limit(1L)
@@ -37,6 +38,7 @@ internal class RepoListParamsTest {
         val params =
             RepoListParams.builder()
                 .hasCommits(true)
+                .includeOwners(true)
                 .isArchived(RepoListParams.IsArchived.TRUE)
                 .isPublic(RepoListParams.IsPublic.TRUE)
                 .limit(1L)
@@ -62,6 +64,7 @@ internal class RepoListParamsTest {
             .isEqualTo(
                 QueryParams.builder()
                     .put("has_commits", "true")
+                    .put("include_owners", "true")
                     .put("is_archived", "true")
                     .put("is_public", "true")
                     .put("limit", "1")

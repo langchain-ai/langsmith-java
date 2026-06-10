@@ -49,6 +49,7 @@ private constructor(
     private val likedByAuthUser: JsonField<Boolean>,
     private val originalRepoFullName: JsonField<String>,
     private val originalRepoId: JsonField<String>,
+    private val owners: JsonField<List<Owner>>,
     private val readme: JsonField<String>,
     private val restrictedMode: JsonField<Boolean>,
     private val source: JsonField<Source>,
@@ -106,6 +107,7 @@ private constructor(
         @JsonProperty("original_repo_id")
         @ExcludeMissing
         originalRepoId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("owners") @ExcludeMissing owners: JsonField<List<Owner>> = JsonMissing.of(),
         @JsonProperty("readme") @ExcludeMissing readme: JsonField<String> = JsonMissing.of(),
         @JsonProperty("restricted_mode")
         @ExcludeMissing
@@ -141,6 +143,7 @@ private constructor(
         likedByAuthUser,
         originalRepoFullName,
         originalRepoId,
+        owners,
         readme,
         restrictedMode,
         source,
@@ -290,6 +293,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun originalRepoId(): Optional<String> = originalRepoId.getOptional("original_repo_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun owners(): Optional<List<Owner>> = owners.getOptional("owners")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -504,6 +513,13 @@ private constructor(
     fun _originalRepoId(): JsonField<String> = originalRepoId
 
     /**
+     * Returns the raw JSON value of [owners].
+     *
+     * Unlike [owners], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("owners") @ExcludeMissing fun _owners(): JsonField<List<Owner>> = owners
+
+    /**
      * Returns the raw JSON value of [readme].
      *
      * Unlike [readme], this method doesn't throw if the JSON field has an unexpected type.
@@ -610,6 +626,7 @@ private constructor(
         private var likedByAuthUser: JsonField<Boolean> = JsonMissing.of()
         private var originalRepoFullName: JsonField<String> = JsonMissing.of()
         private var originalRepoId: JsonField<String> = JsonMissing.of()
+        private var owners: JsonField<MutableList<Owner>>? = null
         private var readme: JsonField<String> = JsonMissing.of()
         private var restrictedMode: JsonField<Boolean> = JsonMissing.of()
         private var source: JsonField<Source> = JsonMissing.of()
@@ -642,6 +659,7 @@ private constructor(
             likedByAuthUser = repoWithLookups.likedByAuthUser
             originalRepoFullName = repoWithLookups.originalRepoFullName
             originalRepoId = repoWithLookups.originalRepoId
+            owners = repoWithLookups.owners.map { it.toMutableList() }
             readme = repoWithLookups.readme
             restrictedMode = repoWithLookups.restrictedMode
             source = repoWithLookups.source
@@ -979,6 +997,34 @@ private constructor(
             this.originalRepoId = originalRepoId
         }
 
+        fun owners(owners: List<Owner>?) = owners(JsonField.ofNullable(owners))
+
+        /** Alias for calling [Builder.owners] with `owners.orElse(null)`. */
+        fun owners(owners: Optional<List<Owner>>) = owners(owners.getOrNull())
+
+        /**
+         * Sets [Builder.owners] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.owners] with a well-typed `List<Owner>` value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun owners(owners: JsonField<List<Owner>>) = apply {
+            this.owners = owners.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [Owner] to [owners].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addOwner(owner: Owner) = apply {
+            owners =
+                (owners ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("owners", it).add(owner)
+                }
+        }
+
         fun readme(readme: String?) = readme(JsonField.ofNullable(readme))
 
         /** Alias for calling [Builder.readme] with `readme.orElse(null)`. */
@@ -1127,6 +1173,7 @@ private constructor(
                 likedByAuthUser,
                 originalRepoFullName,
                 originalRepoId,
+                (owners ?: JsonMissing.of()).map { it.toImmutable() },
                 readme,
                 restrictedMode,
                 source,
@@ -1174,6 +1221,7 @@ private constructor(
         likedByAuthUser()
         originalRepoFullName()
         originalRepoId()
+        owners().ifPresent { it.forEach { it.validate() } }
         readme()
         restrictedMode()
         source().ifPresent { it.validate() }
@@ -1220,6 +1268,7 @@ private constructor(
             (if (likedByAuthUser.asKnown().isPresent) 1 else 0) +
             (if (originalRepoFullName.asKnown().isPresent) 1 else 0) +
             (if (originalRepoId.asKnown().isPresent) 1 else 0) +
+            (owners.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (readme.asKnown().isPresent) 1 else 0) +
             (if (restrictedMode.asKnown().isPresent) 1 else 0) +
             (source.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1372,6 +1421,340 @@ private constructor(
         override fun hashCode() = value.hashCode()
 
         override fun toString() = value.toString()
+    }
+
+    /**
+     * A repo owner with user details.
+     *
+     * Note: identity_id and email may be None when returned to users outside the repo's tenant (PII
+     * protection).
+     */
+    class Owner
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val createdAt: JsonField<OffsetDateTime>,
+        private val email: JsonField<String>,
+        private val fullName: JsonField<String>,
+        private val identityId: JsonField<String>,
+        private val lsUserId: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("created_at")
+            @ExcludeMissing
+            createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("full_name")
+            @ExcludeMissing
+            fullName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("identity_id")
+            @ExcludeMissing
+            identityId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("ls_user_id")
+            @ExcludeMissing
+            lsUserId: JsonField<String> = JsonMissing.of(),
+        ) : this(createdAt, email, fullName, identityId, lsUserId, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun createdAt(): OffsetDateTime = createdAt.getRequired("created_at")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun email(): Optional<String> = email.getOptional("email")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun fullName(): Optional<String> = fullName.getOptional("full_name")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun identityId(): Optional<String> = identityId.getOptional("identity_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun lsUserId(): String = lsUserId.getRequired("ls_user_id")
+
+        /**
+         * Returns the raw JSON value of [createdAt].
+         *
+         * Unlike [createdAt], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("created_at")
+        @ExcludeMissing
+        fun _createdAt(): JsonField<OffsetDateTime> = createdAt
+
+        /**
+         * Returns the raw JSON value of [email].
+         *
+         * Unlike [email], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<String> = email
+
+        /**
+         * Returns the raw JSON value of [fullName].
+         *
+         * Unlike [fullName], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("full_name") @ExcludeMissing fun _fullName(): JsonField<String> = fullName
+
+        /**
+         * Returns the raw JSON value of [identityId].
+         *
+         * Unlike [identityId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("identity_id")
+        @ExcludeMissing
+        fun _identityId(): JsonField<String> = identityId
+
+        /**
+         * Returns the raw JSON value of [lsUserId].
+         *
+         * Unlike [lsUserId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("ls_user_id") @ExcludeMissing fun _lsUserId(): JsonField<String> = lsUserId
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Owner].
+             *
+             * The following fields are required:
+             * ```java
+             * .createdAt()
+             * .email()
+             * .fullName()
+             * .identityId()
+             * .lsUserId()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Owner]. */
+        class Builder internal constructor() {
+
+            private var createdAt: JsonField<OffsetDateTime>? = null
+            private var email: JsonField<String>? = null
+            private var fullName: JsonField<String>? = null
+            private var identityId: JsonField<String>? = null
+            private var lsUserId: JsonField<String>? = null
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(owner: Owner) = apply {
+                createdAt = owner.createdAt
+                email = owner.email
+                fullName = owner.fullName
+                identityId = owner.identityId
+                lsUserId = owner.lsUserId
+                additionalProperties = owner.additionalProperties.toMutableMap()
+            }
+
+            fun createdAt(createdAt: OffsetDateTime) = createdAt(JsonField.of(createdAt))
+
+            /**
+             * Sets [Builder.createdAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.createdAt] with a well-typed [OffsetDateTime] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply {
+                this.createdAt = createdAt
+            }
+
+            fun email(email: String?) = email(JsonField.ofNullable(email))
+
+            /** Alias for calling [Builder.email] with `email.orElse(null)`. */
+            fun email(email: Optional<String>) = email(email.getOrNull())
+
+            /**
+             * Sets [Builder.email] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.email] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun email(email: JsonField<String>) = apply { this.email = email }
+
+            fun fullName(fullName: String?) = fullName(JsonField.ofNullable(fullName))
+
+            /** Alias for calling [Builder.fullName] with `fullName.orElse(null)`. */
+            fun fullName(fullName: Optional<String>) = fullName(fullName.getOrNull())
+
+            /**
+             * Sets [Builder.fullName] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.fullName] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun fullName(fullName: JsonField<String>) = apply { this.fullName = fullName }
+
+            fun identityId(identityId: String?) = identityId(JsonField.ofNullable(identityId))
+
+            /** Alias for calling [Builder.identityId] with `identityId.orElse(null)`. */
+            fun identityId(identityId: Optional<String>) = identityId(identityId.getOrNull())
+
+            /**
+             * Sets [Builder.identityId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.identityId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun identityId(identityId: JsonField<String>) = apply { this.identityId = identityId }
+
+            fun lsUserId(lsUserId: String) = lsUserId(JsonField.of(lsUserId))
+
+            /**
+             * Sets [Builder.lsUserId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.lsUserId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun lsUserId(lsUserId: JsonField<String>) = apply { this.lsUserId = lsUserId }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Owner].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .createdAt()
+             * .email()
+             * .fullName()
+             * .identityId()
+             * .lsUserId()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Owner =
+                Owner(
+                    checkRequired("createdAt", createdAt),
+                    checkRequired("email", email),
+                    checkRequired("fullName", fullName),
+                    checkRequired("identityId", identityId),
+                    checkRequired("lsUserId", lsUserId),
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Owner = apply {
+            if (validated) {
+                return@apply
+            }
+
+            createdAt()
+            email()
+            fullName()
+            identityId()
+            lsUserId()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (createdAt.asKnown().isPresent) 1 else 0) +
+                (if (email.asKnown().isPresent) 1 else 0) +
+                (if (fullName.asKnown().isPresent) 1 else 0) +
+                (if (identityId.asKnown().isPresent) 1 else 0) +
+                (if (lsUserId.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Owner &&
+                createdAt == other.createdAt &&
+                email == other.email &&
+                fullName == other.fullName &&
+                identityId == other.identityId &&
+                lsUserId == other.lsUserId &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(createdAt, email, fullName, identityId, lsUserId, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Owner{createdAt=$createdAt, email=$email, fullName=$fullName, identityId=$identityId, lsUserId=$lsUserId, additionalProperties=$additionalProperties}"
     }
 
     class Source @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
@@ -1539,6 +1922,7 @@ private constructor(
             likedByAuthUser == other.likedByAuthUser &&
             originalRepoFullName == other.originalRepoFullName &&
             originalRepoId == other.originalRepoId &&
+            owners == other.owners &&
             readme == other.readme &&
             restrictedMode == other.restrictedMode &&
             source == other.source &&
@@ -1572,6 +1956,7 @@ private constructor(
             likedByAuthUser,
             originalRepoFullName,
             originalRepoId,
+            owners,
             readme,
             restrictedMode,
             source,
@@ -1584,5 +1969,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RepoWithLookups{id=$id, createdAt=$createdAt, fullName=$fullName, isArchived=$isArchived, isPublic=$isPublic, numCommits=$numCommits, numDownloads=$numDownloads, numLikes=$numLikes, numViews=$numViews, owner=$owner, repoHandle=$repoHandle, repoType=$repoType, tags=$tags, tenantId=$tenantId, updatedAt=$updatedAt, commitTags=$commitTags, createdBy=$createdBy, description=$description, lastCommitHash=$lastCommitHash, latestCommitManifest=$latestCommitManifest, likedByAuthUser=$likedByAuthUser, originalRepoFullName=$originalRepoFullName, originalRepoId=$originalRepoId, readme=$readme, restrictedMode=$restrictedMode, source=$source, upstreamRepoFullName=$upstreamRepoFullName, upstreamRepoId=$upstreamRepoId, additionalProperties=$additionalProperties}"
+        "RepoWithLookups{id=$id, createdAt=$createdAt, fullName=$fullName, isArchived=$isArchived, isPublic=$isPublic, numCommits=$numCommits, numDownloads=$numDownloads, numLikes=$numLikes, numViews=$numViews, owner=$owner, repoHandle=$repoHandle, repoType=$repoType, tags=$tags, tenantId=$tenantId, updatedAt=$updatedAt, commitTags=$commitTags, createdBy=$createdBy, description=$description, lastCommitHash=$lastCommitHash, latestCommitManifest=$latestCommitManifest, likedByAuthUser=$likedByAuthUser, originalRepoFullName=$originalRepoFullName, originalRepoId=$originalRepoId, owners=$owners, readme=$readme, restrictedMode=$restrictedMode, source=$source, upstreamRepoFullName=$upstreamRepoFullName, upstreamRepoId=$upstreamRepoId, additionalProperties=$additionalProperties}"
 }
