@@ -10,6 +10,7 @@ import com.langchain.smith.services.async.EvaluatorServiceAsync
 import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.InfoServiceAsync
+import com.langchain.smith.services.async.OnlineEvaluatorServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
 import com.langchain.smith.services.async.RunServiceAsync
@@ -65,6 +66,8 @@ interface LangsmithClientAsync {
 
     fun evaluators(): EvaluatorServiceAsync
 
+    fun onlineEvaluators(): OnlineEvaluatorServiceAsync
+
     fun feedback(): FeedbackServiceAsync
 
     fun public_(): PublicServiceAsync
@@ -119,6 +122,8 @@ interface LangsmithClientAsync {
         fun runs(): RunServiceAsync.WithRawResponse
 
         fun evaluators(): EvaluatorServiceAsync.WithRawResponse
+
+        fun onlineEvaluators(): OnlineEvaluatorServiceAsync.WithRawResponse
 
         fun feedback(): FeedbackServiceAsync.WithRawResponse
 

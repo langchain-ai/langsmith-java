@@ -18,6 +18,8 @@ import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsyncImpl
 import com.langchain.smith.services.async.InfoServiceAsync
 import com.langchain.smith.services.async.InfoServiceAsyncImpl
+import com.langchain.smith.services.async.OnlineEvaluatorServiceAsync
+import com.langchain.smith.services.async.OnlineEvaluatorServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsyncImpl
 import com.langchain.smith.services.async.RepoServiceAsync
@@ -69,6 +71,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val onlineEvaluators: OnlineEvaluatorServiceAsync by lazy {
+        OnlineEvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val feedback: FeedbackServiceAsync by lazy {
         FeedbackServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -117,6 +123,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun runs(): RunServiceAsync = runs.value
 
     override fun evaluators(): EvaluatorServiceAsync = evaluators
+
+    override fun onlineEvaluators(): OnlineEvaluatorServiceAsync = onlineEvaluators
 
     override fun feedback(): FeedbackServiceAsync = feedback
 
@@ -168,6 +176,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         private val evaluators: EvaluatorServiceAsync.WithRawResponse by lazy {
             EvaluatorServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val onlineEvaluators: OnlineEvaluatorServiceAsync.WithRawResponse by lazy {
+            OnlineEvaluatorServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val feedback: FeedbackServiceAsync.WithRawResponse by lazy {
@@ -222,6 +234,9 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun runs(): RunServiceAsync.WithRawResponse = runs
 
         override fun evaluators(): EvaluatorServiceAsync.WithRawResponse = evaluators
+
+        override fun onlineEvaluators(): OnlineEvaluatorServiceAsync.WithRawResponse =
+            onlineEvaluators
 
         override fun feedback(): FeedbackServiceAsync.WithRawResponse = feedback
 

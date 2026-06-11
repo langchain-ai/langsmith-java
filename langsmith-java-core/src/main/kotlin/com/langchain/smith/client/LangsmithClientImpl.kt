@@ -18,6 +18,8 @@ import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.FeedbackServiceImpl
 import com.langchain.smith.services.blocking.InfoService
 import com.langchain.smith.services.blocking.InfoServiceImpl
+import com.langchain.smith.services.blocking.OnlineEvaluatorService
+import com.langchain.smith.services.blocking.OnlineEvaluatorServiceImpl
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.PublicServiceImpl
 import com.langchain.smith.services.blocking.RepoService
@@ -63,6 +65,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         EvaluatorServiceImpl(clientOptionsWithUserAgent)
     }
 
+    private val onlineEvaluators: OnlineEvaluatorService by lazy {
+        OnlineEvaluatorServiceImpl(clientOptionsWithUserAgent)
+    }
+
     private val feedback: FeedbackService by lazy {
         FeedbackServiceImpl(clientOptionsWithUserAgent)
     }
@@ -103,6 +109,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun runs(): RunService = runs.value
 
     override fun evaluators(): EvaluatorService = evaluators
+
+    override fun onlineEvaluators(): OnlineEvaluatorService = onlineEvaluators
 
     override fun feedback(): FeedbackService = feedback
 
@@ -150,6 +158,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
         private val evaluators: EvaluatorService.WithRawResponse by lazy {
             EvaluatorServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val onlineEvaluators: OnlineEvaluatorService.WithRawResponse by lazy {
+            OnlineEvaluatorServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val feedback: FeedbackService.WithRawResponse by lazy {
@@ -204,6 +216,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun runs(): RunService.WithRawResponse = runs
 
         override fun evaluators(): EvaluatorService.WithRawResponse = evaluators
+
+        override fun onlineEvaluators(): OnlineEvaluatorService.WithRawResponse = onlineEvaluators
 
         override fun feedback(): FeedbackService.WithRawResponse = feedback
 

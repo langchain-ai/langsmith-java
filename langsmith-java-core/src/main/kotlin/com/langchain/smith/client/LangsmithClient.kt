@@ -10,6 +10,7 @@ import com.langchain.smith.services.blocking.EvaluatorService
 import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.InfoService
+import com.langchain.smith.services.blocking.OnlineEvaluatorService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
 import com.langchain.smith.services.blocking.RunService
@@ -65,6 +66,8 @@ interface LangsmithClient {
 
     fun evaluators(): EvaluatorService
 
+    fun onlineEvaluators(): OnlineEvaluatorService
+
     fun feedback(): FeedbackService
 
     fun public_(): PublicService
@@ -115,6 +118,8 @@ interface LangsmithClient {
         fun runs(): RunService.WithRawResponse
 
         fun evaluators(): EvaluatorService.WithRawResponse
+
+        fun onlineEvaluators(): OnlineEvaluatorService.WithRawResponse
 
         fun feedback(): FeedbackService.WithRawResponse
 
