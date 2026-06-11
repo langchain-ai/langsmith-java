@@ -135,8 +135,8 @@ private constructor(
     fun spendLimit(): Optional<OnlineSpendLimit> = spendLimit.getOptional("spend_limit")
 
     /**
-     * Per-rule spend for the current ISO week (omitted when feature is disabled). LLM-evaluator
-     * rules are initialized to 0; code-evaluator rules remain nil.
+     * Per-rule usage for the current ISO week (omitted when feature is disabled). LLM-evaluator
+     * rules are initialized to 0; code-evaluator rules include trace counts only.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -414,8 +414,8 @@ private constructor(
         }
 
         /**
-         * Per-rule spend for the current ISO week (omitted when feature is disabled). LLM-evaluator
-         * rules are initialized to 0; code-evaluator rules remain nil.
+         * Per-rule usage for the current ISO week (omitted when feature is disabled). LLM-evaluator
+         * rules are initialized to 0; code-evaluator rules include trace counts only.
          */
         fun spendUsd(spendUsd: Double) = spendUsd(JsonField.of(spendUsd))
 
