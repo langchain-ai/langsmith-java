@@ -109,6 +109,25 @@ internal class BoxRetrieveResponseTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .gcp(
+                                    BoxRetrieveResponse.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                .ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
                                         .name("name")
@@ -232,6 +251,24 @@ internal class BoxRetrieveResponseTest {
                                     .build()
                             )
                             .enabled(true)
+                            .gcp(
+                                BoxRetrieveResponse.ProxyConfig.Rule.Gcp.builder()
+                                    .addScope("string")
+                                    .serviceAccountJson(
+                                        BoxRetrieveResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .addHeader(
                                 BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
                                     .name("name")
@@ -359,6 +396,25 @@ internal class BoxRetrieveResponseTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .gcp(
+                                    BoxRetrieveResponse.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                .ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
                                         .name("name")

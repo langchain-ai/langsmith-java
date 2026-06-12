@@ -119,6 +119,26 @@ internal class BoxListResponseTest {
                                                 .build()
                                         )
                                         .enabled(true)
+                                        .gcp(
+                                            BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp.builder()
+                                                .addScope("string")
+                                                .serviceAccountJson(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Gcp
+                                                                .ServiceAccountJson
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
                                         .addHeader(
                                             BoxListResponse.Sandbox.ProxyConfig.Rule.Header
                                                 .builder()
@@ -254,6 +274,25 @@ internal class BoxListResponseTest {
                                             .build()
                                     )
                                     .enabled(true)
+                                    .gcp(
+                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp.builder()
+                                            .addScope("string")
+                                            .serviceAccountJson(
+                                                BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp
+                                                            .ServiceAccountJson
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .addHeader(
                                         BoxListResponse.Sandbox.ProxyConfig.Rule.Header.builder()
                                             .name("name")
@@ -394,6 +433,26 @@ internal class BoxListResponseTest {
                                                 .build()
                                         )
                                         .enabled(true)
+                                        .gcp(
+                                            BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp.builder()
+                                                .addScope("string")
+                                                .serviceAccountJson(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Gcp
+                                                                .ServiceAccountJson
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
                                         .addHeader(
                                             BoxListResponse.Sandbox.ProxyConfig.Rule.Header
                                                 .builder()

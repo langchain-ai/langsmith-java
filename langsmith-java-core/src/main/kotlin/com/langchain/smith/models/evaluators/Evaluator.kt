@@ -52,6 +52,7 @@ private constructor(
     private val datasetName: JsonField<String>,
     private val evaluatorId: JsonField<String>,
     private val evaluators: JsonField<List<EvaluatorTopLevel>>,
+    private val extendEvaluatorTraceRetention: JsonField<Boolean>,
     private val extendOnly: JsonField<Boolean>,
     private val filter: JsonField<String>,
     private val groupBy: JsonField<GroupBy>,
@@ -147,6 +148,9 @@ private constructor(
         @JsonProperty("evaluators")
         @ExcludeMissing
         evaluators: JsonField<List<EvaluatorTopLevel>> = JsonMissing.of(),
+        @JsonProperty("extend_evaluator_trace_retention")
+        @ExcludeMissing
+        extendEvaluatorTraceRetention: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("extend_only")
         @ExcludeMissing
         extendOnly: JsonField<Boolean> = JsonMissing.of(),
@@ -210,6 +214,7 @@ private constructor(
         datasetName,
         evaluatorId,
         evaluators,
+        extendEvaluatorTraceRetention,
         extendOnly,
         filter,
         groupBy,
@@ -396,6 +401,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun evaluators(): Optional<List<EvaluatorTopLevel>> = evaluators.getOptional("evaluators")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extendEvaluatorTraceRetention(): Optional<Boolean> =
+        extendEvaluatorTraceRetention.getOptional("extend_evaluator_trace_retention")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -735,6 +747,16 @@ private constructor(
     fun _evaluators(): JsonField<List<EvaluatorTopLevel>> = evaluators
 
     /**
+     * Returns the raw JSON value of [extendEvaluatorTraceRetention].
+     *
+     * Unlike [extendEvaluatorTraceRetention], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("extend_evaluator_trace_retention")
+    @ExcludeMissing
+    fun _extendEvaluatorTraceRetention(): JsonField<Boolean> = extendEvaluatorTraceRetention
+
+    /**
      * Returns the raw JSON value of [extendOnly].
      *
      * Unlike [extendOnly], this method doesn't throw if the JSON field has an unexpected type.
@@ -916,6 +938,7 @@ private constructor(
         private var datasetName: JsonField<String> = JsonMissing.of()
         private var evaluatorId: JsonField<String> = JsonMissing.of()
         private var evaluators: JsonField<MutableList<EvaluatorTopLevel>>? = null
+        private var extendEvaluatorTraceRetention: JsonField<Boolean> = JsonMissing.of()
         private var extendOnly: JsonField<Boolean> = JsonMissing.of()
         private var filter: JsonField<String> = JsonMissing.of()
         private var groupBy: JsonField<GroupBy> = JsonMissing.of()
@@ -962,6 +985,7 @@ private constructor(
             datasetName = evaluator.datasetName
             evaluatorId = evaluator.evaluatorId
             evaluators = evaluator.evaluators.map { it.toMutableList() }
+            extendEvaluatorTraceRetention = evaluator.extendEvaluatorTraceRetention
             extendOnly = evaluator.extendOnly
             filter = evaluator.filter
             groupBy = evaluator.groupBy
@@ -1466,6 +1490,36 @@ private constructor(
                 }
         }
 
+        fun extendEvaluatorTraceRetention(extendEvaluatorTraceRetention: Boolean?) =
+            extendEvaluatorTraceRetention(JsonField.ofNullable(extendEvaluatorTraceRetention))
+
+        /**
+         * Alias for [Builder.extendEvaluatorTraceRetention].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun extendEvaluatorTraceRetention(extendEvaluatorTraceRetention: Boolean) =
+            extendEvaluatorTraceRetention(extendEvaluatorTraceRetention as Boolean?)
+
+        /**
+         * Alias for calling [Builder.extendEvaluatorTraceRetention] with
+         * `extendEvaluatorTraceRetention.orElse(null)`.
+         */
+        fun extendEvaluatorTraceRetention(extendEvaluatorTraceRetention: Optional<Boolean>) =
+            extendEvaluatorTraceRetention(extendEvaluatorTraceRetention.getOrNull())
+
+        /**
+         * Sets [Builder.extendEvaluatorTraceRetention] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extendEvaluatorTraceRetention] with a well-typed
+         * [Boolean] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun extendEvaluatorTraceRetention(extendEvaluatorTraceRetention: JsonField<Boolean>) =
+            apply {
+                this.extendEvaluatorTraceRetention = extendEvaluatorTraceRetention
+            }
+
         fun extendOnly(extendOnly: Boolean) = extendOnly(JsonField.of(extendOnly))
 
         /**
@@ -1758,6 +1812,7 @@ private constructor(
                 datasetName,
                 evaluatorId,
                 (evaluators ?: JsonMissing.of()).map { it.toImmutable() },
+                extendEvaluatorTraceRetention,
                 extendOnly,
                 filter,
                 groupBy,
@@ -1819,6 +1874,7 @@ private constructor(
         datasetName()
         evaluatorId()
         evaluators().ifPresent { it.forEach { it.validate() } }
+        extendEvaluatorTraceRetention()
         extendOnly()
         filter()
         groupBy().ifPresent { it.validate() }
@@ -1879,6 +1935,7 @@ private constructor(
             (if (datasetName.asKnown().isPresent) 1 else 0) +
             (if (evaluatorId.asKnown().isPresent) 1 else 0) +
             (evaluators.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (extendEvaluatorTraceRetention.asKnown().isPresent) 1 else 0) +
             (if (extendOnly.asKnown().isPresent) 1 else 0) +
             (if (filter.asKnown().isPresent) 1 else 0) +
             (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
@@ -2394,6 +2451,7 @@ private constructor(
             datasetName == other.datasetName &&
             evaluatorId == other.evaluatorId &&
             evaluators == other.evaluators &&
+            extendEvaluatorTraceRetention == other.extendEvaluatorTraceRetention &&
             extendOnly == other.extendOnly &&
             filter == other.filter &&
             groupBy == other.groupBy &&
@@ -2441,6 +2499,7 @@ private constructor(
             datasetName,
             evaluatorId,
             evaluators,
+            extendEvaluatorTraceRetention,
             extendOnly,
             filter,
             groupBy,
@@ -2463,5 +2522,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }
