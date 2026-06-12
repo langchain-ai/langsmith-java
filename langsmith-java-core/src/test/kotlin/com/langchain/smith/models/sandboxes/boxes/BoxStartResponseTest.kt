@@ -108,6 +108,24 @@ internal class BoxStartResponseTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .gcp(
+                                    BoxStartResponse.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxStartResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxStartResponse.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxStartResponse.ProxyConfig.Rule.Header.builder()
                                         .name("name")
@@ -229,6 +247,24 @@ internal class BoxStartResponseTest {
                                     .build()
                             )
                             .enabled(true)
+                            .gcp(
+                                BoxStartResponse.ProxyConfig.Rule.Gcp.builder()
+                                    .addScope("string")
+                                    .serviceAccountJson(
+                                        BoxStartResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                            .builder()
+                                            .type(
+                                                BoxStartResponse.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .addHeader(
                                 BoxStartResponse.ProxyConfig.Rule.Header.builder()
                                     .name("name")
@@ -353,6 +389,24 @@ internal class BoxStartResponseTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .gcp(
+                                    BoxStartResponse.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxStartResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxStartResponse.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxStartResponse.ProxyConfig.Rule.Header.builder()
                                         .name("name")

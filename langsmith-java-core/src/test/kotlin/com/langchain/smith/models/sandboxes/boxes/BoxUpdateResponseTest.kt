@@ -109,6 +109,25 @@ internal class BoxUpdateResponseTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .gcp(
+                                    BoxUpdateResponse.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxUpdateResponse.ProxyConfig.Rule.Gcp
+                                                .ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxUpdateResponse.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxUpdateResponse.ProxyConfig.Rule.Header.builder()
                                         .name("name")
@@ -230,6 +249,24 @@ internal class BoxUpdateResponseTest {
                                     .build()
                             )
                             .enabled(true)
+                            .gcp(
+                                BoxUpdateResponse.ProxyConfig.Rule.Gcp.builder()
+                                    .addScope("string")
+                                    .serviceAccountJson(
+                                        BoxUpdateResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                            .builder()
+                                            .type(
+                                                BoxUpdateResponse.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .addHeader(
                                 BoxUpdateResponse.ProxyConfig.Rule.Header.builder()
                                     .name("name")
@@ -355,6 +392,25 @@ internal class BoxUpdateResponseTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .gcp(
+                                    BoxUpdateResponse.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxUpdateResponse.ProxyConfig.Rule.Gcp
+                                                .ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxUpdateResponse.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxUpdateResponse.ProxyConfig.Rule.Header.builder()
                                         .name("name")

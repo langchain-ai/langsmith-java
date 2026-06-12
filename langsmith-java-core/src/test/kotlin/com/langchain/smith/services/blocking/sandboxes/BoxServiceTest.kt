@@ -120,6 +120,25 @@ internal class BoxServiceTest {
                                             .build()
                                     )
                                     .enabled(true)
+                                    .gcp(
+                                        BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
+                                            .addScope("string")
+                                            .serviceAccountJson(
+                                                BoxCreateParams.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .builder()
+                                                    .type(
+                                                        BoxCreateParams.ProxyConfig.Rule.Gcp
+                                                            .ServiceAccountJson
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .addHeader(
                                         BoxCreateParams.ProxyConfig.Rule.Header.builder()
                                             .name("name")
@@ -240,6 +259,25 @@ internal class BoxServiceTest {
                                             .build()
                                     )
                                     .enabled(true)
+                                    .gcp(
+                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                            .addScope("string")
+                                            .serviceAccountJson(
+                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .builder()
+                                                    .type(
+                                                        BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                                            .ServiceAccountJson
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .addHeader(
                                         BoxUpdateParams.ProxyConfig.Rule.Header.builder()
                                             .bodyName("name")
