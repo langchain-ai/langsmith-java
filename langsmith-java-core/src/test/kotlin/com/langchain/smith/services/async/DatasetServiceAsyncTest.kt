@@ -56,6 +56,7 @@ internal class DatasetServiceAsyncTest {
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
+                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addTransformation(
                         DatasetTransformation.builder()
                             .addPath("string")
@@ -209,6 +210,7 @@ internal class DatasetServiceAsyncTest {
                     .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .addExample("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .split("string")
+                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
 
@@ -375,6 +377,7 @@ internal class DatasetServiceAsyncTest {
                     .outputKeyMappings("output_key_mappings")
                     .addOutputKey("string")
                     .outputsSchemaDefinition("outputs_schema_definition")
+                    .tagValueIds("tag_value_ids")
                     .transformations("transformations")
                     .build()
             )

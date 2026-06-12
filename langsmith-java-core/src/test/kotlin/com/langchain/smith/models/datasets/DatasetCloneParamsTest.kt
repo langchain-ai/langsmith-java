@@ -17,6 +17,7 @@ internal class DatasetCloneParamsTest {
             .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .addExample("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .split("string")
+            .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
 
@@ -29,6 +30,7 @@ internal class DatasetCloneParamsTest {
                 .asOf(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addExample("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .split("string")
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         val body = params._body()
@@ -44,6 +46,8 @@ internal class DatasetCloneParamsTest {
         assertThat(body.examples().getOrNull())
             .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.split()).contains(DatasetCloneParams.Split.ofString("string"))
+        assertThat(body.tagValueIds().getOrNull())
+            .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
 
     @Test
