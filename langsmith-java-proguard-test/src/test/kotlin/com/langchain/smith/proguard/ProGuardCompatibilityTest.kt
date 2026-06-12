@@ -91,9 +91,18 @@ internal class ProGuardCompatibilityTest {
                         .addSeries(
                             CustomChartsSection.Chart.Series.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
                                 .name("name")
                                 .feedbackKey("feedback_key")
+                                .filterDefinition(
+                                    CustomChartsSection.Chart.Series.FilterDefinition
+                                        .CustomChartFilterByTracingProject
+                                        .builder()
+                                        .addProjectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .runFilter("run_filter")
+                                        .traceFilter("trace_filter")
+                                        .treeFilter("tree_filter")
+                                        .build()
+                                )
                                 .filters(
                                     CustomChartsSection.Chart.Series.Filters.builder()
                                         .filter("filter")
@@ -111,6 +120,32 @@ internal class ProGuardCompatibilityTest {
                                         .path("path")
                                         .setBy(
                                             CustomChartsSection.Chart.Series.GroupBy.SetBy.SECTION
+                                        )
+                                        .build()
+                                )
+                                .addGroupByDefinition(
+                                    CustomChartsSection.Chart.Series.GroupByDefinition
+                                        .CustomChartGroupByPlain
+                                        .builder()
+                                        .attribute(
+                                            CustomChartsSection.Chart.Series.GroupByDefinition
+                                                .CustomChartGroupByPlain
+                                                .Attribute
+                                                .NAME
+                                        )
+                                        .build()
+                                )
+                                .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
+                                .metricDefinition(
+                                    CustomChartsSection.Chart.Series.MetricDefinition
+                                        .CustomChartMetricCount
+                                        .builder()
+                                        .filter("filter")
+                                        .type(
+                                            CustomChartsSection.Chart.Series.MetricDefinition
+                                                .CustomChartMetricCount
+                                                .Type
+                                                .COUNT
                                         )
                                         .build()
                                 )
@@ -160,12 +195,21 @@ internal class ProGuardCompatibilityTest {
                                 .addSeries(
                                     CustomChartsSection.SubSection.Chart.Series.builder()
                                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                        .metric(
-                                            CustomChartsSection.SubSection.Chart.Series.Metric
-                                                .RUN_COUNT
-                                        )
                                         .name("name")
                                         .feedbackKey("feedback_key")
+                                        .filterDefinition(
+                                            CustomChartsSection.SubSection.Chart.Series
+                                                .FilterDefinition
+                                                .CustomChartFilterByTracingProject
+                                                .builder()
+                                                .addProjectId(
+                                                    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                                                )
+                                                .runFilter("run_filter")
+                                                .traceFilter("trace_filter")
+                                                .treeFilter("tree_filter")
+                                                .build()
+                                        )
                                         .filters(
                                             CustomChartsSection.SubSection.Chart.Series.Filters
                                                 .builder()
@@ -191,6 +235,39 @@ internal class ProGuardCompatibilityTest {
                                                         .GroupBy
                                                         .SetBy
                                                         .SECTION
+                                                )
+                                                .build()
+                                        )
+                                        .addGroupByDefinition(
+                                            CustomChartsSection.SubSection.Chart.Series
+                                                .GroupByDefinition
+                                                .CustomChartGroupByPlain
+                                                .builder()
+                                                .attribute(
+                                                    CustomChartsSection.SubSection.Chart.Series
+                                                        .GroupByDefinition
+                                                        .CustomChartGroupByPlain
+                                                        .Attribute
+                                                        .NAME
+                                                )
+                                                .build()
+                                        )
+                                        .metric(
+                                            CustomChartsSection.SubSection.Chart.Series.Metric
+                                                .RUN_COUNT
+                                        )
+                                        .metricDefinition(
+                                            CustomChartsSection.SubSection.Chart.Series
+                                                .MetricDefinition
+                                                .CustomChartMetricCount
+                                                .builder()
+                                                .filter("filter")
+                                                .type(
+                                                    CustomChartsSection.SubSection.Chart.Series
+                                                        .MetricDefinition
+                                                        .CustomChartMetricCount
+                                                        .Type
+                                                        .COUNT
                                                 )
                                                 .build()
                                         )
