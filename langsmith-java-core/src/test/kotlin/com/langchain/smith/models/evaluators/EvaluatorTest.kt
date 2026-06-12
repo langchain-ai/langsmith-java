@@ -73,6 +73,7 @@ internal class EvaluatorTest {
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
+                                .playgroundSettingsId("playground_settings_id")
                                 .addPrompt(
                                     listOf(
                                         JsonValue.from(mapOf<String, Any>()),
@@ -185,6 +186,7 @@ internal class EvaluatorTest {
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
+                            .playgroundSettingsId("playground_settings_id")
                             .addPrompt(
                                 listOf(
                                     JsonValue.from(mapOf<String, Any>()),
@@ -292,6 +294,7 @@ internal class EvaluatorTest {
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
+                                .playgroundSettingsId("playground_settings_id")
                                 .addPrompt(
                                     listOf(
                                         JsonValue.from(mapOf<String, Any>()),
