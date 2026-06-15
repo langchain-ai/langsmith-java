@@ -110,6 +110,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun tagValueIds(): Optional<String> = body.tagValueIds()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun transformations(): Optional<String> = body.transformations()
 
     /**
@@ -202,6 +208,14 @@ private constructor(
      * unexpected type.
      */
     fun _outputsSchemaDefinition(): MultipartField<String> = body._outputsSchemaDefinition()
+
+    /**
+     * Returns the raw multipart value of [tagValueIds].
+     *
+     * Unlike [tagValueIds], this method doesn't throw if the multipart field has an unexpected
+     * type.
+     */
+    fun _tagValueIds(): MultipartField<String> = body._tagValueIds()
 
     /**
      * Returns the raw multipart value of [transformations].
@@ -480,6 +494,22 @@ private constructor(
             body.outputsSchemaDefinition(outputsSchemaDefinition)
         }
 
+        fun tagValueIds(tagValueIds: String?) = apply { body.tagValueIds(tagValueIds) }
+
+        /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+        fun tagValueIds(tagValueIds: Optional<String>) = tagValueIds(tagValueIds.getOrNull())
+
+        /**
+         * Sets [Builder.tagValueIds] to an arbitrary multipart value.
+         *
+         * You should usually call [Builder.tagValueIds] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun tagValueIds(tagValueIds: MultipartField<String>) = apply {
+            body.tagValueIds(tagValueIds)
+        }
+
         fun transformations(transformations: String?) = apply {
             body.transformations(transformations)
         }
@@ -651,6 +681,7 @@ private constructor(
                 "output_key_mappings" to _outputKeyMappings(),
                 "output_keys" to _outputKeys(),
                 "outputs_schema_definition" to _outputsSchemaDefinition(),
+                "tag_value_ids" to _tagValueIds(),
                 "transformations" to _transformations(),
             ) + _additionalBodyProperties().mapValues { (_, value) -> MultipartField.of(value) })
             .toImmutable()
@@ -673,6 +704,7 @@ private constructor(
         private val outputKeyMappings: MultipartField<String>,
         private val outputKeys: MultipartField<List<String>>,
         private val outputsSchemaDefinition: MultipartField<String>,
+        private val tagValueIds: MultipartField<String>,
         private val transformations: MultipartField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -755,6 +787,12 @@ private constructor(
          */
         fun outputsSchemaDefinition(): Optional<String> =
             outputsSchemaDefinition.value.getOptional("outputs_schema_definition")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tagValueIds(): Optional<String> = tagValueIds.value.getOptional("tag_value_ids")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -878,6 +916,16 @@ private constructor(
         fun _outputsSchemaDefinition(): MultipartField<String> = outputsSchemaDefinition
 
         /**
+         * Returns the raw multipart value of [tagValueIds].
+         *
+         * Unlike [tagValueIds], this method doesn't throw if the multipart field has an unexpected
+         * type.
+         */
+        @JsonProperty("tag_value_ids")
+        @ExcludeMissing
+        fun _tagValueIds(): MultipartField<String> = tagValueIds
+
+        /**
          * Returns the raw multipart value of [transformations].
          *
          * Unlike [transformations], this method doesn't throw if the multipart field has an
@@ -928,6 +976,7 @@ private constructor(
             private var outputKeyMappings: MultipartField<String> = MultipartField.of(null)
             private var outputKeys: MultipartField<MutableList<String>>? = null
             private var outputsSchemaDefinition: MultipartField<String> = MultipartField.of(null)
+            private var tagValueIds: MultipartField<String> = MultipartField.of(null)
             private var transformations: MultipartField<String> = MultipartField.of(null)
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -945,6 +994,7 @@ private constructor(
                 outputKeyMappings = body.outputKeyMappings
                 outputKeys = body.outputKeys.map { it.toMutableList() }
                 outputsSchemaDefinition = body.outputsSchemaDefinition
+                tagValueIds = body.tagValueIds
                 transformations = body.transformations
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -1191,6 +1241,22 @@ private constructor(
                 this.outputsSchemaDefinition = outputsSchemaDefinition
             }
 
+            fun tagValueIds(tagValueIds: String?) = tagValueIds(MultipartField.of(tagValueIds))
+
+            /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+            fun tagValueIds(tagValueIds: Optional<String>) = tagValueIds(tagValueIds.getOrNull())
+
+            /**
+             * Sets [Builder.tagValueIds] to an arbitrary multipart value.
+             *
+             * You should usually call [Builder.tagValueIds] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun tagValueIds(tagValueIds: MultipartField<String>) = apply {
+                this.tagValueIds = tagValueIds
+            }
+
             fun transformations(transformations: String?) =
                 transformations(MultipartField.of(transformations))
 
@@ -1255,6 +1321,7 @@ private constructor(
                     outputKeyMappings,
                     (outputKeys ?: MultipartField.of(null)).map { it.toImmutable() },
                     outputsSchemaDefinition,
+                    tagValueIds,
                     transformations,
                     additionalProperties.toMutableMap(),
                 )
@@ -1288,6 +1355,7 @@ private constructor(
             outputKeyMappings()
             outputKeys()
             outputsSchemaDefinition()
+            tagValueIds()
             transformations()
             validated = true
         }
@@ -1318,6 +1386,7 @@ private constructor(
                 outputKeyMappings == other.outputKeyMappings &&
                 outputKeys == other.outputKeys &&
                 outputsSchemaDefinition == other.outputsSchemaDefinition &&
+                tagValueIds == other.tagValueIds &&
                 transformations == other.transformations &&
                 additionalProperties == other.additionalProperties
         }
@@ -1336,6 +1405,7 @@ private constructor(
                 outputKeyMappings,
                 outputKeys,
                 outputsSchemaDefinition,
+                tagValueIds,
                 transformations,
                 additionalProperties,
             )
@@ -1344,7 +1414,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{file=$file, inputKeys=$inputKeys, dataType=$dataType, description=$description, inputKeyMappings=$inputKeyMappings, inputsSchemaDefinition=$inputsSchemaDefinition, metadataKeyMappings=$metadataKeyMappings, metadataKeys=$metadataKeys, name=$name, outputKeyMappings=$outputKeyMappings, outputKeys=$outputKeys, outputsSchemaDefinition=$outputsSchemaDefinition, transformations=$transformations, additionalProperties=$additionalProperties}"
+            "Body{file=$file, inputKeys=$inputKeys, dataType=$dataType, description=$description, inputKeyMappings=$inputKeyMappings, inputsSchemaDefinition=$inputsSchemaDefinition, metadataKeyMappings=$metadataKeyMappings, metadataKeys=$metadataKeys, name=$name, outputKeyMappings=$outputKeyMappings, outputKeys=$outputKeys, outputsSchemaDefinition=$outputsSchemaDefinition, tagValueIds=$tagValueIds, transformations=$transformations, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

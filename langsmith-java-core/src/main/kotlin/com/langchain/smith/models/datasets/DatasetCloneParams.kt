@@ -76,6 +76,12 @@ private constructor(
     fun split(): Optional<Split> = body.split()
 
     /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun tagValueIds(): Optional<List<String>> = body.tagValueIds()
+
+    /**
      * Returns the raw JSON value of [sourceDatasetId].
      *
      * Unlike [sourceDatasetId], this method doesn't throw if the JSON field has an unexpected type.
@@ -109,6 +115,13 @@ private constructor(
      * Unlike [split], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _split(): JsonField<Split> = body._split()
+
+    /**
+     * Returns the raw JSON value of [tagValueIds].
+     *
+     * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _tagValueIds(): JsonField<List<String>> = body._tagValueIds()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -251,6 +264,29 @@ private constructor(
 
         /** Alias for calling [split] with `Split.ofStrings(strings)`. */
         fun splitOfStrings(strings: List<String>) = apply { body.splitOfStrings(strings) }
+
+        fun tagValueIds(tagValueIds: List<String>?) = apply { body.tagValueIds(tagValueIds) }
+
+        /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+        fun tagValueIds(tagValueIds: Optional<List<String>>) = tagValueIds(tagValueIds.getOrNull())
+
+        /**
+         * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+            body.tagValueIds(tagValueIds)
+        }
+
+        /**
+         * Adds a single [String] to [tagValueIds].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply { body.addTagValueId(tagValueId) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -404,6 +440,7 @@ private constructor(
         private val asOf: JsonField<AsOf>,
         private val examples: JsonField<List<String>>,
         private val split: JsonField<Split>,
+        private val tagValueIds: JsonField<List<String>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -420,7 +457,18 @@ private constructor(
             @ExcludeMissing
             examples: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("split") @ExcludeMissing split: JsonField<Split> = JsonMissing.of(),
-        ) : this(sourceDatasetId, targetDatasetId, asOf, examples, split, mutableMapOf())
+            @JsonProperty("tag_value_ids")
+            @ExcludeMissing
+            tagValueIds: JsonField<List<String>> = JsonMissing.of(),
+        ) : this(
+            sourceDatasetId,
+            targetDatasetId,
+            asOf,
+            examples,
+            split,
+            tagValueIds,
+            mutableMapOf(),
+        )
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -454,6 +502,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun split(): Optional<Split> = split.getOptional("split")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tagValueIds(): Optional<List<String>> = tagValueIds.getOptional("tag_value_ids")
 
         /**
          * Returns the raw JSON value of [sourceDatasetId].
@@ -498,6 +552,15 @@ private constructor(
          */
         @JsonProperty("split") @ExcludeMissing fun _split(): JsonField<Split> = split
 
+        /**
+         * Returns the raw JSON value of [tagValueIds].
+         *
+         * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tag_value_ids")
+        @ExcludeMissing
+        fun _tagValueIds(): JsonField<List<String>> = tagValueIds
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -532,6 +595,7 @@ private constructor(
             private var asOf: JsonField<AsOf> = JsonMissing.of()
             private var examples: JsonField<MutableList<String>>? = null
             private var split: JsonField<Split> = JsonMissing.of()
+            private var tagValueIds: JsonField<MutableList<String>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -541,6 +605,7 @@ private constructor(
                 asOf = body.asOf
                 examples = body.examples.map { it.toMutableList() }
                 split = body.split
+                tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -641,6 +706,36 @@ private constructor(
             /** Alias for calling [split] with `Split.ofStrings(strings)`. */
             fun splitOfStrings(strings: List<String>) = split(Split.ofStrings(strings))
 
+            fun tagValueIds(tagValueIds: List<String>?) =
+                tagValueIds(JsonField.ofNullable(tagValueIds))
+
+            /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+            fun tagValueIds(tagValueIds: Optional<List<String>>) =
+                tagValueIds(tagValueIds.getOrNull())
+
+            /**
+             * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+                this.tagValueIds = tagValueIds.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [tagValueIds].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTagValueId(tagValueId: String) = apply {
+                tagValueIds =
+                    (tagValueIds ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("tagValueIds", it).add(tagValueId)
+                    }
+            }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -680,6 +775,7 @@ private constructor(
                     asOf,
                     (examples ?: JsonMissing.of()).map { it.toImmutable() },
                     split,
+                    (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -705,6 +801,7 @@ private constructor(
             asOf().ifPresent { it.validate() }
             examples()
             split().ifPresent { it.validate() }
+            tagValueIds()
             validated = true
         }
 
@@ -728,7 +825,8 @@ private constructor(
                 (if (targetDatasetId.asKnown().isPresent) 1 else 0) +
                 (asOf.asKnown().getOrNull()?.validity() ?: 0) +
                 (examples.asKnown().getOrNull()?.size ?: 0) +
-                (split.asKnown().getOrNull()?.validity() ?: 0)
+                (split.asKnown().getOrNull()?.validity() ?: 0) +
+                (tagValueIds.asKnown().getOrNull()?.size ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -741,6 +839,7 @@ private constructor(
                 asOf == other.asOf &&
                 examples == other.examples &&
                 split == other.split &&
+                tagValueIds == other.tagValueIds &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -751,6 +850,7 @@ private constructor(
                 asOf,
                 examples,
                 split,
+                tagValueIds,
                 additionalProperties,
             )
         }
@@ -758,7 +858,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{sourceDatasetId=$sourceDatasetId, targetDatasetId=$targetDatasetId, asOf=$asOf, examples=$examples, split=$split, additionalProperties=$additionalProperties}"
+            "Body{sourceDatasetId=$sourceDatasetId, targetDatasetId=$targetDatasetId, asOf=$asOf, examples=$examples, split=$split, tagValueIds=$tagValueIds, additionalProperties=$additionalProperties}"
     }
 
     /**

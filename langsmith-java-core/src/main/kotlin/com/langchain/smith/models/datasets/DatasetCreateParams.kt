@@ -92,6 +92,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun tagValueIds(): Optional<List<String>> = body.tagValueIds()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun transformations(): Optional<List<DatasetTransformation>> = body.transformations()
 
     /**
@@ -161,6 +167,13 @@ private constructor(
      */
     fun _outputsSchemaDefinition(): JsonField<OutputsSchemaDefinition> =
         body._outputsSchemaDefinition()
+
+    /**
+     * Returns the raw JSON value of [tagValueIds].
+     *
+     * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _tagValueIds(): JsonField<List<String>> = body._tagValueIds()
 
     /**
      * Returns the raw JSON value of [transformations].
@@ -366,6 +379,29 @@ private constructor(
                 body.outputsSchemaDefinition(outputsSchemaDefinition)
             }
 
+        fun tagValueIds(tagValueIds: List<String>?) = apply { body.tagValueIds(tagValueIds) }
+
+        /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+        fun tagValueIds(tagValueIds: Optional<List<String>>) = tagValueIds(tagValueIds.getOrNull())
+
+        /**
+         * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+            body.tagValueIds(tagValueIds)
+        }
+
+        /**
+         * Adds a single [String] to [tagValueIds].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply { body.addTagValueId(tagValueId) }
+
         fun transformations(transformations: List<DatasetTransformation>?) = apply {
             body.transformations(transformations)
         }
@@ -550,6 +586,7 @@ private constructor(
         private val extra: JsonField<Extra>,
         private val inputsSchemaDefinition: JsonField<InputsSchemaDefinition>,
         private val outputsSchemaDefinition: JsonField<OutputsSchemaDefinition>,
+        private val tagValueIds: JsonField<List<String>>,
         private val transformations: JsonField<List<DatasetTransformation>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -577,6 +614,9 @@ private constructor(
             @JsonProperty("outputs_schema_definition")
             @ExcludeMissing
             outputsSchemaDefinition: JsonField<OutputsSchemaDefinition> = JsonMissing.of(),
+            @JsonProperty("tag_value_ids")
+            @ExcludeMissing
+            tagValueIds: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("transformations")
             @ExcludeMissing
             transformations: JsonField<List<DatasetTransformation>> = JsonMissing.of(),
@@ -590,6 +630,7 @@ private constructor(
             extra,
             inputsSchemaDefinition,
             outputsSchemaDefinition,
+            tagValueIds,
             transformations,
             mutableMapOf(),
         )
@@ -652,6 +693,12 @@ private constructor(
          */
         fun outputsSchemaDefinition(): Optional<OutputsSchemaDefinition> =
             outputsSchemaDefinition.getOptional("outputs_schema_definition")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tagValueIds(): Optional<List<String>> = tagValueIds.getOptional("tag_value_ids")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -737,6 +784,15 @@ private constructor(
         fun _outputsSchemaDefinition(): JsonField<OutputsSchemaDefinition> = outputsSchemaDefinition
 
         /**
+         * Returns the raw JSON value of [tagValueIds].
+         *
+         * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tag_value_ids")
+        @ExcludeMissing
+        fun _tagValueIds(): JsonField<List<String>> = tagValueIds
+
+        /**
          * Returns the raw JSON value of [transformations].
          *
          * Unlike [transformations], this method doesn't throw if the JSON field has an unexpected
@@ -784,6 +840,7 @@ private constructor(
             private var inputsSchemaDefinition: JsonField<InputsSchemaDefinition> = JsonMissing.of()
             private var outputsSchemaDefinition: JsonField<OutputsSchemaDefinition> =
                 JsonMissing.of()
+            private var tagValueIds: JsonField<MutableList<String>>? = null
             private var transformations: JsonField<MutableList<DatasetTransformation>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -798,6 +855,7 @@ private constructor(
                 extra = body.extra
                 inputsSchemaDefinition = body.inputsSchemaDefinition
                 outputsSchemaDefinition = body.outputsSchemaDefinition
+                tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 transformations = body.transformations.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -954,6 +1012,36 @@ private constructor(
                 outputsSchemaDefinition: JsonField<OutputsSchemaDefinition>
             ) = apply { this.outputsSchemaDefinition = outputsSchemaDefinition }
 
+            fun tagValueIds(tagValueIds: List<String>?) =
+                tagValueIds(JsonField.ofNullable(tagValueIds))
+
+            /** Alias for calling [Builder.tagValueIds] with `tagValueIds.orElse(null)`. */
+            fun tagValueIds(tagValueIds: Optional<List<String>>) =
+                tagValueIds(tagValueIds.getOrNull())
+
+            /**
+             * Sets [Builder.tagValueIds] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.tagValueIds] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun tagValueIds(tagValueIds: JsonField<List<String>>) = apply {
+                this.tagValueIds = tagValueIds.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [tagValueIds].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addTagValueId(tagValueId: String) = apply {
+                tagValueIds =
+                    (tagValueIds ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("tagValueIds", it).add(tagValueId)
+                    }
+            }
+
             fun transformations(transformations: List<DatasetTransformation>?) =
                 transformations(JsonField.ofNullable(transformations))
 
@@ -1026,6 +1114,7 @@ private constructor(
                     extra,
                     inputsSchemaDefinition,
                     outputsSchemaDefinition,
+                    (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
                     (transformations ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -1056,6 +1145,7 @@ private constructor(
             extra().ifPresent { it.validate() }
             inputsSchemaDefinition().ifPresent { it.validate() }
             outputsSchemaDefinition().ifPresent { it.validate() }
+            tagValueIds()
             transformations().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
@@ -1085,6 +1175,7 @@ private constructor(
                 (extra.asKnown().getOrNull()?.validity() ?: 0) +
                 (inputsSchemaDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                 (outputsSchemaDefinition.asKnown().getOrNull()?.validity() ?: 0) +
+                (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
                 (transformations.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -1102,6 +1193,7 @@ private constructor(
                 extra == other.extra &&
                 inputsSchemaDefinition == other.inputsSchemaDefinition &&
                 outputsSchemaDefinition == other.outputsSchemaDefinition &&
+                tagValueIds == other.tagValueIds &&
                 transformations == other.transformations &&
                 additionalProperties == other.additionalProperties
         }
@@ -1117,6 +1209,7 @@ private constructor(
                 extra,
                 inputsSchemaDefinition,
                 outputsSchemaDefinition,
+                tagValueIds,
                 transformations,
                 additionalProperties,
             )
@@ -1125,7 +1218,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{name=$name, id=$id, createdAt=$createdAt, dataType=$dataType, description=$description, externallyManaged=$externallyManaged, extra=$extra, inputsSchemaDefinition=$inputsSchemaDefinition, outputsSchemaDefinition=$outputsSchemaDefinition, transformations=$transformations, additionalProperties=$additionalProperties}"
+            "Body{name=$name, id=$id, createdAt=$createdAt, dataType=$dataType, description=$description, externallyManaged=$externallyManaged, extra=$extra, inputsSchemaDefinition=$inputsSchemaDefinition, outputsSchemaDefinition=$outputsSchemaDefinition, tagValueIds=$tagValueIds, transformations=$transformations, additionalProperties=$additionalProperties}"
     }
 
     class Extra

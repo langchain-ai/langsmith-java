@@ -177,6 +177,7 @@ private constructor(
     private constructor(
         private val hubRef: JsonField<String>,
         private val model: JsonField<Model>,
+        private val playgroundSettingsId: JsonField<String>,
         private val prompt: JsonField<List<List<JsonValue>>>,
         private val schema: JsonField<Schema>,
         private val templateFormat: JsonField<String>,
@@ -188,6 +189,9 @@ private constructor(
         private constructor(
             @JsonProperty("hub_ref") @ExcludeMissing hubRef: JsonField<String> = JsonMissing.of(),
             @JsonProperty("model") @ExcludeMissing model: JsonField<Model> = JsonMissing.of(),
+            @JsonProperty("playground_settings_id")
+            @ExcludeMissing
+            playgroundSettingsId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("prompt")
             @ExcludeMissing
             prompt: JsonField<List<List<JsonValue>>> = JsonMissing.of(),
@@ -198,7 +202,16 @@ private constructor(
             @JsonProperty("variable_mapping")
             @ExcludeMissing
             variableMapping: JsonField<VariableMapping> = JsonMissing.of(),
-        ) : this(hubRef, model, prompt, schema, templateFormat, variableMapping, mutableMapOf())
+        ) : this(
+            hubRef,
+            model,
+            playgroundSettingsId,
+            prompt,
+            schema,
+            templateFormat,
+            variableMapping,
+            mutableMapOf(),
+        )
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -211,6 +224,13 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun model(): Optional<Model> = model.getOptional("model")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun playgroundSettingsId(): Optional<String> =
+            playgroundSettingsId.getOptional("playground_settings_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -250,6 +270,16 @@ private constructor(
          * Unlike [model], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("model") @ExcludeMissing fun _model(): JsonField<Model> = model
+
+        /**
+         * Returns the raw JSON value of [playgroundSettingsId].
+         *
+         * Unlike [playgroundSettingsId], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("playground_settings_id")
+        @ExcludeMissing
+        fun _playgroundSettingsId(): JsonField<String> = playgroundSettingsId
 
         /**
          * Returns the raw JSON value of [prompt].
@@ -310,6 +340,7 @@ private constructor(
 
             private var hubRef: JsonField<String> = JsonMissing.of()
             private var model: JsonField<Model> = JsonMissing.of()
+            private var playgroundSettingsId: JsonField<String> = JsonMissing.of()
             private var prompt: JsonField<MutableList<List<JsonValue>>>? = null
             private var schema: JsonField<Schema> = JsonMissing.of()
             private var templateFormat: JsonField<String> = JsonMissing.of()
@@ -320,6 +351,7 @@ private constructor(
             internal fun from(structured: Structured) = apply {
                 hubRef = structured.hubRef
                 model = structured.model
+                playgroundSettingsId = structured.playgroundSettingsId
                 prompt = structured.prompt.map { it.toMutableList() }
                 schema = structured.schema
                 templateFormat = structured.templateFormat
@@ -354,6 +386,27 @@ private constructor(
              * value.
              */
             fun model(model: JsonField<Model>) = apply { this.model = model }
+
+            fun playgroundSettingsId(playgroundSettingsId: String?) =
+                playgroundSettingsId(JsonField.ofNullable(playgroundSettingsId))
+
+            /**
+             * Alias for calling [Builder.playgroundSettingsId] with
+             * `playgroundSettingsId.orElse(null)`.
+             */
+            fun playgroundSettingsId(playgroundSettingsId: Optional<String>) =
+                playgroundSettingsId(playgroundSettingsId.getOrNull())
+
+            /**
+             * Sets [Builder.playgroundSettingsId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.playgroundSettingsId] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun playgroundSettingsId(playgroundSettingsId: JsonField<String>) = apply {
+                this.playgroundSettingsId = playgroundSettingsId
+            }
 
             fun prompt(prompt: List<List<JsonValue>>?) = prompt(JsonField.ofNullable(prompt))
 
@@ -461,6 +514,7 @@ private constructor(
                 Structured(
                     hubRef,
                     model,
+                    playgroundSettingsId,
                     (prompt ?: JsonMissing.of()).map { it.toImmutable() },
                     schema,
                     templateFormat,
@@ -487,6 +541,7 @@ private constructor(
 
             hubRef()
             model().ifPresent { it.validate() }
+            playgroundSettingsId()
             prompt()
             schema().ifPresent { it.validate() }
             templateFormat()
@@ -512,6 +567,7 @@ private constructor(
         internal fun validity(): Int =
             (if (hubRef.asKnown().isPresent) 1 else 0) +
                 (model.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (playgroundSettingsId.asKnown().isPresent) 1 else 0) +
                 (prompt.asKnown().getOrNull()?.sumOf { it.size.toInt() } ?: 0) +
                 (schema.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (templateFormat.asKnown().isPresent) 1 else 0) +
@@ -862,6 +918,7 @@ private constructor(
             return other is Structured &&
                 hubRef == other.hubRef &&
                 model == other.model &&
+                playgroundSettingsId == other.playgroundSettingsId &&
                 prompt == other.prompt &&
                 schema == other.schema &&
                 templateFormat == other.templateFormat &&
@@ -873,6 +930,7 @@ private constructor(
             Objects.hash(
                 hubRef,
                 model,
+                playgroundSettingsId,
                 prompt,
                 schema,
                 templateFormat,
@@ -884,7 +942,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Structured{hubRef=$hubRef, model=$model, prompt=$prompt, schema=$schema, templateFormat=$templateFormat, variableMapping=$variableMapping, additionalProperties=$additionalProperties}"
+            "Structured{hubRef=$hubRef, model=$model, playgroundSettingsId=$playgroundSettingsId, prompt=$prompt, schema=$schema, templateFormat=$templateFormat, variableMapping=$variableMapping, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
