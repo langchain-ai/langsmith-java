@@ -1,0 +1,87 @@
+name: 'stlc: promote to production'
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    if: github.repository == 'langchain-ai/langsmith-java-staging'
+    runs-on: self-hosted-ubuntu-small-amd64
+    env:
+      PRODUCTION_REPO: langchain-ai/langsmith-java
+    steps:
+      - name: Check out staging
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Load GitHub App key from 1Password
+        id: load-gh-app-secrets
+        uses: 1password/load-secrets-action@581a835fb51b8e7ec56b71cf2ffddd7e68bb25e0 # v2
+        with:
+          export-env: false
+        env:
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN_INTERNAL }}
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+          LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY: op://${{ secrets.INTERNAL_INFRA_OP_VAULT }}/langchain-actions-pr-bot/private_key
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: "Iv23liMFOFBcPTKFWi3S"
+          private-key: ${{ steps.load-gh-app-secrets.outputs.LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY }}
+          repositories: langsmith-java-staging,langsmith-java
+
+      - name: Fetch production main
+        run: |
+          git remote add production \
+            "https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${PRODUCTION_REPO}.git"
+          git fetch production main
+
+      - name: Check if production is already in sync
+        id: diff
+        run: |
+          STAGING_SHA=$(git rev-parse origin/main)
+          PRODUCTION_SHA=$(git rev-parse production/main)
+          if [ "$STAGING_SHA" = "$PRODUCTION_SHA" ]; then
+            echo "Production is already at $STAGING_SHA. Nothing to release."
+            echo "synced=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "synced=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push staging main to the release branch on production
+        if: steps.diff.outputs.synced == 'false'
+        run: |
+          git push production origin/main:refs/heads/stainless/release --force
+
+      - name: Open or update the release PR on production
+        if: steps.diff.outputs.synced == 'false'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          EXISTING_PR=$(gh pr list \
+            --repo "${PRODUCTION_REPO}" \
+            --head stainless/release \
+            --state open \
+            --json number \
+            --jq '.[0].number')
+          if [ -z "${EXISTING_PR}" ]; then
+            gh pr create \
+              --repo "${PRODUCTION_REPO}" \
+              --base main \
+              --head stainless/release \
+              --title "Release SDK updates" \
+              --body "$(git log --reverse --format="%s%n" production/main..origin/main)"
+          else
+            gh pr edit "${EXISTING_PR}" \
+              --repo "${PRODUCTION_REPO}" \
+              --body "$(git log --reverse --format="%s%n" production/main..origin/main)"
+            echo "Release PR #${EXISTING_PR} already exists. Updated its description."
+          fi

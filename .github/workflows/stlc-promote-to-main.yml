@@ -1,0 +1,45 @@
+name: "stlc: trigger promote on next → main approval"
+
+# Dispatches the promote workflow in langchainplus whenever the next → main
+# PR in this repo receives an approving review.
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-promote:
+    if: |
+      github.repository == 'langchain-ai/langsmith-java-staging' &&
+      github.event.review.state == 'approved' &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.head.ref == 'next'
+    runs-on: self-hosted-ubuntu-small-amd64
+    steps:
+      - name: Load GitHub App key from 1Password
+        id: load-gh-app-secrets
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN_INTERNAL }}
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+          LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY: op://${{ secrets.INTERNAL_INFRA_OP_VAULT }}/langchain-actions-pr-bot/private_key
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: "Iv23liMFOFBcPTKFWi3S"
+          private-key: ${{ steps.load-gh-app-secrets.outputs.LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY }}
+          repositories: langchainplus
+
+      - name: Dispatch stlc promote workflow in langchainplus
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run stlc_promote.yml \
+            --repo langchain-ai/langchainplus \
+            --field repos=langsmith-java-staging
