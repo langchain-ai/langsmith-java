@@ -37,11 +37,11 @@ internal class BoxServiceAsyncTest {
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
                     .addMount(
-                        BoxCreateParams.Mount.builder()
+                        BoxCreateParams.Mount.SandboxapiS3BucketMountSpec.builder()
                             .id("id")
                             .mountPath("mount_path")
                             .s3(
-                                BoxCreateParams.Mount.S3.builder()
+                                BoxCreateParams.Mount.SandboxapiS3BucketMountSpec.S3.builder()
                                     .bucket("bucket")
                                     .endpointUrl("endpoint_url")
                                     .region("region")
@@ -49,11 +49,17 @@ internal class BoxServiceAsyncTest {
                                     .prefix("prefix")
                                     .build()
                             )
-                            .type(BoxCreateParams.Mount.Type.S3)
+                            .type(BoxCreateParams.Mount.SandboxapiS3BucketMountSpec.Type.S3)
                             .cache(
-                                BoxCreateParams.Mount.Cache.builder()
+                                BoxCreateParams.Mount.SandboxapiS3BucketMountSpec.Cache.builder()
                                     .maxSizeBytes(0L)
                                     .writebackSeconds(0L)
+                                    .build()
+                            )
+                            .gcs(
+                                BoxCreateParams.Mount.SandboxapiS3BucketMountSpec.Gcs.builder()
+                                    .bucket("bucket")
+                                    .prefix("prefix")
                                     .build()
                             )
                             .readOnly(true)

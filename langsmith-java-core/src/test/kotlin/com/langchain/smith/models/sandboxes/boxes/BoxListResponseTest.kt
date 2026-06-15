@@ -26,11 +26,12 @@ internal class BoxListResponseTest {
                         .idleTtlSeconds(0L)
                         .memBytes(0L)
                         .addMount(
-                            BoxListResponse.Sandbox.Mount.builder()
+                            BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.builder()
                                 .id("id")
                                 .mountPath("mount_path")
                                 .s3(
-                                    BoxListResponse.Sandbox.Mount.S3.builder()
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.S3
+                                        .builder()
                                         .bucket("bucket")
                                         .endpointUrl("endpoint_url")
                                         .region("region")
@@ -38,11 +39,22 @@ internal class BoxListResponseTest {
                                         .prefix("prefix")
                                         .build()
                                 )
-                                .type(BoxListResponse.Sandbox.Mount.Type.S3)
+                                .type(
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Type
+                                        .S3
+                                )
                                 .cache(
-                                    BoxListResponse.Sandbox.Mount.Cache.builder()
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Cache
+                                        .builder()
                                         .maxSizeBytes(0L)
                                         .writebackSeconds(0L)
+                                        .build()
+                                )
+                                .gcs(
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Gcs
+                                        .builder()
+                                        .bucket("bucket")
+                                        .prefix("prefix")
                                         .build()
                                 )
                                 .readOnly(true)
@@ -184,11 +196,12 @@ internal class BoxListResponseTest {
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
                     .addMount(
-                        BoxListResponse.Sandbox.Mount.builder()
+                        BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.builder()
                             .id("id")
                             .mountPath("mount_path")
                             .s3(
-                                BoxListResponse.Sandbox.Mount.S3.builder()
+                                BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.S3
+                                    .builder()
                                     .bucket("bucket")
                                     .endpointUrl("endpoint_url")
                                     .region("region")
@@ -196,11 +209,19 @@ internal class BoxListResponseTest {
                                     .prefix("prefix")
                                     .build()
                             )
-                            .type(BoxListResponse.Sandbox.Mount.Type.S3)
+                            .type(BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Type.S3)
                             .cache(
-                                BoxListResponse.Sandbox.Mount.Cache.builder()
+                                BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Cache
+                                    .builder()
                                     .maxSizeBytes(0L)
                                     .writebackSeconds(0L)
+                                    .build()
+                            )
+                            .gcs(
+                                BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Gcs
+                                    .builder()
+                                    .bucket("bucket")
+                                    .prefix("prefix")
                                     .build()
                             )
                             .readOnly(true)
@@ -340,11 +361,12 @@ internal class BoxListResponseTest {
                         .idleTtlSeconds(0L)
                         .memBytes(0L)
                         .addMount(
-                            BoxListResponse.Sandbox.Mount.builder()
+                            BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.builder()
                                 .id("id")
                                 .mountPath("mount_path")
                                 .s3(
-                                    BoxListResponse.Sandbox.Mount.S3.builder()
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.S3
+                                        .builder()
                                         .bucket("bucket")
                                         .endpointUrl("endpoint_url")
                                         .region("region")
@@ -352,11 +374,22 @@ internal class BoxListResponseTest {
                                         .prefix("prefix")
                                         .build()
                                 )
-                                .type(BoxListResponse.Sandbox.Mount.Type.S3)
+                                .type(
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Type
+                                        .S3
+                                )
                                 .cache(
-                                    BoxListResponse.Sandbox.Mount.Cache.builder()
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Cache
+                                        .builder()
                                         .maxSizeBytes(0L)
                                         .writebackSeconds(0L)
+                                        .build()
+                                )
+                                .gcs(
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Gcs
+                                        .builder()
+                                        .bucket("bucket")
+                                        .prefix("prefix")
                                         .build()
                                 )
                                 .readOnly(true)
