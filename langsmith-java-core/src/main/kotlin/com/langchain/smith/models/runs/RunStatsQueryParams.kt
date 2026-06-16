@@ -1129,6 +1129,8 @@ private constructor(
 
             @JvmField val ALL_TOKEN_STATS = of("all_token_stats")
 
+            @JvmField val GROUP_COUNT = of("group_count")
+
             @JvmField val PROMPT_TOKEN_DETAILS = of("prompt_token_details")
 
             @JvmField val COMPLETION_TOKEN_DETAILS = of("completion_token_details")
@@ -1171,6 +1173,7 @@ private constructor(
             SESSION_FEEDBACK_STATS,
             ALL_RUN_STATS,
             ALL_TOKEN_STATS,
+            GROUP_COUNT,
             PROMPT_TOKEN_DETAILS,
             COMPLETION_TOKEN_DETAILS,
             PROMPT_COST_DETAILS,
@@ -1216,6 +1219,7 @@ private constructor(
             SESSION_FEEDBACK_STATS,
             ALL_RUN_STATS,
             ALL_TOKEN_STATS,
+            GROUP_COUNT,
             PROMPT_TOKEN_DETAILS,
             COMPLETION_TOKEN_DETAILS,
             PROMPT_COST_DETAILS,
@@ -1262,6 +1266,7 @@ private constructor(
                 SESSION_FEEDBACK_STATS -> Value.SESSION_FEEDBACK_STATS
                 ALL_RUN_STATS -> Value.ALL_RUN_STATS
                 ALL_TOKEN_STATS -> Value.ALL_TOKEN_STATS
+                GROUP_COUNT -> Value.GROUP_COUNT
                 PROMPT_TOKEN_DETAILS -> Value.PROMPT_TOKEN_DETAILS
                 COMPLETION_TOKEN_DETAILS -> Value.COMPLETION_TOKEN_DETAILS
                 PROMPT_COST_DETAILS -> Value.PROMPT_COST_DETAILS
@@ -1309,6 +1314,7 @@ private constructor(
                 SESSION_FEEDBACK_STATS -> Known.SESSION_FEEDBACK_STATS
                 ALL_RUN_STATS -> Known.ALL_RUN_STATS
                 ALL_TOKEN_STATS -> Known.ALL_TOKEN_STATS
+                GROUP_COUNT -> Known.GROUP_COUNT
                 PROMPT_TOKEN_DETAILS -> Known.PROMPT_TOKEN_DETAILS
                 COMPLETION_TOKEN_DETAILS -> Known.COMPLETION_TOKEN_DETAILS
                 PROMPT_COST_DETAILS -> Known.PROMPT_COST_DETAILS

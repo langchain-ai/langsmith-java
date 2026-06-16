@@ -25,6 +25,7 @@ internal class FeedbackCreateSchemaTest {
                         .build()
                 )
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .doNotExtendTraceRetention(true)
                 .error(true)
                 .feedbackConfig(
                     FeedbackCreateSchema.FeedbackConfig.builder()
@@ -74,6 +75,7 @@ internal class FeedbackCreateSchemaTest {
             )
         assertThat(feedbackCreateSchema.createdAt())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(feedbackCreateSchema.doNotExtendTraceRetention()).contains(true)
         assertThat(feedbackCreateSchema.error()).contains(true)
         assertThat(feedbackCreateSchema.feedbackConfig())
             .contains(
@@ -131,6 +133,7 @@ internal class FeedbackCreateSchemaTest {
                         .build()
                 )
                 .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .doNotExtendTraceRetention(true)
                 .error(true)
                 .feedbackConfig(
                     FeedbackCreateSchema.FeedbackConfig.builder()

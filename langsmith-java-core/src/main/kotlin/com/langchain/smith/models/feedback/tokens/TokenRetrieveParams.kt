@@ -16,6 +16,7 @@ private constructor(
     private val token: String?,
     private val comment: String?,
     private val correction: String?,
+    private val doNotExtendTraceRetention: Boolean?,
     private val score: Score?,
     private val value: Value?,
     private val additionalHeaders: Headers,
@@ -27,6 +28,9 @@ private constructor(
     fun comment(): Optional<String> = Optional.ofNullable(comment)
 
     fun correction(): Optional<String> = Optional.ofNullable(correction)
+
+    fun doNotExtendTraceRetention(): Optional<Boolean> =
+        Optional.ofNullable(doNotExtendTraceRetention)
 
     fun score(): Optional<Score> = Optional.ofNullable(score)
 
@@ -54,6 +58,7 @@ private constructor(
         private var token: String? = null
         private var comment: String? = null
         private var correction: String? = null
+        private var doNotExtendTraceRetention: Boolean? = null
         private var score: Score? = null
         private var value: Value? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
@@ -64,6 +69,7 @@ private constructor(
             token = tokenRetrieveParams.token
             comment = tokenRetrieveParams.comment
             correction = tokenRetrieveParams.correction
+            doNotExtendTraceRetention = tokenRetrieveParams.doNotExtendTraceRetention
             score = tokenRetrieveParams.score
             value = tokenRetrieveParams.value
             additionalHeaders = tokenRetrieveParams.additionalHeaders.toBuilder()
@@ -84,6 +90,25 @@ private constructor(
 
         /** Alias for calling [Builder.correction] with `correction.orElse(null)`. */
         fun correction(correction: Optional<String>) = correction(correction.getOrNull())
+
+        fun doNotExtendTraceRetention(doNotExtendTraceRetention: Boolean?) = apply {
+            this.doNotExtendTraceRetention = doNotExtendTraceRetention
+        }
+
+        /**
+         * Alias for [Builder.doNotExtendTraceRetention].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun doNotExtendTraceRetention(doNotExtendTraceRetention: Boolean) =
+            doNotExtendTraceRetention(doNotExtendTraceRetention as Boolean?)
+
+        /**
+         * Alias for calling [Builder.doNotExtendTraceRetention] with
+         * `doNotExtendTraceRetention.orElse(null)`.
+         */
+        fun doNotExtendTraceRetention(doNotExtendTraceRetention: Optional<Boolean>) =
+            doNotExtendTraceRetention(doNotExtendTraceRetention.getOrNull())
 
         fun score(score: Score?) = apply { this.score = score }
 
@@ -218,6 +243,7 @@ private constructor(
                 token,
                 comment,
                 correction,
+                doNotExtendTraceRetention,
                 score,
                 value,
                 additionalHeaders.build(),
@@ -238,6 +264,9 @@ private constructor(
             .apply {
                 comment?.let { put("comment", it) }
                 correction?.let { put("correction", it) }
+                doNotExtendTraceRetention?.let {
+                    put("do_not_extend_trace_retention", it.toString())
+                }
                 score?.accept(
                     object : Score.Visitor<Unit> {
                         override fun visitNumber(number: Double) {
@@ -412,6 +441,7 @@ private constructor(
             token == other.token &&
             comment == other.comment &&
             correction == other.correction &&
+            doNotExtendTraceRetention == other.doNotExtendTraceRetention &&
             score == other.score &&
             value == other.value &&
             additionalHeaders == other.additionalHeaders &&
@@ -423,6 +453,7 @@ private constructor(
             token,
             comment,
             correction,
+            doNotExtendTraceRetention,
             score,
             value,
             additionalHeaders,
@@ -430,5 +461,5 @@ private constructor(
         )
 
     override fun toString() =
-        "TokenRetrieveParams{token=$token, comment=$comment, correction=$correction, score=$score, value=$value, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TokenRetrieveParams{token=$token, comment=$comment, correction=$correction, doNotExtendTraceRetention=$doNotExtendTraceRetention, score=$score, value=$value, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

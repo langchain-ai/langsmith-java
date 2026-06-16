@@ -18,6 +18,7 @@ internal class TokenUpdateParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+            .doNotExtendTraceRetention(true)
             .metadata(
                 TokenUpdateParams.Metadata.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -49,6 +50,7 @@ internal class TokenUpdateParamsTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .doNotExtendTraceRetention(true)
                 .metadata(
                     TokenUpdateParams.Metadata.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -69,6 +71,7 @@ internal class TokenUpdateParamsTest {
                         .build()
                 )
             )
+        assertThat(body.doNotExtendTraceRetention()).contains(true)
         assertThat(body.metadata())
             .contains(
                 TokenUpdateParams.Metadata.builder()

@@ -42,6 +42,7 @@ private constructor(
     private val comparativeExperimentId: JsonField<String>,
     private val correction: JsonField<Correction>,
     private val createdAt: JsonField<OffsetDateTime>,
+    private val doNotExtendTraceRetention: JsonField<Boolean>,
     private val error: JsonField<Boolean>,
     private val feedbackConfig: JsonField<FeedbackConfig>,
     private val feedbackGroupId: JsonField<String>,
@@ -70,6 +71,9 @@ private constructor(
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("do_not_extend_trace_retention")
+        @ExcludeMissing
+        doNotExtendTraceRetention: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("error") @ExcludeMissing error: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("feedback_config")
         @ExcludeMissing
@@ -98,6 +102,7 @@ private constructor(
         comparativeExperimentId,
         correction,
         createdAt,
+        doNotExtendTraceRetention,
         error,
         feedbackConfig,
         feedbackGroupId,
@@ -148,6 +153,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun createdAt(): Optional<OffsetDateTime> = createdAt.getOptional("created_at")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun doNotExtendTraceRetention(): Optional<Boolean> =
+        doNotExtendTraceRetention.getOptional("do_not_extend_trace_retention")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -265,6 +277,16 @@ private constructor(
     @JsonProperty("created_at")
     @ExcludeMissing
     fun _createdAt(): JsonField<OffsetDateTime> = createdAt
+
+    /**
+     * Returns the raw JSON value of [doNotExtendTraceRetention].
+     *
+     * Unlike [doNotExtendTraceRetention], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("do_not_extend_trace_retention")
+    @ExcludeMissing
+    fun _doNotExtendTraceRetention(): JsonField<Boolean> = doNotExtendTraceRetention
 
     /**
      * Returns the raw JSON value of [error].
@@ -387,6 +409,7 @@ private constructor(
         private var comparativeExperimentId: JsonField<String> = JsonMissing.of()
         private var correction: JsonField<Correction> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var doNotExtendTraceRetention: JsonField<Boolean> = JsonMissing.of()
         private var error: JsonField<Boolean> = JsonMissing.of()
         private var feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of()
         private var feedbackGroupId: JsonField<String> = JsonMissing.of()
@@ -408,6 +431,7 @@ private constructor(
             comparativeExperimentId = feedbackCreateSchema.comparativeExperimentId
             correction = feedbackCreateSchema.correction
             createdAt = feedbackCreateSchema.createdAt
+            doNotExtendTraceRetention = feedbackCreateSchema.doNotExtendTraceRetention
             error = feedbackCreateSchema.error
             feedbackConfig = feedbackCreateSchema.feedbackConfig
             feedbackGroupId = feedbackCreateSchema.feedbackGroupId
@@ -507,6 +531,20 @@ private constructor(
          * supported value.
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
+
+        fun doNotExtendTraceRetention(doNotExtendTraceRetention: Boolean) =
+            doNotExtendTraceRetention(JsonField.of(doNotExtendTraceRetention))
+
+        /**
+         * Sets [Builder.doNotExtendTraceRetention] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.doNotExtendTraceRetention] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun doNotExtendTraceRetention(doNotExtendTraceRetention: JsonField<Boolean>) = apply {
+            this.doNotExtendTraceRetention = doNotExtendTraceRetention
+        }
 
         fun error(error: Boolean?) = error(JsonField.ofNullable(error))
 
@@ -747,6 +785,7 @@ private constructor(
                 comparativeExperimentId,
                 correction,
                 createdAt,
+                doNotExtendTraceRetention,
                 error,
                 feedbackConfig,
                 feedbackGroupId,
@@ -783,6 +822,7 @@ private constructor(
         comparativeExperimentId()
         correction().ifPresent { it.validate() }
         createdAt()
+        doNotExtendTraceRetention()
         error()
         feedbackConfig().ifPresent { it.validate() }
         feedbackGroupId()
@@ -818,6 +858,7 @@ private constructor(
             (if (comparativeExperimentId.asKnown().isPresent) 1 else 0) +
             (correction.asKnown().getOrNull()?.validity() ?: 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
+            (if (doNotExtendTraceRetention.asKnown().isPresent) 1 else 0) +
             (if (error.asKnown().isPresent) 1 else 0) +
             (feedbackConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (feedbackGroupId.asKnown().isPresent) 1 else 0) +
@@ -2680,6 +2721,7 @@ private constructor(
             comparativeExperimentId == other.comparativeExperimentId &&
             correction == other.correction &&
             createdAt == other.createdAt &&
+            doNotExtendTraceRetention == other.doNotExtendTraceRetention &&
             error == other.error &&
             feedbackConfig == other.feedbackConfig &&
             feedbackGroupId == other.feedbackGroupId &&
@@ -2702,6 +2744,7 @@ private constructor(
             comparativeExperimentId,
             correction,
             createdAt,
+            doNotExtendTraceRetention,
             error,
             feedbackConfig,
             feedbackGroupId,
@@ -2720,5 +2763,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, doNotExtendTraceRetention=$doNotExtendTraceRetention, error=$error, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }
