@@ -48,6 +48,24 @@ internal class BoxCreateResponseTest {
                                 .prefix("prefix")
                                 .build()
                         )
+                        .git(
+                            BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git.builder()
+                                .remoteUrl("remote_url")
+                                .ref(
+                                    BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git.Ref
+                                        .builder()
+                                        .name("name")
+                                        .type(
+                                            BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git
+                                                .Ref
+                                                .Type
+                                                .BRANCH
+                                        )
+                                        .build()
+                                )
+                                .refreshIntervalSeconds(1L)
+                                .build()
+                        )
                         .readOnly(true)
                         .build()
                 )
@@ -197,6 +215,24 @@ internal class BoxCreateResponseTest {
                                 .prefix("prefix")
                                 .build()
                         )
+                        .git(
+                            BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git.builder()
+                                .remoteUrl("remote_url")
+                                .ref(
+                                    BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git.Ref
+                                        .builder()
+                                        .name("name")
+                                        .type(
+                                            BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git
+                                                .Ref
+                                                .Type
+                                                .BRANCH
+                                        )
+                                        .build()
+                                )
+                                .refreshIntervalSeconds(1L)
+                                .build()
+                        )
                         .readOnly(true)
                         .build()
                 )
@@ -343,6 +379,24 @@ internal class BoxCreateResponseTest {
                             BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Gcs.builder()
                                 .bucket("bucket")
                                 .prefix("prefix")
+                                .build()
+                        )
+                        .git(
+                            BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git.builder()
+                                .remoteUrl("remote_url")
+                                .ref(
+                                    BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git.Ref
+                                        .builder()
+                                        .name("name")
+                                        .type(
+                                            BoxCreateResponse.Mount.SandboxapiS3BucketMountSpec.Git
+                                                .Ref
+                                                .Type
+                                                .BRANCH
+                                        )
+                                        .build()
+                                )
+                                .refreshIntervalSeconds(1L)
                                 .build()
                         )
                         .readOnly(true)

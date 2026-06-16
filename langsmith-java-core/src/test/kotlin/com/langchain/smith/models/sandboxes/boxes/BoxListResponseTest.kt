@@ -57,6 +57,30 @@ internal class BoxListResponseTest {
                                         .prefix("prefix")
                                         .build()
                                 )
+                                .git(
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Git
+                                        .builder()
+                                        .remoteUrl("remote_url")
+                                        .ref(
+                                            BoxListResponse.Sandbox.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .Ref
+                                                .builder()
+                                                .name("name")
+                                                .type(
+                                                    BoxListResponse.Sandbox.Mount
+                                                        .SandboxapiS3BucketMountSpec
+                                                        .Git
+                                                        .Ref
+                                                        .Type
+                                                        .BRANCH
+                                                )
+                                                .build()
+                                        )
+                                        .refreshIntervalSeconds(1L)
+                                        .build()
+                                )
                                 .readOnly(true)
                                 .build()
                         )
@@ -222,6 +246,29 @@ internal class BoxListResponseTest {
                                     .builder()
                                     .bucket("bucket")
                                     .prefix("prefix")
+                                    .build()
+                            )
+                            .git(
+                                BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Git
+                                    .builder()
+                                    .remoteUrl("remote_url")
+                                    .ref(
+                                        BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec
+                                            .Git
+                                            .Ref
+                                            .builder()
+                                            .name("name")
+                                            .type(
+                                                BoxListResponse.Sandbox.Mount
+                                                    .SandboxapiS3BucketMountSpec
+                                                    .Git
+                                                    .Ref
+                                                    .Type
+                                                    .BRANCH
+                                            )
+                                            .build()
+                                    )
+                                    .refreshIntervalSeconds(1L)
                                     .build()
                             )
                             .readOnly(true)
@@ -390,6 +437,30 @@ internal class BoxListResponseTest {
                                         .builder()
                                         .bucket("bucket")
                                         .prefix("prefix")
+                                        .build()
+                                )
+                                .git(
+                                    BoxListResponse.Sandbox.Mount.SandboxapiS3BucketMountSpec.Git
+                                        .builder()
+                                        .remoteUrl("remote_url")
+                                        .ref(
+                                            BoxListResponse.Sandbox.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .Ref
+                                                .builder()
+                                                .name("name")
+                                                .type(
+                                                    BoxListResponse.Sandbox.Mount
+                                                        .SandboxapiS3BucketMountSpec
+                                                        .Git
+                                                        .Ref
+                                                        .Type
+                                                        .BRANCH
+                                                )
+                                                .build()
+                                        )
+                                        .refreshIntervalSeconds(1L)
                                         .build()
                                 )
                                 .readOnly(true)

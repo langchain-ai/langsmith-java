@@ -62,6 +62,25 @@ internal class BoxServiceAsyncTest {
                                     .prefix("prefix")
                                     .build()
                             )
+                            .git(
+                                BoxCreateParams.Mount.SandboxapiS3BucketMountSpec.Git.builder()
+                                    .remoteUrl("remote_url")
+                                    .ref(
+                                        BoxCreateParams.Mount.SandboxapiS3BucketMountSpec.Git.Ref
+                                            .builder()
+                                            .name("name")
+                                            .type(
+                                                BoxCreateParams.Mount.SandboxapiS3BucketMountSpec
+                                                    .Git
+                                                    .Ref
+                                                    .Type
+                                                    .BRANCH
+                                            )
+                                            .build()
+                                    )
+                                    .refreshIntervalSeconds(1L)
+                                    .build()
+                            )
                             .readOnly(true)
                             .build()
                     )
