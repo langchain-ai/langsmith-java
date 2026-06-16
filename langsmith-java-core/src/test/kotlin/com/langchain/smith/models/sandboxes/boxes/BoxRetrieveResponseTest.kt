@@ -48,6 +48,25 @@ internal class BoxRetrieveResponseTest {
                                 .prefix("prefix")
                                 .build()
                         )
+                        .git(
+                            BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec.Git.builder()
+                                .remoteUrl("remote_url")
+                                .ref(
+                                    BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec.Git.Ref
+                                        .builder()
+                                        .name("name")
+                                        .type(
+                                            BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .Ref
+                                                .Type
+                                                .BRANCH
+                                        )
+                                        .build()
+                                )
+                                .refreshIntervalSeconds(1L)
+                                .build()
+                        )
                         .readOnly(true)
                         .build()
                 )
@@ -196,6 +215,25 @@ internal class BoxRetrieveResponseTest {
                             BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec.Gcs.builder()
                                 .bucket("bucket")
                                 .prefix("prefix")
+                                .build()
+                        )
+                        .git(
+                            BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec.Git.builder()
+                                .remoteUrl("remote_url")
+                                .ref(
+                                    BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec.Git.Ref
+                                        .builder()
+                                        .name("name")
+                                        .type(
+                                            BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .Ref
+                                                .Type
+                                                .BRANCH
+                                        )
+                                        .build()
+                                )
+                                .refreshIntervalSeconds(1L)
                                 .build()
                         )
                         .readOnly(true)
@@ -347,6 +385,25 @@ internal class BoxRetrieveResponseTest {
                             BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec.Gcs.builder()
                                 .bucket("bucket")
                                 .prefix("prefix")
+                                .build()
+                        )
+                        .git(
+                            BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec.Git.builder()
+                                .remoteUrl("remote_url")
+                                .ref(
+                                    BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec.Git.Ref
+                                        .builder()
+                                        .name("name")
+                                        .type(
+                                            BoxRetrieveResponse.Mount.SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .Ref
+                                                .Type
+                                                .BRANCH
+                                        )
+                                        .build()
+                                )
+                                .refreshIntervalSeconds(1L)
                                 .build()
                         )
                         .readOnly(true)
