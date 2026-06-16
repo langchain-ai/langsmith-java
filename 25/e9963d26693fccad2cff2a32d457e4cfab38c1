@@ -1,0 +1,49 @@
+langsmith-java-core/src/main/kotlin/com/langchain/smith/evaluation/ExperimentClient.kt
+  s_76fc3417b78f3c::t_d8e7b6c93dc5ed 30,33-43,46-47,49-53,309-319
+  s_76fc3417b78f3c::t_904c88cd2479ae 267-268
+  s_76fc3417b78f3c::t_1bb6de85d2ddd2 192-196,199-201,324-326
+  s_76fc3417b78f3c::t_8909eaad0321b1 364-365
+  s_76fc3417b78f3c::t_be0ee78e2a7837 1-4,6-29,31-32,44-45,48,54-56,58-59,65-67,81-91,93-189,191,197-198,202-231,233-266,270-308,320-322,327,332-363,367-385,387-388,390-391,393
+  s_76fc3417b78f3c::t_4403a28f079194 5,62,68-80
+  s_76fc3417b78f3c::t_30194aaf83f75d 57,92,269,323
+  s_76fc3417b78f3c::t_990d40bd588a5f 60-61,63-64,232,328-331
+  s_76fc3417b78f3c::t_6119e33ea30003 190,366,386,389,392
+langsmith-java-core/src/main/kotlin/com/langchain/smith/evaluation/EvaluateParams.kt
+  s_76fc3417b78f3c::t_be0ee78e2a7837 1-123,125-169
+  s_76fc3417b78f3c::t_990d40bd588a5f 124
+langsmith-java-example/src/main/kotlin/com/langchain/smith/example/RunExperimentExample.kt
+  s_76fc3417b78f3c::t_8610f0f0d749c9 1-112
+langsmith-java-core/src/test/kotlin/com/langchain/smith/evaluation/ExperimentClientTest.kt
+  s_76fc3417b78f3c::t_25403ff6e6a840 5-7,18,39,105-110,114-131,136-137,352-356,368-383,386,389,404-412
+  s_76fc3417b78f3c::t_30194aaf83f75d 250,448-453
+  s_76fc3417b78f3c::t_990d40bd588a5f 113,397-399,445-447
+  s_76fc3417b78f3c::t_021f7acdd1c094 25,84,88-92,98-99,203-208,291-292,387-388,396
+  s_76fc3417b78f3c::t_1bb6de85d2ddd2 71-72,191-193,241-243,315-316,318-321
+  s_76fc3417b78f3c::t_2a83c692713f52 141-182,252-256,259-264,266-274
+  s_76fc3417b78f3c::t_a534fe4df17b6c 1-4,8-17,19-24,26-38,40-70,73-83,85-87,93-97,100-104,111-112,132-135,138-140,183-190,194-202,209-240,244-249,251,275-290,293-314,322-326,329-343,347-351,357-367,384-385,390-395,400-403,413-444,454
+  s_76fc3417b78f3c::t_ab90ee7feb4ab0 327-328,344-346
+  s_76fc3417b78f3c::t_5dba85dc485995 257-258,265
+  s_76fc3417b78f3c::t_71ac3d25eb5d09 317
+langsmith-java-core/src/main/kotlin/com/langchain/smith/evaluation/ExperimentTypes.kt
+  s_76fc3417b78f3c::t_be0ee78e2a7837 1-50,53-70,78-79,82-118,121-125
+  s_76fc3417b78f3c::t_990d40bd588a5f 51-52,80-81,119-120
+  s_76fc3417b78f3c::t_1bb6de85d2ddd2 71-77
+langsmith-java-core/src/main/kotlin/com/langchain/smith/evaluation/EvaluationResult.kt
+  s_76fc3417b78f3c::t_be0ee78e2a7837 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.7",
+  "base_commit_sha": "25e9963d26693fccad2cff2a32d457e4cfab38c1",
+  "prompts": {},
+  "sessions": {
+    "s_76fc3417b78f3c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ece1b-ca78-7f80-aea1-a0272a1a53ff",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Stephen Chu <stephen.chu@langchain.dev>"
+    }
+  }
+}
