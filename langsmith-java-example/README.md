@@ -1,7 +1,7 @@
 # LangSmith Examples
 
 This module contains runnable Kotlin examples organized by feature:
-- **`example/`** - SDK examples (ListRuns, Dataset, PromptManagement, RecordExperiment, E2eEval)
+- **`example/`** - SDK examples (ListRuns, Dataset, PromptManagement, RecordExperiment, RunExperiment, E2eEval)
 - **`example/otel/`** - OpenTelemetry tracing examples
 
 ## Prerequisites
@@ -17,6 +17,26 @@ export LANGSMITH_API_KEY=your_api_key
 ```
 
 The `langchain.baseUrl` system property (or `LANGSMITH_ENDPOINT` environment variable) is optional and defaults to `https://api.smith.langchain.com/` if not set.
+
+## Evaluation Examples
+
+Located in `src/main/kotlin/com/langchain/smith/example/`
+
+### Run Experiment
+
+Run a high-level experiment with `ExperimentClient.evaluate`, a target function, and a local row evaluator.
+
+```bash
+./gradlew :langsmith-java-example:run -Pexample=RunExperiment \
+  -Dlangchain.langsmithApiKey=your_api_key
+```
+
+**Features demonstrated:**
+1. Create or reuse a dataset
+2. Add deterministic examples
+3. Run a target function over each example
+4. Submit exact-match evaluator feedback
+5. Print the experiment row and feedback counts
 
 ## OpenTelemetry Tracing Examples
 
