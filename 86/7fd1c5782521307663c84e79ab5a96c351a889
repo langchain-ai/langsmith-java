@@ -1,0 +1,22 @@
+README.md
+  s_76fc3417b78f3c::t_2dca31280ab057 81,85
+  s_76fc3417b78f3c::t_51c6cddf85cb57 72-80,82-84,86-101,124-126
+langsmith-java-example/README.md
+  s_76fc3417b78f3c::t_c6eb76bf52d016 4,21-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "867fd1c5782521307663c84e79ab5a96c351a889",
+  "prompts": {},
+  "sessions": {
+    "s_76fc3417b78f3c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019ece1b-ca78-7f80-aea1-a0272a1a53ff",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Stephen Chu <stephen.chu@langchain.dev>"
+    }
+  }
+}
