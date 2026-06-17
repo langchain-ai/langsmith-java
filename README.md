@@ -69,6 +69,36 @@ for (var run : response.runs()) {
 }
 ```
 
+### Running evaluations
+
+Use `ExperimentClient.evaluate` to run a target function over a dataset, record the experiment, and
+upload local evaluator feedback.
+
+```java
+import com.langchain.smith.evaluation.EvaluateParams;
+import com.langchain.smith.evaluation.EvaluationResult;
+import com.langchain.smith.evaluation.ExperimentClient;
+import com.langchain.smith.evaluation.ExperimentResults;
+import java.util.Collections;
+import java.util.Objects;
+
+ExperimentResults results = ExperimentClient.create(client).evaluate(
+    EvaluateParams.builder()
+        .data("my-dataset")
+        .experimentPrefix("java-evaluate")
+        .target(example -> Collections.singletonMap("answer", "Paris"))
+        .addEvaluator((run, example) ->
+            EvaluationResult.builder()
+                .key("exact_match")
+                .score(Objects.equals(run.outputs().get("answer"), example.outputs().get("answer")))
+                .build())
+        .build());
+
+System.out.println("Experiment: " + results.experimentId());
+System.out.println("Rows: " + results.rows().size());
+System.out.println("Feedback: " + results.feedback().size());
+```
+
 ## Examples
 
 This repository includes runnable examples in the `langsmith-java-example` module to help you get started.
@@ -91,6 +121,9 @@ export LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
 ```bash
 export LANGSMITH_PROJECT_ID="your-project-id"
 ./gradlew :langsmith-java-example:run -Pexample=ListRuns
+
+# Run a high-level experiment with a target function and local evaluator
+./gradlew :langsmith-java-example:run -Pexample=RunExperiment
 ```
 
 All examples are available in [`langsmith-java-example`](langsmith-java-example).
