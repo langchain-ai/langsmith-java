@@ -2276,6 +2276,9 @@ private constructor(
             fun headers(): Optional<List<Header>> = headers.getOptional("headers")
 
             /**
+             * MatchHosts is only accepted for header injection rules. Provider auth rules use
+             * built-in host matching.
+             *
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
@@ -2478,6 +2481,10 @@ private constructor(
                         }
                 }
 
+                /**
+                 * MatchHosts is only accepted for header injection rules. Provider auth rules use
+                 * built-in host matching.
+                 */
                 fun matchHosts(matchHosts: List<String>) = matchHosts(JsonField.of(matchHosts))
 
                 /**
