@@ -1,6 +1,6 @@
-name: "stlc: trigger promote on next → main approval"
+name: "stlc: trigger promote on stlc/from-prod → next approval"
 
-# Dispatches the promote workflow in langchainplus whenever the next → main
+# Dispatches the ff-only merge workflow in langchainplus whenever the stlc/from-prod → next
 # PR in this repo receives an approving review.
 on:
   pull_request_review:
@@ -14,8 +14,8 @@ jobs:
     if: |
       github.repository == 'langchain-ai/langsmith-java-staging' &&
       github.event.review.state == 'approved' &&
-      github.event.pull_request.base.ref == 'main' &&
-      github.event.pull_request.head.ref == 'next'
+      github.event.pull_request.base.ref == 'next' &&
+      github.event.pull_request.head.ref == 'stlc/from-prod'
     runs-on: self-hosted-ubuntu-small-amd64
     steps:
       - name: Load GitHub App key from 1Password
@@ -43,5 +43,5 @@ jobs:
           gh workflow run git-ff-only-merge.yml \
             --repo langchain-ai/langchainplus \
             --field repo=langsmith-java-staging \
-            --field src_branch=next \
-            --field target_branch=main
+            --field src_branch=stlc/from-prod \
+            --field target_branch=next
