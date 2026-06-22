@@ -42,8 +42,8 @@ private constructor(
     private val comparativeExperimentId: JsonField<String>,
     private val correction: JsonField<Correction>,
     private val createdAt: JsonField<OffsetDateTime>,
-    private val doNotExtendTraceRetention: JsonField<Boolean>,
     private val error: JsonField<Boolean>,
+    private val extendTraceRetention: JsonField<Boolean>,
     private val feedbackConfig: JsonField<FeedbackConfig>,
     private val feedbackGroupId: JsonField<String>,
     private val feedbackSource: JsonField<FeedbackSource>,
@@ -71,10 +71,10 @@ private constructor(
         @JsonProperty("created_at")
         @ExcludeMissing
         createdAt: JsonField<OffsetDateTime> = JsonMissing.of(),
-        @JsonProperty("do_not_extend_trace_retention")
-        @ExcludeMissing
-        doNotExtendTraceRetention: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("error") @ExcludeMissing error: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("extend_trace_retention")
+        @ExcludeMissing
+        extendTraceRetention: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("feedback_config")
         @ExcludeMissing
         feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of(),
@@ -102,8 +102,8 @@ private constructor(
         comparativeExperimentId,
         correction,
         createdAt,
-        doNotExtendTraceRetention,
         error,
+        extendTraceRetention,
         feedbackConfig,
         feedbackGroupId,
         feedbackSource,
@@ -158,14 +158,14 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun doNotExtendTraceRetention(): Optional<Boolean> =
-        doNotExtendTraceRetention.getOptional("do_not_extend_trace_retention")
+    fun error(): Optional<Boolean> = error.getOptional("error")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun error(): Optional<Boolean> = error.getOptional("error")
+    fun extendTraceRetention(): Optional<Boolean> =
+        extendTraceRetention.getOptional("extend_trace_retention")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -279,21 +279,21 @@ private constructor(
     fun _createdAt(): JsonField<OffsetDateTime> = createdAt
 
     /**
-     * Returns the raw JSON value of [doNotExtendTraceRetention].
-     *
-     * Unlike [doNotExtendTraceRetention], this method doesn't throw if the JSON field has an
-     * unexpected type.
-     */
-    @JsonProperty("do_not_extend_trace_retention")
-    @ExcludeMissing
-    fun _doNotExtendTraceRetention(): JsonField<Boolean> = doNotExtendTraceRetention
-
-    /**
      * Returns the raw JSON value of [error].
      *
      * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<Boolean> = error
+
+    /**
+     * Returns the raw JSON value of [extendTraceRetention].
+     *
+     * Unlike [extendTraceRetention], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("extend_trace_retention")
+    @ExcludeMissing
+    fun _extendTraceRetention(): JsonField<Boolean> = extendTraceRetention
 
     /**
      * Returns the raw JSON value of [feedbackConfig].
@@ -409,8 +409,8 @@ private constructor(
         private var comparativeExperimentId: JsonField<String> = JsonMissing.of()
         private var correction: JsonField<Correction> = JsonMissing.of()
         private var createdAt: JsonField<OffsetDateTime> = JsonMissing.of()
-        private var doNotExtendTraceRetention: JsonField<Boolean> = JsonMissing.of()
         private var error: JsonField<Boolean> = JsonMissing.of()
+        private var extendTraceRetention: JsonField<Boolean> = JsonMissing.of()
         private var feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of()
         private var feedbackGroupId: JsonField<String> = JsonMissing.of()
         private var feedbackSource: JsonField<FeedbackSource> = JsonMissing.of()
@@ -431,8 +431,8 @@ private constructor(
             comparativeExperimentId = feedbackCreateSchema.comparativeExperimentId
             correction = feedbackCreateSchema.correction
             createdAt = feedbackCreateSchema.createdAt
-            doNotExtendTraceRetention = feedbackCreateSchema.doNotExtendTraceRetention
             error = feedbackCreateSchema.error
+            extendTraceRetention = feedbackCreateSchema.extendTraceRetention
             feedbackConfig = feedbackCreateSchema.feedbackConfig
             feedbackGroupId = feedbackCreateSchema.feedbackGroupId
             feedbackSource = feedbackCreateSchema.feedbackSource
@@ -532,20 +532,6 @@ private constructor(
          */
         fun createdAt(createdAt: JsonField<OffsetDateTime>) = apply { this.createdAt = createdAt }
 
-        fun doNotExtendTraceRetention(doNotExtendTraceRetention: Boolean) =
-            doNotExtendTraceRetention(JsonField.of(doNotExtendTraceRetention))
-
-        /**
-         * Sets [Builder.doNotExtendTraceRetention] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.doNotExtendTraceRetention] with a well-typed [Boolean]
-         * value instead. This method is primarily for setting the field to an undocumented or not
-         * yet supported value.
-         */
-        fun doNotExtendTraceRetention(doNotExtendTraceRetention: JsonField<Boolean>) = apply {
-            this.doNotExtendTraceRetention = doNotExtendTraceRetention
-        }
-
         fun error(error: Boolean?) = error(JsonField.ofNullable(error))
 
         /**
@@ -565,6 +551,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun error(error: JsonField<Boolean>) = apply { this.error = error }
+
+        fun extendTraceRetention(extendTraceRetention: Boolean) =
+            extendTraceRetention(JsonField.of(extendTraceRetention))
+
+        /**
+         * Sets [Builder.extendTraceRetention] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extendTraceRetention] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun extendTraceRetention(extendTraceRetention: JsonField<Boolean>) = apply {
+            this.extendTraceRetention = extendTraceRetention
+        }
 
         fun feedbackConfig(feedbackConfig: FeedbackConfig?) =
             feedbackConfig(JsonField.ofNullable(feedbackConfig))
@@ -785,8 +785,8 @@ private constructor(
                 comparativeExperimentId,
                 correction,
                 createdAt,
-                doNotExtendTraceRetention,
                 error,
+                extendTraceRetention,
                 feedbackConfig,
                 feedbackGroupId,
                 feedbackSource,
@@ -822,8 +822,8 @@ private constructor(
         comparativeExperimentId()
         correction().ifPresent { it.validate() }
         createdAt()
-        doNotExtendTraceRetention()
         error()
+        extendTraceRetention()
         feedbackConfig().ifPresent { it.validate() }
         feedbackGroupId()
         feedbackSource().ifPresent { it.validate() }
@@ -858,8 +858,8 @@ private constructor(
             (if (comparativeExperimentId.asKnown().isPresent) 1 else 0) +
             (correction.asKnown().getOrNull()?.validity() ?: 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
-            (if (doNotExtendTraceRetention.asKnown().isPresent) 1 else 0) +
             (if (error.asKnown().isPresent) 1 else 0) +
+            (if (extendTraceRetention.asKnown().isPresent) 1 else 0) +
             (feedbackConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (feedbackGroupId.asKnown().isPresent) 1 else 0) +
             (feedbackSource.asKnown().getOrNull()?.validity() ?: 0) +
@@ -2721,8 +2721,8 @@ private constructor(
             comparativeExperimentId == other.comparativeExperimentId &&
             correction == other.correction &&
             createdAt == other.createdAt &&
-            doNotExtendTraceRetention == other.doNotExtendTraceRetention &&
             error == other.error &&
+            extendTraceRetention == other.extendTraceRetention &&
             feedbackConfig == other.feedbackConfig &&
             feedbackGroupId == other.feedbackGroupId &&
             feedbackSource == other.feedbackSource &&
@@ -2744,8 +2744,8 @@ private constructor(
             comparativeExperimentId,
             correction,
             createdAt,
-            doNotExtendTraceRetention,
             error,
+            extendTraceRetention,
             feedbackConfig,
             feedbackGroupId,
             feedbackSource,
@@ -2763,5 +2763,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, doNotExtendTraceRetention=$doNotExtendTraceRetention, error=$error, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }

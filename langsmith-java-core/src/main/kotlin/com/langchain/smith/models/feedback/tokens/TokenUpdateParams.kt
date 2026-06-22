@@ -58,7 +58,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun doNotExtendTraceRetention(): Optional<Boolean> = body.doNotExtendTraceRetention()
+    fun extendTraceRetention(): Optional<Boolean> = body.extendTraceRetention()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -93,12 +93,12 @@ private constructor(
     fun _correction(): JsonField<Correction> = body._correction()
 
     /**
-     * Returns the raw JSON value of [doNotExtendTraceRetention].
+     * Returns the raw JSON value of [extendTraceRetention].
      *
-     * Unlike [doNotExtendTraceRetention], this method doesn't throw if the JSON field has an
-     * unexpected type.
+     * Unlike [extendTraceRetention], this method doesn't throw if the JSON field has an unexpected
+     * type.
      */
-    fun _doNotExtendTraceRetention(): JsonField<Boolean> = body._doNotExtendTraceRetention()
+    fun _extendTraceRetention(): JsonField<Boolean> = body._extendTraceRetention()
 
     /**
      * Returns the raw JSON value of [metadata].
@@ -167,7 +167,7 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [comment]
          * - [correction]
-         * - [doNotExtendTraceRetention]
+         * - [extendTraceRetention]
          * - [metadata]
          * - [score]
          * - etc.
@@ -209,19 +209,19 @@ private constructor(
         /** Alias for calling [correction] with `Correction.ofString(string)`. */
         fun correction(string: String) = apply { body.correction(string) }
 
-        fun doNotExtendTraceRetention(doNotExtendTraceRetention: Boolean) = apply {
-            body.doNotExtendTraceRetention(doNotExtendTraceRetention)
+        fun extendTraceRetention(extendTraceRetention: Boolean) = apply {
+            body.extendTraceRetention(extendTraceRetention)
         }
 
         /**
-         * Sets [Builder.doNotExtendTraceRetention] to an arbitrary JSON value.
+         * Sets [Builder.extendTraceRetention] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.doNotExtendTraceRetention] with a well-typed [Boolean]
-         * value instead. This method is primarily for setting the field to an undocumented or not
-         * yet supported value.
+         * You should usually call [Builder.extendTraceRetention] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun doNotExtendTraceRetention(doNotExtendTraceRetention: JsonField<Boolean>) = apply {
-            body.doNotExtendTraceRetention(doNotExtendTraceRetention)
+        fun extendTraceRetention(extendTraceRetention: JsonField<Boolean>) = apply {
+            body.extendTraceRetention(extendTraceRetention)
         }
 
         fun metadata(metadata: Metadata?) = apply { body.metadata(metadata) }
@@ -428,7 +428,7 @@ private constructor(
     private constructor(
         private val comment: JsonField<String>,
         private val correction: JsonField<Correction>,
-        private val doNotExtendTraceRetention: JsonField<Boolean>,
+        private val extendTraceRetention: JsonField<Boolean>,
         private val metadata: JsonField<Metadata>,
         private val score: JsonField<Score>,
         private val value: JsonField<Value>,
@@ -441,23 +441,15 @@ private constructor(
             @JsonProperty("correction")
             @ExcludeMissing
             correction: JsonField<Correction> = JsonMissing.of(),
-            @JsonProperty("do_not_extend_trace_retention")
+            @JsonProperty("extend_trace_retention")
             @ExcludeMissing
-            doNotExtendTraceRetention: JsonField<Boolean> = JsonMissing.of(),
+            extendTraceRetention: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("metadata")
             @ExcludeMissing
             metadata: JsonField<Metadata> = JsonMissing.of(),
             @JsonProperty("score") @ExcludeMissing score: JsonField<Score> = JsonMissing.of(),
             @JsonProperty("value") @ExcludeMissing value: JsonField<Value> = JsonMissing.of(),
-        ) : this(
-            comment,
-            correction,
-            doNotExtendTraceRetention,
-            metadata,
-            score,
-            value,
-            mutableMapOf(),
-        )
+        ) : this(comment, correction, extendTraceRetention, metadata, score, value, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -475,8 +467,8 @@ private constructor(
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun doNotExtendTraceRetention(): Optional<Boolean> =
-            doNotExtendTraceRetention.getOptional("do_not_extend_trace_retention")
+        fun extendTraceRetention(): Optional<Boolean> =
+            extendTraceRetention.getOptional("extend_trace_retention")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -513,14 +505,14 @@ private constructor(
         fun _correction(): JsonField<Correction> = correction
 
         /**
-         * Returns the raw JSON value of [doNotExtendTraceRetention].
+         * Returns the raw JSON value of [extendTraceRetention].
          *
-         * Unlike [doNotExtendTraceRetention], this method doesn't throw if the JSON field has an
+         * Unlike [extendTraceRetention], this method doesn't throw if the JSON field has an
          * unexpected type.
          */
-        @JsonProperty("do_not_extend_trace_retention")
+        @JsonProperty("extend_trace_retention")
         @ExcludeMissing
-        fun _doNotExtendTraceRetention(): JsonField<Boolean> = doNotExtendTraceRetention
+        fun _extendTraceRetention(): JsonField<Boolean> = extendTraceRetention
 
         /**
          * Returns the raw JSON value of [metadata].
@@ -566,7 +558,7 @@ private constructor(
 
             private var comment: JsonField<String> = JsonMissing.of()
             private var correction: JsonField<Correction> = JsonMissing.of()
-            private var doNotExtendTraceRetention: JsonField<Boolean> = JsonMissing.of()
+            private var extendTraceRetention: JsonField<Boolean> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var score: JsonField<Score> = JsonMissing.of()
             private var value: JsonField<Value> = JsonMissing.of()
@@ -576,7 +568,7 @@ private constructor(
             internal fun from(body: Body) = apply {
                 comment = body.comment
                 correction = body.correction
-                doNotExtendTraceRetention = body.doNotExtendTraceRetention
+                extendTraceRetention = body.extendTraceRetention
                 metadata = body.metadata
                 score = body.score
                 value = body.value
@@ -620,18 +612,18 @@ private constructor(
             /** Alias for calling [correction] with `Correction.ofString(string)`. */
             fun correction(string: String) = correction(Correction.ofString(string))
 
-            fun doNotExtendTraceRetention(doNotExtendTraceRetention: Boolean) =
-                doNotExtendTraceRetention(JsonField.of(doNotExtendTraceRetention))
+            fun extendTraceRetention(extendTraceRetention: Boolean) =
+                extendTraceRetention(JsonField.of(extendTraceRetention))
 
             /**
-             * Sets [Builder.doNotExtendTraceRetention] to an arbitrary JSON value.
+             * Sets [Builder.extendTraceRetention] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.doNotExtendTraceRetention] with a well-typed
-             * [Boolean] value instead. This method is primarily for setting the field to an
-             * undocumented or not yet supported value.
+             * You should usually call [Builder.extendTraceRetention] with a well-typed [Boolean]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
              */
-            fun doNotExtendTraceRetention(doNotExtendTraceRetention: JsonField<Boolean>) = apply {
-                this.doNotExtendTraceRetention = doNotExtendTraceRetention
+            fun extendTraceRetention(extendTraceRetention: JsonField<Boolean>) = apply {
+                this.extendTraceRetention = extendTraceRetention
             }
 
             fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
@@ -719,7 +711,7 @@ private constructor(
                 Body(
                     comment,
                     correction,
-                    doNotExtendTraceRetention,
+                    extendTraceRetention,
                     metadata,
                     score,
                     value,
@@ -745,7 +737,7 @@ private constructor(
 
             comment()
             correction().ifPresent { it.validate() }
-            doNotExtendTraceRetention()
+            extendTraceRetention()
             metadata().ifPresent { it.validate() }
             score().ifPresent { it.validate() }
             value().ifPresent { it.validate() }
@@ -770,7 +762,7 @@ private constructor(
         internal fun validity(): Int =
             (if (comment.asKnown().isPresent) 1 else 0) +
                 (correction.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (doNotExtendTraceRetention.asKnown().isPresent) 1 else 0) +
+                (if (extendTraceRetention.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (score.asKnown().getOrNull()?.validity() ?: 0) +
                 (value.asKnown().getOrNull()?.validity() ?: 0)
@@ -783,7 +775,7 @@ private constructor(
             return other is Body &&
                 comment == other.comment &&
                 correction == other.correction &&
-                doNotExtendTraceRetention == other.doNotExtendTraceRetention &&
+                extendTraceRetention == other.extendTraceRetention &&
                 metadata == other.metadata &&
                 score == other.score &&
                 value == other.value &&
@@ -794,7 +786,7 @@ private constructor(
             Objects.hash(
                 comment,
                 correction,
-                doNotExtendTraceRetention,
+                extendTraceRetention,
                 metadata,
                 score,
                 value,
@@ -805,7 +797,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{comment=$comment, correction=$correction, doNotExtendTraceRetention=$doNotExtendTraceRetention, metadata=$metadata, score=$score, value=$value, additionalProperties=$additionalProperties}"
+            "Body{comment=$comment, correction=$correction, extendTraceRetention=$extendTraceRetention, metadata=$metadata, score=$score, value=$value, additionalProperties=$additionalProperties}"
     }
 
     @JsonDeserialize(using = Correction.Deserializer::class)

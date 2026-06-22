@@ -68,7 +68,7 @@ internal class TokenServiceAsyncTest {
                     .token("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .comment("comment")
                     .correction("correction")
-                    .doNotExtendTraceRetention(true)
+                    .extendTraceRetention(true)
                     .score(0.0)
                     .value(0.0)
                     .build()
@@ -98,7 +98,7 @@ internal class TokenServiceAsyncTest {
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
-                    .doNotExtendTraceRetention(true)
+                    .extendTraceRetention(true)
                     .metadata(
                         TokenUpdateParams.Metadata.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))

@@ -37,8 +37,8 @@ internal class FeedbackServiceAsyncTest {
                             .build()
                     )
                     .createdAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .doNotExtendTraceRetention(true)
                     .error(true)
+                    .extendTraceRetention(true)
                     .feedbackConfig(
                         FeedbackCreateSchema.FeedbackConfig.builder()
                             .type(FeedbackCreateSchema.FeedbackConfig.Type.CONTINUOUS)
