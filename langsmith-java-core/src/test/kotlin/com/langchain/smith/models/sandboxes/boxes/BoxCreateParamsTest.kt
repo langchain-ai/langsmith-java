@@ -79,8 +79,8 @@ internal class BoxCreateParamsTest {
                                 BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                     .builder()
                                     .bucket("bucket")
-                                    .endpointUrl("endpoint_url")
                                     .region("region")
+                                    .endpointUrl("endpoint_url")
                                     .pathStyle(true)
                                     .prefix("prefix")
                                     .build()
@@ -306,8 +306,8 @@ internal class BoxCreateParamsTest {
                                     BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                         .builder()
                                         .bucket("bucket")
-                                        .endpointUrl("endpoint_url")
                                         .region("region")
+                                        .endpointUrl("endpoint_url")
                                         .pathStyle(true)
                                         .prefix("prefix")
                                         .build()
@@ -538,8 +538,8 @@ internal class BoxCreateParamsTest {
                                 BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                     .builder()
                                     .bucket("bucket")
-                                    .endpointUrl("endpoint_url")
                                     .region("region")
+                                    .endpointUrl("endpoint_url")
                                     .pathStyle(true)
                                     .prefix("prefix")
                                     .build()

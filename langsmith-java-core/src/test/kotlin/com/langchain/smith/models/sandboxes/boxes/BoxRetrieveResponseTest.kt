@@ -86,8 +86,8 @@ internal class BoxRetrieveResponseTest {
                                         .S3
                                         .builder()
                                         .bucket("bucket")
-                                        .endpointUrl("endpoint_url")
                                         .region("region")
+                                        .endpointUrl("endpoint_url")
                                         .pathStyle(true)
                                         .prefix("prefix")
                                         .build()
@@ -327,8 +327,8 @@ internal class BoxRetrieveResponseTest {
                                 BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec.S3
                                     .builder()
                                     .bucket("bucket")
-                                    .endpointUrl("endpoint_url")
                                     .region("region")
+                                    .endpointUrl("endpoint_url")
                                     .pathStyle(true)
                                     .prefix("prefix")
                                     .build()
@@ -570,8 +570,8 @@ internal class BoxRetrieveResponseTest {
                                         .S3
                                         .builder()
                                         .bucket("bucket")
-                                        .endpointUrl("endpoint_url")
                                         .region("region")
+                                        .endpointUrl("endpoint_url")
                                         .pathStyle(true)
                                         .prefix("prefix")
                                         .build()

@@ -4030,8 +4030,8 @@ private constructor(
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
                     private val bucket: JsonField<String>,
-                    private val endpointUrl: JsonField<String>,
                     private val region: JsonField<String>,
+                    private val endpointUrl: JsonField<String>,
                     private val pathStyle: JsonField<Boolean>,
                     private val prefix: JsonField<String>,
                     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -4042,19 +4042,19 @@ private constructor(
                         @JsonProperty("bucket")
                         @ExcludeMissing
                         bucket: JsonField<String> = JsonMissing.of(),
-                        @JsonProperty("endpoint_url")
-                        @ExcludeMissing
-                        endpointUrl: JsonField<String> = JsonMissing.of(),
                         @JsonProperty("region")
                         @ExcludeMissing
                         region: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("endpoint_url")
+                        @ExcludeMissing
+                        endpointUrl: JsonField<String> = JsonMissing.of(),
                         @JsonProperty("path_style")
                         @ExcludeMissing
                         pathStyle: JsonField<Boolean> = JsonMissing.of(),
                         @JsonProperty("prefix")
                         @ExcludeMissing
                         prefix: JsonField<String> = JsonMissing.of(),
-                    ) : this(bucket, endpointUrl, region, pathStyle, prefix, mutableMapOf())
+                    ) : this(bucket, region, endpointUrl, pathStyle, prefix, mutableMapOf())
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
@@ -4068,14 +4068,13 @@ private constructor(
                      *   type or is unexpectedly missing or null (e.g. if the server responded with
                      *   an unexpected value).
                      */
-                    fun endpointUrl(): String = endpointUrl.getRequired("endpoint_url")
+                    fun region(): String = region.getRequired("region")
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
-                     *   type or is unexpectedly missing or null (e.g. if the server responded with
-                     *   an unexpected value).
+                     *   type (e.g. if the server responded with an unexpected value).
                      */
-                    fun region(): String = region.getRequired("region")
+                    fun endpointUrl(): Optional<String> = endpointUrl.getOptional("endpoint_url")
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
@@ -4100,16 +4099,6 @@ private constructor(
                     fun _bucket(): JsonField<String> = bucket
 
                     /**
-                     * Returns the raw JSON value of [endpointUrl].
-                     *
-                     * Unlike [endpointUrl], this method doesn't throw if the JSON field has an
-                     * unexpected type.
-                     */
-                    @JsonProperty("endpoint_url")
-                    @ExcludeMissing
-                    fun _endpointUrl(): JsonField<String> = endpointUrl
-
-                    /**
                      * Returns the raw JSON value of [region].
                      *
                      * Unlike [region], this method doesn't throw if the JSON field has an
@@ -4118,6 +4107,16 @@ private constructor(
                     @JsonProperty("region")
                     @ExcludeMissing
                     fun _region(): JsonField<String> = region
+
+                    /**
+                     * Returns the raw JSON value of [endpointUrl].
+                     *
+                     * Unlike [endpointUrl], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("endpoint_url")
+                    @ExcludeMissing
+                    fun _endpointUrl(): JsonField<String> = endpointUrl
 
                     /**
                      * Returns the raw JSON value of [pathStyle].
@@ -4159,7 +4158,6 @@ private constructor(
                          * The following fields are required:
                          * ```java
                          * .bucket()
-                         * .endpointUrl()
                          * .region()
                          * ```
                          */
@@ -4170,8 +4168,8 @@ private constructor(
                     class Builder internal constructor() {
 
                         private var bucket: JsonField<String>? = null
-                        private var endpointUrl: JsonField<String>? = null
                         private var region: JsonField<String>? = null
+                        private var endpointUrl: JsonField<String> = JsonMissing.of()
                         private var pathStyle: JsonField<Boolean> = JsonMissing.of()
                         private var prefix: JsonField<String> = JsonMissing.of()
                         private var additionalProperties: MutableMap<String, JsonValue> =
@@ -4180,8 +4178,8 @@ private constructor(
                         @JvmSynthetic
                         internal fun from(s3: S3) = apply {
                             bucket = s3.bucket
-                            endpointUrl = s3.endpointUrl
                             region = s3.region
+                            endpointUrl = s3.endpointUrl
                             pathStyle = s3.pathStyle
                             prefix = s3.prefix
                             additionalProperties = s3.additionalProperties.toMutableMap()
@@ -4198,6 +4196,17 @@ private constructor(
                          */
                         fun bucket(bucket: JsonField<String>) = apply { this.bucket = bucket }
 
+                        fun region(region: String) = region(JsonField.of(region))
+
+                        /**
+                         * Sets [Builder.region] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.region] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun region(region: JsonField<String>) = apply { this.region = region }
+
                         fun endpointUrl(endpointUrl: String) =
                             endpointUrl(JsonField.of(endpointUrl))
 
@@ -4211,17 +4220,6 @@ private constructor(
                         fun endpointUrl(endpointUrl: JsonField<String>) = apply {
                             this.endpointUrl = endpointUrl
                         }
-
-                        fun region(region: String) = region(JsonField.of(region))
-
-                        /**
-                         * Sets [Builder.region] to an arbitrary JSON value.
-                         *
-                         * You should usually call [Builder.region] with a well-typed [String] value
-                         * instead. This method is primarily for setting the field to an
-                         * undocumented or not yet supported value.
-                         */
-                        fun region(region: JsonField<String>) = apply { this.region = region }
 
                         fun pathStyle(pathStyle: Boolean) = pathStyle(JsonField.of(pathStyle))
 
@@ -4277,7 +4275,6 @@ private constructor(
                          * The following fields are required:
                          * ```java
                          * .bucket()
-                         * .endpointUrl()
                          * .region()
                          * ```
                          *
@@ -4286,8 +4283,8 @@ private constructor(
                         fun build(): S3 =
                             S3(
                                 checkRequired("bucket", bucket),
-                                checkRequired("endpointUrl", endpointUrl),
                                 checkRequired("region", region),
+                                endpointUrl,
                                 pathStyle,
                                 prefix,
                                 additionalProperties.toMutableMap(),
@@ -4312,8 +4309,8 @@ private constructor(
                         }
 
                         bucket()
-                        endpointUrl()
                         region()
+                        endpointUrl()
                         pathStyle()
                         prefix()
                         validated = true
@@ -4336,8 +4333,8 @@ private constructor(
                     @JvmSynthetic
                     internal fun validity(): Int =
                         (if (bucket.asKnown().isPresent) 1 else 0) +
-                            (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                             (if (region.asKnown().isPresent) 1 else 0) +
+                            (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                             (if (pathStyle.asKnown().isPresent) 1 else 0) +
                             (if (prefix.asKnown().isPresent) 1 else 0)
 
@@ -4348,8 +4345,8 @@ private constructor(
 
                         return other is S3 &&
                             bucket == other.bucket &&
-                            endpointUrl == other.endpointUrl &&
                             region == other.region &&
+                            endpointUrl == other.endpointUrl &&
                             pathStyle == other.pathStyle &&
                             prefix == other.prefix &&
                             additionalProperties == other.additionalProperties
@@ -4358,8 +4355,8 @@ private constructor(
                     private val hashCode: Int by lazy {
                         Objects.hash(
                             bucket,
-                            endpointUrl,
                             region,
+                            endpointUrl,
                             pathStyle,
                             prefix,
                             additionalProperties,
@@ -4369,7 +4366,7 @@ private constructor(
                     override fun hashCode(): Int = hashCode
 
                     override fun toString() =
-                        "S3{bucket=$bucket, endpointUrl=$endpointUrl, region=$region, pathStyle=$pathStyle, prefix=$prefix, additionalProperties=$additionalProperties}"
+                        "S3{bucket=$bucket, region=$region, endpointUrl=$endpointUrl, pathStyle=$pathStyle, prefix=$prefix, additionalProperties=$additionalProperties}"
                 }
 
                 class Type @JsonCreator private constructor(private val value: JsonField<String>) :
@@ -7206,8 +7203,8 @@ private constructor(
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
                     private val bucket: JsonField<String>,
-                    private val endpointUrl: JsonField<String>,
                     private val region: JsonField<String>,
+                    private val endpointUrl: JsonField<String>,
                     private val pathStyle: JsonField<Boolean>,
                     private val prefix: JsonField<String>,
                     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -7218,19 +7215,19 @@ private constructor(
                         @JsonProperty("bucket")
                         @ExcludeMissing
                         bucket: JsonField<String> = JsonMissing.of(),
-                        @JsonProperty("endpoint_url")
-                        @ExcludeMissing
-                        endpointUrl: JsonField<String> = JsonMissing.of(),
                         @JsonProperty("region")
                         @ExcludeMissing
                         region: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("endpoint_url")
+                        @ExcludeMissing
+                        endpointUrl: JsonField<String> = JsonMissing.of(),
                         @JsonProperty("path_style")
                         @ExcludeMissing
                         pathStyle: JsonField<Boolean> = JsonMissing.of(),
                         @JsonProperty("prefix")
                         @ExcludeMissing
                         prefix: JsonField<String> = JsonMissing.of(),
-                    ) : this(bucket, endpointUrl, region, pathStyle, prefix, mutableMapOf())
+                    ) : this(bucket, region, endpointUrl, pathStyle, prefix, mutableMapOf())
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
@@ -7244,14 +7241,13 @@ private constructor(
                      *   type or is unexpectedly missing or null (e.g. if the server responded with
                      *   an unexpected value).
                      */
-                    fun endpointUrl(): String = endpointUrl.getRequired("endpoint_url")
+                    fun region(): String = region.getRequired("region")
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
-                     *   type or is unexpectedly missing or null (e.g. if the server responded with
-                     *   an unexpected value).
+                     *   type (e.g. if the server responded with an unexpected value).
                      */
-                    fun region(): String = region.getRequired("region")
+                    fun endpointUrl(): Optional<String> = endpointUrl.getOptional("endpoint_url")
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
@@ -7276,16 +7272,6 @@ private constructor(
                     fun _bucket(): JsonField<String> = bucket
 
                     /**
-                     * Returns the raw JSON value of [endpointUrl].
-                     *
-                     * Unlike [endpointUrl], this method doesn't throw if the JSON field has an
-                     * unexpected type.
-                     */
-                    @JsonProperty("endpoint_url")
-                    @ExcludeMissing
-                    fun _endpointUrl(): JsonField<String> = endpointUrl
-
-                    /**
                      * Returns the raw JSON value of [region].
                      *
                      * Unlike [region], this method doesn't throw if the JSON field has an
@@ -7294,6 +7280,16 @@ private constructor(
                     @JsonProperty("region")
                     @ExcludeMissing
                     fun _region(): JsonField<String> = region
+
+                    /**
+                     * Returns the raw JSON value of [endpointUrl].
+                     *
+                     * Unlike [endpointUrl], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("endpoint_url")
+                    @ExcludeMissing
+                    fun _endpointUrl(): JsonField<String> = endpointUrl
 
                     /**
                      * Returns the raw JSON value of [pathStyle].
@@ -7335,7 +7331,6 @@ private constructor(
                          * The following fields are required:
                          * ```java
                          * .bucket()
-                         * .endpointUrl()
                          * .region()
                          * ```
                          */
@@ -7346,8 +7341,8 @@ private constructor(
                     class Builder internal constructor() {
 
                         private var bucket: JsonField<String>? = null
-                        private var endpointUrl: JsonField<String>? = null
                         private var region: JsonField<String>? = null
+                        private var endpointUrl: JsonField<String> = JsonMissing.of()
                         private var pathStyle: JsonField<Boolean> = JsonMissing.of()
                         private var prefix: JsonField<String> = JsonMissing.of()
                         private var additionalProperties: MutableMap<String, JsonValue> =
@@ -7356,8 +7351,8 @@ private constructor(
                         @JvmSynthetic
                         internal fun from(s3: S3) = apply {
                             bucket = s3.bucket
-                            endpointUrl = s3.endpointUrl
                             region = s3.region
+                            endpointUrl = s3.endpointUrl
                             pathStyle = s3.pathStyle
                             prefix = s3.prefix
                             additionalProperties = s3.additionalProperties.toMutableMap()
@@ -7374,6 +7369,17 @@ private constructor(
                          */
                         fun bucket(bucket: JsonField<String>) = apply { this.bucket = bucket }
 
+                        fun region(region: String) = region(JsonField.of(region))
+
+                        /**
+                         * Sets [Builder.region] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.region] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun region(region: JsonField<String>) = apply { this.region = region }
+
                         fun endpointUrl(endpointUrl: String) =
                             endpointUrl(JsonField.of(endpointUrl))
 
@@ -7387,17 +7393,6 @@ private constructor(
                         fun endpointUrl(endpointUrl: JsonField<String>) = apply {
                             this.endpointUrl = endpointUrl
                         }
-
-                        fun region(region: String) = region(JsonField.of(region))
-
-                        /**
-                         * Sets [Builder.region] to an arbitrary JSON value.
-                         *
-                         * You should usually call [Builder.region] with a well-typed [String] value
-                         * instead. This method is primarily for setting the field to an
-                         * undocumented or not yet supported value.
-                         */
-                        fun region(region: JsonField<String>) = apply { this.region = region }
 
                         fun pathStyle(pathStyle: Boolean) = pathStyle(JsonField.of(pathStyle))
 
@@ -7453,7 +7448,6 @@ private constructor(
                          * The following fields are required:
                          * ```java
                          * .bucket()
-                         * .endpointUrl()
                          * .region()
                          * ```
                          *
@@ -7462,8 +7456,8 @@ private constructor(
                         fun build(): S3 =
                             S3(
                                 checkRequired("bucket", bucket),
-                                checkRequired("endpointUrl", endpointUrl),
                                 checkRequired("region", region),
+                                endpointUrl,
                                 pathStyle,
                                 prefix,
                                 additionalProperties.toMutableMap(),
@@ -7488,8 +7482,8 @@ private constructor(
                         }
 
                         bucket()
-                        endpointUrl()
                         region()
+                        endpointUrl()
                         pathStyle()
                         prefix()
                         validated = true
@@ -7512,8 +7506,8 @@ private constructor(
                     @JvmSynthetic
                     internal fun validity(): Int =
                         (if (bucket.asKnown().isPresent) 1 else 0) +
-                            (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                             (if (region.asKnown().isPresent) 1 else 0) +
+                            (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                             (if (pathStyle.asKnown().isPresent) 1 else 0) +
                             (if (prefix.asKnown().isPresent) 1 else 0)
 
@@ -7524,8 +7518,8 @@ private constructor(
 
                         return other is S3 &&
                             bucket == other.bucket &&
-                            endpointUrl == other.endpointUrl &&
                             region == other.region &&
+                            endpointUrl == other.endpointUrl &&
                             pathStyle == other.pathStyle &&
                             prefix == other.prefix &&
                             additionalProperties == other.additionalProperties
@@ -7534,8 +7528,8 @@ private constructor(
                     private val hashCode: Int by lazy {
                         Objects.hash(
                             bucket,
-                            endpointUrl,
                             region,
+                            endpointUrl,
                             pathStyle,
                             prefix,
                             additionalProperties,
@@ -7545,7 +7539,7 @@ private constructor(
                     override fun hashCode(): Int = hashCode
 
                     override fun toString() =
-                        "S3{bucket=$bucket, endpointUrl=$endpointUrl, region=$region, pathStyle=$pathStyle, prefix=$prefix, additionalProperties=$additionalProperties}"
+                        "S3{bucket=$bucket, region=$region, endpointUrl=$endpointUrl, pathStyle=$pathStyle, prefix=$prefix, additionalProperties=$additionalProperties}"
                 }
 
                 override fun equals(other: Any?): Boolean {
@@ -9185,8 +9179,8 @@ private constructor(
                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                 private constructor(
                     private val bucket: JsonField<String>,
-                    private val endpointUrl: JsonField<String>,
                     private val region: JsonField<String>,
+                    private val endpointUrl: JsonField<String>,
                     private val pathStyle: JsonField<Boolean>,
                     private val prefix: JsonField<String>,
                     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -9197,19 +9191,19 @@ private constructor(
                         @JsonProperty("bucket")
                         @ExcludeMissing
                         bucket: JsonField<String> = JsonMissing.of(),
-                        @JsonProperty("endpoint_url")
-                        @ExcludeMissing
-                        endpointUrl: JsonField<String> = JsonMissing.of(),
                         @JsonProperty("region")
                         @ExcludeMissing
                         region: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("endpoint_url")
+                        @ExcludeMissing
+                        endpointUrl: JsonField<String> = JsonMissing.of(),
                         @JsonProperty("path_style")
                         @ExcludeMissing
                         pathStyle: JsonField<Boolean> = JsonMissing.of(),
                         @JsonProperty("prefix")
                         @ExcludeMissing
                         prefix: JsonField<String> = JsonMissing.of(),
-                    ) : this(bucket, endpointUrl, region, pathStyle, prefix, mutableMapOf())
+                    ) : this(bucket, region, endpointUrl, pathStyle, prefix, mutableMapOf())
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
@@ -9223,14 +9217,13 @@ private constructor(
                      *   type or is unexpectedly missing or null (e.g. if the server responded with
                      *   an unexpected value).
                      */
-                    fun endpointUrl(): String = endpointUrl.getRequired("endpoint_url")
+                    fun region(): String = region.getRequired("region")
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
-                     *   type or is unexpectedly missing or null (e.g. if the server responded with
-                     *   an unexpected value).
+                     *   type (e.g. if the server responded with an unexpected value).
                      */
-                    fun region(): String = region.getRequired("region")
+                    fun endpointUrl(): Optional<String> = endpointUrl.getOptional("endpoint_url")
 
                     /**
                      * @throws LangChainInvalidDataException if the JSON field has an unexpected
@@ -9255,16 +9248,6 @@ private constructor(
                     fun _bucket(): JsonField<String> = bucket
 
                     /**
-                     * Returns the raw JSON value of [endpointUrl].
-                     *
-                     * Unlike [endpointUrl], this method doesn't throw if the JSON field has an
-                     * unexpected type.
-                     */
-                    @JsonProperty("endpoint_url")
-                    @ExcludeMissing
-                    fun _endpointUrl(): JsonField<String> = endpointUrl
-
-                    /**
                      * Returns the raw JSON value of [region].
                      *
                      * Unlike [region], this method doesn't throw if the JSON field has an
@@ -9273,6 +9256,16 @@ private constructor(
                     @JsonProperty("region")
                     @ExcludeMissing
                     fun _region(): JsonField<String> = region
+
+                    /**
+                     * Returns the raw JSON value of [endpointUrl].
+                     *
+                     * Unlike [endpointUrl], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("endpoint_url")
+                    @ExcludeMissing
+                    fun _endpointUrl(): JsonField<String> = endpointUrl
 
                     /**
                      * Returns the raw JSON value of [pathStyle].
@@ -9314,7 +9307,6 @@ private constructor(
                          * The following fields are required:
                          * ```java
                          * .bucket()
-                         * .endpointUrl()
                          * .region()
                          * ```
                          */
@@ -9325,8 +9317,8 @@ private constructor(
                     class Builder internal constructor() {
 
                         private var bucket: JsonField<String>? = null
-                        private var endpointUrl: JsonField<String>? = null
                         private var region: JsonField<String>? = null
+                        private var endpointUrl: JsonField<String> = JsonMissing.of()
                         private var pathStyle: JsonField<Boolean> = JsonMissing.of()
                         private var prefix: JsonField<String> = JsonMissing.of()
                         private var additionalProperties: MutableMap<String, JsonValue> =
@@ -9335,8 +9327,8 @@ private constructor(
                         @JvmSynthetic
                         internal fun from(s3: S3) = apply {
                             bucket = s3.bucket
-                            endpointUrl = s3.endpointUrl
                             region = s3.region
+                            endpointUrl = s3.endpointUrl
                             pathStyle = s3.pathStyle
                             prefix = s3.prefix
                             additionalProperties = s3.additionalProperties.toMutableMap()
@@ -9353,6 +9345,17 @@ private constructor(
                          */
                         fun bucket(bucket: JsonField<String>) = apply { this.bucket = bucket }
 
+                        fun region(region: String) = region(JsonField.of(region))
+
+                        /**
+                         * Sets [Builder.region] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.region] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun region(region: JsonField<String>) = apply { this.region = region }
+
                         fun endpointUrl(endpointUrl: String) =
                             endpointUrl(JsonField.of(endpointUrl))
 
@@ -9366,17 +9369,6 @@ private constructor(
                         fun endpointUrl(endpointUrl: JsonField<String>) = apply {
                             this.endpointUrl = endpointUrl
                         }
-
-                        fun region(region: String) = region(JsonField.of(region))
-
-                        /**
-                         * Sets [Builder.region] to an arbitrary JSON value.
-                         *
-                         * You should usually call [Builder.region] with a well-typed [String] value
-                         * instead. This method is primarily for setting the field to an
-                         * undocumented or not yet supported value.
-                         */
-                        fun region(region: JsonField<String>) = apply { this.region = region }
 
                         fun pathStyle(pathStyle: Boolean) = pathStyle(JsonField.of(pathStyle))
 
@@ -9432,7 +9424,6 @@ private constructor(
                          * The following fields are required:
                          * ```java
                          * .bucket()
-                         * .endpointUrl()
                          * .region()
                          * ```
                          *
@@ -9441,8 +9432,8 @@ private constructor(
                         fun build(): S3 =
                             S3(
                                 checkRequired("bucket", bucket),
-                                checkRequired("endpointUrl", endpointUrl),
                                 checkRequired("region", region),
+                                endpointUrl,
                                 pathStyle,
                                 prefix,
                                 additionalProperties.toMutableMap(),
@@ -9467,8 +9458,8 @@ private constructor(
                         }
 
                         bucket()
-                        endpointUrl()
                         region()
+                        endpointUrl()
                         pathStyle()
                         prefix()
                         validated = true
@@ -9491,8 +9482,8 @@ private constructor(
                     @JvmSynthetic
                     internal fun validity(): Int =
                         (if (bucket.asKnown().isPresent) 1 else 0) +
-                            (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                             (if (region.asKnown().isPresent) 1 else 0) +
+                            (if (endpointUrl.asKnown().isPresent) 1 else 0) +
                             (if (pathStyle.asKnown().isPresent) 1 else 0) +
                             (if (prefix.asKnown().isPresent) 1 else 0)
 
@@ -9503,8 +9494,8 @@ private constructor(
 
                         return other is S3 &&
                             bucket == other.bucket &&
-                            endpointUrl == other.endpointUrl &&
                             region == other.region &&
+                            endpointUrl == other.endpointUrl &&
                             pathStyle == other.pathStyle &&
                             prefix == other.prefix &&
                             additionalProperties == other.additionalProperties
@@ -9513,8 +9504,8 @@ private constructor(
                     private val hashCode: Int by lazy {
                         Objects.hash(
                             bucket,
-                            endpointUrl,
                             region,
+                            endpointUrl,
                             pathStyle,
                             prefix,
                             additionalProperties,
@@ -9524,7 +9515,7 @@ private constructor(
                     override fun hashCode(): Int = hashCode
 
                     override fun toString() =
-                        "S3{bucket=$bucket, endpointUrl=$endpointUrl, region=$region, pathStyle=$pathStyle, prefix=$prefix, additionalProperties=$additionalProperties}"
+                        "S3{bucket=$bucket, region=$region, endpointUrl=$endpointUrl, pathStyle=$pathStyle, prefix=$prefix, additionalProperties=$additionalProperties}"
                 }
 
                 override fun equals(other: Any?): Boolean {

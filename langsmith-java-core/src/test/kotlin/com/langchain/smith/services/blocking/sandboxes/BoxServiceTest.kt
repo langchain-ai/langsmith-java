@@ -98,8 +98,8 @@ internal class BoxServiceTest {
                                             .S3
                                             .builder()
                                             .bucket("bucket")
-                                            .endpointUrl("endpoint_url")
                                             .region("region")
+                                            .endpointUrl("endpoint_url")
                                             .pathStyle(true)
                                             .prefix("prefix")
                                             .build()
