@@ -33,6 +33,7 @@ private constructor(
     private val filter: JsonField<String>,
     private val groupBy: JsonField<RunStatsGroupBy>,
     private val groups: JsonField<List<String?>>,
+    private val includeDetails: JsonField<Boolean>,
     private val isRoot: JsonField<Boolean>,
     private val parentRun: JsonField<String>,
     private val query: JsonField<String>,
@@ -68,6 +69,9 @@ private constructor(
         @ExcludeMissing
         groupBy: JsonField<RunStatsGroupBy> = JsonMissing.of(),
         @JsonProperty("groups") @ExcludeMissing groups: JsonField<List<String?>> = JsonMissing.of(),
+        @JsonProperty("include_details")
+        @ExcludeMissing
+        includeDetails: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("is_root") @ExcludeMissing isRoot: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("parent_run") @ExcludeMissing parentRun: JsonField<String> = JsonMissing.of(),
         @JsonProperty("query") @ExcludeMissing query: JsonField<String> = JsonMissing.of(),
@@ -109,6 +113,7 @@ private constructor(
         filter,
         groupBy,
         groups,
+        includeDetails,
         isRoot,
         parentRun,
         query,
@@ -178,6 +183,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun groups(): Optional<List<String?>> = groups.getOptional("groups")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun includeDetails(): Optional<Boolean> = includeDetails.getOptional("include_details")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -328,6 +339,15 @@ private constructor(
     @JsonProperty("groups") @ExcludeMissing fun _groups(): JsonField<List<String?>> = groups
 
     /**
+     * Returns the raw JSON value of [includeDetails].
+     *
+     * Unlike [includeDetails], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("include_details")
+    @ExcludeMissing
+    fun _includeDetails(): JsonField<Boolean> = includeDetails
+
+    /**
      * Returns the raw JSON value of [isRoot].
      *
      * Unlike [isRoot], this method doesn't throw if the JSON field has an unexpected type.
@@ -468,6 +488,7 @@ private constructor(
         private var filter: JsonField<String> = JsonMissing.of()
         private var groupBy: JsonField<RunStatsGroupBy> = JsonMissing.of()
         private var groups: JsonField<MutableList<String?>>? = null
+        private var includeDetails: JsonField<Boolean> = JsonMissing.of()
         private var isRoot: JsonField<Boolean> = JsonMissing.of()
         private var parentRun: JsonField<String> = JsonMissing.of()
         private var query: JsonField<String> = JsonMissing.of()
@@ -494,6 +515,7 @@ private constructor(
             filter = runStatsQueryParams.filter
             groupBy = runStatsQueryParams.groupBy
             groups = runStatsQueryParams.groups.map { it.toMutableList() }
+            includeDetails = runStatsQueryParams.includeDetails
             isRoot = runStatsQueryParams.isRoot
             parentRun = runStatsQueryParams.parentRun
             query = runStatsQueryParams.query
@@ -666,6 +688,19 @@ private constructor(
                 (groups ?: JsonField.of(mutableListOf())).also {
                     checkKnown("groups", it).add(group)
                 }
+        }
+
+        fun includeDetails(includeDetails: Boolean) = includeDetails(JsonField.of(includeDetails))
+
+        /**
+         * Sets [Builder.includeDetails] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.includeDetails] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun includeDetails(includeDetails: JsonField<Boolean>) = apply {
+            this.includeDetails = includeDetails
         }
 
         fun isRoot(isRoot: Boolean?) = isRoot(JsonField.ofNullable(isRoot))
@@ -960,6 +995,7 @@ private constructor(
                 filter,
                 groupBy,
                 (groups ?: JsonMissing.of()).map { it.toImmutable() },
+                includeDetails,
                 isRoot,
                 parentRun,
                 query,
@@ -1001,6 +1037,7 @@ private constructor(
         filter()
         groupBy().ifPresent { it.validate() }
         groups()
+        includeDetails()
         isRoot()
         parentRun()
         query()
@@ -1041,6 +1078,7 @@ private constructor(
             (if (filter.asKnown().isPresent) 1 else 0) +
             (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
             (groups.asKnown().getOrNull()?.sumOf { (if (it == null) 0 else 1).toInt() } ?: 0) +
+            (if (includeDetails.asKnown().isPresent) 1 else 0) +
             (if (isRoot.asKnown().isPresent) 1 else 0) +
             (if (parentRun.asKnown().isPresent) 1 else 0) +
             (if (query.asKnown().isPresent) 1 else 0) +
@@ -1399,6 +1437,7 @@ private constructor(
             filter == other.filter &&
             groupBy == other.groupBy &&
             groups == other.groups &&
+            includeDetails == other.includeDetails &&
             isRoot == other.isRoot &&
             parentRun == other.parentRun &&
             query == other.query &&
@@ -1426,6 +1465,7 @@ private constructor(
             filter,
             groupBy,
             groups,
+            includeDetails,
             isRoot,
             parentRun,
             query,
@@ -1447,5 +1487,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunStatsQueryParams{id=$id, dataSourceType=$dataSourceType, endTime=$endTime, error=$error, executionOrder=$executionOrder, filter=$filter, groupBy=$groupBy, groups=$groups, isRoot=$isRoot, parentRun=$parentRun, query=$query, referenceExample=$referenceExample, runType=$runType, searchFilter=$searchFilter, select=$select, session=$session, skipPagination=$skipPagination, startTime=$startTime, trace=$trace, traceFilter=$traceFilter, treeFilter=$treeFilter, useExperimentalSearch=$useExperimentalSearch, additionalProperties=$additionalProperties}"
+        "RunStatsQueryParams{id=$id, dataSourceType=$dataSourceType, endTime=$endTime, error=$error, executionOrder=$executionOrder, filter=$filter, groupBy=$groupBy, groups=$groups, includeDetails=$includeDetails, isRoot=$isRoot, parentRun=$parentRun, query=$query, referenceExample=$referenceExample, runType=$runType, searchFilter=$searchFilter, select=$select, session=$session, skipPagination=$skipPagination, startTime=$startTime, trace=$trace, traceFilter=$traceFilter, treeFilter=$treeFilter, useExperimentalSearch=$useExperimentalSearch, additionalProperties=$additionalProperties}"
 }
