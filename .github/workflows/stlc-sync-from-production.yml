@@ -1,0 +1,86 @@
+name: "stlc: sync from production"
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: stlc-sync-from-production
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: self-hosted-ubuntu-small-amd64
+    if: github.repository == 'langchain-ai/langsmith-java-staging'
+    env:
+      PRODUCTION_REPO: langchain-ai/langsmith-java
+    steps:
+      - name: Load GitHub App key from 1Password
+        id: load-gh-app-secrets
+        uses: 1password/load-secrets-action@581a835fb51b8e7ec56b71cf2ffddd7e68bb25e0 # v2
+        with:
+          export-env: false
+        env:
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN_INTERNAL }}
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+          LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY: op://${{ secrets.INTERNAL_INFRA_OP_VAULT }}/langchain-actions-pr-bot/private_key
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: "Iv23liMFOFBcPTKFWi3S"
+          private-key: ${{ steps.load-gh-app-secrets.outputs.LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY }}
+          repositories: langsmith-java-staging,langsmith-java,stlc,stlc-java,langchainplus
+
+      - name: Check out staging
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: next
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Fetch production main
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          git remote add production \
+            "https://x-access-token:${APP_TOKEN}@github.com/${PRODUCTION_REPO}.git"
+          git fetch production main
+
+      - name: Check whether production has content staging lacks
+        id: diff
+        run: |
+          MERGED=$(git merge-tree --write-tree origin/next production/main) || MERGED=conflict
+          STAGING_TREE=$(git rev-parse 'origin/next^{tree}')
+          if [ "$MERGED" = "$STAGING_TREE" ]; then
+            echo "Staging already has production's content. Nothing to pull back."
+            echo "behind=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "behind=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push production main to the back-sync branch on staging
+        if: steps.diff.outputs.behind == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: git push origin production/main:refs/heads/stlc/from-prod --force
+
+      - name: Open or update the back-sync PR on staging
+        if: steps.diff.outputs.behind == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          EXISTING_PR=$(gh pr list --head stlc/from-prod --base next --state open --json number --jq '.[0].number')
+          if [ -z "${EXISTING_PR}" ]; then
+            gh pr create \
+              --base next \
+              --head stlc/from-prod \
+              --title "Sync release changes from production" \
+              --body "Pulls production's release-please commits (and any merged contributions) back onto staging \`next\` so the next \`stlc build\` reseals against the released state. Bot-authored; safe to auto-merge."
+          fi

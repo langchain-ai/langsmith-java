@@ -34,6 +34,7 @@ internal class DatasetCreateParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+            .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addTransformation(
                 DatasetTransformation.builder()
                     .addPath("string")
@@ -70,6 +71,7 @@ internal class DatasetCreateParamsTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addTransformation(
                     DatasetTransformation.builder()
                         .addPath("string")
@@ -106,6 +108,8 @@ internal class DatasetCreateParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+        assertThat(body.tagValueIds().getOrNull())
+            .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.transformations().getOrNull())
             .containsExactly(
                 DatasetTransformation.builder()

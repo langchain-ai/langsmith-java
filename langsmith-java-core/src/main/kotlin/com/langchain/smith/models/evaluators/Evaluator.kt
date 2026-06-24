@@ -52,7 +52,11 @@ private constructor(
     private val datasetName: JsonField<String>,
     private val evaluatorId: JsonField<String>,
     private val evaluators: JsonField<List<EvaluatorTopLevel>>,
+    private val extendAnnotationQueueTraceRetention: JsonField<Boolean>,
+    private val extendDatasetTraceRetention: JsonField<Boolean>,
+    private val extendEvaluatorTraceRetention: JsonField<Boolean>,
     private val extendOnly: JsonField<Boolean>,
+    private val extendWebhookTraceRetention: JsonField<Boolean>,
     private val filter: JsonField<String>,
     private val groupBy: JsonField<GroupBy>,
     private val includeExtendedStats: JsonField<Boolean>,
@@ -61,6 +65,8 @@ private constructor(
     private val sessionId: JsonField<String>,
     private val sessionName: JsonField<String>,
     private val spendLimit: JsonField<SpendLimit>,
+    private val spendUsd: JsonField<Double>,
+    private val traceCount: JsonField<Long>,
     private val traceFilter: JsonField<String>,
     private val isTransient: JsonField<Boolean>,
     private val treeFilter: JsonField<String>,
@@ -145,9 +151,21 @@ private constructor(
         @JsonProperty("evaluators")
         @ExcludeMissing
         evaluators: JsonField<List<EvaluatorTopLevel>> = JsonMissing.of(),
+        @JsonProperty("extend_annotation_queue_trace_retention")
+        @ExcludeMissing
+        extendAnnotationQueueTraceRetention: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("extend_dataset_trace_retention")
+        @ExcludeMissing
+        extendDatasetTraceRetention: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("extend_evaluator_trace_retention")
+        @ExcludeMissing
+        extendEvaluatorTraceRetention: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("extend_only")
         @ExcludeMissing
         extendOnly: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("extend_webhook_trace_retention")
+        @ExcludeMissing
+        extendWebhookTraceRetention: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("filter") @ExcludeMissing filter: JsonField<String> = JsonMissing.of(),
         @JsonProperty("group_by") @ExcludeMissing groupBy: JsonField<GroupBy> = JsonMissing.of(),
         @JsonProperty("include_extended_stats")
@@ -166,6 +184,8 @@ private constructor(
         @JsonProperty("spend_limit")
         @ExcludeMissing
         spendLimit: JsonField<SpendLimit> = JsonMissing.of(),
+        @JsonProperty("spend_usd") @ExcludeMissing spendUsd: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("trace_count") @ExcludeMissing traceCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("trace_filter")
         @ExcludeMissing
         traceFilter: JsonField<String> = JsonMissing.of(),
@@ -206,7 +226,11 @@ private constructor(
         datasetName,
         evaluatorId,
         evaluators,
+        extendAnnotationQueueTraceRetention,
+        extendDatasetTraceRetention,
+        extendEvaluatorTraceRetention,
         extendOnly,
+        extendWebhookTraceRetention,
         filter,
         groupBy,
         includeExtendedStats,
@@ -215,6 +239,8 @@ private constructor(
         sessionId,
         sessionName,
         spendLimit,
+        spendUsd,
+        traceCount,
         traceFilter,
         isTransient,
         treeFilter,
@@ -395,7 +421,35 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun extendAnnotationQueueTraceRetention(): Optional<Boolean> =
+        extendAnnotationQueueTraceRetention.getOptional("extend_annotation_queue_trace_retention")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extendDatasetTraceRetention(): Optional<Boolean> =
+        extendDatasetTraceRetention.getOptional("extend_dataset_trace_retention")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extendEvaluatorTraceRetention(): Optional<Boolean> =
+        extendEvaluatorTraceRetention.getOptional("extend_evaluator_trace_retention")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun extendOnly(): Optional<Boolean> = extendOnly.getOptional("extend_only")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extendWebhookTraceRetention(): Optional<Boolean> =
+        extendWebhookTraceRetention.getOptional("extend_webhook_trace_retention")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -446,6 +500,18 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun spendLimit(): Optional<SpendLimit> = spendLimit.getOptional("spend_limit")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun spendUsd(): Optional<Double> = spendUsd.getOptional("spend_usd")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun traceCount(): Optional<Long> = traceCount.getOptional("trace_count")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -717,11 +783,52 @@ private constructor(
     fun _evaluators(): JsonField<List<EvaluatorTopLevel>> = evaluators
 
     /**
+     * Returns the raw JSON value of [extendAnnotationQueueTraceRetention].
+     *
+     * Unlike [extendAnnotationQueueTraceRetention], this method doesn't throw if the JSON field has
+     * an unexpected type.
+     */
+    @JsonProperty("extend_annotation_queue_trace_retention")
+    @ExcludeMissing
+    fun _extendAnnotationQueueTraceRetention(): JsonField<Boolean> =
+        extendAnnotationQueueTraceRetention
+
+    /**
+     * Returns the raw JSON value of [extendDatasetTraceRetention].
+     *
+     * Unlike [extendDatasetTraceRetention], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("extend_dataset_trace_retention")
+    @ExcludeMissing
+    fun _extendDatasetTraceRetention(): JsonField<Boolean> = extendDatasetTraceRetention
+
+    /**
+     * Returns the raw JSON value of [extendEvaluatorTraceRetention].
+     *
+     * Unlike [extendEvaluatorTraceRetention], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("extend_evaluator_trace_retention")
+    @ExcludeMissing
+    fun _extendEvaluatorTraceRetention(): JsonField<Boolean> = extendEvaluatorTraceRetention
+
+    /**
      * Returns the raw JSON value of [extendOnly].
      *
      * Unlike [extendOnly], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("extend_only") @ExcludeMissing fun _extendOnly(): JsonField<Boolean> = extendOnly
+
+    /**
+     * Returns the raw JSON value of [extendWebhookTraceRetention].
+     *
+     * Unlike [extendWebhookTraceRetention], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("extend_webhook_trace_retention")
+    @ExcludeMissing
+    fun _extendWebhookTraceRetention(): JsonField<Boolean> = extendWebhookTraceRetention
 
     /**
      * Returns the raw JSON value of [filter].
@@ -788,6 +895,20 @@ private constructor(
     @JsonProperty("spend_limit")
     @ExcludeMissing
     fun _spendLimit(): JsonField<SpendLimit> = spendLimit
+
+    /**
+     * Returns the raw JSON value of [spendUsd].
+     *
+     * Unlike [spendUsd], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("spend_usd") @ExcludeMissing fun _spendUsd(): JsonField<Double> = spendUsd
+
+    /**
+     * Returns the raw JSON value of [traceCount].
+     *
+     * Unlike [traceCount], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("trace_count") @ExcludeMissing fun _traceCount(): JsonField<Long> = traceCount
 
     /**
      * Returns the raw JSON value of [traceFilter].
@@ -884,7 +1005,11 @@ private constructor(
         private var datasetName: JsonField<String> = JsonMissing.of()
         private var evaluatorId: JsonField<String> = JsonMissing.of()
         private var evaluators: JsonField<MutableList<EvaluatorTopLevel>>? = null
+        private var extendAnnotationQueueTraceRetention: JsonField<Boolean> = JsonMissing.of()
+        private var extendDatasetTraceRetention: JsonField<Boolean> = JsonMissing.of()
+        private var extendEvaluatorTraceRetention: JsonField<Boolean> = JsonMissing.of()
         private var extendOnly: JsonField<Boolean> = JsonMissing.of()
+        private var extendWebhookTraceRetention: JsonField<Boolean> = JsonMissing.of()
         private var filter: JsonField<String> = JsonMissing.of()
         private var groupBy: JsonField<GroupBy> = JsonMissing.of()
         private var includeExtendedStats: JsonField<Boolean> = JsonMissing.of()
@@ -893,6 +1018,8 @@ private constructor(
         private var sessionId: JsonField<String> = JsonMissing.of()
         private var sessionName: JsonField<String> = JsonMissing.of()
         private var spendLimit: JsonField<SpendLimit> = JsonMissing.of()
+        private var spendUsd: JsonField<Double> = JsonMissing.of()
+        private var traceCount: JsonField<Long> = JsonMissing.of()
         private var traceFilter: JsonField<String> = JsonMissing.of()
         private var isTransient: JsonField<Boolean> = JsonMissing.of()
         private var treeFilter: JsonField<String> = JsonMissing.of()
@@ -928,7 +1055,11 @@ private constructor(
             datasetName = evaluator.datasetName
             evaluatorId = evaluator.evaluatorId
             evaluators = evaluator.evaluators.map { it.toMutableList() }
+            extendAnnotationQueueTraceRetention = evaluator.extendAnnotationQueueTraceRetention
+            extendDatasetTraceRetention = evaluator.extendDatasetTraceRetention
+            extendEvaluatorTraceRetention = evaluator.extendEvaluatorTraceRetention
             extendOnly = evaluator.extendOnly
+            extendWebhookTraceRetention = evaluator.extendWebhookTraceRetention
             filter = evaluator.filter
             groupBy = evaluator.groupBy
             includeExtendedStats = evaluator.includeExtendedStats
@@ -937,6 +1068,8 @@ private constructor(
             sessionId = evaluator.sessionId
             sessionName = evaluator.sessionName
             spendLimit = evaluator.spendLimit
+            spendUsd = evaluator.spendUsd
+            traceCount = evaluator.traceCount
             traceFilter = evaluator.traceFilter
             isTransient = evaluator.isTransient
             treeFilter = evaluator.treeFilter
@@ -1430,6 +1563,97 @@ private constructor(
                 }
         }
 
+        fun extendAnnotationQueueTraceRetention(extendAnnotationQueueTraceRetention: Boolean?) =
+            extendAnnotationQueueTraceRetention(
+                JsonField.ofNullable(extendAnnotationQueueTraceRetention)
+            )
+
+        /**
+         * Alias for [Builder.extendAnnotationQueueTraceRetention].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun extendAnnotationQueueTraceRetention(extendAnnotationQueueTraceRetention: Boolean) =
+            extendAnnotationQueueTraceRetention(extendAnnotationQueueTraceRetention as Boolean?)
+
+        /**
+         * Alias for calling [Builder.extendAnnotationQueueTraceRetention] with
+         * `extendAnnotationQueueTraceRetention.orElse(null)`.
+         */
+        fun extendAnnotationQueueTraceRetention(
+            extendAnnotationQueueTraceRetention: Optional<Boolean>
+        ) = extendAnnotationQueueTraceRetention(extendAnnotationQueueTraceRetention.getOrNull())
+
+        /**
+         * Sets [Builder.extendAnnotationQueueTraceRetention] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extendAnnotationQueueTraceRetention] with a well-typed
+         * [Boolean] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun extendAnnotationQueueTraceRetention(
+            extendAnnotationQueueTraceRetention: JsonField<Boolean>
+        ) = apply { this.extendAnnotationQueueTraceRetention = extendAnnotationQueueTraceRetention }
+
+        fun extendDatasetTraceRetention(extendDatasetTraceRetention: Boolean?) =
+            extendDatasetTraceRetention(JsonField.ofNullable(extendDatasetTraceRetention))
+
+        /**
+         * Alias for [Builder.extendDatasetTraceRetention].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun extendDatasetTraceRetention(extendDatasetTraceRetention: Boolean) =
+            extendDatasetTraceRetention(extendDatasetTraceRetention as Boolean?)
+
+        /**
+         * Alias for calling [Builder.extendDatasetTraceRetention] with
+         * `extendDatasetTraceRetention.orElse(null)`.
+         */
+        fun extendDatasetTraceRetention(extendDatasetTraceRetention: Optional<Boolean>) =
+            extendDatasetTraceRetention(extendDatasetTraceRetention.getOrNull())
+
+        /**
+         * Sets [Builder.extendDatasetTraceRetention] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extendDatasetTraceRetention] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun extendDatasetTraceRetention(extendDatasetTraceRetention: JsonField<Boolean>) = apply {
+            this.extendDatasetTraceRetention = extendDatasetTraceRetention
+        }
+
+        fun extendEvaluatorTraceRetention(extendEvaluatorTraceRetention: Boolean?) =
+            extendEvaluatorTraceRetention(JsonField.ofNullable(extendEvaluatorTraceRetention))
+
+        /**
+         * Alias for [Builder.extendEvaluatorTraceRetention].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun extendEvaluatorTraceRetention(extendEvaluatorTraceRetention: Boolean) =
+            extendEvaluatorTraceRetention(extendEvaluatorTraceRetention as Boolean?)
+
+        /**
+         * Alias for calling [Builder.extendEvaluatorTraceRetention] with
+         * `extendEvaluatorTraceRetention.orElse(null)`.
+         */
+        fun extendEvaluatorTraceRetention(extendEvaluatorTraceRetention: Optional<Boolean>) =
+            extendEvaluatorTraceRetention(extendEvaluatorTraceRetention.getOrNull())
+
+        /**
+         * Sets [Builder.extendEvaluatorTraceRetention] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extendEvaluatorTraceRetention] with a well-typed
+         * [Boolean] value instead. This method is primarily for setting the field to an
+         * undocumented or not yet supported value.
+         */
+        fun extendEvaluatorTraceRetention(extendEvaluatorTraceRetention: JsonField<Boolean>) =
+            apply {
+                this.extendEvaluatorTraceRetention = extendEvaluatorTraceRetention
+            }
+
         fun extendOnly(extendOnly: Boolean) = extendOnly(JsonField.of(extendOnly))
 
         /**
@@ -1440,6 +1664,35 @@ private constructor(
          * value.
          */
         fun extendOnly(extendOnly: JsonField<Boolean>) = apply { this.extendOnly = extendOnly }
+
+        fun extendWebhookTraceRetention(extendWebhookTraceRetention: Boolean?) =
+            extendWebhookTraceRetention(JsonField.ofNullable(extendWebhookTraceRetention))
+
+        /**
+         * Alias for [Builder.extendWebhookTraceRetention].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun extendWebhookTraceRetention(extendWebhookTraceRetention: Boolean) =
+            extendWebhookTraceRetention(extendWebhookTraceRetention as Boolean?)
+
+        /**
+         * Alias for calling [Builder.extendWebhookTraceRetention] with
+         * `extendWebhookTraceRetention.orElse(null)`.
+         */
+        fun extendWebhookTraceRetention(extendWebhookTraceRetention: Optional<Boolean>) =
+            extendWebhookTraceRetention(extendWebhookTraceRetention.getOrNull())
+
+        /**
+         * Sets [Builder.extendWebhookTraceRetention] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extendWebhookTraceRetention] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun extendWebhookTraceRetention(extendWebhookTraceRetention: JsonField<Boolean>) = apply {
+            this.extendWebhookTraceRetention = extendWebhookTraceRetention
+        }
 
         fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
 
@@ -1562,6 +1815,46 @@ private constructor(
          */
         fun spendLimit(spendLimit: JsonField<SpendLimit>) = apply { this.spendLimit = spendLimit }
 
+        fun spendUsd(spendUsd: Double?) = spendUsd(JsonField.ofNullable(spendUsd))
+
+        /**
+         * Alias for [Builder.spendUsd].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun spendUsd(spendUsd: Double) = spendUsd(spendUsd as Double?)
+
+        /** Alias for calling [Builder.spendUsd] with `spendUsd.orElse(null)`. */
+        fun spendUsd(spendUsd: Optional<Double>) = spendUsd(spendUsd.getOrNull())
+
+        /**
+         * Sets [Builder.spendUsd] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.spendUsd] with a well-typed [Double] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun spendUsd(spendUsd: JsonField<Double>) = apply { this.spendUsd = spendUsd }
+
+        fun traceCount(traceCount: Long?) = traceCount(JsonField.ofNullable(traceCount))
+
+        /**
+         * Alias for [Builder.traceCount].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun traceCount(traceCount: Long) = traceCount(traceCount as Long?)
+
+        /** Alias for calling [Builder.traceCount] with `traceCount.orElse(null)`. */
+        fun traceCount(traceCount: Optional<Long>) = traceCount(traceCount.getOrNull())
+
+        /**
+         * Sets [Builder.traceCount] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.traceCount] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun traceCount(traceCount: JsonField<Long>) = apply { this.traceCount = traceCount }
+
         fun traceFilter(traceFilter: String?) = traceFilter(JsonField.ofNullable(traceFilter))
 
         /** Alias for calling [Builder.traceFilter] with `traceFilter.orElse(null)`. */
@@ -1682,7 +1975,11 @@ private constructor(
                 datasetName,
                 evaluatorId,
                 (evaluators ?: JsonMissing.of()).map { it.toImmutable() },
+                extendAnnotationQueueTraceRetention,
+                extendDatasetTraceRetention,
+                extendEvaluatorTraceRetention,
                 extendOnly,
+                extendWebhookTraceRetention,
                 filter,
                 groupBy,
                 includeExtendedStats,
@@ -1691,6 +1988,8 @@ private constructor(
                 sessionId,
                 sessionName,
                 spendLimit,
+                spendUsd,
+                traceCount,
                 traceFilter,
                 isTransient,
                 treeFilter,
@@ -1741,7 +2040,11 @@ private constructor(
         datasetName()
         evaluatorId()
         evaluators().ifPresent { it.forEach { it.validate() } }
+        extendAnnotationQueueTraceRetention()
+        extendDatasetTraceRetention()
+        extendEvaluatorTraceRetention()
         extendOnly()
+        extendWebhookTraceRetention()
         filter()
         groupBy().ifPresent { it.validate() }
         includeExtendedStats()
@@ -1750,6 +2053,8 @@ private constructor(
         sessionId()
         sessionName()
         spendLimit().ifPresent { it.validate() }
+        spendUsd()
+        traceCount()
         traceFilter()
         isTransient()
         treeFilter()
@@ -1799,7 +2104,11 @@ private constructor(
             (if (datasetName.asKnown().isPresent) 1 else 0) +
             (if (evaluatorId.asKnown().isPresent) 1 else 0) +
             (evaluators.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (extendAnnotationQueueTraceRetention.asKnown().isPresent) 1 else 0) +
+            (if (extendDatasetTraceRetention.asKnown().isPresent) 1 else 0) +
+            (if (extendEvaluatorTraceRetention.asKnown().isPresent) 1 else 0) +
             (if (extendOnly.asKnown().isPresent) 1 else 0) +
+            (if (extendWebhookTraceRetention.asKnown().isPresent) 1 else 0) +
             (if (filter.asKnown().isPresent) 1 else 0) +
             (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
             (if (includeExtendedStats.asKnown().isPresent) 1 else 0) +
@@ -1808,6 +2117,8 @@ private constructor(
             (if (sessionId.asKnown().isPresent) 1 else 0) +
             (if (sessionName.asKnown().isPresent) 1 else 0) +
             (spendLimit.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (spendUsd.asKnown().isPresent) 1 else 0) +
+            (if (traceCount.asKnown().isPresent) 1 else 0) +
             (if (traceFilter.asKnown().isPresent) 1 else 0) +
             (if (isTransient.asKnown().isPresent) 1 else 0) +
             (if (treeFilter.asKnown().isPresent) 1 else 0) +
@@ -2312,7 +2623,11 @@ private constructor(
             datasetName == other.datasetName &&
             evaluatorId == other.evaluatorId &&
             evaluators == other.evaluators &&
+            extendAnnotationQueueTraceRetention == other.extendAnnotationQueueTraceRetention &&
+            extendDatasetTraceRetention == other.extendDatasetTraceRetention &&
+            extendEvaluatorTraceRetention == other.extendEvaluatorTraceRetention &&
             extendOnly == other.extendOnly &&
+            extendWebhookTraceRetention == other.extendWebhookTraceRetention &&
             filter == other.filter &&
             groupBy == other.groupBy &&
             includeExtendedStats == other.includeExtendedStats &&
@@ -2321,6 +2636,8 @@ private constructor(
             sessionId == other.sessionId &&
             sessionName == other.sessionName &&
             spendLimit == other.spendLimit &&
+            spendUsd == other.spendUsd &&
+            traceCount == other.traceCount &&
             traceFilter == other.traceFilter &&
             isTransient == other.isTransient &&
             treeFilter == other.treeFilter &&
@@ -2357,7 +2674,11 @@ private constructor(
             datasetName,
             evaluatorId,
             evaluators,
+            extendAnnotationQueueTraceRetention,
+            extendDatasetTraceRetention,
+            extendEvaluatorTraceRetention,
             extendOnly,
+            extendWebhookTraceRetention,
             filter,
             groupBy,
             includeExtendedStats,
@@ -2366,6 +2687,8 @@ private constructor(
             sessionId,
             sessionName,
             spendLimit,
+            spendUsd,
+            traceCount,
             traceFilter,
             isTransient,
             treeFilter,
@@ -2377,5 +2700,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendOnly=$extendOnly, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
-import com.langchain.smith.models.feedback.FeedbackSchema
 import com.langchain.smith.models.runs.RunTypeEnum
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -64,71 +63,8 @@ internal class GroupRunsResponseTest {
                                                 )
                                                 .build()
                                         )
-                                        .addFeedback(
-                                            FeedbackSchema.builder()
-                                                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                .key("key")
-                                                .comment("comment")
-                                                .comparativeExperimentId(
-                                                    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                )
-                                                .correction(
-                                                    FeedbackSchema.Correction.UnionMember0.builder()
-                                                        .putAdditionalProperty(
-                                                            "foo",
-                                                            JsonValue.from("bar"),
-                                                        )
-                                                        .build()
-                                                )
-                                                .createdAt(
-                                                    OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                                )
-                                                .extra(
-                                                    FeedbackSchema.Extra.builder()
-                                                        .putAdditionalProperty(
-                                                            "foo",
-                                                            JsonValue.from("bar"),
-                                                        )
-                                                        .build()
-                                                )
-                                                .feedbackGroupId(
-                                                    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                )
-                                                .feedbackSource(
-                                                    FeedbackSchema.FeedbackSource.builder()
-                                                        .lsUserId(
-                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                        )
-                                                        .metadata(
-                                                            FeedbackSchema.FeedbackSource.Metadata
-                                                                .builder()
-                                                                .putAdditionalProperty(
-                                                                    "foo",
-                                                                    JsonValue.from("bar"),
-                                                                )
-                                                                .build()
-                                                        )
-                                                        .type("type")
-                                                        .userId(
-                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                        )
-                                                        .userName("user_name")
-                                                        .build()
-                                                )
-                                                .feedbackThreadId("feedback_thread_id")
-                                                .isRoot(true)
-                                                .modifiedAt(
-                                                    OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                                )
-                                                .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                .score(0.0)
-                                                .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                .startTime(
-                                                    OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                                )
-                                                .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                .value(0.0)
-                                                .build()
+                                        .firstTokenTime(
+                                            OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                         )
                                         .inputs(
                                             ExampleWithRunsCh.Run.Inputs.builder()
@@ -214,6 +150,19 @@ internal class GroupRunsResponseTest {
                                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .errorRate(0.0)
                                 .exampleCount(0L)
+                                .experimentProgress(
+                                    GroupRunsResponse.Group.Session.ExperimentProgress.builder()
+                                        .evaluatorProgress(
+                                            GroupRunsResponse.Group.Session.ExperimentProgress
+                                                .EvaluatorProgress
+                                                .builder()
+                                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                                .build()
+                                        )
+                                        .expectedRunCount(0L)
+                                        .runProgress(0.0)
+                                        .build()
+                                )
                                 .extra(
                                     GroupRunsResponse.Group.Session.Extra.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -325,67 +274,8 @@ internal class GroupRunsResponseTest {
                                             )
                                             .build()
                                     )
-                                    .addFeedback(
-                                        FeedbackSchema.builder()
-                                            .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                            .key("key")
-                                            .comment("comment")
-                                            .comparativeExperimentId(
-                                                "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                            )
-                                            .correction(
-                                                FeedbackSchema.Correction.UnionMember0.builder()
-                                                    .putAdditionalProperty(
-                                                        "foo",
-                                                        JsonValue.from("bar"),
-                                                    )
-                                                    .build()
-                                            )
-                                            .createdAt(
-                                                OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                            )
-                                            .extra(
-                                                FeedbackSchema.Extra.builder()
-                                                    .putAdditionalProperty(
-                                                        "foo",
-                                                        JsonValue.from("bar"),
-                                                    )
-                                                    .build()
-                                            )
-                                            .feedbackGroupId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                            .feedbackSource(
-                                                FeedbackSchema.FeedbackSource.builder()
-                                                    .lsUserId(
-                                                        "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                    )
-                                                    .metadata(
-                                                        FeedbackSchema.FeedbackSource.Metadata
-                                                            .builder()
-                                                            .putAdditionalProperty(
-                                                                "foo",
-                                                                JsonValue.from("bar"),
-                                                            )
-                                                            .build()
-                                                    )
-                                                    .type("type")
-                                                    .userId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                    .userName("user_name")
-                                                    .build()
-                                            )
-                                            .feedbackThreadId("feedback_thread_id")
-                                            .isRoot(true)
-                                            .modifiedAt(
-                                                OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                            )
-                                            .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                            .score(0.0)
-                                            .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                            .startTime(
-                                                OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                            )
-                                            .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                            .value(0.0)
-                                            .build()
+                                    .firstTokenTime(
+                                        OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                     )
                                     .inputs(
                                         ExampleWithRunsCh.Run.Inputs.builder()
@@ -471,6 +361,19 @@ internal class GroupRunsResponseTest {
                             .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                             .errorRate(0.0)
                             .exampleCount(0L)
+                            .experimentProgress(
+                                GroupRunsResponse.Group.Session.ExperimentProgress.builder()
+                                    .evaluatorProgress(
+                                        GroupRunsResponse.Group.Session.ExperimentProgress
+                                            .EvaluatorProgress
+                                            .builder()
+                                            .putAdditionalProperty("foo", JsonValue.from(0))
+                                            .build()
+                                    )
+                                    .expectedRunCount(0L)
+                                    .runProgress(0.0)
+                                    .build()
+                            )
                             .extra(
                                 GroupRunsResponse.Group.Session.Extra.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -584,71 +487,8 @@ internal class GroupRunsResponseTest {
                                                 )
                                                 .build()
                                         )
-                                        .addFeedback(
-                                            FeedbackSchema.builder()
-                                                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                .key("key")
-                                                .comment("comment")
-                                                .comparativeExperimentId(
-                                                    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                )
-                                                .correction(
-                                                    FeedbackSchema.Correction.UnionMember0.builder()
-                                                        .putAdditionalProperty(
-                                                            "foo",
-                                                            JsonValue.from("bar"),
-                                                        )
-                                                        .build()
-                                                )
-                                                .createdAt(
-                                                    OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                                )
-                                                .extra(
-                                                    FeedbackSchema.Extra.builder()
-                                                        .putAdditionalProperty(
-                                                            "foo",
-                                                            JsonValue.from("bar"),
-                                                        )
-                                                        .build()
-                                                )
-                                                .feedbackGroupId(
-                                                    "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                )
-                                                .feedbackSource(
-                                                    FeedbackSchema.FeedbackSource.builder()
-                                                        .lsUserId(
-                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                        )
-                                                        .metadata(
-                                                            FeedbackSchema.FeedbackSource.Metadata
-                                                                .builder()
-                                                                .putAdditionalProperty(
-                                                                    "foo",
-                                                                    JsonValue.from("bar"),
-                                                                )
-                                                                .build()
-                                                        )
-                                                        .type("type")
-                                                        .userId(
-                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
-                                                        )
-                                                        .userName("user_name")
-                                                        .build()
-                                                )
-                                                .feedbackThreadId("feedback_thread_id")
-                                                .isRoot(true)
-                                                .modifiedAt(
-                                                    OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                                )
-                                                .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                .score(0.0)
-                                                .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                .startTime(
-                                                    OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
-                                                )
-                                                .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                                .value(0.0)
-                                                .build()
+                                        .firstTokenTime(
+                                            OffsetDateTime.parse("2019-12-27T18:11:19.117Z")
                                         )
                                         .inputs(
                                             ExampleWithRunsCh.Run.Inputs.builder()
@@ -734,6 +574,19 @@ internal class GroupRunsResponseTest {
                                 .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .errorRate(0.0)
                                 .exampleCount(0L)
+                                .experimentProgress(
+                                    GroupRunsResponse.Group.Session.ExperimentProgress.builder()
+                                        .evaluatorProgress(
+                                            GroupRunsResponse.Group.Session.ExperimentProgress
+                                                .EvaluatorProgress
+                                                .builder()
+                                                .putAdditionalProperty("foo", JsonValue.from(0))
+                                                .build()
+                                        )
+                                        .expectedRunCount(0L)
+                                        .runProgress(0.0)
+                                        .build()
+                                )
                                 .extra(
                                     GroupRunsResponse.Group.Session.Extra.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))

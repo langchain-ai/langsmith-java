@@ -24,6 +24,7 @@ internal class DatasetUploadParamsTest {
             .outputKeyMappings("output_key_mappings")
             .addOutputKey("string")
             .outputsSchemaDefinition("outputs_schema_definition")
+            .tagValueIds("tag_value_ids")
             .transformations("transformations")
             .build()
     }
@@ -44,6 +45,7 @@ internal class DatasetUploadParamsTest {
                 .outputKeyMappings("output_key_mappings")
                 .addOutputKey("string")
                 .outputsSchemaDefinition("outputs_schema_definition")
+                .tagValueIds("tag_value_ids")
                 .transformations("transformations")
                 .build()
 
@@ -72,6 +74,7 @@ internal class DatasetUploadParamsTest {
                         "output_keys" to MultipartField.of(listOf("string")),
                         "outputs_schema_definition" to
                             MultipartField.of("outputs_schema_definition"),
+                        "tag_value_ids" to MultipartField.of("tag_value_ids"),
                         "transformations" to MultipartField.of("transformations"),
                     )
                     .mapValues { (_, field) ->

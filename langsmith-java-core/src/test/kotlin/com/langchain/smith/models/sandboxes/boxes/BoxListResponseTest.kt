@@ -25,6 +25,139 @@ internal class BoxListResponseTest {
                         .fsCapacityBytes(0L)
                         .idleTtlSeconds(0L)
                         .memBytes(0L)
+                        .mountConfig(
+                            BoxListResponse.Sandbox.MountConfig.builder()
+                                .auth(
+                                    BoxListResponse.Sandbox.MountConfig.Auth.builder()
+                                        .aws(
+                                            BoxListResponse.Sandbox.MountConfig.Auth.Aws.builder()
+                                                .accessKeyId(
+                                                    BoxListResponse.Sandbox.MountConfig.Auth.Aws
+                                                        .AccessKeyId
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.MountConfig.Auth
+                                                                .Aws
+                                                                .AccessKeyId
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .secretAccessKey(
+                                                    BoxListResponse.Sandbox.MountConfig.Auth.Aws
+                                                        .SecretAccessKey
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.MountConfig.Auth
+                                                                .Aws
+                                                                .SecretAccessKey
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .gcp(
+                                            BoxListResponse.Sandbox.MountConfig.Auth.Gcp.builder()
+                                                .serviceAccountJson(
+                                                    BoxListResponse.Sandbox.MountConfig.Auth.Gcp
+                                                        .ServiceAccountJson
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.MountConfig.Auth
+                                                                .Gcp
+                                                                .ServiceAccountJson
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .addMount(
+                                    BoxListResponse.Sandbox.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .builder()
+                                        .id("id")
+                                        .mountPath("mount_path")
+                                        .s3(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .S3
+                                                .builder()
+                                                .bucket("bucket")
+                                                .region("region")
+                                                .endpointUrl("endpoint_url")
+                                                .pathStyle(true)
+                                                .prefix("prefix")
+                                                .build()
+                                        )
+                                        .type(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Type
+                                                .S3
+                                        )
+                                        .cache(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Cache
+                                                .builder()
+                                                .maxSizeBytes(0L)
+                                                .writebackSeconds(0L)
+                                                .build()
+                                        )
+                                        .gcs(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Gcs
+                                                .builder()
+                                                .bucket("bucket")
+                                                .prefix("prefix")
+                                                .build()
+                                        )
+                                        .git(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .builder()
+                                                .remoteUrl("remote_url")
+                                                .ref(
+                                                    BoxListResponse.Sandbox.MountConfig.Mount
+                                                        .SandboxapiS3BucketMountSpec
+                                                        .Git
+                                                        .Ref
+                                                        .builder()
+                                                        .name("name")
+                                                        .type(
+                                                            BoxListResponse.Sandbox.MountConfig
+                                                                .Mount
+                                                                .SandboxapiS3BucketMountSpec
+                                                                .Git
+                                                                .Ref
+                                                                .Type
+                                                                .BRANCH
+                                                        )
+                                                        .build()
+                                                )
+                                                .refreshIntervalSeconds(1L)
+                                                .build()
+                                        )
+                                        .readOnly(true)
+                                        .build()
+                                )
+                                .build()
+                        )
                         .name("name")
                         .proxyConfig(
                             BoxListResponse.Sandbox.ProxyConfig.builder()
@@ -60,9 +193,62 @@ internal class BoxListResponseTest {
                                 .addNoProxy("string")
                                 .addRule(
                                     BoxListResponse.Sandbox.ProxyConfig.Rule.builder()
-                                        .addMatchHost("string")
                                         .name("name")
+                                        .aws(
+                                            BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
+                                                .accessKeyId(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Aws
+                                                                .AccessKeyId
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .secretAccessKey(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Aws
+                                                                .SecretAccessKey
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
                                         .enabled(true)
+                                        .gcp(
+                                            BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp.builder()
+                                                .addScope("string")
+                                                .serviceAccountJson(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Gcp
+                                                                .ServiceAccountJson
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
                                         .addHeader(
                                             BoxListResponse.Sandbox.ProxyConfig.Rule.Header
                                                 .builder()
@@ -76,7 +262,9 @@ internal class BoxListResponseTest {
                                                 .value("value")
                                                 .build()
                                         )
+                                        .addMatchHost("string")
                                         .addMatchPath("string")
+                                        .type("type")
                                         .build()
                                 )
                                 .build()
@@ -105,6 +293,135 @@ internal class BoxListResponseTest {
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
+                    .mountConfig(
+                        BoxListResponse.Sandbox.MountConfig.builder()
+                            .auth(
+                                BoxListResponse.Sandbox.MountConfig.Auth.builder()
+                                    .aws(
+                                        BoxListResponse.Sandbox.MountConfig.Auth.Aws.builder()
+                                            .accessKeyId(
+                                                BoxListResponse.Sandbox.MountConfig.Auth.Aws
+                                                    .AccessKeyId
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.MountConfig.Auth.Aws
+                                                            .AccessKeyId
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .secretAccessKey(
+                                                BoxListResponse.Sandbox.MountConfig.Auth.Aws
+                                                    .SecretAccessKey
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.MountConfig.Auth.Aws
+                                                            .SecretAccessKey
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .gcp(
+                                        BoxListResponse.Sandbox.MountConfig.Auth.Gcp.builder()
+                                            .serviceAccountJson(
+                                                BoxListResponse.Sandbox.MountConfig.Auth.Gcp
+                                                    .ServiceAccountJson
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.MountConfig.Auth.Gcp
+                                                            .ServiceAccountJson
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .addMount(
+                                BoxListResponse.Sandbox.MountConfig.Mount
+                                    .SandboxapiS3BucketMountSpec
+                                    .builder()
+                                    .id("id")
+                                    .mountPath("mount_path")
+                                    .s3(
+                                        BoxListResponse.Sandbox.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .S3
+                                            .builder()
+                                            .bucket("bucket")
+                                            .region("region")
+                                            .endpointUrl("endpoint_url")
+                                            .pathStyle(true)
+                                            .prefix("prefix")
+                                            .build()
+                                    )
+                                    .type(
+                                        BoxListResponse.Sandbox.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Type
+                                            .S3
+                                    )
+                                    .cache(
+                                        BoxListResponse.Sandbox.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Cache
+                                            .builder()
+                                            .maxSizeBytes(0L)
+                                            .writebackSeconds(0L)
+                                            .build()
+                                    )
+                                    .gcs(
+                                        BoxListResponse.Sandbox.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Gcs
+                                            .builder()
+                                            .bucket("bucket")
+                                            .prefix("prefix")
+                                            .build()
+                                    )
+                                    .git(
+                                        BoxListResponse.Sandbox.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Git
+                                            .builder()
+                                            .remoteUrl("remote_url")
+                                            .ref(
+                                                BoxListResponse.Sandbox.MountConfig.Mount
+                                                    .SandboxapiS3BucketMountSpec
+                                                    .Git
+                                                    .Ref
+                                                    .builder()
+                                                    .name("name")
+                                                    .type(
+                                                        BoxListResponse.Sandbox.MountConfig.Mount
+                                                            .SandboxapiS3BucketMountSpec
+                                                            .Git
+                                                            .Ref
+                                                            .Type
+                                                            .BRANCH
+                                                    )
+                                                    .build()
+                                            )
+                                            .refreshIntervalSeconds(1L)
+                                            .build()
+                                    )
+                                    .readOnly(true)
+                                    .build()
+                            )
+                            .build()
+                    )
                     .name("name")
                     .proxyConfig(
                         BoxListResponse.Sandbox.ProxyConfig.builder()
@@ -139,9 +456,59 @@ internal class BoxListResponseTest {
                             .addNoProxy("string")
                             .addRule(
                                 BoxListResponse.Sandbox.ProxyConfig.Rule.builder()
-                                    .addMatchHost("string")
                                     .name("name")
+                                    .aws(
+                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
+                                            .accessKeyId(
+                                                BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                    .AccessKeyId
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                            .AccessKeyId
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .secretAccessKey(
+                                                BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                    .SecretAccessKey
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                            .SecretAccessKey
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .enabled(true)
+                                    .gcp(
+                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp.builder()
+                                            .addScope("string")
+                                            .serviceAccountJson(
+                                                BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .builder()
+                                                    .type(
+                                                        BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp
+                                                            .ServiceAccountJson
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .addHeader(
                                         BoxListResponse.Sandbox.ProxyConfig.Rule.Header.builder()
                                             .name("name")
@@ -153,7 +520,9 @@ internal class BoxListResponseTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .addMatchHost("string")
                                     .addMatchPath("string")
+                                    .type("type")
                                     .build()
                             )
                             .build()
@@ -186,6 +555,139 @@ internal class BoxListResponseTest {
                         .fsCapacityBytes(0L)
                         .idleTtlSeconds(0L)
                         .memBytes(0L)
+                        .mountConfig(
+                            BoxListResponse.Sandbox.MountConfig.builder()
+                                .auth(
+                                    BoxListResponse.Sandbox.MountConfig.Auth.builder()
+                                        .aws(
+                                            BoxListResponse.Sandbox.MountConfig.Auth.Aws.builder()
+                                                .accessKeyId(
+                                                    BoxListResponse.Sandbox.MountConfig.Auth.Aws
+                                                        .AccessKeyId
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.MountConfig.Auth
+                                                                .Aws
+                                                                .AccessKeyId
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .secretAccessKey(
+                                                    BoxListResponse.Sandbox.MountConfig.Auth.Aws
+                                                        .SecretAccessKey
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.MountConfig.Auth
+                                                                .Aws
+                                                                .SecretAccessKey
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .gcp(
+                                            BoxListResponse.Sandbox.MountConfig.Auth.Gcp.builder()
+                                                .serviceAccountJson(
+                                                    BoxListResponse.Sandbox.MountConfig.Auth.Gcp
+                                                        .ServiceAccountJson
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.MountConfig.Auth
+                                                                .Gcp
+                                                                .ServiceAccountJson
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .addMount(
+                                    BoxListResponse.Sandbox.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .builder()
+                                        .id("id")
+                                        .mountPath("mount_path")
+                                        .s3(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .S3
+                                                .builder()
+                                                .bucket("bucket")
+                                                .region("region")
+                                                .endpointUrl("endpoint_url")
+                                                .pathStyle(true)
+                                                .prefix("prefix")
+                                                .build()
+                                        )
+                                        .type(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Type
+                                                .S3
+                                        )
+                                        .cache(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Cache
+                                                .builder()
+                                                .maxSizeBytes(0L)
+                                                .writebackSeconds(0L)
+                                                .build()
+                                        )
+                                        .gcs(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Gcs
+                                                .builder()
+                                                .bucket("bucket")
+                                                .prefix("prefix")
+                                                .build()
+                                        )
+                                        .git(
+                                            BoxListResponse.Sandbox.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .builder()
+                                                .remoteUrl("remote_url")
+                                                .ref(
+                                                    BoxListResponse.Sandbox.MountConfig.Mount
+                                                        .SandboxapiS3BucketMountSpec
+                                                        .Git
+                                                        .Ref
+                                                        .builder()
+                                                        .name("name")
+                                                        .type(
+                                                            BoxListResponse.Sandbox.MountConfig
+                                                                .Mount
+                                                                .SandboxapiS3BucketMountSpec
+                                                                .Git
+                                                                .Ref
+                                                                .Type
+                                                                .BRANCH
+                                                        )
+                                                        .build()
+                                                )
+                                                .refreshIntervalSeconds(1L)
+                                                .build()
+                                        )
+                                        .readOnly(true)
+                                        .build()
+                                )
+                                .build()
+                        )
                         .name("name")
                         .proxyConfig(
                             BoxListResponse.Sandbox.ProxyConfig.builder()
@@ -221,9 +723,62 @@ internal class BoxListResponseTest {
                                 .addNoProxy("string")
                                 .addRule(
                                     BoxListResponse.Sandbox.ProxyConfig.Rule.builder()
-                                        .addMatchHost("string")
                                         .name("name")
+                                        .aws(
+                                            BoxListResponse.Sandbox.ProxyConfig.Rule.Aws.builder()
+                                                .accessKeyId(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Aws
+                                                                .AccessKeyId
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .secretAccessKey(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Aws
+                                                                .SecretAccessKey
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
                                         .enabled(true)
+                                        .gcp(
+                                            BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp.builder()
+                                                .addScope("string")
+                                                .serviceAccountJson(
+                                                    BoxListResponse.Sandbox.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .builder()
+                                                        .type(
+                                                            BoxListResponse.Sandbox.ProxyConfig.Rule
+                                                                .Gcp
+                                                                .ServiceAccountJson
+                                                                .Type
+                                                                .PLAINTEXT
+                                                        )
+                                                        .isSet(true)
+                                                        .value("value")
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
                                         .addHeader(
                                             BoxListResponse.Sandbox.ProxyConfig.Rule.Header
                                                 .builder()
@@ -237,7 +792,9 @@ internal class BoxListResponseTest {
                                                 .value("value")
                                                 .build()
                                         )
+                                        .addMatchHost("string")
                                         .addMatchPath("string")
+                                        .type("type")
                                         .build()
                                 )
                                 .build()

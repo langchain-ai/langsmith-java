@@ -46,8 +46,6 @@ import com.langchain.smith.services.blocking.datasets.ExperimentService
 import com.langchain.smith.services.blocking.datasets.ExperimentServiceImpl
 import com.langchain.smith.services.blocking.datasets.GroupService
 import com.langchain.smith.services.blocking.datasets.GroupServiceImpl
-import com.langchain.smith.services.blocking.datasets.PlaygroundExperimentService
-import com.langchain.smith.services.blocking.datasets.PlaygroundExperimentServiceImpl
 import com.langchain.smith.services.blocking.datasets.RunService
 import com.langchain.smith.services.blocking.datasets.RunServiceImpl
 import com.langchain.smith.services.blocking.datasets.ShareService
@@ -80,10 +78,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     private val splits: SplitService by lazy { SplitServiceImpl(clientOptions) }
 
-    private val playgroundExperiment: PlaygroundExperimentService by lazy {
-        PlaygroundExperimentServiceImpl(clientOptions)
-    }
-
     override fun withRawResponse(): DatasetService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetService =
@@ -102,8 +96,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
     override fun comparative(): ComparativeService = comparative
 
     override fun splits(): SplitService = splits
-
-    override fun playgroundExperiment(): PlaygroundExperimentService = playgroundExperiment
 
     override fun create(params: DatasetCreateParams, requestOptions: RequestOptions): Dataset =
         // post /api/v1/datasets
@@ -218,10 +210,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             SplitServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val playgroundExperiment: PlaygroundExperimentService.WithRawResponse by lazy {
-            PlaygroundExperimentServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): DatasetService.WithRawResponse =
@@ -242,9 +230,6 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
         override fun comparative(): ComparativeService.WithRawResponse = comparative
 
         override fun splits(): SplitService.WithRawResponse = splits
-
-        override fun playgroundExperiment(): PlaygroundExperimentService.WithRawResponse =
-            playgroundExperiment
 
         private val createHandler: Handler<Dataset> = jsonHandler<Dataset>(clientOptions.jsonMapper)
 

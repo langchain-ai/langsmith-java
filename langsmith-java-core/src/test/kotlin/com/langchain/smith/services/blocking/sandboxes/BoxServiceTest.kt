@@ -3,6 +3,7 @@
 package com.langchain.smith.services.blocking.sandboxes
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
@@ -24,9 +25,140 @@ internal class BoxServiceTest {
             boxService.create(
                 BoxCreateParams.builder()
                     .deleteAfterStopSeconds(0L)
+                    .envVars(
+                        BoxCreateParams.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
                     .memBytes(0L)
+                    .mountConfig(
+                        BoxCreateParams.MountConfig.builder()
+                            .auth(
+                                BoxCreateParams.MountConfig.Auth.builder()
+                                    .aws(
+                                        BoxCreateParams.MountConfig.Auth.Aws.builder()
+                                            .accessKeyId(
+                                                BoxCreateParams.MountConfig.Auth.Aws.AccessKeyId
+                                                    .builder()
+                                                    .type(
+                                                        BoxCreateParams.MountConfig.Auth.Aws
+                                                            .AccessKeyId
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .secretAccessKey(
+                                                BoxCreateParams.MountConfig.Auth.Aws.SecretAccessKey
+                                                    .builder()
+                                                    .type(
+                                                        BoxCreateParams.MountConfig.Auth.Aws
+                                                            .SecretAccessKey
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .gcp(
+                                        BoxCreateParams.MountConfig.Auth.Gcp.builder()
+                                            .serviceAccountJson(
+                                                BoxCreateParams.MountConfig.Auth.Gcp
+                                                    .ServiceAccountJson
+                                                    .builder()
+                                                    .type(
+                                                        BoxCreateParams.MountConfig.Auth.Gcp
+                                                            .ServiceAccountJson
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .addMount(
+                                BoxCreateParams.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .builder()
+                                    .id("id")
+                                    .mountPath("mount_path")
+                                    .s3(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .S3
+                                            .builder()
+                                            .bucket("bucket")
+                                            .region("region")
+                                            .endpointUrl("endpoint_url")
+                                            .pathStyle(true)
+                                            .prefix("prefix")
+                                            .build()
+                                    )
+                                    .type(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Type
+                                            .S3
+                                    )
+                                    .cache(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Cache
+                                            .builder()
+                                            .maxSizeBytes(0L)
+                                            .writebackSeconds(0L)
+                                            .build()
+                                    )
+                                    .gcs(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Gcs
+                                            .builder()
+                                            .bucket("bucket")
+                                            .prefix("prefix")
+                                            .build()
+                                    )
+                                    .git(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Git
+                                            .builder()
+                                            .remoteUrl("remote_url")
+                                            .ref(
+                                                BoxCreateParams.MountConfig.Mount
+                                                    .SandboxapiS3BucketMountSpec
+                                                    .Git
+                                                    .Ref
+                                                    .builder()
+                                                    .name("name")
+                                                    .type(
+                                                        BoxCreateParams.MountConfig.Mount
+                                                            .SandboxapiS3BucketMountSpec
+                                                            .Git
+                                                            .Ref
+                                                            .Type
+                                                            .BRANCH
+                                                    )
+                                                    .build()
+                                            )
+                                            .refreshIntervalSeconds(1L)
+                                            .build()
+                                    )
+                                    .readOnly(true)
+                                    .build()
+                            )
+                            .build()
+                    )
                     .name("name")
                     .proxyConfig(
                         BoxCreateParams.ProxyConfig.builder()
@@ -59,9 +191,57 @@ internal class BoxServiceTest {
                             .addNoProxy("string")
                             .addRule(
                                 BoxCreateParams.ProxyConfig.Rule.builder()
-                                    .addMatchHost("string")
                                     .name("name")
+                                    .aws(
+                                        BoxCreateParams.ProxyConfig.Rule.Aws.builder()
+                                            .accessKeyId(
+                                                BoxCreateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .builder()
+                                                    .type(
+                                                        BoxCreateParams.ProxyConfig.Rule.Aws
+                                                            .AccessKeyId
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .secretAccessKey(
+                                                BoxCreateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                    .builder()
+                                                    .type(
+                                                        BoxCreateParams.ProxyConfig.Rule.Aws
+                                                            .SecretAccessKey
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .enabled(true)
+                                    .gcp(
+                                        BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
+                                            .addScope("string")
+                                            .serviceAccountJson(
+                                                BoxCreateParams.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .builder()
+                                                    .type(
+                                                        BoxCreateParams.ProxyConfig.Rule.Gcp
+                                                            .ServiceAccountJson
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .addHeader(
                                         BoxCreateParams.ProxyConfig.Rule.Header.builder()
                                             .name("name")
@@ -73,7 +253,9 @@ internal class BoxServiceTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .addMatchHost("string")
                                     .addMatchPath("string")
+                                    .type("type")
                                     .build()
                             )
                             .build()
@@ -148,9 +330,57 @@ internal class BoxServiceTest {
                             .addNoProxy("string")
                             .addRule(
                                 BoxUpdateParams.ProxyConfig.Rule.builder()
-                                    .addMatchHost("string")
                                     .bodyName("name")
+                                    .aws(
+                                        BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
+                                            .accessKeyId(
+                                                BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .builder()
+                                                    .type(
+                                                        BoxUpdateParams.ProxyConfig.Rule.Aws
+                                                            .AccessKeyId
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .secretAccessKey(
+                                                BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                    .builder()
+                                                    .type(
+                                                        BoxUpdateParams.ProxyConfig.Rule.Aws
+                                                            .SecretAccessKey
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .enabled(true)
+                                    .gcp(
+                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                            .addScope("string")
+                                            .serviceAccountJson(
+                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .builder()
+                                                    .type(
+                                                        BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                                            .ServiceAccountJson
+                                                            .Type
+                                                            .PLAINTEXT
+                                                    )
+                                                    .isSet(true)
+                                                    .value("value")
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                     .addHeader(
                                         BoxUpdateParams.ProxyConfig.Rule.Header.builder()
                                             .bodyName("name")
@@ -162,7 +392,9 @@ internal class BoxServiceTest {
                                             .value("value")
                                             .build()
                                     )
+                                    .addMatchHost("string")
                                     .addMatchPath("string")
+                                    .type("type")
                                     .build()
                             )
                             .build()
@@ -185,6 +417,7 @@ internal class BoxServiceTest {
         val boxes =
             boxService.list(
                 BoxListParams.builder()
+                    .createdBy("created_by")
                     .limit(0L)
                     .nameContains("name_contains")
                     .offset(0L)

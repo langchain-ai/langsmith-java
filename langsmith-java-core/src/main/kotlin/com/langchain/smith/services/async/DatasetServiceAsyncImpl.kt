@@ -46,8 +46,6 @@ import com.langchain.smith.services.async.datasets.ExperimentServiceAsync
 import com.langchain.smith.services.async.datasets.ExperimentServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.GroupServiceAsync
 import com.langchain.smith.services.async.datasets.GroupServiceAsyncImpl
-import com.langchain.smith.services.async.datasets.PlaygroundExperimentServiceAsync
-import com.langchain.smith.services.async.datasets.PlaygroundExperimentServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.RunServiceAsync
 import com.langchain.smith.services.async.datasets.RunServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.ShareServiceAsync
@@ -85,10 +83,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     private val splits: SplitServiceAsync by lazy { SplitServiceAsyncImpl(clientOptions) }
 
-    private val playgroundExperiment: PlaygroundExperimentServiceAsync by lazy {
-        PlaygroundExperimentServiceAsyncImpl(clientOptions)
-    }
-
     override fun withRawResponse(): DatasetServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): DatasetServiceAsync =
@@ -107,8 +101,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
     override fun comparative(): ComparativeServiceAsync = comparative
 
     override fun splits(): SplitServiceAsync = splits
-
-    override fun playgroundExperiment(): PlaygroundExperimentServiceAsync = playgroundExperiment
 
     override fun create(
         params: DatasetCreateParams,
@@ -235,10 +227,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
             SplitServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val playgroundExperiment: PlaygroundExperimentServiceAsync.WithRawResponse by lazy {
-            PlaygroundExperimentServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): DatasetServiceAsync.WithRawResponse =
@@ -259,9 +247,6 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
         override fun comparative(): ComparativeServiceAsync.WithRawResponse = comparative
 
         override fun splits(): SplitServiceAsync.WithRawResponse = splits
-
-        override fun playgroundExperiment(): PlaygroundExperimentServiceAsync.WithRawResponse =
-            playgroundExperiment
 
         private val createHandler: Handler<Dataset> = jsonHandler<Dataset>(clientOptions.jsonMapper)
 

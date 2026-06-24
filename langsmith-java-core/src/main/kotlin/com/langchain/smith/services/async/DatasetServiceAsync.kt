@@ -31,7 +31,6 @@ import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
 import com.langchain.smith.services.async.datasets.ExperimentServiceAsync
 import com.langchain.smith.services.async.datasets.GroupServiceAsync
-import com.langchain.smith.services.async.datasets.PlaygroundExperimentServiceAsync
 import com.langchain.smith.services.async.datasets.RunServiceAsync
 import com.langchain.smith.services.async.datasets.ShareServiceAsync
 import com.langchain.smith.services.async.datasets.SplitServiceAsync
@@ -66,8 +65,6 @@ interface DatasetServiceAsync {
     fun comparative(): ComparativeServiceAsync
 
     fun splits(): SplitServiceAsync
-
-    fun playgroundExperiment(): PlaygroundExperimentServiceAsync
 
     /** Create a new dataset. */
     fun create(params: DatasetCreateParams): CompletableFuture<Dataset> =
@@ -456,8 +453,6 @@ interface DatasetServiceAsync {
         fun comparative(): ComparativeServiceAsync.WithRawResponse
 
         fun splits(): SplitServiceAsync.WithRawResponse
-
-        fun playgroundExperiment(): PlaygroundExperimentServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /api/v1/datasets`, but is otherwise the same as

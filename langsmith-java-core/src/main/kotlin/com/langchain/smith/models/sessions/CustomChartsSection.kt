@@ -922,6 +922,14 @@ private constructor(
 
                 @JvmField val BAR = of("bar")
 
+                @JvmField val TABLE = of("table")
+
+                @JvmField val KPI = of("kpi")
+
+                @JvmField val TOP_K = of("top-k")
+
+                @JvmField val PIE = of("pie")
+
                 @JvmStatic fun of(value: String) = ChartType(JsonField.of(value))
             }
 
@@ -929,6 +937,10 @@ private constructor(
             enum class Known {
                 LINE,
                 BAR,
+                TABLE,
+                KPI,
+                TOP_K,
+                PIE,
             }
 
             /**
@@ -943,6 +955,10 @@ private constructor(
             enum class Value {
                 LINE,
                 BAR,
+                TABLE,
+                KPI,
+                TOP_K,
+                PIE,
                 /**
                  * An enum member indicating that [ChartType] was instantiated with an unknown
                  * value.
@@ -961,6 +977,10 @@ private constructor(
                 when (this) {
                     LINE -> Value.LINE
                     BAR -> Value.BAR
+                    TABLE -> Value.TABLE
+                    KPI -> Value.KPI
+                    TOP_K -> Value.TOP_K
+                    PIE -> Value.PIE
                     else -> Value._UNKNOWN
                 }
 
@@ -977,6 +997,10 @@ private constructor(
                 when (this) {
                     LINE -> Known.LINE
                     BAR -> Known.BAR
+                    TABLE -> Known.TABLE
+                    KPI -> Known.KPI
+                    TOP_K -> Known.TOP_K
+                    PIE -> Known.PIE
                     else -> throw LangChainInvalidDataException("Unknown ChartType: $value")
                 }
 
@@ -1683,11 +1707,14 @@ private constructor(
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
             private val id: JsonField<String>,
-            private val metric: JsonField<Metric>,
             private val name: JsonField<String>,
             private val feedbackKey: JsonField<String>,
+            private val filterDefinition: JsonField<FilterDefinition>,
             private val filters: JsonField<Filters>,
             private val groupBy: JsonField<GroupBy>,
+            private val groupByDefinitions: JsonField<List<GroupByDefinition>>,
+            private val metric: JsonField<Metric>,
+            private val metricDefinition: JsonField<MetricDefinition>,
             private val projectMetric: JsonField<ProjectMetric>,
             private val workspaceId: JsonField<String>,
             private val additionalProperties: MutableMap<String, JsonValue>,
@@ -1696,19 +1723,28 @@ private constructor(
             @JsonCreator
             private constructor(
                 @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("metric")
-                @ExcludeMissing
-                metric: JsonField<Metric> = JsonMissing.of(),
                 @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("feedback_key")
                 @ExcludeMissing
                 feedbackKey: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("filter_definition")
+                @ExcludeMissing
+                filterDefinition: JsonField<FilterDefinition> = JsonMissing.of(),
                 @JsonProperty("filters")
                 @ExcludeMissing
                 filters: JsonField<Filters> = JsonMissing.of(),
                 @JsonProperty("group_by")
                 @ExcludeMissing
                 groupBy: JsonField<GroupBy> = JsonMissing.of(),
+                @JsonProperty("group_by_definitions")
+                @ExcludeMissing
+                groupByDefinitions: JsonField<List<GroupByDefinition>> = JsonMissing.of(),
+                @JsonProperty("metric")
+                @ExcludeMissing
+                metric: JsonField<Metric> = JsonMissing.of(),
+                @JsonProperty("metric_definition")
+                @ExcludeMissing
+                metricDefinition: JsonField<MetricDefinition> = JsonMissing.of(),
                 @JsonProperty("project_metric")
                 @ExcludeMissing
                 projectMetric: JsonField<ProjectMetric> = JsonMissing.of(),
@@ -1717,11 +1753,14 @@ private constructor(
                 workspaceId: JsonField<String> = JsonMissing.of(),
             ) : this(
                 id,
-                metric,
                 name,
                 feedbackKey,
+                filterDefinition,
                 filters,
                 groupBy,
+                groupByDefinitions,
+                metric,
+                metricDefinition,
                 projectMetric,
                 workspaceId,
                 mutableMapOf(),
@@ -1733,16 +1772,6 @@ private constructor(
              *   value).
              */
             fun id(): String = id.getRequired("id")
-
-            /**
-             * Metrics you can chart. Feedback metrics are not available for organization-scoped
-             * charts.
-             *
-             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
-             */
-            fun metric(): Metric = metric.getRequired("metric")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -1761,6 +1790,13 @@ private constructor(
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
+            fun filterDefinition(): Optional<FilterDefinition> =
+                filterDefinition.getOptional("filter_definition")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
             fun filters(): Optional<Filters> = filters.getOptional("filters")
 
             /**
@@ -1770,6 +1806,29 @@ private constructor(
              *   if the server responded with an unexpected value).
              */
             fun groupBy(): Optional<GroupBy> = groupBy.getOptional("group_by")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun groupByDefinitions(): Optional<List<GroupByDefinition>> =
+                groupByDefinitions.getOptional("group_by_definitions")
+
+            /**
+             * Metrics you can chart. Feedback metrics are not available for organization-scoped
+             * charts.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun metric(): Optional<Metric> = metric.getOptional("metric")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun metricDefinition(): Optional<MetricDefinition> =
+                metricDefinition.getOptional("metric_definition")
 
             /**
              * LGP Metrics you can chart.
@@ -1794,13 +1853,6 @@ private constructor(
             @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
 
             /**
-             * Returns the raw JSON value of [metric].
-             *
-             * Unlike [metric], this method doesn't throw if the JSON field has an unexpected type.
-             */
-            @JsonProperty("metric") @ExcludeMissing fun _metric(): JsonField<Metric> = metric
-
-            /**
              * Returns the raw JSON value of [name].
              *
              * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
@@ -1818,6 +1870,16 @@ private constructor(
             fun _feedbackKey(): JsonField<String> = feedbackKey
 
             /**
+             * Returns the raw JSON value of [filterDefinition].
+             *
+             * Unlike [filterDefinition], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("filter_definition")
+            @ExcludeMissing
+            fun _filterDefinition(): JsonField<FilterDefinition> = filterDefinition
+
+            /**
              * Returns the raw JSON value of [filters].
              *
              * Unlike [filters], this method doesn't throw if the JSON field has an unexpected type.
@@ -1830,6 +1892,33 @@ private constructor(
              * Unlike [groupBy], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("group_by") @ExcludeMissing fun _groupBy(): JsonField<GroupBy> = groupBy
+
+            /**
+             * Returns the raw JSON value of [groupByDefinitions].
+             *
+             * Unlike [groupByDefinitions], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("group_by_definitions")
+            @ExcludeMissing
+            fun _groupByDefinitions(): JsonField<List<GroupByDefinition>> = groupByDefinitions
+
+            /**
+             * Returns the raw JSON value of [metric].
+             *
+             * Unlike [metric], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("metric") @ExcludeMissing fun _metric(): JsonField<Metric> = metric
+
+            /**
+             * Returns the raw JSON value of [metricDefinition].
+             *
+             * Unlike [metricDefinition], this method doesn't throw if the JSON field has an
+             * unexpected type.
+             */
+            @JsonProperty("metric_definition")
+            @ExcludeMissing
+            fun _metricDefinition(): JsonField<MetricDefinition> = metricDefinition
 
             /**
              * Returns the raw JSON value of [projectMetric].
@@ -1871,7 +1960,6 @@ private constructor(
                  * The following fields are required:
                  * ```java
                  * .id()
-                 * .metric()
                  * .name()
                  * ```
                  */
@@ -1882,11 +1970,14 @@ private constructor(
             class Builder internal constructor() {
 
                 private var id: JsonField<String>? = null
-                private var metric: JsonField<Metric>? = null
                 private var name: JsonField<String>? = null
                 private var feedbackKey: JsonField<String> = JsonMissing.of()
+                private var filterDefinition: JsonField<FilterDefinition> = JsonMissing.of()
                 private var filters: JsonField<Filters> = JsonMissing.of()
                 private var groupBy: JsonField<GroupBy> = JsonMissing.of()
+                private var groupByDefinitions: JsonField<MutableList<GroupByDefinition>>? = null
+                private var metric: JsonField<Metric> = JsonMissing.of()
+                private var metricDefinition: JsonField<MetricDefinition> = JsonMissing.of()
                 private var projectMetric: JsonField<ProjectMetric> = JsonMissing.of()
                 private var workspaceId: JsonField<String> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -1894,11 +1985,14 @@ private constructor(
                 @JvmSynthetic
                 internal fun from(series: Series) = apply {
                     id = series.id
-                    metric = series.metric
                     name = series.name
                     feedbackKey = series.feedbackKey
+                    filterDefinition = series.filterDefinition
                     filters = series.filters
                     groupBy = series.groupBy
+                    groupByDefinitions = series.groupByDefinitions.map { it.toMutableList() }
+                    metric = series.metric
+                    metricDefinition = series.metricDefinition
                     projectMetric = series.projectMetric
                     workspaceId = series.workspaceId
                     additionalProperties = series.additionalProperties.toMutableMap()
@@ -1914,21 +2008,6 @@ private constructor(
                  * supported value.
                  */
                 fun id(id: JsonField<String>) = apply { this.id = id }
-
-                /**
-                 * Metrics you can chart. Feedback metrics are not available for organization-scoped
-                 * charts.
-                 */
-                fun metric(metric: Metric) = metric(JsonField.of(metric))
-
-                /**
-                 * Sets [Builder.metric] to an arbitrary JSON value.
-                 *
-                 * You should usually call [Builder.metric] with a well-typed [Metric] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
-                 */
-                fun metric(metric: JsonField<Metric>) = apply { this.metric = metric }
 
                 fun name(name: String) = name(JsonField.of(name))
 
@@ -1959,6 +2038,52 @@ private constructor(
                     this.feedbackKey = feedbackKey
                 }
 
+                fun filterDefinition(filterDefinition: FilterDefinition?) =
+                    filterDefinition(JsonField.ofNullable(filterDefinition))
+
+                /**
+                 * Alias for calling [Builder.filterDefinition] with
+                 * `filterDefinition.orElse(null)`.
+                 */
+                fun filterDefinition(filterDefinition: Optional<FilterDefinition>) =
+                    filterDefinition(filterDefinition.getOrNull())
+
+                /**
+                 * Sets [Builder.filterDefinition] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.filterDefinition] with a well-typed
+                 * [FilterDefinition] value instead. This method is primarily for setting the field
+                 * to an undocumented or not yet supported value.
+                 */
+                fun filterDefinition(filterDefinition: JsonField<FilterDefinition>) = apply {
+                    this.filterDefinition = filterDefinition
+                }
+
+                /**
+                 * Alias for calling [filterDefinition] with
+                 * `FilterDefinition.ofCustomChartFilterByTracingProject(customChartFilterByTracingProject)`.
+                 */
+                fun filterDefinition(
+                    customChartFilterByTracingProject:
+                        FilterDefinition.CustomChartFilterByTracingProject
+                ) =
+                    filterDefinition(
+                        FilterDefinition.ofCustomChartFilterByTracingProject(
+                            customChartFilterByTracingProject
+                        )
+                    )
+
+                /**
+                 * Alias for calling [filterDefinition] with
+                 * `FilterDefinition.ofCustomChartFilterByDataset(customChartFilterByDataset)`.
+                 */
+                fun filterDefinition(
+                    customChartFilterByDataset: FilterDefinition.CustomChartFilterByDataset
+                ) =
+                    filterDefinition(
+                        FilterDefinition.ofCustomChartFilterByDataset(customChartFilterByDataset)
+                    )
+
                 fun filters(filters: Filters?) = filters(JsonField.ofNullable(filters))
 
                 /** Alias for calling [Builder.filters] with `filters.orElse(null)`. */
@@ -1987,6 +2112,147 @@ private constructor(
                  * yet supported value.
                  */
                 fun groupBy(groupBy: JsonField<GroupBy>) = apply { this.groupBy = groupBy }
+
+                fun groupByDefinitions(groupByDefinitions: List<GroupByDefinition>?) =
+                    groupByDefinitions(JsonField.ofNullable(groupByDefinitions))
+
+                /**
+                 * Alias for calling [Builder.groupByDefinitions] with
+                 * `groupByDefinitions.orElse(null)`.
+                 */
+                fun groupByDefinitions(groupByDefinitions: Optional<List<GroupByDefinition>>) =
+                    groupByDefinitions(groupByDefinitions.getOrNull())
+
+                /**
+                 * Sets [Builder.groupByDefinitions] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.groupByDefinitions] with a well-typed
+                 * `List<GroupByDefinition>` value instead. This method is primarily for setting the
+                 * field to an undocumented or not yet supported value.
+                 */
+                fun groupByDefinitions(groupByDefinitions: JsonField<List<GroupByDefinition>>) =
+                    apply {
+                        this.groupByDefinitions = groupByDefinitions.map { it.toMutableList() }
+                    }
+
+                /**
+                 * Adds a single [GroupByDefinition] to [groupByDefinitions].
+                 *
+                 * @throws IllegalStateException if the field was previously set to a non-list.
+                 */
+                fun addGroupByDefinition(groupByDefinition: GroupByDefinition) = apply {
+                    groupByDefinitions =
+                        (groupByDefinitions ?: JsonField.of(mutableListOf())).also {
+                            checkKnown("groupByDefinitions", it).add(groupByDefinition)
+                        }
+                }
+
+                /**
+                 * Alias for calling [addGroupByDefinition] with
+                 * `GroupByDefinition.ofCustomChartGroupByPlain(customChartGroupByPlain)`.
+                 */
+                fun addGroupByDefinition(
+                    customChartGroupByPlain: GroupByDefinition.CustomChartGroupByPlain
+                ) =
+                    addGroupByDefinition(
+                        GroupByDefinition.ofCustomChartGroupByPlain(customChartGroupByPlain)
+                    )
+
+                /**
+                 * Alias for calling [addGroupByDefinition] with
+                 * `GroupByDefinition.ofCustomChartGroupByComplex(customChartGroupByComplex)`.
+                 */
+                fun addGroupByDefinition(
+                    customChartGroupByComplex: GroupByDefinition.CustomChartGroupByComplex
+                ) =
+                    addGroupByDefinition(
+                        GroupByDefinition.ofCustomChartGroupByComplex(customChartGroupByComplex)
+                    )
+
+                /**
+                 * Metrics you can chart. Feedback metrics are not available for organization-scoped
+                 * charts.
+                 */
+                fun metric(metric: Metric?) = metric(JsonField.ofNullable(metric))
+
+                /** Alias for calling [Builder.metric] with `metric.orElse(null)`. */
+                fun metric(metric: Optional<Metric>) = metric(metric.getOrNull())
+
+                /**
+                 * Sets [Builder.metric] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.metric] with a well-typed [Metric] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun metric(metric: JsonField<Metric>) = apply { this.metric = metric }
+
+                fun metricDefinition(metricDefinition: MetricDefinition?) =
+                    metricDefinition(JsonField.ofNullable(metricDefinition))
+
+                /**
+                 * Alias for calling [Builder.metricDefinition] with
+                 * `metricDefinition.orElse(null)`.
+                 */
+                fun metricDefinition(metricDefinition: Optional<MetricDefinition>) =
+                    metricDefinition(metricDefinition.getOrNull())
+
+                /**
+                 * Sets [Builder.metricDefinition] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.metricDefinition] with a well-typed
+                 * [MetricDefinition] value instead. This method is primarily for setting the field
+                 * to an undocumented or not yet supported value.
+                 */
+                fun metricDefinition(metricDefinition: JsonField<MetricDefinition>) = apply {
+                    this.metricDefinition = metricDefinition
+                }
+
+                /**
+                 * Alias for calling [metricDefinition] with
+                 * `MetricDefinition.ofCustomChartMetricCount(customChartMetricCount)`.
+                 */
+                fun metricDefinition(
+                    customChartMetricCount: MetricDefinition.CustomChartMetricCount
+                ) =
+                    metricDefinition(
+                        MetricDefinition.ofCustomChartMetricCount(customChartMetricCount)
+                    )
+
+                /**
+                 * Alias for calling [metricDefinition] with
+                 * `MetricDefinition.ofCustomChartMetricScalar(customChartMetricScalar)`.
+                 */
+                fun metricDefinition(
+                    customChartMetricScalar: MetricDefinition.CustomChartMetricScalar
+                ) =
+                    metricDefinition(
+                        MetricDefinition.ofCustomChartMetricScalar(customChartMetricScalar)
+                    )
+
+                /**
+                 * Alias for calling [metricDefinition] with
+                 * `MetricDefinition.ofCustomChartMetricPercentile(customChartMetricPercentile)`.
+                 */
+                fun metricDefinition(
+                    customChartMetricPercentile: MetricDefinition.CustomChartMetricPercentile
+                ) =
+                    metricDefinition(
+                        MetricDefinition.ofCustomChartMetricPercentile(customChartMetricPercentile)
+                    )
+
+                /**
+                 * Alias for calling [metricDefinition] with
+                 * `MetricDefinition.ofCustomChartMetricRatioOutput(customChartMetricRatioOutput)`.
+                 */
+                fun metricDefinition(
+                    customChartMetricRatioOutput: MetricDefinition.CustomChartMetricRatioOutput
+                ) =
+                    metricDefinition(
+                        MetricDefinition.ofCustomChartMetricRatioOutput(
+                            customChartMetricRatioOutput
+                        )
+                    )
 
                 /** LGP Metrics you can chart. */
                 fun projectMetric(projectMetric: ProjectMetric?) =
@@ -2055,7 +2321,6 @@ private constructor(
                  * The following fields are required:
                  * ```java
                  * .id()
-                 * .metric()
                  * .name()
                  * ```
                  *
@@ -2064,11 +2329,14 @@ private constructor(
                 fun build(): Series =
                     Series(
                         checkRequired("id", id),
-                        checkRequired("metric", metric),
                         checkRequired("name", name),
                         feedbackKey,
+                        filterDefinition,
                         filters,
                         groupBy,
+                        (groupByDefinitions ?: JsonMissing.of()).map { it.toImmutable() },
+                        metric,
+                        metricDefinition,
                         projectMetric,
                         workspaceId,
                         additionalProperties.toMutableMap(),
@@ -2093,11 +2361,14 @@ private constructor(
                 }
 
                 id()
-                metric().validate()
                 name()
                 feedbackKey()
+                filterDefinition().ifPresent { it.validate() }
                 filters().ifPresent { it.validate() }
                 groupBy().ifPresent { it.validate() }
+                groupByDefinitions().ifPresent { it.forEach { it.validate() } }
+                metric().ifPresent { it.validate() }
+                metricDefinition().ifPresent { it.validate() }
                 projectMetric().ifPresent { it.validate() }
                 workspaceId()
                 validated = true
@@ -2120,245 +2391,89 @@ private constructor(
             @JvmSynthetic
             internal fun validity(): Int =
                 (if (id.asKnown().isPresent) 1 else 0) +
-                    (metric.asKnown().getOrNull()?.validity() ?: 0) +
                     (if (name.asKnown().isPresent) 1 else 0) +
                     (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                    (filterDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                     (filters.asKnown().getOrNull()?.validity() ?: 0) +
                     (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
+                    (groupByDefinitions.asKnown().getOrNull()?.sumOf { it.validity().toInt() }
+                        ?: 0) +
+                    (metric.asKnown().getOrNull()?.validity() ?: 0) +
+                    (metricDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                     (projectMetric.asKnown().getOrNull()?.validity() ?: 0) +
                     (if (workspaceId.asKnown().isPresent) 1 else 0)
 
-            /**
-             * Metrics you can chart. Feedback metrics are not available for organization-scoped
-             * charts.
-             */
-            class Metric @JsonCreator private constructor(private val value: JsonField<String>) :
-                Enum {
+            @JsonDeserialize(using = FilterDefinition.Deserializer::class)
+            @JsonSerialize(using = FilterDefinition.Serializer::class)
+            class FilterDefinition
+            private constructor(
+                private val customChartFilterByTracingProject: CustomChartFilterByTracingProject? =
+                    null,
+                private val customChartFilterByDataset: CustomChartFilterByDataset? = null,
+                private val _json: JsonValue? = null,
+            ) {
+
+                fun customChartFilterByTracingProject():
+                    Optional<CustomChartFilterByTracingProject> =
+                    Optional.ofNullable(customChartFilterByTracingProject)
+
+                fun customChartFilterByDataset(): Optional<CustomChartFilterByDataset> =
+                    Optional.ofNullable(customChartFilterByDataset)
+
+                fun isCustomChartFilterByTracingProject(): Boolean =
+                    customChartFilterByTracingProject != null
+
+                fun isCustomChartFilterByDataset(): Boolean = customChartFilterByDataset != null
+
+                fun asCustomChartFilterByTracingProject(): CustomChartFilterByTracingProject =
+                    customChartFilterByTracingProject.getOrThrow(
+                        "customChartFilterByTracingProject"
+                    )
+
+                fun asCustomChartFilterByDataset(): CustomChartFilterByDataset =
+                    customChartFilterByDataset.getOrThrow("customChartFilterByDataset")
+
+                fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
                 /**
-                 * Returns this class instance's raw value.
+                 * Maps this instance's current variant to a value of type [T] using the given
+                 * [visitor].
                  *
-                 * This is usually only useful if this instance was deserialized from data that
-                 * doesn't match any known member, and you want to know that value. For example, if
-                 * the SDK is on an older version than the API, then the API may respond with new
-                 * members that the SDK is unaware of.
+                 * Note that this method is _not_ forwards compatible with new variants from the
+                 * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not known
+                 * to this version of the SDK gracefully, consider overriding [Visitor.unknown]:
+                 * ```java
+                 * import com.langchain.smith.core.JsonValue;
+                 * import java.util.Optional;
+                 *
+                 * Optional<String> result = filterDefinition.accept(new FilterDefinition.Visitor<Optional<String>>() {
+                 *     @Override
+                 *     public Optional<String> visitCustomChartFilterByTracingProject(CustomChartFilterByTracingProject customChartFilterByTracingProject) {
+                 *         return Optional.of(customChartFilterByTracingProject.toString());
+                 *     }
+                 *
+                 *     // ...
+                 *
+                 *     @Override
+                 *     public Optional<String> unknown(JsonValue json) {
+                 *         // Or inspect the `json`.
+                 *         return Optional.empty();
+                 *     }
+                 * });
+                 * ```
+                 *
+                 * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in
+                 *   [visitor] and the current variant is unknown.
                  */
-                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-                companion object {
-
-                    @JvmField val RUN_COUNT = of("run_count")
-
-                    @JvmField val LATENCY_P50 = of("latency_p50")
-
-                    @JvmField val LATENCY_P99 = of("latency_p99")
-
-                    @JvmField val LATENCY_AVG = of("latency_avg")
-
-                    @JvmField val FIRST_TOKEN_P50 = of("first_token_p50")
-
-                    @JvmField val FIRST_TOKEN_P99 = of("first_token_p99")
-
-                    @JvmField val TOTAL_TOKENS = of("total_tokens")
-
-                    @JvmField val PROMPT_TOKENS = of("prompt_tokens")
-
-                    @JvmField val COMPLETION_TOKENS = of("completion_tokens")
-
-                    @JvmField val MEDIAN_TOKENS = of("median_tokens")
-
-                    @JvmField val COMPLETION_TOKENS_P50 = of("completion_tokens_p50")
-
-                    @JvmField val PROMPT_TOKENS_P50 = of("prompt_tokens_p50")
-
-                    @JvmField val TOKENS_P99 = of("tokens_p99")
-
-                    @JvmField val COMPLETION_TOKENS_P99 = of("completion_tokens_p99")
-
-                    @JvmField val PROMPT_TOKENS_P99 = of("prompt_tokens_p99")
-
-                    @JvmField val FEEDBACK = of("feedback")
-
-                    @JvmField val FEEDBACK_SCORE_AVG = of("feedback_score_avg")
-
-                    @JvmField val FEEDBACK_VALUES = of("feedback_values")
-
-                    @JvmField val TOTAL_COST = of("total_cost")
-
-                    @JvmField val PROMPT_COST = of("prompt_cost")
-
-                    @JvmField val COMPLETION_COST = of("completion_cost")
-
-                    @JvmField val ERROR_RATE = of("error_rate")
-
-                    @JvmField val STREAMING_RATE = of("streaming_rate")
-
-                    @JvmField val COST_P50 = of("cost_p50")
-
-                    @JvmField val COST_P99 = of("cost_p99")
-
-                    @JvmStatic fun of(value: String) = Metric(JsonField.of(value))
-                }
-
-                /** An enum containing [Metric]'s known values. */
-                enum class Known {
-                    RUN_COUNT,
-                    LATENCY_P50,
-                    LATENCY_P99,
-                    LATENCY_AVG,
-                    FIRST_TOKEN_P50,
-                    FIRST_TOKEN_P99,
-                    TOTAL_TOKENS,
-                    PROMPT_TOKENS,
-                    COMPLETION_TOKENS,
-                    MEDIAN_TOKENS,
-                    COMPLETION_TOKENS_P50,
-                    PROMPT_TOKENS_P50,
-                    TOKENS_P99,
-                    COMPLETION_TOKENS_P99,
-                    PROMPT_TOKENS_P99,
-                    FEEDBACK,
-                    FEEDBACK_SCORE_AVG,
-                    FEEDBACK_VALUES,
-                    TOTAL_COST,
-                    PROMPT_COST,
-                    COMPLETION_COST,
-                    ERROR_RATE,
-                    STREAMING_RATE,
-                    COST_P50,
-                    COST_P99,
-                }
-
-                /**
-                 * An enum containing [Metric]'s known values, as well as an [_UNKNOWN] member.
-                 *
-                 * An instance of [Metric] can contain an unknown value in a couple of cases:
-                 * - It was deserialized from data that doesn't match any known member. For example,
-                 *   if the SDK is on an older version than the API, then the API may respond with
-                 *   new members that the SDK is unaware of.
-                 * - It was constructed with an arbitrary value using the [of] method.
-                 */
-                enum class Value {
-                    RUN_COUNT,
-                    LATENCY_P50,
-                    LATENCY_P99,
-                    LATENCY_AVG,
-                    FIRST_TOKEN_P50,
-                    FIRST_TOKEN_P99,
-                    TOTAL_TOKENS,
-                    PROMPT_TOKENS,
-                    COMPLETION_TOKENS,
-                    MEDIAN_TOKENS,
-                    COMPLETION_TOKENS_P50,
-                    PROMPT_TOKENS_P50,
-                    TOKENS_P99,
-                    COMPLETION_TOKENS_P99,
-                    PROMPT_TOKENS_P99,
-                    FEEDBACK,
-                    FEEDBACK_SCORE_AVG,
-                    FEEDBACK_VALUES,
-                    TOTAL_COST,
-                    PROMPT_COST,
-                    COMPLETION_COST,
-                    ERROR_RATE,
-                    STREAMING_RATE,
-                    COST_P50,
-                    COST_P99,
-                    /**
-                     * An enum member indicating that [Metric] was instantiated with an unknown
-                     * value.
-                     */
-                    _UNKNOWN,
-                }
-
-                /**
-                 * Returns an enum member corresponding to this class instance's value, or
-                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
-                 *
-                 * Use the [known] method instead if you're certain the value is always known or if
-                 * you want to throw for the unknown case.
-                 */
-                fun value(): Value =
-                    when (this) {
-                        RUN_COUNT -> Value.RUN_COUNT
-                        LATENCY_P50 -> Value.LATENCY_P50
-                        LATENCY_P99 -> Value.LATENCY_P99
-                        LATENCY_AVG -> Value.LATENCY_AVG
-                        FIRST_TOKEN_P50 -> Value.FIRST_TOKEN_P50
-                        FIRST_TOKEN_P99 -> Value.FIRST_TOKEN_P99
-                        TOTAL_TOKENS -> Value.TOTAL_TOKENS
-                        PROMPT_TOKENS -> Value.PROMPT_TOKENS
-                        COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
-                        MEDIAN_TOKENS -> Value.MEDIAN_TOKENS
-                        COMPLETION_TOKENS_P50 -> Value.COMPLETION_TOKENS_P50
-                        PROMPT_TOKENS_P50 -> Value.PROMPT_TOKENS_P50
-                        TOKENS_P99 -> Value.TOKENS_P99
-                        COMPLETION_TOKENS_P99 -> Value.COMPLETION_TOKENS_P99
-                        PROMPT_TOKENS_P99 -> Value.PROMPT_TOKENS_P99
-                        FEEDBACK -> Value.FEEDBACK
-                        FEEDBACK_SCORE_AVG -> Value.FEEDBACK_SCORE_AVG
-                        FEEDBACK_VALUES -> Value.FEEDBACK_VALUES
-                        TOTAL_COST -> Value.TOTAL_COST
-                        PROMPT_COST -> Value.PROMPT_COST
-                        COMPLETION_COST -> Value.COMPLETION_COST
-                        ERROR_RATE -> Value.ERROR_RATE
-                        STREAMING_RATE -> Value.STREAMING_RATE
-                        COST_P50 -> Value.COST_P50
-                        COST_P99 -> Value.COST_P99
-                        else -> Value._UNKNOWN
-                    }
-
-                /**
-                 * Returns an enum member corresponding to this class instance's value.
-                 *
-                 * Use the [value] method instead if you're uncertain the value is always known and
-                 * don't want to throw for the unknown case.
-                 *
-                 * @throws LangChainInvalidDataException if this class instance's value is a not a
-                 *   known member.
-                 */
-                fun known(): Known =
-                    when (this) {
-                        RUN_COUNT -> Known.RUN_COUNT
-                        LATENCY_P50 -> Known.LATENCY_P50
-                        LATENCY_P99 -> Known.LATENCY_P99
-                        LATENCY_AVG -> Known.LATENCY_AVG
-                        FIRST_TOKEN_P50 -> Known.FIRST_TOKEN_P50
-                        FIRST_TOKEN_P99 -> Known.FIRST_TOKEN_P99
-                        TOTAL_TOKENS -> Known.TOTAL_TOKENS
-                        PROMPT_TOKENS -> Known.PROMPT_TOKENS
-                        COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
-                        MEDIAN_TOKENS -> Known.MEDIAN_TOKENS
-                        COMPLETION_TOKENS_P50 -> Known.COMPLETION_TOKENS_P50
-                        PROMPT_TOKENS_P50 -> Known.PROMPT_TOKENS_P50
-                        TOKENS_P99 -> Known.TOKENS_P99
-                        COMPLETION_TOKENS_P99 -> Known.COMPLETION_TOKENS_P99
-                        PROMPT_TOKENS_P99 -> Known.PROMPT_TOKENS_P99
-                        FEEDBACK -> Known.FEEDBACK
-                        FEEDBACK_SCORE_AVG -> Known.FEEDBACK_SCORE_AVG
-                        FEEDBACK_VALUES -> Known.FEEDBACK_VALUES
-                        TOTAL_COST -> Known.TOTAL_COST
-                        PROMPT_COST -> Known.PROMPT_COST
-                        COMPLETION_COST -> Known.COMPLETION_COST
-                        ERROR_RATE -> Known.ERROR_RATE
-                        STREAMING_RATE -> Known.STREAMING_RATE
-                        COST_P50 -> Known.COST_P50
-                        COST_P99 -> Known.COST_P99
-                        else -> throw LangChainInvalidDataException("Unknown Metric: $value")
-                    }
-
-                /**
-                 * Returns this class instance's primitive wire representation.
-                 *
-                 * This differs from the [toString] method because that method is primarily for
-                 * debugging and generally doesn't throw.
-                 *
-                 * @throws LangChainInvalidDataException if this class instance's value does not
-                 *   have the expected primitive type.
-                 */
-                fun asString(): String =
-                    _value().asString().orElseThrow {
-                        LangChainInvalidDataException("Value is not a String")
+                fun <T> accept(visitor: Visitor<T>): T =
+                    when {
+                        customChartFilterByTracingProject != null ->
+                            visitor.visitCustomChartFilterByTracingProject(
+                                customChartFilterByTracingProject
+                            )
+                        customChartFilterByDataset != null ->
+                            visitor.visitCustomChartFilterByDataset(customChartFilterByDataset)
+                        else -> visitor.unknown(_json)
                     }
 
                 private var validated: Boolean = false
@@ -2373,12 +2488,26 @@ private constructor(
                  * @throws LangChainInvalidDataException if any value type in this object doesn't
                  *   match its expected type.
                  */
-                fun validate(): Metric = apply {
+                fun validate(): FilterDefinition = apply {
                     if (validated) {
                         return@apply
                     }
 
-                    known()
+                    accept(
+                        object : Visitor<Unit> {
+                            override fun visitCustomChartFilterByTracingProject(
+                                customChartFilterByTracingProject: CustomChartFilterByTracingProject
+                            ) {
+                                customChartFilterByTracingProject.validate()
+                            }
+
+                            override fun visitCustomChartFilterByDataset(
+                                customChartFilterByDataset: CustomChartFilterByDataset
+                            ) {
+                                customChartFilterByDataset.validate()
+                            }
+                        }
+                    )
                     validated = true
                 }
 
@@ -2396,19 +2525,801 @@ private constructor(
                  *
                  * Used for best match union deserialization.
                  */
-                @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    accept(
+                        object : Visitor<Int> {
+                            override fun visitCustomChartFilterByTracingProject(
+                                customChartFilterByTracingProject: CustomChartFilterByTracingProject
+                            ) = customChartFilterByTracingProject.validity()
+
+                            override fun visitCustomChartFilterByDataset(
+                                customChartFilterByDataset: CustomChartFilterByDataset
+                            ) = customChartFilterByDataset.validity()
+
+                            override fun unknown(json: JsonValue?) = 0
+                        }
+                    )
 
                 override fun equals(other: Any?): Boolean {
                     if (this === other) {
                         return true
                     }
 
-                    return other is Metric && value == other.value
+                    return other is FilterDefinition &&
+                        customChartFilterByTracingProject ==
+                            other.customChartFilterByTracingProject &&
+                        customChartFilterByDataset == other.customChartFilterByDataset
                 }
 
-                override fun hashCode() = value.hashCode()
+                override fun hashCode(): Int =
+                    Objects.hash(customChartFilterByTracingProject, customChartFilterByDataset)
 
-                override fun toString() = value.toString()
+                override fun toString(): String =
+                    when {
+                        customChartFilterByTracingProject != null ->
+                            "FilterDefinition{customChartFilterByTracingProject=$customChartFilterByTracingProject}"
+                        customChartFilterByDataset != null ->
+                            "FilterDefinition{customChartFilterByDataset=$customChartFilterByDataset}"
+                        _json != null -> "FilterDefinition{_unknown=$_json}"
+                        else -> throw IllegalStateException("Invalid FilterDefinition")
+                    }
+
+                companion object {
+
+                    @JvmStatic
+                    fun ofCustomChartFilterByTracingProject(
+                        customChartFilterByTracingProject: CustomChartFilterByTracingProject
+                    ) =
+                        FilterDefinition(
+                            customChartFilterByTracingProject = customChartFilterByTracingProject
+                        )
+
+                    @JvmStatic
+                    fun ofCustomChartFilterByDataset(
+                        customChartFilterByDataset: CustomChartFilterByDataset
+                    ) = FilterDefinition(customChartFilterByDataset = customChartFilterByDataset)
+                }
+
+                /**
+                 * An interface that defines how to map each variant of [FilterDefinition] to a
+                 * value of type [T].
+                 */
+                interface Visitor<out T> {
+
+                    fun visitCustomChartFilterByTracingProject(
+                        customChartFilterByTracingProject: CustomChartFilterByTracingProject
+                    ): T
+
+                    fun visitCustomChartFilterByDataset(
+                        customChartFilterByDataset: CustomChartFilterByDataset
+                    ): T
+
+                    /**
+                     * Maps an unknown variant of [FilterDefinition] to a value of type [T].
+                     *
+                     * An instance of [FilterDefinition] can contain an unknown variant if it was
+                     * deserialized from data that doesn't match any known variant. For example, if
+                     * the SDK is on an older version than the API, then the API may respond with
+                     * new variants that the SDK is unaware of.
+                     *
+                     * @throws LangChainInvalidDataException in the default implementation.
+                     */
+                    fun unknown(json: JsonValue?): T {
+                        throw LangChainInvalidDataException("Unknown FilterDefinition: $json")
+                    }
+                }
+
+                internal class Deserializer :
+                    BaseDeserializer<FilterDefinition>(FilterDefinition::class) {
+
+                    override fun ObjectCodec.deserialize(node: JsonNode): FilterDefinition {
+                        val json = JsonValue.fromJsonNode(node)
+
+                        val bestMatches =
+                            sequenceOf(
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<CustomChartFilterByTracingProject>(),
+                                        )
+                                        ?.let {
+                                            FilterDefinition(
+                                                customChartFilterByTracingProject = it,
+                                                _json = json,
+                                            )
+                                        },
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<CustomChartFilterByDataset>(),
+                                        )
+                                        ?.let {
+                                            FilterDefinition(
+                                                customChartFilterByDataset = it,
+                                                _json = json,
+                                            )
+                                        },
+                                )
+                                .filterNotNull()
+                                .allMaxBy { it.validity() }
+                                .toList()
+                        return when (bestMatches.size) {
+                            // This can happen if what we're deserializing is completely
+                            // incompatible with all the possible variants (e.g. deserializing from
+                            // boolean).
+                            0 -> FilterDefinition(_json = json)
+                            1 -> bestMatches.single()
+                            // If there's more than one match with the highest validity, then use
+                            // the first completely valid match, or simply the first match if none
+                            // are completely valid.
+                            else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                        }
+                    }
+                }
+
+                internal class Serializer :
+                    BaseSerializer<FilterDefinition>(FilterDefinition::class) {
+
+                    override fun serialize(
+                        value: FilterDefinition,
+                        generator: JsonGenerator,
+                        provider: SerializerProvider,
+                    ) {
+                        when {
+                            value.customChartFilterByTracingProject != null ->
+                                generator.writeObject(value.customChartFilterByTracingProject)
+                            value.customChartFilterByDataset != null ->
+                                generator.writeObject(value.customChartFilterByDataset)
+                            value._json != null -> generator.writeObject(value._json)
+                            else -> throw IllegalStateException("Invalid FilterDefinition")
+                        }
+                    }
+                }
+
+                class CustomChartFilterByTracingProject
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val projectIds: JsonField<List<String>>,
+                    private val sourceType: JsonValue,
+                    private val runFilter: JsonField<String>,
+                    private val traceFilter: JsonField<String>,
+                    private val treeFilter: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("project_ids")
+                        @ExcludeMissing
+                        projectIds: JsonField<List<String>> = JsonMissing.of(),
+                        @JsonProperty("source_type")
+                        @ExcludeMissing
+                        sourceType: JsonValue = JsonMissing.of(),
+                        @JsonProperty("run_filter")
+                        @ExcludeMissing
+                        runFilter: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("trace_filter")
+                        @ExcludeMissing
+                        traceFilter: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("tree_filter")
+                        @ExcludeMissing
+                        treeFilter: JsonField<String> = JsonMissing.of(),
+                    ) : this(
+                        projectIds,
+                        sourceType,
+                        runFilter,
+                        traceFilter,
+                        treeFilter,
+                        mutableMapOf(),
+                    )
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun projectIds(): List<String> = projectIds.getRequired("project_ids")
+
+                    /**
+                     * Expected to always return the following:
+                     * ```java
+                     * JsonValue.from("tracing_project")
+                     * ```
+                     *
+                     * However, this method can be useful for debugging and logging (e.g. if the
+                     * server responded with an unexpected value).
+                     */
+                    @JsonProperty("source_type")
+                    @ExcludeMissing
+                    fun _sourceType(): JsonValue = sourceType
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun runFilter(): Optional<String> = runFilter.getOptional("run_filter")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun traceFilter(): Optional<String> = traceFilter.getOptional("trace_filter")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun treeFilter(): Optional<String> = treeFilter.getOptional("tree_filter")
+
+                    /**
+                     * Returns the raw JSON value of [projectIds].
+                     *
+                     * Unlike [projectIds], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("project_ids")
+                    @ExcludeMissing
+                    fun _projectIds(): JsonField<List<String>> = projectIds
+
+                    /**
+                     * Returns the raw JSON value of [runFilter].
+                     *
+                     * Unlike [runFilter], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("run_filter")
+                    @ExcludeMissing
+                    fun _runFilter(): JsonField<String> = runFilter
+
+                    /**
+                     * Returns the raw JSON value of [traceFilter].
+                     *
+                     * Unlike [traceFilter], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("trace_filter")
+                    @ExcludeMissing
+                    fun _traceFilter(): JsonField<String> = traceFilter
+
+                    /**
+                     * Returns the raw JSON value of [treeFilter].
+                     *
+                     * Unlike [treeFilter], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("tree_filter")
+                    @ExcludeMissing
+                    fun _treeFilter(): JsonField<String> = treeFilter
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [CustomChartFilterByTracingProject].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .projectIds()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [CustomChartFilterByTracingProject]. */
+                    class Builder internal constructor() {
+
+                        private var projectIds: JsonField<MutableList<String>>? = null
+                        private var sourceType: JsonValue = JsonValue.from("tracing_project")
+                        private var runFilter: JsonField<String> = JsonMissing.of()
+                        private var traceFilter: JsonField<String> = JsonMissing.of()
+                        private var treeFilter: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(
+                            customChartFilterByTracingProject: CustomChartFilterByTracingProject
+                        ) = apply {
+                            projectIds =
+                                customChartFilterByTracingProject.projectIds.map {
+                                    it.toMutableList()
+                                }
+                            sourceType = customChartFilterByTracingProject.sourceType
+                            runFilter = customChartFilterByTracingProject.runFilter
+                            traceFilter = customChartFilterByTracingProject.traceFilter
+                            treeFilter = customChartFilterByTracingProject.treeFilter
+                            additionalProperties =
+                                customChartFilterByTracingProject.additionalProperties
+                                    .toMutableMap()
+                        }
+
+                        fun projectIds(projectIds: List<String>) =
+                            projectIds(JsonField.of(projectIds))
+
+                        /**
+                         * Sets [Builder.projectIds] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.projectIds] with a well-typed
+                         * `List<String>` value instead. This method is primarily for setting the
+                         * field to an undocumented or not yet supported value.
+                         */
+                        fun projectIds(projectIds: JsonField<List<String>>) = apply {
+                            this.projectIds = projectIds.map { it.toMutableList() }
+                        }
+
+                        /**
+                         * Adds a single [String] to [projectIds].
+                         *
+                         * @throws IllegalStateException if the field was previously set to a
+                         *   non-list.
+                         */
+                        fun addProjectId(projectId: String) = apply {
+                            projectIds =
+                                (projectIds ?: JsonField.of(mutableListOf())).also {
+                                    checkKnown("projectIds", it).add(projectId)
+                                }
+                        }
+
+                        /**
+                         * Sets the field to an arbitrary JSON value.
+                         *
+                         * It is usually unnecessary to call this method because the field defaults
+                         * to the following:
+                         * ```java
+                         * JsonValue.from("tracing_project")
+                         * ```
+                         *
+                         * This method is primarily for setting the field to an undocumented or not
+                         * yet supported value.
+                         */
+                        fun sourceType(sourceType: JsonValue) = apply {
+                            this.sourceType = sourceType
+                        }
+
+                        fun runFilter(runFilter: String?) =
+                            runFilter(JsonField.ofNullable(runFilter))
+
+                        /** Alias for calling [Builder.runFilter] with `runFilter.orElse(null)`. */
+                        fun runFilter(runFilter: Optional<String>) =
+                            runFilter(runFilter.getOrNull())
+
+                        /**
+                         * Sets [Builder.runFilter] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.runFilter] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun runFilter(runFilter: JsonField<String>) = apply {
+                            this.runFilter = runFilter
+                        }
+
+                        fun traceFilter(traceFilter: String?) =
+                            traceFilter(JsonField.ofNullable(traceFilter))
+
+                        /**
+                         * Alias for calling [Builder.traceFilter] with `traceFilter.orElse(null)`.
+                         */
+                        fun traceFilter(traceFilter: Optional<String>) =
+                            traceFilter(traceFilter.getOrNull())
+
+                        /**
+                         * Sets [Builder.traceFilter] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.traceFilter] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun traceFilter(traceFilter: JsonField<String>) = apply {
+                            this.traceFilter = traceFilter
+                        }
+
+                        fun treeFilter(treeFilter: String?) =
+                            treeFilter(JsonField.ofNullable(treeFilter))
+
+                        /**
+                         * Alias for calling [Builder.treeFilter] with `treeFilter.orElse(null)`.
+                         */
+                        fun treeFilter(treeFilter: Optional<String>) =
+                            treeFilter(treeFilter.getOrNull())
+
+                        /**
+                         * Sets [Builder.treeFilter] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.treeFilter] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun treeFilter(treeFilter: JsonField<String>) = apply {
+                            this.treeFilter = treeFilter
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [CustomChartFilterByTracingProject].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .projectIds()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): CustomChartFilterByTracingProject =
+                            CustomChartFilterByTracingProject(
+                                checkRequired("projectIds", projectIds).map { it.toImmutable() },
+                                sourceType,
+                                runFilter,
+                                traceFilter,
+                                treeFilter,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): CustomChartFilterByTracingProject = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        projectIds()
+                        _sourceType().let {
+                            if (it != JsonValue.from("tracing_project")) {
+                                throw LangChainInvalidDataException(
+                                    "'sourceType' is invalid, received $it"
+                                )
+                            }
+                        }
+                        runFilter()
+                        traceFilter()
+                        treeFilter()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (projectIds.asKnown().getOrNull()?.size ?: 0) +
+                            sourceType.let {
+                                if (it == JsonValue.from("tracing_project")) 1 else 0
+                            } +
+                            (if (runFilter.asKnown().isPresent) 1 else 0) +
+                            (if (traceFilter.asKnown().isPresent) 1 else 0) +
+                            (if (treeFilter.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is CustomChartFilterByTracingProject &&
+                            projectIds == other.projectIds &&
+                            sourceType == other.sourceType &&
+                            runFilter == other.runFilter &&
+                            traceFilter == other.traceFilter &&
+                            treeFilter == other.treeFilter &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(
+                            projectIds,
+                            sourceType,
+                            runFilter,
+                            traceFilter,
+                            treeFilter,
+                            additionalProperties,
+                        )
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "CustomChartFilterByTracingProject{projectIds=$projectIds, sourceType=$sourceType, runFilter=$runFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+                }
+
+                class CustomChartFilterByDataset
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val datasetIds: JsonField<List<String>>,
+                    private val sourceType: JsonValue,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("dataset_ids")
+                        @ExcludeMissing
+                        datasetIds: JsonField<List<String>> = JsonMissing.of(),
+                        @JsonProperty("source_type")
+                        @ExcludeMissing
+                        sourceType: JsonValue = JsonMissing.of(),
+                    ) : this(datasetIds, sourceType, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun datasetIds(): List<String> = datasetIds.getRequired("dataset_ids")
+
+                    /**
+                     * Expected to always return the following:
+                     * ```java
+                     * JsonValue.from("dataset")
+                     * ```
+                     *
+                     * However, this method can be useful for debugging and logging (e.g. if the
+                     * server responded with an unexpected value).
+                     */
+                    @JsonProperty("source_type")
+                    @ExcludeMissing
+                    fun _sourceType(): JsonValue = sourceType
+
+                    /**
+                     * Returns the raw JSON value of [datasetIds].
+                     *
+                     * Unlike [datasetIds], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("dataset_ids")
+                    @ExcludeMissing
+                    fun _datasetIds(): JsonField<List<String>> = datasetIds
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [CustomChartFilterByDataset].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .datasetIds()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [CustomChartFilterByDataset]. */
+                    class Builder internal constructor() {
+
+                        private var datasetIds: JsonField<MutableList<String>>? = null
+                        private var sourceType: JsonValue = JsonValue.from("dataset")
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(customChartFilterByDataset: CustomChartFilterByDataset) =
+                            apply {
+                                datasetIds =
+                                    customChartFilterByDataset.datasetIds.map { it.toMutableList() }
+                                sourceType = customChartFilterByDataset.sourceType
+                                additionalProperties =
+                                    customChartFilterByDataset.additionalProperties.toMutableMap()
+                            }
+
+                        fun datasetIds(datasetIds: List<String>) =
+                            datasetIds(JsonField.of(datasetIds))
+
+                        /**
+                         * Sets [Builder.datasetIds] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.datasetIds] with a well-typed
+                         * `List<String>` value instead. This method is primarily for setting the
+                         * field to an undocumented or not yet supported value.
+                         */
+                        fun datasetIds(datasetIds: JsonField<List<String>>) = apply {
+                            this.datasetIds = datasetIds.map { it.toMutableList() }
+                        }
+
+                        /**
+                         * Adds a single [String] to [datasetIds].
+                         *
+                         * @throws IllegalStateException if the field was previously set to a
+                         *   non-list.
+                         */
+                        fun addDatasetId(datasetId: String) = apply {
+                            datasetIds =
+                                (datasetIds ?: JsonField.of(mutableListOf())).also {
+                                    checkKnown("datasetIds", it).add(datasetId)
+                                }
+                        }
+
+                        /**
+                         * Sets the field to an arbitrary JSON value.
+                         *
+                         * It is usually unnecessary to call this method because the field defaults
+                         * to the following:
+                         * ```java
+                         * JsonValue.from("dataset")
+                         * ```
+                         *
+                         * This method is primarily for setting the field to an undocumented or not
+                         * yet supported value.
+                         */
+                        fun sourceType(sourceType: JsonValue) = apply {
+                            this.sourceType = sourceType
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [CustomChartFilterByDataset].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .datasetIds()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): CustomChartFilterByDataset =
+                            CustomChartFilterByDataset(
+                                checkRequired("datasetIds", datasetIds).map { it.toImmutable() },
+                                sourceType,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): CustomChartFilterByDataset = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        datasetIds()
+                        _sourceType().let {
+                            if (it != JsonValue.from("dataset")) {
+                                throw LangChainInvalidDataException(
+                                    "'sourceType' is invalid, received $it"
+                                )
+                            }
+                        }
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (datasetIds.asKnown().getOrNull()?.size ?: 0) +
+                            sourceType.let { if (it == JsonValue.from("dataset")) 1 else 0 }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is CustomChartFilterByDataset &&
+                            datasetIds == other.datasetIds &&
+                            sourceType == other.sourceType &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(datasetIds, sourceType, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "CustomChartFilterByDataset{datasetIds=$datasetIds, sourceType=$sourceType, additionalProperties=$additionalProperties}"
+                }
             }
 
             class Filters
@@ -3313,6 +4224,7559 @@ private constructor(
                     "GroupBy{attribute=$attribute, maxGroups=$maxGroups, path=$path, setBy=$setBy, additionalProperties=$additionalProperties}"
             }
 
+            @JsonDeserialize(using = GroupByDefinition.Deserializer::class)
+            @JsonSerialize(using = GroupByDefinition.Serializer::class)
+            class GroupByDefinition
+            private constructor(
+                private val customChartGroupByPlain: CustomChartGroupByPlain? = null,
+                private val customChartGroupByComplex: CustomChartGroupByComplex? = null,
+                private val _json: JsonValue? = null,
+            ) {
+
+                fun customChartGroupByPlain(): Optional<CustomChartGroupByPlain> =
+                    Optional.ofNullable(customChartGroupByPlain)
+
+                fun customChartGroupByComplex(): Optional<CustomChartGroupByComplex> =
+                    Optional.ofNullable(customChartGroupByComplex)
+
+                fun isCustomChartGroupByPlain(): Boolean = customChartGroupByPlain != null
+
+                fun isCustomChartGroupByComplex(): Boolean = customChartGroupByComplex != null
+
+                fun asCustomChartGroupByPlain(): CustomChartGroupByPlain =
+                    customChartGroupByPlain.getOrThrow("customChartGroupByPlain")
+
+                fun asCustomChartGroupByComplex(): CustomChartGroupByComplex =
+                    customChartGroupByComplex.getOrThrow("customChartGroupByComplex")
+
+                fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                /**
+                 * Maps this instance's current variant to a value of type [T] using the given
+                 * [visitor].
+                 *
+                 * Note that this method is _not_ forwards compatible with new variants from the
+                 * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not known
+                 * to this version of the SDK gracefully, consider overriding [Visitor.unknown]:
+                 * ```java
+                 * import com.langchain.smith.core.JsonValue;
+                 * import java.util.Optional;
+                 *
+                 * Optional<String> result = groupByDefinition.accept(new GroupByDefinition.Visitor<Optional<String>>() {
+                 *     @Override
+                 *     public Optional<String> visitCustomChartGroupByPlain(CustomChartGroupByPlain customChartGroupByPlain) {
+                 *         return Optional.of(customChartGroupByPlain.toString());
+                 *     }
+                 *
+                 *     // ...
+                 *
+                 *     @Override
+                 *     public Optional<String> unknown(JsonValue json) {
+                 *         // Or inspect the `json`.
+                 *         return Optional.empty();
+                 *     }
+                 * });
+                 * ```
+                 *
+                 * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in
+                 *   [visitor] and the current variant is unknown.
+                 */
+                fun <T> accept(visitor: Visitor<T>): T =
+                    when {
+                        customChartGroupByPlain != null ->
+                            visitor.visitCustomChartGroupByPlain(customChartGroupByPlain)
+                        customChartGroupByComplex != null ->
+                            visitor.visitCustomChartGroupByComplex(customChartGroupByComplex)
+                        else -> visitor.unknown(_json)
+                    }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): GroupByDefinition = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    accept(
+                        object : Visitor<Unit> {
+                            override fun visitCustomChartGroupByPlain(
+                                customChartGroupByPlain: CustomChartGroupByPlain
+                            ) {
+                                customChartGroupByPlain.validate()
+                            }
+
+                            override fun visitCustomChartGroupByComplex(
+                                customChartGroupByComplex: CustomChartGroupByComplex
+                            ) {
+                                customChartGroupByComplex.validate()
+                            }
+                        }
+                    )
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    accept(
+                        object : Visitor<Int> {
+                            override fun visitCustomChartGroupByPlain(
+                                customChartGroupByPlain: CustomChartGroupByPlain
+                            ) = customChartGroupByPlain.validity()
+
+                            override fun visitCustomChartGroupByComplex(
+                                customChartGroupByComplex: CustomChartGroupByComplex
+                            ) = customChartGroupByComplex.validity()
+
+                            override fun unknown(json: JsonValue?) = 0
+                        }
+                    )
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is GroupByDefinition &&
+                        customChartGroupByPlain == other.customChartGroupByPlain &&
+                        customChartGroupByComplex == other.customChartGroupByComplex
+                }
+
+                override fun hashCode(): Int =
+                    Objects.hash(customChartGroupByPlain, customChartGroupByComplex)
+
+                override fun toString(): String =
+                    when {
+                        customChartGroupByPlain != null ->
+                            "GroupByDefinition{customChartGroupByPlain=$customChartGroupByPlain}"
+                        customChartGroupByComplex != null ->
+                            "GroupByDefinition{customChartGroupByComplex=$customChartGroupByComplex}"
+                        _json != null -> "GroupByDefinition{_unknown=$_json}"
+                        else -> throw IllegalStateException("Invalid GroupByDefinition")
+                    }
+
+                companion object {
+
+                    @JvmStatic
+                    fun ofCustomChartGroupByPlain(
+                        customChartGroupByPlain: CustomChartGroupByPlain
+                    ) = GroupByDefinition(customChartGroupByPlain = customChartGroupByPlain)
+
+                    @JvmStatic
+                    fun ofCustomChartGroupByComplex(
+                        customChartGroupByComplex: CustomChartGroupByComplex
+                    ) = GroupByDefinition(customChartGroupByComplex = customChartGroupByComplex)
+                }
+
+                /**
+                 * An interface that defines how to map each variant of [GroupByDefinition] to a
+                 * value of type [T].
+                 */
+                interface Visitor<out T> {
+
+                    fun visitCustomChartGroupByPlain(
+                        customChartGroupByPlain: CustomChartGroupByPlain
+                    ): T
+
+                    fun visitCustomChartGroupByComplex(
+                        customChartGroupByComplex: CustomChartGroupByComplex
+                    ): T
+
+                    /**
+                     * Maps an unknown variant of [GroupByDefinition] to a value of type [T].
+                     *
+                     * An instance of [GroupByDefinition] can contain an unknown variant if it was
+                     * deserialized from data that doesn't match any known variant. For example, if
+                     * the SDK is on an older version than the API, then the API may respond with
+                     * new variants that the SDK is unaware of.
+                     *
+                     * @throws LangChainInvalidDataException in the default implementation.
+                     */
+                    fun unknown(json: JsonValue?): T {
+                        throw LangChainInvalidDataException("Unknown GroupByDefinition: $json")
+                    }
+                }
+
+                internal class Deserializer :
+                    BaseDeserializer<GroupByDefinition>(GroupByDefinition::class) {
+
+                    override fun ObjectCodec.deserialize(node: JsonNode): GroupByDefinition {
+                        val json = JsonValue.fromJsonNode(node)
+
+                        val bestMatches =
+                            sequenceOf(
+                                    tryDeserialize(node, jacksonTypeRef<CustomChartGroupByPlain>())
+                                        ?.let {
+                                            GroupByDefinition(
+                                                customChartGroupByPlain = it,
+                                                _json = json,
+                                            )
+                                        },
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<CustomChartGroupByComplex>(),
+                                        )
+                                        ?.let {
+                                            GroupByDefinition(
+                                                customChartGroupByComplex = it,
+                                                _json = json,
+                                            )
+                                        },
+                                )
+                                .filterNotNull()
+                                .allMaxBy { it.validity() }
+                                .toList()
+                        return when (bestMatches.size) {
+                            // This can happen if what we're deserializing is completely
+                            // incompatible with all the possible variants (e.g. deserializing from
+                            // boolean).
+                            0 -> GroupByDefinition(_json = json)
+                            1 -> bestMatches.single()
+                            // If there's more than one match with the highest validity, then use
+                            // the first completely valid match, or simply the first match if none
+                            // are completely valid.
+                            else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                        }
+                    }
+                }
+
+                internal class Serializer :
+                    BaseSerializer<GroupByDefinition>(GroupByDefinition::class) {
+
+                    override fun serialize(
+                        value: GroupByDefinition,
+                        generator: JsonGenerator,
+                        provider: SerializerProvider,
+                    ) {
+                        when {
+                            value.customChartGroupByPlain != null ->
+                                generator.writeObject(value.customChartGroupByPlain)
+                            value.customChartGroupByComplex != null ->
+                                generator.writeObject(value.customChartGroupByComplex)
+                            value._json != null -> generator.writeObject(value._json)
+                            else -> throw IllegalStateException("Invalid GroupByDefinition")
+                        }
+                    }
+                }
+
+                class CustomChartGroupByPlain
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val attribute: JsonField<Attribute>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("attribute")
+                        @ExcludeMissing
+                        attribute: JsonField<Attribute> = JsonMissing.of()
+                    ) : this(attribute, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun attribute(): Attribute = attribute.getRequired("attribute")
+
+                    /**
+                     * Returns the raw JSON value of [attribute].
+                     *
+                     * Unlike [attribute], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("attribute")
+                    @ExcludeMissing
+                    fun _attribute(): JsonField<Attribute> = attribute
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [CustomChartGroupByPlain].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .attribute()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [CustomChartGroupByPlain]. */
+                    class Builder internal constructor() {
+
+                        private var attribute: JsonField<Attribute>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(customChartGroupByPlain: CustomChartGroupByPlain) =
+                            apply {
+                                attribute = customChartGroupByPlain.attribute
+                                additionalProperties =
+                                    customChartGroupByPlain.additionalProperties.toMutableMap()
+                            }
+
+                        fun attribute(attribute: Attribute) = attribute(JsonField.of(attribute))
+
+                        /**
+                         * Sets [Builder.attribute] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.attribute] with a well-typed [Attribute]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun attribute(attribute: JsonField<Attribute>) = apply {
+                            this.attribute = attribute
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [CustomChartGroupByPlain].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .attribute()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): CustomChartGroupByPlain =
+                            CustomChartGroupByPlain(
+                                checkRequired("attribute", attribute),
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): CustomChartGroupByPlain = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        attribute().validate()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (attribute.asKnown().getOrNull()?.validity() ?: 0)
+
+                    class Attribute
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val NAME = of("name")
+
+                            @JvmField val RUN_TYPE = of("run_type")
+
+                            @JvmField val TAG = of("tag")
+
+                            @JvmField val PROJECT = of("project")
+
+                            @JvmField val STATUS = of("status")
+
+                            @JvmStatic fun of(value: String) = Attribute(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Attribute]'s known values. */
+                        enum class Known {
+                            NAME,
+                            RUN_TYPE,
+                            TAG,
+                            PROJECT,
+                            STATUS,
+                        }
+
+                        /**
+                         * An enum containing [Attribute]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Attribute] can contain an unknown value in a couple of
+                         * cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            NAME,
+                            RUN_TYPE,
+                            TAG,
+                            PROJECT,
+                            STATUS,
+                            /**
+                             * An enum member indicating that [Attribute] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                NAME -> Value.NAME
+                                RUN_TYPE -> Value.RUN_TYPE
+                                TAG -> Value.TAG
+                                PROJECT -> Value.PROJECT
+                                STATUS -> Value.STATUS
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                NAME -> Known.NAME
+                                RUN_TYPE -> Known.RUN_TYPE
+                                TAG -> Known.TAG
+                                PROJECT -> Known.PROJECT
+                                STATUS -> Known.STATUS
+                                else ->
+                                    throw LangChainInvalidDataException("Unknown Attribute: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Attribute = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Attribute && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is CustomChartGroupByPlain &&
+                            attribute == other.attribute &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(attribute, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "CustomChartGroupByPlain{attribute=$attribute, additionalProperties=$additionalProperties}"
+                }
+
+                class CustomChartGroupByComplex
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val attribute: JsonField<Attribute>,
+                    private val path: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("attribute")
+                        @ExcludeMissing
+                        attribute: JsonField<Attribute> = JsonMissing.of(),
+                        @JsonProperty("path")
+                        @ExcludeMissing
+                        path: JsonField<String> = JsonMissing.of(),
+                    ) : this(attribute, path, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun attribute(): Attribute = attribute.getRequired("attribute")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun path(): String = path.getRequired("path")
+
+                    /**
+                     * Returns the raw JSON value of [attribute].
+                     *
+                     * Unlike [attribute], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("attribute")
+                    @ExcludeMissing
+                    fun _attribute(): JsonField<Attribute> = attribute
+
+                    /**
+                     * Returns the raw JSON value of [path].
+                     *
+                     * Unlike [path], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("path") @ExcludeMissing fun _path(): JsonField<String> = path
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [CustomChartGroupByComplex].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .attribute()
+                         * .path()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [CustomChartGroupByComplex]. */
+                    class Builder internal constructor() {
+
+                        private var attribute: JsonField<Attribute>? = null
+                        private var path: JsonField<String>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(customChartGroupByComplex: CustomChartGroupByComplex) =
+                            apply {
+                                attribute = customChartGroupByComplex.attribute
+                                path = customChartGroupByComplex.path
+                                additionalProperties =
+                                    customChartGroupByComplex.additionalProperties.toMutableMap()
+                            }
+
+                        fun attribute(attribute: Attribute) = attribute(JsonField.of(attribute))
+
+                        /**
+                         * Sets [Builder.attribute] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.attribute] with a well-typed [Attribute]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun attribute(attribute: JsonField<Attribute>) = apply {
+                            this.attribute = attribute
+                        }
+
+                        fun path(path: String) = path(JsonField.of(path))
+
+                        /**
+                         * Sets [Builder.path] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.path] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun path(path: JsonField<String>) = apply { this.path = path }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [CustomChartGroupByComplex].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .attribute()
+                         * .path()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): CustomChartGroupByComplex =
+                            CustomChartGroupByComplex(
+                                checkRequired("attribute", attribute),
+                                checkRequired("path", path),
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): CustomChartGroupByComplex = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        attribute().validate()
+                        path()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (attribute.asKnown().getOrNull()?.validity() ?: 0) +
+                            (if (path.asKnown().isPresent) 1 else 0)
+
+                    class Attribute
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val METADATA = of("metadata")
+
+                            @JvmField val FEEDBACK_LABEL = of("feedback_label")
+
+                            @JvmStatic fun of(value: String) = Attribute(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Attribute]'s known values. */
+                        enum class Known {
+                            METADATA,
+                            FEEDBACK_LABEL,
+                        }
+
+                        /**
+                         * An enum containing [Attribute]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Attribute] can contain an unknown value in a couple of
+                         * cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            METADATA,
+                            FEEDBACK_LABEL,
+                            /**
+                             * An enum member indicating that [Attribute] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                METADATA -> Value.METADATA
+                                FEEDBACK_LABEL -> Value.FEEDBACK_LABEL
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                METADATA -> Known.METADATA
+                                FEEDBACK_LABEL -> Known.FEEDBACK_LABEL
+                                else ->
+                                    throw LangChainInvalidDataException("Unknown Attribute: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Attribute = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Attribute && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is CustomChartGroupByComplex &&
+                            attribute == other.attribute &&
+                            path == other.path &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(attribute, path, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "CustomChartGroupByComplex{attribute=$attribute, path=$path, additionalProperties=$additionalProperties}"
+                }
+            }
+
+            /**
+             * Metrics you can chart. Feedback metrics are not available for organization-scoped
+             * charts.
+             */
+            class Metric @JsonCreator private constructor(private val value: JsonField<String>) :
+                Enum {
+
+                /**
+                 * Returns this class instance's raw value.
+                 *
+                 * This is usually only useful if this instance was deserialized from data that
+                 * doesn't match any known member, and you want to know that value. For example, if
+                 * the SDK is on an older version than the API, then the API may respond with new
+                 * members that the SDK is unaware of.
+                 */
+                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+                companion object {
+
+                    @JvmField val RUN_COUNT = of("run_count")
+
+                    @JvmField val LATENCY_P50 = of("latency_p50")
+
+                    @JvmField val LATENCY_P99 = of("latency_p99")
+
+                    @JvmField val LATENCY_AVG = of("latency_avg")
+
+                    @JvmField val FIRST_TOKEN_P50 = of("first_token_p50")
+
+                    @JvmField val FIRST_TOKEN_P99 = of("first_token_p99")
+
+                    @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                    @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                    @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                    @JvmField val MEDIAN_TOKENS = of("median_tokens")
+
+                    @JvmField val COMPLETION_TOKENS_P50 = of("completion_tokens_p50")
+
+                    @JvmField val PROMPT_TOKENS_P50 = of("prompt_tokens_p50")
+
+                    @JvmField val TOKENS_P99 = of("tokens_p99")
+
+                    @JvmField val COMPLETION_TOKENS_P99 = of("completion_tokens_p99")
+
+                    @JvmField val PROMPT_TOKENS_P99 = of("prompt_tokens_p99")
+
+                    @JvmField val FEEDBACK = of("feedback")
+
+                    @JvmField val FEEDBACK_SCORE_AVG = of("feedback_score_avg")
+
+                    @JvmField val FEEDBACK_VALUES = of("feedback_values")
+
+                    @JvmField val TOTAL_COST = of("total_cost")
+
+                    @JvmField val PROMPT_COST = of("prompt_cost")
+
+                    @JvmField val COMPLETION_COST = of("completion_cost")
+
+                    @JvmField val ERROR_RATE = of("error_rate")
+
+                    @JvmField val STREAMING_RATE = of("streaming_rate")
+
+                    @JvmField val COST_P50 = of("cost_p50")
+
+                    @JvmField val COST_P99 = of("cost_p99")
+
+                    @JvmStatic fun of(value: String) = Metric(JsonField.of(value))
+                }
+
+                /** An enum containing [Metric]'s known values. */
+                enum class Known {
+                    RUN_COUNT,
+                    LATENCY_P50,
+                    LATENCY_P99,
+                    LATENCY_AVG,
+                    FIRST_TOKEN_P50,
+                    FIRST_TOKEN_P99,
+                    TOTAL_TOKENS,
+                    PROMPT_TOKENS,
+                    COMPLETION_TOKENS,
+                    MEDIAN_TOKENS,
+                    COMPLETION_TOKENS_P50,
+                    PROMPT_TOKENS_P50,
+                    TOKENS_P99,
+                    COMPLETION_TOKENS_P99,
+                    PROMPT_TOKENS_P99,
+                    FEEDBACK,
+                    FEEDBACK_SCORE_AVG,
+                    FEEDBACK_VALUES,
+                    TOTAL_COST,
+                    PROMPT_COST,
+                    COMPLETION_COST,
+                    ERROR_RATE,
+                    STREAMING_RATE,
+                    COST_P50,
+                    COST_P99,
+                }
+
+                /**
+                 * An enum containing [Metric]'s known values, as well as an [_UNKNOWN] member.
+                 *
+                 * An instance of [Metric] can contain an unknown value in a couple of cases:
+                 * - It was deserialized from data that doesn't match any known member. For example,
+                 *   if the SDK is on an older version than the API, then the API may respond with
+                 *   new members that the SDK is unaware of.
+                 * - It was constructed with an arbitrary value using the [of] method.
+                 */
+                enum class Value {
+                    RUN_COUNT,
+                    LATENCY_P50,
+                    LATENCY_P99,
+                    LATENCY_AVG,
+                    FIRST_TOKEN_P50,
+                    FIRST_TOKEN_P99,
+                    TOTAL_TOKENS,
+                    PROMPT_TOKENS,
+                    COMPLETION_TOKENS,
+                    MEDIAN_TOKENS,
+                    COMPLETION_TOKENS_P50,
+                    PROMPT_TOKENS_P50,
+                    TOKENS_P99,
+                    COMPLETION_TOKENS_P99,
+                    PROMPT_TOKENS_P99,
+                    FEEDBACK,
+                    FEEDBACK_SCORE_AVG,
+                    FEEDBACK_VALUES,
+                    TOTAL_COST,
+                    PROMPT_COST,
+                    COMPLETION_COST,
+                    ERROR_RATE,
+                    STREAMING_RATE,
+                    COST_P50,
+                    COST_P99,
+                    /**
+                     * An enum member indicating that [Metric] was instantiated with an unknown
+                     * value.
+                     */
+                    _UNKNOWN,
+                }
+
+                /**
+                 * Returns an enum member corresponding to this class instance's value, or
+                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 *
+                 * Use the [known] method instead if you're certain the value is always known or if
+                 * you want to throw for the unknown case.
+                 */
+                fun value(): Value =
+                    when (this) {
+                        RUN_COUNT -> Value.RUN_COUNT
+                        LATENCY_P50 -> Value.LATENCY_P50
+                        LATENCY_P99 -> Value.LATENCY_P99
+                        LATENCY_AVG -> Value.LATENCY_AVG
+                        FIRST_TOKEN_P50 -> Value.FIRST_TOKEN_P50
+                        FIRST_TOKEN_P99 -> Value.FIRST_TOKEN_P99
+                        TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                        PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                        COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                        MEDIAN_TOKENS -> Value.MEDIAN_TOKENS
+                        COMPLETION_TOKENS_P50 -> Value.COMPLETION_TOKENS_P50
+                        PROMPT_TOKENS_P50 -> Value.PROMPT_TOKENS_P50
+                        TOKENS_P99 -> Value.TOKENS_P99
+                        COMPLETION_TOKENS_P99 -> Value.COMPLETION_TOKENS_P99
+                        PROMPT_TOKENS_P99 -> Value.PROMPT_TOKENS_P99
+                        FEEDBACK -> Value.FEEDBACK
+                        FEEDBACK_SCORE_AVG -> Value.FEEDBACK_SCORE_AVG
+                        FEEDBACK_VALUES -> Value.FEEDBACK_VALUES
+                        TOTAL_COST -> Value.TOTAL_COST
+                        PROMPT_COST -> Value.PROMPT_COST
+                        COMPLETION_COST -> Value.COMPLETION_COST
+                        ERROR_RATE -> Value.ERROR_RATE
+                        STREAMING_RATE -> Value.STREAMING_RATE
+                        COST_P50 -> Value.COST_P50
+                        COST_P99 -> Value.COST_P99
+                        else -> Value._UNKNOWN
+                    }
+
+                /**
+                 * Returns an enum member corresponding to this class instance's value.
+                 *
+                 * Use the [value] method instead if you're uncertain the value is always known and
+                 * don't want to throw for the unknown case.
+                 *
+                 * @throws LangChainInvalidDataException if this class instance's value is a not a
+                 *   known member.
+                 */
+                fun known(): Known =
+                    when (this) {
+                        RUN_COUNT -> Known.RUN_COUNT
+                        LATENCY_P50 -> Known.LATENCY_P50
+                        LATENCY_P99 -> Known.LATENCY_P99
+                        LATENCY_AVG -> Known.LATENCY_AVG
+                        FIRST_TOKEN_P50 -> Known.FIRST_TOKEN_P50
+                        FIRST_TOKEN_P99 -> Known.FIRST_TOKEN_P99
+                        TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                        PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                        COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                        MEDIAN_TOKENS -> Known.MEDIAN_TOKENS
+                        COMPLETION_TOKENS_P50 -> Known.COMPLETION_TOKENS_P50
+                        PROMPT_TOKENS_P50 -> Known.PROMPT_TOKENS_P50
+                        TOKENS_P99 -> Known.TOKENS_P99
+                        COMPLETION_TOKENS_P99 -> Known.COMPLETION_TOKENS_P99
+                        PROMPT_TOKENS_P99 -> Known.PROMPT_TOKENS_P99
+                        FEEDBACK -> Known.FEEDBACK
+                        FEEDBACK_SCORE_AVG -> Known.FEEDBACK_SCORE_AVG
+                        FEEDBACK_VALUES -> Known.FEEDBACK_VALUES
+                        TOTAL_COST -> Known.TOTAL_COST
+                        PROMPT_COST -> Known.PROMPT_COST
+                        COMPLETION_COST -> Known.COMPLETION_COST
+                        ERROR_RATE -> Known.ERROR_RATE
+                        STREAMING_RATE -> Known.STREAMING_RATE
+                        COST_P50 -> Known.COST_P50
+                        COST_P99 -> Known.COST_P99
+                        else -> throw LangChainInvalidDataException("Unknown Metric: $value")
+                    }
+
+                /**
+                 * Returns this class instance's primitive wire representation.
+                 *
+                 * This differs from the [toString] method because that method is primarily for
+                 * debugging and generally doesn't throw.
+                 *
+                 * @throws LangChainInvalidDataException if this class instance's value does not
+                 *   have the expected primitive type.
+                 */
+                fun asString(): String =
+                    _value().asString().orElseThrow {
+                        LangChainInvalidDataException("Value is not a String")
+                    }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Metric = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    known()
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Metric && value == other.value
+                }
+
+                override fun hashCode() = value.hashCode()
+
+                override fun toString() = value.toString()
+            }
+
+            @JsonDeserialize(using = MetricDefinition.Deserializer::class)
+            @JsonSerialize(using = MetricDefinition.Serializer::class)
+            class MetricDefinition
+            private constructor(
+                private val customChartMetricCount: CustomChartMetricCount? = null,
+                private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                private val customChartMetricPercentile: CustomChartMetricPercentile? = null,
+                private val customChartMetricRatioOutput: CustomChartMetricRatioOutput? = null,
+                private val _json: JsonValue? = null,
+            ) {
+
+                fun customChartMetricCount(): Optional<CustomChartMetricCount> =
+                    Optional.ofNullable(customChartMetricCount)
+
+                fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
+                    Optional.ofNullable(customChartMetricScalar)
+
+                fun customChartMetricPercentile(): Optional<CustomChartMetricPercentile> =
+                    Optional.ofNullable(customChartMetricPercentile)
+
+                fun customChartMetricRatioOutput(): Optional<CustomChartMetricRatioOutput> =
+                    Optional.ofNullable(customChartMetricRatioOutput)
+
+                fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
+
+                fun isCustomChartMetricScalar(): Boolean = customChartMetricScalar != null
+
+                fun isCustomChartMetricPercentile(): Boolean = customChartMetricPercentile != null
+
+                fun isCustomChartMetricRatioOutput(): Boolean = customChartMetricRatioOutput != null
+
+                fun asCustomChartMetricCount(): CustomChartMetricCount =
+                    customChartMetricCount.getOrThrow("customChartMetricCount")
+
+                fun asCustomChartMetricScalar(): CustomChartMetricScalar =
+                    customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
+                    customChartMetricPercentile.getOrThrow("customChartMetricPercentile")
+
+                fun asCustomChartMetricRatioOutput(): CustomChartMetricRatioOutput =
+                    customChartMetricRatioOutput.getOrThrow("customChartMetricRatioOutput")
+
+                fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                /**
+                 * Maps this instance's current variant to a value of type [T] using the given
+                 * [visitor].
+                 *
+                 * Note that this method is _not_ forwards compatible with new variants from the
+                 * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not known
+                 * to this version of the SDK gracefully, consider overriding [Visitor.unknown]:
+                 * ```java
+                 * import com.langchain.smith.core.JsonValue;
+                 * import java.util.Optional;
+                 *
+                 * Optional<String> result = metricDefinition.accept(new MetricDefinition.Visitor<Optional<String>>() {
+                 *     @Override
+                 *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
+                 *         return Optional.of(customChartMetricCount.toString());
+                 *     }
+                 *
+                 *     // ...
+                 *
+                 *     @Override
+                 *     public Optional<String> unknown(JsonValue json) {
+                 *         // Or inspect the `json`.
+                 *         return Optional.empty();
+                 *     }
+                 * });
+                 * ```
+                 *
+                 * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden in
+                 *   [visitor] and the current variant is unknown.
+                 */
+                fun <T> accept(visitor: Visitor<T>): T =
+                    when {
+                        customChartMetricCount != null ->
+                            visitor.visitCustomChartMetricCount(customChartMetricCount)
+                        customChartMetricScalar != null ->
+                            visitor.visitCustomChartMetricScalar(customChartMetricScalar)
+                        customChartMetricPercentile != null ->
+                            visitor.visitCustomChartMetricPercentile(customChartMetricPercentile)
+                        customChartMetricRatioOutput != null ->
+                            visitor.visitCustomChartMetricRatioOutput(customChartMetricRatioOutput)
+                        else -> visitor.unknown(_json)
+                    }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): MetricDefinition = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    accept(
+                        object : Visitor<Unit> {
+                            override fun visitCustomChartMetricCount(
+                                customChartMetricCount: CustomChartMetricCount
+                            ) {
+                                customChartMetricCount.validate()
+                            }
+
+                            override fun visitCustomChartMetricScalar(
+                                customChartMetricScalar: CustomChartMetricScalar
+                            ) {
+                                customChartMetricScalar.validate()
+                            }
+
+                            override fun visitCustomChartMetricPercentile(
+                                customChartMetricPercentile: CustomChartMetricPercentile
+                            ) {
+                                customChartMetricPercentile.validate()
+                            }
+
+                            override fun visitCustomChartMetricRatioOutput(
+                                customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                            ) {
+                                customChartMetricRatioOutput.validate()
+                            }
+                        }
+                    )
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    accept(
+                        object : Visitor<Int> {
+                            override fun visitCustomChartMetricCount(
+                                customChartMetricCount: CustomChartMetricCount
+                            ) = customChartMetricCount.validity()
+
+                            override fun visitCustomChartMetricScalar(
+                                customChartMetricScalar: CustomChartMetricScalar
+                            ) = customChartMetricScalar.validity()
+
+                            override fun visitCustomChartMetricPercentile(
+                                customChartMetricPercentile: CustomChartMetricPercentile
+                            ) = customChartMetricPercentile.validity()
+
+                            override fun visitCustomChartMetricRatioOutput(
+                                customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                            ) = customChartMetricRatioOutput.validity()
+
+                            override fun unknown(json: JsonValue?) = 0
+                        }
+                    )
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is MetricDefinition &&
+                        customChartMetricCount == other.customChartMetricCount &&
+                        customChartMetricScalar == other.customChartMetricScalar &&
+                        customChartMetricPercentile == other.customChartMetricPercentile &&
+                        customChartMetricRatioOutput == other.customChartMetricRatioOutput
+                }
+
+                override fun hashCode(): Int =
+                    Objects.hash(
+                        customChartMetricCount,
+                        customChartMetricScalar,
+                        customChartMetricPercentile,
+                        customChartMetricRatioOutput,
+                    )
+
+                override fun toString(): String =
+                    when {
+                        customChartMetricCount != null ->
+                            "MetricDefinition{customChartMetricCount=$customChartMetricCount}"
+                        customChartMetricScalar != null ->
+                            "MetricDefinition{customChartMetricScalar=$customChartMetricScalar}"
+                        customChartMetricPercentile != null ->
+                            "MetricDefinition{customChartMetricPercentile=$customChartMetricPercentile}"
+                        customChartMetricRatioOutput != null ->
+                            "MetricDefinition{customChartMetricRatioOutput=$customChartMetricRatioOutput}"
+                        _json != null -> "MetricDefinition{_unknown=$_json}"
+                        else -> throw IllegalStateException("Invalid MetricDefinition")
+                    }
+
+                companion object {
+
+                    @JvmStatic
+                    fun ofCustomChartMetricCount(customChartMetricCount: CustomChartMetricCount) =
+                        MetricDefinition(customChartMetricCount = customChartMetricCount)
+
+                    @JvmStatic
+                    fun ofCustomChartMetricScalar(
+                        customChartMetricScalar: CustomChartMetricScalar
+                    ) = MetricDefinition(customChartMetricScalar = customChartMetricScalar)
+
+                    @JvmStatic
+                    fun ofCustomChartMetricPercentile(
+                        customChartMetricPercentile: CustomChartMetricPercentile
+                    ) = MetricDefinition(customChartMetricPercentile = customChartMetricPercentile)
+
+                    @JvmStatic
+                    fun ofCustomChartMetricRatioOutput(
+                        customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                    ) =
+                        MetricDefinition(
+                            customChartMetricRatioOutput = customChartMetricRatioOutput
+                        )
+                }
+
+                /**
+                 * An interface that defines how to map each variant of [MetricDefinition] to a
+                 * value of type [T].
+                 */
+                interface Visitor<out T> {
+
+                    fun visitCustomChartMetricCount(
+                        customChartMetricCount: CustomChartMetricCount
+                    ): T
+
+                    fun visitCustomChartMetricScalar(
+                        customChartMetricScalar: CustomChartMetricScalar
+                    ): T
+
+                    fun visitCustomChartMetricPercentile(
+                        customChartMetricPercentile: CustomChartMetricPercentile
+                    ): T
+
+                    fun visitCustomChartMetricRatioOutput(
+                        customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                    ): T
+
+                    /**
+                     * Maps an unknown variant of [MetricDefinition] to a value of type [T].
+                     *
+                     * An instance of [MetricDefinition] can contain an unknown variant if it was
+                     * deserialized from data that doesn't match any known variant. For example, if
+                     * the SDK is on an older version than the API, then the API may respond with
+                     * new variants that the SDK is unaware of.
+                     *
+                     * @throws LangChainInvalidDataException in the default implementation.
+                     */
+                    fun unknown(json: JsonValue?): T {
+                        throw LangChainInvalidDataException("Unknown MetricDefinition: $json")
+                    }
+                }
+
+                internal class Deserializer :
+                    BaseDeserializer<MetricDefinition>(MetricDefinition::class) {
+
+                    override fun ObjectCodec.deserialize(node: JsonNode): MetricDefinition {
+                        val json = JsonValue.fromJsonNode(node)
+
+                        val bestMatches =
+                            sequenceOf(
+                                    tryDeserialize(node, jacksonTypeRef<CustomChartMetricCount>())
+                                        ?.let {
+                                            MetricDefinition(
+                                                customChartMetricCount = it,
+                                                _json = json,
+                                            )
+                                        },
+                                    tryDeserialize(node, jacksonTypeRef<CustomChartMetricScalar>())
+                                        ?.let {
+                                            MetricDefinition(
+                                                customChartMetricScalar = it,
+                                                _json = json,
+                                            )
+                                        },
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<CustomChartMetricPercentile>(),
+                                        )
+                                        ?.let {
+                                            MetricDefinition(
+                                                customChartMetricPercentile = it,
+                                                _json = json,
+                                            )
+                                        },
+                                    tryDeserialize(
+                                            node,
+                                            jacksonTypeRef<CustomChartMetricRatioOutput>(),
+                                        )
+                                        ?.let {
+                                            MetricDefinition(
+                                                customChartMetricRatioOutput = it,
+                                                _json = json,
+                                            )
+                                        },
+                                )
+                                .filterNotNull()
+                                .allMaxBy { it.validity() }
+                                .toList()
+                        return when (bestMatches.size) {
+                            // This can happen if what we're deserializing is completely
+                            // incompatible with all the possible variants (e.g. deserializing from
+                            // boolean).
+                            0 -> MetricDefinition(_json = json)
+                            1 -> bestMatches.single()
+                            // If there's more than one match with the highest validity, then use
+                            // the first completely valid match, or simply the first match if none
+                            // are completely valid.
+                            else -> bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                        }
+                    }
+                }
+
+                internal class Serializer :
+                    BaseSerializer<MetricDefinition>(MetricDefinition::class) {
+
+                    override fun serialize(
+                        value: MetricDefinition,
+                        generator: JsonGenerator,
+                        provider: SerializerProvider,
+                    ) {
+                        when {
+                            value.customChartMetricCount != null ->
+                                generator.writeObject(value.customChartMetricCount)
+                            value.customChartMetricScalar != null ->
+                                generator.writeObject(value.customChartMetricScalar)
+                            value.customChartMetricPercentile != null ->
+                                generator.writeObject(value.customChartMetricPercentile)
+                            value.customChartMetricRatioOutput != null ->
+                                generator.writeObject(value.customChartMetricRatioOutput)
+                            value._json != null -> generator.writeObject(value._json)
+                            else -> throw IllegalStateException("Invalid MetricDefinition")
+                        }
+                    }
+                }
+
+                class CustomChartMetricCount
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val filter: JsonField<String>,
+                    private val type: JsonField<Type>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        filter: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("type")
+                        @ExcludeMissing
+                        type: JsonField<Type> = JsonMissing.of(),
+                    ) : this(filter, type, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun filter(): Optional<String> = filter.getOptional("filter")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun type(): Optional<Type> = type.getOptional("type")
+
+                    /**
+                     * Returns the raw JSON value of [filter].
+                     *
+                     * Unlike [filter], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("filter")
+                    @ExcludeMissing
+                    fun _filter(): JsonField<String> = filter
+
+                    /**
+                     * Returns the raw JSON value of [type].
+                     *
+                     * Unlike [type], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [CustomChartMetricCount].
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [CustomChartMetricCount]. */
+                    class Builder internal constructor() {
+
+                        private var filter: JsonField<String> = JsonMissing.of()
+                        private var type: JsonField<Type> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(customChartMetricCount: CustomChartMetricCount) = apply {
+                            filter = customChartMetricCount.filter
+                            type = customChartMetricCount.type
+                            additionalProperties =
+                                customChartMetricCount.additionalProperties.toMutableMap()
+                        }
+
+                        fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                        /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                        fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                        /**
+                         * Sets [Builder.filter] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.filter] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                        fun type(type: Type) = type(JsonField.of(type))
+
+                        /**
+                         * Sets [Builder.type] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.type] with a well-typed [Type] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [CustomChartMetricCount].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): CustomChartMetricCount =
+                            CustomChartMetricCount(
+                                filter,
+                                type,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): CustomChartMetricCount = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        filter()
+                        type().ifPresent { it.validate() }
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (filter.asKnown().isPresent) 1 else 0) +
+                            (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                    class Type
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val COUNT = of("count")
+
+                            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Type]'s known values. */
+                        enum class Known {
+                            COUNT
+                        }
+
+                        /**
+                         * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Type] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            COUNT,
+                            /**
+                             * An enum member indicating that [Type] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                COUNT -> Value.COUNT
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                COUNT -> Known.COUNT
+                                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Type = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Type && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is CustomChartMetricCount &&
+                            filter == other.filter &&
+                            type == other.type &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(filter, type, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "CustomChartMetricCount{filter=$filter, type=$type, additionalProperties=$additionalProperties}"
+                }
+
+                class CustomChartMetricScalar
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val field: JsonField<Field>,
+                    private val type: JsonField<Type>,
+                    private val filter: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("field")
+                        @ExcludeMissing
+                        field: JsonField<Field> = JsonMissing.of(),
+                        @JsonProperty("type")
+                        @ExcludeMissing
+                        type: JsonField<Type> = JsonMissing.of(),
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        filter: JsonField<String> = JsonMissing.of(),
+                    ) : this(field, type, filter, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun field(): Field = field.getRequired("field")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun type(): Type = type.getRequired("type")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun filter(): Optional<String> = filter.getOptional("filter")
+
+                    /**
+                     * Returns the raw JSON value of [field].
+                     *
+                     * Unlike [field], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("field") @ExcludeMissing fun _field(): JsonField<Field> = field
+
+                    /**
+                     * Returns the raw JSON value of [type].
+                     *
+                     * Unlike [type], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                    /**
+                     * Returns the raw JSON value of [filter].
+                     *
+                     * Unlike [filter], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("filter")
+                    @ExcludeMissing
+                    fun _filter(): JsonField<String> = filter
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [CustomChartMetricScalar].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .field()
+                         * .type()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [CustomChartMetricScalar]. */
+                    class Builder internal constructor() {
+
+                        private var field: JsonField<Field>? = null
+                        private var type: JsonField<Type>? = null
+                        private var filter: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(customChartMetricScalar: CustomChartMetricScalar) =
+                            apply {
+                                field = customChartMetricScalar.field
+                                type = customChartMetricScalar.type
+                                filter = customChartMetricScalar.filter
+                                additionalProperties =
+                                    customChartMetricScalar.additionalProperties.toMutableMap()
+                            }
+
+                        fun field(field: Field) = field(JsonField.of(field))
+
+                        /**
+                         * Sets [Builder.field] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.field] with a well-typed [Field] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                        fun type(type: Type) = type(JsonField.of(type))
+
+                        /**
+                         * Sets [Builder.type] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.type] with a well-typed [Type] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                        fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                        /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                        fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                        /**
+                         * Sets [Builder.filter] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.filter] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [CustomChartMetricScalar].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .field()
+                         * .type()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): CustomChartMetricScalar =
+                            CustomChartMetricScalar(
+                                checkRequired("field", field),
+                                checkRequired("type", type),
+                                filter,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): CustomChartMetricScalar = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        field().validate()
+                        type().validate()
+                        filter()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (field.asKnown().getOrNull()?.validity() ?: 0) +
+                            (type.asKnown().getOrNull()?.validity() ?: 0) +
+                            (if (filter.asKnown().isPresent) 1 else 0)
+
+                    class Field
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                            @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                            @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                            @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                            @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                            @JvmField val TOTAL_COST = of("total_cost")
+
+                            @JvmField val PROMPT_COST = of("prompt_cost")
+
+                            @JvmField val COMPLETION_COST = of("completion_cost")
+
+                            @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Field]'s known values. */
+                        enum class Known {
+                            LATENCY_SECONDS,
+                            FIRST_TOKEN_SECONDS,
+                            TOTAL_TOKENS,
+                            PROMPT_TOKENS,
+                            COMPLETION_TOKENS,
+                            TOTAL_COST,
+                            PROMPT_COST,
+                            COMPLETION_COST,
+                        }
+
+                        /**
+                         * An enum containing [Field]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Field] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            LATENCY_SECONDS,
+                            FIRST_TOKEN_SECONDS,
+                            TOTAL_TOKENS,
+                            PROMPT_TOKENS,
+                            COMPLETION_TOKENS,
+                            TOTAL_COST,
+                            PROMPT_COST,
+                            COMPLETION_COST,
+                            /**
+                             * An enum member indicating that [Field] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                TOTAL_COST -> Value.TOTAL_COST
+                                PROMPT_COST -> Value.PROMPT_COST
+                                COMPLETION_COST -> Value.COMPLETION_COST
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                TOTAL_COST -> Known.TOTAL_COST
+                                PROMPT_COST -> Known.PROMPT_COST
+                                COMPLETION_COST -> Known.COMPLETION_COST
+                                else -> throw LangChainInvalidDataException("Unknown Field: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Field = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Field && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    class Type
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val SUM = of("sum")
+
+                            @JvmField val MAX = of("max")
+
+                            @JvmField val MIN = of("min")
+
+                            @JvmField val AVG = of("avg")
+
+                            @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Type]'s known values. */
+                        enum class Known {
+                            SUM,
+                            MAX,
+                            MIN,
+                            AVG,
+                        }
+
+                        /**
+                         * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Type] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            SUM,
+                            MAX,
+                            MIN,
+                            AVG,
+                            /**
+                             * An enum member indicating that [Type] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                SUM -> Value.SUM
+                                MAX -> Value.MAX
+                                MIN -> Value.MIN
+                                AVG -> Value.AVG
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                SUM -> Known.SUM
+                                MAX -> Known.MAX
+                                MIN -> Known.MIN
+                                AVG -> Known.AVG
+                                else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Type = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Type && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is CustomChartMetricScalar &&
+                            field == other.field &&
+                            type == other.type &&
+                            filter == other.filter &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(field, type, filter, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                }
+
+                class CustomChartMetricPercentile
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val field: JsonField<Field>,
+                    private val params: JsonField<Params>,
+                    private val type: JsonValue,
+                    private val filter: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("field")
+                        @ExcludeMissing
+                        field: JsonField<Field> = JsonMissing.of(),
+                        @JsonProperty("params")
+                        @ExcludeMissing
+                        params: JsonField<Params> = JsonMissing.of(),
+                        @JsonProperty("type") @ExcludeMissing type: JsonValue = JsonMissing.of(),
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        filter: JsonField<String> = JsonMissing.of(),
+                    ) : this(field, params, type, filter, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun field(): Field = field.getRequired("field")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun params(): Params = params.getRequired("params")
+
+                    /**
+                     * Expected to always return the following:
+                     * ```java
+                     * JsonValue.from("percentile")
+                     * ```
+                     *
+                     * However, this method can be useful for debugging and logging (e.g. if the
+                     * server responded with an unexpected value).
+                     */
+                    @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun filter(): Optional<String> = filter.getOptional("filter")
+
+                    /**
+                     * Returns the raw JSON value of [field].
+                     *
+                     * Unlike [field], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("field") @ExcludeMissing fun _field(): JsonField<Field> = field
+
+                    /**
+                     * Returns the raw JSON value of [params].
+                     *
+                     * Unlike [params], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("params")
+                    @ExcludeMissing
+                    fun _params(): JsonField<Params> = params
+
+                    /**
+                     * Returns the raw JSON value of [filter].
+                     *
+                     * Unlike [filter], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("filter")
+                    @ExcludeMissing
+                    fun _filter(): JsonField<String> = filter
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [CustomChartMetricPercentile].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .field()
+                         * .params()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [CustomChartMetricPercentile]. */
+                    class Builder internal constructor() {
+
+                        private var field: JsonField<Field>? = null
+                        private var params: JsonField<Params>? = null
+                        private var type: JsonValue = JsonValue.from("percentile")
+                        private var filter: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(
+                            customChartMetricPercentile: CustomChartMetricPercentile
+                        ) = apply {
+                            field = customChartMetricPercentile.field
+                            params = customChartMetricPercentile.params
+                            type = customChartMetricPercentile.type
+                            filter = customChartMetricPercentile.filter
+                            additionalProperties =
+                                customChartMetricPercentile.additionalProperties.toMutableMap()
+                        }
+
+                        fun field(field: Field) = field(JsonField.of(field))
+
+                        /**
+                         * Sets [Builder.field] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.field] with a well-typed [Field] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                        fun params(params: Params) = params(JsonField.of(params))
+
+                        /**
+                         * Sets [Builder.params] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.params] with a well-typed [Params] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                        /**
+                         * Sets the field to an arbitrary JSON value.
+                         *
+                         * It is usually unnecessary to call this method because the field defaults
+                         * to the following:
+                         * ```java
+                         * JsonValue.from("percentile")
+                         * ```
+                         *
+                         * This method is primarily for setting the field to an undocumented or not
+                         * yet supported value.
+                         */
+                        fun type(type: JsonValue) = apply { this.type = type }
+
+                        fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                        /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                        fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                        /**
+                         * Sets [Builder.filter] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.filter] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [CustomChartMetricPercentile].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .field()
+                         * .params()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): CustomChartMetricPercentile =
+                            CustomChartMetricPercentile(
+                                checkRequired("field", field),
+                                checkRequired("params", params),
+                                type,
+                                filter,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): CustomChartMetricPercentile = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        field().validate()
+                        params().validate()
+                        _type().let {
+                            if (it != JsonValue.from("percentile")) {
+                                throw LangChainInvalidDataException(
+                                    "'type' is invalid, received $it"
+                                )
+                            }
+                        }
+                        filter()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (field.asKnown().getOrNull()?.validity() ?: 0) +
+                            (params.asKnown().getOrNull()?.validity() ?: 0) +
+                            type.let { if (it == JsonValue.from("percentile")) 1 else 0 } +
+                            (if (filter.asKnown().isPresent) 1 else 0)
+
+                    class Field
+                    @JsonCreator
+                    private constructor(private val value: JsonField<String>) : Enum {
+
+                        /**
+                         * Returns this class instance's raw value.
+                         *
+                         * This is usually only useful if this instance was deserialized from data
+                         * that doesn't match any known member, and you want to know that value. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new members that the SDK is unaware of.
+                         */
+                        @com.fasterxml.jackson.annotation.JsonValue
+                        fun _value(): JsonField<String> = value
+
+                        companion object {
+
+                            @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                            @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                            @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                            @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                            @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                            @JvmField val TOTAL_COST = of("total_cost")
+
+                            @JvmField val PROMPT_COST = of("prompt_cost")
+
+                            @JvmField val COMPLETION_COST = of("completion_cost")
+
+                            @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                        }
+
+                        /** An enum containing [Field]'s known values. */
+                        enum class Known {
+                            LATENCY_SECONDS,
+                            FIRST_TOKEN_SECONDS,
+                            TOTAL_TOKENS,
+                            PROMPT_TOKENS,
+                            COMPLETION_TOKENS,
+                            TOTAL_COST,
+                            PROMPT_COST,
+                            COMPLETION_COST,
+                        }
+
+                        /**
+                         * An enum containing [Field]'s known values, as well as an [_UNKNOWN]
+                         * member.
+                         *
+                         * An instance of [Field] can contain an unknown value in a couple of cases:
+                         * - It was deserialized from data that doesn't match any known member. For
+                         *   example, if the SDK is on an older version than the API, then the API
+                         *   may respond with new members that the SDK is unaware of.
+                         * - It was constructed with an arbitrary value using the [of] method.
+                         */
+                        enum class Value {
+                            LATENCY_SECONDS,
+                            FIRST_TOKEN_SECONDS,
+                            TOTAL_TOKENS,
+                            PROMPT_TOKENS,
+                            COMPLETION_TOKENS,
+                            TOTAL_COST,
+                            PROMPT_COST,
+                            COMPLETION_COST,
+                            /**
+                             * An enum member indicating that [Field] was instantiated with an
+                             * unknown value.
+                             */
+                            _UNKNOWN,
+                        }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value, or
+                         * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                         *
+                         * Use the [known] method instead if you're certain the value is always
+                         * known or if you want to throw for the unknown case.
+                         */
+                        fun value(): Value =
+                            when (this) {
+                                LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                TOTAL_COST -> Value.TOTAL_COST
+                                PROMPT_COST -> Value.PROMPT_COST
+                                COMPLETION_COST -> Value.COMPLETION_COST
+                                else -> Value._UNKNOWN
+                            }
+
+                        /**
+                         * Returns an enum member corresponding to this class instance's value.
+                         *
+                         * Use the [value] method instead if you're uncertain the value is always
+                         * known and don't want to throw for the unknown case.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value is a
+                         *   not a known member.
+                         */
+                        fun known(): Known =
+                            when (this) {
+                                LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                TOTAL_COST -> Known.TOTAL_COST
+                                PROMPT_COST -> Known.PROMPT_COST
+                                COMPLETION_COST -> Known.COMPLETION_COST
+                                else -> throw LangChainInvalidDataException("Unknown Field: $value")
+                            }
+
+                        /**
+                         * Returns this class instance's primitive wire representation.
+                         *
+                         * This differs from the [toString] method because that method is primarily
+                         * for debugging and generally doesn't throw.
+                         *
+                         * @throws LangChainInvalidDataException if this class instance's value does
+                         *   not have the expected primitive type.
+                         */
+                        fun asString(): String =
+                            _value().asString().orElseThrow {
+                                LangChainInvalidDataException("Value is not a String")
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Field = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            known()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Field && value == other.value
+                        }
+
+                        override fun hashCode() = value.hashCode()
+
+                        override fun toString() = value.toString()
+                    }
+
+                    class Params
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val p: JsonField<Long>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("p") @ExcludeMissing p: JsonField<Long> = JsonMissing.of()
+                        ) : this(p, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun p(): Long = p.getRequired("p")
+
+                        /**
+                         * Returns the raw JSON value of [p].
+                         *
+                         * Unlike [p], this method doesn't throw if the JSON field has an unexpected
+                         * type.
+                         */
+                        @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of [Params].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .p()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [Params]. */
+                        class Builder internal constructor() {
+
+                            private var p: JsonField<Long>? = null
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(params: Params) = apply {
+                                p = params.p
+                                additionalProperties = params.additionalProperties.toMutableMap()
+                            }
+
+                            fun p(p: Long) = p(JsonField.of(p))
+
+                            /**
+                             * Sets [Builder.p] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.p] with a well-typed [Long] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun p(p: JsonField<Long>) = apply { this.p = p }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [Params].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .p()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): Params =
+                                Params(checkRequired("p", p), additionalProperties.toMutableMap())
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Params = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            p()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int = (if (p.asKnown().isPresent) 1 else 0)
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Params &&
+                                p == other.p &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy { Objects.hash(p, additionalProperties) }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "Params{p=$p, additionalProperties=$additionalProperties}"
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is CustomChartMetricPercentile &&
+                            field == other.field &&
+                            params == other.params &&
+                            type == other.type &&
+                            filter == other.filter &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(field, params, type, filter, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "CustomChartMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                }
+
+                class CustomChartMetricRatioOutput
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val denominator: JsonField<Denominator>,
+                    private val numerator: JsonField<Numerator>,
+                    private val type: JsonValue,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("denominator")
+                        @ExcludeMissing
+                        denominator: JsonField<Denominator> = JsonMissing.of(),
+                        @JsonProperty("numerator")
+                        @ExcludeMissing
+                        numerator: JsonField<Numerator> = JsonMissing.of(),
+                        @JsonProperty("type") @ExcludeMissing type: JsonValue = JsonMissing.of(),
+                    ) : this(denominator, numerator, type, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun denominator(): Denominator = denominator.getRequired("denominator")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun numerator(): Numerator = numerator.getRequired("numerator")
+
+                    /**
+                     * Expected to always return the following:
+                     * ```java
+                     * JsonValue.from("ratio")
+                     * ```
+                     *
+                     * However, this method can be useful for debugging and logging (e.g. if the
+                     * server responded with an unexpected value).
+                     */
+                    @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                    /**
+                     * Returns the raw JSON value of [denominator].
+                     *
+                     * Unlike [denominator], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("denominator")
+                    @ExcludeMissing
+                    fun _denominator(): JsonField<Denominator> = denominator
+
+                    /**
+                     * Returns the raw JSON value of [numerator].
+                     *
+                     * Unlike [numerator], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("numerator")
+                    @ExcludeMissing
+                    fun _numerator(): JsonField<Numerator> = numerator
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of
+                         * [CustomChartMetricRatioOutput].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .denominator()
+                         * .numerator()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [CustomChartMetricRatioOutput]. */
+                    class Builder internal constructor() {
+
+                        private var denominator: JsonField<Denominator>? = null
+                        private var numerator: JsonField<Numerator>? = null
+                        private var type: JsonValue = JsonValue.from("ratio")
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(
+                            customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                        ) = apply {
+                            denominator = customChartMetricRatioOutput.denominator
+                            numerator = customChartMetricRatioOutput.numerator
+                            type = customChartMetricRatioOutput.type
+                            additionalProperties =
+                                customChartMetricRatioOutput.additionalProperties.toMutableMap()
+                        }
+
+                        fun denominator(denominator: Denominator) =
+                            denominator(JsonField.of(denominator))
+
+                        /**
+                         * Sets [Builder.denominator] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.denominator] with a well-typed
+                         * [Denominator] value instead. This method is primarily for setting the
+                         * field to an undocumented or not yet supported value.
+                         */
+                        fun denominator(denominator: JsonField<Denominator>) = apply {
+                            this.denominator = denominator
+                        }
+
+                        /**
+                         * Alias for calling [denominator] with
+                         * `Denominator.ofCustomChartMetricCount(customChartMetricCount)`.
+                         */
+                        fun denominator(
+                            customChartMetricCount: Denominator.CustomChartMetricCount
+                        ) =
+                            denominator(
+                                Denominator.ofCustomChartMetricCount(customChartMetricCount)
+                            )
+
+                        /**
+                         * Alias for calling [denominator] with
+                         * `Denominator.ofCustomChartMetricScalar(customChartMetricScalar)`.
+                         */
+                        fun denominator(
+                            customChartMetricScalar: Denominator.CustomChartMetricScalar
+                        ) =
+                            denominator(
+                                Denominator.ofCustomChartMetricScalar(customChartMetricScalar)
+                            )
+
+                        /**
+                         * Alias for calling [denominator] with
+                         * `Denominator.ofCustomChartMetricPercentile(customChartMetricPercentile)`.
+                         */
+                        fun denominator(
+                            customChartMetricPercentile: Denominator.CustomChartMetricPercentile
+                        ) =
+                            denominator(
+                                Denominator.ofCustomChartMetricPercentile(
+                                    customChartMetricPercentile
+                                )
+                            )
+
+                        fun numerator(numerator: Numerator) = numerator(JsonField.of(numerator))
+
+                        /**
+                         * Sets [Builder.numerator] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.numerator] with a well-typed [Numerator]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun numerator(numerator: JsonField<Numerator>) = apply {
+                            this.numerator = numerator
+                        }
+
+                        /**
+                         * Alias for calling [numerator] with
+                         * `Numerator.ofCustomChartMetricCount(customChartMetricCount)`.
+                         */
+                        fun numerator(customChartMetricCount: Numerator.CustomChartMetricCount) =
+                            numerator(Numerator.ofCustomChartMetricCount(customChartMetricCount))
+
+                        /**
+                         * Alias for calling [numerator] with
+                         * `Numerator.ofCustomChartMetricScalar(customChartMetricScalar)`.
+                         */
+                        fun numerator(customChartMetricScalar: Numerator.CustomChartMetricScalar) =
+                            numerator(Numerator.ofCustomChartMetricScalar(customChartMetricScalar))
+
+                        /**
+                         * Alias for calling [numerator] with
+                         * `Numerator.ofCustomChartMetricPercentile(customChartMetricPercentile)`.
+                         */
+                        fun numerator(
+                            customChartMetricPercentile: Numerator.CustomChartMetricPercentile
+                        ) =
+                            numerator(
+                                Numerator.ofCustomChartMetricPercentile(customChartMetricPercentile)
+                            )
+
+                        /**
+                         * Sets the field to an arbitrary JSON value.
+                         *
+                         * It is usually unnecessary to call this method because the field defaults
+                         * to the following:
+                         * ```java
+                         * JsonValue.from("ratio")
+                         * ```
+                         *
+                         * This method is primarily for setting the field to an undocumented or not
+                         * yet supported value.
+                         */
+                        fun type(type: JsonValue) = apply { this.type = type }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [CustomChartMetricRatioOutput].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .denominator()
+                         * .numerator()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): CustomChartMetricRatioOutput =
+                            CustomChartMetricRatioOutput(
+                                checkRequired("denominator", denominator),
+                                checkRequired("numerator", numerator),
+                                type,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): CustomChartMetricRatioOutput = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        denominator().validate()
+                        numerator().validate()
+                        _type().let {
+                            if (it != JsonValue.from("ratio")) {
+                                throw LangChainInvalidDataException(
+                                    "'type' is invalid, received $it"
+                                )
+                            }
+                        }
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (denominator.asKnown().getOrNull()?.validity() ?: 0) +
+                            (numerator.asKnown().getOrNull()?.validity() ?: 0) +
+                            type.let { if (it == JsonValue.from("ratio")) 1 else 0 }
+
+                    @JsonDeserialize(using = Denominator.Deserializer::class)
+                    @JsonSerialize(using = Denominator.Serializer::class)
+                    class Denominator
+                    private constructor(
+                        private val customChartMetricCount: CustomChartMetricCount? = null,
+                        private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                        private val customChartMetricPercentile: CustomChartMetricPercentile? =
+                            null,
+                        private val _json: JsonValue? = null,
+                    ) {
+
+                        fun customChartMetricCount(): Optional<CustomChartMetricCount> =
+                            Optional.ofNullable(customChartMetricCount)
+
+                        fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
+                            Optional.ofNullable(customChartMetricScalar)
+
+                        fun customChartMetricPercentile(): Optional<CustomChartMetricPercentile> =
+                            Optional.ofNullable(customChartMetricPercentile)
+
+                        fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
+
+                        fun isCustomChartMetricScalar(): Boolean = customChartMetricScalar != null
+
+                        fun isCustomChartMetricPercentile(): Boolean =
+                            customChartMetricPercentile != null
+
+                        fun asCustomChartMetricCount(): CustomChartMetricCount =
+                            customChartMetricCount.getOrThrow("customChartMetricCount")
+
+                        fun asCustomChartMetricScalar(): CustomChartMetricScalar =
+                            customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                        fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
+                            customChartMetricPercentile.getOrThrow("customChartMetricPercentile")
+
+                        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                        /**
+                         * Maps this instance's current variant to a value of type [T] using the
+                         * given [visitor].
+                         *
+                         * Note that this method is _not_ forwards compatible with new variants from
+                         * the API, unless [visitor] overrides [Visitor.unknown]. To handle variants
+                         * not known to this version of the SDK gracefully, consider overriding
+                         * [Visitor.unknown]:
+                         * ```java
+                         * import com.langchain.smith.core.JsonValue;
+                         * import java.util.Optional;
+                         *
+                         * Optional<String> result = denominator.accept(new Denominator.Visitor<Optional<String>>() {
+                         *     @Override
+                         *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
+                         *         return Optional.of(customChartMetricCount.toString());
+                         *     }
+                         *
+                         *     // ...
+                         *
+                         *     @Override
+                         *     public Optional<String> unknown(JsonValue json) {
+                         *         // Or inspect the `json`.
+                         *         return Optional.empty();
+                         *     }
+                         * });
+                         * ```
+                         *
+                         * @throws LangChainInvalidDataException if [Visitor.unknown] is not
+                         *   overridden in [visitor] and the current variant is unknown.
+                         */
+                        fun <T> accept(visitor: Visitor<T>): T =
+                            when {
+                                customChartMetricCount != null ->
+                                    visitor.visitCustomChartMetricCount(customChartMetricCount)
+                                customChartMetricScalar != null ->
+                                    visitor.visitCustomChartMetricScalar(customChartMetricScalar)
+                                customChartMetricPercentile != null ->
+                                    visitor.visitCustomChartMetricPercentile(
+                                        customChartMetricPercentile
+                                    )
+                                else -> visitor.unknown(_json)
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Denominator = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            accept(
+                                object : Visitor<Unit> {
+                                    override fun visitCustomChartMetricCount(
+                                        customChartMetricCount: CustomChartMetricCount
+                                    ) {
+                                        customChartMetricCount.validate()
+                                    }
+
+                                    override fun visitCustomChartMetricScalar(
+                                        customChartMetricScalar: CustomChartMetricScalar
+                                    ) {
+                                        customChartMetricScalar.validate()
+                                    }
+
+                                    override fun visitCustomChartMetricPercentile(
+                                        customChartMetricPercentile: CustomChartMetricPercentile
+                                    ) {
+                                        customChartMetricPercentile.validate()
+                                    }
+                                }
+                            )
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            accept(
+                                object : Visitor<Int> {
+                                    override fun visitCustomChartMetricCount(
+                                        customChartMetricCount: CustomChartMetricCount
+                                    ) = customChartMetricCount.validity()
+
+                                    override fun visitCustomChartMetricScalar(
+                                        customChartMetricScalar: CustomChartMetricScalar
+                                    ) = customChartMetricScalar.validity()
+
+                                    override fun visitCustomChartMetricPercentile(
+                                        customChartMetricPercentile: CustomChartMetricPercentile
+                                    ) = customChartMetricPercentile.validity()
+
+                                    override fun unknown(json: JsonValue?) = 0
+                                }
+                            )
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Denominator &&
+                                customChartMetricCount == other.customChartMetricCount &&
+                                customChartMetricScalar == other.customChartMetricScalar &&
+                                customChartMetricPercentile == other.customChartMetricPercentile
+                        }
+
+                        override fun hashCode(): Int =
+                            Objects.hash(
+                                customChartMetricCount,
+                                customChartMetricScalar,
+                                customChartMetricPercentile,
+                            )
+
+                        override fun toString(): String =
+                            when {
+                                customChartMetricCount != null ->
+                                    "Denominator{customChartMetricCount=$customChartMetricCount}"
+                                customChartMetricScalar != null ->
+                                    "Denominator{customChartMetricScalar=$customChartMetricScalar}"
+                                customChartMetricPercentile != null ->
+                                    "Denominator{customChartMetricPercentile=$customChartMetricPercentile}"
+                                _json != null -> "Denominator{_unknown=$_json}"
+                                else -> throw IllegalStateException("Invalid Denominator")
+                            }
+
+                        companion object {
+
+                            @JvmStatic
+                            fun ofCustomChartMetricCount(
+                                customChartMetricCount: CustomChartMetricCount
+                            ) = Denominator(customChartMetricCount = customChartMetricCount)
+
+                            @JvmStatic
+                            fun ofCustomChartMetricScalar(
+                                customChartMetricScalar: CustomChartMetricScalar
+                            ) = Denominator(customChartMetricScalar = customChartMetricScalar)
+
+                            @JvmStatic
+                            fun ofCustomChartMetricPercentile(
+                                customChartMetricPercentile: CustomChartMetricPercentile
+                            ) =
+                                Denominator(
+                                    customChartMetricPercentile = customChartMetricPercentile
+                                )
+                        }
+
+                        /**
+                         * An interface that defines how to map each variant of [Denominator] to a
+                         * value of type [T].
+                         */
+                        interface Visitor<out T> {
+
+                            fun visitCustomChartMetricCount(
+                                customChartMetricCount: CustomChartMetricCount
+                            ): T
+
+                            fun visitCustomChartMetricScalar(
+                                customChartMetricScalar: CustomChartMetricScalar
+                            ): T
+
+                            fun visitCustomChartMetricPercentile(
+                                customChartMetricPercentile: CustomChartMetricPercentile
+                            ): T
+
+                            /**
+                             * Maps an unknown variant of [Denominator] to a value of type [T].
+                             *
+                             * An instance of [Denominator] can contain an unknown variant if it was
+                             * deserialized from data that doesn't match any known variant. For
+                             * example, if the SDK is on an older version than the API, then the API
+                             * may respond with new variants that the SDK is unaware of.
+                             *
+                             * @throws LangChainInvalidDataException in the default implementation.
+                             */
+                            fun unknown(json: JsonValue?): T {
+                                throw LangChainInvalidDataException("Unknown Denominator: $json")
+                            }
+                        }
+
+                        internal class Deserializer :
+                            BaseDeserializer<Denominator>(Denominator::class) {
+
+                            override fun ObjectCodec.deserialize(node: JsonNode): Denominator {
+                                val json = JsonValue.fromJsonNode(node)
+
+                                val bestMatches =
+                                    sequenceOf(
+                                            tryDeserialize(
+                                                    node,
+                                                    jacksonTypeRef<CustomChartMetricCount>(),
+                                                )
+                                                ?.let {
+                                                    Denominator(
+                                                        customChartMetricCount = it,
+                                                        _json = json,
+                                                    )
+                                                },
+                                            tryDeserialize(
+                                                    node,
+                                                    jacksonTypeRef<CustomChartMetricScalar>(),
+                                                )
+                                                ?.let {
+                                                    Denominator(
+                                                        customChartMetricScalar = it,
+                                                        _json = json,
+                                                    )
+                                                },
+                                            tryDeserialize(
+                                                    node,
+                                                    jacksonTypeRef<CustomChartMetricPercentile>(),
+                                                )
+                                                ?.let {
+                                                    Denominator(
+                                                        customChartMetricPercentile = it,
+                                                        _json = json,
+                                                    )
+                                                },
+                                        )
+                                        .filterNotNull()
+                                        .allMaxBy { it.validity() }
+                                        .toList()
+                                return when (bestMatches.size) {
+                                    // This can happen if what we're deserializing is completely
+                                    // incompatible with all the possible variants (e.g.
+                                    // deserializing from boolean).
+                                    0 -> Denominator(_json = json)
+                                    1 -> bestMatches.single()
+                                    // If there's more than one match with the highest validity,
+                                    // then use the first completely valid match, or simply the
+                                    // first match if none are completely valid.
+                                    else ->
+                                        bestMatches.firstOrNull { it.isValid() }
+                                            ?: bestMatches.first()
+                                }
+                            }
+                        }
+
+                        internal class Serializer :
+                            BaseSerializer<Denominator>(Denominator::class) {
+
+                            override fun serialize(
+                                value: Denominator,
+                                generator: JsonGenerator,
+                                provider: SerializerProvider,
+                            ) {
+                                when {
+                                    value.customChartMetricCount != null ->
+                                        generator.writeObject(value.customChartMetricCount)
+                                    value.customChartMetricScalar != null ->
+                                        generator.writeObject(value.customChartMetricScalar)
+                                    value.customChartMetricPercentile != null ->
+                                        generator.writeObject(value.customChartMetricPercentile)
+                                    value._json != null -> generator.writeObject(value._json)
+                                    else -> throw IllegalStateException("Invalid Denominator")
+                                }
+                            }
+                        }
+
+                        class CustomChartMetricCount
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val filter: JsonField<String>,
+                            private val type: JsonField<Type>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                filter: JsonField<String> = JsonMissing.of(),
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                type: JsonField<Type> = JsonMissing.of(),
+                            ) : this(filter, type, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type (e.g. if the server responded with an unexpected
+                             *   value).
+                             */
+                            fun filter(): Optional<String> = filter.getOptional("filter")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type (e.g. if the server responded with an unexpected
+                             *   value).
+                             */
+                            fun type(): Optional<Type> = type.getOptional("type")
+
+                            /**
+                             * Returns the raw JSON value of [filter].
+                             *
+                             * Unlike [filter], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            fun _filter(): JsonField<String> = filter
+
+                            /**
+                             * Returns the raw JSON value of [type].
+                             *
+                             * Unlike [type], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            fun _type(): JsonField<Type> = type
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [CustomChartMetricCount].
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [CustomChartMetricCount]. */
+                            class Builder internal constructor() {
+
+                                private var filter: JsonField<String> = JsonMissing.of()
+                                private var type: JsonField<Type> = JsonMissing.of()
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(customChartMetricCount: CustomChartMetricCount) =
+                                    apply {
+                                        filter = customChartMetricCount.filter
+                                        type = customChartMetricCount.type
+                                        additionalProperties =
+                                            customChartMetricCount.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                                /**
+                                 * Alias for calling [Builder.filter] with `filter.orElse(null)`.
+                                 */
+                                fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                                /**
+                                 * Sets [Builder.filter] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.filter] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun filter(filter: JsonField<String>) = apply {
+                                    this.filter = filter
+                                }
+
+                                fun type(type: Type) = type(JsonField.of(type))
+
+                                /**
+                                 * Sets [Builder.type] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.type] with a well-typed [Type]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [CustomChartMetricCount].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 */
+                                fun build(): CustomChartMetricCount =
+                                    CustomChartMetricCount(
+                                        filter,
+                                        type,
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): CustomChartMetricCount = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                filter()
+                                type().ifPresent { it.validate() }
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (if (filter.asKnown().isPresent) 1 else 0) +
+                                    (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                            class Type
+                            @JsonCreator
+                            private constructor(private val value: JsonField<String>) : Enum {
+
+                                /**
+                                 * Returns this class instance's raw value.
+                                 *
+                                 * This is usually only useful if this instance was deserialized
+                                 * from data that doesn't match any known member, and you want to
+                                 * know that value. For example, if the SDK is on an older version
+                                 * than the API, then the API may respond with new members that the
+                                 * SDK is unaware of.
+                                 */
+                                @com.fasterxml.jackson.annotation.JsonValue
+                                fun _value(): JsonField<String> = value
+
+                                companion object {
+
+                                    @JvmField val COUNT = of("count")
+
+                                    @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                }
+
+                                /** An enum containing [Type]'s known values. */
+                                enum class Known {
+                                    COUNT
+                                }
+
+                                /**
+                                 * An enum containing [Type]'s known values, as well as an
+                                 * [_UNKNOWN] member.
+                                 *
+                                 * An instance of [Type] can contain an unknown value in a couple of
+                                 * cases:
+                                 * - It was deserialized from data that doesn't match any known
+                                 *   member. For example, if the SDK is on an older version than the
+                                 *   API, then the API may respond with new members that the SDK is
+                                 *   unaware of.
+                                 * - It was constructed with an arbitrary value using the [of]
+                                 *   method.
+                                 */
+                                enum class Value {
+                                    COUNT,
+                                    /**
+                                     * An enum member indicating that [Type] was instantiated with
+                                     * an unknown value.
+                                     */
+                                    _UNKNOWN,
+                                }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value, or [Value._UNKNOWN] if the class was instantiated with an
+                                 * unknown value.
+                                 *
+                                 * Use the [known] method instead if you're certain the value is
+                                 * always known or if you want to throw for the unknown case.
+                                 */
+                                fun value(): Value =
+                                    when (this) {
+                                        COUNT -> Value.COUNT
+                                        else -> Value._UNKNOWN
+                                    }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value.
+                                 *
+                                 * Use the [value] method instead if you're uncertain the value is
+                                 * always known and don't want to throw for the unknown case.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value is a not a known member.
+                                 */
+                                fun known(): Known =
+                                    when (this) {
+                                        COUNT -> Known.COUNT
+                                        else ->
+                                            throw LangChainInvalidDataException(
+                                                "Unknown Type: $value"
+                                            )
+                                    }
+
+                                /**
+                                 * Returns this class instance's primitive wire representation.
+                                 *
+                                 * This differs from the [toString] method because that method is
+                                 * primarily for debugging and generally doesn't throw.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value does not have the expected primitive type.
+                                 */
+                                fun asString(): String =
+                                    _value().asString().orElseThrow {
+                                        LangChainInvalidDataException("Value is not a String")
+                                    }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Type = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    known()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    if (value() == Value._UNKNOWN) 0 else 1
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Type && value == other.value
+                                }
+
+                                override fun hashCode() = value.hashCode()
+
+                                override fun toString() = value.toString()
+                            }
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is CustomChartMetricCount &&
+                                    filter == other.filter &&
+                                    type == other.type &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(filter, type, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "CustomChartMetricCount{filter=$filter, type=$type, additionalProperties=$additionalProperties}"
+                        }
+
+                        class CustomChartMetricScalar
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val field: JsonField<Field>,
+                            private val type: JsonField<Type>,
+                            private val filter: JsonField<String>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                field: JsonField<Field> = JsonMissing.of(),
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                type: JsonField<Type> = JsonMissing.of(),
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                filter: JsonField<String> = JsonMissing.of(),
+                            ) : this(field, type, filter, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun field(): Field = field.getRequired("field")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun type(): Type = type.getRequired("type")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type (e.g. if the server responded with an unexpected
+                             *   value).
+                             */
+                            fun filter(): Optional<String> = filter.getOptional("filter")
+
+                            /**
+                             * Returns the raw JSON value of [field].
+                             *
+                             * Unlike [field], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("field")
+                            @ExcludeMissing
+                            fun _field(): JsonField<Field> = field
+
+                            /**
+                             * Returns the raw JSON value of [type].
+                             *
+                             * Unlike [type], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            fun _type(): JsonField<Type> = type
+
+                            /**
+                             * Returns the raw JSON value of [filter].
+                             *
+                             * Unlike [filter], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            fun _filter(): JsonField<String> = filter
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [CustomChartMetricScalar].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .field()
+                                 * .type()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [CustomChartMetricScalar]. */
+                            class Builder internal constructor() {
+
+                                private var field: JsonField<Field>? = null
+                                private var type: JsonField<Type>? = null
+                                private var filter: JsonField<String> = JsonMissing.of()
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(
+                                    customChartMetricScalar: CustomChartMetricScalar
+                                ) = apply {
+                                    field = customChartMetricScalar.field
+                                    type = customChartMetricScalar.type
+                                    filter = customChartMetricScalar.filter
+                                    additionalProperties =
+                                        customChartMetricScalar.additionalProperties.toMutableMap()
+                                }
+
+                                fun field(field: Field) = field(JsonField.of(field))
+
+                                /**
+                                 * Sets [Builder.field] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.field] with a well-typed [Field]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                                fun type(type: Type) = type(JsonField.of(type))
+
+                                /**
+                                 * Sets [Builder.type] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.type] with a well-typed [Type]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                                /**
+                                 * Alias for calling [Builder.filter] with `filter.orElse(null)`.
+                                 */
+                                fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                                /**
+                                 * Sets [Builder.filter] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.filter] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun filter(filter: JsonField<String>) = apply {
+                                    this.filter = filter
+                                }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [CustomChartMetricScalar].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .field()
+                                 * .type()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): CustomChartMetricScalar =
+                                    CustomChartMetricScalar(
+                                        checkRequired("field", field),
+                                        checkRequired("type", type),
+                                        filter,
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): CustomChartMetricScalar = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                field().validate()
+                                type().validate()
+                                filter()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                    (type.asKnown().getOrNull()?.validity() ?: 0) +
+                                    (if (filter.asKnown().isPresent) 1 else 0)
+
+                            class Field
+                            @JsonCreator
+                            private constructor(private val value: JsonField<String>) : Enum {
+
+                                /**
+                                 * Returns this class instance's raw value.
+                                 *
+                                 * This is usually only useful if this instance was deserialized
+                                 * from data that doesn't match any known member, and you want to
+                                 * know that value. For example, if the SDK is on an older version
+                                 * than the API, then the API may respond with new members that the
+                                 * SDK is unaware of.
+                                 */
+                                @com.fasterxml.jackson.annotation.JsonValue
+                                fun _value(): JsonField<String> = value
+
+                                companion object {
+
+                                    @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                    @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                    @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                    @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                    @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                    @JvmField val TOTAL_COST = of("total_cost")
+
+                                    @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                    @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                    @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                                }
+
+                                /** An enum containing [Field]'s known values. */
+                                enum class Known {
+                                    LATENCY_SECONDS,
+                                    FIRST_TOKEN_SECONDS,
+                                    TOTAL_TOKENS,
+                                    PROMPT_TOKENS,
+                                    COMPLETION_TOKENS,
+                                    TOTAL_COST,
+                                    PROMPT_COST,
+                                    COMPLETION_COST,
+                                }
+
+                                /**
+                                 * An enum containing [Field]'s known values, as well as an
+                                 * [_UNKNOWN] member.
+                                 *
+                                 * An instance of [Field] can contain an unknown value in a couple
+                                 * of cases:
+                                 * - It was deserialized from data that doesn't match any known
+                                 *   member. For example, if the SDK is on an older version than the
+                                 *   API, then the API may respond with new members that the SDK is
+                                 *   unaware of.
+                                 * - It was constructed with an arbitrary value using the [of]
+                                 *   method.
+                                 */
+                                enum class Value {
+                                    LATENCY_SECONDS,
+                                    FIRST_TOKEN_SECONDS,
+                                    TOTAL_TOKENS,
+                                    PROMPT_TOKENS,
+                                    COMPLETION_TOKENS,
+                                    TOTAL_COST,
+                                    PROMPT_COST,
+                                    COMPLETION_COST,
+                                    /**
+                                     * An enum member indicating that [Field] was instantiated with
+                                     * an unknown value.
+                                     */
+                                    _UNKNOWN,
+                                }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value, or [Value._UNKNOWN] if the class was instantiated with an
+                                 * unknown value.
+                                 *
+                                 * Use the [known] method instead if you're certain the value is
+                                 * always known or if you want to throw for the unknown case.
+                                 */
+                                fun value(): Value =
+                                    when (this) {
+                                        LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                        FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                        TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                        PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                        COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                        TOTAL_COST -> Value.TOTAL_COST
+                                        PROMPT_COST -> Value.PROMPT_COST
+                                        COMPLETION_COST -> Value.COMPLETION_COST
+                                        else -> Value._UNKNOWN
+                                    }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value.
+                                 *
+                                 * Use the [value] method instead if you're uncertain the value is
+                                 * always known and don't want to throw for the unknown case.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value is a not a known member.
+                                 */
+                                fun known(): Known =
+                                    when (this) {
+                                        LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                        FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                        TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                        PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                        COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                        TOTAL_COST -> Known.TOTAL_COST
+                                        PROMPT_COST -> Known.PROMPT_COST
+                                        COMPLETION_COST -> Known.COMPLETION_COST
+                                        else ->
+                                            throw LangChainInvalidDataException(
+                                                "Unknown Field: $value"
+                                            )
+                                    }
+
+                                /**
+                                 * Returns this class instance's primitive wire representation.
+                                 *
+                                 * This differs from the [toString] method because that method is
+                                 * primarily for debugging and generally doesn't throw.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value does not have the expected primitive type.
+                                 */
+                                fun asString(): String =
+                                    _value().asString().orElseThrow {
+                                        LangChainInvalidDataException("Value is not a String")
+                                    }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Field = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    known()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    if (value() == Value._UNKNOWN) 0 else 1
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Field && value == other.value
+                                }
+
+                                override fun hashCode() = value.hashCode()
+
+                                override fun toString() = value.toString()
+                            }
+
+                            class Type
+                            @JsonCreator
+                            private constructor(private val value: JsonField<String>) : Enum {
+
+                                /**
+                                 * Returns this class instance's raw value.
+                                 *
+                                 * This is usually only useful if this instance was deserialized
+                                 * from data that doesn't match any known member, and you want to
+                                 * know that value. For example, if the SDK is on an older version
+                                 * than the API, then the API may respond with new members that the
+                                 * SDK is unaware of.
+                                 */
+                                @com.fasterxml.jackson.annotation.JsonValue
+                                fun _value(): JsonField<String> = value
+
+                                companion object {
+
+                                    @JvmField val SUM = of("sum")
+
+                                    @JvmField val MAX = of("max")
+
+                                    @JvmField val MIN = of("min")
+
+                                    @JvmField val AVG = of("avg")
+
+                                    @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                }
+
+                                /** An enum containing [Type]'s known values. */
+                                enum class Known {
+                                    SUM,
+                                    MAX,
+                                    MIN,
+                                    AVG,
+                                }
+
+                                /**
+                                 * An enum containing [Type]'s known values, as well as an
+                                 * [_UNKNOWN] member.
+                                 *
+                                 * An instance of [Type] can contain an unknown value in a couple of
+                                 * cases:
+                                 * - It was deserialized from data that doesn't match any known
+                                 *   member. For example, if the SDK is on an older version than the
+                                 *   API, then the API may respond with new members that the SDK is
+                                 *   unaware of.
+                                 * - It was constructed with an arbitrary value using the [of]
+                                 *   method.
+                                 */
+                                enum class Value {
+                                    SUM,
+                                    MAX,
+                                    MIN,
+                                    AVG,
+                                    /**
+                                     * An enum member indicating that [Type] was instantiated with
+                                     * an unknown value.
+                                     */
+                                    _UNKNOWN,
+                                }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value, or [Value._UNKNOWN] if the class was instantiated with an
+                                 * unknown value.
+                                 *
+                                 * Use the [known] method instead if you're certain the value is
+                                 * always known or if you want to throw for the unknown case.
+                                 */
+                                fun value(): Value =
+                                    when (this) {
+                                        SUM -> Value.SUM
+                                        MAX -> Value.MAX
+                                        MIN -> Value.MIN
+                                        AVG -> Value.AVG
+                                        else -> Value._UNKNOWN
+                                    }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value.
+                                 *
+                                 * Use the [value] method instead if you're uncertain the value is
+                                 * always known and don't want to throw for the unknown case.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value is a not a known member.
+                                 */
+                                fun known(): Known =
+                                    when (this) {
+                                        SUM -> Known.SUM
+                                        MAX -> Known.MAX
+                                        MIN -> Known.MIN
+                                        AVG -> Known.AVG
+                                        else ->
+                                            throw LangChainInvalidDataException(
+                                                "Unknown Type: $value"
+                                            )
+                                    }
+
+                                /**
+                                 * Returns this class instance's primitive wire representation.
+                                 *
+                                 * This differs from the [toString] method because that method is
+                                 * primarily for debugging and generally doesn't throw.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value does not have the expected primitive type.
+                                 */
+                                fun asString(): String =
+                                    _value().asString().orElseThrow {
+                                        LangChainInvalidDataException("Value is not a String")
+                                    }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Type = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    known()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    if (value() == Value._UNKNOWN) 0 else 1
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Type && value == other.value
+                                }
+
+                                override fun hashCode() = value.hashCode()
+
+                                override fun toString() = value.toString()
+                            }
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is CustomChartMetricScalar &&
+                                    field == other.field &&
+                                    type == other.type &&
+                                    filter == other.filter &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(field, type, filter, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                        }
+
+                        class CustomChartMetricPercentile
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val field: JsonField<Field>,
+                            private val params: JsonField<Params>,
+                            private val type: JsonValue,
+                            private val filter: JsonField<String>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                field: JsonField<Field> = JsonMissing.of(),
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                params: JsonField<Params> = JsonMissing.of(),
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                type: JsonValue = JsonMissing.of(),
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                filter: JsonField<String> = JsonMissing.of(),
+                            ) : this(field, params, type, filter, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun field(): Field = field.getRequired("field")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun params(): Params = params.getRequired("params")
+
+                            /**
+                             * Expected to always return the following:
+                             * ```java
+                             * JsonValue.from("percentile")
+                             * ```
+                             *
+                             * However, this method can be useful for debugging and logging (e.g. if
+                             * the server responded with an unexpected value).
+                             */
+                            @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type (e.g. if the server responded with an unexpected
+                             *   value).
+                             */
+                            fun filter(): Optional<String> = filter.getOptional("filter")
+
+                            /**
+                             * Returns the raw JSON value of [field].
+                             *
+                             * Unlike [field], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("field")
+                            @ExcludeMissing
+                            fun _field(): JsonField<Field> = field
+
+                            /**
+                             * Returns the raw JSON value of [params].
+                             *
+                             * Unlike [params], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("params")
+                            @ExcludeMissing
+                            fun _params(): JsonField<Params> = params
+
+                            /**
+                             * Returns the raw JSON value of [filter].
+                             *
+                             * Unlike [filter], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            fun _filter(): JsonField<String> = filter
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [CustomChartMetricPercentile].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .field()
+                                 * .params()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [CustomChartMetricPercentile]. */
+                            class Builder internal constructor() {
+
+                                private var field: JsonField<Field>? = null
+                                private var params: JsonField<Params>? = null
+                                private var type: JsonValue = JsonValue.from("percentile")
+                                private var filter: JsonField<String> = JsonMissing.of()
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(
+                                    customChartMetricPercentile: CustomChartMetricPercentile
+                                ) = apply {
+                                    field = customChartMetricPercentile.field
+                                    params = customChartMetricPercentile.params
+                                    type = customChartMetricPercentile.type
+                                    filter = customChartMetricPercentile.filter
+                                    additionalProperties =
+                                        customChartMetricPercentile.additionalProperties
+                                            .toMutableMap()
+                                }
+
+                                fun field(field: Field) = field(JsonField.of(field))
+
+                                /**
+                                 * Sets [Builder.field] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.field] with a well-typed [Field]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                                fun params(params: Params) = params(JsonField.of(params))
+
+                                /**
+                                 * Sets [Builder.params] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.params] with a well-typed
+                                 * [Params] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun params(params: JsonField<Params>) = apply {
+                                    this.params = params
+                                }
+
+                                /**
+                                 * Sets the field to an arbitrary JSON value.
+                                 *
+                                 * It is usually unnecessary to call this method because the field
+                                 * defaults to the following:
+                                 * ```java
+                                 * JsonValue.from("percentile")
+                                 * ```
+                                 *
+                                 * This method is primarily for setting the field to an undocumented
+                                 * or not yet supported value.
+                                 */
+                                fun type(type: JsonValue) = apply { this.type = type }
+
+                                fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                                /**
+                                 * Alias for calling [Builder.filter] with `filter.orElse(null)`.
+                                 */
+                                fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                                /**
+                                 * Sets [Builder.filter] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.filter] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun filter(filter: JsonField<String>) = apply {
+                                    this.filter = filter
+                                }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [CustomChartMetricPercentile].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .field()
+                                 * .params()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): CustomChartMetricPercentile =
+                                    CustomChartMetricPercentile(
+                                        checkRequired("field", field),
+                                        checkRequired("params", params),
+                                        type,
+                                        filter,
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): CustomChartMetricPercentile = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                field().validate()
+                                params().validate()
+                                _type().let {
+                                    if (it != JsonValue.from("percentile")) {
+                                        throw LangChainInvalidDataException(
+                                            "'type' is invalid, received $it"
+                                        )
+                                    }
+                                }
+                                filter()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                    (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                    type.let { if (it == JsonValue.from("percentile")) 1 else 0 } +
+                                    (if (filter.asKnown().isPresent) 1 else 0)
+
+                            class Field
+                            @JsonCreator
+                            private constructor(private val value: JsonField<String>) : Enum {
+
+                                /**
+                                 * Returns this class instance's raw value.
+                                 *
+                                 * This is usually only useful if this instance was deserialized
+                                 * from data that doesn't match any known member, and you want to
+                                 * know that value. For example, if the SDK is on an older version
+                                 * than the API, then the API may respond with new members that the
+                                 * SDK is unaware of.
+                                 */
+                                @com.fasterxml.jackson.annotation.JsonValue
+                                fun _value(): JsonField<String> = value
+
+                                companion object {
+
+                                    @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                    @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                    @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                    @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                    @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                    @JvmField val TOTAL_COST = of("total_cost")
+
+                                    @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                    @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                    @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                                }
+
+                                /** An enum containing [Field]'s known values. */
+                                enum class Known {
+                                    LATENCY_SECONDS,
+                                    FIRST_TOKEN_SECONDS,
+                                    TOTAL_TOKENS,
+                                    PROMPT_TOKENS,
+                                    COMPLETION_TOKENS,
+                                    TOTAL_COST,
+                                    PROMPT_COST,
+                                    COMPLETION_COST,
+                                }
+
+                                /**
+                                 * An enum containing [Field]'s known values, as well as an
+                                 * [_UNKNOWN] member.
+                                 *
+                                 * An instance of [Field] can contain an unknown value in a couple
+                                 * of cases:
+                                 * - It was deserialized from data that doesn't match any known
+                                 *   member. For example, if the SDK is on an older version than the
+                                 *   API, then the API may respond with new members that the SDK is
+                                 *   unaware of.
+                                 * - It was constructed with an arbitrary value using the [of]
+                                 *   method.
+                                 */
+                                enum class Value {
+                                    LATENCY_SECONDS,
+                                    FIRST_TOKEN_SECONDS,
+                                    TOTAL_TOKENS,
+                                    PROMPT_TOKENS,
+                                    COMPLETION_TOKENS,
+                                    TOTAL_COST,
+                                    PROMPT_COST,
+                                    COMPLETION_COST,
+                                    /**
+                                     * An enum member indicating that [Field] was instantiated with
+                                     * an unknown value.
+                                     */
+                                    _UNKNOWN,
+                                }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value, or [Value._UNKNOWN] if the class was instantiated with an
+                                 * unknown value.
+                                 *
+                                 * Use the [known] method instead if you're certain the value is
+                                 * always known or if you want to throw for the unknown case.
+                                 */
+                                fun value(): Value =
+                                    when (this) {
+                                        LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                        FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                        TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                        PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                        COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                        TOTAL_COST -> Value.TOTAL_COST
+                                        PROMPT_COST -> Value.PROMPT_COST
+                                        COMPLETION_COST -> Value.COMPLETION_COST
+                                        else -> Value._UNKNOWN
+                                    }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value.
+                                 *
+                                 * Use the [value] method instead if you're uncertain the value is
+                                 * always known and don't want to throw for the unknown case.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value is a not a known member.
+                                 */
+                                fun known(): Known =
+                                    when (this) {
+                                        LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                        FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                        TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                        PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                        COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                        TOTAL_COST -> Known.TOTAL_COST
+                                        PROMPT_COST -> Known.PROMPT_COST
+                                        COMPLETION_COST -> Known.COMPLETION_COST
+                                        else ->
+                                            throw LangChainInvalidDataException(
+                                                "Unknown Field: $value"
+                                            )
+                                    }
+
+                                /**
+                                 * Returns this class instance's primitive wire representation.
+                                 *
+                                 * This differs from the [toString] method because that method is
+                                 * primarily for debugging and generally doesn't throw.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value does not have the expected primitive type.
+                                 */
+                                fun asString(): String =
+                                    _value().asString().orElseThrow {
+                                        LangChainInvalidDataException("Value is not a String")
+                                    }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Field = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    known()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    if (value() == Value._UNKNOWN) 0 else 1
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Field && value == other.value
+                                }
+
+                                override fun hashCode() = value.hashCode()
+
+                                override fun toString() = value.toString()
+                            }
+
+                            class Params
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val p: JsonField<Long>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("p")
+                                    @ExcludeMissing
+                                    p: JsonField<Long> = JsonMissing.of()
+                                ) : this(p, mutableMapOf())
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun p(): Long = p.getRequired("p")
+
+                                /**
+                                 * Returns the raw JSON value of [p].
+                                 *
+                                 * Unlike [p], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [Params].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .p()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [Params]. */
+                                class Builder internal constructor() {
+
+                                    private var p: JsonField<Long>? = null
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(params: Params) = apply {
+                                        p = params.p
+                                        additionalProperties =
+                                            params.additionalProperties.toMutableMap()
+                                    }
+
+                                    fun p(p: Long) = p(JsonField.of(p))
+
+                                    /**
+                                     * Sets [Builder.p] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.p] with a well-typed [Long]
+                                     * value instead. This method is primarily for setting the field
+                                     * to an undocumented or not yet supported value.
+                                     */
+                                    fun p(p: JsonField<Long>) = apply { this.p = p }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of [Params].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .p()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): Params =
+                                        Params(
+                                            checkRequired("p", p),
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Params = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    p()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int = (if (p.asKnown().isPresent) 1 else 0)
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Params &&
+                                        p == other.p &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(p, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "Params{p=$p, additionalProperties=$additionalProperties}"
+                            }
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is CustomChartMetricPercentile &&
+                                    field == other.field &&
+                                    params == other.params &&
+                                    type == other.type &&
+                                    filter == other.filter &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(field, params, type, filter, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "CustomChartMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                        }
+                    }
+
+                    @JsonDeserialize(using = Numerator.Deserializer::class)
+                    @JsonSerialize(using = Numerator.Serializer::class)
+                    class Numerator
+                    private constructor(
+                        private val customChartMetricCount: CustomChartMetricCount? = null,
+                        private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                        private val customChartMetricPercentile: CustomChartMetricPercentile? =
+                            null,
+                        private val _json: JsonValue? = null,
+                    ) {
+
+                        fun customChartMetricCount(): Optional<CustomChartMetricCount> =
+                            Optional.ofNullable(customChartMetricCount)
+
+                        fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
+                            Optional.ofNullable(customChartMetricScalar)
+
+                        fun customChartMetricPercentile(): Optional<CustomChartMetricPercentile> =
+                            Optional.ofNullable(customChartMetricPercentile)
+
+                        fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
+
+                        fun isCustomChartMetricScalar(): Boolean = customChartMetricScalar != null
+
+                        fun isCustomChartMetricPercentile(): Boolean =
+                            customChartMetricPercentile != null
+
+                        fun asCustomChartMetricCount(): CustomChartMetricCount =
+                            customChartMetricCount.getOrThrow("customChartMetricCount")
+
+                        fun asCustomChartMetricScalar(): CustomChartMetricScalar =
+                            customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                        fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
+                            customChartMetricPercentile.getOrThrow("customChartMetricPercentile")
+
+                        fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                        /**
+                         * Maps this instance's current variant to a value of type [T] using the
+                         * given [visitor].
+                         *
+                         * Note that this method is _not_ forwards compatible with new variants from
+                         * the API, unless [visitor] overrides [Visitor.unknown]. To handle variants
+                         * not known to this version of the SDK gracefully, consider overriding
+                         * [Visitor.unknown]:
+                         * ```java
+                         * import com.langchain.smith.core.JsonValue;
+                         * import java.util.Optional;
+                         *
+                         * Optional<String> result = numerator.accept(new Numerator.Visitor<Optional<String>>() {
+                         *     @Override
+                         *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
+                         *         return Optional.of(customChartMetricCount.toString());
+                         *     }
+                         *
+                         *     // ...
+                         *
+                         *     @Override
+                         *     public Optional<String> unknown(JsonValue json) {
+                         *         // Or inspect the `json`.
+                         *         return Optional.empty();
+                         *     }
+                         * });
+                         * ```
+                         *
+                         * @throws LangChainInvalidDataException if [Visitor.unknown] is not
+                         *   overridden in [visitor] and the current variant is unknown.
+                         */
+                        fun <T> accept(visitor: Visitor<T>): T =
+                            when {
+                                customChartMetricCount != null ->
+                                    visitor.visitCustomChartMetricCount(customChartMetricCount)
+                                customChartMetricScalar != null ->
+                                    visitor.visitCustomChartMetricScalar(customChartMetricScalar)
+                                customChartMetricPercentile != null ->
+                                    visitor.visitCustomChartMetricPercentile(
+                                        customChartMetricPercentile
+                                    )
+                                else -> visitor.unknown(_json)
+                            }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Numerator = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            accept(
+                                object : Visitor<Unit> {
+                                    override fun visitCustomChartMetricCount(
+                                        customChartMetricCount: CustomChartMetricCount
+                                    ) {
+                                        customChartMetricCount.validate()
+                                    }
+
+                                    override fun visitCustomChartMetricScalar(
+                                        customChartMetricScalar: CustomChartMetricScalar
+                                    ) {
+                                        customChartMetricScalar.validate()
+                                    }
+
+                                    override fun visitCustomChartMetricPercentile(
+                                        customChartMetricPercentile: CustomChartMetricPercentile
+                                    ) {
+                                        customChartMetricPercentile.validate()
+                                    }
+                                }
+                            )
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            accept(
+                                object : Visitor<Int> {
+                                    override fun visitCustomChartMetricCount(
+                                        customChartMetricCount: CustomChartMetricCount
+                                    ) = customChartMetricCount.validity()
+
+                                    override fun visitCustomChartMetricScalar(
+                                        customChartMetricScalar: CustomChartMetricScalar
+                                    ) = customChartMetricScalar.validity()
+
+                                    override fun visitCustomChartMetricPercentile(
+                                        customChartMetricPercentile: CustomChartMetricPercentile
+                                    ) = customChartMetricPercentile.validity()
+
+                                    override fun unknown(json: JsonValue?) = 0
+                                }
+                            )
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Numerator &&
+                                customChartMetricCount == other.customChartMetricCount &&
+                                customChartMetricScalar == other.customChartMetricScalar &&
+                                customChartMetricPercentile == other.customChartMetricPercentile
+                        }
+
+                        override fun hashCode(): Int =
+                            Objects.hash(
+                                customChartMetricCount,
+                                customChartMetricScalar,
+                                customChartMetricPercentile,
+                            )
+
+                        override fun toString(): String =
+                            when {
+                                customChartMetricCount != null ->
+                                    "Numerator{customChartMetricCount=$customChartMetricCount}"
+                                customChartMetricScalar != null ->
+                                    "Numerator{customChartMetricScalar=$customChartMetricScalar}"
+                                customChartMetricPercentile != null ->
+                                    "Numerator{customChartMetricPercentile=$customChartMetricPercentile}"
+                                _json != null -> "Numerator{_unknown=$_json}"
+                                else -> throw IllegalStateException("Invalid Numerator")
+                            }
+
+                        companion object {
+
+                            @JvmStatic
+                            fun ofCustomChartMetricCount(
+                                customChartMetricCount: CustomChartMetricCount
+                            ) = Numerator(customChartMetricCount = customChartMetricCount)
+
+                            @JvmStatic
+                            fun ofCustomChartMetricScalar(
+                                customChartMetricScalar: CustomChartMetricScalar
+                            ) = Numerator(customChartMetricScalar = customChartMetricScalar)
+
+                            @JvmStatic
+                            fun ofCustomChartMetricPercentile(
+                                customChartMetricPercentile: CustomChartMetricPercentile
+                            ) = Numerator(customChartMetricPercentile = customChartMetricPercentile)
+                        }
+
+                        /**
+                         * An interface that defines how to map each variant of [Numerator] to a
+                         * value of type [T].
+                         */
+                        interface Visitor<out T> {
+
+                            fun visitCustomChartMetricCount(
+                                customChartMetricCount: CustomChartMetricCount
+                            ): T
+
+                            fun visitCustomChartMetricScalar(
+                                customChartMetricScalar: CustomChartMetricScalar
+                            ): T
+
+                            fun visitCustomChartMetricPercentile(
+                                customChartMetricPercentile: CustomChartMetricPercentile
+                            ): T
+
+                            /**
+                             * Maps an unknown variant of [Numerator] to a value of type [T].
+                             *
+                             * An instance of [Numerator] can contain an unknown variant if it was
+                             * deserialized from data that doesn't match any known variant. For
+                             * example, if the SDK is on an older version than the API, then the API
+                             * may respond with new variants that the SDK is unaware of.
+                             *
+                             * @throws LangChainInvalidDataException in the default implementation.
+                             */
+                            fun unknown(json: JsonValue?): T {
+                                throw LangChainInvalidDataException("Unknown Numerator: $json")
+                            }
+                        }
+
+                        internal class Deserializer :
+                            BaseDeserializer<Numerator>(Numerator::class) {
+
+                            override fun ObjectCodec.deserialize(node: JsonNode): Numerator {
+                                val json = JsonValue.fromJsonNode(node)
+
+                                val bestMatches =
+                                    sequenceOf(
+                                            tryDeserialize(
+                                                    node,
+                                                    jacksonTypeRef<CustomChartMetricCount>(),
+                                                )
+                                                ?.let {
+                                                    Numerator(
+                                                        customChartMetricCount = it,
+                                                        _json = json,
+                                                    )
+                                                },
+                                            tryDeserialize(
+                                                    node,
+                                                    jacksonTypeRef<CustomChartMetricScalar>(),
+                                                )
+                                                ?.let {
+                                                    Numerator(
+                                                        customChartMetricScalar = it,
+                                                        _json = json,
+                                                    )
+                                                },
+                                            tryDeserialize(
+                                                    node,
+                                                    jacksonTypeRef<CustomChartMetricPercentile>(),
+                                                )
+                                                ?.let {
+                                                    Numerator(
+                                                        customChartMetricPercentile = it,
+                                                        _json = json,
+                                                    )
+                                                },
+                                        )
+                                        .filterNotNull()
+                                        .allMaxBy { it.validity() }
+                                        .toList()
+                                return when (bestMatches.size) {
+                                    // This can happen if what we're deserializing is completely
+                                    // incompatible with all the possible variants (e.g.
+                                    // deserializing from boolean).
+                                    0 -> Numerator(_json = json)
+                                    1 -> bestMatches.single()
+                                    // If there's more than one match with the highest validity,
+                                    // then use the first completely valid match, or simply the
+                                    // first match if none are completely valid.
+                                    else ->
+                                        bestMatches.firstOrNull { it.isValid() }
+                                            ?: bestMatches.first()
+                                }
+                            }
+                        }
+
+                        internal class Serializer : BaseSerializer<Numerator>(Numerator::class) {
+
+                            override fun serialize(
+                                value: Numerator,
+                                generator: JsonGenerator,
+                                provider: SerializerProvider,
+                            ) {
+                                when {
+                                    value.customChartMetricCount != null ->
+                                        generator.writeObject(value.customChartMetricCount)
+                                    value.customChartMetricScalar != null ->
+                                        generator.writeObject(value.customChartMetricScalar)
+                                    value.customChartMetricPercentile != null ->
+                                        generator.writeObject(value.customChartMetricPercentile)
+                                    value._json != null -> generator.writeObject(value._json)
+                                    else -> throw IllegalStateException("Invalid Numerator")
+                                }
+                            }
+                        }
+
+                        class CustomChartMetricCount
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val filter: JsonField<String>,
+                            private val type: JsonField<Type>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                filter: JsonField<String> = JsonMissing.of(),
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                type: JsonField<Type> = JsonMissing.of(),
+                            ) : this(filter, type, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type (e.g. if the server responded with an unexpected
+                             *   value).
+                             */
+                            fun filter(): Optional<String> = filter.getOptional("filter")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type (e.g. if the server responded with an unexpected
+                             *   value).
+                             */
+                            fun type(): Optional<Type> = type.getOptional("type")
+
+                            /**
+                             * Returns the raw JSON value of [filter].
+                             *
+                             * Unlike [filter], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            fun _filter(): JsonField<String> = filter
+
+                            /**
+                             * Returns the raw JSON value of [type].
+                             *
+                             * Unlike [type], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            fun _type(): JsonField<Type> = type
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [CustomChartMetricCount].
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [CustomChartMetricCount]. */
+                            class Builder internal constructor() {
+
+                                private var filter: JsonField<String> = JsonMissing.of()
+                                private var type: JsonField<Type> = JsonMissing.of()
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(customChartMetricCount: CustomChartMetricCount) =
+                                    apply {
+                                        filter = customChartMetricCount.filter
+                                        type = customChartMetricCount.type
+                                        additionalProperties =
+                                            customChartMetricCount.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                                /**
+                                 * Alias for calling [Builder.filter] with `filter.orElse(null)`.
+                                 */
+                                fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                                /**
+                                 * Sets [Builder.filter] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.filter] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun filter(filter: JsonField<String>) = apply {
+                                    this.filter = filter
+                                }
+
+                                fun type(type: Type) = type(JsonField.of(type))
+
+                                /**
+                                 * Sets [Builder.type] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.type] with a well-typed [Type]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [CustomChartMetricCount].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 */
+                                fun build(): CustomChartMetricCount =
+                                    CustomChartMetricCount(
+                                        filter,
+                                        type,
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): CustomChartMetricCount = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                filter()
+                                type().ifPresent { it.validate() }
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (if (filter.asKnown().isPresent) 1 else 0) +
+                                    (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                            class Type
+                            @JsonCreator
+                            private constructor(private val value: JsonField<String>) : Enum {
+
+                                /**
+                                 * Returns this class instance's raw value.
+                                 *
+                                 * This is usually only useful if this instance was deserialized
+                                 * from data that doesn't match any known member, and you want to
+                                 * know that value. For example, if the SDK is on an older version
+                                 * than the API, then the API may respond with new members that the
+                                 * SDK is unaware of.
+                                 */
+                                @com.fasterxml.jackson.annotation.JsonValue
+                                fun _value(): JsonField<String> = value
+
+                                companion object {
+
+                                    @JvmField val COUNT = of("count")
+
+                                    @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                }
+
+                                /** An enum containing [Type]'s known values. */
+                                enum class Known {
+                                    COUNT
+                                }
+
+                                /**
+                                 * An enum containing [Type]'s known values, as well as an
+                                 * [_UNKNOWN] member.
+                                 *
+                                 * An instance of [Type] can contain an unknown value in a couple of
+                                 * cases:
+                                 * - It was deserialized from data that doesn't match any known
+                                 *   member. For example, if the SDK is on an older version than the
+                                 *   API, then the API may respond with new members that the SDK is
+                                 *   unaware of.
+                                 * - It was constructed with an arbitrary value using the [of]
+                                 *   method.
+                                 */
+                                enum class Value {
+                                    COUNT,
+                                    /**
+                                     * An enum member indicating that [Type] was instantiated with
+                                     * an unknown value.
+                                     */
+                                    _UNKNOWN,
+                                }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value, or [Value._UNKNOWN] if the class was instantiated with an
+                                 * unknown value.
+                                 *
+                                 * Use the [known] method instead if you're certain the value is
+                                 * always known or if you want to throw for the unknown case.
+                                 */
+                                fun value(): Value =
+                                    when (this) {
+                                        COUNT -> Value.COUNT
+                                        else -> Value._UNKNOWN
+                                    }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value.
+                                 *
+                                 * Use the [value] method instead if you're uncertain the value is
+                                 * always known and don't want to throw for the unknown case.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value is a not a known member.
+                                 */
+                                fun known(): Known =
+                                    when (this) {
+                                        COUNT -> Known.COUNT
+                                        else ->
+                                            throw LangChainInvalidDataException(
+                                                "Unknown Type: $value"
+                                            )
+                                    }
+
+                                /**
+                                 * Returns this class instance's primitive wire representation.
+                                 *
+                                 * This differs from the [toString] method because that method is
+                                 * primarily for debugging and generally doesn't throw.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value does not have the expected primitive type.
+                                 */
+                                fun asString(): String =
+                                    _value().asString().orElseThrow {
+                                        LangChainInvalidDataException("Value is not a String")
+                                    }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Type = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    known()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    if (value() == Value._UNKNOWN) 0 else 1
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Type && value == other.value
+                                }
+
+                                override fun hashCode() = value.hashCode()
+
+                                override fun toString() = value.toString()
+                            }
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is CustomChartMetricCount &&
+                                    filter == other.filter &&
+                                    type == other.type &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(filter, type, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "CustomChartMetricCount{filter=$filter, type=$type, additionalProperties=$additionalProperties}"
+                        }
+
+                        class CustomChartMetricScalar
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val field: JsonField<Field>,
+                            private val type: JsonField<Type>,
+                            private val filter: JsonField<String>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                field: JsonField<Field> = JsonMissing.of(),
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                type: JsonField<Type> = JsonMissing.of(),
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                filter: JsonField<String> = JsonMissing.of(),
+                            ) : this(field, type, filter, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun field(): Field = field.getRequired("field")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun type(): Type = type.getRequired("type")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type (e.g. if the server responded with an unexpected
+                             *   value).
+                             */
+                            fun filter(): Optional<String> = filter.getOptional("filter")
+
+                            /**
+                             * Returns the raw JSON value of [field].
+                             *
+                             * Unlike [field], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("field")
+                            @ExcludeMissing
+                            fun _field(): JsonField<Field> = field
+
+                            /**
+                             * Returns the raw JSON value of [type].
+                             *
+                             * Unlike [type], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            fun _type(): JsonField<Type> = type
+
+                            /**
+                             * Returns the raw JSON value of [filter].
+                             *
+                             * Unlike [filter], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            fun _filter(): JsonField<String> = filter
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [CustomChartMetricScalar].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .field()
+                                 * .type()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [CustomChartMetricScalar]. */
+                            class Builder internal constructor() {
+
+                                private var field: JsonField<Field>? = null
+                                private var type: JsonField<Type>? = null
+                                private var filter: JsonField<String> = JsonMissing.of()
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(
+                                    customChartMetricScalar: CustomChartMetricScalar
+                                ) = apply {
+                                    field = customChartMetricScalar.field
+                                    type = customChartMetricScalar.type
+                                    filter = customChartMetricScalar.filter
+                                    additionalProperties =
+                                        customChartMetricScalar.additionalProperties.toMutableMap()
+                                }
+
+                                fun field(field: Field) = field(JsonField.of(field))
+
+                                /**
+                                 * Sets [Builder.field] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.field] with a well-typed [Field]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                                fun type(type: Type) = type(JsonField.of(type))
+
+                                /**
+                                 * Sets [Builder.type] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.type] with a well-typed [Type]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                                /**
+                                 * Alias for calling [Builder.filter] with `filter.orElse(null)`.
+                                 */
+                                fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                                /**
+                                 * Sets [Builder.filter] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.filter] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun filter(filter: JsonField<String>) = apply {
+                                    this.filter = filter
+                                }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [CustomChartMetricScalar].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .field()
+                                 * .type()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): CustomChartMetricScalar =
+                                    CustomChartMetricScalar(
+                                        checkRequired("field", field),
+                                        checkRequired("type", type),
+                                        filter,
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): CustomChartMetricScalar = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                field().validate()
+                                type().validate()
+                                filter()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                    (type.asKnown().getOrNull()?.validity() ?: 0) +
+                                    (if (filter.asKnown().isPresent) 1 else 0)
+
+                            class Field
+                            @JsonCreator
+                            private constructor(private val value: JsonField<String>) : Enum {
+
+                                /**
+                                 * Returns this class instance's raw value.
+                                 *
+                                 * This is usually only useful if this instance was deserialized
+                                 * from data that doesn't match any known member, and you want to
+                                 * know that value. For example, if the SDK is on an older version
+                                 * than the API, then the API may respond with new members that the
+                                 * SDK is unaware of.
+                                 */
+                                @com.fasterxml.jackson.annotation.JsonValue
+                                fun _value(): JsonField<String> = value
+
+                                companion object {
+
+                                    @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                    @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                    @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                    @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                    @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                    @JvmField val TOTAL_COST = of("total_cost")
+
+                                    @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                    @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                    @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                                }
+
+                                /** An enum containing [Field]'s known values. */
+                                enum class Known {
+                                    LATENCY_SECONDS,
+                                    FIRST_TOKEN_SECONDS,
+                                    TOTAL_TOKENS,
+                                    PROMPT_TOKENS,
+                                    COMPLETION_TOKENS,
+                                    TOTAL_COST,
+                                    PROMPT_COST,
+                                    COMPLETION_COST,
+                                }
+
+                                /**
+                                 * An enum containing [Field]'s known values, as well as an
+                                 * [_UNKNOWN] member.
+                                 *
+                                 * An instance of [Field] can contain an unknown value in a couple
+                                 * of cases:
+                                 * - It was deserialized from data that doesn't match any known
+                                 *   member. For example, if the SDK is on an older version than the
+                                 *   API, then the API may respond with new members that the SDK is
+                                 *   unaware of.
+                                 * - It was constructed with an arbitrary value using the [of]
+                                 *   method.
+                                 */
+                                enum class Value {
+                                    LATENCY_SECONDS,
+                                    FIRST_TOKEN_SECONDS,
+                                    TOTAL_TOKENS,
+                                    PROMPT_TOKENS,
+                                    COMPLETION_TOKENS,
+                                    TOTAL_COST,
+                                    PROMPT_COST,
+                                    COMPLETION_COST,
+                                    /**
+                                     * An enum member indicating that [Field] was instantiated with
+                                     * an unknown value.
+                                     */
+                                    _UNKNOWN,
+                                }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value, or [Value._UNKNOWN] if the class was instantiated with an
+                                 * unknown value.
+                                 *
+                                 * Use the [known] method instead if you're certain the value is
+                                 * always known or if you want to throw for the unknown case.
+                                 */
+                                fun value(): Value =
+                                    when (this) {
+                                        LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                        FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                        TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                        PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                        COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                        TOTAL_COST -> Value.TOTAL_COST
+                                        PROMPT_COST -> Value.PROMPT_COST
+                                        COMPLETION_COST -> Value.COMPLETION_COST
+                                        else -> Value._UNKNOWN
+                                    }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value.
+                                 *
+                                 * Use the [value] method instead if you're uncertain the value is
+                                 * always known and don't want to throw for the unknown case.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value is a not a known member.
+                                 */
+                                fun known(): Known =
+                                    when (this) {
+                                        LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                        FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                        TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                        PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                        COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                        TOTAL_COST -> Known.TOTAL_COST
+                                        PROMPT_COST -> Known.PROMPT_COST
+                                        COMPLETION_COST -> Known.COMPLETION_COST
+                                        else ->
+                                            throw LangChainInvalidDataException(
+                                                "Unknown Field: $value"
+                                            )
+                                    }
+
+                                /**
+                                 * Returns this class instance's primitive wire representation.
+                                 *
+                                 * This differs from the [toString] method because that method is
+                                 * primarily for debugging and generally doesn't throw.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value does not have the expected primitive type.
+                                 */
+                                fun asString(): String =
+                                    _value().asString().orElseThrow {
+                                        LangChainInvalidDataException("Value is not a String")
+                                    }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Field = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    known()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    if (value() == Value._UNKNOWN) 0 else 1
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Field && value == other.value
+                                }
+
+                                override fun hashCode() = value.hashCode()
+
+                                override fun toString() = value.toString()
+                            }
+
+                            class Type
+                            @JsonCreator
+                            private constructor(private val value: JsonField<String>) : Enum {
+
+                                /**
+                                 * Returns this class instance's raw value.
+                                 *
+                                 * This is usually only useful if this instance was deserialized
+                                 * from data that doesn't match any known member, and you want to
+                                 * know that value. For example, if the SDK is on an older version
+                                 * than the API, then the API may respond with new members that the
+                                 * SDK is unaware of.
+                                 */
+                                @com.fasterxml.jackson.annotation.JsonValue
+                                fun _value(): JsonField<String> = value
+
+                                companion object {
+
+                                    @JvmField val SUM = of("sum")
+
+                                    @JvmField val MAX = of("max")
+
+                                    @JvmField val MIN = of("min")
+
+                                    @JvmField val AVG = of("avg")
+
+                                    @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                }
+
+                                /** An enum containing [Type]'s known values. */
+                                enum class Known {
+                                    SUM,
+                                    MAX,
+                                    MIN,
+                                    AVG,
+                                }
+
+                                /**
+                                 * An enum containing [Type]'s known values, as well as an
+                                 * [_UNKNOWN] member.
+                                 *
+                                 * An instance of [Type] can contain an unknown value in a couple of
+                                 * cases:
+                                 * - It was deserialized from data that doesn't match any known
+                                 *   member. For example, if the SDK is on an older version than the
+                                 *   API, then the API may respond with new members that the SDK is
+                                 *   unaware of.
+                                 * - It was constructed with an arbitrary value using the [of]
+                                 *   method.
+                                 */
+                                enum class Value {
+                                    SUM,
+                                    MAX,
+                                    MIN,
+                                    AVG,
+                                    /**
+                                     * An enum member indicating that [Type] was instantiated with
+                                     * an unknown value.
+                                     */
+                                    _UNKNOWN,
+                                }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value, or [Value._UNKNOWN] if the class was instantiated with an
+                                 * unknown value.
+                                 *
+                                 * Use the [known] method instead if you're certain the value is
+                                 * always known or if you want to throw for the unknown case.
+                                 */
+                                fun value(): Value =
+                                    when (this) {
+                                        SUM -> Value.SUM
+                                        MAX -> Value.MAX
+                                        MIN -> Value.MIN
+                                        AVG -> Value.AVG
+                                        else -> Value._UNKNOWN
+                                    }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value.
+                                 *
+                                 * Use the [value] method instead if you're uncertain the value is
+                                 * always known and don't want to throw for the unknown case.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value is a not a known member.
+                                 */
+                                fun known(): Known =
+                                    when (this) {
+                                        SUM -> Known.SUM
+                                        MAX -> Known.MAX
+                                        MIN -> Known.MIN
+                                        AVG -> Known.AVG
+                                        else ->
+                                            throw LangChainInvalidDataException(
+                                                "Unknown Type: $value"
+                                            )
+                                    }
+
+                                /**
+                                 * Returns this class instance's primitive wire representation.
+                                 *
+                                 * This differs from the [toString] method because that method is
+                                 * primarily for debugging and generally doesn't throw.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value does not have the expected primitive type.
+                                 */
+                                fun asString(): String =
+                                    _value().asString().orElseThrow {
+                                        LangChainInvalidDataException("Value is not a String")
+                                    }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Type = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    known()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    if (value() == Value._UNKNOWN) 0 else 1
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Type && value == other.value
+                                }
+
+                                override fun hashCode() = value.hashCode()
+
+                                override fun toString() = value.toString()
+                            }
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is CustomChartMetricScalar &&
+                                    field == other.field &&
+                                    type == other.type &&
+                                    filter == other.filter &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(field, type, filter, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                        }
+
+                        class CustomChartMetricPercentile
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val field: JsonField<Field>,
+                            private val params: JsonField<Params>,
+                            private val type: JsonValue,
+                            private val filter: JsonField<String>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                field: JsonField<Field> = JsonMissing.of(),
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                params: JsonField<Params> = JsonMissing.of(),
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                type: JsonValue = JsonMissing.of(),
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                filter: JsonField<String> = JsonMissing.of(),
+                            ) : this(field, params, type, filter, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun field(): Field = field.getRequired("field")
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun params(): Params = params.getRequired("params")
+
+                            /**
+                             * Expected to always return the following:
+                             * ```java
+                             * JsonValue.from("percentile")
+                             * ```
+                             *
+                             * However, this method can be useful for debugging and logging (e.g. if
+                             * the server responded with an unexpected value).
+                             */
+                            @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type (e.g. if the server responded with an unexpected
+                             *   value).
+                             */
+                            fun filter(): Optional<String> = filter.getOptional("filter")
+
+                            /**
+                             * Returns the raw JSON value of [field].
+                             *
+                             * Unlike [field], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("field")
+                            @ExcludeMissing
+                            fun _field(): JsonField<Field> = field
+
+                            /**
+                             * Returns the raw JSON value of [params].
+                             *
+                             * Unlike [params], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("params")
+                            @ExcludeMissing
+                            fun _params(): JsonField<Params> = params
+
+                            /**
+                             * Returns the raw JSON value of [filter].
+                             *
+                             * Unlike [filter], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            fun _filter(): JsonField<String> = filter
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [CustomChartMetricPercentile].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .field()
+                                 * .params()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [CustomChartMetricPercentile]. */
+                            class Builder internal constructor() {
+
+                                private var field: JsonField<Field>? = null
+                                private var params: JsonField<Params>? = null
+                                private var type: JsonValue = JsonValue.from("percentile")
+                                private var filter: JsonField<String> = JsonMissing.of()
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(
+                                    customChartMetricPercentile: CustomChartMetricPercentile
+                                ) = apply {
+                                    field = customChartMetricPercentile.field
+                                    params = customChartMetricPercentile.params
+                                    type = customChartMetricPercentile.type
+                                    filter = customChartMetricPercentile.filter
+                                    additionalProperties =
+                                        customChartMetricPercentile.additionalProperties
+                                            .toMutableMap()
+                                }
+
+                                fun field(field: Field) = field(JsonField.of(field))
+
+                                /**
+                                 * Sets [Builder.field] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.field] with a well-typed [Field]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                                fun params(params: Params) = params(JsonField.of(params))
+
+                                /**
+                                 * Sets [Builder.params] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.params] with a well-typed
+                                 * [Params] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun params(params: JsonField<Params>) = apply {
+                                    this.params = params
+                                }
+
+                                /**
+                                 * Sets the field to an arbitrary JSON value.
+                                 *
+                                 * It is usually unnecessary to call this method because the field
+                                 * defaults to the following:
+                                 * ```java
+                                 * JsonValue.from("percentile")
+                                 * ```
+                                 *
+                                 * This method is primarily for setting the field to an undocumented
+                                 * or not yet supported value.
+                                 */
+                                fun type(type: JsonValue) = apply { this.type = type }
+
+                                fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                                /**
+                                 * Alias for calling [Builder.filter] with `filter.orElse(null)`.
+                                 */
+                                fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                                /**
+                                 * Sets [Builder.filter] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.filter] with a well-typed
+                                 * [String] value instead. This method is primarily for setting the
+                                 * field to an undocumented or not yet supported value.
+                                 */
+                                fun filter(filter: JsonField<String>) = apply {
+                                    this.filter = filter
+                                }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [CustomChartMetricPercentile].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .field()
+                                 * .params()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): CustomChartMetricPercentile =
+                                    CustomChartMetricPercentile(
+                                        checkRequired("field", field),
+                                        checkRequired("params", params),
+                                        type,
+                                        filter,
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): CustomChartMetricPercentile = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                field().validate()
+                                params().validate()
+                                _type().let {
+                                    if (it != JsonValue.from("percentile")) {
+                                        throw LangChainInvalidDataException(
+                                            "'type' is invalid, received $it"
+                                        )
+                                    }
+                                }
+                                filter()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                    (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                    type.let { if (it == JsonValue.from("percentile")) 1 else 0 } +
+                                    (if (filter.asKnown().isPresent) 1 else 0)
+
+                            class Field
+                            @JsonCreator
+                            private constructor(private val value: JsonField<String>) : Enum {
+
+                                /**
+                                 * Returns this class instance's raw value.
+                                 *
+                                 * This is usually only useful if this instance was deserialized
+                                 * from data that doesn't match any known member, and you want to
+                                 * know that value. For example, if the SDK is on an older version
+                                 * than the API, then the API may respond with new members that the
+                                 * SDK is unaware of.
+                                 */
+                                @com.fasterxml.jackson.annotation.JsonValue
+                                fun _value(): JsonField<String> = value
+
+                                companion object {
+
+                                    @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                    @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                    @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                    @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                    @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                    @JvmField val TOTAL_COST = of("total_cost")
+
+                                    @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                    @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                    @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                                }
+
+                                /** An enum containing [Field]'s known values. */
+                                enum class Known {
+                                    LATENCY_SECONDS,
+                                    FIRST_TOKEN_SECONDS,
+                                    TOTAL_TOKENS,
+                                    PROMPT_TOKENS,
+                                    COMPLETION_TOKENS,
+                                    TOTAL_COST,
+                                    PROMPT_COST,
+                                    COMPLETION_COST,
+                                }
+
+                                /**
+                                 * An enum containing [Field]'s known values, as well as an
+                                 * [_UNKNOWN] member.
+                                 *
+                                 * An instance of [Field] can contain an unknown value in a couple
+                                 * of cases:
+                                 * - It was deserialized from data that doesn't match any known
+                                 *   member. For example, if the SDK is on an older version than the
+                                 *   API, then the API may respond with new members that the SDK is
+                                 *   unaware of.
+                                 * - It was constructed with an arbitrary value using the [of]
+                                 *   method.
+                                 */
+                                enum class Value {
+                                    LATENCY_SECONDS,
+                                    FIRST_TOKEN_SECONDS,
+                                    TOTAL_TOKENS,
+                                    PROMPT_TOKENS,
+                                    COMPLETION_TOKENS,
+                                    TOTAL_COST,
+                                    PROMPT_COST,
+                                    COMPLETION_COST,
+                                    /**
+                                     * An enum member indicating that [Field] was instantiated with
+                                     * an unknown value.
+                                     */
+                                    _UNKNOWN,
+                                }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value, or [Value._UNKNOWN] if the class was instantiated with an
+                                 * unknown value.
+                                 *
+                                 * Use the [known] method instead if you're certain the value is
+                                 * always known or if you want to throw for the unknown case.
+                                 */
+                                fun value(): Value =
+                                    when (this) {
+                                        LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                        FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                        TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                        PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                        COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                        TOTAL_COST -> Value.TOTAL_COST
+                                        PROMPT_COST -> Value.PROMPT_COST
+                                        COMPLETION_COST -> Value.COMPLETION_COST
+                                        else -> Value._UNKNOWN
+                                    }
+
+                                /**
+                                 * Returns an enum member corresponding to this class instance's
+                                 * value.
+                                 *
+                                 * Use the [value] method instead if you're uncertain the value is
+                                 * always known and don't want to throw for the unknown case.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value is a not a known member.
+                                 */
+                                fun known(): Known =
+                                    when (this) {
+                                        LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                        FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                        TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                        PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                        COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                        TOTAL_COST -> Known.TOTAL_COST
+                                        PROMPT_COST -> Known.PROMPT_COST
+                                        COMPLETION_COST -> Known.COMPLETION_COST
+                                        else ->
+                                            throw LangChainInvalidDataException(
+                                                "Unknown Field: $value"
+                                            )
+                                    }
+
+                                /**
+                                 * Returns this class instance's primitive wire representation.
+                                 *
+                                 * This differs from the [toString] method because that method is
+                                 * primarily for debugging and generally doesn't throw.
+                                 *
+                                 * @throws LangChainInvalidDataException if this class instance's
+                                 *   value does not have the expected primitive type.
+                                 */
+                                fun asString(): String =
+                                    _value().asString().orElseThrow {
+                                        LangChainInvalidDataException("Value is not a String")
+                                    }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Field = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    known()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    if (value() == Value._UNKNOWN) 0 else 1
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Field && value == other.value
+                                }
+
+                                override fun hashCode() = value.hashCode()
+
+                                override fun toString() = value.toString()
+                            }
+
+                            class Params
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val p: JsonField<Long>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("p")
+                                    @ExcludeMissing
+                                    p: JsonField<Long> = JsonMissing.of()
+                                ) : this(p, mutableMapOf())
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun p(): Long = p.getRequired("p")
+
+                                /**
+                                 * Returns the raw JSON value of [p].
+                                 *
+                                 * Unlike [p], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [Params].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .p()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [Params]. */
+                                class Builder internal constructor() {
+
+                                    private var p: JsonField<Long>? = null
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(params: Params) = apply {
+                                        p = params.p
+                                        additionalProperties =
+                                            params.additionalProperties.toMutableMap()
+                                    }
+
+                                    fun p(p: Long) = p(JsonField.of(p))
+
+                                    /**
+                                     * Sets [Builder.p] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.p] with a well-typed [Long]
+                                     * value instead. This method is primarily for setting the field
+                                     * to an undocumented or not yet supported value.
+                                     */
+                                    fun p(p: JsonField<Long>) = apply { this.p = p }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of [Params].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .p()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): Params =
+                                        Params(
+                                            checkRequired("p", p),
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): Params = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    p()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int = (if (p.asKnown().isPresent) 1 else 0)
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is Params &&
+                                        p == other.p &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(p, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "Params{p=$p, additionalProperties=$additionalProperties}"
+                            }
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is CustomChartMetricPercentile &&
+                                    field == other.field &&
+                                    params == other.params &&
+                                    type == other.type &&
+                                    filter == other.filter &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(field, params, type, filter, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "CustomChartMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                        }
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is CustomChartMetricRatioOutput &&
+                            denominator == other.denominator &&
+                            numerator == other.numerator &&
+                            type == other.type &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(denominator, numerator, type, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "CustomChartMetricRatioOutput{denominator=$denominator, numerator=$numerator, type=$type, additionalProperties=$additionalProperties}"
+                }
+            }
+
             /** LGP Metrics you can chart. */
             class ProjectMetric
             @JsonCreator
@@ -3512,11 +11976,14 @@ private constructor(
 
                 return other is Series &&
                     id == other.id &&
-                    metric == other.metric &&
                     name == other.name &&
                     feedbackKey == other.feedbackKey &&
+                    filterDefinition == other.filterDefinition &&
                     filters == other.filters &&
                     groupBy == other.groupBy &&
+                    groupByDefinitions == other.groupByDefinitions &&
+                    metric == other.metric &&
+                    metricDefinition == other.metricDefinition &&
                     projectMetric == other.projectMetric &&
                     workspaceId == other.workspaceId &&
                     additionalProperties == other.additionalProperties
@@ -3525,11 +11992,14 @@ private constructor(
             private val hashCode: Int by lazy {
                 Objects.hash(
                     id,
-                    metric,
                     name,
                     feedbackKey,
+                    filterDefinition,
                     filters,
                     groupBy,
+                    groupByDefinitions,
+                    metric,
+                    metricDefinition,
                     projectMetric,
                     workspaceId,
                     additionalProperties,
@@ -3539,7 +12009,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Series{id=$id, metric=$metric, name=$name, feedbackKey=$feedbackKey, filters=$filters, groupBy=$groupBy, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
+                "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
         }
 
         class CommonFilters
@@ -4823,6 +13293,14 @@ private constructor(
 
                     @JvmField val BAR = of("bar")
 
+                    @JvmField val TABLE = of("table")
+
+                    @JvmField val KPI = of("kpi")
+
+                    @JvmField val TOP_K = of("top-k")
+
+                    @JvmField val PIE = of("pie")
+
                     @JvmStatic fun of(value: String) = ChartType(JsonField.of(value))
                 }
 
@@ -4830,6 +13308,10 @@ private constructor(
                 enum class Known {
                     LINE,
                     BAR,
+                    TABLE,
+                    KPI,
+                    TOP_K,
+                    PIE,
                 }
 
                 /**
@@ -4844,6 +13326,10 @@ private constructor(
                 enum class Value {
                     LINE,
                     BAR,
+                    TABLE,
+                    KPI,
+                    TOP_K,
+                    PIE,
                     /**
                      * An enum member indicating that [ChartType] was instantiated with an unknown
                      * value.
@@ -4862,6 +13348,10 @@ private constructor(
                     when (this) {
                         LINE -> Value.LINE
                         BAR -> Value.BAR
+                        TABLE -> Value.TABLE
+                        KPI -> Value.KPI
+                        TOP_K -> Value.TOP_K
+                        PIE -> Value.PIE
                         else -> Value._UNKNOWN
                     }
 
@@ -4878,6 +13368,10 @@ private constructor(
                     when (this) {
                         LINE -> Known.LINE
                         BAR -> Known.BAR
+                        TABLE -> Known.TABLE
+                        KPI -> Known.KPI
+                        TOP_K -> Known.TOP_K
+                        PIE -> Known.PIE
                         else -> throw LangChainInvalidDataException("Unknown ChartType: $value")
                     }
 
@@ -5599,11 +14093,14 @@ private constructor(
             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
             private constructor(
                 private val id: JsonField<String>,
-                private val metric: JsonField<Metric>,
                 private val name: JsonField<String>,
                 private val feedbackKey: JsonField<String>,
+                private val filterDefinition: JsonField<FilterDefinition>,
                 private val filters: JsonField<Filters>,
                 private val groupBy: JsonField<GroupBy>,
+                private val groupByDefinitions: JsonField<List<GroupByDefinition>>,
+                private val metric: JsonField<Metric>,
+                private val metricDefinition: JsonField<MetricDefinition>,
                 private val projectMetric: JsonField<ProjectMetric>,
                 private val workspaceId: JsonField<String>,
                 private val additionalProperties: MutableMap<String, JsonValue>,
@@ -5612,21 +14109,30 @@ private constructor(
                 @JsonCreator
                 private constructor(
                     @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("metric")
-                    @ExcludeMissing
-                    metric: JsonField<Metric> = JsonMissing.of(),
                     @JsonProperty("name")
                     @ExcludeMissing
                     name: JsonField<String> = JsonMissing.of(),
                     @JsonProperty("feedback_key")
                     @ExcludeMissing
                     feedbackKey: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("filter_definition")
+                    @ExcludeMissing
+                    filterDefinition: JsonField<FilterDefinition> = JsonMissing.of(),
                     @JsonProperty("filters")
                     @ExcludeMissing
                     filters: JsonField<Filters> = JsonMissing.of(),
                     @JsonProperty("group_by")
                     @ExcludeMissing
                     groupBy: JsonField<GroupBy> = JsonMissing.of(),
+                    @JsonProperty("group_by_definitions")
+                    @ExcludeMissing
+                    groupByDefinitions: JsonField<List<GroupByDefinition>> = JsonMissing.of(),
+                    @JsonProperty("metric")
+                    @ExcludeMissing
+                    metric: JsonField<Metric> = JsonMissing.of(),
+                    @JsonProperty("metric_definition")
+                    @ExcludeMissing
+                    metricDefinition: JsonField<MetricDefinition> = JsonMissing.of(),
                     @JsonProperty("project_metric")
                     @ExcludeMissing
                     projectMetric: JsonField<ProjectMetric> = JsonMissing.of(),
@@ -5635,11 +14141,14 @@ private constructor(
                     workspaceId: JsonField<String> = JsonMissing.of(),
                 ) : this(
                     id,
-                    metric,
                     name,
                     feedbackKey,
+                    filterDefinition,
                     filters,
                     groupBy,
+                    groupByDefinitions,
+                    metric,
+                    metricDefinition,
                     projectMetric,
                     workspaceId,
                     mutableMapOf(),
@@ -5651,16 +14160,6 @@ private constructor(
                  *   unexpected value).
                  */
                 fun id(): String = id.getRequired("id")
-
-                /**
-                 * Metrics you can chart. Feedback metrics are not available for organization-scoped
-                 * charts.
-                 *
-                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
-                 */
-                fun metric(): Metric = metric.getRequired("metric")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
@@ -5679,6 +14178,13 @@ private constructor(
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type
                  *   (e.g. if the server responded with an unexpected value).
                  */
+                fun filterDefinition(): Optional<FilterDefinition> =
+                    filterDefinition.getOptional("filter_definition")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
                 fun filters(): Optional<Filters> = filters.getOptional("filters")
 
                 /**
@@ -5688,6 +14194,29 @@ private constructor(
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun groupBy(): Optional<GroupBy> = groupBy.getOptional("group_by")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun groupByDefinitions(): Optional<List<GroupByDefinition>> =
+                    groupByDefinitions.getOptional("group_by_definitions")
+
+                /**
+                 * Metrics you can chart. Feedback metrics are not available for organization-scoped
+                 * charts.
+                 *
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun metric(): Optional<Metric> = metric.getOptional("metric")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun metricDefinition(): Optional<MetricDefinition> =
+                    metricDefinition.getOptional("metric_definition")
 
                 /**
                  * LGP Metrics you can chart.
@@ -5712,14 +14241,6 @@ private constructor(
                 @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
 
                 /**
-                 * Returns the raw JSON value of [metric].
-                 *
-                 * Unlike [metric], this method doesn't throw if the JSON field has an unexpected
-                 * type.
-                 */
-                @JsonProperty("metric") @ExcludeMissing fun _metric(): JsonField<Metric> = metric
-
-                /**
                  * Returns the raw JSON value of [name].
                  *
                  * Unlike [name], this method doesn't throw if the JSON field has an unexpected
@@ -5736,6 +14257,16 @@ private constructor(
                 @JsonProperty("feedback_key")
                 @ExcludeMissing
                 fun _feedbackKey(): JsonField<String> = feedbackKey
+
+                /**
+                 * Returns the raw JSON value of [filterDefinition].
+                 *
+                 * Unlike [filterDefinition], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("filter_definition")
+                @ExcludeMissing
+                fun _filterDefinition(): JsonField<FilterDefinition> = filterDefinition
 
                 /**
                  * Returns the raw JSON value of [filters].
@@ -5756,6 +14287,34 @@ private constructor(
                 @JsonProperty("group_by")
                 @ExcludeMissing
                 fun _groupBy(): JsonField<GroupBy> = groupBy
+
+                /**
+                 * Returns the raw JSON value of [groupByDefinitions].
+                 *
+                 * Unlike [groupByDefinitions], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("group_by_definitions")
+                @ExcludeMissing
+                fun _groupByDefinitions(): JsonField<List<GroupByDefinition>> = groupByDefinitions
+
+                /**
+                 * Returns the raw JSON value of [metric].
+                 *
+                 * Unlike [metric], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("metric") @ExcludeMissing fun _metric(): JsonField<Metric> = metric
+
+                /**
+                 * Returns the raw JSON value of [metricDefinition].
+                 *
+                 * Unlike [metricDefinition], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("metric_definition")
+                @ExcludeMissing
+                fun _metricDefinition(): JsonField<MetricDefinition> = metricDefinition
 
                 /**
                  * Returns the raw JSON value of [projectMetric].
@@ -5797,7 +14356,6 @@ private constructor(
                      * The following fields are required:
                      * ```java
                      * .id()
-                     * .metric()
                      * .name()
                      * ```
                      */
@@ -5808,11 +14366,15 @@ private constructor(
                 class Builder internal constructor() {
 
                     private var id: JsonField<String>? = null
-                    private var metric: JsonField<Metric>? = null
                     private var name: JsonField<String>? = null
                     private var feedbackKey: JsonField<String> = JsonMissing.of()
+                    private var filterDefinition: JsonField<FilterDefinition> = JsonMissing.of()
                     private var filters: JsonField<Filters> = JsonMissing.of()
                     private var groupBy: JsonField<GroupBy> = JsonMissing.of()
+                    private var groupByDefinitions: JsonField<MutableList<GroupByDefinition>>? =
+                        null
+                    private var metric: JsonField<Metric> = JsonMissing.of()
+                    private var metricDefinition: JsonField<MetricDefinition> = JsonMissing.of()
                     private var projectMetric: JsonField<ProjectMetric> = JsonMissing.of()
                     private var workspaceId: JsonField<String> = JsonMissing.of()
                     private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -5820,11 +14382,14 @@ private constructor(
                     @JvmSynthetic
                     internal fun from(series: Series) = apply {
                         id = series.id
-                        metric = series.metric
                         name = series.name
                         feedbackKey = series.feedbackKey
+                        filterDefinition = series.filterDefinition
                         filters = series.filters
                         groupBy = series.groupBy
+                        groupByDefinitions = series.groupByDefinitions.map { it.toMutableList() }
+                        metric = series.metric
+                        metricDefinition = series.metricDefinition
                         projectMetric = series.projectMetric
                         workspaceId = series.workspaceId
                         additionalProperties = series.additionalProperties.toMutableMap()
@@ -5840,21 +14405,6 @@ private constructor(
                      * not yet supported value.
                      */
                     fun id(id: JsonField<String>) = apply { this.id = id }
-
-                    /**
-                     * Metrics you can chart. Feedback metrics are not available for
-                     * organization-scoped charts.
-                     */
-                    fun metric(metric: Metric) = metric(JsonField.of(metric))
-
-                    /**
-                     * Sets [Builder.metric] to an arbitrary JSON value.
-                     *
-                     * You should usually call [Builder.metric] with a well-typed [Metric] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
-                     */
-                    fun metric(metric: JsonField<Metric>) = apply { this.metric = metric }
 
                     fun name(name: String) = name(JsonField.of(name))
 
@@ -5885,6 +14435,54 @@ private constructor(
                         this.feedbackKey = feedbackKey
                     }
 
+                    fun filterDefinition(filterDefinition: FilterDefinition?) =
+                        filterDefinition(JsonField.ofNullable(filterDefinition))
+
+                    /**
+                     * Alias for calling [Builder.filterDefinition] with
+                     * `filterDefinition.orElse(null)`.
+                     */
+                    fun filterDefinition(filterDefinition: Optional<FilterDefinition>) =
+                        filterDefinition(filterDefinition.getOrNull())
+
+                    /**
+                     * Sets [Builder.filterDefinition] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.filterDefinition] with a well-typed
+                     * [FilterDefinition] value instead. This method is primarily for setting the
+                     * field to an undocumented or not yet supported value.
+                     */
+                    fun filterDefinition(filterDefinition: JsonField<FilterDefinition>) = apply {
+                        this.filterDefinition = filterDefinition
+                    }
+
+                    /**
+                     * Alias for calling [filterDefinition] with
+                     * `FilterDefinition.ofCustomChartFilterByTracingProject(customChartFilterByTracingProject)`.
+                     */
+                    fun filterDefinition(
+                        customChartFilterByTracingProject:
+                            FilterDefinition.CustomChartFilterByTracingProject
+                    ) =
+                        filterDefinition(
+                            FilterDefinition.ofCustomChartFilterByTracingProject(
+                                customChartFilterByTracingProject
+                            )
+                        )
+
+                    /**
+                     * Alias for calling [filterDefinition] with
+                     * `FilterDefinition.ofCustomChartFilterByDataset(customChartFilterByDataset)`.
+                     */
+                    fun filterDefinition(
+                        customChartFilterByDataset: FilterDefinition.CustomChartFilterByDataset
+                    ) =
+                        filterDefinition(
+                            FilterDefinition.ofCustomChartFilterByDataset(
+                                customChartFilterByDataset
+                            )
+                        )
+
                     fun filters(filters: Filters?) = filters(JsonField.ofNullable(filters))
 
                     /** Alias for calling [Builder.filters] with `filters.orElse(null)`. */
@@ -5913,6 +14511,149 @@ private constructor(
                      * not yet supported value.
                      */
                     fun groupBy(groupBy: JsonField<GroupBy>) = apply { this.groupBy = groupBy }
+
+                    fun groupByDefinitions(groupByDefinitions: List<GroupByDefinition>?) =
+                        groupByDefinitions(JsonField.ofNullable(groupByDefinitions))
+
+                    /**
+                     * Alias for calling [Builder.groupByDefinitions] with
+                     * `groupByDefinitions.orElse(null)`.
+                     */
+                    fun groupByDefinitions(groupByDefinitions: Optional<List<GroupByDefinition>>) =
+                        groupByDefinitions(groupByDefinitions.getOrNull())
+
+                    /**
+                     * Sets [Builder.groupByDefinitions] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.groupByDefinitions] with a well-typed
+                     * `List<GroupByDefinition>` value instead. This method is primarily for setting
+                     * the field to an undocumented or not yet supported value.
+                     */
+                    fun groupByDefinitions(groupByDefinitions: JsonField<List<GroupByDefinition>>) =
+                        apply {
+                            this.groupByDefinitions = groupByDefinitions.map { it.toMutableList() }
+                        }
+
+                    /**
+                     * Adds a single [GroupByDefinition] to [groupByDefinitions].
+                     *
+                     * @throws IllegalStateException if the field was previously set to a non-list.
+                     */
+                    fun addGroupByDefinition(groupByDefinition: GroupByDefinition) = apply {
+                        groupByDefinitions =
+                            (groupByDefinitions ?: JsonField.of(mutableListOf())).also {
+                                checkKnown("groupByDefinitions", it).add(groupByDefinition)
+                            }
+                    }
+
+                    /**
+                     * Alias for calling [addGroupByDefinition] with
+                     * `GroupByDefinition.ofCustomChartGroupByPlain(customChartGroupByPlain)`.
+                     */
+                    fun addGroupByDefinition(
+                        customChartGroupByPlain: GroupByDefinition.CustomChartGroupByPlain
+                    ) =
+                        addGroupByDefinition(
+                            GroupByDefinition.ofCustomChartGroupByPlain(customChartGroupByPlain)
+                        )
+
+                    /**
+                     * Alias for calling [addGroupByDefinition] with
+                     * `GroupByDefinition.ofCustomChartGroupByComplex(customChartGroupByComplex)`.
+                     */
+                    fun addGroupByDefinition(
+                        customChartGroupByComplex: GroupByDefinition.CustomChartGroupByComplex
+                    ) =
+                        addGroupByDefinition(
+                            GroupByDefinition.ofCustomChartGroupByComplex(customChartGroupByComplex)
+                        )
+
+                    /**
+                     * Metrics you can chart. Feedback metrics are not available for
+                     * organization-scoped charts.
+                     */
+                    fun metric(metric: Metric?) = metric(JsonField.ofNullable(metric))
+
+                    /** Alias for calling [Builder.metric] with `metric.orElse(null)`. */
+                    fun metric(metric: Optional<Metric>) = metric(metric.getOrNull())
+
+                    /**
+                     * Sets [Builder.metric] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.metric] with a well-typed [Metric] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun metric(metric: JsonField<Metric>) = apply { this.metric = metric }
+
+                    fun metricDefinition(metricDefinition: MetricDefinition?) =
+                        metricDefinition(JsonField.ofNullable(metricDefinition))
+
+                    /**
+                     * Alias for calling [Builder.metricDefinition] with
+                     * `metricDefinition.orElse(null)`.
+                     */
+                    fun metricDefinition(metricDefinition: Optional<MetricDefinition>) =
+                        metricDefinition(metricDefinition.getOrNull())
+
+                    /**
+                     * Sets [Builder.metricDefinition] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.metricDefinition] with a well-typed
+                     * [MetricDefinition] value instead. This method is primarily for setting the
+                     * field to an undocumented or not yet supported value.
+                     */
+                    fun metricDefinition(metricDefinition: JsonField<MetricDefinition>) = apply {
+                        this.metricDefinition = metricDefinition
+                    }
+
+                    /**
+                     * Alias for calling [metricDefinition] with
+                     * `MetricDefinition.ofCustomChartMetricCount(customChartMetricCount)`.
+                     */
+                    fun metricDefinition(
+                        customChartMetricCount: MetricDefinition.CustomChartMetricCount
+                    ) =
+                        metricDefinition(
+                            MetricDefinition.ofCustomChartMetricCount(customChartMetricCount)
+                        )
+
+                    /**
+                     * Alias for calling [metricDefinition] with
+                     * `MetricDefinition.ofCustomChartMetricScalar(customChartMetricScalar)`.
+                     */
+                    fun metricDefinition(
+                        customChartMetricScalar: MetricDefinition.CustomChartMetricScalar
+                    ) =
+                        metricDefinition(
+                            MetricDefinition.ofCustomChartMetricScalar(customChartMetricScalar)
+                        )
+
+                    /**
+                     * Alias for calling [metricDefinition] with
+                     * `MetricDefinition.ofCustomChartMetricPercentile(customChartMetricPercentile)`.
+                     */
+                    fun metricDefinition(
+                        customChartMetricPercentile: MetricDefinition.CustomChartMetricPercentile
+                    ) =
+                        metricDefinition(
+                            MetricDefinition.ofCustomChartMetricPercentile(
+                                customChartMetricPercentile
+                            )
+                        )
+
+                    /**
+                     * Alias for calling [metricDefinition] with
+                     * `MetricDefinition.ofCustomChartMetricRatioOutput(customChartMetricRatioOutput)`.
+                     */
+                    fun metricDefinition(
+                        customChartMetricRatioOutput: MetricDefinition.CustomChartMetricRatioOutput
+                    ) =
+                        metricDefinition(
+                            MetricDefinition.ofCustomChartMetricRatioOutput(
+                                customChartMetricRatioOutput
+                            )
+                        )
 
                     /** LGP Metrics you can chart. */
                     fun projectMetric(projectMetric: ProjectMetric?) =
@@ -5983,7 +14724,6 @@ private constructor(
                      * The following fields are required:
                      * ```java
                      * .id()
-                     * .metric()
                      * .name()
                      * ```
                      *
@@ -5992,11 +14732,14 @@ private constructor(
                     fun build(): Series =
                         Series(
                             checkRequired("id", id),
-                            checkRequired("metric", metric),
                             checkRequired("name", name),
                             feedbackKey,
+                            filterDefinition,
                             filters,
                             groupBy,
+                            (groupByDefinitions ?: JsonMissing.of()).map { it.toImmutable() },
+                            metric,
+                            metricDefinition,
                             projectMetric,
                             workspaceId,
                             additionalProperties.toMutableMap(),
@@ -6021,11 +14764,14 @@ private constructor(
                     }
 
                     id()
-                    metric().validate()
                     name()
                     feedbackKey()
+                    filterDefinition().ifPresent { it.validate() }
                     filters().ifPresent { it.validate() }
                     groupBy().ifPresent { it.validate() }
+                    groupByDefinitions().ifPresent { it.forEach { it.validate() } }
+                    metric().ifPresent { it.validate() }
+                    metricDefinition().ifPresent { it.validate() }
                     projectMetric().ifPresent { it.validate() }
                     workspaceId()
                     validated = true
@@ -6048,247 +14794,91 @@ private constructor(
                 @JvmSynthetic
                 internal fun validity(): Int =
                     (if (id.asKnown().isPresent) 1 else 0) +
-                        (metric.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (name.asKnown().isPresent) 1 else 0) +
                         (if (feedbackKey.asKnown().isPresent) 1 else 0) +
+                        (filterDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                         (filters.asKnown().getOrNull()?.validity() ?: 0) +
                         (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
+                        (groupByDefinitions.asKnown().getOrNull()?.sumOf { it.validity().toInt() }
+                            ?: 0) +
+                        (metric.asKnown().getOrNull()?.validity() ?: 0) +
+                        (metricDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                         (projectMetric.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (workspaceId.asKnown().isPresent) 1 else 0)
 
-                /**
-                 * Metrics you can chart. Feedback metrics are not available for organization-scoped
-                 * charts.
-                 */
-                class Metric
-                @JsonCreator
-                private constructor(private val value: JsonField<String>) : Enum {
+                @JsonDeserialize(using = FilterDefinition.Deserializer::class)
+                @JsonSerialize(using = FilterDefinition.Serializer::class)
+                class FilterDefinition
+                private constructor(
+                    private val customChartFilterByTracingProject:
+                        CustomChartFilterByTracingProject? =
+                        null,
+                    private val customChartFilterByDataset: CustomChartFilterByDataset? = null,
+                    private val _json: JsonValue? = null,
+                ) {
+
+                    fun customChartFilterByTracingProject():
+                        Optional<CustomChartFilterByTracingProject> =
+                        Optional.ofNullable(customChartFilterByTracingProject)
+
+                    fun customChartFilterByDataset(): Optional<CustomChartFilterByDataset> =
+                        Optional.ofNullable(customChartFilterByDataset)
+
+                    fun isCustomChartFilterByTracingProject(): Boolean =
+                        customChartFilterByTracingProject != null
+
+                    fun isCustomChartFilterByDataset(): Boolean = customChartFilterByDataset != null
+
+                    fun asCustomChartFilterByTracingProject(): CustomChartFilterByTracingProject =
+                        customChartFilterByTracingProject.getOrThrow(
+                            "customChartFilterByTracingProject"
+                        )
+
+                    fun asCustomChartFilterByDataset(): CustomChartFilterByDataset =
+                        customChartFilterByDataset.getOrThrow("customChartFilterByDataset")
+
+                    fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
                     /**
-                     * Returns this class instance's raw value.
+                     * Maps this instance's current variant to a value of type [T] using the given
+                     * [visitor].
                      *
-                     * This is usually only useful if this instance was deserialized from data that
-                     * doesn't match any known member, and you want to know that value. For example,
-                     * if the SDK is on an older version than the API, then the API may respond with
-                     * new members that the SDK is unaware of.
+                     * Note that this method is _not_ forwards compatible with new variants from the
+                     * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not
+                     * known to this version of the SDK gracefully, consider overriding
+                     * [Visitor.unknown]:
+                     * ```java
+                     * import com.langchain.smith.core.JsonValue;
+                     * import java.util.Optional;
+                     *
+                     * Optional<String> result = filterDefinition.accept(new FilterDefinition.Visitor<Optional<String>>() {
+                     *     @Override
+                     *     public Optional<String> visitCustomChartFilterByTracingProject(CustomChartFilterByTracingProject customChartFilterByTracingProject) {
+                     *         return Optional.of(customChartFilterByTracingProject.toString());
+                     *     }
+                     *
+                     *     // ...
+                     *
+                     *     @Override
+                     *     public Optional<String> unknown(JsonValue json) {
+                     *         // Or inspect the `json`.
+                     *         return Optional.empty();
+                     *     }
+                     * });
+                     * ```
+                     *
+                     * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden
+                     *   in [visitor] and the current variant is unknown.
                      */
-                    @com.fasterxml.jackson.annotation.JsonValue
-                    fun _value(): JsonField<String> = value
-
-                    companion object {
-
-                        @JvmField val RUN_COUNT = of("run_count")
-
-                        @JvmField val LATENCY_P50 = of("latency_p50")
-
-                        @JvmField val LATENCY_P99 = of("latency_p99")
-
-                        @JvmField val LATENCY_AVG = of("latency_avg")
-
-                        @JvmField val FIRST_TOKEN_P50 = of("first_token_p50")
-
-                        @JvmField val FIRST_TOKEN_P99 = of("first_token_p99")
-
-                        @JvmField val TOTAL_TOKENS = of("total_tokens")
-
-                        @JvmField val PROMPT_TOKENS = of("prompt_tokens")
-
-                        @JvmField val COMPLETION_TOKENS = of("completion_tokens")
-
-                        @JvmField val MEDIAN_TOKENS = of("median_tokens")
-
-                        @JvmField val COMPLETION_TOKENS_P50 = of("completion_tokens_p50")
-
-                        @JvmField val PROMPT_TOKENS_P50 = of("prompt_tokens_p50")
-
-                        @JvmField val TOKENS_P99 = of("tokens_p99")
-
-                        @JvmField val COMPLETION_TOKENS_P99 = of("completion_tokens_p99")
-
-                        @JvmField val PROMPT_TOKENS_P99 = of("prompt_tokens_p99")
-
-                        @JvmField val FEEDBACK = of("feedback")
-
-                        @JvmField val FEEDBACK_SCORE_AVG = of("feedback_score_avg")
-
-                        @JvmField val FEEDBACK_VALUES = of("feedback_values")
-
-                        @JvmField val TOTAL_COST = of("total_cost")
-
-                        @JvmField val PROMPT_COST = of("prompt_cost")
-
-                        @JvmField val COMPLETION_COST = of("completion_cost")
-
-                        @JvmField val ERROR_RATE = of("error_rate")
-
-                        @JvmField val STREAMING_RATE = of("streaming_rate")
-
-                        @JvmField val COST_P50 = of("cost_p50")
-
-                        @JvmField val COST_P99 = of("cost_p99")
-
-                        @JvmStatic fun of(value: String) = Metric(JsonField.of(value))
-                    }
-
-                    /** An enum containing [Metric]'s known values. */
-                    enum class Known {
-                        RUN_COUNT,
-                        LATENCY_P50,
-                        LATENCY_P99,
-                        LATENCY_AVG,
-                        FIRST_TOKEN_P50,
-                        FIRST_TOKEN_P99,
-                        TOTAL_TOKENS,
-                        PROMPT_TOKENS,
-                        COMPLETION_TOKENS,
-                        MEDIAN_TOKENS,
-                        COMPLETION_TOKENS_P50,
-                        PROMPT_TOKENS_P50,
-                        TOKENS_P99,
-                        COMPLETION_TOKENS_P99,
-                        PROMPT_TOKENS_P99,
-                        FEEDBACK,
-                        FEEDBACK_SCORE_AVG,
-                        FEEDBACK_VALUES,
-                        TOTAL_COST,
-                        PROMPT_COST,
-                        COMPLETION_COST,
-                        ERROR_RATE,
-                        STREAMING_RATE,
-                        COST_P50,
-                        COST_P99,
-                    }
-
-                    /**
-                     * An enum containing [Metric]'s known values, as well as an [_UNKNOWN] member.
-                     *
-                     * An instance of [Metric] can contain an unknown value in a couple of cases:
-                     * - It was deserialized from data that doesn't match any known member. For
-                     *   example, if the SDK is on an older version than the API, then the API may
-                     *   respond with new members that the SDK is unaware of.
-                     * - It was constructed with an arbitrary value using the [of] method.
-                     */
-                    enum class Value {
-                        RUN_COUNT,
-                        LATENCY_P50,
-                        LATENCY_P99,
-                        LATENCY_AVG,
-                        FIRST_TOKEN_P50,
-                        FIRST_TOKEN_P99,
-                        TOTAL_TOKENS,
-                        PROMPT_TOKENS,
-                        COMPLETION_TOKENS,
-                        MEDIAN_TOKENS,
-                        COMPLETION_TOKENS_P50,
-                        PROMPT_TOKENS_P50,
-                        TOKENS_P99,
-                        COMPLETION_TOKENS_P99,
-                        PROMPT_TOKENS_P99,
-                        FEEDBACK,
-                        FEEDBACK_SCORE_AVG,
-                        FEEDBACK_VALUES,
-                        TOTAL_COST,
-                        PROMPT_COST,
-                        COMPLETION_COST,
-                        ERROR_RATE,
-                        STREAMING_RATE,
-                        COST_P50,
-                        COST_P99,
-                        /**
-                         * An enum member indicating that [Metric] was instantiated with an unknown
-                         * value.
-                         */
-                        _UNKNOWN,
-                    }
-
-                    /**
-                     * Returns an enum member corresponding to this class instance's value, or
-                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
-                     *
-                     * Use the [known] method instead if you're certain the value is always known or
-                     * if you want to throw for the unknown case.
-                     */
-                    fun value(): Value =
-                        when (this) {
-                            RUN_COUNT -> Value.RUN_COUNT
-                            LATENCY_P50 -> Value.LATENCY_P50
-                            LATENCY_P99 -> Value.LATENCY_P99
-                            LATENCY_AVG -> Value.LATENCY_AVG
-                            FIRST_TOKEN_P50 -> Value.FIRST_TOKEN_P50
-                            FIRST_TOKEN_P99 -> Value.FIRST_TOKEN_P99
-                            TOTAL_TOKENS -> Value.TOTAL_TOKENS
-                            PROMPT_TOKENS -> Value.PROMPT_TOKENS
-                            COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
-                            MEDIAN_TOKENS -> Value.MEDIAN_TOKENS
-                            COMPLETION_TOKENS_P50 -> Value.COMPLETION_TOKENS_P50
-                            PROMPT_TOKENS_P50 -> Value.PROMPT_TOKENS_P50
-                            TOKENS_P99 -> Value.TOKENS_P99
-                            COMPLETION_TOKENS_P99 -> Value.COMPLETION_TOKENS_P99
-                            PROMPT_TOKENS_P99 -> Value.PROMPT_TOKENS_P99
-                            FEEDBACK -> Value.FEEDBACK
-                            FEEDBACK_SCORE_AVG -> Value.FEEDBACK_SCORE_AVG
-                            FEEDBACK_VALUES -> Value.FEEDBACK_VALUES
-                            TOTAL_COST -> Value.TOTAL_COST
-                            PROMPT_COST -> Value.PROMPT_COST
-                            COMPLETION_COST -> Value.COMPLETION_COST
-                            ERROR_RATE -> Value.ERROR_RATE
-                            STREAMING_RATE -> Value.STREAMING_RATE
-                            COST_P50 -> Value.COST_P50
-                            COST_P99 -> Value.COST_P99
-                            else -> Value._UNKNOWN
-                        }
-
-                    /**
-                     * Returns an enum member corresponding to this class instance's value.
-                     *
-                     * Use the [value] method instead if you're uncertain the value is always known
-                     * and don't want to throw for the unknown case.
-                     *
-                     * @throws LangChainInvalidDataException if this class instance's value is a not
-                     *   a known member.
-                     */
-                    fun known(): Known =
-                        when (this) {
-                            RUN_COUNT -> Known.RUN_COUNT
-                            LATENCY_P50 -> Known.LATENCY_P50
-                            LATENCY_P99 -> Known.LATENCY_P99
-                            LATENCY_AVG -> Known.LATENCY_AVG
-                            FIRST_TOKEN_P50 -> Known.FIRST_TOKEN_P50
-                            FIRST_TOKEN_P99 -> Known.FIRST_TOKEN_P99
-                            TOTAL_TOKENS -> Known.TOTAL_TOKENS
-                            PROMPT_TOKENS -> Known.PROMPT_TOKENS
-                            COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
-                            MEDIAN_TOKENS -> Known.MEDIAN_TOKENS
-                            COMPLETION_TOKENS_P50 -> Known.COMPLETION_TOKENS_P50
-                            PROMPT_TOKENS_P50 -> Known.PROMPT_TOKENS_P50
-                            TOKENS_P99 -> Known.TOKENS_P99
-                            COMPLETION_TOKENS_P99 -> Known.COMPLETION_TOKENS_P99
-                            PROMPT_TOKENS_P99 -> Known.PROMPT_TOKENS_P99
-                            FEEDBACK -> Known.FEEDBACK
-                            FEEDBACK_SCORE_AVG -> Known.FEEDBACK_SCORE_AVG
-                            FEEDBACK_VALUES -> Known.FEEDBACK_VALUES
-                            TOTAL_COST -> Known.TOTAL_COST
-                            PROMPT_COST -> Known.PROMPT_COST
-                            COMPLETION_COST -> Known.COMPLETION_COST
-                            ERROR_RATE -> Known.ERROR_RATE
-                            STREAMING_RATE -> Known.STREAMING_RATE
-                            COST_P50 -> Known.COST_P50
-                            COST_P99 -> Known.COST_P99
-                            else -> throw LangChainInvalidDataException("Unknown Metric: $value")
-                        }
-
-                    /**
-                     * Returns this class instance's primitive wire representation.
-                     *
-                     * This differs from the [toString] method because that method is primarily for
-                     * debugging and generally doesn't throw.
-                     *
-                     * @throws LangChainInvalidDataException if this class instance's value does not
-                     *   have the expected primitive type.
-                     */
-                    fun asString(): String =
-                        _value().asString().orElseThrow {
-                            LangChainInvalidDataException("Value is not a String")
+                    fun <T> accept(visitor: Visitor<T>): T =
+                        when {
+                            customChartFilterByTracingProject != null ->
+                                visitor.visitCustomChartFilterByTracingProject(
+                                    customChartFilterByTracingProject
+                                )
+                            customChartFilterByDataset != null ->
+                                visitor.visitCustomChartFilterByDataset(customChartFilterByDataset)
+                            else -> visitor.unknown(_json)
                         }
 
                     private var validated: Boolean = false
@@ -6303,12 +14893,27 @@ private constructor(
                      * @throws LangChainInvalidDataException if any value type in this object
                      *   doesn't match its expected type.
                      */
-                    fun validate(): Metric = apply {
+                    fun validate(): FilterDefinition = apply {
                         if (validated) {
                             return@apply
                         }
 
-                        known()
+                        accept(
+                            object : Visitor<Unit> {
+                                override fun visitCustomChartFilterByTracingProject(
+                                    customChartFilterByTracingProject:
+                                        CustomChartFilterByTracingProject
+                                ) {
+                                    customChartFilterByTracingProject.validate()
+                                }
+
+                                override fun visitCustomChartFilterByDataset(
+                                    customChartFilterByDataset: CustomChartFilterByDataset
+                                ) {
+                                    customChartFilterByDataset.validate()
+                                }
+                            }
+                        )
                         validated = true
                     }
 
@@ -6327,19 +14932,818 @@ private constructor(
                      * Used for best match union deserialization.
                      */
                     @JvmSynthetic
-                    internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+                    internal fun validity(): Int =
+                        accept(
+                            object : Visitor<Int> {
+                                override fun visitCustomChartFilterByTracingProject(
+                                    customChartFilterByTracingProject:
+                                        CustomChartFilterByTracingProject
+                                ) = customChartFilterByTracingProject.validity()
+
+                                override fun visitCustomChartFilterByDataset(
+                                    customChartFilterByDataset: CustomChartFilterByDataset
+                                ) = customChartFilterByDataset.validity()
+
+                                override fun unknown(json: JsonValue?) = 0
+                            }
+                        )
 
                     override fun equals(other: Any?): Boolean {
                         if (this === other) {
                             return true
                         }
 
-                        return other is Metric && value == other.value
+                        return other is FilterDefinition &&
+                            customChartFilterByTracingProject ==
+                                other.customChartFilterByTracingProject &&
+                            customChartFilterByDataset == other.customChartFilterByDataset
                     }
 
-                    override fun hashCode() = value.hashCode()
+                    override fun hashCode(): Int =
+                        Objects.hash(customChartFilterByTracingProject, customChartFilterByDataset)
 
-                    override fun toString() = value.toString()
+                    override fun toString(): String =
+                        when {
+                            customChartFilterByTracingProject != null ->
+                                "FilterDefinition{customChartFilterByTracingProject=$customChartFilterByTracingProject}"
+                            customChartFilterByDataset != null ->
+                                "FilterDefinition{customChartFilterByDataset=$customChartFilterByDataset}"
+                            _json != null -> "FilterDefinition{_unknown=$_json}"
+                            else -> throw IllegalStateException("Invalid FilterDefinition")
+                        }
+
+                    companion object {
+
+                        @JvmStatic
+                        fun ofCustomChartFilterByTracingProject(
+                            customChartFilterByTracingProject: CustomChartFilterByTracingProject
+                        ) =
+                            FilterDefinition(
+                                customChartFilterByTracingProject =
+                                    customChartFilterByTracingProject
+                            )
+
+                        @JvmStatic
+                        fun ofCustomChartFilterByDataset(
+                            customChartFilterByDataset: CustomChartFilterByDataset
+                        ) =
+                            FilterDefinition(
+                                customChartFilterByDataset = customChartFilterByDataset
+                            )
+                    }
+
+                    /**
+                     * An interface that defines how to map each variant of [FilterDefinition] to a
+                     * value of type [T].
+                     */
+                    interface Visitor<out T> {
+
+                        fun visitCustomChartFilterByTracingProject(
+                            customChartFilterByTracingProject: CustomChartFilterByTracingProject
+                        ): T
+
+                        fun visitCustomChartFilterByDataset(
+                            customChartFilterByDataset: CustomChartFilterByDataset
+                        ): T
+
+                        /**
+                         * Maps an unknown variant of [FilterDefinition] to a value of type [T].
+                         *
+                         * An instance of [FilterDefinition] can contain an unknown variant if it
+                         * was deserialized from data that doesn't match any known variant. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new variants that the SDK is unaware of.
+                         *
+                         * @throws LangChainInvalidDataException in the default implementation.
+                         */
+                        fun unknown(json: JsonValue?): T {
+                            throw LangChainInvalidDataException("Unknown FilterDefinition: $json")
+                        }
+                    }
+
+                    internal class Deserializer :
+                        BaseDeserializer<FilterDefinition>(FilterDefinition::class) {
+
+                        override fun ObjectCodec.deserialize(node: JsonNode): FilterDefinition {
+                            val json = JsonValue.fromJsonNode(node)
+
+                            val bestMatches =
+                                sequenceOf(
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<CustomChartFilterByTracingProject>(),
+                                            )
+                                            ?.let {
+                                                FilterDefinition(
+                                                    customChartFilterByTracingProject = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<CustomChartFilterByDataset>(),
+                                            )
+                                            ?.let {
+                                                FilterDefinition(
+                                                    customChartFilterByDataset = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                    )
+                                    .filterNotNull()
+                                    .allMaxBy { it.validity() }
+                                    .toList()
+                            return when (bestMatches.size) {
+                                // This can happen if what we're deserializing is completely
+                                // incompatible with all the possible variants (e.g. deserializing
+                                // from boolean).
+                                0 -> FilterDefinition(_json = json)
+                                1 -> bestMatches.single()
+                                // If there's more than one match with the highest validity, then
+                                // use the first completely valid match, or simply the first match
+                                // if none are completely valid.
+                                else ->
+                                    bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                            }
+                        }
+                    }
+
+                    internal class Serializer :
+                        BaseSerializer<FilterDefinition>(FilterDefinition::class) {
+
+                        override fun serialize(
+                            value: FilterDefinition,
+                            generator: JsonGenerator,
+                            provider: SerializerProvider,
+                        ) {
+                            when {
+                                value.customChartFilterByTracingProject != null ->
+                                    generator.writeObject(value.customChartFilterByTracingProject)
+                                value.customChartFilterByDataset != null ->
+                                    generator.writeObject(value.customChartFilterByDataset)
+                                value._json != null -> generator.writeObject(value._json)
+                                else -> throw IllegalStateException("Invalid FilterDefinition")
+                            }
+                        }
+                    }
+
+                    class CustomChartFilterByTracingProject
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val projectIds: JsonField<List<String>>,
+                        private val sourceType: JsonValue,
+                        private val runFilter: JsonField<String>,
+                        private val traceFilter: JsonField<String>,
+                        private val treeFilter: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("project_ids")
+                            @ExcludeMissing
+                            projectIds: JsonField<List<String>> = JsonMissing.of(),
+                            @JsonProperty("source_type")
+                            @ExcludeMissing
+                            sourceType: JsonValue = JsonMissing.of(),
+                            @JsonProperty("run_filter")
+                            @ExcludeMissing
+                            runFilter: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("trace_filter")
+                            @ExcludeMissing
+                            traceFilter: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("tree_filter")
+                            @ExcludeMissing
+                            treeFilter: JsonField<String> = JsonMissing.of(),
+                        ) : this(
+                            projectIds,
+                            sourceType,
+                            runFilter,
+                            traceFilter,
+                            treeFilter,
+                            mutableMapOf(),
+                        )
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun projectIds(): List<String> = projectIds.getRequired("project_ids")
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("tracing_project")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("source_type")
+                        @ExcludeMissing
+                        fun _sourceType(): JsonValue = sourceType
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun runFilter(): Optional<String> = runFilter.getOptional("run_filter")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun traceFilter(): Optional<String> =
+                            traceFilter.getOptional("trace_filter")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun treeFilter(): Optional<String> = treeFilter.getOptional("tree_filter")
+
+                        /**
+                         * Returns the raw JSON value of [projectIds].
+                         *
+                         * Unlike [projectIds], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("project_ids")
+                        @ExcludeMissing
+                        fun _projectIds(): JsonField<List<String>> = projectIds
+
+                        /**
+                         * Returns the raw JSON value of [runFilter].
+                         *
+                         * Unlike [runFilter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("run_filter")
+                        @ExcludeMissing
+                        fun _runFilter(): JsonField<String> = runFilter
+
+                        /**
+                         * Returns the raw JSON value of [traceFilter].
+                         *
+                         * Unlike [traceFilter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("trace_filter")
+                        @ExcludeMissing
+                        fun _traceFilter(): JsonField<String> = traceFilter
+
+                        /**
+                         * Returns the raw JSON value of [treeFilter].
+                         *
+                         * Unlike [treeFilter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("tree_filter")
+                        @ExcludeMissing
+                        fun _treeFilter(): JsonField<String> = treeFilter
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartFilterByTracingProject].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .projectIds()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartFilterByTracingProject]. */
+                        class Builder internal constructor() {
+
+                            private var projectIds: JsonField<MutableList<String>>? = null
+                            private var sourceType: JsonValue = JsonValue.from("tracing_project")
+                            private var runFilter: JsonField<String> = JsonMissing.of()
+                            private var traceFilter: JsonField<String> = JsonMissing.of()
+                            private var treeFilter: JsonField<String> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartFilterByTracingProject: CustomChartFilterByTracingProject
+                            ) = apply {
+                                projectIds =
+                                    customChartFilterByTracingProject.projectIds.map {
+                                        it.toMutableList()
+                                    }
+                                sourceType = customChartFilterByTracingProject.sourceType
+                                runFilter = customChartFilterByTracingProject.runFilter
+                                traceFilter = customChartFilterByTracingProject.traceFilter
+                                treeFilter = customChartFilterByTracingProject.treeFilter
+                                additionalProperties =
+                                    customChartFilterByTracingProject.additionalProperties
+                                        .toMutableMap()
+                            }
+
+                            fun projectIds(projectIds: List<String>) =
+                                projectIds(JsonField.of(projectIds))
+
+                            /**
+                             * Sets [Builder.projectIds] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.projectIds] with a well-typed
+                             * `List<String>` value instead. This method is primarily for setting
+                             * the field to an undocumented or not yet supported value.
+                             */
+                            fun projectIds(projectIds: JsonField<List<String>>) = apply {
+                                this.projectIds = projectIds.map { it.toMutableList() }
+                            }
+
+                            /**
+                             * Adds a single [String] to [projectIds].
+                             *
+                             * @throws IllegalStateException if the field was previously set to a
+                             *   non-list.
+                             */
+                            fun addProjectId(projectId: String) = apply {
+                                projectIds =
+                                    (projectIds ?: JsonField.of(mutableListOf())).also {
+                                        checkKnown("projectIds", it).add(projectId)
+                                    }
+                            }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("tracing_project")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun sourceType(sourceType: JsonValue) = apply {
+                                this.sourceType = sourceType
+                            }
+
+                            fun runFilter(runFilter: String?) =
+                                runFilter(JsonField.ofNullable(runFilter))
+
+                            /**
+                             * Alias for calling [Builder.runFilter] with `runFilter.orElse(null)`.
+                             */
+                            fun runFilter(runFilter: Optional<String>) =
+                                runFilter(runFilter.getOrNull())
+
+                            /**
+                             * Sets [Builder.runFilter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.runFilter] with a well-typed
+                             * [String] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun runFilter(runFilter: JsonField<String>) = apply {
+                                this.runFilter = runFilter
+                            }
+
+                            fun traceFilter(traceFilter: String?) =
+                                traceFilter(JsonField.ofNullable(traceFilter))
+
+                            /**
+                             * Alias for calling [Builder.traceFilter] with
+                             * `traceFilter.orElse(null)`.
+                             */
+                            fun traceFilter(traceFilter: Optional<String>) =
+                                traceFilter(traceFilter.getOrNull())
+
+                            /**
+                             * Sets [Builder.traceFilter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.traceFilter] with a well-typed
+                             * [String] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun traceFilter(traceFilter: JsonField<String>) = apply {
+                                this.traceFilter = traceFilter
+                            }
+
+                            fun treeFilter(treeFilter: String?) =
+                                treeFilter(JsonField.ofNullable(treeFilter))
+
+                            /**
+                             * Alias for calling [Builder.treeFilter] with
+                             * `treeFilter.orElse(null)`.
+                             */
+                            fun treeFilter(treeFilter: Optional<String>) =
+                                treeFilter(treeFilter.getOrNull())
+
+                            /**
+                             * Sets [Builder.treeFilter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.treeFilter] with a well-typed
+                             * [String] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun treeFilter(treeFilter: JsonField<String>) = apply {
+                                this.treeFilter = treeFilter
+                            }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartFilterByTracingProject].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .projectIds()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartFilterByTracingProject =
+                                CustomChartFilterByTracingProject(
+                                    checkRequired("projectIds", projectIds).map {
+                                        it.toImmutable()
+                                    },
+                                    sourceType,
+                                    runFilter,
+                                    traceFilter,
+                                    treeFilter,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartFilterByTracingProject = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            projectIds()
+                            _sourceType().let {
+                                if (it != JsonValue.from("tracing_project")) {
+                                    throw LangChainInvalidDataException(
+                                        "'sourceType' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            runFilter()
+                            traceFilter()
+                            treeFilter()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (projectIds.asKnown().getOrNull()?.size ?: 0) +
+                                sourceType.let {
+                                    if (it == JsonValue.from("tracing_project")) 1 else 0
+                                } +
+                                (if (runFilter.asKnown().isPresent) 1 else 0) +
+                                (if (traceFilter.asKnown().isPresent) 1 else 0) +
+                                (if (treeFilter.asKnown().isPresent) 1 else 0)
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartFilterByTracingProject &&
+                                projectIds == other.projectIds &&
+                                sourceType == other.sourceType &&
+                                runFilter == other.runFilter &&
+                                traceFilter == other.traceFilter &&
+                                treeFilter == other.treeFilter &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(
+                                projectIds,
+                                sourceType,
+                                runFilter,
+                                traceFilter,
+                                treeFilter,
+                                additionalProperties,
+                            )
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartFilterByTracingProject{projectIds=$projectIds, sourceType=$sourceType, runFilter=$runFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+                    }
+
+                    class CustomChartFilterByDataset
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val datasetIds: JsonField<List<String>>,
+                        private val sourceType: JsonValue,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("dataset_ids")
+                            @ExcludeMissing
+                            datasetIds: JsonField<List<String>> = JsonMissing.of(),
+                            @JsonProperty("source_type")
+                            @ExcludeMissing
+                            sourceType: JsonValue = JsonMissing.of(),
+                        ) : this(datasetIds, sourceType, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun datasetIds(): List<String> = datasetIds.getRequired("dataset_ids")
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("dataset")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("source_type")
+                        @ExcludeMissing
+                        fun _sourceType(): JsonValue = sourceType
+
+                        /**
+                         * Returns the raw JSON value of [datasetIds].
+                         *
+                         * Unlike [datasetIds], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("dataset_ids")
+                        @ExcludeMissing
+                        fun _datasetIds(): JsonField<List<String>> = datasetIds
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartFilterByDataset].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .datasetIds()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartFilterByDataset]. */
+                        class Builder internal constructor() {
+
+                            private var datasetIds: JsonField<MutableList<String>>? = null
+                            private var sourceType: JsonValue = JsonValue.from("dataset")
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartFilterByDataset: CustomChartFilterByDataset
+                            ) = apply {
+                                datasetIds =
+                                    customChartFilterByDataset.datasetIds.map { it.toMutableList() }
+                                sourceType = customChartFilterByDataset.sourceType
+                                additionalProperties =
+                                    customChartFilterByDataset.additionalProperties.toMutableMap()
+                            }
+
+                            fun datasetIds(datasetIds: List<String>) =
+                                datasetIds(JsonField.of(datasetIds))
+
+                            /**
+                             * Sets [Builder.datasetIds] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.datasetIds] with a well-typed
+                             * `List<String>` value instead. This method is primarily for setting
+                             * the field to an undocumented or not yet supported value.
+                             */
+                            fun datasetIds(datasetIds: JsonField<List<String>>) = apply {
+                                this.datasetIds = datasetIds.map { it.toMutableList() }
+                            }
+
+                            /**
+                             * Adds a single [String] to [datasetIds].
+                             *
+                             * @throws IllegalStateException if the field was previously set to a
+                             *   non-list.
+                             */
+                            fun addDatasetId(datasetId: String) = apply {
+                                datasetIds =
+                                    (datasetIds ?: JsonField.of(mutableListOf())).also {
+                                        checkKnown("datasetIds", it).add(datasetId)
+                                    }
+                            }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("dataset")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun sourceType(sourceType: JsonValue) = apply {
+                                this.sourceType = sourceType
+                            }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartFilterByDataset].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .datasetIds()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartFilterByDataset =
+                                CustomChartFilterByDataset(
+                                    checkRequired("datasetIds", datasetIds).map {
+                                        it.toImmutable()
+                                    },
+                                    sourceType,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartFilterByDataset = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            datasetIds()
+                            _sourceType().let {
+                                if (it != JsonValue.from("dataset")) {
+                                    throw LangChainInvalidDataException(
+                                        "'sourceType' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (datasetIds.asKnown().getOrNull()?.size ?: 0) +
+                                sourceType.let { if (it == JsonValue.from("dataset")) 1 else 0 }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartFilterByDataset &&
+                                datasetIds == other.datasetIds &&
+                                sourceType == other.sourceType &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(datasetIds, sourceType, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartFilterByDataset{datasetIds=$datasetIds, sourceType=$sourceType, additionalProperties=$additionalProperties}"
+                    }
                 }
 
                 class Filters
@@ -7259,6 +16663,7743 @@ private constructor(
                         "GroupBy{attribute=$attribute, maxGroups=$maxGroups, path=$path, setBy=$setBy, additionalProperties=$additionalProperties}"
                 }
 
+                @JsonDeserialize(using = GroupByDefinition.Deserializer::class)
+                @JsonSerialize(using = GroupByDefinition.Serializer::class)
+                class GroupByDefinition
+                private constructor(
+                    private val customChartGroupByPlain: CustomChartGroupByPlain? = null,
+                    private val customChartGroupByComplex: CustomChartGroupByComplex? = null,
+                    private val _json: JsonValue? = null,
+                ) {
+
+                    fun customChartGroupByPlain(): Optional<CustomChartGroupByPlain> =
+                        Optional.ofNullable(customChartGroupByPlain)
+
+                    fun customChartGroupByComplex(): Optional<CustomChartGroupByComplex> =
+                        Optional.ofNullable(customChartGroupByComplex)
+
+                    fun isCustomChartGroupByPlain(): Boolean = customChartGroupByPlain != null
+
+                    fun isCustomChartGroupByComplex(): Boolean = customChartGroupByComplex != null
+
+                    fun asCustomChartGroupByPlain(): CustomChartGroupByPlain =
+                        customChartGroupByPlain.getOrThrow("customChartGroupByPlain")
+
+                    fun asCustomChartGroupByComplex(): CustomChartGroupByComplex =
+                        customChartGroupByComplex.getOrThrow("customChartGroupByComplex")
+
+                    fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                    /**
+                     * Maps this instance's current variant to a value of type [T] using the given
+                     * [visitor].
+                     *
+                     * Note that this method is _not_ forwards compatible with new variants from the
+                     * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not
+                     * known to this version of the SDK gracefully, consider overriding
+                     * [Visitor.unknown]:
+                     * ```java
+                     * import com.langchain.smith.core.JsonValue;
+                     * import java.util.Optional;
+                     *
+                     * Optional<String> result = groupByDefinition.accept(new GroupByDefinition.Visitor<Optional<String>>() {
+                     *     @Override
+                     *     public Optional<String> visitCustomChartGroupByPlain(CustomChartGroupByPlain customChartGroupByPlain) {
+                     *         return Optional.of(customChartGroupByPlain.toString());
+                     *     }
+                     *
+                     *     // ...
+                     *
+                     *     @Override
+                     *     public Optional<String> unknown(JsonValue json) {
+                     *         // Or inspect the `json`.
+                     *         return Optional.empty();
+                     *     }
+                     * });
+                     * ```
+                     *
+                     * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden
+                     *   in [visitor] and the current variant is unknown.
+                     */
+                    fun <T> accept(visitor: Visitor<T>): T =
+                        when {
+                            customChartGroupByPlain != null ->
+                                visitor.visitCustomChartGroupByPlain(customChartGroupByPlain)
+                            customChartGroupByComplex != null ->
+                                visitor.visitCustomChartGroupByComplex(customChartGroupByComplex)
+                            else -> visitor.unknown(_json)
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): GroupByDefinition = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        accept(
+                            object : Visitor<Unit> {
+                                override fun visitCustomChartGroupByPlain(
+                                    customChartGroupByPlain: CustomChartGroupByPlain
+                                ) {
+                                    customChartGroupByPlain.validate()
+                                }
+
+                                override fun visitCustomChartGroupByComplex(
+                                    customChartGroupByComplex: CustomChartGroupByComplex
+                                ) {
+                                    customChartGroupByComplex.validate()
+                                }
+                            }
+                        )
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        accept(
+                            object : Visitor<Int> {
+                                override fun visitCustomChartGroupByPlain(
+                                    customChartGroupByPlain: CustomChartGroupByPlain
+                                ) = customChartGroupByPlain.validity()
+
+                                override fun visitCustomChartGroupByComplex(
+                                    customChartGroupByComplex: CustomChartGroupByComplex
+                                ) = customChartGroupByComplex.validity()
+
+                                override fun unknown(json: JsonValue?) = 0
+                            }
+                        )
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is GroupByDefinition &&
+                            customChartGroupByPlain == other.customChartGroupByPlain &&
+                            customChartGroupByComplex == other.customChartGroupByComplex
+                    }
+
+                    override fun hashCode(): Int =
+                        Objects.hash(customChartGroupByPlain, customChartGroupByComplex)
+
+                    override fun toString(): String =
+                        when {
+                            customChartGroupByPlain != null ->
+                                "GroupByDefinition{customChartGroupByPlain=$customChartGroupByPlain}"
+                            customChartGroupByComplex != null ->
+                                "GroupByDefinition{customChartGroupByComplex=$customChartGroupByComplex}"
+                            _json != null -> "GroupByDefinition{_unknown=$_json}"
+                            else -> throw IllegalStateException("Invalid GroupByDefinition")
+                        }
+
+                    companion object {
+
+                        @JvmStatic
+                        fun ofCustomChartGroupByPlain(
+                            customChartGroupByPlain: CustomChartGroupByPlain
+                        ) = GroupByDefinition(customChartGroupByPlain = customChartGroupByPlain)
+
+                        @JvmStatic
+                        fun ofCustomChartGroupByComplex(
+                            customChartGroupByComplex: CustomChartGroupByComplex
+                        ) = GroupByDefinition(customChartGroupByComplex = customChartGroupByComplex)
+                    }
+
+                    /**
+                     * An interface that defines how to map each variant of [GroupByDefinition] to a
+                     * value of type [T].
+                     */
+                    interface Visitor<out T> {
+
+                        fun visitCustomChartGroupByPlain(
+                            customChartGroupByPlain: CustomChartGroupByPlain
+                        ): T
+
+                        fun visitCustomChartGroupByComplex(
+                            customChartGroupByComplex: CustomChartGroupByComplex
+                        ): T
+
+                        /**
+                         * Maps an unknown variant of [GroupByDefinition] to a value of type [T].
+                         *
+                         * An instance of [GroupByDefinition] can contain an unknown variant if it
+                         * was deserialized from data that doesn't match any known variant. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new variants that the SDK is unaware of.
+                         *
+                         * @throws LangChainInvalidDataException in the default implementation.
+                         */
+                        fun unknown(json: JsonValue?): T {
+                            throw LangChainInvalidDataException("Unknown GroupByDefinition: $json")
+                        }
+                    }
+
+                    internal class Deserializer :
+                        BaseDeserializer<GroupByDefinition>(GroupByDefinition::class) {
+
+                        override fun ObjectCodec.deserialize(node: JsonNode): GroupByDefinition {
+                            val json = JsonValue.fromJsonNode(node)
+
+                            val bestMatches =
+                                sequenceOf(
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<CustomChartGroupByPlain>(),
+                                            )
+                                            ?.let {
+                                                GroupByDefinition(
+                                                    customChartGroupByPlain = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<CustomChartGroupByComplex>(),
+                                            )
+                                            ?.let {
+                                                GroupByDefinition(
+                                                    customChartGroupByComplex = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                    )
+                                    .filterNotNull()
+                                    .allMaxBy { it.validity() }
+                                    .toList()
+                            return when (bestMatches.size) {
+                                // This can happen if what we're deserializing is completely
+                                // incompatible with all the possible variants (e.g. deserializing
+                                // from boolean).
+                                0 -> GroupByDefinition(_json = json)
+                                1 -> bestMatches.single()
+                                // If there's more than one match with the highest validity, then
+                                // use the first completely valid match, or simply the first match
+                                // if none are completely valid.
+                                else ->
+                                    bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                            }
+                        }
+                    }
+
+                    internal class Serializer :
+                        BaseSerializer<GroupByDefinition>(GroupByDefinition::class) {
+
+                        override fun serialize(
+                            value: GroupByDefinition,
+                            generator: JsonGenerator,
+                            provider: SerializerProvider,
+                        ) {
+                            when {
+                                value.customChartGroupByPlain != null ->
+                                    generator.writeObject(value.customChartGroupByPlain)
+                                value.customChartGroupByComplex != null ->
+                                    generator.writeObject(value.customChartGroupByComplex)
+                                value._json != null -> generator.writeObject(value._json)
+                                else -> throw IllegalStateException("Invalid GroupByDefinition")
+                            }
+                        }
+                    }
+
+                    class CustomChartGroupByPlain
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val attribute: JsonField<Attribute>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("attribute")
+                            @ExcludeMissing
+                            attribute: JsonField<Attribute> = JsonMissing.of()
+                        ) : this(attribute, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun attribute(): Attribute = attribute.getRequired("attribute")
+
+                        /**
+                         * Returns the raw JSON value of [attribute].
+                         *
+                         * Unlike [attribute], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("attribute")
+                        @ExcludeMissing
+                        fun _attribute(): JsonField<Attribute> = attribute
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartGroupByPlain].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .attribute()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartGroupByPlain]. */
+                        class Builder internal constructor() {
+
+                            private var attribute: JsonField<Attribute>? = null
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(customChartGroupByPlain: CustomChartGroupByPlain) =
+                                apply {
+                                    attribute = customChartGroupByPlain.attribute
+                                    additionalProperties =
+                                        customChartGroupByPlain.additionalProperties.toMutableMap()
+                                }
+
+                            fun attribute(attribute: Attribute) = attribute(JsonField.of(attribute))
+
+                            /**
+                             * Sets [Builder.attribute] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.attribute] with a well-typed
+                             * [Attribute] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun attribute(attribute: JsonField<Attribute>) = apply {
+                                this.attribute = attribute
+                            }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartGroupByPlain].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .attribute()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartGroupByPlain =
+                                CustomChartGroupByPlain(
+                                    checkRequired("attribute", attribute),
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartGroupByPlain = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            attribute().validate()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (attribute.asKnown().getOrNull()?.validity() ?: 0)
+
+                        class Attribute
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val NAME = of("name")
+
+                                @JvmField val RUN_TYPE = of("run_type")
+
+                                @JvmField val TAG = of("tag")
+
+                                @JvmField val PROJECT = of("project")
+
+                                @JvmField val STATUS = of("status")
+
+                                @JvmStatic fun of(value: String) = Attribute(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Attribute]'s known values. */
+                            enum class Known {
+                                NAME,
+                                RUN_TYPE,
+                                TAG,
+                                PROJECT,
+                                STATUS,
+                            }
+
+                            /**
+                             * An enum containing [Attribute]'s known values, as well as an
+                             * [_UNKNOWN] member.
+                             *
+                             * An instance of [Attribute] can contain an unknown value in a couple
+                             * of cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                NAME,
+                                RUN_TYPE,
+                                TAG,
+                                PROJECT,
+                                STATUS,
+                                /**
+                                 * An enum member indicating that [Attribute] was instantiated with
+                                 * an unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    NAME -> Value.NAME
+                                    RUN_TYPE -> Value.RUN_TYPE
+                                    TAG -> Value.TAG
+                                    PROJECT -> Value.PROJECT
+                                    STATUS -> Value.STATUS
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    NAME -> Known.NAME
+                                    RUN_TYPE -> Known.RUN_TYPE
+                                    TAG -> Known.TAG
+                                    PROJECT -> Known.PROJECT
+                                    STATUS -> Known.STATUS
+                                    else ->
+                                        throw LangChainInvalidDataException(
+                                            "Unknown Attribute: $value"
+                                        )
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Attribute = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Attribute && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartGroupByPlain &&
+                                attribute == other.attribute &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(attribute, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartGroupByPlain{attribute=$attribute, additionalProperties=$additionalProperties}"
+                    }
+
+                    class CustomChartGroupByComplex
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val attribute: JsonField<Attribute>,
+                        private val path: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("attribute")
+                            @ExcludeMissing
+                            attribute: JsonField<Attribute> = JsonMissing.of(),
+                            @JsonProperty("path")
+                            @ExcludeMissing
+                            path: JsonField<String> = JsonMissing.of(),
+                        ) : this(attribute, path, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun attribute(): Attribute = attribute.getRequired("attribute")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun path(): String = path.getRequired("path")
+
+                        /**
+                         * Returns the raw JSON value of [attribute].
+                         *
+                         * Unlike [attribute], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("attribute")
+                        @ExcludeMissing
+                        fun _attribute(): JsonField<Attribute> = attribute
+
+                        /**
+                         * Returns the raw JSON value of [path].
+                         *
+                         * Unlike [path], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("path") @ExcludeMissing fun _path(): JsonField<String> = path
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartGroupByComplex].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .attribute()
+                             * .path()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartGroupByComplex]. */
+                        class Builder internal constructor() {
+
+                            private var attribute: JsonField<Attribute>? = null
+                            private var path: JsonField<String>? = null
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartGroupByComplex: CustomChartGroupByComplex
+                            ) = apply {
+                                attribute = customChartGroupByComplex.attribute
+                                path = customChartGroupByComplex.path
+                                additionalProperties =
+                                    customChartGroupByComplex.additionalProperties.toMutableMap()
+                            }
+
+                            fun attribute(attribute: Attribute) = attribute(JsonField.of(attribute))
+
+                            /**
+                             * Sets [Builder.attribute] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.attribute] with a well-typed
+                             * [Attribute] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun attribute(attribute: JsonField<Attribute>) = apply {
+                                this.attribute = attribute
+                            }
+
+                            fun path(path: String) = path(JsonField.of(path))
+
+                            /**
+                             * Sets [Builder.path] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.path] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun path(path: JsonField<String>) = apply { this.path = path }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartGroupByComplex].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .attribute()
+                             * .path()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartGroupByComplex =
+                                CustomChartGroupByComplex(
+                                    checkRequired("attribute", attribute),
+                                    checkRequired("path", path),
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartGroupByComplex = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            attribute().validate()
+                            path()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (attribute.asKnown().getOrNull()?.validity() ?: 0) +
+                                (if (path.asKnown().isPresent) 1 else 0)
+
+                        class Attribute
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val METADATA = of("metadata")
+
+                                @JvmField val FEEDBACK_LABEL = of("feedback_label")
+
+                                @JvmStatic fun of(value: String) = Attribute(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Attribute]'s known values. */
+                            enum class Known {
+                                METADATA,
+                                FEEDBACK_LABEL,
+                            }
+
+                            /**
+                             * An enum containing [Attribute]'s known values, as well as an
+                             * [_UNKNOWN] member.
+                             *
+                             * An instance of [Attribute] can contain an unknown value in a couple
+                             * of cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                METADATA,
+                                FEEDBACK_LABEL,
+                                /**
+                                 * An enum member indicating that [Attribute] was instantiated with
+                                 * an unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    METADATA -> Value.METADATA
+                                    FEEDBACK_LABEL -> Value.FEEDBACK_LABEL
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    METADATA -> Known.METADATA
+                                    FEEDBACK_LABEL -> Known.FEEDBACK_LABEL
+                                    else ->
+                                        throw LangChainInvalidDataException(
+                                            "Unknown Attribute: $value"
+                                        )
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Attribute = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Attribute && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartGroupByComplex &&
+                                attribute == other.attribute &&
+                                path == other.path &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(attribute, path, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartGroupByComplex{attribute=$attribute, path=$path, additionalProperties=$additionalProperties}"
+                    }
+                }
+
+                /**
+                 * Metrics you can chart. Feedback metrics are not available for organization-scoped
+                 * charts.
+                 */
+                class Metric
+                @JsonCreator
+                private constructor(private val value: JsonField<String>) : Enum {
+
+                    /**
+                     * Returns this class instance's raw value.
+                     *
+                     * This is usually only useful if this instance was deserialized from data that
+                     * doesn't match any known member, and you want to know that value. For example,
+                     * if the SDK is on an older version than the API, then the API may respond with
+                     * new members that the SDK is unaware of.
+                     */
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    fun _value(): JsonField<String> = value
+
+                    companion object {
+
+                        @JvmField val RUN_COUNT = of("run_count")
+
+                        @JvmField val LATENCY_P50 = of("latency_p50")
+
+                        @JvmField val LATENCY_P99 = of("latency_p99")
+
+                        @JvmField val LATENCY_AVG = of("latency_avg")
+
+                        @JvmField val FIRST_TOKEN_P50 = of("first_token_p50")
+
+                        @JvmField val FIRST_TOKEN_P99 = of("first_token_p99")
+
+                        @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                        @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                        @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                        @JvmField val MEDIAN_TOKENS = of("median_tokens")
+
+                        @JvmField val COMPLETION_TOKENS_P50 = of("completion_tokens_p50")
+
+                        @JvmField val PROMPT_TOKENS_P50 = of("prompt_tokens_p50")
+
+                        @JvmField val TOKENS_P99 = of("tokens_p99")
+
+                        @JvmField val COMPLETION_TOKENS_P99 = of("completion_tokens_p99")
+
+                        @JvmField val PROMPT_TOKENS_P99 = of("prompt_tokens_p99")
+
+                        @JvmField val FEEDBACK = of("feedback")
+
+                        @JvmField val FEEDBACK_SCORE_AVG = of("feedback_score_avg")
+
+                        @JvmField val FEEDBACK_VALUES = of("feedback_values")
+
+                        @JvmField val TOTAL_COST = of("total_cost")
+
+                        @JvmField val PROMPT_COST = of("prompt_cost")
+
+                        @JvmField val COMPLETION_COST = of("completion_cost")
+
+                        @JvmField val ERROR_RATE = of("error_rate")
+
+                        @JvmField val STREAMING_RATE = of("streaming_rate")
+
+                        @JvmField val COST_P50 = of("cost_p50")
+
+                        @JvmField val COST_P99 = of("cost_p99")
+
+                        @JvmStatic fun of(value: String) = Metric(JsonField.of(value))
+                    }
+
+                    /** An enum containing [Metric]'s known values. */
+                    enum class Known {
+                        RUN_COUNT,
+                        LATENCY_P50,
+                        LATENCY_P99,
+                        LATENCY_AVG,
+                        FIRST_TOKEN_P50,
+                        FIRST_TOKEN_P99,
+                        TOTAL_TOKENS,
+                        PROMPT_TOKENS,
+                        COMPLETION_TOKENS,
+                        MEDIAN_TOKENS,
+                        COMPLETION_TOKENS_P50,
+                        PROMPT_TOKENS_P50,
+                        TOKENS_P99,
+                        COMPLETION_TOKENS_P99,
+                        PROMPT_TOKENS_P99,
+                        FEEDBACK,
+                        FEEDBACK_SCORE_AVG,
+                        FEEDBACK_VALUES,
+                        TOTAL_COST,
+                        PROMPT_COST,
+                        COMPLETION_COST,
+                        ERROR_RATE,
+                        STREAMING_RATE,
+                        COST_P50,
+                        COST_P99,
+                    }
+
+                    /**
+                     * An enum containing [Metric]'s known values, as well as an [_UNKNOWN] member.
+                     *
+                     * An instance of [Metric] can contain an unknown value in a couple of cases:
+                     * - It was deserialized from data that doesn't match any known member. For
+                     *   example, if the SDK is on an older version than the API, then the API may
+                     *   respond with new members that the SDK is unaware of.
+                     * - It was constructed with an arbitrary value using the [of] method.
+                     */
+                    enum class Value {
+                        RUN_COUNT,
+                        LATENCY_P50,
+                        LATENCY_P99,
+                        LATENCY_AVG,
+                        FIRST_TOKEN_P50,
+                        FIRST_TOKEN_P99,
+                        TOTAL_TOKENS,
+                        PROMPT_TOKENS,
+                        COMPLETION_TOKENS,
+                        MEDIAN_TOKENS,
+                        COMPLETION_TOKENS_P50,
+                        PROMPT_TOKENS_P50,
+                        TOKENS_P99,
+                        COMPLETION_TOKENS_P99,
+                        PROMPT_TOKENS_P99,
+                        FEEDBACK,
+                        FEEDBACK_SCORE_AVG,
+                        FEEDBACK_VALUES,
+                        TOTAL_COST,
+                        PROMPT_COST,
+                        COMPLETION_COST,
+                        ERROR_RATE,
+                        STREAMING_RATE,
+                        COST_P50,
+                        COST_P99,
+                        /**
+                         * An enum member indicating that [Metric] was instantiated with an unknown
+                         * value.
+                         */
+                        _UNKNOWN,
+                    }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value, or
+                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     *
+                     * Use the [known] method instead if you're certain the value is always known or
+                     * if you want to throw for the unknown case.
+                     */
+                    fun value(): Value =
+                        when (this) {
+                            RUN_COUNT -> Value.RUN_COUNT
+                            LATENCY_P50 -> Value.LATENCY_P50
+                            LATENCY_P99 -> Value.LATENCY_P99
+                            LATENCY_AVG -> Value.LATENCY_AVG
+                            FIRST_TOKEN_P50 -> Value.FIRST_TOKEN_P50
+                            FIRST_TOKEN_P99 -> Value.FIRST_TOKEN_P99
+                            TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                            PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                            COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                            MEDIAN_TOKENS -> Value.MEDIAN_TOKENS
+                            COMPLETION_TOKENS_P50 -> Value.COMPLETION_TOKENS_P50
+                            PROMPT_TOKENS_P50 -> Value.PROMPT_TOKENS_P50
+                            TOKENS_P99 -> Value.TOKENS_P99
+                            COMPLETION_TOKENS_P99 -> Value.COMPLETION_TOKENS_P99
+                            PROMPT_TOKENS_P99 -> Value.PROMPT_TOKENS_P99
+                            FEEDBACK -> Value.FEEDBACK
+                            FEEDBACK_SCORE_AVG -> Value.FEEDBACK_SCORE_AVG
+                            FEEDBACK_VALUES -> Value.FEEDBACK_VALUES
+                            TOTAL_COST -> Value.TOTAL_COST
+                            PROMPT_COST -> Value.PROMPT_COST
+                            COMPLETION_COST -> Value.COMPLETION_COST
+                            ERROR_RATE -> Value.ERROR_RATE
+                            STREAMING_RATE -> Value.STREAMING_RATE
+                            COST_P50 -> Value.COST_P50
+                            COST_P99 -> Value.COST_P99
+                            else -> Value._UNKNOWN
+                        }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value.
+                     *
+                     * Use the [value] method instead if you're uncertain the value is always known
+                     * and don't want to throw for the unknown case.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value is a not
+                     *   a known member.
+                     */
+                    fun known(): Known =
+                        when (this) {
+                            RUN_COUNT -> Known.RUN_COUNT
+                            LATENCY_P50 -> Known.LATENCY_P50
+                            LATENCY_P99 -> Known.LATENCY_P99
+                            LATENCY_AVG -> Known.LATENCY_AVG
+                            FIRST_TOKEN_P50 -> Known.FIRST_TOKEN_P50
+                            FIRST_TOKEN_P99 -> Known.FIRST_TOKEN_P99
+                            TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                            PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                            COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                            MEDIAN_TOKENS -> Known.MEDIAN_TOKENS
+                            COMPLETION_TOKENS_P50 -> Known.COMPLETION_TOKENS_P50
+                            PROMPT_TOKENS_P50 -> Known.PROMPT_TOKENS_P50
+                            TOKENS_P99 -> Known.TOKENS_P99
+                            COMPLETION_TOKENS_P99 -> Known.COMPLETION_TOKENS_P99
+                            PROMPT_TOKENS_P99 -> Known.PROMPT_TOKENS_P99
+                            FEEDBACK -> Known.FEEDBACK
+                            FEEDBACK_SCORE_AVG -> Known.FEEDBACK_SCORE_AVG
+                            FEEDBACK_VALUES -> Known.FEEDBACK_VALUES
+                            TOTAL_COST -> Known.TOTAL_COST
+                            PROMPT_COST -> Known.PROMPT_COST
+                            COMPLETION_COST -> Known.COMPLETION_COST
+                            ERROR_RATE -> Known.ERROR_RATE
+                            STREAMING_RATE -> Known.STREAMING_RATE
+                            COST_P50 -> Known.COST_P50
+                            COST_P99 -> Known.COST_P99
+                            else -> throw LangChainInvalidDataException("Unknown Metric: $value")
+                        }
+
+                    /**
+                     * Returns this class instance's primitive wire representation.
+                     *
+                     * This differs from the [toString] method because that method is primarily for
+                     * debugging and generally doesn't throw.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value does not
+                     *   have the expected primitive type.
+                     */
+                    fun asString(): String =
+                        _value().asString().orElseThrow {
+                            LangChainInvalidDataException("Value is not a String")
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Metric = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        known()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Metric && value == other.value
+                    }
+
+                    override fun hashCode() = value.hashCode()
+
+                    override fun toString() = value.toString()
+                }
+
+                @JsonDeserialize(using = MetricDefinition.Deserializer::class)
+                @JsonSerialize(using = MetricDefinition.Serializer::class)
+                class MetricDefinition
+                private constructor(
+                    private val customChartMetricCount: CustomChartMetricCount? = null,
+                    private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                    private val customChartMetricPercentile: CustomChartMetricPercentile? = null,
+                    private val customChartMetricRatioOutput: CustomChartMetricRatioOutput? = null,
+                    private val _json: JsonValue? = null,
+                ) {
+
+                    fun customChartMetricCount(): Optional<CustomChartMetricCount> =
+                        Optional.ofNullable(customChartMetricCount)
+
+                    fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
+                        Optional.ofNullable(customChartMetricScalar)
+
+                    fun customChartMetricPercentile(): Optional<CustomChartMetricPercentile> =
+                        Optional.ofNullable(customChartMetricPercentile)
+
+                    fun customChartMetricRatioOutput(): Optional<CustomChartMetricRatioOutput> =
+                        Optional.ofNullable(customChartMetricRatioOutput)
+
+                    fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
+
+                    fun isCustomChartMetricScalar(): Boolean = customChartMetricScalar != null
+
+                    fun isCustomChartMetricPercentile(): Boolean =
+                        customChartMetricPercentile != null
+
+                    fun isCustomChartMetricRatioOutput(): Boolean =
+                        customChartMetricRatioOutput != null
+
+                    fun asCustomChartMetricCount(): CustomChartMetricCount =
+                        customChartMetricCount.getOrThrow("customChartMetricCount")
+
+                    fun asCustomChartMetricScalar(): CustomChartMetricScalar =
+                        customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                    fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
+                        customChartMetricPercentile.getOrThrow("customChartMetricPercentile")
+
+                    fun asCustomChartMetricRatioOutput(): CustomChartMetricRatioOutput =
+                        customChartMetricRatioOutput.getOrThrow("customChartMetricRatioOutput")
+
+                    fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                    /**
+                     * Maps this instance's current variant to a value of type [T] using the given
+                     * [visitor].
+                     *
+                     * Note that this method is _not_ forwards compatible with new variants from the
+                     * API, unless [visitor] overrides [Visitor.unknown]. To handle variants not
+                     * known to this version of the SDK gracefully, consider overriding
+                     * [Visitor.unknown]:
+                     * ```java
+                     * import com.langchain.smith.core.JsonValue;
+                     * import java.util.Optional;
+                     *
+                     * Optional<String> result = metricDefinition.accept(new MetricDefinition.Visitor<Optional<String>>() {
+                     *     @Override
+                     *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
+                     *         return Optional.of(customChartMetricCount.toString());
+                     *     }
+                     *
+                     *     // ...
+                     *
+                     *     @Override
+                     *     public Optional<String> unknown(JsonValue json) {
+                     *         // Or inspect the `json`.
+                     *         return Optional.empty();
+                     *     }
+                     * });
+                     * ```
+                     *
+                     * @throws LangChainInvalidDataException if [Visitor.unknown] is not overridden
+                     *   in [visitor] and the current variant is unknown.
+                     */
+                    fun <T> accept(visitor: Visitor<T>): T =
+                        when {
+                            customChartMetricCount != null ->
+                                visitor.visitCustomChartMetricCount(customChartMetricCount)
+                            customChartMetricScalar != null ->
+                                visitor.visitCustomChartMetricScalar(customChartMetricScalar)
+                            customChartMetricPercentile != null ->
+                                visitor.visitCustomChartMetricPercentile(
+                                    customChartMetricPercentile
+                                )
+                            customChartMetricRatioOutput != null ->
+                                visitor.visitCustomChartMetricRatioOutput(
+                                    customChartMetricRatioOutput
+                                )
+                            else -> visitor.unknown(_json)
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): MetricDefinition = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        accept(
+                            object : Visitor<Unit> {
+                                override fun visitCustomChartMetricCount(
+                                    customChartMetricCount: CustomChartMetricCount
+                                ) {
+                                    customChartMetricCount.validate()
+                                }
+
+                                override fun visitCustomChartMetricScalar(
+                                    customChartMetricScalar: CustomChartMetricScalar
+                                ) {
+                                    customChartMetricScalar.validate()
+                                }
+
+                                override fun visitCustomChartMetricPercentile(
+                                    customChartMetricPercentile: CustomChartMetricPercentile
+                                ) {
+                                    customChartMetricPercentile.validate()
+                                }
+
+                                override fun visitCustomChartMetricRatioOutput(
+                                    customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                                ) {
+                                    customChartMetricRatioOutput.validate()
+                                }
+                            }
+                        )
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        accept(
+                            object : Visitor<Int> {
+                                override fun visitCustomChartMetricCount(
+                                    customChartMetricCount: CustomChartMetricCount
+                                ) = customChartMetricCount.validity()
+
+                                override fun visitCustomChartMetricScalar(
+                                    customChartMetricScalar: CustomChartMetricScalar
+                                ) = customChartMetricScalar.validity()
+
+                                override fun visitCustomChartMetricPercentile(
+                                    customChartMetricPercentile: CustomChartMetricPercentile
+                                ) = customChartMetricPercentile.validity()
+
+                                override fun visitCustomChartMetricRatioOutput(
+                                    customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                                ) = customChartMetricRatioOutput.validity()
+
+                                override fun unknown(json: JsonValue?) = 0
+                            }
+                        )
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is MetricDefinition &&
+                            customChartMetricCount == other.customChartMetricCount &&
+                            customChartMetricScalar == other.customChartMetricScalar &&
+                            customChartMetricPercentile == other.customChartMetricPercentile &&
+                            customChartMetricRatioOutput == other.customChartMetricRatioOutput
+                    }
+
+                    override fun hashCode(): Int =
+                        Objects.hash(
+                            customChartMetricCount,
+                            customChartMetricScalar,
+                            customChartMetricPercentile,
+                            customChartMetricRatioOutput,
+                        )
+
+                    override fun toString(): String =
+                        when {
+                            customChartMetricCount != null ->
+                                "MetricDefinition{customChartMetricCount=$customChartMetricCount}"
+                            customChartMetricScalar != null ->
+                                "MetricDefinition{customChartMetricScalar=$customChartMetricScalar}"
+                            customChartMetricPercentile != null ->
+                                "MetricDefinition{customChartMetricPercentile=$customChartMetricPercentile}"
+                            customChartMetricRatioOutput != null ->
+                                "MetricDefinition{customChartMetricRatioOutput=$customChartMetricRatioOutput}"
+                            _json != null -> "MetricDefinition{_unknown=$_json}"
+                            else -> throw IllegalStateException("Invalid MetricDefinition")
+                        }
+
+                    companion object {
+
+                        @JvmStatic
+                        fun ofCustomChartMetricCount(
+                            customChartMetricCount: CustomChartMetricCount
+                        ) = MetricDefinition(customChartMetricCount = customChartMetricCount)
+
+                        @JvmStatic
+                        fun ofCustomChartMetricScalar(
+                            customChartMetricScalar: CustomChartMetricScalar
+                        ) = MetricDefinition(customChartMetricScalar = customChartMetricScalar)
+
+                        @JvmStatic
+                        fun ofCustomChartMetricPercentile(
+                            customChartMetricPercentile: CustomChartMetricPercentile
+                        ) =
+                            MetricDefinition(
+                                customChartMetricPercentile = customChartMetricPercentile
+                            )
+
+                        @JvmStatic
+                        fun ofCustomChartMetricRatioOutput(
+                            customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                        ) =
+                            MetricDefinition(
+                                customChartMetricRatioOutput = customChartMetricRatioOutput
+                            )
+                    }
+
+                    /**
+                     * An interface that defines how to map each variant of [MetricDefinition] to a
+                     * value of type [T].
+                     */
+                    interface Visitor<out T> {
+
+                        fun visitCustomChartMetricCount(
+                            customChartMetricCount: CustomChartMetricCount
+                        ): T
+
+                        fun visitCustomChartMetricScalar(
+                            customChartMetricScalar: CustomChartMetricScalar
+                        ): T
+
+                        fun visitCustomChartMetricPercentile(
+                            customChartMetricPercentile: CustomChartMetricPercentile
+                        ): T
+
+                        fun visitCustomChartMetricRatioOutput(
+                            customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                        ): T
+
+                        /**
+                         * Maps an unknown variant of [MetricDefinition] to a value of type [T].
+                         *
+                         * An instance of [MetricDefinition] can contain an unknown variant if it
+                         * was deserialized from data that doesn't match any known variant. For
+                         * example, if the SDK is on an older version than the API, then the API may
+                         * respond with new variants that the SDK is unaware of.
+                         *
+                         * @throws LangChainInvalidDataException in the default implementation.
+                         */
+                        fun unknown(json: JsonValue?): T {
+                            throw LangChainInvalidDataException("Unknown MetricDefinition: $json")
+                        }
+                    }
+
+                    internal class Deserializer :
+                        BaseDeserializer<MetricDefinition>(MetricDefinition::class) {
+
+                        override fun ObjectCodec.deserialize(node: JsonNode): MetricDefinition {
+                            val json = JsonValue.fromJsonNode(node)
+
+                            val bestMatches =
+                                sequenceOf(
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<CustomChartMetricCount>(),
+                                            )
+                                            ?.let {
+                                                MetricDefinition(
+                                                    customChartMetricCount = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<CustomChartMetricScalar>(),
+                                            )
+                                            ?.let {
+                                                MetricDefinition(
+                                                    customChartMetricScalar = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<CustomChartMetricPercentile>(),
+                                            )
+                                            ?.let {
+                                                MetricDefinition(
+                                                    customChartMetricPercentile = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                        tryDeserialize(
+                                                node,
+                                                jacksonTypeRef<CustomChartMetricRatioOutput>(),
+                                            )
+                                            ?.let {
+                                                MetricDefinition(
+                                                    customChartMetricRatioOutput = it,
+                                                    _json = json,
+                                                )
+                                            },
+                                    )
+                                    .filterNotNull()
+                                    .allMaxBy { it.validity() }
+                                    .toList()
+                            return when (bestMatches.size) {
+                                // This can happen if what we're deserializing is completely
+                                // incompatible with all the possible variants (e.g. deserializing
+                                // from boolean).
+                                0 -> MetricDefinition(_json = json)
+                                1 -> bestMatches.single()
+                                // If there's more than one match with the highest validity, then
+                                // use the first completely valid match, or simply the first match
+                                // if none are completely valid.
+                                else ->
+                                    bestMatches.firstOrNull { it.isValid() } ?: bestMatches.first()
+                            }
+                        }
+                    }
+
+                    internal class Serializer :
+                        BaseSerializer<MetricDefinition>(MetricDefinition::class) {
+
+                        override fun serialize(
+                            value: MetricDefinition,
+                            generator: JsonGenerator,
+                            provider: SerializerProvider,
+                        ) {
+                            when {
+                                value.customChartMetricCount != null ->
+                                    generator.writeObject(value.customChartMetricCount)
+                                value.customChartMetricScalar != null ->
+                                    generator.writeObject(value.customChartMetricScalar)
+                                value.customChartMetricPercentile != null ->
+                                    generator.writeObject(value.customChartMetricPercentile)
+                                value.customChartMetricRatioOutput != null ->
+                                    generator.writeObject(value.customChartMetricRatioOutput)
+                                value._json != null -> generator.writeObject(value._json)
+                                else -> throw IllegalStateException("Invalid MetricDefinition")
+                            }
+                        }
+                    }
+
+                    class CustomChartMetricCount
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val filter: JsonField<String>,
+                        private val type: JsonField<Type>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            filter: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonField<Type> = JsonMissing.of(),
+                        ) : this(filter, type, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun filter(): Optional<String> = filter.getOptional("filter")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun type(): Optional<Type> = type.getOptional("type")
+
+                        /**
+                         * Returns the raw JSON value of [filter].
+                         *
+                         * Unlike [filter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        fun _filter(): JsonField<String> = filter
+
+                        /**
+                         * Returns the raw JSON value of [type].
+                         *
+                         * Unlike [type], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartMetricCount].
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartMetricCount]. */
+                        class Builder internal constructor() {
+
+                            private var filter: JsonField<String> = JsonMissing.of()
+                            private var type: JsonField<Type> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(customChartMetricCount: CustomChartMetricCount) =
+                                apply {
+                                    filter = customChartMetricCount.filter
+                                    type = customChartMetricCount.type
+                                    additionalProperties =
+                                        customChartMetricCount.additionalProperties.toMutableMap()
+                                }
+
+                            fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                            /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                            fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                            /**
+                             * Sets [Builder.filter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.filter] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                            fun type(type: Type) = type(JsonField.of(type))
+
+                            /**
+                             * Sets [Builder.type] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.type] with a well-typed [Type] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartMetricCount].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             */
+                            fun build(): CustomChartMetricCount =
+                                CustomChartMetricCount(
+                                    filter,
+                                    type,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartMetricCount = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            filter()
+                            type().ifPresent { it.validate() }
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (if (filter.asKnown().isPresent) 1 else 0) +
+                                (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                        class Type
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val COUNT = of("count")
+
+                                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Type]'s known values. */
+                            enum class Known {
+                                COUNT
+                            }
+
+                            /**
+                             * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Type] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                COUNT,
+                                /**
+                                 * An enum member indicating that [Type] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    COUNT -> Value.COUNT
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    COUNT -> Known.COUNT
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Type: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Type = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Type && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartMetricCount &&
+                                filter == other.filter &&
+                                type == other.type &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(filter, type, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartMetricCount{filter=$filter, type=$type, additionalProperties=$additionalProperties}"
+                    }
+
+                    class CustomChartMetricScalar
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val field: JsonField<Field>,
+                        private val type: JsonField<Type>,
+                        private val filter: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("field")
+                            @ExcludeMissing
+                            field: JsonField<Field> = JsonMissing.of(),
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonField<Type> = JsonMissing.of(),
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            filter: JsonField<String> = JsonMissing.of(),
+                        ) : this(field, type, filter, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun field(): Field = field.getRequired("field")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun type(): Type = type.getRequired("type")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun filter(): Optional<String> = filter.getOptional("filter")
+
+                        /**
+                         * Returns the raw JSON value of [field].
+                         *
+                         * Unlike [field], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("field")
+                        @ExcludeMissing
+                        fun _field(): JsonField<Field> = field
+
+                        /**
+                         * Returns the raw JSON value of [type].
+                         *
+                         * Unlike [type], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                        /**
+                         * Returns the raw JSON value of [filter].
+                         *
+                         * Unlike [filter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        fun _filter(): JsonField<String> = filter
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartMetricScalar].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .field()
+                             * .type()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartMetricScalar]. */
+                        class Builder internal constructor() {
+
+                            private var field: JsonField<Field>? = null
+                            private var type: JsonField<Type>? = null
+                            private var filter: JsonField<String> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(customChartMetricScalar: CustomChartMetricScalar) =
+                                apply {
+                                    field = customChartMetricScalar.field
+                                    type = customChartMetricScalar.type
+                                    filter = customChartMetricScalar.filter
+                                    additionalProperties =
+                                        customChartMetricScalar.additionalProperties.toMutableMap()
+                                }
+
+                            fun field(field: Field) = field(JsonField.of(field))
+
+                            /**
+                             * Sets [Builder.field] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.field] with a well-typed [Field]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                            fun type(type: Type) = type(JsonField.of(type))
+
+                            /**
+                             * Sets [Builder.type] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.type] with a well-typed [Type] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                            fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                            /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                            fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                            /**
+                             * Sets [Builder.filter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.filter] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartMetricScalar].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .field()
+                             * .type()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartMetricScalar =
+                                CustomChartMetricScalar(
+                                    checkRequired("field", field),
+                                    checkRequired("type", type),
+                                    filter,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartMetricScalar = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            field().validate()
+                            type().validate()
+                            filter()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                (type.asKnown().getOrNull()?.validity() ?: 0) +
+                                (if (filter.asKnown().isPresent) 1 else 0)
+
+                        class Field
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                @JvmField val TOTAL_COST = of("total_cost")
+
+                                @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Field]'s known values. */
+                            enum class Known {
+                                LATENCY_SECONDS,
+                                FIRST_TOKEN_SECONDS,
+                                TOTAL_TOKENS,
+                                PROMPT_TOKENS,
+                                COMPLETION_TOKENS,
+                                TOTAL_COST,
+                                PROMPT_COST,
+                                COMPLETION_COST,
+                            }
+
+                            /**
+                             * An enum containing [Field]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Field] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                LATENCY_SECONDS,
+                                FIRST_TOKEN_SECONDS,
+                                TOTAL_TOKENS,
+                                PROMPT_TOKENS,
+                                COMPLETION_TOKENS,
+                                TOTAL_COST,
+                                PROMPT_COST,
+                                COMPLETION_COST,
+                                /**
+                                 * An enum member indicating that [Field] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                    FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                    TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                    PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                    COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                    TOTAL_COST -> Value.TOTAL_COST
+                                    PROMPT_COST -> Value.PROMPT_COST
+                                    COMPLETION_COST -> Value.COMPLETION_COST
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                    FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                    TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                    PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                    COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                    TOTAL_COST -> Known.TOTAL_COST
+                                    PROMPT_COST -> Known.PROMPT_COST
+                                    COMPLETION_COST -> Known.COMPLETION_COST
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Field: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Field = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Field && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        class Type
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val SUM = of("sum")
+
+                                @JvmField val MAX = of("max")
+
+                                @JvmField val MIN = of("min")
+
+                                @JvmField val AVG = of("avg")
+
+                                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Type]'s known values. */
+                            enum class Known {
+                                SUM,
+                                MAX,
+                                MIN,
+                                AVG,
+                            }
+
+                            /**
+                             * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Type] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                SUM,
+                                MAX,
+                                MIN,
+                                AVG,
+                                /**
+                                 * An enum member indicating that [Type] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    SUM -> Value.SUM
+                                    MAX -> Value.MAX
+                                    MIN -> Value.MIN
+                                    AVG -> Value.AVG
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    SUM -> Known.SUM
+                                    MAX -> Known.MAX
+                                    MIN -> Known.MIN
+                                    AVG -> Known.AVG
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Type: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Type = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Type && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartMetricScalar &&
+                                field == other.field &&
+                                type == other.type &&
+                                filter == other.filter &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(field, type, filter, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                    }
+
+                    class CustomChartMetricPercentile
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val field: JsonField<Field>,
+                        private val params: JsonField<Params>,
+                        private val type: JsonValue,
+                        private val filter: JsonField<String>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("field")
+                            @ExcludeMissing
+                            field: JsonField<Field> = JsonMissing.of(),
+                            @JsonProperty("params")
+                            @ExcludeMissing
+                            params: JsonField<Params> = JsonMissing.of(),
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonValue = JsonMissing.of(),
+                            @JsonProperty("filter")
+                            @ExcludeMissing
+                            filter: JsonField<String> = JsonMissing.of(),
+                        ) : this(field, params, type, filter, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun field(): Field = field.getRequired("field")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun params(): Params = params.getRequired("params")
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("percentile")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type (e.g. if the server responded with an unexpected value).
+                         */
+                        fun filter(): Optional<String> = filter.getOptional("filter")
+
+                        /**
+                         * Returns the raw JSON value of [field].
+                         *
+                         * Unlike [field], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("field")
+                        @ExcludeMissing
+                        fun _field(): JsonField<Field> = field
+
+                        /**
+                         * Returns the raw JSON value of [params].
+                         *
+                         * Unlike [params], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("params")
+                        @ExcludeMissing
+                        fun _params(): JsonField<Params> = params
+
+                        /**
+                         * Returns the raw JSON value of [filter].
+                         *
+                         * Unlike [filter], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("filter")
+                        @ExcludeMissing
+                        fun _filter(): JsonField<String> = filter
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartMetricPercentile].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .field()
+                             * .params()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartMetricPercentile]. */
+                        class Builder internal constructor() {
+
+                            private var field: JsonField<Field>? = null
+                            private var params: JsonField<Params>? = null
+                            private var type: JsonValue = JsonValue.from("percentile")
+                            private var filter: JsonField<String> = JsonMissing.of()
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartMetricPercentile: CustomChartMetricPercentile
+                            ) = apply {
+                                field = customChartMetricPercentile.field
+                                params = customChartMetricPercentile.params
+                                type = customChartMetricPercentile.type
+                                filter = customChartMetricPercentile.filter
+                                additionalProperties =
+                                    customChartMetricPercentile.additionalProperties.toMutableMap()
+                            }
+
+                            fun field(field: Field) = field(JsonField.of(field))
+
+                            /**
+                             * Sets [Builder.field] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.field] with a well-typed [Field]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun field(field: JsonField<Field>) = apply { this.field = field }
+
+                            fun params(params: Params) = params(JsonField.of(params))
+
+                            /**
+                             * Sets [Builder.params] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.params] with a well-typed [Params]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun params(params: JsonField<Params>) = apply { this.params = params }
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("percentile")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun type(type: JsonValue) = apply { this.type = type }
+
+                            fun filter(filter: String?) = filter(JsonField.ofNullable(filter))
+
+                            /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+                            fun filter(filter: Optional<String>) = filter(filter.getOrNull())
+
+                            /**
+                             * Sets [Builder.filter] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.filter] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartMetricPercentile].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .field()
+                             * .params()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartMetricPercentile =
+                                CustomChartMetricPercentile(
+                                    checkRequired("field", field),
+                                    checkRequired("params", params),
+                                    type,
+                                    filter,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartMetricPercentile = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            field().validate()
+                            params().validate()
+                            _type().let {
+                                if (it != JsonValue.from("percentile")) {
+                                    throw LangChainInvalidDataException(
+                                        "'type' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            filter()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                type.let { if (it == JsonValue.from("percentile")) 1 else 0 } +
+                                (if (filter.asKnown().isPresent) 1 else 0)
+
+                        class Field
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                @JvmField val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                @JvmField val TOTAL_COST = of("total_cost")
+
+                                @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                @JvmStatic fun of(value: String) = Field(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Field]'s known values. */
+                            enum class Known {
+                                LATENCY_SECONDS,
+                                FIRST_TOKEN_SECONDS,
+                                TOTAL_TOKENS,
+                                PROMPT_TOKENS,
+                                COMPLETION_TOKENS,
+                                TOTAL_COST,
+                                PROMPT_COST,
+                                COMPLETION_COST,
+                            }
+
+                            /**
+                             * An enum containing [Field]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Field] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                LATENCY_SECONDS,
+                                FIRST_TOKEN_SECONDS,
+                                TOTAL_TOKENS,
+                                PROMPT_TOKENS,
+                                COMPLETION_TOKENS,
+                                TOTAL_COST,
+                                PROMPT_COST,
+                                COMPLETION_COST,
+                                /**
+                                 * An enum member indicating that [Field] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                    FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                    TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                    PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                    COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                    TOTAL_COST -> Value.TOTAL_COST
+                                    PROMPT_COST -> Value.PROMPT_COST
+                                    COMPLETION_COST -> Value.COMPLETION_COST
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                    FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                    TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                    PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                    COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                    TOTAL_COST -> Known.TOTAL_COST
+                                    PROMPT_COST -> Known.PROMPT_COST
+                                    COMPLETION_COST -> Known.COMPLETION_COST
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Field: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Field = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Field && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        class Params
+                        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                        private constructor(
+                            private val p: JsonField<Long>,
+                            private val additionalProperties: MutableMap<String, JsonValue>,
+                        ) {
+
+                            @JsonCreator
+                            private constructor(
+                                @JsonProperty("p")
+                                @ExcludeMissing
+                                p: JsonField<Long> = JsonMissing.of()
+                            ) : this(p, mutableMapOf())
+
+                            /**
+                             * @throws LangChainInvalidDataException if the JSON field has an
+                             *   unexpected type or is unexpectedly missing or null (e.g. if the
+                             *   server responded with an unexpected value).
+                             */
+                            fun p(): Long = p.getRequired("p")
+
+                            /**
+                             * Returns the raw JSON value of [p].
+                             *
+                             * Unlike [p], this method doesn't throw if the JSON field has an
+                             * unexpected type.
+                             */
+                            @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+
+                            @JsonAnySetter
+                            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                additionalProperties.put(key, value)
+                            }
+
+                            @JsonAnyGetter
+                            @ExcludeMissing
+                            fun _additionalProperties(): Map<String, JsonValue> =
+                                Collections.unmodifiableMap(additionalProperties)
+
+                            fun toBuilder() = Builder().from(this)
+
+                            companion object {
+
+                                /**
+                                 * Returns a mutable builder for constructing an instance of
+                                 * [Params].
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .p()
+                                 * ```
+                                 */
+                                @JvmStatic fun builder() = Builder()
+                            }
+
+                            /** A builder for [Params]. */
+                            class Builder internal constructor() {
+
+                                private var p: JsonField<Long>? = null
+                                private var additionalProperties: MutableMap<String, JsonValue> =
+                                    mutableMapOf()
+
+                                @JvmSynthetic
+                                internal fun from(params: Params) = apply {
+                                    p = params.p
+                                    additionalProperties =
+                                        params.additionalProperties.toMutableMap()
+                                }
+
+                                fun p(p: Long) = p(JsonField.of(p))
+
+                                /**
+                                 * Sets [Builder.p] to an arbitrary JSON value.
+                                 *
+                                 * You should usually call [Builder.p] with a well-typed [Long]
+                                 * value instead. This method is primarily for setting the field to
+                                 * an undocumented or not yet supported value.
+                                 */
+                                fun p(p: JsonField<Long>) = apply { this.p = p }
+
+                                fun additionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                fun putAllAdditionalProperties(
+                                    additionalProperties: Map<String, JsonValue>
+                                ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                                fun removeAdditionalProperty(key: String) = apply {
+                                    additionalProperties.remove(key)
+                                }
+
+                                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                    keys.forEach(::removeAdditionalProperty)
+                                }
+
+                                /**
+                                 * Returns an immutable instance of [Params].
+                                 *
+                                 * Further updates to this [Builder] will not mutate the returned
+                                 * instance.
+                                 *
+                                 * The following fields are required:
+                                 * ```java
+                                 * .p()
+                                 * ```
+                                 *
+                                 * @throws IllegalStateException if any required field is unset.
+                                 */
+                                fun build(): Params =
+                                    Params(
+                                        checkRequired("p", p),
+                                        additionalProperties.toMutableMap(),
+                                    )
+                            }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Params = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                p()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = (if (p.asKnown().isPresent) 1 else 0)
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Params &&
+                                    p == other.p &&
+                                    additionalProperties == other.additionalProperties
+                            }
+
+                            private val hashCode: Int by lazy {
+                                Objects.hash(p, additionalProperties)
+                            }
+
+                            override fun hashCode(): Int = hashCode
+
+                            override fun toString() =
+                                "Params{p=$p, additionalProperties=$additionalProperties}"
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartMetricPercentile &&
+                                field == other.field &&
+                                params == other.params &&
+                                type == other.type &&
+                                filter == other.filter &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(field, params, type, filter, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                    }
+
+                    class CustomChartMetricRatioOutput
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val denominator: JsonField<Denominator>,
+                        private val numerator: JsonField<Numerator>,
+                        private val type: JsonValue,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("denominator")
+                            @ExcludeMissing
+                            denominator: JsonField<Denominator> = JsonMissing.of(),
+                            @JsonProperty("numerator")
+                            @ExcludeMissing
+                            numerator: JsonField<Numerator> = JsonMissing.of(),
+                            @JsonProperty("type") @ExcludeMissing type: JsonValue = JsonMissing.of(),
+                        ) : this(denominator, numerator, type, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun denominator(): Denominator = denominator.getRequired("denominator")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun numerator(): Numerator = numerator.getRequired("numerator")
+
+                        /**
+                         * Expected to always return the following:
+                         * ```java
+                         * JsonValue.from("ratio")
+                         * ```
+                         *
+                         * However, this method can be useful for debugging and logging (e.g. if the
+                         * server responded with an unexpected value).
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                        /**
+                         * Returns the raw JSON value of [denominator].
+                         *
+                         * Unlike [denominator], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("denominator")
+                        @ExcludeMissing
+                        fun _denominator(): JsonField<Denominator> = denominator
+
+                        /**
+                         * Returns the raw JSON value of [numerator].
+                         *
+                         * Unlike [numerator], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("numerator")
+                        @ExcludeMissing
+                        fun _numerator(): JsonField<Numerator> = numerator
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of
+                             * [CustomChartMetricRatioOutput].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .denominator()
+                             * .numerator()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [CustomChartMetricRatioOutput]. */
+                        class Builder internal constructor() {
+
+                            private var denominator: JsonField<Denominator>? = null
+                            private var numerator: JsonField<Numerator>? = null
+                            private var type: JsonValue = JsonValue.from("ratio")
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(
+                                customChartMetricRatioOutput: CustomChartMetricRatioOutput
+                            ) = apply {
+                                denominator = customChartMetricRatioOutput.denominator
+                                numerator = customChartMetricRatioOutput.numerator
+                                type = customChartMetricRatioOutput.type
+                                additionalProperties =
+                                    customChartMetricRatioOutput.additionalProperties.toMutableMap()
+                            }
+
+                            fun denominator(denominator: Denominator) =
+                                denominator(JsonField.of(denominator))
+
+                            /**
+                             * Sets [Builder.denominator] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.denominator] with a well-typed
+                             * [Denominator] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun denominator(denominator: JsonField<Denominator>) = apply {
+                                this.denominator = denominator
+                            }
+
+                            /**
+                             * Alias for calling [denominator] with
+                             * `Denominator.ofCustomChartMetricCount(customChartMetricCount)`.
+                             */
+                            fun denominator(
+                                customChartMetricCount: Denominator.CustomChartMetricCount
+                            ) =
+                                denominator(
+                                    Denominator.ofCustomChartMetricCount(customChartMetricCount)
+                                )
+
+                            /**
+                             * Alias for calling [denominator] with
+                             * `Denominator.ofCustomChartMetricScalar(customChartMetricScalar)`.
+                             */
+                            fun denominator(
+                                customChartMetricScalar: Denominator.CustomChartMetricScalar
+                            ) =
+                                denominator(
+                                    Denominator.ofCustomChartMetricScalar(customChartMetricScalar)
+                                )
+
+                            /**
+                             * Alias for calling [denominator] with
+                             * `Denominator.ofCustomChartMetricPercentile(customChartMetricPercentile)`.
+                             */
+                            fun denominator(
+                                customChartMetricPercentile: Denominator.CustomChartMetricPercentile
+                            ) =
+                                denominator(
+                                    Denominator.ofCustomChartMetricPercentile(
+                                        customChartMetricPercentile
+                                    )
+                                )
+
+                            fun numerator(numerator: Numerator) = numerator(JsonField.of(numerator))
+
+                            /**
+                             * Sets [Builder.numerator] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.numerator] with a well-typed
+                             * [Numerator] value instead. This method is primarily for setting the
+                             * field to an undocumented or not yet supported value.
+                             */
+                            fun numerator(numerator: JsonField<Numerator>) = apply {
+                                this.numerator = numerator
+                            }
+
+                            /**
+                             * Alias for calling [numerator] with
+                             * `Numerator.ofCustomChartMetricCount(customChartMetricCount)`.
+                             */
+                            fun numerator(
+                                customChartMetricCount: Numerator.CustomChartMetricCount
+                            ) =
+                                numerator(
+                                    Numerator.ofCustomChartMetricCount(customChartMetricCount)
+                                )
+
+                            /**
+                             * Alias for calling [numerator] with
+                             * `Numerator.ofCustomChartMetricScalar(customChartMetricScalar)`.
+                             */
+                            fun numerator(
+                                customChartMetricScalar: Numerator.CustomChartMetricScalar
+                            ) =
+                                numerator(
+                                    Numerator.ofCustomChartMetricScalar(customChartMetricScalar)
+                                )
+
+                            /**
+                             * Alias for calling [numerator] with
+                             * `Numerator.ofCustomChartMetricPercentile(customChartMetricPercentile)`.
+                             */
+                            fun numerator(
+                                customChartMetricPercentile: Numerator.CustomChartMetricPercentile
+                            ) =
+                                numerator(
+                                    Numerator.ofCustomChartMetricPercentile(
+                                        customChartMetricPercentile
+                                    )
+                                )
+
+                            /**
+                             * Sets the field to an arbitrary JSON value.
+                             *
+                             * It is usually unnecessary to call this method because the field
+                             * defaults to the following:
+                             * ```java
+                             * JsonValue.from("ratio")
+                             * ```
+                             *
+                             * This method is primarily for setting the field to an undocumented or
+                             * not yet supported value.
+                             */
+                            fun type(type: JsonValue) = apply { this.type = type }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [CustomChartMetricRatioOutput].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .denominator()
+                             * .numerator()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): CustomChartMetricRatioOutput =
+                                CustomChartMetricRatioOutput(
+                                    checkRequired("denominator", denominator),
+                                    checkRequired("numerator", numerator),
+                                    type,
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): CustomChartMetricRatioOutput = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            denominator().validate()
+                            numerator().validate()
+                            _type().let {
+                                if (it != JsonValue.from("ratio")) {
+                                    throw LangChainInvalidDataException(
+                                        "'type' is invalid, received $it"
+                                    )
+                                }
+                            }
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (denominator.asKnown().getOrNull()?.validity() ?: 0) +
+                                (numerator.asKnown().getOrNull()?.validity() ?: 0) +
+                                type.let { if (it == JsonValue.from("ratio")) 1 else 0 }
+
+                        @JsonDeserialize(using = Denominator.Deserializer::class)
+                        @JsonSerialize(using = Denominator.Serializer::class)
+                        class Denominator
+                        private constructor(
+                            private val customChartMetricCount: CustomChartMetricCount? = null,
+                            private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                            private val customChartMetricPercentile: CustomChartMetricPercentile? =
+                                null,
+                            private val _json: JsonValue? = null,
+                        ) {
+
+                            fun customChartMetricCount(): Optional<CustomChartMetricCount> =
+                                Optional.ofNullable(customChartMetricCount)
+
+                            fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
+                                Optional.ofNullable(customChartMetricScalar)
+
+                            fun customChartMetricPercentile():
+                                Optional<CustomChartMetricPercentile> =
+                                Optional.ofNullable(customChartMetricPercentile)
+
+                            fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
+
+                            fun isCustomChartMetricScalar(): Boolean =
+                                customChartMetricScalar != null
+
+                            fun isCustomChartMetricPercentile(): Boolean =
+                                customChartMetricPercentile != null
+
+                            fun asCustomChartMetricCount(): CustomChartMetricCount =
+                                customChartMetricCount.getOrThrow("customChartMetricCount")
+
+                            fun asCustomChartMetricScalar(): CustomChartMetricScalar =
+                                customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                            fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
+                                customChartMetricPercentile.getOrThrow(
+                                    "customChartMetricPercentile"
+                                )
+
+                            fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                            /**
+                             * Maps this instance's current variant to a value of type [T] using the
+                             * given [visitor].
+                             *
+                             * Note that this method is _not_ forwards compatible with new variants
+                             * from the API, unless [visitor] overrides [Visitor.unknown]. To handle
+                             * variants not known to this version of the SDK gracefully, consider
+                             * overriding [Visitor.unknown]:
+                             * ```java
+                             * import com.langchain.smith.core.JsonValue;
+                             * import java.util.Optional;
+                             *
+                             * Optional<String> result = denominator.accept(new Denominator.Visitor<Optional<String>>() {
+                             *     @Override
+                             *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
+                             *         return Optional.of(customChartMetricCount.toString());
+                             *     }
+                             *
+                             *     // ...
+                             *
+                             *     @Override
+                             *     public Optional<String> unknown(JsonValue json) {
+                             *         // Or inspect the `json`.
+                             *         return Optional.empty();
+                             *     }
+                             * });
+                             * ```
+                             *
+                             * @throws LangChainInvalidDataException if [Visitor.unknown] is not
+                             *   overridden in [visitor] and the current variant is unknown.
+                             */
+                            fun <T> accept(visitor: Visitor<T>): T =
+                                when {
+                                    customChartMetricCount != null ->
+                                        visitor.visitCustomChartMetricCount(customChartMetricCount)
+                                    customChartMetricScalar != null ->
+                                        visitor.visitCustomChartMetricScalar(
+                                            customChartMetricScalar
+                                        )
+                                    customChartMetricPercentile != null ->
+                                        visitor.visitCustomChartMetricPercentile(
+                                            customChartMetricPercentile
+                                        )
+                                    else -> visitor.unknown(_json)
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Denominator = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                accept(
+                                    object : Visitor<Unit> {
+                                        override fun visitCustomChartMetricCount(
+                                            customChartMetricCount: CustomChartMetricCount
+                                        ) {
+                                            customChartMetricCount.validate()
+                                        }
+
+                                        override fun visitCustomChartMetricScalar(
+                                            customChartMetricScalar: CustomChartMetricScalar
+                                        ) {
+                                            customChartMetricScalar.validate()
+                                        }
+
+                                        override fun visitCustomChartMetricPercentile(
+                                            customChartMetricPercentile: CustomChartMetricPercentile
+                                        ) {
+                                            customChartMetricPercentile.validate()
+                                        }
+                                    }
+                                )
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                accept(
+                                    object : Visitor<Int> {
+                                        override fun visitCustomChartMetricCount(
+                                            customChartMetricCount: CustomChartMetricCount
+                                        ) = customChartMetricCount.validity()
+
+                                        override fun visitCustomChartMetricScalar(
+                                            customChartMetricScalar: CustomChartMetricScalar
+                                        ) = customChartMetricScalar.validity()
+
+                                        override fun visitCustomChartMetricPercentile(
+                                            customChartMetricPercentile: CustomChartMetricPercentile
+                                        ) = customChartMetricPercentile.validity()
+
+                                        override fun unknown(json: JsonValue?) = 0
+                                    }
+                                )
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Denominator &&
+                                    customChartMetricCount == other.customChartMetricCount &&
+                                    customChartMetricScalar == other.customChartMetricScalar &&
+                                    customChartMetricPercentile == other.customChartMetricPercentile
+                            }
+
+                            override fun hashCode(): Int =
+                                Objects.hash(
+                                    customChartMetricCount,
+                                    customChartMetricScalar,
+                                    customChartMetricPercentile,
+                                )
+
+                            override fun toString(): String =
+                                when {
+                                    customChartMetricCount != null ->
+                                        "Denominator{customChartMetricCount=$customChartMetricCount}"
+                                    customChartMetricScalar != null ->
+                                        "Denominator{customChartMetricScalar=$customChartMetricScalar}"
+                                    customChartMetricPercentile != null ->
+                                        "Denominator{customChartMetricPercentile=$customChartMetricPercentile}"
+                                    _json != null -> "Denominator{_unknown=$_json}"
+                                    else -> throw IllegalStateException("Invalid Denominator")
+                                }
+
+                            companion object {
+
+                                @JvmStatic
+                                fun ofCustomChartMetricCount(
+                                    customChartMetricCount: CustomChartMetricCount
+                                ) = Denominator(customChartMetricCount = customChartMetricCount)
+
+                                @JvmStatic
+                                fun ofCustomChartMetricScalar(
+                                    customChartMetricScalar: CustomChartMetricScalar
+                                ) = Denominator(customChartMetricScalar = customChartMetricScalar)
+
+                                @JvmStatic
+                                fun ofCustomChartMetricPercentile(
+                                    customChartMetricPercentile: CustomChartMetricPercentile
+                                ) =
+                                    Denominator(
+                                        customChartMetricPercentile = customChartMetricPercentile
+                                    )
+                            }
+
+                            /**
+                             * An interface that defines how to map each variant of [Denominator] to
+                             * a value of type [T].
+                             */
+                            interface Visitor<out T> {
+
+                                fun visitCustomChartMetricCount(
+                                    customChartMetricCount: CustomChartMetricCount
+                                ): T
+
+                                fun visitCustomChartMetricScalar(
+                                    customChartMetricScalar: CustomChartMetricScalar
+                                ): T
+
+                                fun visitCustomChartMetricPercentile(
+                                    customChartMetricPercentile: CustomChartMetricPercentile
+                                ): T
+
+                                /**
+                                 * Maps an unknown variant of [Denominator] to a value of type [T].
+                                 *
+                                 * An instance of [Denominator] can contain an unknown variant if it
+                                 * was deserialized from data that doesn't match any known variant.
+                                 * For example, if the SDK is on an older version than the API, then
+                                 * the API may respond with new variants that the SDK is unaware of.
+                                 *
+                                 * @throws LangChainInvalidDataException in the default
+                                 *   implementation.
+                                 */
+                                fun unknown(json: JsonValue?): T {
+                                    throw LangChainInvalidDataException(
+                                        "Unknown Denominator: $json"
+                                    )
+                                }
+                            }
+
+                            internal class Deserializer :
+                                BaseDeserializer<Denominator>(Denominator::class) {
+
+                                override fun ObjectCodec.deserialize(node: JsonNode): Denominator {
+                                    val json = JsonValue.fromJsonNode(node)
+
+                                    val bestMatches =
+                                        sequenceOf(
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<CustomChartMetricCount>(),
+                                                    )
+                                                    ?.let {
+                                                        Denominator(
+                                                            customChartMetricCount = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<CustomChartMetricScalar>(),
+                                                    )
+                                                    ?.let {
+                                                        Denominator(
+                                                            customChartMetricScalar = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<
+                                                            CustomChartMetricPercentile
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Denominator(
+                                                            customChartMetricPercentile = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                            )
+                                            .filterNotNull()
+                                            .allMaxBy { it.validity() }
+                                            .toList()
+                                    return when (bestMatches.size) {
+                                        // This can happen if what we're deserializing is completely
+                                        // incompatible with all the possible variants (e.g.
+                                        // deserializing from boolean).
+                                        0 -> Denominator(_json = json)
+                                        1 -> bestMatches.single()
+                                        // If there's more than one match with the highest validity,
+                                        // then use the first completely valid match, or simply the
+                                        // first match if none are completely valid.
+                                        else ->
+                                            bestMatches.firstOrNull { it.isValid() }
+                                                ?: bestMatches.first()
+                                    }
+                                }
+                            }
+
+                            internal class Serializer :
+                                BaseSerializer<Denominator>(Denominator::class) {
+
+                                override fun serialize(
+                                    value: Denominator,
+                                    generator: JsonGenerator,
+                                    provider: SerializerProvider,
+                                ) {
+                                    when {
+                                        value.customChartMetricCount != null ->
+                                            generator.writeObject(value.customChartMetricCount)
+                                        value.customChartMetricScalar != null ->
+                                            generator.writeObject(value.customChartMetricScalar)
+                                        value.customChartMetricPercentile != null ->
+                                            generator.writeObject(value.customChartMetricPercentile)
+                                        value._json != null -> generator.writeObject(value._json)
+                                        else -> throw IllegalStateException("Invalid Denominator")
+                                    }
+                                }
+                            }
+
+                            class CustomChartMetricCount
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val filter: JsonField<String>,
+                                private val type: JsonField<Type>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonField<Type> = JsonMissing.of(),
+                                ) : this(filter, type, mutableMapOf())
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun type(): Optional<Type> = type.getOptional("type")
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                /**
+                                 * Returns the raw JSON value of [type].
+                                 *
+                                 * Unlike [type], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                fun _type(): JsonField<Type> = type
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartMetricCount].
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartMetricCount]. */
+                                class Builder internal constructor() {
+
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var type: JsonField<Type> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartMetricCount: CustomChartMetricCount
+                                    ) = apply {
+                                        filter = customChartMetricCount.filter
+                                        type = customChartMetricCount.type
+                                        additionalProperties =
+                                            customChartMetricCount.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun type(type: Type) = type(JsonField.of(type))
+
+                                    /**
+                                     * Sets [Builder.type] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.type] with a well-typed
+                                     * [Type] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of [CustomChartMetricCount].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     */
+                                    fun build(): CustomChartMetricCount =
+                                        CustomChartMetricCount(
+                                            filter,
+                                            type,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartMetricCount = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    filter()
+                                    type().ifPresent { it.validate() }
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    (if (filter.asKnown().isPresent) 1 else 0) +
+                                        (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                                class Type
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val COUNT = of("count")
+
+                                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Type]'s known values. */
+                                    enum class Known {
+                                        COUNT
+                                    }
+
+                                    /**
+                                     * An enum containing [Type]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Type] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        COUNT,
+                                        /**
+                                         * An enum member indicating that [Type] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            COUNT -> Value.COUNT
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            COUNT -> Known.COUNT
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Type: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Type = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Type && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartMetricCount &&
+                                        filter == other.filter &&
+                                        type == other.type &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(filter, type, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartMetricCount{filter=$filter, type=$type, additionalProperties=$additionalProperties}"
+                            }
+
+                            class CustomChartMetricScalar
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val field: JsonField<Field>,
+                                private val type: JsonField<Type>,
+                                private val filter: JsonField<String>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("field")
+                                    @ExcludeMissing
+                                    field: JsonField<Field> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonField<Type> = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                ) : this(field, type, filter, mutableMapOf())
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun field(): Field = field.getRequired("field")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun type(): Type = type.getRequired("type")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * Returns the raw JSON value of [field].
+                                 *
+                                 * Unlike [field], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                fun _field(): JsonField<Field> = field
+
+                                /**
+                                 * Returns the raw JSON value of [type].
+                                 *
+                                 * Unlike [type], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                fun _type(): JsonField<Type> = type
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartMetricScalar].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .field()
+                                     * .type()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartMetricScalar]. */
+                                class Builder internal constructor() {
+
+                                    private var field: JsonField<Field>? = null
+                                    private var type: JsonField<Type>? = null
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartMetricScalar: CustomChartMetricScalar
+                                    ) = apply {
+                                        field = customChartMetricScalar.field
+                                        type = customChartMetricScalar.type
+                                        filter = customChartMetricScalar.filter
+                                        additionalProperties =
+                                            customChartMetricScalar.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    fun field(field: Field) = field(JsonField.of(field))
+
+                                    /**
+                                     * Sets [Builder.field] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.field] with a well-typed
+                                     * [Field] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun field(field: JsonField<Field>) = apply {
+                                        this.field = field
+                                    }
+
+                                    fun type(type: Type) = type(JsonField.of(type))
+
+                                    /**
+                                     * Sets [Builder.type] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.type] with a well-typed
+                                     * [Type] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of [CustomChartMetricScalar].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .field()
+                                     * .type()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartMetricScalar =
+                                        CustomChartMetricScalar(
+                                            checkRequired("field", field),
+                                            checkRequired("type", type),
+                                            filter,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartMetricScalar = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    field().validate()
+                                    type().validate()
+                                    filter()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (type.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (if (filter.asKnown().isPresent) 1 else 0)
+
+                                class Field
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                        @JvmField
+                                        val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                        @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                        @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                        @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                        @JvmField val TOTAL_COST = of("total_cost")
+
+                                        @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                        @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                        @JvmStatic
+                                        fun of(value: String) = Field(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Field]'s known values. */
+                                    enum class Known {
+                                        LATENCY_SECONDS,
+                                        FIRST_TOKEN_SECONDS,
+                                        TOTAL_TOKENS,
+                                        PROMPT_TOKENS,
+                                        COMPLETION_TOKENS,
+                                        TOTAL_COST,
+                                        PROMPT_COST,
+                                        COMPLETION_COST,
+                                    }
+
+                                    /**
+                                     * An enum containing [Field]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Field] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        LATENCY_SECONDS,
+                                        FIRST_TOKEN_SECONDS,
+                                        TOTAL_TOKENS,
+                                        PROMPT_TOKENS,
+                                        COMPLETION_TOKENS,
+                                        TOTAL_COST,
+                                        PROMPT_COST,
+                                        COMPLETION_COST,
+                                        /**
+                                         * An enum member indicating that [Field] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                            FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                            TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                            PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                            COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            TOTAL_COST -> Value.TOTAL_COST
+                                            PROMPT_COST -> Value.PROMPT_COST
+                                            COMPLETION_COST -> Value.COMPLETION_COST
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                            FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                            TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                            PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                            COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            TOTAL_COST -> Known.TOTAL_COST
+                                            PROMPT_COST -> Known.PROMPT_COST
+                                            COMPLETION_COST -> Known.COMPLETION_COST
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Field: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Field = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Field && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                class Type
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val SUM = of("sum")
+
+                                        @JvmField val MAX = of("max")
+
+                                        @JvmField val MIN = of("min")
+
+                                        @JvmField val AVG = of("avg")
+
+                                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Type]'s known values. */
+                                    enum class Known {
+                                        SUM,
+                                        MAX,
+                                        MIN,
+                                        AVG,
+                                    }
+
+                                    /**
+                                     * An enum containing [Type]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Type] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        SUM,
+                                        MAX,
+                                        MIN,
+                                        AVG,
+                                        /**
+                                         * An enum member indicating that [Type] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            SUM -> Value.SUM
+                                            MAX -> Value.MAX
+                                            MIN -> Value.MIN
+                                            AVG -> Value.AVG
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            SUM -> Known.SUM
+                                            MAX -> Known.MAX
+                                            MIN -> Known.MIN
+                                            AVG -> Known.AVG
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Type: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Type = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Type && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartMetricScalar &&
+                                        field == other.field &&
+                                        type == other.type &&
+                                        filter == other.filter &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(field, type, filter, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                            }
+
+                            class CustomChartMetricPercentile
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val field: JsonField<Field>,
+                                private val params: JsonField<Params>,
+                                private val type: JsonValue,
+                                private val filter: JsonField<String>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("field")
+                                    @ExcludeMissing
+                                    field: JsonField<Field> = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                ) : this(field, params, type, filter, mutableMapOf())
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun field(): Field = field.getRequired("field")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("percentile")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * Returns the raw JSON value of [field].
+                                 *
+                                 * Unlike [field], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                fun _field(): JsonField<Field> = field
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartMetricPercentile].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .field()
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartMetricPercentile]. */
+                                class Builder internal constructor() {
+
+                                    private var field: JsonField<Field>? = null
+                                    private var params: JsonField<Params>? = null
+                                    private var type: JsonValue = JsonValue.from("percentile")
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartMetricPercentile: CustomChartMetricPercentile
+                                    ) = apply {
+                                        field = customChartMetricPercentile.field
+                                        params = customChartMetricPercentile.params
+                                        type = customChartMetricPercentile.type
+                                        filter = customChartMetricPercentile.filter
+                                        additionalProperties =
+                                            customChartMetricPercentile.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    fun field(field: Field) = field(JsonField.of(field))
+
+                                    /**
+                                     * Sets [Builder.field] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.field] with a well-typed
+                                     * [Field] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun field(field: JsonField<Field>) = apply {
+                                        this.field = field
+                                    }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("percentile")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonValue) = apply { this.type = type }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartMetricPercentile].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .field()
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartMetricPercentile =
+                                        CustomChartMetricPercentile(
+                                            checkRequired("field", field),
+                                            checkRequired("params", params),
+                                            type,
+                                            filter,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartMetricPercentile = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    field().validate()
+                                    params().validate()
+                                    _type().let {
+                                        if (it != JsonValue.from("percentile")) {
+                                            throw LangChainInvalidDataException(
+                                                "'type' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    filter()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        type.let {
+                                            if (it == JsonValue.from("percentile")) 1 else 0
+                                        } +
+                                        (if (filter.asKnown().isPresent) 1 else 0)
+
+                                class Field
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                        @JvmField
+                                        val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                        @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                        @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                        @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                        @JvmField val TOTAL_COST = of("total_cost")
+
+                                        @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                        @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                        @JvmStatic
+                                        fun of(value: String) = Field(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Field]'s known values. */
+                                    enum class Known {
+                                        LATENCY_SECONDS,
+                                        FIRST_TOKEN_SECONDS,
+                                        TOTAL_TOKENS,
+                                        PROMPT_TOKENS,
+                                        COMPLETION_TOKENS,
+                                        TOTAL_COST,
+                                        PROMPT_COST,
+                                        COMPLETION_COST,
+                                    }
+
+                                    /**
+                                     * An enum containing [Field]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Field] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        LATENCY_SECONDS,
+                                        FIRST_TOKEN_SECONDS,
+                                        TOTAL_TOKENS,
+                                        PROMPT_TOKENS,
+                                        COMPLETION_TOKENS,
+                                        TOTAL_COST,
+                                        PROMPT_COST,
+                                        COMPLETION_COST,
+                                        /**
+                                         * An enum member indicating that [Field] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                            FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                            TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                            PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                            COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            TOTAL_COST -> Value.TOTAL_COST
+                                            PROMPT_COST -> Value.PROMPT_COST
+                                            COMPLETION_COST -> Value.COMPLETION_COST
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                            FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                            TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                            PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                            COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            TOTAL_COST -> Known.TOTAL_COST
+                                            PROMPT_COST -> Known.PROMPT_COST
+                                            COMPLETION_COST -> Known.COMPLETION_COST
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Field: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Field = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Field && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val p: JsonField<Long>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("p")
+                                        @ExcludeMissing
+                                        p: JsonField<Long> = JsonMissing.of()
+                                    ) : this(p, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun p(): Long = p.getRequired("p")
+
+                                    /**
+                                     * Returns the raw JSON value of [p].
+                                     *
+                                     * Unlike [p], this method doesn't throw if the JSON field has
+                                     * an unexpected type.
+                                     */
+                                    @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .p()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var p: JsonField<Long>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            p = params.p
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun p(p: Long) = p(JsonField.of(p))
+
+                                        /**
+                                         * Sets [Builder.p] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.p] with a well-typed
+                                         * [Long] value instead. This method is primarily for
+                                         * setting the field to an undocumented or not yet supported
+                                         * value.
+                                         */
+                                        fun p(p: JsonField<Long>) = apply { this.p = p }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .p()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("p", p),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        p()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (p.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            p == other.p &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(p, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{p=$p, additionalProperties=$additionalProperties}"
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartMetricPercentile &&
+                                        field == other.field &&
+                                        params == other.params &&
+                                        type == other.type &&
+                                        filter == other.filter &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(field, params, type, filter, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                            }
+                        }
+
+                        @JsonDeserialize(using = Numerator.Deserializer::class)
+                        @JsonSerialize(using = Numerator.Serializer::class)
+                        class Numerator
+                        private constructor(
+                            private val customChartMetricCount: CustomChartMetricCount? = null,
+                            private val customChartMetricScalar: CustomChartMetricScalar? = null,
+                            private val customChartMetricPercentile: CustomChartMetricPercentile? =
+                                null,
+                            private val _json: JsonValue? = null,
+                        ) {
+
+                            fun customChartMetricCount(): Optional<CustomChartMetricCount> =
+                                Optional.ofNullable(customChartMetricCount)
+
+                            fun customChartMetricScalar(): Optional<CustomChartMetricScalar> =
+                                Optional.ofNullable(customChartMetricScalar)
+
+                            fun customChartMetricPercentile():
+                                Optional<CustomChartMetricPercentile> =
+                                Optional.ofNullable(customChartMetricPercentile)
+
+                            fun isCustomChartMetricCount(): Boolean = customChartMetricCount != null
+
+                            fun isCustomChartMetricScalar(): Boolean =
+                                customChartMetricScalar != null
+
+                            fun isCustomChartMetricPercentile(): Boolean =
+                                customChartMetricPercentile != null
+
+                            fun asCustomChartMetricCount(): CustomChartMetricCount =
+                                customChartMetricCount.getOrThrow("customChartMetricCount")
+
+                            fun asCustomChartMetricScalar(): CustomChartMetricScalar =
+                                customChartMetricScalar.getOrThrow("customChartMetricScalar")
+
+                            fun asCustomChartMetricPercentile(): CustomChartMetricPercentile =
+                                customChartMetricPercentile.getOrThrow(
+                                    "customChartMetricPercentile"
+                                )
+
+                            fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
+
+                            /**
+                             * Maps this instance's current variant to a value of type [T] using the
+                             * given [visitor].
+                             *
+                             * Note that this method is _not_ forwards compatible with new variants
+                             * from the API, unless [visitor] overrides [Visitor.unknown]. To handle
+                             * variants not known to this version of the SDK gracefully, consider
+                             * overriding [Visitor.unknown]:
+                             * ```java
+                             * import com.langchain.smith.core.JsonValue;
+                             * import java.util.Optional;
+                             *
+                             * Optional<String> result = numerator.accept(new Numerator.Visitor<Optional<String>>() {
+                             *     @Override
+                             *     public Optional<String> visitCustomChartMetricCount(CustomChartMetricCount customChartMetricCount) {
+                             *         return Optional.of(customChartMetricCount.toString());
+                             *     }
+                             *
+                             *     // ...
+                             *
+                             *     @Override
+                             *     public Optional<String> unknown(JsonValue json) {
+                             *         // Or inspect the `json`.
+                             *         return Optional.empty();
+                             *     }
+                             * });
+                             * ```
+                             *
+                             * @throws LangChainInvalidDataException if [Visitor.unknown] is not
+                             *   overridden in [visitor] and the current variant is unknown.
+                             */
+                            fun <T> accept(visitor: Visitor<T>): T =
+                                when {
+                                    customChartMetricCount != null ->
+                                        visitor.visitCustomChartMetricCount(customChartMetricCount)
+                                    customChartMetricScalar != null ->
+                                        visitor.visitCustomChartMetricScalar(
+                                            customChartMetricScalar
+                                        )
+                                    customChartMetricPercentile != null ->
+                                        visitor.visitCustomChartMetricPercentile(
+                                            customChartMetricPercentile
+                                        )
+                                    else -> visitor.unknown(_json)
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Numerator = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                accept(
+                                    object : Visitor<Unit> {
+                                        override fun visitCustomChartMetricCount(
+                                            customChartMetricCount: CustomChartMetricCount
+                                        ) {
+                                            customChartMetricCount.validate()
+                                        }
+
+                                        override fun visitCustomChartMetricScalar(
+                                            customChartMetricScalar: CustomChartMetricScalar
+                                        ) {
+                                            customChartMetricScalar.validate()
+                                        }
+
+                                        override fun visitCustomChartMetricPercentile(
+                                            customChartMetricPercentile: CustomChartMetricPercentile
+                                        ) {
+                                            customChartMetricPercentile.validate()
+                                        }
+                                    }
+                                )
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int =
+                                accept(
+                                    object : Visitor<Int> {
+                                        override fun visitCustomChartMetricCount(
+                                            customChartMetricCount: CustomChartMetricCount
+                                        ) = customChartMetricCount.validity()
+
+                                        override fun visitCustomChartMetricScalar(
+                                            customChartMetricScalar: CustomChartMetricScalar
+                                        ) = customChartMetricScalar.validity()
+
+                                        override fun visitCustomChartMetricPercentile(
+                                            customChartMetricPercentile: CustomChartMetricPercentile
+                                        ) = customChartMetricPercentile.validity()
+
+                                        override fun unknown(json: JsonValue?) = 0
+                                    }
+                                )
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Numerator &&
+                                    customChartMetricCount == other.customChartMetricCount &&
+                                    customChartMetricScalar == other.customChartMetricScalar &&
+                                    customChartMetricPercentile == other.customChartMetricPercentile
+                            }
+
+                            override fun hashCode(): Int =
+                                Objects.hash(
+                                    customChartMetricCount,
+                                    customChartMetricScalar,
+                                    customChartMetricPercentile,
+                                )
+
+                            override fun toString(): String =
+                                when {
+                                    customChartMetricCount != null ->
+                                        "Numerator{customChartMetricCount=$customChartMetricCount}"
+                                    customChartMetricScalar != null ->
+                                        "Numerator{customChartMetricScalar=$customChartMetricScalar}"
+                                    customChartMetricPercentile != null ->
+                                        "Numerator{customChartMetricPercentile=$customChartMetricPercentile}"
+                                    _json != null -> "Numerator{_unknown=$_json}"
+                                    else -> throw IllegalStateException("Invalid Numerator")
+                                }
+
+                            companion object {
+
+                                @JvmStatic
+                                fun ofCustomChartMetricCount(
+                                    customChartMetricCount: CustomChartMetricCount
+                                ) = Numerator(customChartMetricCount = customChartMetricCount)
+
+                                @JvmStatic
+                                fun ofCustomChartMetricScalar(
+                                    customChartMetricScalar: CustomChartMetricScalar
+                                ) = Numerator(customChartMetricScalar = customChartMetricScalar)
+
+                                @JvmStatic
+                                fun ofCustomChartMetricPercentile(
+                                    customChartMetricPercentile: CustomChartMetricPercentile
+                                ) =
+                                    Numerator(
+                                        customChartMetricPercentile = customChartMetricPercentile
+                                    )
+                            }
+
+                            /**
+                             * An interface that defines how to map each variant of [Numerator] to a
+                             * value of type [T].
+                             */
+                            interface Visitor<out T> {
+
+                                fun visitCustomChartMetricCount(
+                                    customChartMetricCount: CustomChartMetricCount
+                                ): T
+
+                                fun visitCustomChartMetricScalar(
+                                    customChartMetricScalar: CustomChartMetricScalar
+                                ): T
+
+                                fun visitCustomChartMetricPercentile(
+                                    customChartMetricPercentile: CustomChartMetricPercentile
+                                ): T
+
+                                /**
+                                 * Maps an unknown variant of [Numerator] to a value of type [T].
+                                 *
+                                 * An instance of [Numerator] can contain an unknown variant if it
+                                 * was deserialized from data that doesn't match any known variant.
+                                 * For example, if the SDK is on an older version than the API, then
+                                 * the API may respond with new variants that the SDK is unaware of.
+                                 *
+                                 * @throws LangChainInvalidDataException in the default
+                                 *   implementation.
+                                 */
+                                fun unknown(json: JsonValue?): T {
+                                    throw LangChainInvalidDataException("Unknown Numerator: $json")
+                                }
+                            }
+
+                            internal class Deserializer :
+                                BaseDeserializer<Numerator>(Numerator::class) {
+
+                                override fun ObjectCodec.deserialize(node: JsonNode): Numerator {
+                                    val json = JsonValue.fromJsonNode(node)
+
+                                    val bestMatches =
+                                        sequenceOf(
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<CustomChartMetricCount>(),
+                                                    )
+                                                    ?.let {
+                                                        Numerator(
+                                                            customChartMetricCount = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<CustomChartMetricScalar>(),
+                                                    )
+                                                    ?.let {
+                                                        Numerator(
+                                                            customChartMetricScalar = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                                tryDeserialize(
+                                                        node,
+                                                        jacksonTypeRef<
+                                                            CustomChartMetricPercentile
+                                                        >(),
+                                                    )
+                                                    ?.let {
+                                                        Numerator(
+                                                            customChartMetricPercentile = it,
+                                                            _json = json,
+                                                        )
+                                                    },
+                                            )
+                                            .filterNotNull()
+                                            .allMaxBy { it.validity() }
+                                            .toList()
+                                    return when (bestMatches.size) {
+                                        // This can happen if what we're deserializing is completely
+                                        // incompatible with all the possible variants (e.g.
+                                        // deserializing from boolean).
+                                        0 -> Numerator(_json = json)
+                                        1 -> bestMatches.single()
+                                        // If there's more than one match with the highest validity,
+                                        // then use the first completely valid match, or simply the
+                                        // first match if none are completely valid.
+                                        else ->
+                                            bestMatches.firstOrNull { it.isValid() }
+                                                ?: bestMatches.first()
+                                    }
+                                }
+                            }
+
+                            internal class Serializer :
+                                BaseSerializer<Numerator>(Numerator::class) {
+
+                                override fun serialize(
+                                    value: Numerator,
+                                    generator: JsonGenerator,
+                                    provider: SerializerProvider,
+                                ) {
+                                    when {
+                                        value.customChartMetricCount != null ->
+                                            generator.writeObject(value.customChartMetricCount)
+                                        value.customChartMetricScalar != null ->
+                                            generator.writeObject(value.customChartMetricScalar)
+                                        value.customChartMetricPercentile != null ->
+                                            generator.writeObject(value.customChartMetricPercentile)
+                                        value._json != null -> generator.writeObject(value._json)
+                                        else -> throw IllegalStateException("Invalid Numerator")
+                                    }
+                                }
+                            }
+
+                            class CustomChartMetricCount
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val filter: JsonField<String>,
+                                private val type: JsonField<Type>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonField<Type> = JsonMissing.of(),
+                                ) : this(filter, type, mutableMapOf())
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun type(): Optional<Type> = type.getOptional("type")
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                /**
+                                 * Returns the raw JSON value of [type].
+                                 *
+                                 * Unlike [type], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                fun _type(): JsonField<Type> = type
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartMetricCount].
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartMetricCount]. */
+                                class Builder internal constructor() {
+
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var type: JsonField<Type> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartMetricCount: CustomChartMetricCount
+                                    ) = apply {
+                                        filter = customChartMetricCount.filter
+                                        type = customChartMetricCount.type
+                                        additionalProperties =
+                                            customChartMetricCount.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun type(type: Type) = type(JsonField.of(type))
+
+                                    /**
+                                     * Sets [Builder.type] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.type] with a well-typed
+                                     * [Type] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of [CustomChartMetricCount].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     */
+                                    fun build(): CustomChartMetricCount =
+                                        CustomChartMetricCount(
+                                            filter,
+                                            type,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartMetricCount = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    filter()
+                                    type().ifPresent { it.validate() }
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    (if (filter.asKnown().isPresent) 1 else 0) +
+                                        (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                                class Type
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val COUNT = of("count")
+
+                                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Type]'s known values. */
+                                    enum class Known {
+                                        COUNT
+                                    }
+
+                                    /**
+                                     * An enum containing [Type]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Type] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        COUNT,
+                                        /**
+                                         * An enum member indicating that [Type] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            COUNT -> Value.COUNT
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            COUNT -> Known.COUNT
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Type: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Type = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Type && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartMetricCount &&
+                                        filter == other.filter &&
+                                        type == other.type &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(filter, type, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartMetricCount{filter=$filter, type=$type, additionalProperties=$additionalProperties}"
+                            }
+
+                            class CustomChartMetricScalar
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val field: JsonField<Field>,
+                                private val type: JsonField<Type>,
+                                private val filter: JsonField<String>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("field")
+                                    @ExcludeMissing
+                                    field: JsonField<Field> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonField<Type> = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                ) : this(field, type, filter, mutableMapOf())
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun field(): Field = field.getRequired("field")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun type(): Type = type.getRequired("type")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * Returns the raw JSON value of [field].
+                                 *
+                                 * Unlike [field], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                fun _field(): JsonField<Field> = field
+
+                                /**
+                                 * Returns the raw JSON value of [type].
+                                 *
+                                 * Unlike [type], this method doesn't throw if the JSON field has an
+                                 * unexpected type.
+                                 */
+                                @JsonProperty("type")
+                                @ExcludeMissing
+                                fun _type(): JsonField<Type> = type
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartMetricScalar].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .field()
+                                     * .type()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartMetricScalar]. */
+                                class Builder internal constructor() {
+
+                                    private var field: JsonField<Field>? = null
+                                    private var type: JsonField<Type>? = null
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartMetricScalar: CustomChartMetricScalar
+                                    ) = apply {
+                                        field = customChartMetricScalar.field
+                                        type = customChartMetricScalar.type
+                                        filter = customChartMetricScalar.filter
+                                        additionalProperties =
+                                            customChartMetricScalar.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    fun field(field: Field) = field(JsonField.of(field))
+
+                                    /**
+                                     * Sets [Builder.field] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.field] with a well-typed
+                                     * [Field] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun field(field: JsonField<Field>) = apply {
+                                        this.field = field
+                                    }
+
+                                    fun type(type: Type) = type(JsonField.of(type))
+
+                                    /**
+                                     * Sets [Builder.type] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.type] with a well-typed
+                                     * [Type] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of [CustomChartMetricScalar].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .field()
+                                     * .type()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartMetricScalar =
+                                        CustomChartMetricScalar(
+                                            checkRequired("field", field),
+                                            checkRequired("type", type),
+                                            filter,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartMetricScalar = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    field().validate()
+                                    type().validate()
+                                    filter()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (type.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (if (filter.asKnown().isPresent) 1 else 0)
+
+                                class Field
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                        @JvmField
+                                        val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                        @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                        @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                        @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                        @JvmField val TOTAL_COST = of("total_cost")
+
+                                        @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                        @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                        @JvmStatic
+                                        fun of(value: String) = Field(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Field]'s known values. */
+                                    enum class Known {
+                                        LATENCY_SECONDS,
+                                        FIRST_TOKEN_SECONDS,
+                                        TOTAL_TOKENS,
+                                        PROMPT_TOKENS,
+                                        COMPLETION_TOKENS,
+                                        TOTAL_COST,
+                                        PROMPT_COST,
+                                        COMPLETION_COST,
+                                    }
+
+                                    /**
+                                     * An enum containing [Field]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Field] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        LATENCY_SECONDS,
+                                        FIRST_TOKEN_SECONDS,
+                                        TOTAL_TOKENS,
+                                        PROMPT_TOKENS,
+                                        COMPLETION_TOKENS,
+                                        TOTAL_COST,
+                                        PROMPT_COST,
+                                        COMPLETION_COST,
+                                        /**
+                                         * An enum member indicating that [Field] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                            FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                            TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                            PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                            COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            TOTAL_COST -> Value.TOTAL_COST
+                                            PROMPT_COST -> Value.PROMPT_COST
+                                            COMPLETION_COST -> Value.COMPLETION_COST
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                            FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                            TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                            PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                            COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            TOTAL_COST -> Known.TOTAL_COST
+                                            PROMPT_COST -> Known.PROMPT_COST
+                                            COMPLETION_COST -> Known.COMPLETION_COST
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Field: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Field = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Field && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                class Type
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val SUM = of("sum")
+
+                                        @JvmField val MAX = of("max")
+
+                                        @JvmField val MIN = of("min")
+
+                                        @JvmField val AVG = of("avg")
+
+                                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Type]'s known values. */
+                                    enum class Known {
+                                        SUM,
+                                        MAX,
+                                        MIN,
+                                        AVG,
+                                    }
+
+                                    /**
+                                     * An enum containing [Type]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Type] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        SUM,
+                                        MAX,
+                                        MIN,
+                                        AVG,
+                                        /**
+                                         * An enum member indicating that [Type] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            SUM -> Value.SUM
+                                            MAX -> Value.MAX
+                                            MIN -> Value.MIN
+                                            AVG -> Value.AVG
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            SUM -> Known.SUM
+                                            MAX -> Known.MAX
+                                            MIN -> Known.MIN
+                                            AVG -> Known.AVG
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Type: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Type = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Type && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartMetricScalar &&
+                                        field == other.field &&
+                                        type == other.type &&
+                                        filter == other.filter &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(field, type, filter, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartMetricScalar{field=$field, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                            }
+
+                            class CustomChartMetricPercentile
+                            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                            private constructor(
+                                private val field: JsonField<Field>,
+                                private val params: JsonField<Params>,
+                                private val type: JsonValue,
+                                private val filter: JsonField<String>,
+                                private val additionalProperties: MutableMap<String, JsonValue>,
+                            ) {
+
+                                @JsonCreator
+                                private constructor(
+                                    @JsonProperty("field")
+                                    @ExcludeMissing
+                                    field: JsonField<Field> = JsonMissing.of(),
+                                    @JsonProperty("params")
+                                    @ExcludeMissing
+                                    params: JsonField<Params> = JsonMissing.of(),
+                                    @JsonProperty("type")
+                                    @ExcludeMissing
+                                    type: JsonValue = JsonMissing.of(),
+                                    @JsonProperty("filter")
+                                    @ExcludeMissing
+                                    filter: JsonField<String> = JsonMissing.of(),
+                                ) : this(field, params, type, filter, mutableMapOf())
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun field(): Field = field.getRequired("field")
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type or is unexpectedly missing or null (e.g. if the
+                                 *   server responded with an unexpected value).
+                                 */
+                                fun params(): Params = params.getRequired("params")
+
+                                /**
+                                 * Expected to always return the following:
+                                 * ```java
+                                 * JsonValue.from("percentile")
+                                 * ```
+                                 *
+                                 * However, this method can be useful for debugging and logging
+                                 * (e.g. if the server responded with an unexpected value).
+                                 */
+                                @JsonProperty("type") @ExcludeMissing fun _type(): JsonValue = type
+
+                                /**
+                                 * @throws LangChainInvalidDataException if the JSON field has an
+                                 *   unexpected type (e.g. if the server responded with an
+                                 *   unexpected value).
+                                 */
+                                fun filter(): Optional<String> = filter.getOptional("filter")
+
+                                /**
+                                 * Returns the raw JSON value of [field].
+                                 *
+                                 * Unlike [field], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("field")
+                                @ExcludeMissing
+                                fun _field(): JsonField<Field> = field
+
+                                /**
+                                 * Returns the raw JSON value of [params].
+                                 *
+                                 * Unlike [params], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("params")
+                                @ExcludeMissing
+                                fun _params(): JsonField<Params> = params
+
+                                /**
+                                 * Returns the raw JSON value of [filter].
+                                 *
+                                 * Unlike [filter], this method doesn't throw if the JSON field has
+                                 * an unexpected type.
+                                 */
+                                @JsonProperty("filter")
+                                @ExcludeMissing
+                                fun _filter(): JsonField<String> = filter
+
+                                @JsonAnySetter
+                                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                                    additionalProperties.put(key, value)
+                                }
+
+                                @JsonAnyGetter
+                                @ExcludeMissing
+                                fun _additionalProperties(): Map<String, JsonValue> =
+                                    Collections.unmodifiableMap(additionalProperties)
+
+                                fun toBuilder() = Builder().from(this)
+
+                                companion object {
+
+                                    /**
+                                     * Returns a mutable builder for constructing an instance of
+                                     * [CustomChartMetricPercentile].
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .field()
+                                     * .params()
+                                     * ```
+                                     */
+                                    @JvmStatic fun builder() = Builder()
+                                }
+
+                                /** A builder for [CustomChartMetricPercentile]. */
+                                class Builder internal constructor() {
+
+                                    private var field: JsonField<Field>? = null
+                                    private var params: JsonField<Params>? = null
+                                    private var type: JsonValue = JsonValue.from("percentile")
+                                    private var filter: JsonField<String> = JsonMissing.of()
+                                    private var additionalProperties:
+                                        MutableMap<String, JsonValue> =
+                                        mutableMapOf()
+
+                                    @JvmSynthetic
+                                    internal fun from(
+                                        customChartMetricPercentile: CustomChartMetricPercentile
+                                    ) = apply {
+                                        field = customChartMetricPercentile.field
+                                        params = customChartMetricPercentile.params
+                                        type = customChartMetricPercentile.type
+                                        filter = customChartMetricPercentile.filter
+                                        additionalProperties =
+                                            customChartMetricPercentile.additionalProperties
+                                                .toMutableMap()
+                                    }
+
+                                    fun field(field: Field) = field(JsonField.of(field))
+
+                                    /**
+                                     * Sets [Builder.field] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.field] with a well-typed
+                                     * [Field] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun field(field: JsonField<Field>) = apply {
+                                        this.field = field
+                                    }
+
+                                    fun params(params: Params) = params(JsonField.of(params))
+
+                                    /**
+                                     * Sets [Builder.params] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.params] with a well-typed
+                                     * [Params] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun params(params: JsonField<Params>) = apply {
+                                        this.params = params
+                                    }
+
+                                    /**
+                                     * Sets the field to an arbitrary JSON value.
+                                     *
+                                     * It is usually unnecessary to call this method because the
+                                     * field defaults to the following:
+                                     * ```java
+                                     * JsonValue.from("percentile")
+                                     * ```
+                                     *
+                                     * This method is primarily for setting the field to an
+                                     * undocumented or not yet supported value.
+                                     */
+                                    fun type(type: JsonValue) = apply { this.type = type }
+
+                                    fun filter(filter: String?) =
+                                        filter(JsonField.ofNullable(filter))
+
+                                    /**
+                                     * Alias for calling [Builder.filter] with
+                                     * `filter.orElse(null)`.
+                                     */
+                                    fun filter(filter: Optional<String>) =
+                                        filter(filter.getOrNull())
+
+                                    /**
+                                     * Sets [Builder.filter] to an arbitrary JSON value.
+                                     *
+                                     * You should usually call [Builder.filter] with a well-typed
+                                     * [String] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
+                                     */
+                                    fun filter(filter: JsonField<String>) = apply {
+                                        this.filter = filter
+                                    }
+
+                                    fun additionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.clear()
+                                        putAllAdditionalProperties(additionalProperties)
+                                    }
+
+                                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                                        apply {
+                                            additionalProperties.put(key, value)
+                                        }
+
+                                    fun putAllAdditionalProperties(
+                                        additionalProperties: Map<String, JsonValue>
+                                    ) = apply {
+                                        this.additionalProperties.putAll(additionalProperties)
+                                    }
+
+                                    fun removeAdditionalProperty(key: String) = apply {
+                                        additionalProperties.remove(key)
+                                    }
+
+                                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                        keys.forEach(::removeAdditionalProperty)
+                                    }
+
+                                    /**
+                                     * Returns an immutable instance of
+                                     * [CustomChartMetricPercentile].
+                                     *
+                                     * Further updates to this [Builder] will not mutate the
+                                     * returned instance.
+                                     *
+                                     * The following fields are required:
+                                     * ```java
+                                     * .field()
+                                     * .params()
+                                     * ```
+                                     *
+                                     * @throws IllegalStateException if any required field is unset.
+                                     */
+                                    fun build(): CustomChartMetricPercentile =
+                                        CustomChartMetricPercentile(
+                                            checkRequired("field", field),
+                                            checkRequired("params", params),
+                                            type,
+                                            filter,
+                                            additionalProperties.toMutableMap(),
+                                        )
+                                }
+
+                                private var validated: Boolean = false
+
+                                /**
+                                 * Validates that the types of all values in this object match their
+                                 * expected types recursively.
+                                 *
+                                 * This method is _not_ forwards compatible with new types from the
+                                 * API for existing fields.
+                                 *
+                                 * @throws LangChainInvalidDataException if any value type in this
+                                 *   object doesn't match its expected type.
+                                 */
+                                fun validate(): CustomChartMetricPercentile = apply {
+                                    if (validated) {
+                                        return@apply
+                                    }
+
+                                    field().validate()
+                                    params().validate()
+                                    _type().let {
+                                        if (it != JsonValue.from("percentile")) {
+                                            throw LangChainInvalidDataException(
+                                                "'type' is invalid, received $it"
+                                            )
+                                        }
+                                    }
+                                    filter()
+                                    validated = true
+                                }
+
+                                fun isValid(): Boolean =
+                                    try {
+                                        validate()
+                                        true
+                                    } catch (e: LangChainInvalidDataException) {
+                                        false
+                                    }
+
+                                /**
+                                 * Returns a score indicating how many valid values are contained in
+                                 * this object recursively.
+                                 *
+                                 * Used for best match union deserialization.
+                                 */
+                                @JvmSynthetic
+                                internal fun validity(): Int =
+                                    (field.asKnown().getOrNull()?.validity() ?: 0) +
+                                        (params.asKnown().getOrNull()?.validity() ?: 0) +
+                                        type.let {
+                                            if (it == JsonValue.from("percentile")) 1 else 0
+                                        } +
+                                        (if (filter.asKnown().isPresent) 1 else 0)
+
+                                class Field
+                                @JsonCreator
+                                private constructor(private val value: JsonField<String>) : Enum {
+
+                                    /**
+                                     * Returns this class instance's raw value.
+                                     *
+                                     * This is usually only useful if this instance was deserialized
+                                     * from data that doesn't match any known member, and you want
+                                     * to know that value. For example, if the SDK is on an older
+                                     * version than the API, then the API may respond with new
+                                     * members that the SDK is unaware of.
+                                     */
+                                    @com.fasterxml.jackson.annotation.JsonValue
+                                    fun _value(): JsonField<String> = value
+
+                                    companion object {
+
+                                        @JvmField val LATENCY_SECONDS = of("latency_seconds")
+
+                                        @JvmField
+                                        val FIRST_TOKEN_SECONDS = of("first_token_seconds")
+
+                                        @JvmField val TOTAL_TOKENS = of("total_tokens")
+
+                                        @JvmField val PROMPT_TOKENS = of("prompt_tokens")
+
+                                        @JvmField val COMPLETION_TOKENS = of("completion_tokens")
+
+                                        @JvmField val TOTAL_COST = of("total_cost")
+
+                                        @JvmField val PROMPT_COST = of("prompt_cost")
+
+                                        @JvmField val COMPLETION_COST = of("completion_cost")
+
+                                        @JvmStatic
+                                        fun of(value: String) = Field(JsonField.of(value))
+                                    }
+
+                                    /** An enum containing [Field]'s known values. */
+                                    enum class Known {
+                                        LATENCY_SECONDS,
+                                        FIRST_TOKEN_SECONDS,
+                                        TOTAL_TOKENS,
+                                        PROMPT_TOKENS,
+                                        COMPLETION_TOKENS,
+                                        TOTAL_COST,
+                                        PROMPT_COST,
+                                        COMPLETION_COST,
+                                    }
+
+                                    /**
+                                     * An enum containing [Field]'s known values, as well as an
+                                     * [_UNKNOWN] member.
+                                     *
+                                     * An instance of [Field] can contain an unknown value in a
+                                     * couple of cases:
+                                     * - It was deserialized from data that doesn't match any known
+                                     *   member. For example, if the SDK is on an older version than
+                                     *   the API, then the API may respond with new members that the
+                                     *   SDK is unaware of.
+                                     * - It was constructed with an arbitrary value using the [of]
+                                     *   method.
+                                     */
+                                    enum class Value {
+                                        LATENCY_SECONDS,
+                                        FIRST_TOKEN_SECONDS,
+                                        TOTAL_TOKENS,
+                                        PROMPT_TOKENS,
+                                        COMPLETION_TOKENS,
+                                        TOTAL_COST,
+                                        PROMPT_COST,
+                                        COMPLETION_COST,
+                                        /**
+                                         * An enum member indicating that [Field] was instantiated
+                                         * with an unknown value.
+                                         */
+                                        _UNKNOWN,
+                                    }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value, or [Value._UNKNOWN] if the class was instantiated with
+                                     * an unknown value.
+                                     *
+                                     * Use the [known] method instead if you're certain the value is
+                                     * always known or if you want to throw for the unknown case.
+                                     */
+                                    fun value(): Value =
+                                        when (this) {
+                                            LATENCY_SECONDS -> Value.LATENCY_SECONDS
+                                            FIRST_TOKEN_SECONDS -> Value.FIRST_TOKEN_SECONDS
+                                            TOTAL_TOKENS -> Value.TOTAL_TOKENS
+                                            PROMPT_TOKENS -> Value.PROMPT_TOKENS
+                                            COMPLETION_TOKENS -> Value.COMPLETION_TOKENS
+                                            TOTAL_COST -> Value.TOTAL_COST
+                                            PROMPT_COST -> Value.PROMPT_COST
+                                            COMPLETION_COST -> Value.COMPLETION_COST
+                                            else -> Value._UNKNOWN
+                                        }
+
+                                    /**
+                                     * Returns an enum member corresponding to this class instance's
+                                     * value.
+                                     *
+                                     * Use the [value] method instead if you're uncertain the value
+                                     * is always known and don't want to throw for the unknown case.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value is a not a known member.
+                                     */
+                                    fun known(): Known =
+                                        when (this) {
+                                            LATENCY_SECONDS -> Known.LATENCY_SECONDS
+                                            FIRST_TOKEN_SECONDS -> Known.FIRST_TOKEN_SECONDS
+                                            TOTAL_TOKENS -> Known.TOTAL_TOKENS
+                                            PROMPT_TOKENS -> Known.PROMPT_TOKENS
+                                            COMPLETION_TOKENS -> Known.COMPLETION_TOKENS
+                                            TOTAL_COST -> Known.TOTAL_COST
+                                            PROMPT_COST -> Known.PROMPT_COST
+                                            COMPLETION_COST -> Known.COMPLETION_COST
+                                            else ->
+                                                throw LangChainInvalidDataException(
+                                                    "Unknown Field: $value"
+                                                )
+                                        }
+
+                                    /**
+                                     * Returns this class instance's primitive wire representation.
+                                     *
+                                     * This differs from the [toString] method because that method
+                                     * is primarily for debugging and generally doesn't throw.
+                                     *
+                                     * @throws LangChainInvalidDataException if this class
+                                     *   instance's value does not have the expected primitive type.
+                                     */
+                                    fun asString(): String =
+                                        _value().asString().orElseThrow {
+                                            LangChainInvalidDataException("Value is not a String")
+                                        }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Field = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        known()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        if (value() == Value._UNKNOWN) 0 else 1
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Field && value == other.value
+                                    }
+
+                                    override fun hashCode() = value.hashCode()
+
+                                    override fun toString() = value.toString()
+                                }
+
+                                class Params
+                                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                                private constructor(
+                                    private val p: JsonField<Long>,
+                                    private val additionalProperties: MutableMap<String, JsonValue>,
+                                ) {
+
+                                    @JsonCreator
+                                    private constructor(
+                                        @JsonProperty("p")
+                                        @ExcludeMissing
+                                        p: JsonField<Long> = JsonMissing.of()
+                                    ) : this(p, mutableMapOf())
+
+                                    /**
+                                     * @throws LangChainInvalidDataException if the JSON field has
+                                     *   an unexpected type or is unexpectedly missing or null (e.g.
+                                     *   if the server responded with an unexpected value).
+                                     */
+                                    fun p(): Long = p.getRequired("p")
+
+                                    /**
+                                     * Returns the raw JSON value of [p].
+                                     *
+                                     * Unlike [p], this method doesn't throw if the JSON field has
+                                     * an unexpected type.
+                                     */
+                                    @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+
+                                    @JsonAnySetter
+                                    private fun putAdditionalProperty(
+                                        key: String,
+                                        value: JsonValue,
+                                    ) {
+                                        additionalProperties.put(key, value)
+                                    }
+
+                                    @JsonAnyGetter
+                                    @ExcludeMissing
+                                    fun _additionalProperties(): Map<String, JsonValue> =
+                                        Collections.unmodifiableMap(additionalProperties)
+
+                                    fun toBuilder() = Builder().from(this)
+
+                                    companion object {
+
+                                        /**
+                                         * Returns a mutable builder for constructing an instance of
+                                         * [Params].
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .p()
+                                         * ```
+                                         */
+                                        @JvmStatic fun builder() = Builder()
+                                    }
+
+                                    /** A builder for [Params]. */
+                                    class Builder internal constructor() {
+
+                                        private var p: JsonField<Long>? = null
+                                        private var additionalProperties:
+                                            MutableMap<String, JsonValue> =
+                                            mutableMapOf()
+
+                                        @JvmSynthetic
+                                        internal fun from(params: Params) = apply {
+                                            p = params.p
+                                            additionalProperties =
+                                                params.additionalProperties.toMutableMap()
+                                        }
+
+                                        fun p(p: Long) = p(JsonField.of(p))
+
+                                        /**
+                                         * Sets [Builder.p] to an arbitrary JSON value.
+                                         *
+                                         * You should usually call [Builder.p] with a well-typed
+                                         * [Long] value instead. This method is primarily for
+                                         * setting the field to an undocumented or not yet supported
+                                         * value.
+                                         */
+                                        fun p(p: JsonField<Long>) = apply { this.p = p }
+
+                                        fun additionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.clear()
+                                            putAllAdditionalProperties(additionalProperties)
+                                        }
+
+                                        fun putAdditionalProperty(key: String, value: JsonValue) =
+                                            apply {
+                                                additionalProperties.put(key, value)
+                                            }
+
+                                        fun putAllAdditionalProperties(
+                                            additionalProperties: Map<String, JsonValue>
+                                        ) = apply {
+                                            this.additionalProperties.putAll(additionalProperties)
+                                        }
+
+                                        fun removeAdditionalProperty(key: String) = apply {
+                                            additionalProperties.remove(key)
+                                        }
+
+                                        fun removeAllAdditionalProperties(keys: Set<String>) =
+                                            apply {
+                                                keys.forEach(::removeAdditionalProperty)
+                                            }
+
+                                        /**
+                                         * Returns an immutable instance of [Params].
+                                         *
+                                         * Further updates to this [Builder] will not mutate the
+                                         * returned instance.
+                                         *
+                                         * The following fields are required:
+                                         * ```java
+                                         * .p()
+                                         * ```
+                                         *
+                                         * @throws IllegalStateException if any required field is
+                                         *   unset.
+                                         */
+                                        fun build(): Params =
+                                            Params(
+                                                checkRequired("p", p),
+                                                additionalProperties.toMutableMap(),
+                                            )
+                                    }
+
+                                    private var validated: Boolean = false
+
+                                    /**
+                                     * Validates that the types of all values in this object match
+                                     * their expected types recursively.
+                                     *
+                                     * This method is _not_ forwards compatible with new types from
+                                     * the API for existing fields.
+                                     *
+                                     * @throws LangChainInvalidDataException if any value type in
+                                     *   this object doesn't match its expected type.
+                                     */
+                                    fun validate(): Params = apply {
+                                        if (validated) {
+                                            return@apply
+                                        }
+
+                                        p()
+                                        validated = true
+                                    }
+
+                                    fun isValid(): Boolean =
+                                        try {
+                                            validate()
+                                            true
+                                        } catch (e: LangChainInvalidDataException) {
+                                            false
+                                        }
+
+                                    /**
+                                     * Returns a score indicating how many valid values are
+                                     * contained in this object recursively.
+                                     *
+                                     * Used for best match union deserialization.
+                                     */
+                                    @JvmSynthetic
+                                    internal fun validity(): Int =
+                                        (if (p.asKnown().isPresent) 1 else 0)
+
+                                    override fun equals(other: Any?): Boolean {
+                                        if (this === other) {
+                                            return true
+                                        }
+
+                                        return other is Params &&
+                                            p == other.p &&
+                                            additionalProperties == other.additionalProperties
+                                    }
+
+                                    private val hashCode: Int by lazy {
+                                        Objects.hash(p, additionalProperties)
+                                    }
+
+                                    override fun hashCode(): Int = hashCode
+
+                                    override fun toString() =
+                                        "Params{p=$p, additionalProperties=$additionalProperties}"
+                                }
+
+                                override fun equals(other: Any?): Boolean {
+                                    if (this === other) {
+                                        return true
+                                    }
+
+                                    return other is CustomChartMetricPercentile &&
+                                        field == other.field &&
+                                        params == other.params &&
+                                        type == other.type &&
+                                        filter == other.filter &&
+                                        additionalProperties == other.additionalProperties
+                                }
+
+                                private val hashCode: Int by lazy {
+                                    Objects.hash(field, params, type, filter, additionalProperties)
+                                }
+
+                                override fun hashCode(): Int = hashCode
+
+                                override fun toString() =
+                                    "CustomChartMetricPercentile{field=$field, params=$params, type=$type, filter=$filter, additionalProperties=$additionalProperties}"
+                            }
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is CustomChartMetricRatioOutput &&
+                                denominator == other.denominator &&
+                                numerator == other.numerator &&
+                                type == other.type &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(denominator, numerator, type, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "CustomChartMetricRatioOutput{denominator=$denominator, numerator=$numerator, type=$type, additionalProperties=$additionalProperties}"
+                    }
+                }
+
                 /** LGP Metrics you can chart. */
                 class ProjectMetric
                 @JsonCreator
@@ -7462,11 +24603,14 @@ private constructor(
 
                     return other is Series &&
                         id == other.id &&
-                        metric == other.metric &&
                         name == other.name &&
                         feedbackKey == other.feedbackKey &&
+                        filterDefinition == other.filterDefinition &&
                         filters == other.filters &&
                         groupBy == other.groupBy &&
+                        groupByDefinitions == other.groupByDefinitions &&
+                        metric == other.metric &&
+                        metricDefinition == other.metricDefinition &&
                         projectMetric == other.projectMetric &&
                         workspaceId == other.workspaceId &&
                         additionalProperties == other.additionalProperties
@@ -7475,11 +24619,14 @@ private constructor(
                 private val hashCode: Int by lazy {
                     Objects.hash(
                         id,
-                        metric,
                         name,
                         feedbackKey,
+                        filterDefinition,
                         filters,
                         groupBy,
+                        groupByDefinitions,
+                        metric,
+                        metricDefinition,
                         projectMetric,
                         workspaceId,
                         additionalProperties,
@@ -7489,7 +24636,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "Series{id=$id, metric=$metric, name=$name, feedbackKey=$feedbackKey, filters=$filters, groupBy=$groupBy, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
+                    "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
             }
 
             class CommonFilters

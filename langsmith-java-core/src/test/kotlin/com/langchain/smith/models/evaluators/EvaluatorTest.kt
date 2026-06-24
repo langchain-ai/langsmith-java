@@ -73,6 +73,7 @@ internal class EvaluatorTest {
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
+                                .playgroundSettingsId("playground_settings_id")
                                 .addPrompt(
                                     listOf(
                                         JsonValue.from(mapOf<String, Any>()),
@@ -94,7 +95,11 @@ internal class EvaluatorTest {
                         )
                         .build()
                 )
+                .extendAnnotationQueueTraceRetention(true)
+                .extendDatasetTraceRetention(true)
+                .extendEvaluatorTraceRetention(true)
                 .extendOnly(true)
+                .extendWebhookTraceRetention(true)
                 .filter("filter")
                 .groupBy(Evaluator.GroupBy.THREAD_ID)
                 .includeExtendedStats(true)
@@ -108,6 +113,8 @@ internal class EvaluatorTest {
                         .window(Evaluator.SpendLimit.Window.WEEKLY)
                         .build()
                 )
+                .spendUsd(0.0)
+                .traceCount(0L)
                 .traceFilter("trace_filter")
                 .isTransient(true)
                 .treeFilter("tree_filter")
@@ -182,6 +189,7 @@ internal class EvaluatorTest {
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
+                            .playgroundSettingsId("playground_settings_id")
                             .addPrompt(
                                 listOf(
                                     JsonValue.from(mapOf<String, Any>()),
@@ -203,7 +211,11 @@ internal class EvaluatorTest {
                     )
                     .build()
             )
+        assertThat(evaluator.extendAnnotationQueueTraceRetention()).contains(true)
+        assertThat(evaluator.extendDatasetTraceRetention()).contains(true)
+        assertThat(evaluator.extendEvaluatorTraceRetention()).contains(true)
         assertThat(evaluator.extendOnly()).contains(true)
+        assertThat(evaluator.extendWebhookTraceRetention()).contains(true)
         assertThat(evaluator.filter()).contains("filter")
         assertThat(evaluator.groupBy()).contains(Evaluator.GroupBy.THREAD_ID)
         assertThat(evaluator.includeExtendedStats()).contains(true)
@@ -218,6 +230,8 @@ internal class EvaluatorTest {
                     .window(Evaluator.SpendLimit.Window.WEEKLY)
                     .build()
             )
+        assertThat(evaluator.spendUsd()).contains(0.0)
+        assertThat(evaluator.traceCount()).contains(0L)
         assertThat(evaluator.traceFilter()).contains("trace_filter")
         assertThat(evaluator.isTransient()).contains(true)
         assertThat(evaluator.treeFilter()).contains("tree_filter")
@@ -286,6 +300,7 @@ internal class EvaluatorTest {
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
+                                .playgroundSettingsId("playground_settings_id")
                                 .addPrompt(
                                     listOf(
                                         JsonValue.from(mapOf<String, Any>()),
@@ -307,7 +322,11 @@ internal class EvaluatorTest {
                         )
                         .build()
                 )
+                .extendAnnotationQueueTraceRetention(true)
+                .extendDatasetTraceRetention(true)
+                .extendEvaluatorTraceRetention(true)
                 .extendOnly(true)
+                .extendWebhookTraceRetention(true)
                 .filter("filter")
                 .groupBy(Evaluator.GroupBy.THREAD_ID)
                 .includeExtendedStats(true)
@@ -321,6 +340,8 @@ internal class EvaluatorTest {
                         .window(Evaluator.SpendLimit.Window.WEEKLY)
                         .build()
                 )
+                .spendUsd(0.0)
+                .traceCount(0L)
                 .traceFilter("trace_filter")
                 .isTransient(true)
                 .treeFilter("tree_filter")

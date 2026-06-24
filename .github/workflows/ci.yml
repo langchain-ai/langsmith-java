@@ -21,7 +21,7 @@ jobs:
   lint:
     timeout-minutes: 15
     name: lint
-    runs-on: ${{ github.repository == 'stainless-sdks/langsmith-api-java' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event.pull_request.head.repo.fork) && (github.event_name != 'push' || github.event.head_commit.message != 'codegen metadata')
 
     steps:
@@ -48,7 +48,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: ${{ github.repository == 'stainless-sdks/langsmith-api-java' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     if: (github.event_name == 'push' || github.event.pull_request.head.repo.fork) && (github.event_name != 'push' || github.event.head_commit.message != 'codegen metadata')
 
     steps:
@@ -68,42 +68,6 @@ jobs:
 
       - name: Build SDK
         run: ./scripts/build
-
-      - name: Get GitHub OIDC Token
-        if: |-
-          github.repository == 'stainless-sdks/langsmith-api-java' &&
-          !startsWith(github.ref, 'refs/heads/stl/')
-        id: github-oidc
-        uses: actions/github-script@v9
-        with:
-          script: core.setOutput('github_token', await core.getIDToken());
-
-      - name: Build and upload Maven artifacts
-        if: |-
-          github.repository == 'stainless-sdks/langsmith-api-java' &&
-          !startsWith(github.ref, 'refs/heads/stl/')
-        env:
-          URL: https://pkg.stainless.com/s
-          AUTH: ${{ steps.github-oidc.outputs.github_token }}
-          SHA: ${{ github.sha }}
-          PROJECT: langsmith-api-java
-        run: ./scripts/upload-artifacts
-  test:
-    timeout-minutes: 15
-    name: test
-    runs-on: ${{ github.repository == 'stainless-sdks/langsmith-api-java' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Set up Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
-        with:
-          distribution: temurin
-          java-version: |
-            8
-            21
-          cache: gradle
 
       - name: Set up Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3

@@ -18,12 +18,13 @@ import kotlin.jvm.optionals.getOrNull
 class RepoListParams
 private constructor(
     private val hasCommits: Boolean?,
+    private val includeOwners: Boolean?,
     private val isArchived: IsArchived?,
     private val isPublic: IsPublic?,
     private val limit: Long?,
     private val offset: Long?,
     private val query: String?,
-    private val repoType: RepoType?,
+    private val singleRepoType: SingleRepoType?,
     private val repoTypes: List<RepoType>?,
     private val sortDirection: SortDirection?,
     private val sortField: SortField?,
@@ -41,6 +42,8 @@ private constructor(
 
     fun hasCommits(): Optional<Boolean> = Optional.ofNullable(hasCommits)
 
+    fun includeOwners(): Optional<Boolean> = Optional.ofNullable(includeOwners)
+
     fun isArchived(): Optional<IsArchived> = Optional.ofNullable(isArchived)
 
     fun isPublic(): Optional<IsPublic> = Optional.ofNullable(isPublic)
@@ -51,7 +54,7 @@ private constructor(
 
     fun query(): Optional<String> = Optional.ofNullable(query)
 
-    fun repoType(): Optional<RepoType> = Optional.ofNullable(repoType)
+    fun singleRepoType(): Optional<SingleRepoType> = Optional.ofNullable(singleRepoType)
 
     fun repoTypes(): Optional<List<RepoType>> = Optional.ofNullable(repoTypes)
 
@@ -95,12 +98,13 @@ private constructor(
     class Builder internal constructor() {
 
         private var hasCommits: Boolean? = null
+        private var includeOwners: Boolean? = null
         private var isArchived: IsArchived? = null
         private var isPublic: IsPublic? = null
         private var limit: Long? = null
         private var offset: Long? = null
         private var query: String? = null
-        private var repoType: RepoType? = null
+        private var singleRepoType: SingleRepoType? = null
         private var repoTypes: MutableList<RepoType>? = null
         private var sortDirection: SortDirection? = null
         private var sortField: SortField? = null
@@ -118,12 +122,13 @@ private constructor(
         @JvmSynthetic
         internal fun from(repoListParams: RepoListParams) = apply {
             hasCommits = repoListParams.hasCommits
+            includeOwners = repoListParams.includeOwners
             isArchived = repoListParams.isArchived
             isPublic = repoListParams.isPublic
             limit = repoListParams.limit
             offset = repoListParams.offset
             query = repoListParams.query
-            repoType = repoListParams.repoType
+            singleRepoType = repoListParams.singleRepoType
             repoTypes = repoListParams.repoTypes?.toMutableList()
             sortDirection = repoListParams.sortDirection
             sortField = repoListParams.sortField
@@ -150,6 +155,19 @@ private constructor(
 
         /** Alias for calling [Builder.hasCommits] with `hasCommits.orElse(null)`. */
         fun hasCommits(hasCommits: Optional<Boolean>) = hasCommits(hasCommits.getOrNull())
+
+        fun includeOwners(includeOwners: Boolean?) = apply { this.includeOwners = includeOwners }
+
+        /**
+         * Alias for [Builder.includeOwners].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun includeOwners(includeOwners: Boolean) = includeOwners(includeOwners as Boolean?)
+
+        /** Alias for calling [Builder.includeOwners] with `includeOwners.orElse(null)`. */
+        fun includeOwners(includeOwners: Optional<Boolean>) =
+            includeOwners(includeOwners.getOrNull())
 
         fun isArchived(isArchived: IsArchived?) = apply { this.isArchived = isArchived }
 
@@ -190,10 +208,13 @@ private constructor(
         /** Alias for calling [Builder.query] with `query.orElse(null)`. */
         fun query(query: Optional<String>) = query(query.getOrNull())
 
-        fun repoType(repoType: RepoType?) = apply { this.repoType = repoType }
+        fun singleRepoType(singleRepoType: SingleRepoType?) = apply {
+            this.singleRepoType = singleRepoType
+        }
 
-        /** Alias for calling [Builder.repoType] with `repoType.orElse(null)`. */
-        fun repoType(repoType: Optional<RepoType>) = repoType(repoType.getOrNull())
+        /** Alias for calling [Builder.singleRepoType] with `singleRepoType.orElse(null)`. */
+        fun singleRepoType(singleRepoType: Optional<SingleRepoType>) =
+            singleRepoType(singleRepoType.getOrNull())
 
         fun repoTypes(repoTypes: List<RepoType>?) = apply {
             this.repoTypes = repoTypes?.toMutableList()
@@ -409,12 +430,13 @@ private constructor(
         fun build(): RepoListParams =
             RepoListParams(
                 hasCommits,
+                includeOwners,
                 isArchived,
                 isPublic,
                 limit,
                 offset,
                 query,
-                repoType,
+                singleRepoType,
                 repoTypes?.toImmutable(),
                 sortDirection,
                 sortField,
@@ -437,12 +459,13 @@ private constructor(
         QueryParams.builder()
             .apply {
                 hasCommits?.let { put("has_commits", it.toString()) }
+                includeOwners?.let { put("include_owners", it.toString()) }
                 isArchived?.let { put("is_archived", it.toString()) }
                 isPublic?.let { put("is_public", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 offset?.let { put("offset", it.toString()) }
                 query?.let { put("query", it) }
-                repoType?.let { put("repo_type", it.toString()) }
+                singleRepoType?.let { put("repo_type", it.toString()) }
                 repoTypes?.let { put("repo_types", it.joinToString(",") { it.toString() }) }
                 sortDirection?.let { put("sort_direction", it.toString()) }
                 sortField?.let { put("sort_field", it.toString()) }
@@ -731,6 +754,158 @@ private constructor(
             }
 
             return other is IsPublic && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
+    class SingleRepoType @JsonCreator private constructor(private val value: JsonField<String>) :
+        Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val PROMPT = of("prompt")
+
+            @JvmField val FILE = of("file")
+
+            @JvmField val AGENT = of("agent")
+
+            @JvmField val SKILL = of("skill")
+
+            @JvmStatic fun of(value: String) = SingleRepoType(JsonField.of(value))
+        }
+
+        /** An enum containing [SingleRepoType]'s known values. */
+        enum class Known {
+            PROMPT,
+            FILE,
+            AGENT,
+            SKILL,
+        }
+
+        /**
+         * An enum containing [SingleRepoType]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [SingleRepoType] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            PROMPT,
+            FILE,
+            AGENT,
+            SKILL,
+            /**
+             * An enum member indicating that [SingleRepoType] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                PROMPT -> Value.PROMPT
+                FILE -> Value.FILE
+                AGENT -> Value.AGENT
+                SKILL -> Value.SKILL
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                PROMPT -> Known.PROMPT
+                FILE -> Known.FILE
+                AGENT -> Known.AGENT
+                SKILL -> Known.SKILL
+                else -> throw LangChainInvalidDataException("Unknown SingleRepoType: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): SingleRepoType = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is SingleRepoType && value == other.value
         }
 
         override fun hashCode() = value.hashCode()
@@ -1325,12 +1500,13 @@ private constructor(
 
         return other is RepoListParams &&
             hasCommits == other.hasCommits &&
+            includeOwners == other.includeOwners &&
             isArchived == other.isArchived &&
             isPublic == other.isPublic &&
             limit == other.limit &&
             offset == other.offset &&
             query == other.query &&
-            repoType == other.repoType &&
+            singleRepoType == other.singleRepoType &&
             repoTypes == other.repoTypes &&
             sortDirection == other.sortDirection &&
             sortField == other.sortField &&
@@ -1349,12 +1525,13 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             hasCommits,
+            includeOwners,
             isArchived,
             isPublic,
             limit,
             offset,
             query,
-            repoType,
+            singleRepoType,
             repoTypes,
             sortDirection,
             sortField,
@@ -1371,5 +1548,5 @@ private constructor(
         )
 
     override fun toString() =
-        "RepoListParams{hasCommits=$hasCommits, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, repoType=$repoType, repoTypes=$repoTypes, sortDirection=$sortDirection, sortField=$sortField, source=$source, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RepoListParams{hasCommits=$hasCommits, includeOwners=$includeOwners, isArchived=$isArchived, isPublic=$isPublic, limit=$limit, offset=$offset, query=$query, singleRepoType=$singleRepoType, repoTypes=$repoTypes, sortDirection=$sortDirection, sortField=$sortField, source=$source, tagValueId=$tagValueId, tags=$tags, tenantHandle=$tenantHandle, tenantId=$tenantId, upstreamRepoHandle=$upstreamRepoHandle, upstreamRepoOwner=$upstreamRepoOwner, withLatestManifest=$withLatestManifest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

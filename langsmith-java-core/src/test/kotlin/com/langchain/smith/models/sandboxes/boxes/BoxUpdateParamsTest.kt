@@ -47,9 +47,53 @@ internal class BoxUpdateParamsTest {
                     .addNoProxy("string")
                     .addRule(
                         BoxUpdateParams.ProxyConfig.Rule.builder()
-                            .addMatchHost("string")
                             .bodyName("name")
+                            .aws(
+                                BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
+                                    .accessKeyId(
+                                        BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
+                                            .type(
+                                                BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .secretAccessKey(
+                                        BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                            .builder()
+                                            .type(
+                                                BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .enabled(true)
+                            .gcp(
+                                BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                    .addScope("string")
+                                    .serviceAccountJson(
+                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                            .builder()
+                                            .type(
+                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .addHeader(
                                 BoxUpdateParams.ProxyConfig.Rule.Header.builder()
                                     .bodyName("name")
@@ -58,7 +102,9 @@ internal class BoxUpdateParamsTest {
                                     .value("value")
                                     .build()
                             )
+                            .addMatchHost("string")
                             .addMatchPath("string")
+                            .type("type")
                             .build()
                     )
                     .build()
@@ -117,9 +163,55 @@ internal class BoxUpdateParamsTest {
                         .addNoProxy("string")
                         .addRule(
                             BoxUpdateParams.ProxyConfig.Rule.builder()
-                                .addMatchHost("string")
                                 .bodyName("name")
+                                .aws(
+                                    BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
+                                        .accessKeyId(
+                                            BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxUpdateParams.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .enabled(true)
+                                .gcp(
+                                    BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxUpdateParams.ProxyConfig.Rule.Header.builder()
                                         .bodyName("name")
@@ -130,7 +222,9 @@ internal class BoxUpdateParamsTest {
                                         .value("value")
                                         .build()
                                 )
+                                .addMatchHost("string")
                                 .addMatchPath("string")
+                                .type("type")
                                 .build()
                         )
                         .build()
@@ -177,9 +271,53 @@ internal class BoxUpdateParamsTest {
                     .addNoProxy("string")
                     .addRule(
                         BoxUpdateParams.ProxyConfig.Rule.builder()
-                            .addMatchHost("string")
                             .bodyName("name")
+                            .aws(
+                                BoxUpdateParams.ProxyConfig.Rule.Aws.builder()
+                                    .accessKeyId(
+                                        BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId.builder()
+                                            .type(
+                                                BoxUpdateParams.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .secretAccessKey(
+                                        BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                            .builder()
+                                            .type(
+                                                BoxUpdateParams.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .enabled(true)
+                            .gcp(
+                                BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
+                                    .addScope("string")
+                                    .serviceAccountJson(
+                                        BoxUpdateParams.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                            .builder()
+                                            .type(
+                                                BoxUpdateParams.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .addHeader(
                                 BoxUpdateParams.ProxyConfig.Rule.Header.builder()
                                     .bodyName("name")
@@ -188,7 +326,9 @@ internal class BoxUpdateParamsTest {
                                     .value("value")
                                     .build()
                             )
+                            .addMatchHost("string")
                             .addMatchPath("string")
+                            .type("type")
                             .build()
                     )
                     .build()

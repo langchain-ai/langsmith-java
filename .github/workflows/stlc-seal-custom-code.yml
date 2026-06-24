@@ -1,0 +1,47 @@
+name: "stlc: seal custom code"
+
+# Triggered on every push to the `next` branch of langsmith-java-staging.
+# Delegates to the stlc_seal_custom_code workflow in langchainplus (where
+# the stainless workspace and reusable actions live) by dispatching it via
+# the GitHub API, scoped to the java target only.
+on:
+  push:
+    branches: [next]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+
+jobs:
+  seal:
+    if: github.repository == 'langchain-ai/langsmith-java-staging'
+    runs-on: self-hosted-ubuntu-small-amd64
+    steps:
+      - name: Load GitHub App key from 1Password
+        id: load-gh-app-secrets
+        uses: 1password/load-secrets-action@581a835fb51b8e7ec56b71cf2ffddd7e68bb25e0 # v2
+        with:
+          export-env: false
+        env:
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN_INTERNAL }}
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+          LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY: op://${{ secrets.INTERNAL_INFRA_OP_VAULT }}/langchain-actions-pr-bot/private_key
+
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: "Iv23liMFOFBcPTKFWi3S"
+          private-key: ${{ steps.load-gh-app-secrets.outputs.LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY }}
+          repositories: langsmith-java-staging,langchainplus
+
+      - name: Trigger stlc seal workflow in langchainplus
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run stlc_seal_custom_code.yml \
+            --repo langchain-ai/langchainplus \
+            --field repositories=langsmith-java-staging

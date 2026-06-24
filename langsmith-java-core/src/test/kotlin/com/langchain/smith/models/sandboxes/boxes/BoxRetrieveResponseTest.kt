@@ -21,6 +21,132 @@ internal class BoxRetrieveResponseTest {
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
                 .memBytes(0L)
+                .mountConfig(
+                    BoxRetrieveResponse.MountConfig.builder()
+                        .auth(
+                            BoxRetrieveResponse.MountConfig.Auth.builder()
+                                .aws(
+                                    BoxRetrieveResponse.MountConfig.Auth.Aws.builder()
+                                        .accessKeyId(
+                                            BoxRetrieveResponse.MountConfig.Auth.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.MountConfig.Auth.Aws
+                                                        .AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxRetrieveResponse.MountConfig.Auth.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.MountConfig.Auth.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .gcp(
+                                    BoxRetrieveResponse.MountConfig.Auth.Gcp.builder()
+                                        .serviceAccountJson(
+                                            BoxRetrieveResponse.MountConfig.Auth.Gcp
+                                                .ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.MountConfig.Auth.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .addMount(
+                            BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                .builder()
+                                .id("id")
+                                .mountPath("mount_path")
+                                .s3(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .S3
+                                        .builder()
+                                        .bucket("bucket")
+                                        .region("region")
+                                        .endpointUrl("endpoint_url")
+                                        .pathStyle(true)
+                                        .prefix("prefix")
+                                        .build()
+                                )
+                                .type(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .Type
+                                        .S3
+                                )
+                                .cache(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .Cache
+                                        .builder()
+                                        .maxSizeBytes(0L)
+                                        .writebackSeconds(0L)
+                                        .build()
+                                )
+                                .gcs(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .Gcs
+                                        .builder()
+                                        .bucket("bucket")
+                                        .prefix("prefix")
+                                        .build()
+                                )
+                                .git(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .Git
+                                        .builder()
+                                        .remoteUrl("remote_url")
+                                        .ref(
+                                            BoxRetrieveResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .Ref
+                                                .builder()
+                                                .name("name")
+                                                .type(
+                                                    BoxRetrieveResponse.MountConfig.Mount
+                                                        .SandboxapiS3BucketMountSpec
+                                                        .Git
+                                                        .Ref
+                                                        .Type
+                                                        .BRANCH
+                                                )
+                                                .build()
+                                        )
+                                        .refreshIntervalSeconds(1L)
+                                        .build()
+                                )
+                                .readOnly(true)
+                                .build()
+                        )
+                        .build()
+                )
                 .name("name")
                 .proxyConfig(
                     BoxRetrieveResponse.ProxyConfig.builder()
@@ -53,9 +179,57 @@ internal class BoxRetrieveResponseTest {
                         .addNoProxy("string")
                         .addRule(
                             BoxRetrieveResponse.ProxyConfig.Rule.builder()
-                                .addMatchHost("string")
                                 .name("name")
+                                .aws(
+                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
+                                        .accessKeyId(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .enabled(true)
+                                .gcp(
+                                    BoxRetrieveResponse.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                .ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
                                         .name("name")
@@ -67,7 +241,9 @@ internal class BoxRetrieveResponseTest {
                                         .value("value")
                                         .build()
                                 )
+                                .addMatchHost("string")
                                 .addMatchPath("string")
+                                .type("type")
                                 .build()
                         )
                         .build()
@@ -90,6 +266,124 @@ internal class BoxRetrieveResponseTest {
         assertThat(boxRetrieveResponse.fsCapacityBytes()).contains(0L)
         assertThat(boxRetrieveResponse.idleTtlSeconds()).contains(0L)
         assertThat(boxRetrieveResponse.memBytes()).contains(0L)
+        assertThat(boxRetrieveResponse.mountConfig())
+            .contains(
+                BoxRetrieveResponse.MountConfig.builder()
+                    .auth(
+                        BoxRetrieveResponse.MountConfig.Auth.builder()
+                            .aws(
+                                BoxRetrieveResponse.MountConfig.Auth.Aws.builder()
+                                    .accessKeyId(
+                                        BoxRetrieveResponse.MountConfig.Auth.Aws.AccessKeyId
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.MountConfig.Auth.Aws.AccessKeyId
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .secretAccessKey(
+                                        BoxRetrieveResponse.MountConfig.Auth.Aws.SecretAccessKey
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.MountConfig.Auth.Aws
+                                                    .SecretAccessKey
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .gcp(
+                                BoxRetrieveResponse.MountConfig.Auth.Gcp.builder()
+                                    .serviceAccountJson(
+                                        BoxRetrieveResponse.MountConfig.Auth.Gcp.ServiceAccountJson
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.MountConfig.Auth.Gcp
+                                                    .ServiceAccountJson
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .addMount(
+                        BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec.builder()
+                            .id("id")
+                            .mountPath("mount_path")
+                            .s3(
+                                BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec.S3
+                                    .builder()
+                                    .bucket("bucket")
+                                    .region("region")
+                                    .endpointUrl("endpoint_url")
+                                    .pathStyle(true)
+                                    .prefix("prefix")
+                                    .build()
+                            )
+                            .type(
+                                BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .Type
+                                    .S3
+                            )
+                            .cache(
+                                BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .Cache
+                                    .builder()
+                                    .maxSizeBytes(0L)
+                                    .writebackSeconds(0L)
+                                    .build()
+                            )
+                            .gcs(
+                                BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .Gcs
+                                    .builder()
+                                    .bucket("bucket")
+                                    .prefix("prefix")
+                                    .build()
+                            )
+                            .git(
+                                BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .Git
+                                    .builder()
+                                    .remoteUrl("remote_url")
+                                    .ref(
+                                        BoxRetrieveResponse.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Git
+                                            .Ref
+                                            .builder()
+                                            .name("name")
+                                            .type(
+                                                BoxRetrieveResponse.MountConfig.Mount
+                                                    .SandboxapiS3BucketMountSpec
+                                                    .Git
+                                                    .Ref
+                                                    .Type
+                                                    .BRANCH
+                                            )
+                                            .build()
+                                    )
+                                    .refreshIntervalSeconds(1L)
+                                    .build()
+                            )
+                            .readOnly(true)
+                            .build()
+                    )
+                    .build()
+            )
         assertThat(boxRetrieveResponse.name()).contains("name")
         assertThat(boxRetrieveResponse.proxyConfig())
             .contains(
@@ -122,9 +416,55 @@ internal class BoxRetrieveResponseTest {
                     .addNoProxy("string")
                     .addRule(
                         BoxRetrieveResponse.ProxyConfig.Rule.builder()
-                            .addMatchHost("string")
                             .name("name")
+                            .aws(
+                                BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
+                                    .accessKeyId(
+                                        BoxRetrieveResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .secretAccessKey(
+                                        BoxRetrieveResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                    .SecretAccessKey
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .enabled(true)
+                            .gcp(
+                                BoxRetrieveResponse.ProxyConfig.Rule.Gcp.builder()
+                                    .addScope("string")
+                                    .serviceAccountJson(
+                                        BoxRetrieveResponse.ProxyConfig.Rule.Gcp.ServiceAccountJson
+                                            .builder()
+                                            .type(
+                                                BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                    .ServiceAccountJson
+                                                    .Type
+                                                    .PLAINTEXT
+                                            )
+                                            .isSet(true)
+                                            .value("value")
+                                            .build()
+                                    )
+                                    .build()
+                            )
                             .addHeader(
                                 BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
                                     .name("name")
@@ -135,7 +475,9 @@ internal class BoxRetrieveResponseTest {
                                     .value("value")
                                     .build()
                             )
+                            .addMatchHost("string")
                             .addMatchPath("string")
+                            .type("type")
                             .build()
                     )
                     .build()
@@ -163,6 +505,132 @@ internal class BoxRetrieveResponseTest {
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
                 .memBytes(0L)
+                .mountConfig(
+                    BoxRetrieveResponse.MountConfig.builder()
+                        .auth(
+                            BoxRetrieveResponse.MountConfig.Auth.builder()
+                                .aws(
+                                    BoxRetrieveResponse.MountConfig.Auth.Aws.builder()
+                                        .accessKeyId(
+                                            BoxRetrieveResponse.MountConfig.Auth.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.MountConfig.Auth.Aws
+                                                        .AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxRetrieveResponse.MountConfig.Auth.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.MountConfig.Auth.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .gcp(
+                                    BoxRetrieveResponse.MountConfig.Auth.Gcp.builder()
+                                        .serviceAccountJson(
+                                            BoxRetrieveResponse.MountConfig.Auth.Gcp
+                                                .ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.MountConfig.Auth.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .addMount(
+                            BoxRetrieveResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                .builder()
+                                .id("id")
+                                .mountPath("mount_path")
+                                .s3(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .S3
+                                        .builder()
+                                        .bucket("bucket")
+                                        .region("region")
+                                        .endpointUrl("endpoint_url")
+                                        .pathStyle(true)
+                                        .prefix("prefix")
+                                        .build()
+                                )
+                                .type(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .Type
+                                        .S3
+                                )
+                                .cache(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .Cache
+                                        .builder()
+                                        .maxSizeBytes(0L)
+                                        .writebackSeconds(0L)
+                                        .build()
+                                )
+                                .gcs(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .Gcs
+                                        .builder()
+                                        .bucket("bucket")
+                                        .prefix("prefix")
+                                        .build()
+                                )
+                                .git(
+                                    BoxRetrieveResponse.MountConfig.Mount
+                                        .SandboxapiS3BucketMountSpec
+                                        .Git
+                                        .builder()
+                                        .remoteUrl("remote_url")
+                                        .ref(
+                                            BoxRetrieveResponse.MountConfig.Mount
+                                                .SandboxapiS3BucketMountSpec
+                                                .Git
+                                                .Ref
+                                                .builder()
+                                                .name("name")
+                                                .type(
+                                                    BoxRetrieveResponse.MountConfig.Mount
+                                                        .SandboxapiS3BucketMountSpec
+                                                        .Git
+                                                        .Ref
+                                                        .Type
+                                                        .BRANCH
+                                                )
+                                                .build()
+                                        )
+                                        .refreshIntervalSeconds(1L)
+                                        .build()
+                                )
+                                .readOnly(true)
+                                .build()
+                        )
+                        .build()
+                )
                 .name("name")
                 .proxyConfig(
                     BoxRetrieveResponse.ProxyConfig.builder()
@@ -195,9 +663,57 @@ internal class BoxRetrieveResponseTest {
                         .addNoProxy("string")
                         .addRule(
                             BoxRetrieveResponse.ProxyConfig.Rule.builder()
-                                .addMatchHost("string")
                                 .name("name")
+                                .aws(
+                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws.builder()
+                                        .accessKeyId(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Aws.AccessKeyId
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                        .AccessKeyId
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .secretAccessKey(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Aws.SecretAccessKey
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Aws
+                                                        .SecretAccessKey
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .enabled(true)
+                                .gcp(
+                                    BoxRetrieveResponse.ProxyConfig.Rule.Gcp.builder()
+                                        .addScope("string")
+                                        .serviceAccountJson(
+                                            BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                .ServiceAccountJson
+                                                .builder()
+                                                .type(
+                                                    BoxRetrieveResponse.ProxyConfig.Rule.Gcp
+                                                        .ServiceAccountJson
+                                                        .Type
+                                                        .PLAINTEXT
+                                                )
+                                                .isSet(true)
+                                                .value("value")
+                                                .build()
+                                        )
+                                        .build()
+                                )
                                 .addHeader(
                                     BoxRetrieveResponse.ProxyConfig.Rule.Header.builder()
                                         .name("name")
@@ -209,7 +725,9 @@ internal class BoxRetrieveResponseTest {
                                         .value("value")
                                         .build()
                                 )
+                                .addMatchHost("string")
                                 .addMatchPath("string")
+                                .type("type")
                                 .build()
                         )
                         .build()
