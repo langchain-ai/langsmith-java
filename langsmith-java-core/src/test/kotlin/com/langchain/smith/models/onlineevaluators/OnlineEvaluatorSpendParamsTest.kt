@@ -46,7 +46,7 @@ internal class OnlineEvaluatorSpendParamsTest {
                     .put("evaluator_id", "evaluator_id")
                     .put("feedback_key", "feedback_key")
                     .put("group_by", "group_by")
-                    .put("resource_id", listOf("string").joinToString(","))
+                    .put("resource_id", "string")
                     .put("session_id", "session_id")
                     .put("type", "type")
                     .build()

@@ -25,8 +25,9 @@ import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
-import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunRetrieveV1Params
+import com.langchain.smith.models.runs.RunRetrieveV2Params
 import com.langchain.smith.models.runs.RunStatsQueryParams
 import com.langchain.smith.models.runs.RunTypeEnum
 import com.langchain.smith.models.runs.RunUpdateParams
@@ -450,28 +451,6 @@ internal class RunServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun retrieve() {
-        val client =
-            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
-        val runService = client.runs()
-
-        val runSchema =
-            runService.retrieve(
-                RunRetrieveParams.builder()
-                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .excludeS3StoredAttributes(true)
-                    .excludeSerialized(true)
-                    .includeMessages(true)
-                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .build()
-            )
-
-        runSchema.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
     fun ingestBatch() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
@@ -594,42 +573,69 @@ internal class RunServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun query() {
+    fun queryV1() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.runs()
 
-        val response =
-            runService.query(
-                RunQueryParams.builder()
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .cursor("cursor")
-                    .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
-                    .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .error(true)
-                    .executionOrder(1L)
-                    .filter("filter")
-                    .isRoot(true)
-                    .limit(1L)
-                    .order(RunQueryParams.Order.ASC)
-                    .parentRun("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .query("query")
-                    .addReferenceExample("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .runType(RunTypeEnum.TOOL)
-                    .searchFilter("search_filter")
-                    .addSelect(RunQueryParams.Select.ID)
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .skipPagination(true)
-                    .skipPrevCursor(true)
+        val page = runService.queryV1()
+
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun queryV2() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val runService = client.runs()
+
+        val page = runService.queryV2()
+
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveV1() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val runService = client.runs()
+
+        val runSchema =
+            runService.retrieveV1(
+                RunRetrieveV1Params.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .excludeS3StoredAttributes(true)
+                    .excludeSerialized(true)
+                    .includeMessages(true)
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .traceFilter("trace_filter")
-                    .treeFilter("tree_filter")
-                    .useExperimentalSearch(true)
                     .build()
             )
 
-        response.validate()
+        runSchema.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveV2() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val runService = client.runs()
+
+        val queryRunResponse =
+            runService.retrieveV2(
+                RunRetrieveV2Params.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .projectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .addSelect(RunRetrieveV2Params.Select.ID)
+                    .accept("Accept")
+                    .build()
+            )
+
+        queryRunResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -687,6 +693,40 @@ internal class RunServiceTest {
         val response = runService.update2("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
 
         response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieve() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val runService = client.runs()
+
+        val runSchema =
+            runService.retrieve(
+                RunRetrieveParams.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .excludeS3StoredAttributes(true)
+                    .excludeSerialized(true)
+                    .includeMessages(true)
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .build()
+            )
+
+        runSchema.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun query() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val runService = client.runs()
+
+        val page = runService.query()
+
+        page.response().validate()
     }
 
     private fun runService(httpClient: HttpClient): RunService.WithRawResponse =

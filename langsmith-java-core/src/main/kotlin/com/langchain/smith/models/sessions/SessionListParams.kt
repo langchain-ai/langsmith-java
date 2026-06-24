@@ -523,7 +523,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                id?.let { put("id", it.joinToString(",")) }
+                id?.forEach { put("id", it) }
                 datasetVersion?.let { put("dataset_version", it) }
                 facets?.let { put("facets", it.toString()) }
                 filter?.let { put("filter", it) }
@@ -533,18 +533,18 @@ private constructor(
                 name?.let { put("name", it) }
                 nameContains?.let { put("name_contains", it) }
                 offset?.let { put("offset", it.toString()) }
-                referenceDataset?.let { put("reference_dataset", it.joinToString(",")) }
+                referenceDataset?.forEach { put("reference_dataset", it) }
                 referenceFree?.let { put("reference_free", it.toString()) }
                 sortBy?.let { put("sort_by", it.toString()) }
                 sortByDesc?.let { put("sort_by_desc", it.toString()) }
                 sortByFeedbackKey?.let { put("sort_by_feedback_key", it) }
                 sortByFeedbackSource?.let { put("sort_by_feedback_source", it.toString()) }
                 statsFilter?.let { put("stats_filter", it) }
-                statsSelect?.let { put("stats_select", it.joinToString(",")) }
+                statsSelect?.forEach { put("stats_select", it) }
                 statsStartTime?.let {
                     put("stats_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
                 }
-                tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
+                tagValueId?.forEach { put("tag_value_id", it) }
                 useApproxStats?.let { put("use_approx_stats", it.toString()) }
                 putAll(additionalQueryParams)
             }

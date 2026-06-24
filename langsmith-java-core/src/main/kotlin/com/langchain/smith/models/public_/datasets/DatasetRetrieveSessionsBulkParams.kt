@@ -193,7 +193,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                put("share_tokens", shareTokens.joinToString(","))
+                shareTokens.forEach { put("share_tokens", it) }
                 putAll(additionalQueryParams)
             }
             .build()

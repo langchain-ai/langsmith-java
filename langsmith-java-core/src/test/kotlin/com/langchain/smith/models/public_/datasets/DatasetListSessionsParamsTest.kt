@@ -15,6 +15,7 @@ internal class DatasetListSessionsParamsTest {
         DatasetListSessionsParams.builder()
             .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .datasetVersion("dataset_version")
             .facets(true)
             .limit(1L)
@@ -45,6 +46,7 @@ internal class DatasetListSessionsParamsTest {
         val params =
             DatasetListSessionsParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .datasetVersion("dataset_version")
                 .facets(true)
@@ -81,6 +83,7 @@ internal class DatasetListSessionsParamsTest {
             DatasetListSessionsParams.builder()
                 .shareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .datasetVersion("dataset_version")
                 .facets(true)
                 .limit(1L)
@@ -98,7 +101,8 @@ internal class DatasetListSessionsParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
-                    .put("id", listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","))
+                    .put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("dataset_version", "dataset_version")
                     .put("facets", "true")
                     .put("limit", "1")

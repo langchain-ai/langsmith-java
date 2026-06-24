@@ -5,14 +5,21 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.runs.QueryRunResponse
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
+import com.langchain.smith.models.runs.RunQueryPageAsync
 import com.langchain.smith.models.runs.RunQueryParams
-import com.langchain.smith.models.runs.RunQueryResponse
+import com.langchain.smith.models.runs.RunQueryV1PageAsync
+import com.langchain.smith.models.runs.RunQueryV1Params
+import com.langchain.smith.models.runs.RunQueryV2PageAsync
+import com.langchain.smith.models.runs.RunQueryV2Params
 import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunRetrieveV1Params
+import com.langchain.smith.models.runs.RunRetrieveV2Params
 import com.langchain.smith.models.runs.RunSchema
 import com.langchain.smith.models.runs.RunStatsParams
 import com.langchain.smith.models.runs.RunStatsQueryParams
@@ -66,38 +73,6 @@ interface RunServiceAsync {
     /** @see create */
     fun create(run: Run): CompletableFuture<Void?> = create(run, RequestOptions.none())
 
-    /** Get a specific run. */
-    fun retrieve(runId: String): CompletableFuture<RunSchema> =
-        retrieve(runId, RunRetrieveParams.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        runId: String,
-        params: RunRetrieveParams = RunRetrieveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RunSchema> =
-        retrieve(params.toBuilder().runId(runId).build(), requestOptions)
-
-    /** @see retrieve */
-    fun retrieve(
-        runId: String,
-        params: RunRetrieveParams = RunRetrieveParams.none(),
-    ): CompletableFuture<RunSchema> = retrieve(runId, params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        params: RunRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RunSchema>
-
-    /** @see retrieve */
-    fun retrieve(params: RunRetrieveParams): CompletableFuture<RunSchema> =
-        retrieve(params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(runId: String, requestOptions: RequestOptions): CompletableFuture<RunSchema> =
-        retrieve(runId, RunRetrieveParams.none(), requestOptions)
-
     /**
      * Updates a run identified by its ID. The body should contain only the fields to be changed;
      * unknown fields are ignored.
@@ -147,21 +122,104 @@ interface RunServiceAsync {
         ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
     /** Query Runs */
-    fun query(): CompletableFuture<RunQueryResponse> = query(RunQueryParams.none())
+    fun queryV1(): CompletableFuture<RunQueryV1PageAsync> = queryV1(RunQueryV1Params.none())
 
-    /** @see query */
-    fun query(
-        params: RunQueryParams = RunQueryParams.none(),
+    /** @see queryV1 */
+    fun queryV1(
+        params: RunQueryV1Params = RunQueryV1Params.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RunQueryResponse>
+    ): CompletableFuture<RunQueryV1PageAsync>
 
-    /** @see query */
-    fun query(params: RunQueryParams = RunQueryParams.none()): CompletableFuture<RunQueryResponse> =
-        query(params, RequestOptions.none())
+    /** @see queryV1 */
+    fun queryV1(
+        params: RunQueryV1Params = RunQueryV1Params.none()
+    ): CompletableFuture<RunQueryV1PageAsync> = queryV1(params, RequestOptions.none())
 
-    /** @see query */
-    fun query(requestOptions: RequestOptions): CompletableFuture<RunQueryResponse> =
-        query(RunQueryParams.none(), requestOptions)
+    /** @see queryV1 */
+    fun queryV1(requestOptions: RequestOptions): CompletableFuture<RunQueryV1PageAsync> =
+        queryV1(RunQueryV1Params.none(), requestOptions)
+
+    /**
+     * **Alpha:** The request and response contract may change; Returns a paginated list of runs for
+     * the given projects within min/max start_time. Supports filters, cursor pagination, and
+     * `selects` to select fields to return.
+     */
+    fun queryV2(): CompletableFuture<RunQueryV2PageAsync> = queryV2(RunQueryV2Params.none())
+
+    /** @see queryV2 */
+    fun queryV2(
+        params: RunQueryV2Params = RunQueryV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunQueryV2PageAsync>
+
+    /** @see queryV2 */
+    fun queryV2(
+        params: RunQueryV2Params = RunQueryV2Params.none()
+    ): CompletableFuture<RunQueryV2PageAsync> = queryV2(params, RequestOptions.none())
+
+    /** @see queryV2 */
+    fun queryV2(requestOptions: RequestOptions): CompletableFuture<RunQueryV2PageAsync> =
+        queryV2(RunQueryV2Params.none(), requestOptions)
+
+    /** Get a specific run. */
+    fun retrieveV1(runId: String): CompletableFuture<RunSchema> =
+        retrieveV1(runId, RunRetrieveV1Params.none())
+
+    /** @see retrieveV1 */
+    fun retrieveV1(
+        runId: String,
+        params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunSchema> =
+        retrieveV1(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see retrieveV1 */
+    fun retrieveV1(
+        runId: String,
+        params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
+    ): CompletableFuture<RunSchema> = retrieveV1(runId, params, RequestOptions.none())
+
+    /** @see retrieveV1 */
+    fun retrieveV1(
+        params: RunRetrieveV1Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunSchema>
+
+    /** @see retrieveV1 */
+    fun retrieveV1(params: RunRetrieveV1Params): CompletableFuture<RunSchema> =
+        retrieveV1(params, RequestOptions.none())
+
+    /** @see retrieveV1 */
+    fun retrieveV1(runId: String, requestOptions: RequestOptions): CompletableFuture<RunSchema> =
+        retrieveV1(runId, RunRetrieveV1Params.none(), requestOptions)
+
+    /**
+     * **Alpha:** The request and response contract may change; Returns one run by ID for the given
+     * session and start_time. Use the `selects` query parameter (repeatable) to select fields to
+     * return.
+     */
+    fun retrieveV2(
+        runId: String,
+        params: RunRetrieveV2Params,
+    ): CompletableFuture<QueryRunResponse> = retrieveV2(runId, params, RequestOptions.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        runId: String,
+        params: RunRetrieveV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<QueryRunResponse> =
+        retrieveV2(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see retrieveV2 */
+    fun retrieveV2(params: RunRetrieveV2Params): CompletableFuture<QueryRunResponse> =
+        retrieveV2(params, RequestOptions.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        params: RunRetrieveV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<QueryRunResponse>
 
     /** Get all runs by query in body payload. */
     fun stats(params: RunStatsParams): CompletableFuture<RunStatsResponse> =
@@ -222,6 +280,56 @@ interface RunServiceAsync {
     ): CompletableFuture<RunUpdate2Response> =
         update2(runId, RunUpdate2Params.none(), requestOptions)
 
+    /** Get a specific run. */
+    fun retrieve(runId: String): CompletableFuture<RunSchema> =
+        retrieve(runId, RunRetrieveParams.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        runId: String,
+        params: RunRetrieveParams = RunRetrieveParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunSchema> =
+        retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see retrieve */
+    fun retrieve(
+        runId: String,
+        params: RunRetrieveParams = RunRetrieveParams.none(),
+    ): CompletableFuture<RunSchema> = retrieve(runId, params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        params: RunRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunSchema>
+
+    /** @see retrieve */
+    fun retrieve(params: RunRetrieveParams): CompletableFuture<RunSchema> =
+        retrieve(params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(runId: String, requestOptions: RequestOptions): CompletableFuture<RunSchema> =
+        retrieve(runId, RunRetrieveParams.none(), requestOptions)
+
+    /** Query Runs */
+    fun query(): CompletableFuture<RunQueryPageAsync> = query(RunQueryParams.none())
+
+    /** @see query */
+    fun query(
+        params: RunQueryParams = RunQueryParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunQueryPageAsync>
+
+    /** @see query */
+    fun query(
+        params: RunQueryParams = RunQueryParams.none()
+    ): CompletableFuture<RunQueryPageAsync> = query(params, RequestOptions.none())
+
+    /** @see query */
+    fun query(requestOptions: RequestOptions): CompletableFuture<RunQueryPageAsync> =
+        query(RunQueryParams.none(), requestOptions)
+
     /** A view of [RunServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -257,45 +365,6 @@ interface RunServiceAsync {
         /** @see create */
         fun create(run: Run): CompletableFuture<HttpResponseFor<RunCreateResponse>> =
             create(run, RequestOptions.none())
-
-        /**
-         * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
-         * [RunServiceAsync.retrieve].
-         */
-        fun retrieve(runId: String): CompletableFuture<HttpResponseFor<RunSchema>> =
-            retrieve(runId, RunRetrieveParams.none())
-
-        /** @see retrieve */
-        fun retrieve(
-            runId: String,
-            params: RunRetrieveParams = RunRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RunSchema>> =
-            retrieve(params.toBuilder().runId(runId).build(), requestOptions)
-
-        /** @see retrieve */
-        fun retrieve(
-            runId: String,
-            params: RunRetrieveParams = RunRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<RunSchema>> =
-            retrieve(runId, params, RequestOptions.none())
-
-        /** @see retrieve */
-        fun retrieve(
-            params: RunRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RunSchema>>
-
-        /** @see retrieve */
-        fun retrieve(params: RunRetrieveParams): CompletableFuture<HttpResponseFor<RunSchema>> =
-            retrieve(params, RequestOptions.none())
-
-        /** @see retrieve */
-        fun retrieve(
-            runId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RunSchema>> =
-            retrieve(runId, RunRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch /runs/{run_id}`, but is otherwise the same as
@@ -352,28 +421,122 @@ interface RunServiceAsync {
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as
-         * [RunServiceAsync.query].
+         * [RunServiceAsync.queryV1].
          */
-        fun query(): CompletableFuture<HttpResponseFor<RunQueryResponse>> =
-            query(RunQueryParams.none())
+        fun queryV1(): CompletableFuture<HttpResponseFor<RunQueryV1PageAsync>> =
+            queryV1(RunQueryV1Params.none())
 
-        /** @see query */
-        fun query(
-            params: RunQueryParams = RunQueryParams.none(),
+        /** @see queryV1 */
+        fun queryV1(
+            params: RunQueryV1Params = RunQueryV1Params.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RunQueryResponse>>
+        ): CompletableFuture<HttpResponseFor<RunQueryV1PageAsync>>
 
-        /** @see query */
-        fun query(
-            params: RunQueryParams = RunQueryParams.none()
-        ): CompletableFuture<HttpResponseFor<RunQueryResponse>> =
-            query(params, RequestOptions.none())
+        /** @see queryV1 */
+        fun queryV1(
+            params: RunQueryV1Params = RunQueryV1Params.none()
+        ): CompletableFuture<HttpResponseFor<RunQueryV1PageAsync>> =
+            queryV1(params, RequestOptions.none())
 
-        /** @see query */
-        fun query(
+        /** @see queryV1 */
+        fun queryV1(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<RunQueryResponse>> =
-            query(RunQueryParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<RunQueryV1PageAsync>> =
+            queryV1(RunQueryV1Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /v2/runs/query`, but is otherwise the same as
+         * [RunServiceAsync.queryV2].
+         */
+        fun queryV2(): CompletableFuture<HttpResponseFor<RunQueryV2PageAsync>> =
+            queryV2(RunQueryV2Params.none())
+
+        /** @see queryV2 */
+        fun queryV2(
+            params: RunQueryV2Params = RunQueryV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunQueryV2PageAsync>>
+
+        /** @see queryV2 */
+        fun queryV2(
+            params: RunQueryV2Params = RunQueryV2Params.none()
+        ): CompletableFuture<HttpResponseFor<RunQueryV2PageAsync>> =
+            queryV2(params, RequestOptions.none())
+
+        /** @see queryV2 */
+        fun queryV2(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<RunQueryV2PageAsync>> =
+            queryV2(RunQueryV2Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
+         * [RunServiceAsync.retrieveV1].
+         */
+        fun retrieveV1(runId: String): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieveV1(runId, RunRetrieveV1Params.none())
+
+        /** @see retrieveV1 */
+        fun retrieveV1(
+            runId: String,
+            params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieveV1(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see retrieveV1 */
+        fun retrieveV1(
+            runId: String,
+            params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieveV1(runId, params, RequestOptions.none())
+
+        /** @see retrieveV1 */
+        fun retrieveV1(
+            params: RunRetrieveV1Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunSchema>>
+
+        /** @see retrieveV1 */
+        fun retrieveV1(params: RunRetrieveV1Params): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieveV1(params, RequestOptions.none())
+
+        /** @see retrieveV1 */
+        fun retrieveV1(
+            runId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieveV1(runId, RunRetrieveV1Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /v2/runs/{run_id}`, but is otherwise the same as
+         * [RunServiceAsync.retrieveV2].
+         */
+        fun retrieveV2(
+            runId: String,
+            params: RunRetrieveV2Params,
+        ): CompletableFuture<HttpResponseFor<QueryRunResponse>> =
+            retrieveV2(runId, params, RequestOptions.none())
+
+        /** @see retrieveV2 */
+        fun retrieveV2(
+            runId: String,
+            params: RunRetrieveV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<QueryRunResponse>> =
+            retrieveV2(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see retrieveV2 */
+        fun retrieveV2(
+            params: RunRetrieveV2Params
+        ): CompletableFuture<HttpResponseFor<QueryRunResponse>> =
+            retrieveV2(params, RequestOptions.none())
+
+        /** @see retrieveV2 */
+        fun retrieveV2(
+            params: RunRetrieveV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<QueryRunResponse>>
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/stats`, but is otherwise the same as
@@ -444,5 +607,69 @@ interface RunServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
             update2(runId, RunUpdate2Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
+         * [RunServiceAsync.retrieve].
+         */
+        fun retrieve(runId: String): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieve(runId, RunRetrieveParams.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            runId: String,
+            params: RunRetrieveParams = RunRetrieveParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see retrieve */
+        fun retrieve(
+            runId: String,
+            params: RunRetrieveParams = RunRetrieveParams.none(),
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieve(runId, params, RequestOptions.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            params: RunRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunSchema>>
+
+        /** @see retrieve */
+        fun retrieve(params: RunRetrieveParams): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieve(params, RequestOptions.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            runId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RunSchema>> =
+            retrieve(runId, RunRetrieveParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as
+         * [RunServiceAsync.query].
+         */
+        fun query(): CompletableFuture<HttpResponseFor<RunQueryPageAsync>> =
+            query(RunQueryParams.none())
+
+        /** @see query */
+        fun query(
+            params: RunQueryParams = RunQueryParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunQueryPageAsync>>
+
+        /** @see query */
+        fun query(
+            params: RunQueryParams = RunQueryParams.none()
+        ): CompletableFuture<HttpResponseFor<RunQueryPageAsync>> =
+            query(params, RequestOptions.none())
+
+        /** @see query */
+        fun query(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<RunQueryPageAsync>> =
+            query(RunQueryParams.none(), requestOptions)
     }
 }

@@ -6,14 +6,21 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.runs.QueryRunResponse
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
+import com.langchain.smith.models.runs.RunQueryPage
 import com.langchain.smith.models.runs.RunQueryParams
-import com.langchain.smith.models.runs.RunQueryResponse
+import com.langchain.smith.models.runs.RunQueryV1Page
+import com.langchain.smith.models.runs.RunQueryV1Params
+import com.langchain.smith.models.runs.RunQueryV2Page
+import com.langchain.smith.models.runs.RunQueryV2Params
 import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunRetrieveV1Params
+import com.langchain.smith.models.runs.RunRetrieveV2Params
 import com.langchain.smith.models.runs.RunSchema
 import com.langchain.smith.models.runs.RunStatsParams
 import com.langchain.smith.models.runs.RunStatsQueryParams
@@ -60,33 +67,6 @@ interface RunService {
     /** @see create */
     fun create(run: Run) = create(run, RequestOptions.none())
 
-    /** Get a specific run. */
-    fun retrieve(runId: String): RunSchema = retrieve(runId, RunRetrieveParams.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        runId: String,
-        params: RunRetrieveParams = RunRetrieveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): RunSchema = retrieve(params.toBuilder().runId(runId).build(), requestOptions)
-
-    /** @see retrieve */
-    fun retrieve(runId: String, params: RunRetrieveParams = RunRetrieveParams.none()): RunSchema =
-        retrieve(runId, params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(
-        params: RunRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): RunSchema
-
-    /** @see retrieve */
-    fun retrieve(params: RunRetrieveParams): RunSchema = retrieve(params, RequestOptions.none())
-
-    /** @see retrieve */
-    fun retrieve(runId: String, requestOptions: RequestOptions): RunSchema =
-        retrieve(runId, RunRetrieveParams.none(), requestOptions)
-
     /**
      * Updates a run identified by its ID. The body should contain only the fields to be changed;
      * unknown fields are ignored.
@@ -131,21 +111,97 @@ interface RunService {
         ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
     /** Query Runs */
-    fun query(): RunQueryResponse = query(RunQueryParams.none())
+    fun queryV1(): RunQueryV1Page = queryV1(RunQueryV1Params.none())
 
-    /** @see query */
-    fun query(
-        params: RunQueryParams = RunQueryParams.none(),
+    /** @see queryV1 */
+    fun queryV1(
+        params: RunQueryV1Params = RunQueryV1Params.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): RunQueryResponse
+    ): RunQueryV1Page
 
-    /** @see query */
-    fun query(params: RunQueryParams = RunQueryParams.none()): RunQueryResponse =
-        query(params, RequestOptions.none())
+    /** @see queryV1 */
+    fun queryV1(params: RunQueryV1Params = RunQueryV1Params.none()): RunQueryV1Page =
+        queryV1(params, RequestOptions.none())
 
-    /** @see query */
-    fun query(requestOptions: RequestOptions): RunQueryResponse =
-        query(RunQueryParams.none(), requestOptions)
+    /** @see queryV1 */
+    fun queryV1(requestOptions: RequestOptions): RunQueryV1Page =
+        queryV1(RunQueryV1Params.none(), requestOptions)
+
+    /**
+     * **Alpha:** The request and response contract may change; Returns a paginated list of runs for
+     * the given projects within min/max start_time. Supports filters, cursor pagination, and
+     * `selects` to select fields to return.
+     */
+    fun queryV2(): RunQueryV2Page = queryV2(RunQueryV2Params.none())
+
+    /** @see queryV2 */
+    fun queryV2(
+        params: RunQueryV2Params = RunQueryV2Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunQueryV2Page
+
+    /** @see queryV2 */
+    fun queryV2(params: RunQueryV2Params = RunQueryV2Params.none()): RunQueryV2Page =
+        queryV2(params, RequestOptions.none())
+
+    /** @see queryV2 */
+    fun queryV2(requestOptions: RequestOptions): RunQueryV2Page =
+        queryV2(RunQueryV2Params.none(), requestOptions)
+
+    /** Get a specific run. */
+    fun retrieveV1(runId: String): RunSchema = retrieveV1(runId, RunRetrieveV1Params.none())
+
+    /** @see retrieveV1 */
+    fun retrieveV1(
+        runId: String,
+        params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunSchema = retrieveV1(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see retrieveV1 */
+    fun retrieveV1(
+        runId: String,
+        params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
+    ): RunSchema = retrieveV1(runId, params, RequestOptions.none())
+
+    /** @see retrieveV1 */
+    fun retrieveV1(
+        params: RunRetrieveV1Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunSchema
+
+    /** @see retrieveV1 */
+    fun retrieveV1(params: RunRetrieveV1Params): RunSchema =
+        retrieveV1(params, RequestOptions.none())
+
+    /** @see retrieveV1 */
+    fun retrieveV1(runId: String, requestOptions: RequestOptions): RunSchema =
+        retrieveV1(runId, RunRetrieveV1Params.none(), requestOptions)
+
+    /**
+     * **Alpha:** The request and response contract may change; Returns one run by ID for the given
+     * session and start_time. Use the `selects` query parameter (repeatable) to select fields to
+     * return.
+     */
+    fun retrieveV2(runId: String, params: RunRetrieveV2Params): QueryRunResponse =
+        retrieveV2(runId, params, RequestOptions.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        runId: String,
+        params: RunRetrieveV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): QueryRunResponse = retrieveV2(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see retrieveV2 */
+    fun retrieveV2(params: RunRetrieveV2Params): QueryRunResponse =
+        retrieveV2(params, RequestOptions.none())
+
+    /** @see retrieveV2 */
+    fun retrieveV2(
+        params: RunRetrieveV2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): QueryRunResponse
 
     /** Get all runs by query in body payload. */
     fun stats(params: RunStatsParams): RunStatsResponse = stats(params, RequestOptions.none())
@@ -200,6 +256,50 @@ interface RunService {
     fun update2(runId: String, requestOptions: RequestOptions): RunUpdate2Response =
         update2(runId, RunUpdate2Params.none(), requestOptions)
 
+    /** Get a specific run. */
+    fun retrieve(runId: String): RunSchema = retrieve(runId, RunRetrieveParams.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        runId: String,
+        params: RunRetrieveParams = RunRetrieveParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunSchema = retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see retrieve */
+    fun retrieve(runId: String, params: RunRetrieveParams = RunRetrieveParams.none()): RunSchema =
+        retrieve(runId, params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        params: RunRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunSchema
+
+    /** @see retrieve */
+    fun retrieve(params: RunRetrieveParams): RunSchema = retrieve(params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(runId: String, requestOptions: RequestOptions): RunSchema =
+        retrieve(runId, RunRetrieveParams.none(), requestOptions)
+
+    /** Query Runs */
+    fun query(): RunQueryPage = query(RunQueryParams.none())
+
+    /** @see query */
+    fun query(
+        params: RunQueryParams = RunQueryParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunQueryPage
+
+    /** @see query */
+    fun query(params: RunQueryParams = RunQueryParams.none()): RunQueryPage =
+        query(params, RequestOptions.none())
+
+    /** @see query */
+    fun query(requestOptions: RequestOptions): RunQueryPage =
+        query(RunQueryParams.none(), requestOptions)
+
     /** A view of [RunService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -242,47 +342,6 @@ interface RunService {
         @MustBeClosed
         fun create(run: Run): HttpResponseFor<RunCreateResponse> =
             create(run, RequestOptions.none())
-
-        /**
-         * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
-         * [RunService.retrieve].
-         */
-        @MustBeClosed
-        fun retrieve(runId: String): HttpResponseFor<RunSchema> =
-            retrieve(runId, RunRetrieveParams.none())
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(
-            runId: String,
-            params: RunRetrieveParams = RunRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RunSchema> =
-            retrieve(params.toBuilder().runId(runId).build(), requestOptions)
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(
-            runId: String,
-            params: RunRetrieveParams = RunRetrieveParams.none(),
-        ): HttpResponseFor<RunSchema> = retrieve(runId, params, RequestOptions.none())
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(
-            params: RunRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RunSchema>
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(params: RunRetrieveParams): HttpResponseFor<RunSchema> =
-            retrieve(params, RequestOptions.none())
-
-        /** @see retrieve */
-        @MustBeClosed
-        fun retrieve(runId: String, requestOptions: RequestOptions): HttpResponseFor<RunSchema> =
-            retrieve(runId, RunRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch /runs/{run_id}`, but is otherwise the same as
@@ -341,27 +400,125 @@ interface RunService {
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as
-         * [RunService.query].
+         * [RunService.queryV1].
          */
-        @MustBeClosed fun query(): HttpResponseFor<RunQueryResponse> = query(RunQueryParams.none())
-
-        /** @see query */
         @MustBeClosed
-        fun query(
-            params: RunQueryParams = RunQueryParams.none(),
+        fun queryV1(): HttpResponseFor<RunQueryV1Page> = queryV1(RunQueryV1Params.none())
+
+        /** @see queryV1 */
+        @MustBeClosed
+        fun queryV1(
+            params: RunQueryV1Params = RunQueryV1Params.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RunQueryResponse>
+        ): HttpResponseFor<RunQueryV1Page>
 
-        /** @see query */
+        /** @see queryV1 */
         @MustBeClosed
-        fun query(
-            params: RunQueryParams = RunQueryParams.none()
-        ): HttpResponseFor<RunQueryResponse> = query(params, RequestOptions.none())
+        fun queryV1(
+            params: RunQueryV1Params = RunQueryV1Params.none()
+        ): HttpResponseFor<RunQueryV1Page> = queryV1(params, RequestOptions.none())
 
-        /** @see query */
+        /** @see queryV1 */
         @MustBeClosed
-        fun query(requestOptions: RequestOptions): HttpResponseFor<RunQueryResponse> =
-            query(RunQueryParams.none(), requestOptions)
+        fun queryV1(requestOptions: RequestOptions): HttpResponseFor<RunQueryV1Page> =
+            queryV1(RunQueryV1Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /v2/runs/query`, but is otherwise the same as
+         * [RunService.queryV2].
+         */
+        @MustBeClosed
+        fun queryV2(): HttpResponseFor<RunQueryV2Page> = queryV2(RunQueryV2Params.none())
+
+        /** @see queryV2 */
+        @MustBeClosed
+        fun queryV2(
+            params: RunQueryV2Params = RunQueryV2Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunQueryV2Page>
+
+        /** @see queryV2 */
+        @MustBeClosed
+        fun queryV2(
+            params: RunQueryV2Params = RunQueryV2Params.none()
+        ): HttpResponseFor<RunQueryV2Page> = queryV2(params, RequestOptions.none())
+
+        /** @see queryV2 */
+        @MustBeClosed
+        fun queryV2(requestOptions: RequestOptions): HttpResponseFor<RunQueryV2Page> =
+            queryV2(RunQueryV2Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
+         * [RunService.retrieveV1].
+         */
+        @MustBeClosed
+        fun retrieveV1(runId: String): HttpResponseFor<RunSchema> =
+            retrieveV1(runId, RunRetrieveV1Params.none())
+
+        /** @see retrieveV1 */
+        @MustBeClosed
+        fun retrieveV1(
+            runId: String,
+            params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunSchema> =
+            retrieveV1(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see retrieveV1 */
+        @MustBeClosed
+        fun retrieveV1(
+            runId: String,
+            params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
+        ): HttpResponseFor<RunSchema> = retrieveV1(runId, params, RequestOptions.none())
+
+        /** @see retrieveV1 */
+        @MustBeClosed
+        fun retrieveV1(
+            params: RunRetrieveV1Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunSchema>
+
+        /** @see retrieveV1 */
+        @MustBeClosed
+        fun retrieveV1(params: RunRetrieveV1Params): HttpResponseFor<RunSchema> =
+            retrieveV1(params, RequestOptions.none())
+
+        /** @see retrieveV1 */
+        @MustBeClosed
+        fun retrieveV1(runId: String, requestOptions: RequestOptions): HttpResponseFor<RunSchema> =
+            retrieveV1(runId, RunRetrieveV1Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /v2/runs/{run_id}`, but is otherwise the same as
+         * [RunService.retrieveV2].
+         */
+        @MustBeClosed
+        fun retrieveV2(
+            runId: String,
+            params: RunRetrieveV2Params,
+        ): HttpResponseFor<QueryRunResponse> = retrieveV2(runId, params, RequestOptions.none())
+
+        /** @see retrieveV2 */
+        @MustBeClosed
+        fun retrieveV2(
+            runId: String,
+            params: RunRetrieveV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<QueryRunResponse> =
+            retrieveV2(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see retrieveV2 */
+        @MustBeClosed
+        fun retrieveV2(params: RunRetrieveV2Params): HttpResponseFor<QueryRunResponse> =
+            retrieveV2(params, RequestOptions.none())
+
+        /** @see retrieveV2 */
+        @MustBeClosed
+        fun retrieveV2(
+            params: RunRetrieveV2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<QueryRunResponse>
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/stats`, but is otherwise the same as
@@ -437,5 +594,69 @@ interface RunService {
             requestOptions: RequestOptions,
         ): HttpResponseFor<RunUpdate2Response> =
             update2(runId, RunUpdate2Params.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
+         * [RunService.retrieve].
+         */
+        @MustBeClosed
+        fun retrieve(runId: String): HttpResponseFor<RunSchema> =
+            retrieve(runId, RunRetrieveParams.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            runId: String,
+            params: RunRetrieveParams = RunRetrieveParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunSchema> =
+            retrieve(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            runId: String,
+            params: RunRetrieveParams = RunRetrieveParams.none(),
+        ): HttpResponseFor<RunSchema> = retrieve(runId, params, RequestOptions.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            params: RunRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunSchema>
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(params: RunRetrieveParams): HttpResponseFor<RunSchema> =
+            retrieve(params, RequestOptions.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(runId: String, requestOptions: RequestOptions): HttpResponseFor<RunSchema> =
+            retrieve(runId, RunRetrieveParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as
+         * [RunService.query].
+         */
+        @MustBeClosed fun query(): HttpResponseFor<RunQueryPage> = query(RunQueryParams.none())
+
+        /** @see query */
+        @MustBeClosed
+        fun query(
+            params: RunQueryParams = RunQueryParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunQueryPage>
+
+        /** @see query */
+        @MustBeClosed
+        fun query(params: RunQueryParams = RunQueryParams.none()): HttpResponseFor<RunQueryPage> =
+            query(params, RequestOptions.none())
+
+        /** @see query */
+        @MustBeClosed
+        fun query(requestOptions: RequestOptions): HttpResponseFor<RunQueryPage> =
+            query(RunQueryParams.none(), requestOptions)
     }
 }

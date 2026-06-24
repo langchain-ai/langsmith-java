@@ -27,10 +27,7 @@ internal class ExampleDeleteAllParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
-                    .put(
-                        "example_ids",
-                        listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","),
-                    )
+                    .put("example_ids", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
     }

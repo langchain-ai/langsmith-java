@@ -20,10 +20,6 @@ internal class DatasetRetrieveSessionsBulkParamsTest {
         val queryParams = params._queryParams()
 
         assertThat(queryParams)
-            .isEqualTo(
-                QueryParams.builder()
-                    .put("share_tokens", listOf("string").joinToString(","))
-                    .build()
-            )
+            .isEqualTo(QueryParams.builder().put("share_tokens", "string").build())
     }
 }

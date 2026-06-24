@@ -14,6 +14,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
             .assignedToMe(true)
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .limit(1L)
             .name("name")
             .nameContains("name_contains")
@@ -21,6 +22,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
             .queueType(AnnotationQueueRetrieveAnnotationQueuesParams.QueueType.SINGLE)
             .sortBy("sort_by")
             .sortByDesc(true)
+            .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
@@ -32,6 +34,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
                 .assignedToMe(true)
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .limit(1L)
                 .name("name")
                 .nameContains("name_contains")
@@ -39,6 +42,7 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
                 .queueType(AnnotationQueueRetrieveAnnotationQueuesParams.QueueType.SINGLE)
                 .sortBy("sort_by")
                 .sortByDesc(true)
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
@@ -49,7 +53,8 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
                 QueryParams.builder()
                     .put("assigned_to_me", "true")
                     .put("dataset_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .put("ids", listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","))
+                    .put("ids", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("ids", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("limit", "1")
                     .put("name", "name")
                     .put("name_contains", "name_contains")
@@ -57,10 +62,8 @@ internal class AnnotationQueueRetrieveAnnotationQueuesParamsTest {
                     .put("queue_type", "single")
                     .put("sort_by", "sort_by")
                     .put("sort_by_desc", "true")
-                    .put(
-                        "tag_value_id",
-                        listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","),
-                    )
+                    .put("tag_value_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("tag_value_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
     }

@@ -307,7 +307,7 @@ private constructor(
                 evaluatorId?.let { put("evaluator_id", it) }
                 feedbackKey?.let { put("feedback_key", it) }
                 groupBy?.let { put("group_by", it) }
-                resourceId?.let { put("resource_id", it.joinToString(",")) }
+                resourceId?.forEach { put("resource_id", it) }
                 sessionId?.let { put("session_id", it) }
                 type?.let { put("type", it) }
                 putAll(additionalQueryParams)

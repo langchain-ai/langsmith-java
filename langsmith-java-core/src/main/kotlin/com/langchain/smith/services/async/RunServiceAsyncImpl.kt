@@ -23,13 +23,23 @@ import com.langchain.smith.core.http.zstd
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.errors.NotFoundException
 import com.langchain.smith.models.info.InfoListResponse
+import com.langchain.smith.models.runs.QueryRunResponse
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
+import com.langchain.smith.models.runs.RunQueryPageAsync
+import com.langchain.smith.models.runs.RunQueryPageResponse
 import com.langchain.smith.models.runs.RunQueryParams
-import com.langchain.smith.models.runs.RunQueryResponse
+import com.langchain.smith.models.runs.RunQueryV1PageAsync
+import com.langchain.smith.models.runs.RunQueryV1PageResponse
+import com.langchain.smith.models.runs.RunQueryV1Params
+import com.langchain.smith.models.runs.RunQueryV2PageAsync
+import com.langchain.smith.models.runs.RunQueryV2PageResponse
+import com.langchain.smith.models.runs.RunQueryV2Params
 import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunRetrieveV1Params
+import com.langchain.smith.models.runs.RunRetrieveV2Params
 import com.langchain.smith.models.runs.RunSchema
 import com.langchain.smith.models.runs.RunStatsParams
 import com.langchain.smith.models.runs.RunStatsResponse
@@ -172,13 +182,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         }
     }
 
-    override fun retrieve(
-        params: RunRetrieveParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<RunSchema> =
-        // get /api/v1/runs/{run_id}
-        withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
-
     override fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions,
@@ -205,12 +208,33 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         // post /runs/batch
         withRawResponse().ingestBatch(params, requestOptions).thenApply { it.parse() }
 
-    override fun query(
-        params: RunQueryParams,
+    override fun queryV1(
+        params: RunQueryV1Params,
         requestOptions: RequestOptions,
-    ): CompletableFuture<RunQueryResponse> =
+    ): CompletableFuture<RunQueryV1PageAsync> =
         // post /api/v1/runs/query
-        withRawResponse().query(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().queryV1(params, requestOptions).thenApply { it.parse() }
+
+    override fun queryV2(
+        params: RunQueryV2Params,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<RunQueryV2PageAsync> =
+        // post /v2/runs/query
+        withRawResponse().queryV2(params, requestOptions).thenApply { it.parse() }
+
+    override fun retrieveV1(
+        params: RunRetrieveV1Params,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<RunSchema> =
+        // get /api/v1/runs/{run_id}
+        withRawResponse().retrieveV1(params, requestOptions).thenApply { it.parse() }
+
+    override fun retrieveV2(
+        params: RunRetrieveV2Params,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<QueryRunResponse> =
+        // get /v2/runs/{run_id}
+        withRawResponse().retrieveV2(params, requestOptions).thenApply { it.parse() }
 
     override fun stats(
         params: RunStatsParams,
@@ -225,6 +249,20 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<RunUpdate2Response> =
         // patch /api/v1/runs/{run_id}
         withRawResponse().update2(params, requestOptions).thenApply { it.parse() }
+
+    override fun retrieve(
+        params: RunRetrieveParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<RunSchema> =
+        // get /api/v1/runs/{run_id}
+        withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
+
+    override fun query(
+        params: RunQueryParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<RunQueryPageAsync> =
+        // post /api/v1/runs/query
+        withRawResponse().query(params, requestOptions).thenApply { it.parse() }
 
     override fun flush(): CompletableFuture<Void?> =
         CompletableFuture.runAsync { batchQueue.flush() }.thenApply { null }
@@ -318,39 +356,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                     errorHandler.handle(response).parseable {
                         response
                             .use { createHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val retrieveHandler: Handler<RunSchema> =
-            jsonHandler<RunSchema>(clientOptions.jsonMapper)
-
-        override fun retrieve(
-            params: RunRetrieveParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RunSchema>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("runId", params.runId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "runs", params._pathParam(0))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { retrieveHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
@@ -461,13 +466,13 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val queryHandler: Handler<RunQueryResponse> =
-            jsonHandler<RunQueryResponse>(clientOptions.jsonMapper)
+        private val queryV1Handler: Handler<RunQueryV1PageResponse> =
+            jsonHandler<RunQueryV1PageResponse>(clientOptions.jsonMapper)
 
-        override fun query(
-            params: RunQueryParams,
+        override fun queryV1(
+            params: RunQueryV1Params,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RunQueryResponse>> {
+        ): CompletableFuture<HttpResponseFor<RunQueryV1PageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -482,7 +487,120 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { queryHandler.handle(it) }
+                            .use { queryV1Handler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                            .let {
+                                RunQueryV1PageAsync.builder()
+                                    .service(RunServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
+                            }
+                    }
+                }
+        }
+
+        private val queryV2Handler: Handler<RunQueryV2PageResponse> =
+            jsonHandler<RunQueryV2PageResponse>(clientOptions.jsonMapper)
+
+        override fun queryV2(
+            params: RunQueryV2Params,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RunQueryV2PageAsync>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v2", "runs", "query")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { queryV2Handler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                            .let {
+                                RunQueryV2PageAsync.builder()
+                                    .service(RunServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
+                            }
+                    }
+                }
+        }
+
+        private val retrieveV1Handler: Handler<RunSchema> =
+            jsonHandler<RunSchema>(clientOptions.jsonMapper)
+
+        override fun retrieveV1(
+            params: RunRetrieveV1Params,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RunSchema>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("runId", params.runId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "runs", params._pathParam(0))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveV1Handler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val retrieveV2Handler: Handler<QueryRunResponse> =
+            jsonHandler<QueryRunResponse>(clientOptions.jsonMapper)
+
+        override fun retrieveV2(
+            params: RunRetrieveV2Params,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<QueryRunResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("runId", params.runId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v2", "runs", params._pathParam(0))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveV2Handler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
@@ -552,6 +670,78 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                    }
+                }
+        }
+
+        private val retrieveHandler: Handler<RunSchema> =
+            jsonHandler<RunSchema>(clientOptions.jsonMapper)
+
+        override fun retrieve(
+            params: RunRetrieveParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RunSchema>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("runId", params.runId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "runs", params._pathParam(0))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val queryHandler: Handler<RunQueryPageResponse> =
+            jsonHandler<RunQueryPageResponse>(clientOptions.jsonMapper)
+
+        override fun query(
+            params: RunQueryParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RunQueryPageAsync>> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "runs", "query")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { queryHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                            .let {
+                                RunQueryPageAsync.builder()
+                                    .service(RunServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

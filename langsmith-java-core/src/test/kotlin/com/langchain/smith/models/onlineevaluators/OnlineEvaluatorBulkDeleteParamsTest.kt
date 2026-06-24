@@ -29,7 +29,7 @@ internal class OnlineEvaluatorBulkDeleteParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
-                    .put("evaluator_ids", listOf("string").joinToString(","))
+                    .put("evaluator_ids", "string")
                     .put("delete_run_rules", "true")
                     .build()
             )
@@ -42,10 +42,6 @@ internal class OnlineEvaluatorBulkDeleteParamsTest {
         val queryParams = params._queryParams()
 
         assertThat(queryParams)
-            .isEqualTo(
-                QueryParams.builder()
-                    .put("evaluator_ids", listOf("string").joinToString(","))
-                    .build()
-            )
+            .isEqualTo(QueryParams.builder().put("evaluator_ids", "string").build())
     }
 }
