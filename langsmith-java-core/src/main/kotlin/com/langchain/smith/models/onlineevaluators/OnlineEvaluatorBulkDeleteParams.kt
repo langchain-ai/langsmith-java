@@ -254,7 +254,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                put("evaluator_ids", evaluatorIds.joinToString(","))
+                evaluatorIds.forEach { put("evaluator_ids", it) }
                 deleteRunRules?.let { put("delete_run_rules", it.toString()) }
                 putAll(additionalQueryParams)
             }

@@ -389,7 +389,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                id?.let { put("id", it.joinToString(",")) }
+                id?.forEach { put("id", it) }
                 asOf?.accept(
                     object : AsOf.Visitor<Unit> {
                         override fun visitOffsetDateTime(offsetDateTime: OffsetDateTime) {
@@ -407,14 +407,14 @@ private constructor(
                 dataset?.let { put("dataset", it) }
                 descending?.let { put("descending", it.toString()) }
                 filter?.let { put("filter", it) }
-                fullTextContains?.let { put("full_text_contains", it.joinToString(",")) }
+                fullTextContains?.forEach { put("full_text_contains", it) }
                 limit?.let { put("limit", it.toString()) }
                 metadata?.let { put("metadata", it) }
                 offset?.let { put("offset", it.toString()) }
                 order?.let { put("order", it.toString()) }
                 randomSeed?.let { put("random_seed", it.toString()) }
-                select?.let { put("select", it.joinToString(",") { it.toString() }) }
-                splits?.let { put("splits", it.joinToString(",")) }
+                select?.forEach { put("select", it.toString()) }
+                splits?.forEach { put("splits", it) }
                 putAll(additionalQueryParams)
             }
             .build()

@@ -341,7 +341,7 @@ private constructor(
             .apply {
                 assignedToMe?.let { put("assigned_to_me", it.toString()) }
                 datasetId?.let { put("dataset_id", it) }
-                ids?.let { put("ids", it.joinToString(",")) }
+                ids?.forEach { put("ids", it) }
                 limit?.let { put("limit", it.toString()) }
                 name?.let { put("name", it) }
                 nameContains?.let { put("name_contains", it) }
@@ -349,7 +349,7 @@ private constructor(
                 queueType?.let { put("queue_type", it.toString()) }
                 sortBy?.let { put("sort_by", it) }
                 sortByDesc?.let { put("sort_by_desc", it.toString()) }
-                tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
+                tagValueId?.forEach { put("tag_value_id", it) }
                 putAll(additionalQueryParams)
             }
             .build()

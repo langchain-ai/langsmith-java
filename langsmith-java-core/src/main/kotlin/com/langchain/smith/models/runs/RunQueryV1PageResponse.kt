@@ -19,7 +19,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class RunQueryResponse
+class RunQueryV1PageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val cursors: JsonField<Cursors>,
@@ -112,7 +112,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [RunQueryResponse].
+         * Returns a mutable builder for constructing an instance of [RunQueryV1PageResponse].
          *
          * The following fields are required:
          * ```java
@@ -123,7 +123,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [RunQueryResponse]. */
+    /** A builder for [RunQueryV1PageResponse]. */
     class Builder internal constructor() {
 
         private var cursors: JsonField<Cursors>? = null
@@ -133,12 +133,12 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(runQueryResponse: RunQueryResponse) = apply {
-            cursors = runQueryResponse.cursors
-            runs = runQueryResponse.runs.map { it.toMutableList() }
-            parsedQuery = runQueryResponse.parsedQuery
-            searchCursors = runQueryResponse.searchCursors
-            additionalProperties = runQueryResponse.additionalProperties.toMutableMap()
+        internal fun from(runQueryV1PageResponse: RunQueryV1PageResponse) = apply {
+            cursors = runQueryV1PageResponse.cursors
+            runs = runQueryV1PageResponse.runs.map { it.toMutableList() }
+            parsedQuery = runQueryV1PageResponse.parsedQuery
+            searchCursors = runQueryV1PageResponse.searchCursors
+            additionalProperties = runQueryV1PageResponse.additionalProperties.toMutableMap()
         }
 
         fun cursors(cursors: Cursors) = cursors(JsonField.of(cursors))
@@ -225,7 +225,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [RunQueryResponse].
+         * Returns an immutable instance of [RunQueryV1PageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -237,8 +237,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): RunQueryResponse =
-            RunQueryResponse(
+        fun build(): RunQueryV1PageResponse =
+            RunQueryV1PageResponse(
                 checkRequired("cursors", cursors),
                 checkRequired("runs", runs).map { it.toImmutable() },
                 parsedQuery,
@@ -257,7 +257,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): RunQueryResponse = apply {
+    fun validate(): RunQueryV1PageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -290,15 +290,39 @@ private constructor(
             (searchCursors.asKnown().getOrNull()?.validity() ?: 0)
 
     class Cursors
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        @com.fasterxml.jackson.annotation.JsonValue
-        private val additionalProperties: Map<String, JsonValue>
+        private val next: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("next") @ExcludeMissing next: JsonField<String> = JsonMissing.of()
+        ) : this(next, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun next(): Optional<String> = next.getOptional("next")
+
+        /**
+         * Returns the raw JSON value of [next].
+         *
+         * Unlike [next], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("next") @ExcludeMissing fun _next(): JsonField<String> = next
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
 
         @JsonAnyGetter
         @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
 
         fun toBuilder() = Builder().from(this)
 
@@ -311,12 +335,28 @@ private constructor(
         /** A builder for [Cursors]. */
         class Builder internal constructor() {
 
+            private var next: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(cursors: Cursors) = apply {
+                next = cursors.next
                 additionalProperties = cursors.additionalProperties.toMutableMap()
             }
+
+            fun next(next: String?) = next(JsonField.ofNullable(next))
+
+            /** Alias for calling [Builder.next] with `next.orElse(null)`. */
+            fun next(next: Optional<String>) = next(next.getOrNull())
+
+            /**
+             * Sets [Builder.next] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.next] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun next(next: JsonField<String>) = apply { this.next = next }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
@@ -342,7 +382,7 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Cursors = Cursors(additionalProperties.toImmutable())
+            fun build(): Cursors = Cursors(next, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -361,6 +401,7 @@ private constructor(
                 return@apply
             }
 
+            next()
             validated = true
         }
 
@@ -378,23 +419,23 @@ private constructor(
          *
          * Used for best match union deserialization.
          */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+        @JvmSynthetic internal fun validity(): Int = (if (next.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
                 return true
             }
 
-            return other is Cursors && additionalProperties == other.additionalProperties
+            return other is Cursors &&
+                next == other.next &&
+                additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+        private val hashCode: Int by lazy { Objects.hash(next, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
-        override fun toString() = "Cursors{additionalProperties=$additionalProperties}"
+        override fun toString() = "Cursors{next=$next, additionalProperties=$additionalProperties}"
     }
 
     class SearchCursors
@@ -510,7 +551,7 @@ private constructor(
             return true
         }
 
-        return other is RunQueryResponse &&
+        return other is RunQueryV1PageResponse &&
             cursors == other.cursors &&
             runs == other.runs &&
             parsedQuery == other.parsedQuery &&
@@ -525,5 +566,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunQueryResponse{cursors=$cursors, runs=$runs, parsedQuery=$parsedQuery, searchCursors=$searchCursors, additionalProperties=$additionalProperties}"
+        "RunQueryV1PageResponse{cursors=$cursors, runs=$runs, parsedQuery=$parsedQuery, searchCursors=$searchCursors, additionalProperties=$additionalProperties}"
 }

@@ -329,10 +329,10 @@ private constructor(
                 limit?.let { put("limit", it.toString()) }
                 nameContains?.let { put("name_contains", it) }
                 offset?.let { put("offset", it.toString()) }
-                resourceId?.let { put("resource_id", it.joinToString(",")) }
+                resourceId?.forEach { put("resource_id", it) }
                 sortBy?.let { put("sort_by", it) }
                 sortByDesc?.let { put("sort_by_desc", it.toString()) }
-                tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
+                tagValueId?.forEach { put("tag_value_id", it) }
                 type?.let { put("type", it) }
                 putAll(additionalQueryParams)
             }

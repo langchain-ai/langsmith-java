@@ -12,11 +12,13 @@ internal class EvaluatorListParamsTest {
     fun create() {
         EvaluatorListParams.builder()
             .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .evaluatorId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .includeBackfillProgress(true)
             .nameContains("name_contains")
             .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .type(EvaluatorListParams.Type.SESSION)
             .build()
@@ -27,11 +29,13 @@ internal class EvaluatorListParamsTest {
         val params =
             EvaluatorListParams.builder()
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .evaluatorId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .includeBackfillProgress(true)
                 .nameContains("name_contains")
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .type(EvaluatorListParams.Type.SESSION)
                 .build()
@@ -41,16 +45,15 @@ internal class EvaluatorListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
-                    .put("id", listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","))
+                    .put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("dataset_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("evaluator_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("include_backfill_progress", "true")
                     .put("name_contains", "name_contains")
                     .put("session_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .put(
-                        "tag_value_id",
-                        listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","),
-                    )
+                    .put("tag_value_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("tag_value_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("type", "session")
                     .build()
             )

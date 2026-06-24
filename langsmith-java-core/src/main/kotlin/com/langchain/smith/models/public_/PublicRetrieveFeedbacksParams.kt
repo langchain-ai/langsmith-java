@@ -369,14 +369,14 @@ private constructor(
             .apply {
                 hasComment?.let { put("has_comment", it.toString()) }
                 hasScore?.let { put("has_score", it.toString()) }
-                key?.let { put("key", it.joinToString(",")) }
+                key?.forEach { put("key", it) }
                 level?.let { put("level", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 offset?.let { put("offset", it.toString()) }
-                run?.let { put("run", it.joinToString(",")) }
-                session?.let { put("session", it.joinToString(",")) }
-                source?.let { put("source", it.joinToString(",") { it.toString() }) }
-                user?.let { put("user", it.joinToString(",")) }
+                run?.forEach { put("run", it) }
+                session?.forEach { put("session", it) }
+                source?.forEach { put("source", it.toString()) }
+                user?.forEach { put("user", it) }
                 putAll(additionalQueryParams)
             }
             .build()

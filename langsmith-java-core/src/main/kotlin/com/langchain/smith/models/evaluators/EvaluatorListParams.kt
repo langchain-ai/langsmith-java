@@ -284,13 +284,13 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                id?.let { put("id", it.joinToString(",")) }
+                id?.forEach { put("id", it) }
                 datasetId?.let { put("dataset_id", it) }
                 evaluatorId?.let { put("evaluator_id", it) }
                 includeBackfillProgress?.let { put("include_backfill_progress", it.toString()) }
                 nameContains?.let { put("name_contains", it) }
                 sessionId?.let { put("session_id", it) }
-                tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
+                tagValueId?.forEach { put("tag_value_id", it) }
                 type?.let { put("type", it.toString()) }
                 putAll(additionalQueryParams)
             }

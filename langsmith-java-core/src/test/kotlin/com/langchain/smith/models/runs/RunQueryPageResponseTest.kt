@@ -9,17 +9,13 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class RunQueryResponseTest {
+internal class RunQueryPageResponseTest {
 
     @Test
     fun create() {
-        val runQueryResponse =
-            RunQueryResponse.builder()
-                .cursors(
-                    RunQueryResponse.Cursors.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("string"))
-                        .build()
-                )
+        val runQueryPageResponse =
+            RunQueryPageResponse.builder()
+                .cursors(RunQueryPageResponse.Cursors.builder().next("next").build())
                 .addRun(
                     RunSchema.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -137,19 +133,15 @@ internal class RunQueryResponseTest {
                 )
                 .parsedQuery("parsed_query")
                 .searchCursors(
-                    RunQueryResponse.SearchCursors.builder()
+                    RunQueryPageResponse.SearchCursors.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
                 .build()
 
-        assertThat(runQueryResponse.cursors())
-            .isEqualTo(
-                RunQueryResponse.Cursors.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("string"))
-                    .build()
-            )
-        assertThat(runQueryResponse.runs())
+        assertThat(runQueryPageResponse.cursors())
+            .isEqualTo(RunQueryPageResponse.Cursors.builder().next("next").build())
+        assertThat(runQueryPageResponse.runs())
             .containsExactly(
                 RunSchema.builder()
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -265,10 +257,10 @@ internal class RunQueryResponseTest {
                     .ttlSeconds(0L)
                     .build()
             )
-        assertThat(runQueryResponse.parsedQuery()).contains("parsed_query")
-        assertThat(runQueryResponse.searchCursors())
+        assertThat(runQueryPageResponse.parsedQuery()).contains("parsed_query")
+        assertThat(runQueryPageResponse.searchCursors())
             .contains(
-                RunQueryResponse.SearchCursors.builder()
+                RunQueryPageResponse.SearchCursors.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
@@ -277,13 +269,9 @@ internal class RunQueryResponseTest {
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val runQueryResponse =
-            RunQueryResponse.builder()
-                .cursors(
-                    RunQueryResponse.Cursors.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("string"))
-                        .build()
-                )
+        val runQueryPageResponse =
+            RunQueryPageResponse.builder()
+                .cursors(RunQueryPageResponse.Cursors.builder().next("next").build())
                 .addRun(
                     RunSchema.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -401,18 +389,18 @@ internal class RunQueryResponseTest {
                 )
                 .parsedQuery("parsed_query")
                 .searchCursors(
-                    RunQueryResponse.SearchCursors.builder()
+                    RunQueryPageResponse.SearchCursors.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
                 .build()
 
-        val roundtrippedRunQueryResponse =
+        val roundtrippedRunQueryPageResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(runQueryResponse),
-                jacksonTypeRef<RunQueryResponse>(),
+                jsonMapper.writeValueAsString(runQueryPageResponse),
+                jacksonTypeRef<RunQueryPageResponse>(),
             )
 
-        assertThat(roundtrippedRunQueryResponse).isEqualTo(runQueryResponse)
+        assertThat(roundtrippedRunQueryPageResponse).isEqualTo(runQueryPageResponse)
     }
 }

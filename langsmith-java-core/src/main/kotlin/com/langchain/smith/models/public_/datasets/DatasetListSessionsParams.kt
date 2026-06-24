@@ -346,7 +346,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                id?.let { put("id", it.joinToString(",")) }
+                id?.forEach { put("id", it) }
                 datasetVersion?.let { put("dataset_version", it) }
                 facets?.let { put("facets", it.toString()) }
                 limit?.let { put("limit", it.toString()) }

@@ -20,11 +20,13 @@ internal class EvaluatorServiceTest {
             evaluatorService.list(
                 EvaluatorListParams.builder()
                     .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .evaluatorId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .includeBackfillProgress(true)
                     .nameContains("name_contains")
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .type(EvaluatorListParams.Type.SESSION)
                     .build()

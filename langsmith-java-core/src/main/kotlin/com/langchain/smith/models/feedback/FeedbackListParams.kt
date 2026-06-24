@@ -409,7 +409,7 @@ private constructor(
                 hasComment?.let { put("has_comment", it.toString()) }
                 hasScore?.let { put("has_score", it.toString()) }
                 includeUserNames?.let { put("include_user_names", it.toString()) }
-                key?.let { put("key", it.joinToString(",")) }
+                key?.forEach { put("key", it) }
                 level?.let { put("level", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 maxCreatedAt?.let {
@@ -422,7 +422,7 @@ private constructor(
                 run?.accept(
                     object : Run.Visitor<Unit> {
                         override fun visitStrings(strings: List<String>) {
-                            put("run", strings.joinToString(","))
+                            strings.forEach { put("run", it) }
                         }
 
                         override fun visitString(string: String) {
@@ -433,7 +433,7 @@ private constructor(
                 session?.accept(
                     object : Session.Visitor<Unit> {
                         override fun visitStrings(strings: List<String>) {
-                            put("session", strings.joinToString(","))
+                            strings.forEach { put("session", it) }
                         }
 
                         override fun visitString(string: String) {
@@ -441,8 +441,8 @@ private constructor(
                         }
                     }
                 )
-                source?.let { put("source", it.joinToString(",") { it.toString() }) }
-                user?.let { put("user", it.joinToString(",")) }
+                source?.forEach { put("source", it.toString()) }
+                user?.forEach { put("user", it) }
                 putAll(additionalQueryParams)
             }
             .build()

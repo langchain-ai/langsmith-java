@@ -371,11 +371,11 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                id?.let { put("id", it.joinToString(",")) }
+                id?.forEach { put("id", it) }
                 datatype?.accept(
                     object : Datatype.Visitor<Unit> {
                         override fun visitDataTypes(dataTypes: List<DataType>) {
-                            put("data_type", dataTypes.joinToString(",") { it.toString() })
+                            dataTypes.forEach { put("data_type", it.toString()) }
                         }
 
                         override fun visitDataType(
@@ -385,7 +385,7 @@ private constructor(
                         }
                     }
                 )
-                exclude?.let { put("exclude", it.joinToString(",") { it.toString() }) }
+                exclude?.forEach { put("exclude", it.toString()) }
                 excludeCorrectionsDatasets?.let {
                     put("exclude_corrections_datasets", it.toString())
                 }
@@ -396,7 +396,7 @@ private constructor(
                 offset?.let { put("offset", it.toString()) }
                 sortBy?.let { put("sort_by", it.toString()) }
                 sortByDesc?.let { put("sort_by_desc", it.toString()) }
-                tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
+                tagValueId?.forEach { put("tag_value_id", it) }
                 putAll(additionalQueryParams)
             }
             .build()

@@ -225,7 +225,7 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
-                put("example_ids", exampleIds.joinToString(","))
+                exampleIds.forEach { put("example_ids", it) }
                 putAll(additionalQueryParams)
             }
             .build()

@@ -466,12 +466,12 @@ private constructor(
                 offset?.let { put("offset", it.toString()) }
                 query?.let { put("query", it) }
                 singleRepoType?.let { put("repo_type", it.toString()) }
-                repoTypes?.let { put("repo_types", it.joinToString(",") { it.toString() }) }
+                repoTypes?.forEach { put("repo_types", it.toString()) }
                 sortDirection?.let { put("sort_direction", it.toString()) }
                 sortField?.let { put("sort_field", it.toString()) }
                 source?.let { put("source", it.toString()) }
-                tagValueId?.let { put("tag_value_id", it.joinToString(",")) }
-                tags?.let { put("tags", it.joinToString(",")) }
+                tagValueId?.forEach { put("tag_value_id", it) }
+                tags?.forEach { put("tags", it) }
                 tenantHandle?.let { put("tenant_handle", it) }
                 tenantId?.let { put("tenant_id", it) }
                 upstreamRepoHandle?.let { put("upstream_repo_handle", it) }

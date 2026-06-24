@@ -12,7 +12,9 @@ internal class DatasetListParamsTest {
     fun create() {
         DatasetListParams.builder()
             .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .datatype(DataType.KV)
+            .addExclude(DatasetListParams.Exclude.EXAMPLE_COUNT)
             .addExclude(DatasetListParams.Exclude.EXAMPLE_COUNT)
             .excludeCorrectionsDatasets(true)
             .limit(1L)
@@ -23,6 +25,7 @@ internal class DatasetListParamsTest {
             .sortBy(SortByDatasetColumn.NAME)
             .sortByDesc(true)
             .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .build()
     }
 
@@ -31,7 +34,9 @@ internal class DatasetListParamsTest {
         val params =
             DatasetListParams.builder()
                 .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .datatype(DataType.KV)
+                .addExclude(DatasetListParams.Exclude.EXAMPLE_COUNT)
                 .addExclude(DatasetListParams.Exclude.EXAMPLE_COUNT)
                 .excludeCorrectionsDatasets(true)
                 .limit(1L)
@@ -42,6 +47,7 @@ internal class DatasetListParamsTest {
                 .sortBy(SortByDatasetColumn.NAME)
                 .sortByDesc(true)
                 .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         val queryParams = params._queryParams()
@@ -49,9 +55,11 @@ internal class DatasetListParamsTest {
         assertThat(queryParams)
             .isEqualTo(
                 QueryParams.builder()
-                    .put("id", listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","))
+                    .put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("data_type", "kv")
-                    .put("exclude", listOf("example_count").joinToString(","))
+                    .put("exclude", "example_count")
+                    .put("exclude", "example_count")
                     .put("exclude_corrections_datasets", "true")
                     .put("limit", "1")
                     .put("metadata", "metadata")
@@ -60,10 +68,8 @@ internal class DatasetListParamsTest {
                     .put("offset", "0")
                     .put("sort_by", "name")
                     .put("sort_by_desc", "true")
-                    .put(
-                        "tag_value_id",
-                        listOf("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e").joinToString(","),
-                    )
+                    .put("tag_value_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("tag_value_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
     }

@@ -13,8 +13,9 @@ import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngestBatchParams
-import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunRetrieveParams
+import com.langchain.smith.models.runs.RunRetrieveV1Params
+import com.langchain.smith.models.runs.RunRetrieveV2Params
 import com.langchain.smith.models.runs.RunStatsQueryParams
 import com.langchain.smith.models.runs.RunTypeEnum
 import com.langchain.smith.models.runs.RunUpdateParams
@@ -238,32 +239,6 @@ internal class RunServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun retrieve() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .build()
-        val runServiceAsync = client.runs()
-
-        val runSchemaFuture =
-            runServiceAsync.retrieve(
-                RunRetrieveParams.builder()
-                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .excludeS3StoredAttributes(true)
-                    .excludeSerialized(true)
-                    .includeMessages(true)
-                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .build()
-            )
-
-        val runSchema = runSchemaFuture.get()
-        runSchema.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
     fun update() {
         val client =
             LangsmithOkHttpClientAsync.builder()
@@ -463,7 +438,7 @@ internal class RunServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun query() {
+    fun queryV1() {
         val client =
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
@@ -471,38 +446,77 @@ internal class RunServiceAsyncTest {
                 .build()
         val runServiceAsync = client.runs()
 
-        val responseFuture =
-            runServiceAsync.query(
-                RunQueryParams.builder()
-                    .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .cursor("cursor")
-                    .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
-                    .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .error(true)
-                    .executionOrder(1L)
-                    .filter("filter")
-                    .isRoot(true)
-                    .limit(1L)
-                    .order(RunQueryParams.Order.ASC)
-                    .parentRun("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .query("query")
-                    .addReferenceExample("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .runType(RunTypeEnum.TOOL)
-                    .searchFilter("search_filter")
-                    .addSelect(RunQueryParams.Select.ID)
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .skipPagination(true)
-                    .skipPrevCursor(true)
+        val pageFuture = runServiceAsync.queryV1()
+
+        val page = pageFuture.get()
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun queryV2() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val runServiceAsync = client.runs()
+
+        val pageFuture = runServiceAsync.queryV2()
+
+        val page = pageFuture.get()
+        page.response().validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveV1() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val runServiceAsync = client.runs()
+
+        val runSchemaFuture =
+            runServiceAsync.retrieveV1(
+                RunRetrieveV1Params.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .excludeS3StoredAttributes(true)
+                    .excludeSerialized(true)
+                    .includeMessages(true)
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .traceFilter("trace_filter")
-                    .treeFilter("tree_filter")
-                    .useExperimentalSearch(true)
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val runSchema = runSchemaFuture.get()
+        runSchema.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveV2() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val runServiceAsync = client.runs()
+
+        val queryRunResponseFuture =
+            runServiceAsync.retrieveV2(
+                RunRetrieveV2Params.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .projectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .addSelect(RunRetrieveV2Params.Select.ID)
+                    .accept("Accept")
+                    .build()
+            )
+
+        val queryRunResponse = queryRunResponseFuture.get()
+        queryRunResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -568,6 +582,48 @@ internal class RunServiceAsyncTest {
 
         val response = responseFuture.get()
         response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieve() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val runServiceAsync = client.runs()
+
+        val runSchemaFuture =
+            runServiceAsync.retrieve(
+                RunRetrieveParams.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .excludeS3StoredAttributes(true)
+                    .excludeSerialized(true)
+                    .includeMessages(true)
+                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .build()
+            )
+
+        val runSchema = runSchemaFuture.get()
+        runSchema.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun query() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val runServiceAsync = client.runs()
+
+        val pageFuture = runServiceAsync.query()
+
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     private fun runService(httpClient: HttpClient): RunServiceAsync.WithRawResponse =
