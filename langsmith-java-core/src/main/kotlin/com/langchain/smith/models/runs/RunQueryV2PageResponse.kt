@@ -37,8 +37,7 @@ private constructor(
     ) : this(items, nextCursor, mutableMapOf())
 
     /**
-     * `items` is the page of runs, sorted by `start_time` in the direction given by the request
-     * `sort_order`.
+     * `items` is the page of runs, sorted by `start_time` descending.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -46,8 +45,8 @@ private constructor(
     fun items(): Optional<List<QueryRunResponse>> = items.getOptional("items")
 
     /**
-     * `next_cursor` is the opaque cursor to pass as `cursor` on the next request. Omitted on the
-     * final page.
+     * `next_cursor` is the opaque cursor to pass as `cursor` on the next request. Null on the final
+     * page.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -100,10 +99,7 @@ private constructor(
             additionalProperties = runQueryV2PageResponse.additionalProperties.toMutableMap()
         }
 
-        /**
-         * `items` is the page of runs, sorted by `start_time` in the direction given by the request
-         * `sort_order`.
-         */
+        /** `items` is the page of runs, sorted by `start_time` descending. */
         fun items(items: List<QueryRunResponse>) = items(JsonField.of(items))
 
         /**
@@ -128,8 +124,8 @@ private constructor(
         }
 
         /**
-         * `next_cursor` is the opaque cursor to pass as `cursor` on the next request. Omitted on
-         * the final page.
+         * `next_cursor` is the opaque cursor to pass as `cursor` on the next request. Null on the
+         * final page.
          */
         fun nextCursor(nextCursor: String) = nextCursor(JsonField.of(nextCursor))
 

@@ -14,7 +14,6 @@ internal class RunQueryV2ParamsTest {
     fun create() {
         RunQueryV2Params.builder()
             .accept("Accept")
-            .aiQuery("runs that used tool calls")
             .cursor(
                 "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
             )
@@ -42,7 +41,6 @@ internal class RunQueryV2ParamsTest {
                     RunQueryV2Params.Select.STATUS,
                 )
             )
-            .sortOrder(RunQueryV2Params.SortOrder.DESC)
             .traceFilter("eq(status, \"success\")")
             .traceId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
             .treeFilter("has(tags, \"production\")")
@@ -54,7 +52,6 @@ internal class RunQueryV2ParamsTest {
         val params =
             RunQueryV2Params.builder()
                 .accept("Accept")
-                .aiQuery("runs that used tool calls")
                 .cursor(
                     "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
                 )
@@ -82,7 +79,6 @@ internal class RunQueryV2ParamsTest {
                         RunQueryV2Params.Select.STATUS,
                     )
                 )
-                .sortOrder(RunQueryV2Params.SortOrder.DESC)
                 .traceFilter("eq(status, \"success\")")
                 .traceId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
                 .treeFilter("has(tags, \"production\")")
@@ -107,7 +103,6 @@ internal class RunQueryV2ParamsTest {
         val params =
             RunQueryV2Params.builder()
                 .accept("Accept")
-                .aiQuery("runs that used tool calls")
                 .cursor(
                     "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
                 )
@@ -135,7 +130,6 @@ internal class RunQueryV2ParamsTest {
                         RunQueryV2Params.Select.STATUS,
                     )
                 )
-                .sortOrder(RunQueryV2Params.SortOrder.DESC)
                 .traceFilter("eq(status, \"success\")")
                 .traceId("f47ac10b-58cc-4372-a567-0e02b2c3d479")
                 .treeFilter("has(tags, \"production\")")
@@ -143,7 +137,6 @@ internal class RunQueryV2ParamsTest {
 
         val body = params._body()
 
-        assertThat(body.aiQuery()).contains("runs that used tool calls")
         assertThat(body.cursor())
             .contains(
                 "eyJ2IjoxLCJhIjoicnVucy5xdWVyeSIsImsiOiJwYXNzIiwiYiI6InNkYiIsInQiOiJsdChjdXJzb3IsICcyMDI1LTEyLTEyIDE5OjAzOjI4LjQ4MTI1NTAxOWIxM2YyJykifQ"
@@ -180,7 +173,6 @@ internal class RunQueryV2ParamsTest {
                 RunQueryV2Params.Select.RUN_TYPE,
                 RunQueryV2Params.Select.STATUS,
             )
-        assertThat(body.sortOrder()).contains(RunQueryV2Params.SortOrder.DESC)
         assertThat(body.traceFilter()).contains("eq(status, \"success\")")
         assertThat(body.traceId()).contains("f47ac10b-58cc-4372-a567-0e02b2c3d479")
         assertThat(body.treeFilter()).contains("has(tags, \"production\")")

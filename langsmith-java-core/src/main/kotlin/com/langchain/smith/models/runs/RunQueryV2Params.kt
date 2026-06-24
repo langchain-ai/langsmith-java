@@ -39,14 +39,6 @@ private constructor(
     fun accept(): Optional<String> = Optional.ofNullable(accept)
 
     /**
-     * `ai_query` is a natural-language query to filter runs using AI.
-     *
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun aiQuery(): Optional<String> = body.aiQuery()
-
-    /**
      * `cursor` is the opaque string from a previous response's `next_cursor`. Treat it as opaque
      * and pass it back unmodified.
      *
@@ -161,15 +153,6 @@ private constructor(
     fun selects(): Optional<List<Select>> = body.selects()
 
     /**
-     * `sort_order` is the sort direction for `start_time` (`ASC` or `DESC`). Defaults to `DESC`
-     * when omitted. Maps to the SmithDB proto `Order` field.
-     *
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun sortOrder(): Optional<SortOrder> = body.sortOrder()
-
-    /**
      * `trace_filter` narrows results to runs whose root trace matches this LangSmith filter
      * expression. Use this to filter by properties of the trace's root run — for example eq(status,
      * "success") to include only traces that completed without error. See
@@ -199,13 +182,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun treeFilter(): Optional<String> = body.treeFilter()
-
-    /**
-     * Returns the raw JSON value of [aiQuery].
-     *
-     * Unlike [aiQuery], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _aiQuery(): JsonField<String> = body._aiQuery()
 
     /**
      * Returns the raw JSON value of [cursor].
@@ -301,13 +277,6 @@ private constructor(
     fun _selects(): JsonField<List<Select>> = body._selects()
 
     /**
-     * Returns the raw JSON value of [sortOrder].
-     *
-     * Unlike [sortOrder], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _sortOrder(): JsonField<SortOrder> = body._sortOrder()
-
-    /**
      * Returns the raw JSON value of [traceFilter].
      *
      * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
@@ -372,25 +341,14 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
-         * - [aiQuery]
          * - [cursor]
          * - [filter]
          * - [hasError]
          * - [ids]
+         * - [isRoot]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
-
-        /** `ai_query` is a natural-language query to filter runs using AI. */
-        fun aiQuery(aiQuery: String) = apply { body.aiQuery(aiQuery) }
-
-        /**
-         * Sets [Builder.aiQuery] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.aiQuery] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun aiQuery(aiQuery: JsonField<String>) = apply { body.aiQuery(aiQuery) }
 
         /**
          * `cursor` is the opaque string from a previous response's `next_cursor`. Treat it as
@@ -612,21 +570,6 @@ private constructor(
         fun addSelect(select: Select) = apply { body.addSelect(select) }
 
         /**
-         * `sort_order` is the sort direction for `start_time` (`ASC` or `DESC`). Defaults to `DESC`
-         * when omitted. Maps to the SmithDB proto `Order` field.
-         */
-        fun sortOrder(sortOrder: SortOrder) = apply { body.sortOrder(sortOrder) }
-
-        /**
-         * Sets [Builder.sortOrder] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sortOrder] with a well-typed [SortOrder] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun sortOrder(sortOrder: JsonField<SortOrder>) = apply { body.sortOrder(sortOrder) }
-
-        /**
          * `trace_filter` narrows results to runs whose root trace matches this LangSmith filter
          * expression. Use this to filter by properties of the trace's root run — for example
          * eq(status, "success") to include only traces that completed without error. See
@@ -818,7 +761,6 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val aiQuery: JsonField<String>,
         private val cursor: JsonField<String>,
         private val filter: JsonField<String>,
         private val hasError: JsonField<Boolean>,
@@ -832,7 +774,6 @@ private constructor(
         private val referenceExamples: JsonField<List<String>>,
         private val runType: JsonField<RunType>,
         private val selects: JsonField<List<Select>>,
-        private val sortOrder: JsonField<SortOrder>,
         private val traceFilter: JsonField<String>,
         private val traceId: JsonField<String>,
         private val treeFilter: JsonField<String>,
@@ -841,7 +782,6 @@ private constructor(
 
         @JsonCreator
         private constructor(
-            @JsonProperty("ai_query") @ExcludeMissing aiQuery: JsonField<String> = JsonMissing.of(),
             @JsonProperty("cursor") @ExcludeMissing cursor: JsonField<String> = JsonMissing.of(),
             @JsonProperty("filter") @ExcludeMissing filter: JsonField<String> = JsonMissing.of(),
             @JsonProperty("has_error")
@@ -871,9 +811,6 @@ private constructor(
             @JsonProperty("selects")
             @ExcludeMissing
             selects: JsonField<List<Select>> = JsonMissing.of(),
-            @JsonProperty("sort_order")
-            @ExcludeMissing
-            sortOrder: JsonField<SortOrder> = JsonMissing.of(),
             @JsonProperty("trace_filter")
             @ExcludeMissing
             traceFilter: JsonField<String> = JsonMissing.of(),
@@ -882,7 +819,6 @@ private constructor(
             @ExcludeMissing
             treeFilter: JsonField<String> = JsonMissing.of(),
         ) : this(
-            aiQuery,
             cursor,
             filter,
             hasError,
@@ -896,20 +832,11 @@ private constructor(
             referenceExamples,
             runType,
             selects,
-            sortOrder,
             traceFilter,
             traceId,
             treeFilter,
             mutableMapOf(),
         )
-
-        /**
-         * `ai_query` is a natural-language query to filter runs using AI.
-         *
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun aiQuery(): Optional<String> = aiQuery.getOptional("ai_query")
 
         /**
          * `cursor` is the opaque string from a previous response's `next_cursor`. Treat it as
@@ -1030,15 +957,6 @@ private constructor(
         fun selects(): Optional<List<Select>> = selects.getOptional("selects")
 
         /**
-         * `sort_order` is the sort direction for `start_time` (`ASC` or `DESC`). Defaults to `DESC`
-         * when omitted. Maps to the SmithDB proto `Order` field.
-         *
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun sortOrder(): Optional<SortOrder> = sortOrder.getOptional("sort_order")
-
-        /**
          * `trace_filter` narrows results to runs whose root trace matches this LangSmith filter
          * expression. Use this to filter by properties of the trace's root run — for example
          * eq(status, "success") to include only traces that completed without error. See
@@ -1068,13 +986,6 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun treeFilter(): Optional<String> = treeFilter.getOptional("tree_filter")
-
-        /**
-         * Returns the raw JSON value of [aiQuery].
-         *
-         * Unlike [aiQuery], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("ai_query") @ExcludeMissing fun _aiQuery(): JsonField<String> = aiQuery
 
         /**
          * Returns the raw JSON value of [cursor].
@@ -1182,15 +1093,6 @@ private constructor(
         @JsonProperty("selects") @ExcludeMissing fun _selects(): JsonField<List<Select>> = selects
 
         /**
-         * Returns the raw JSON value of [sortOrder].
-         *
-         * Unlike [sortOrder], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("sort_order")
-        @ExcludeMissing
-        fun _sortOrder(): JsonField<SortOrder> = sortOrder
-
-        /**
          * Returns the raw JSON value of [traceFilter].
          *
          * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
@@ -1236,7 +1138,6 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var aiQuery: JsonField<String> = JsonMissing.of()
             private var cursor: JsonField<String> = JsonMissing.of()
             private var filter: JsonField<String> = JsonMissing.of()
             private var hasError: JsonField<Boolean> = JsonMissing.of()
@@ -1250,7 +1151,6 @@ private constructor(
             private var referenceExamples: JsonField<MutableList<String>>? = null
             private var runType: JsonField<RunType> = JsonMissing.of()
             private var selects: JsonField<MutableList<Select>>? = null
-            private var sortOrder: JsonField<SortOrder> = JsonMissing.of()
             private var traceFilter: JsonField<String> = JsonMissing.of()
             private var traceId: JsonField<String> = JsonMissing.of()
             private var treeFilter: JsonField<String> = JsonMissing.of()
@@ -1258,7 +1158,6 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
-                aiQuery = body.aiQuery
                 cursor = body.cursor
                 filter = body.filter
                 hasError = body.hasError
@@ -1272,24 +1171,11 @@ private constructor(
                 referenceExamples = body.referenceExamples.map { it.toMutableList() }
                 runType = body.runType
                 selects = body.selects.map { it.toMutableList() }
-                sortOrder = body.sortOrder
                 traceFilter = body.traceFilter
                 traceId = body.traceId
                 treeFilter = body.treeFilter
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
-
-            /** `ai_query` is a natural-language query to filter runs using AI. */
-            fun aiQuery(aiQuery: String) = aiQuery(JsonField.of(aiQuery))
-
-            /**
-             * Sets [Builder.aiQuery] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.aiQuery] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun aiQuery(aiQuery: JsonField<String>) = apply { this.aiQuery = aiQuery }
 
             /**
              * `cursor` is the opaque string from a previous response's `next_cursor`. Treat it as
@@ -1546,21 +1432,6 @@ private constructor(
             }
 
             /**
-             * `sort_order` is the sort direction for `start_time` (`ASC` or `DESC`). Defaults to
-             * `DESC` when omitted. Maps to the SmithDB proto `Order` field.
-             */
-            fun sortOrder(sortOrder: SortOrder) = sortOrder(JsonField.of(sortOrder))
-
-            /**
-             * Sets [Builder.sortOrder] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.sortOrder] with a well-typed [SortOrder] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun sortOrder(sortOrder: JsonField<SortOrder>) = apply { this.sortOrder = sortOrder }
-
-            /**
              * `trace_filter` narrows results to runs whose root trace matches this LangSmith filter
              * expression. Use this to filter by properties of the trace's root run — for example
              * eq(status, "success") to include only traces that completed without error. See
@@ -1637,7 +1508,6 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    aiQuery,
                     cursor,
                     filter,
                     hasError,
@@ -1651,7 +1521,6 @@ private constructor(
                     (referenceExamples ?: JsonMissing.of()).map { it.toImmutable() },
                     runType,
                     (selects ?: JsonMissing.of()).map { it.toImmutable() },
-                    sortOrder,
                     traceFilter,
                     traceId,
                     treeFilter,
@@ -1675,7 +1544,6 @@ private constructor(
                 return@apply
             }
 
-            aiQuery()
             cursor()
             filter()
             hasError()
@@ -1689,7 +1557,6 @@ private constructor(
             referenceExamples()
             runType().ifPresent { it.validate() }
             selects().ifPresent { it.forEach { it.validate() } }
-            sortOrder().ifPresent { it.validate() }
             traceFilter()
             traceId()
             treeFilter()
@@ -1712,8 +1579,7 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (aiQuery.asKnown().isPresent) 1 else 0) +
-                (if (cursor.asKnown().isPresent) 1 else 0) +
+            (if (cursor.asKnown().isPresent) 1 else 0) +
                 (if (filter.asKnown().isPresent) 1 else 0) +
                 (if (hasError.asKnown().isPresent) 1 else 0) +
                 (ids.asKnown().getOrNull()?.size ?: 0) +
@@ -1726,7 +1592,6 @@ private constructor(
                 (referenceExamples.asKnown().getOrNull()?.size ?: 0) +
                 (runType.asKnown().getOrNull()?.validity() ?: 0) +
                 (selects.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
-                (sortOrder.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (traceFilter.asKnown().isPresent) 1 else 0) +
                 (if (traceId.asKnown().isPresent) 1 else 0) +
                 (if (treeFilter.asKnown().isPresent) 1 else 0)
@@ -1737,7 +1602,6 @@ private constructor(
             }
 
             return other is Body &&
-                aiQuery == other.aiQuery &&
                 cursor == other.cursor &&
                 filter == other.filter &&
                 hasError == other.hasError &&
@@ -1751,7 +1615,6 @@ private constructor(
                 referenceExamples == other.referenceExamples &&
                 runType == other.runType &&
                 selects == other.selects &&
-                sortOrder == other.sortOrder &&
                 traceFilter == other.traceFilter &&
                 traceId == other.traceId &&
                 treeFilter == other.treeFilter &&
@@ -1760,7 +1623,6 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
-                aiQuery,
                 cursor,
                 filter,
                 hasError,
@@ -1774,7 +1636,6 @@ private constructor(
                 referenceExamples,
                 runType,
                 selects,
-                sortOrder,
                 traceFilter,
                 traceId,
                 treeFilter,
@@ -1785,7 +1646,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{aiQuery=$aiQuery, cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, isRoot=$isRoot, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, sortOrder=$sortOrder, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{cursor=$cursor, filter=$filter, hasError=$hasError, ids=$ids, isRoot=$isRoot, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectIds=$projectIds, referenceDatasetId=$referenceDatasetId, referenceExamples=$referenceExamples, runType=$runType, selects=$selects, traceFilter=$traceFilter, traceId=$traceId, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     /** `run_type`, when set, restricts results to runs whose `run_type` equals this value. */
@@ -2336,148 +2197,6 @@ private constructor(
             }
 
             return other is Select && value == other.value
-        }
-
-        override fun hashCode() = value.hashCode()
-
-        override fun toString() = value.toString()
-    }
-
-    /**
-     * `sort_order` is the sort direction for `start_time` (`ASC` or `DESC`). Defaults to `DESC`
-     * when omitted. Maps to the SmithDB proto `Order` field.
-     */
-    class SortOrder @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
-
-        /**
-         * Returns this class instance's raw value.
-         *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
-         */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-        companion object {
-
-            @JvmField val ASC = of("ASC")
-
-            @JvmField val DESC = of("DESC")
-
-            @JvmStatic fun of(value: String) = SortOrder(JsonField.of(value))
-        }
-
-        /** An enum containing [SortOrder]'s known values. */
-        enum class Known {
-            ASC,
-            DESC,
-        }
-
-        /**
-         * An enum containing [SortOrder]'s known values, as well as an [_UNKNOWN] member.
-         *
-         * An instance of [SortOrder] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
-         * - It was constructed with an arbitrary value using the [of] method.
-         */
-        enum class Value {
-            ASC,
-            DESC,
-            /**
-             * An enum member indicating that [SortOrder] was instantiated with an unknown value.
-             */
-            _UNKNOWN,
-        }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
-         *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
-         */
-        fun value(): Value =
-            when (this) {
-                ASC -> Value.ASC
-                DESC -> Value.DESC
-                else -> Value._UNKNOWN
-            }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value.
-         *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value is a not a known
-         *   member.
-         */
-        fun known(): Known =
-            when (this) {
-                ASC -> Known.ASC
-                DESC -> Known.DESC
-                else -> throw LangChainInvalidDataException("Unknown SortOrder: $value")
-            }
-
-        /**
-         * Returns this class instance's primitive wire representation.
-         *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
-         *
-         * @throws LangChainInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
-         */
-        fun asString(): String =
-            _value().asString().orElseThrow {
-                LangChainInvalidDataException("Value is not a String")
-            }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): SortOrder = apply {
-            if (validated) {
-                return@apply
-            }
-
-            known()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: LangChainInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is SortOrder && value == other.value
         }
 
         override fun hashCode() = value.hashCode()
