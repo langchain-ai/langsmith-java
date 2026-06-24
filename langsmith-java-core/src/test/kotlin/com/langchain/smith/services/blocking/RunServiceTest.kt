@@ -451,28 +451,6 @@ internal class RunServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun retrieve() {
-        val client =
-            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
-        val runService = client.runs()
-
-        val runSchema =
-            runService.retrieve(
-                RunRetrieveParams.builder()
-                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .excludeS3StoredAttributes(true)
-                    .excludeSerialized(true)
-                    .includeMessages(true)
-                    .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                    .build()
-            )
-
-        runSchema.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
     fun ingestBatch() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
