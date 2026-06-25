@@ -1,5 +1,64 @@
 # Changelog
 
+## [0.1.0-beta.8](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.7...v0.1.0-beta.8) (2026-06-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sandboxes:** default S3 mount endpoint
+* **sandboxes:** add ArtifactFS git mounts
+* **sandboxes:** add gcs bucket mounts
+
+### Features
+
+* **abac:** add tag_value_ids to dataset creation endpoints ([280a374](https://github.com/langchain-ai/langsmith-java/commit/280a37489da492957d07773692e5ae62140d98d0))
+* **abac:** add tag_value_ids to prompt creation endpoints [ENT-1176] ([f3ce273](https://github.com/langchain-ai/langsmith-java/commit/f3ce273a028c0de24171835d854edb4c69268d91))
+* **abac:** add tag_value_ids to tracer session creation ([f859585](https://github.com/langchain-ai/langsmith-java/commit/f859585592c616310f02f91d8f0f6822ab9be17d))
+* add online evaluator endpoints to stainless config ([77d19d3](https://github.com/langchain-ai/langsmith-java/commit/77d19d324195ca6a93b51ea74aaa4484fb7a2cef))
+* adding time to first token for experiment metrics ([5a6bddd](https://github.com/langchain-ai/langsmith-java/commit/5a6bddd241bb95b0d176d70ae36c810a8157177d))
+* **backend:** allow retrieving and storing V2 charts in database [LSO-2799] ([b86e854](https://github.com/langchain-ai/langsmith-java/commit/b86e854687089b26205de336c8c99d994fd57369))
+* end-to-end OAuth bearer for Playground [part of ENT-760] ([77f12e3](https://github.com/langchain-ai/langsmith-java/commit/77f12e3a6e6d627a0e2309ecd35396abb01448ac))
+* **evaluation:** Java evaluate() primitives ([#7](https://github.com/langchain-ai/langsmith-java/issues/7)) ([a82b5c8](https://github.com/langchain-ai/langsmith-java/commit/a82b5c88fc08de041e78657d368c2b0359196248))
+* **fleet:** frontend passes typed fields (closes AB-000) ([bbbcf7b](https://github.com/langchain-ai/langsmith-java/commit/bbbcf7bf4027f95b13f2a0bffe18564da3fcfbe9))
+* **group-stats:** back thread stats with SmithDB ([7f24878](https://github.com/langchain-ai/langsmith-java/commit/7f24878418347b187fbc2c7064c52725de775c8b))
+* **hub:** add include_owners to repos list for Fleet [closes AB-2537] ([10f1d65](https://github.com/langchain-ai/langsmith-java/commit/10f1d6506332402672366470117774db374350a6))
+* make online evaluator retention opt-in (backend) ([e480cd4](https://github.com/langchain-ai/langsmith-java/commit/e480cd4104a22b71607aca0f209b416320fe62e0))
+* **run-rules:** per-action trace-retention control for automations [LSO-2749] ([3c218e9](https://github.com/langchain-ai/langsmith-java/commit/3c218e98bc255847a60b75499d9230372468adb6))
+* **runs/v2:** expose runs v2 endpoints publicly with stainless config ([48c283c](https://github.com/langchain-ai/langsmith-java/commit/48c283c7a7448b03b52185053a578027005bbdbd))
+* **sandboxes:** add ArtifactFS git mounts ([2ddc687](https://github.com/langchain-ai/langsmith-java/commit/2ddc687610df41bf15429b2492fd85cbcff86472))
+* **sandboxes:** add GCP proxy auth flow ([fd2980c](https://github.com/langchain-ai/langsmith-java/commit/fd2980ce69f3be63a0fd44922f08f72a0a6d9ac2))
+* **sandboxes:** add gcs bucket mounts ([87e3acb](https://github.com/langchain-ai/langsmith-java/commit/87e3acbb7b1d871a44e82472ff7fbce8669395de))
+* **sandboxes:** add sandbox env var support ([da0fc7b](https://github.com/langchain-ai/langsmith-java/commit/da0fc7b507828609f0264e90a50f6f8910ce9567))
+* **sandboxes:** filter lists by creator [INF-1492] ([bb9f973](https://github.com/langchain-ai/langsmith-java/commit/bb9f973f41a930ed23d33ee42deeaaaba4d07c35))
+* **sandboxes:** move mounts under mount_config ([734a828](https://github.com/langchain-ai/langsmith-java/commit/734a8285cd37d10e9676e67ae8fa98b6420514b0))
+* **sandboxes:** proxy runtime routes through platform backend [INF-0000] ([7cb70fc](https://github.com/langchain-ai/langsmith-java/commit/7cb70fc3e3dc71788c9ad66360dbcf4d577a098d))
+* **sandboxes:** resolve AWS proxy rule secrets ([cb519f9](https://github.com/langchain-ai/langsmith-java/commit/cb519f93d44d0a34633cae88c0fa79a4c3db182b))
+* **sandboxes:** set AWS proxy compatibility env ([6bbe522](https://github.com/langchain-ai/langsmith-java/commit/6bbe522f0a167e6671c5528eec2fa95dde0b680e))
+* **sandboxes:** snapshot memory from stopped boxes + honor restore_memory in v2 [INF-0000] ([79647d1](https://github.com/langchain-ai/langsmith-java/commit/79647d1579da9cdc6027f7922075ddb489e9601a))
+* **stats:** add include_details param to /runs/stats for backwards compat ([49039f2](https://github.com/langchain-ai/langsmith-java/commit/49039f277018a60f46af85108a30815609c8482c))
+
+
+### Bug Fixes
+
+* **evaluators:** show code evaluator trace counts [LSE-2359] ([3f3a0c9](https://github.com/langchain-ai/langsmith-java/commit/3f3a0c9c30fc61198a19b27c7b3c6b8e5aa444c6))
+* **sandboxes:** default S3 mount endpoint ([54d105e](https://github.com/langchain-ai/langsmith-java/commit/54d105ef91e0c65de0f2a77ccc7e794570da15cb))
+* **sandboxes:** use built-in gcp proxy host matching ([ac8da0f](https://github.com/langchain-ai/langsmith-java/commit/ac8da0f77c706c7fc072842d5ec4e95b4f82a2d7))
+* **tests:** remove duplicate retrieve() method in RunServiceTest ([#10](https://github.com/langchain-ai/langsmith-java/issues/10)) ([ba419de](https://github.com/langchain-ai/langsmith-java/commit/ba419de13e4749f8427a98b1572bc1764404dd20))
+
+
+### Chores
+
+* add release-please workflow ([#11](https://github.com/langchain-ai/langsmith-java/issues/11)) ([65b5b9a](https://github.com/langchain-ai/langsmith-java/commit/65b5b9ae402be8b84253d5ca7c255bd188c0e415))
+* add stlc sync and promotion workflows ([#5](https://github.com/langchain-ai/langsmith-java/issues/5)) ([f00fef5](https://github.com/langchain-ai/langsmith-java/commit/f00fef565e6c5c5edfa651223790e8e9cf90c317))
+* **fleet:** add param to list threads [closes AB-2522] ([8b85e16](https://github.com/langchain-ai/langsmith-java/commit/8b85e16472982a2821e82a6677c843d0565d17f3))
+* **smith-sdks:** update Java SDK stainless custom-code tracking file ([17bb73a](https://github.com/langchain-ai/langsmith-java/commit/17bb73a0061627a86d2ed1dba19316dcdfaf9c6d))
+
+
+### Refactors
+
+* **playground:** remove legacy experiment endpoints [LSO-2230] ([370b940](https://github.com/langchain-ai/langsmith-java/commit/370b940a1ca252f0198b49d315749dc5d9282714))
+* rename field to match prev trace retention fields ([b963cab](https://github.com/langchain-ai/langsmith-java/commit/b963cab6c63f10bed9a7a1237b6df12c111be9d4))
+
 ## 0.1.0-beta.7 (2026-05-27)
 
 Full Changelog: [v0.1.0-beta.6...v0.1.0-beta.7](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.6...v0.1.0-beta.7)
