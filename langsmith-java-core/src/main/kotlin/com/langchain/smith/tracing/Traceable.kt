@@ -259,6 +259,15 @@ class TraceConfig(
     val tags: List<String>? = null,
     /** The LangSmith project name. Inherited by children. */
     val projectName: String? = null,
+    /**
+     * Dataset example this run is associated with. Used by evaluate() to link predictions back to
+     * dataset rows.
+     */
+    val referenceExampleId: String? = null,
+    /**
+     * Experiment session this run belongs to. Used by evaluate() to group runs under an experiment.
+     */
+    val sessionId: String? = null,
     /** The [ExecutorService] for background run posting. Inherited by children. */
     val executor: ExecutorService? = null,
     /** Whether tracing is active. Inherited by children. */
@@ -343,6 +352,8 @@ class TraceConfig(
         private var metadata: Map<String, Any>? = null
         private var tags: List<String>? = null
         private var projectName: String? = null
+        private var referenceExampleId: String? = null
+        private var sessionId: String? = null
         private var executor: ExecutorService? = null
         private var tracingEnabled: Boolean? = null
         private var processTracedIO: TraceProcessIO<*, *>? = null
@@ -356,6 +367,8 @@ class TraceConfig(
             metadata = config.metadata
             tags = config.tags
             projectName = config.projectName
+            referenceExampleId = config.referenceExampleId
+            sessionId = config.sessionId
             executor = config.executor
             tracingEnabled = config.tracingEnabled
             processTracedIO = config.processTracedIO
@@ -379,6 +392,14 @@ class TraceConfig(
 
         /** The LangSmith project name. Inherited by children if not set. */
         fun projectName(projectName: String) = apply { this.projectName = projectName }
+
+        /** Dataset example this run is associated with. Inherited by children if not set. */
+        fun referenceExampleId(referenceExampleId: String) = apply {
+            this.referenceExampleId = referenceExampleId
+        }
+
+        /** Experiment session this run belongs to. Inherited by children if not set. */
+        fun sessionId(sessionId: String) = apply { this.sessionId = sessionId }
 
         /** The [ExecutorService] for background run posting. Inherited by children if not set. */
         fun executor(executor: ExecutorService) = apply { this.executor = executor }
@@ -418,6 +439,8 @@ class TraceConfig(
                 metadata = metadata,
                 tags = tags,
                 projectName = projectName,
+                referenceExampleId = referenceExampleId,
+                sessionId = sessionId,
                 executor = executor,
                 tracingEnabled = tracingEnabled,
                 processTracedIO = processTracedIO,
@@ -751,6 +774,8 @@ private fun <T> executeTraced(config: TraceConfig, inputs: Map<String, Any?>?, b
                 runType = config.runType,
                 startTime = startTime,
                 projectName = config.projectName ?: DEFAULT_PROJECT_NAME,
+                referenceExampleId = config.referenceExampleId,
+                sessionId = config.sessionId,
                 inputs = inputs,
                 outputs = null,
                 error = null,

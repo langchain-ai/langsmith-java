@@ -60,6 +60,10 @@ class RunTree(
     val extra: MutableMap<String, Any> = mutableMapOf(),
     /** The LangSmith project name, or `null` for the server default. */
     val projectName: String? = null,
+    /** Dataset example this run is associated with, if any. */
+    val referenceExampleId: String? = null,
+    /** Experiment session this run belongs to, if any. */
+    val sessionId: String? = null,
     /** The client used to post this run. Inherited by child runs. */
     @get:JvmSynthetic internal val client: LangsmithClient? = null,
     /** The executor used for background posting. Inherited by child runs. */
@@ -116,6 +120,8 @@ class RunTree(
             runType = config.runType,
             startTime = childStartTime,
             projectName = config.projectName ?: projectName,
+            referenceExampleId = config.referenceExampleId ?: referenceExampleId,
+            sessionId = config.sessionId ?: sessionId,
             metadata = mergedMetadata,
             tags = mergedTags,
             client = config.client ?: client,
@@ -192,6 +198,8 @@ class RunTree(
         endTime?.let { builder.endTime(it) }
         error?.let { builder.error(it) }
         parentRunId?.let { builder.parentRunId(it) }
+        referenceExampleId?.let { builder.referenceExampleId(it) }
+        sessionId?.let { builder.sessionId(it) }
         outputs?.let {
             builder.outputs(
                 Run.Outputs.builder().putAllAdditionalProperties(toJsonValueMap(it)).build()
@@ -209,6 +217,8 @@ class RunTree(
                 add("runType=$runType")
                 add("startTime=$startTime")
                 projectName?.let { add("projectName=$it") }
+                referenceExampleId?.let { add("referenceExampleId=$it") }
+                sessionId?.let { add("sessionId=$it") }
                 parentRunId?.let { add("parentRunId=$it") }
                 add("dottedOrder=$dottedOrder")
                 inputs?.let { add("inputs=$it") }
@@ -255,6 +265,8 @@ class RunTree(
         private var tags: MutableList<String> = mutableListOf()
         private var extra: MutableMap<String, Any> = mutableMapOf()
         private var projectName: String? = null
+        private var referenceExampleId: String? = null
+        private var sessionId: String? = null
         private var client: LangsmithClient? = null
         private var executor: ExecutorService? = null
         private var tracingEnabled: Boolean = true
@@ -276,6 +288,8 @@ class RunTree(
             tags = run.tags.toMutableList()
             extra = run.extra.toMutableMap()
             projectName = run.projectName
+            referenceExampleId = run.referenceExampleId
+            sessionId = run.sessionId
             client = run.client
             executor = run.executor
             tracingEnabled = run.tracingEnabled
@@ -304,6 +318,12 @@ class RunTree(
         fun extra(extra: Map<String, Any>) = apply { this.extra = extra.toMutableMap() }
 
         fun projectName(projectName: String) = apply { this.projectName = projectName }
+
+        fun referenceExampleId(referenceExampleId: String) = apply {
+            this.referenceExampleId = referenceExampleId
+        }
+
+        fun sessionId(sessionId: String) = apply { this.sessionId = sessionId }
 
         fun client(client: LangsmithClient) = apply { this.client = client }
 
@@ -336,6 +356,8 @@ class RunTree(
                 tags = tags,
                 extra = extra,
                 projectName = projectName,
+                referenceExampleId = referenceExampleId,
+                sessionId = sessionId,
                 client = client,
                 executor = executor,
                 tracingEnabled = tracingEnabled,
