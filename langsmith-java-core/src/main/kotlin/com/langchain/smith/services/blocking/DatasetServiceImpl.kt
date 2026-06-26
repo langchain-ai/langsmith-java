@@ -42,10 +42,8 @@ import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
 import com.langchain.smith.services.blocking.datasets.ComparativeServiceImpl
-import com.langchain.smith.services.blocking.datasets.ExperimentService
-import com.langchain.smith.services.blocking.datasets.ExperimentServiceImpl
-import com.langchain.smith.services.blocking.datasets.GroupService
-import com.langchain.smith.services.blocking.datasets.GroupServiceImpl
+import com.langchain.smith.services.blocking.datasets.ExperimentRunService
+import com.langchain.smith.services.blocking.datasets.ExperimentRunServiceImpl
 import com.langchain.smith.services.blocking.datasets.RunService
 import com.langchain.smith.services.blocking.datasets.RunServiceImpl
 import com.langchain.smith.services.blocking.datasets.ShareService
@@ -68,9 +66,9 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     private val runs: RunService by lazy { RunServiceImpl(clientOptions) }
 
-    private val group: GroupService by lazy { GroupServiceImpl(clientOptions) }
-
-    private val experiments: ExperimentService by lazy { ExperimentServiceImpl(clientOptions) }
+    private val experimentRuns: ExperimentRunService by lazy {
+        ExperimentRunServiceImpl(clientOptions)
+    }
 
     private val share: ShareService by lazy { ShareServiceImpl(clientOptions) }
 
@@ -87,9 +85,7 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
     override fun runs(): RunService = runs
 
-    override fun group(): GroupService = group
-
-    override fun experiments(): ExperimentService = experiments
+    override fun experimentRuns(): ExperimentRunService = experimentRuns
 
     override fun share(): ShareService = share
 
@@ -190,12 +186,8 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
             RunServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val group: GroupService.WithRawResponse by lazy {
-            GroupServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val experiments: ExperimentService.WithRawResponse by lazy {
-            ExperimentServiceImpl.WithRawResponseImpl(clientOptions)
+        private val experimentRuns: ExperimentRunService.WithRawResponse by lazy {
+            ExperimentRunServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val share: ShareService.WithRawResponse by lazy {
@@ -221,9 +213,7 @@ class DatasetServiceImpl internal constructor(private val clientOptions: ClientO
 
         override fun runs(): RunService.WithRawResponse = runs
 
-        override fun group(): GroupService.WithRawResponse = group
-
-        override fun experiments(): ExperimentService.WithRawResponse = experiments
+        override fun experimentRuns(): ExperimentRunService.WithRawResponse = experimentRuns
 
         override fun share(): ShareService.WithRawResponse = share
 

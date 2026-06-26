@@ -18,8 +18,6 @@ import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
 import com.langchain.smith.models.datasets.runs.RunCreateParams
-import com.langchain.smith.models.datasets.runs.RunDeltaParams
-import com.langchain.smith.models.datasets.runs.SessionFeedbackDelta
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -43,13 +41,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
         // post /api/v1/datasets/{dataset_id}/runs
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
-
-    override fun delta(
-        params: RunDeltaParams,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<SessionFeedbackDelta> =
-        // post /api/v1/datasets/{dataset_id}/runs/delta
-        withRawResponse().delta(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunServiceAsync.WithRawResponse {
@@ -92,40 +83,6 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.ifPresent { it.forEach { it.validate() } }
-                                }
-                            }
-                    }
-                }
-        }
-
-        private val deltaHandler: Handler<SessionFeedbackDelta> =
-            jsonHandler<SessionFeedbackDelta>(clientOptions.jsonMapper)
-
-        override fun delta(
-            params: RunDeltaParams,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SessionFeedbackDelta>> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("datasetId", params.datasetId().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("api", "v1", "datasets", params._pathParam(0), "runs", "delta")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            return request
-                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
-                .thenApply { response ->
-                    errorHandler.handle(response).parseable {
-                        response
-                            .use { deltaHandler.handle(it) }
-                            .also {
-                                if (requestOptions.responseValidation!!) {
-                                    it.validate()
                                 }
                             }
                     }

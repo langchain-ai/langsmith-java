@@ -16,50 +16,51 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
-import com.langchain.smith.models.datasets.experiments.ExperimentGroupedParams
-import com.langchain.smith.models.datasets.experiments.ExperimentGroupedResponse
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePage
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePageResponse
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreateParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-class ExperimentServiceImpl internal constructor(private val clientOptions: ClientOptions) :
-    ExperimentService {
+class ExperimentRunServiceImpl internal constructor(private val clientOptions: ClientOptions) :
+    ExperimentRunService {
 
-    private val withRawResponse: ExperimentService.WithRawResponse by lazy {
+    private val withRawResponse: ExperimentRunService.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
     }
 
-    override fun withRawResponse(): ExperimentService.WithRawResponse = withRawResponse
+    override fun withRawResponse(): ExperimentRunService.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ExperimentService =
-        ExperimentServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ExperimentRunService =
+        ExperimentRunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun grouped(
-        params: ExperimentGroupedParams,
+    override fun create(
+        params: ExperimentRunCreateParams,
         requestOptions: RequestOptions,
-    ): ExperimentGroupedResponse =
-        // post /api/v1/datasets/{dataset_id}/experiments/grouped
-        withRawResponse().grouped(params, requestOptions).parse()
+    ): ExperimentRunCreatePage =
+        // post /v2/datasets/{dataset_id}/experiment-runs
+        withRawResponse().create(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        ExperimentService.WithRawResponse {
+        ExperimentRunService.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
-        ): ExperimentService.WithRawResponse =
-            ExperimentServiceImpl.WithRawResponseImpl(
+        ): ExperimentRunService.WithRawResponse =
+            ExperimentRunServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val groupedHandler: Handler<ExperimentGroupedResponse> =
-            jsonHandler<ExperimentGroupedResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ExperimentRunCreatePageResponse> =
+            jsonHandler<ExperimentRunCreatePageResponse>(clientOptions.jsonMapper)
 
-        override fun grouped(
-            params: ExperimentGroupedParams,
+        override fun create(
+            params: ExperimentRunCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ExperimentGroupedResponse> {
+        ): HttpResponseFor<ExperimentRunCreatePage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -67,14 +68,7 @@ class ExperimentServiceImpl internal constructor(private val clientOptions: Clie
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "api",
-                        "v1",
-                        "datasets",
-                        params._pathParam(0),
-                        "experiments",
-                        "grouped",
-                    )
+                    .addPathSegments("v2", "datasets", params._pathParam(0), "experiment-runs")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -82,11 +76,18 @@ class ExperimentServiceImpl internal constructor(private val clientOptions: Clie
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { groupedHandler.handle(it) }
+                    .use { createHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        ExperimentRunCreatePage.builder()
+                            .service(ExperimentRunServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

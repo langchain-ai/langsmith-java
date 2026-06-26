@@ -30,8 +30,7 @@ import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.blocking.datasets.ComparativeService
-import com.langchain.smith.services.blocking.datasets.ExperimentService
-import com.langchain.smith.services.blocking.datasets.GroupService
+import com.langchain.smith.services.blocking.datasets.ExperimentRunService
 import com.langchain.smith.services.blocking.datasets.RunService
 import com.langchain.smith.services.blocking.datasets.ShareService
 import com.langchain.smith.services.blocking.datasets.SplitService
@@ -56,9 +55,7 @@ interface DatasetService {
 
     fun runs(): RunService
 
-    fun group(): GroupService
-
-    fun experiments(): ExperimentService
+    fun experimentRuns(): ExperimentRunService
 
     fun share(): ShareService
 
@@ -408,9 +405,7 @@ interface DatasetService {
 
         fun runs(): RunService.WithRawResponse
 
-        fun group(): GroupService.WithRawResponse
-
-        fun experiments(): ExperimentService.WithRawResponse
+        fun experimentRuns(): ExperimentRunService.WithRawResponse
 
         fun share(): ShareService.WithRawResponse
 

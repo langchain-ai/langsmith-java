@@ -42,10 +42,8 @@ import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsyncImpl
-import com.langchain.smith.services.async.datasets.ExperimentServiceAsync
-import com.langchain.smith.services.async.datasets.ExperimentServiceAsyncImpl
-import com.langchain.smith.services.async.datasets.GroupServiceAsync
-import com.langchain.smith.services.async.datasets.GroupServiceAsyncImpl
+import com.langchain.smith.services.async.datasets.ExperimentRunServiceAsync
+import com.langchain.smith.services.async.datasets.ExperimentRunServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.RunServiceAsync
 import com.langchain.smith.services.async.datasets.RunServiceAsyncImpl
 import com.langchain.smith.services.async.datasets.ShareServiceAsync
@@ -69,10 +67,8 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     private val runs: RunServiceAsync by lazy { RunServiceAsyncImpl(clientOptions) }
 
-    private val group: GroupServiceAsync by lazy { GroupServiceAsyncImpl(clientOptions) }
-
-    private val experiments: ExperimentServiceAsync by lazy {
-        ExperimentServiceAsyncImpl(clientOptions)
+    private val experimentRuns: ExperimentRunServiceAsync by lazy {
+        ExperimentRunServiceAsyncImpl(clientOptions)
     }
 
     private val share: ShareServiceAsync by lazy { ShareServiceAsyncImpl(clientOptions) }
@@ -92,9 +88,7 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     override fun runs(): RunServiceAsync = runs
 
-    override fun group(): GroupServiceAsync = group
-
-    override fun experiments(): ExperimentServiceAsync = experiments
+    override fun experimentRuns(): ExperimentRunServiceAsync = experimentRuns
 
     override fun share(): ShareServiceAsync = share
 
@@ -207,12 +201,8 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
             RunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val group: GroupServiceAsync.WithRawResponse by lazy {
-            GroupServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val experiments: ExperimentServiceAsync.WithRawResponse by lazy {
-            ExperimentServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        private val experimentRuns: ExperimentRunServiceAsync.WithRawResponse by lazy {
+            ExperimentRunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val share: ShareServiceAsync.WithRawResponse by lazy {
@@ -238,9 +228,7 @@ class DatasetServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
         override fun runs(): RunServiceAsync.WithRawResponse = runs
 
-        override fun group(): GroupServiceAsync.WithRawResponse = group
-
-        override fun experiments(): ExperimentServiceAsync.WithRawResponse = experiments
+        override fun experimentRuns(): ExperimentRunServiceAsync.WithRawResponse = experimentRuns
 
         override fun share(): ShareServiceAsync.WithRawResponse = share
 

@@ -16,51 +16,52 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
-import com.langchain.smith.models.datasets.experiments.ExperimentGroupedParams
-import com.langchain.smith.models.datasets.experiments.ExperimentGroupedResponse
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePageAsync
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePageResponse
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-class ExperimentServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    ExperimentServiceAsync {
+class ExperimentRunServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
+    ExperimentRunServiceAsync {
 
-    private val withRawResponse: ExperimentServiceAsync.WithRawResponse by lazy {
+    private val withRawResponse: ExperimentRunServiceAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
     }
 
-    override fun withRawResponse(): ExperimentServiceAsync.WithRawResponse = withRawResponse
+    override fun withRawResponse(): ExperimentRunServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ExperimentServiceAsync =
-        ExperimentServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ExperimentRunServiceAsync =
+        ExperimentRunServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun grouped(
-        params: ExperimentGroupedParams,
+    override fun create(
+        params: ExperimentRunCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ExperimentGroupedResponse> =
-        // post /api/v1/datasets/{dataset_id}/experiments/grouped
-        withRawResponse().grouped(params, requestOptions).thenApply { it.parse() }
+    ): CompletableFuture<ExperimentRunCreatePageAsync> =
+        // post /v2/datasets/{dataset_id}/experiment-runs
+        withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        ExperimentServiceAsync.WithRawResponse {
+        ExperimentRunServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
-        ): ExperimentServiceAsync.WithRawResponse =
-            ExperimentServiceAsyncImpl.WithRawResponseImpl(
+        ): ExperimentRunServiceAsync.WithRawResponse =
+            ExperimentRunServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val groupedHandler: Handler<ExperimentGroupedResponse> =
-            jsonHandler<ExperimentGroupedResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<ExperimentRunCreatePageResponse> =
+            jsonHandler<ExperimentRunCreatePageResponse>(clientOptions.jsonMapper)
 
-        override fun grouped(
-            params: ExperimentGroupedParams,
+        override fun create(
+            params: ExperimentRunCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ExperimentGroupedResponse>> {
+        ): CompletableFuture<HttpResponseFor<ExperimentRunCreatePageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -68,14 +69,7 @@ class ExperimentServiceAsyncImpl internal constructor(private val clientOptions:
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "api",
-                        "v1",
-                        "datasets",
-                        params._pathParam(0),
-                        "experiments",
-                        "grouped",
-                    )
+                    .addPathSegments("v2", "datasets", params._pathParam(0), "experiment-runs")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -85,11 +79,19 @@ class ExperimentServiceAsyncImpl internal constructor(private val clientOptions:
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { groupedHandler.handle(it) }
+                            .use { createHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                ExperimentRunCreatePageAsync.builder()
+                                    .service(ExperimentRunServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }
