@@ -17,24 +17,21 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.sandboxes.SandboxListResponse
+import com.langchain.smith.models.sandboxes.SandboxResponse
+import com.langchain.smith.models.sandboxes.SandboxStatusResponse
+import com.langchain.smith.models.sandboxes.ServiceUrlResponse
+import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
-import com.langchain.smith.models.sandboxes.boxes.BoxCreateResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
-import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
-import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
-import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
-import com.langchain.smith.models.sandboxes.boxes.BoxListResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
-import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
-import com.langchain.smith.models.sandboxes.boxes.BoxStartResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
-import com.langchain.smith.models.sandboxes.boxes.BoxUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -54,28 +51,28 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: BoxCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxCreateResponse> =
+    ): CompletableFuture<SandboxResponse> =
         // post /v2/sandboxes/boxes
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
         params: BoxRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxRetrieveResponse> =
+    ): CompletableFuture<SandboxResponse> =
         // get /v2/sandboxes/boxes/{name}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: BoxUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxUpdateResponse> =
+    ): CompletableFuture<SandboxResponse> =
         // patch /v2/sandboxes/boxes/{name}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: BoxListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxListResponse> =
+    ): CompletableFuture<SandboxListResponse> =
         // get /v2/sandboxes/boxes
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -89,28 +86,28 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun createSnapshot(
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxCreateSnapshotResponse> =
+    ): CompletableFuture<SnapshotResponse> =
         // post /v2/sandboxes/boxes/{name}/snapshot
         withRawResponse().createSnapshot(params, requestOptions).thenApply { it.parse() }
 
     override fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxGenerateServiceUrlResponse> =
+    ): CompletableFuture<ServiceUrlResponse> =
         // post /v2/sandboxes/boxes/{name}/service-url
         withRawResponse().generateServiceUrl(params, requestOptions).thenApply { it.parse() }
 
     override fun getStatus(
         params: BoxGetStatusParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxGetStatusResponse> =
+    ): CompletableFuture<SandboxStatusResponse> =
         // get /v2/sandboxes/boxes/{name}/status
         withRawResponse().getStatus(params, requestOptions).thenApply { it.parse() }
 
     override fun start(
         params: BoxStartParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxStartResponse> =
+    ): CompletableFuture<SandboxResponse> =
         // post /v2/sandboxes/boxes/{name}/start
         withRawResponse().start(params, requestOptions).thenApply { it.parse() }
 
@@ -134,13 +131,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<BoxCreateResponse> =
-            jsonHandler<BoxCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<SandboxResponse> =
+            jsonHandler<SandboxResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: BoxCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxCreateResponse>> {
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -165,13 +162,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val retrieveHandler: Handler<BoxRetrieveResponse> =
-            jsonHandler<BoxRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<SandboxResponse> =
+            jsonHandler<SandboxResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: BoxRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxRetrieveResponse>> {
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("name", params.name().getOrNull())
@@ -198,13 +195,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val updateHandler: Handler<BoxUpdateResponse> =
-            jsonHandler<BoxUpdateResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<SandboxResponse> =
+            jsonHandler<SandboxResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: BoxUpdateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxUpdateResponse>> {
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("pathName", params.pathName().getOrNull())
@@ -232,13 +229,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val listHandler: Handler<BoxListResponse> =
-            jsonHandler<BoxListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<SandboxListResponse> =
+            jsonHandler<SandboxListResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: BoxListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxListResponse>> {
+        ): CompletableFuture<HttpResponseFor<SandboxListResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -289,13 +286,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val createSnapshotHandler: Handler<BoxCreateSnapshotResponse> =
-            jsonHandler<BoxCreateSnapshotResponse>(clientOptions.jsonMapper)
+        private val createSnapshotHandler: Handler<SnapshotResponse> =
+            jsonHandler<SnapshotResponse>(clientOptions.jsonMapper)
 
         override fun createSnapshot(
             params: BoxCreateSnapshotParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxCreateSnapshotResponse>> {
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("pathName", params.pathName().getOrNull())
@@ -323,13 +320,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val generateServiceUrlHandler: Handler<BoxGenerateServiceUrlResponse> =
-            jsonHandler<BoxGenerateServiceUrlResponse>(clientOptions.jsonMapper)
+        private val generateServiceUrlHandler: Handler<ServiceUrlResponse> =
+            jsonHandler<ServiceUrlResponse>(clientOptions.jsonMapper)
 
         override fun generateServiceUrl(
             params: BoxGenerateServiceUrlParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxGenerateServiceUrlResponse>> {
+        ): CompletableFuture<HttpResponseFor<ServiceUrlResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("name", params.name().getOrNull())
@@ -363,13 +360,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val getStatusHandler: Handler<BoxGetStatusResponse> =
-            jsonHandler<BoxGetStatusResponse>(clientOptions.jsonMapper)
+        private val getStatusHandler: Handler<SandboxStatusResponse> =
+            jsonHandler<SandboxStatusResponse>(clientOptions.jsonMapper)
 
         override fun getStatus(
             params: BoxGetStatusParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxGetStatusResponse>> {
+        ): CompletableFuture<HttpResponseFor<SandboxStatusResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("name", params.name().getOrNull())
@@ -396,13 +393,13 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val startHandler: Handler<BoxStartResponse> =
-            jsonHandler<BoxStartResponse>(clientOptions.jsonMapper)
+        private val startHandler: Handler<SandboxResponse> =
+            jsonHandler<SandboxResponse>(clientOptions.jsonMapper)
 
         override fun start(
             params: BoxStartParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>> {
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("name", params.name().getOrNull())

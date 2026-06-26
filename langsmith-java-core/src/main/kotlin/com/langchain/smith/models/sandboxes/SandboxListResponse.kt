@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sandboxes.boxes
+package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -10,54 +10,57 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
-class BoxGetStatusResponse
+class SandboxListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val status: JsonField<String>,
-    private val statusMessage: JsonField<String>,
+    private val offset: JsonField<Long>,
+    private val sandboxes: JsonField<List<SandboxResponse>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("status_message")
+        @JsonProperty("offset") @ExcludeMissing offset: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("sandboxes")
         @ExcludeMissing
-        statusMessage: JsonField<String> = JsonMissing.of(),
-    ) : this(status, statusMessage, mutableMapOf())
+        sandboxes: JsonField<List<SandboxResponse>> = JsonMissing.of(),
+    ) : this(offset, sandboxes, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun status(): Optional<String> = status.getOptional("status")
+    fun offset(): Optional<Long> = offset.getOptional("offset")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun statusMessage(): Optional<String> = statusMessage.getOptional("status_message")
+    fun sandboxes(): Optional<List<SandboxResponse>> = sandboxes.getOptional("sandboxes")
 
     /**
-     * Returns the raw JSON value of [status].
+     * Returns the raw JSON value of [offset].
      *
-     * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [offset], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<String> = status
+    @JsonProperty("offset") @ExcludeMissing fun _offset(): JsonField<Long> = offset
 
     /**
-     * Returns the raw JSON value of [statusMessage].
+     * Returns the raw JSON value of [sandboxes].
      *
-     * Unlike [statusMessage], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [sandboxes], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("status_message")
+    @JsonProperty("sandboxes")
     @ExcludeMissing
-    fun _statusMessage(): JsonField<String> = statusMessage
+    fun _sandboxes(): JsonField<List<SandboxResponse>> = sandboxes
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -73,45 +76,57 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [BoxGetStatusResponse]. */
+        /** Returns a mutable builder for constructing an instance of [SandboxListResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [BoxGetStatusResponse]. */
+    /** A builder for [SandboxListResponse]. */
     class Builder internal constructor() {
 
-        private var status: JsonField<String> = JsonMissing.of()
-        private var statusMessage: JsonField<String> = JsonMissing.of()
+        private var offset: JsonField<Long> = JsonMissing.of()
+        private var sandboxes: JsonField<MutableList<SandboxResponse>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(boxGetStatusResponse: BoxGetStatusResponse) = apply {
-            status = boxGetStatusResponse.status
-            statusMessage = boxGetStatusResponse.statusMessage
-            additionalProperties = boxGetStatusResponse.additionalProperties.toMutableMap()
+        internal fun from(sandboxListResponse: SandboxListResponse) = apply {
+            offset = sandboxListResponse.offset
+            sandboxes = sandboxListResponse.sandboxes.map { it.toMutableList() }
+            additionalProperties = sandboxListResponse.additionalProperties.toMutableMap()
         }
 
-        fun status(status: String) = status(JsonField.of(status))
+        fun offset(offset: Long) = offset(JsonField.of(offset))
 
         /**
-         * Sets [Builder.status] to an arbitrary JSON value.
+         * Sets [Builder.offset] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.status] with a well-typed [String] value instead. This
+         * You should usually call [Builder.offset] with a well-typed [Long] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun status(status: JsonField<String>) = apply { this.status = status }
+        fun offset(offset: JsonField<Long>) = apply { this.offset = offset }
 
-        fun statusMessage(statusMessage: String) = statusMessage(JsonField.of(statusMessage))
+        fun sandboxes(sandboxes: List<SandboxResponse>) = sandboxes(JsonField.of(sandboxes))
 
         /**
-         * Sets [Builder.statusMessage] to an arbitrary JSON value.
+         * Sets [Builder.sandboxes] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.statusMessage] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.sandboxes] with a well-typed `List<SandboxResponse>`
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
          */
-        fun statusMessage(statusMessage: JsonField<String>) = apply {
-            this.statusMessage = statusMessage
+        fun sandboxes(sandboxes: JsonField<List<SandboxResponse>>) = apply {
+            this.sandboxes = sandboxes.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [SandboxResponse] to [sandboxes].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addSandbox(sandbox: SandboxResponse) = apply {
+            sandboxes =
+                (sandboxes ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("sandboxes", it).add(sandbox)
+                }
         }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -134,12 +149,16 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [BoxGetStatusResponse].
+         * Returns an immutable instance of [SandboxListResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): BoxGetStatusResponse =
-            BoxGetStatusResponse(status, statusMessage, additionalProperties.toMutableMap())
+        fun build(): SandboxListResponse =
+            SandboxListResponse(
+                offset,
+                (sandboxes ?: JsonMissing.of()).map { it.toImmutable() },
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -152,13 +171,13 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): BoxGetStatusResponse = apply {
+    fun validate(): SandboxListResponse = apply {
         if (validated) {
             return@apply
         }
 
-        status()
-        statusMessage()
+        offset()
+        sandboxes().ifPresent { it.forEach { it.validate() } }
         validated = true
     }
 
@@ -177,24 +196,24 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (status.asKnown().isPresent) 1 else 0) +
-            (if (statusMessage.asKnown().isPresent) 1 else 0)
+        (if (offset.asKnown().isPresent) 1 else 0) +
+            (sandboxes.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
 
-        return other is BoxGetStatusResponse &&
-            status == other.status &&
-            statusMessage == other.statusMessage &&
+        return other is SandboxListResponse &&
+            offset == other.offset &&
+            sandboxes == other.sandboxes &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(status, statusMessage, additionalProperties) }
+    private val hashCode: Int by lazy { Objects.hash(offset, sandboxes, additionalProperties) }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxGetStatusResponse{status=$status, statusMessage=$statusMessage, additionalProperties=$additionalProperties}"
+        "SandboxListResponse{offset=$offset, sandboxes=$sandboxes, additionalProperties=$additionalProperties}"
 }

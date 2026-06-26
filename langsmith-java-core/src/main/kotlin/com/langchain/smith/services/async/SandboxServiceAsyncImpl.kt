@@ -5,6 +5,8 @@ package com.langchain.smith.services.async
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.async.sandboxes.BoxServiceAsync
 import com.langchain.smith.services.async.sandboxes.BoxServiceAsyncImpl
+import com.langchain.smith.services.async.sandboxes.RegistryServiceAsync
+import com.langchain.smith.services.async.sandboxes.RegistryServiceAsyncImpl
 import com.langchain.smith.services.async.sandboxes.SnapshotServiceAsync
 import com.langchain.smith.services.async.sandboxes.SnapshotServiceAsyncImpl
 import java.util.function.Consumer
@@ -18,6 +20,8 @@ class SandboxServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     private val boxes: BoxServiceAsync by lazy { BoxServiceAsyncImpl(clientOptions) }
 
+    private val registries: RegistryServiceAsync by lazy { RegistryServiceAsyncImpl(clientOptions) }
+
     private val snapshots: SnapshotServiceAsync by lazy { SnapshotServiceAsyncImpl(clientOptions) }
 
     override fun withRawResponse(): SandboxServiceAsync.WithRawResponse = withRawResponse
@@ -27,6 +31,8 @@ class SandboxServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
     override fun boxes(): BoxServiceAsync = boxes
 
+    override fun registries(): RegistryServiceAsync = registries
+
     override fun snapshots(): SnapshotServiceAsync = snapshots
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -34,6 +40,10 @@ class SandboxServiceAsyncImpl internal constructor(private val clientOptions: Cl
 
         private val boxes: BoxServiceAsync.WithRawResponse by lazy {
             BoxServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val registries: RegistryServiceAsync.WithRawResponse by lazy {
+            RegistryServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val snapshots: SnapshotServiceAsync.WithRawResponse by lazy {
@@ -48,6 +58,8 @@ class SandboxServiceAsyncImpl internal constructor(private val clientOptions: Cl
             )
 
         override fun boxes(): BoxServiceAsync.WithRawResponse = boxes
+
+        override fun registries(): RegistryServiceAsync.WithRawResponse = registries
 
         override fun snapshots(): SnapshotServiceAsync.WithRawResponse = snapshots
     }

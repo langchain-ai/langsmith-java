@@ -17,81 +17,89 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
-import com.langchain.smith.models.sandboxes.SnapshotListResponse
-import com.langchain.smith.models.sandboxes.SnapshotResponse
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveParams
+import com.langchain.smith.models.sandboxes.registries.RegistryCreateParams
+import com.langchain.smith.models.sandboxes.registries.RegistryDeleteParams
+import com.langchain.smith.models.sandboxes.registries.RegistryListParams
+import com.langchain.smith.models.sandboxes.registries.RegistryListResponse
+import com.langchain.smith.models.sandboxes.registries.RegistryResponse
+import com.langchain.smith.models.sandboxes.registries.RegistryRetrieveParams
+import com.langchain.smith.models.sandboxes.registries.RegistryUpdateParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
-class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    SnapshotServiceAsync {
+class RegistryServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
+    RegistryServiceAsync {
 
-    private val withRawResponse: SnapshotServiceAsync.WithRawResponse by lazy {
+    private val withRawResponse: RegistryServiceAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
     }
 
-    override fun withRawResponse(): SnapshotServiceAsync.WithRawResponse = withRawResponse
+    override fun withRawResponse(): RegistryServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): SnapshotServiceAsync =
-        SnapshotServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+    override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RegistryServiceAsync =
+        RegistryServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun create(
-        params: SnapshotCreateParams,
+        params: RegistryCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SnapshotResponse> =
-        // post /v2/sandboxes/snapshots
+    ): CompletableFuture<RegistryResponse> =
+        // post /v2/sandboxes/registries
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
-        params: SnapshotRetrieveParams,
+        params: RegistryRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SnapshotResponse> =
-        // get /v2/sandboxes/snapshots/{snapshot_id}
+    ): CompletableFuture<RegistryResponse> =
+        // get /v2/sandboxes/registries/{name}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
-    override fun list(
-        params: SnapshotListParams,
+    override fun update(
+        params: RegistryUpdateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SnapshotListResponse> =
-        // get /v2/sandboxes/snapshots
+    ): CompletableFuture<RegistryResponse> =
+        // patch /v2/sandboxes/registries/{name}
+        withRawResponse().update(params, requestOptions).thenApply { it.parse() }
+
+    override fun list(
+        params: RegistryListParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<RegistryListResponse> =
+        // get /v2/sandboxes/registries
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
-        params: SnapshotDeleteParams,
+        params: RegistryDeleteParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> =
-        // delete /v2/sandboxes/snapshots/{snapshot_id}
+        // delete /v2/sandboxes/registries/{name}
         withRawResponse().delete(params, requestOptions).thenAccept {}
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        SnapshotServiceAsync.WithRawResponse {
+        RegistryServiceAsync.WithRawResponse {
 
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
-        ): SnapshotServiceAsync.WithRawResponse =
-            SnapshotServiceAsyncImpl.WithRawResponseImpl(
+        ): RegistryServiceAsync.WithRawResponse =
+            RegistryServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<SnapshotResponse> =
-            jsonHandler<SnapshotResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<RegistryResponse> =
+            jsonHandler<RegistryResponse>(clientOptions.jsonMapper)
 
         override fun create(
-            params: SnapshotCreateParams,
+            params: RegistryCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> {
+        ): CompletableFuture<HttpResponseFor<RegistryResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "snapshots")
+                    .addPathSegments("v2", "sandboxes", "registries")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -111,21 +119,21 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
                 }
         }
 
-        private val retrieveHandler: Handler<SnapshotResponse> =
-            jsonHandler<SnapshotResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<RegistryResponse> =
+            jsonHandler<RegistryResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
-            params: SnapshotRetrieveParams,
+            params: RegistryRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> {
+        ): CompletableFuture<HttpResponseFor<RegistryResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("snapshotId", params.snapshotId().getOrNull())
+            checkRequired("name", params.name().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "snapshots", params._pathParam(0))
+                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -144,18 +152,52 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
                 }
         }
 
-        private val listHandler: Handler<SnapshotListResponse> =
-            jsonHandler<SnapshotListResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<RegistryResponse> =
+            jsonHandler<RegistryResponse>(clientOptions.jsonMapper)
+
+        override fun update(
+            params: RegistryUpdateParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<RegistryResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("pathName", params.pathName().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { updateHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val listHandler: Handler<RegistryListResponse> =
+            jsonHandler<RegistryListResponse>(clientOptions.jsonMapper)
 
         override fun list(
-            params: SnapshotListParams,
+            params: RegistryListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SnapshotListResponse>> {
+        ): CompletableFuture<HttpResponseFor<RegistryListResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "snapshots")
+                    .addPathSegments("v2", "sandboxes", "registries")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -177,17 +219,17 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
         private val deleteHandler: Handler<Void?> = emptyHandler()
 
         override fun delete(
-            params: SnapshotDeleteParams,
+            params: RegistryDeleteParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("snapshotId", params.snapshotId().getOrNull())
+            checkRequired("name", params.name().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "snapshots", params._pathParam(0))
+                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepareAsync(clientOptions, params)

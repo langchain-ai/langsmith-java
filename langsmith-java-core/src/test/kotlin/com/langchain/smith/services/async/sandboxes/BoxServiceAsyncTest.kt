@@ -24,7 +24,7 @@ internal class BoxServiceAsyncTest {
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
-        val boxFuture =
+        val sandboxResponseFuture =
             boxServiceAsync.create(
                 BoxCreateParams.builder()
                     .deleteAfterStopSeconds(0L)
@@ -271,8 +271,8 @@ internal class BoxServiceAsyncTest {
                     .build()
             )
 
-        val box = boxFuture.get()
-        box.validate()
+        val sandboxResponse = sandboxResponseFuture.get()
+        sandboxResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -285,10 +285,10 @@ internal class BoxServiceAsyncTest {
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
-        val boxFuture = boxServiceAsync.retrieve("name")
+        val sandboxResponseFuture = boxServiceAsync.retrieve("name")
 
-        val box = boxFuture.get()
-        box.validate()
+        val sandboxResponse = sandboxResponseFuture.get()
+        sandboxResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -301,7 +301,7 @@ internal class BoxServiceAsyncTest {
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
-        val boxFuture =
+        val sandboxResponseFuture =
             boxServiceAsync.update(
                 BoxUpdateParams.builder()
                     .pathName("name")
@@ -415,8 +415,8 @@ internal class BoxServiceAsyncTest {
                     .build()
             )
 
-        val box = boxFuture.get()
-        box.validate()
+        val sandboxResponse = sandboxResponseFuture.get()
+        sandboxResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -429,7 +429,7 @@ internal class BoxServiceAsyncTest {
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
-        val boxesFuture =
+        val sandboxListResponseFuture =
             boxServiceAsync.list(
                 BoxListParams.builder()
                     .createdBy("created_by")
@@ -442,8 +442,8 @@ internal class BoxServiceAsyncTest {
                     .build()
             )
 
-        val boxes = boxesFuture.get()
-        boxes.validate()
+        val sandboxListResponse = sandboxListResponseFuture.get()
+        sandboxListResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -471,7 +471,7 @@ internal class BoxServiceAsyncTest {
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
-        val responseFuture =
+        val snapshotResponseFuture =
             boxServiceAsync.createSnapshot(
                 BoxCreateSnapshotParams.builder()
                     .pathName("name")
@@ -483,8 +483,8 @@ internal class BoxServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val snapshotResponse = snapshotResponseFuture.get()
+        snapshotResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -497,7 +497,7 @@ internal class BoxServiceAsyncTest {
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
-        val responseFuture =
+        val serviceUrlResponseFuture =
             boxServiceAsync.generateServiceUrl(
                 BoxGenerateServiceUrlParams.builder()
                     .name("name")
@@ -506,8 +506,8 @@ internal class BoxServiceAsyncTest {
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val serviceUrlResponse = serviceUrlResponseFuture.get()
+        serviceUrlResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -520,10 +520,10 @@ internal class BoxServiceAsyncTest {
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
-        val responseFuture = boxServiceAsync.getStatus("name")
+        val sandboxStatusResponseFuture = boxServiceAsync.getStatus("name")
 
-        val response = responseFuture.get()
-        response.validate()
+        val sandboxStatusResponse = sandboxStatusResponseFuture.get()
+        sandboxStatusResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -536,10 +536,10 @@ internal class BoxServiceAsyncTest {
                 .build()
         val boxServiceAsync = client.sandboxes().boxes()
 
-        val responseFuture = boxServiceAsync.start("name")
+        val sandboxResponseFuture = boxServiceAsync.start("name")
 
-        val response = responseFuture.get()
-        response.validate()
+        val sandboxResponse = sandboxResponseFuture.get()
+        sandboxResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")

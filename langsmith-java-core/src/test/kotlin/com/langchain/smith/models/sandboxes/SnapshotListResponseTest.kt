@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sandboxes.snapshots
+package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.jsonMapper
@@ -16,7 +16,7 @@ internal class SnapshotListResponseTest {
             SnapshotListResponse.builder()
                 .offset(0L)
                 .addSnapshot(
-                    SnapshotListResponse.Snapshot.builder()
+                    SnapshotResponse.builder()
                         .id("id")
                         .createdAt("created_at")
                         .createdBy("created_by")
@@ -38,7 +38,7 @@ internal class SnapshotListResponseTest {
         assertThat(snapshotListResponse.offset()).contains(0L)
         assertThat(snapshotListResponse.snapshots().getOrNull())
             .containsExactly(
-                SnapshotListResponse.Snapshot.builder()
+                SnapshotResponse.builder()
                     .id("id")
                     .createdAt("created_at")
                     .createdBy("created_by")
@@ -64,7 +64,7 @@ internal class SnapshotListResponseTest {
             SnapshotListResponse.builder()
                 .offset(0L)
                 .addSnapshot(
-                    SnapshotListResponse.Snapshot.builder()
+                    SnapshotResponse.builder()
                         .id("id")
                         .createdAt("created_at")
                         .createdBy("created_by")

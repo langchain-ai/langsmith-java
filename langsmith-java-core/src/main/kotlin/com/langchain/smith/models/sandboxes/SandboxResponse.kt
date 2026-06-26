@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sandboxes.boxes
+package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -31,7 +31,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class BoxUpdateResponse
+class SandboxResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
@@ -393,11 +393,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [BoxUpdateResponse]. */
+        /** Returns a mutable builder for constructing an instance of [SandboxResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [BoxUpdateResponse]. */
+    /** A builder for [SandboxResponse]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
@@ -422,27 +422,27 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(boxUpdateResponse: BoxUpdateResponse) = apply {
-            id = boxUpdateResponse.id
-            createdAt = boxUpdateResponse.createdAt
-            createdBy = boxUpdateResponse.createdBy
-            dataplaneUrl = boxUpdateResponse.dataplaneUrl
-            deleteAfterStopSeconds = boxUpdateResponse.deleteAfterStopSeconds
-            fsCapacityBytes = boxUpdateResponse.fsCapacityBytes
-            idleTtlSeconds = boxUpdateResponse.idleTtlSeconds
-            memBytes = boxUpdateResponse.memBytes
-            mountConfig = boxUpdateResponse.mountConfig
-            name = boxUpdateResponse.name
-            proxyConfig = boxUpdateResponse.proxyConfig
-            sizeClass = boxUpdateResponse.sizeClass
-            snapshotId = boxUpdateResponse.snapshotId
-            status = boxUpdateResponse.status
-            statusMessage = boxUpdateResponse.statusMessage
-            stoppedAt = boxUpdateResponse.stoppedAt
-            updatedAt = boxUpdateResponse.updatedAt
-            updatedBy = boxUpdateResponse.updatedBy
-            vcpus = boxUpdateResponse.vcpus
-            additionalProperties = boxUpdateResponse.additionalProperties.toMutableMap()
+        internal fun from(sandboxResponse: SandboxResponse) = apply {
+            id = sandboxResponse.id
+            createdAt = sandboxResponse.createdAt
+            createdBy = sandboxResponse.createdBy
+            dataplaneUrl = sandboxResponse.dataplaneUrl
+            deleteAfterStopSeconds = sandboxResponse.deleteAfterStopSeconds
+            fsCapacityBytes = sandboxResponse.fsCapacityBytes
+            idleTtlSeconds = sandboxResponse.idleTtlSeconds
+            memBytes = sandboxResponse.memBytes
+            mountConfig = sandboxResponse.mountConfig
+            name = sandboxResponse.name
+            proxyConfig = sandboxResponse.proxyConfig
+            sizeClass = sandboxResponse.sizeClass
+            snapshotId = sandboxResponse.snapshotId
+            status = sandboxResponse.status
+            statusMessage = sandboxResponse.statusMessage
+            stoppedAt = sandboxResponse.stoppedAt
+            updatedAt = sandboxResponse.updatedAt
+            updatedBy = sandboxResponse.updatedBy
+            vcpus = sandboxResponse.vcpus
+            additionalProperties = sandboxResponse.additionalProperties.toMutableMap()
         }
 
         fun id(id: String) = id(JsonField.of(id))
@@ -684,12 +684,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [BoxUpdateResponse].
+         * Returns an immutable instance of [SandboxResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): BoxUpdateResponse =
-            BoxUpdateResponse(
+        fun build(): SandboxResponse =
+            SandboxResponse(
                 id,
                 createdAt,
                 createdBy,
@@ -723,7 +723,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): BoxUpdateResponse = apply {
+    fun validate(): SandboxResponse = apply {
         if (validated) {
             return@apply
         }
@@ -12928,7 +12928,7 @@ private constructor(
             return true
         }
 
-        return other is BoxUpdateResponse &&
+        return other is SandboxResponse &&
             id == other.id &&
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
@@ -12979,5 +12979,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxUpdateResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "SandboxResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

@@ -20,7 +20,7 @@ internal class SnapshotServiceAsyncTest {
                 .build()
         val snapshotServiceAsync = client.sandboxes().snapshots()
 
-        val snapshotFuture =
+        val snapshotResponseFuture =
             snapshotServiceAsync.create(
                 SnapshotCreateParams.builder()
                     .dockerImage("docker_image")
@@ -30,8 +30,8 @@ internal class SnapshotServiceAsyncTest {
                     .build()
             )
 
-        val snapshot = snapshotFuture.get()
-        snapshot.validate()
+        val snapshotResponse = snapshotResponseFuture.get()
+        snapshotResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -44,10 +44,10 @@ internal class SnapshotServiceAsyncTest {
                 .build()
         val snapshotServiceAsync = client.sandboxes().snapshots()
 
-        val snapshotFuture = snapshotServiceAsync.retrieve("snapshot_id")
+        val snapshotResponseFuture = snapshotServiceAsync.retrieve("snapshot_id")
 
-        val snapshot = snapshotFuture.get()
-        snapshot.validate()
+        val snapshotResponse = snapshotResponseFuture.get()
+        snapshotResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -60,7 +60,7 @@ internal class SnapshotServiceAsyncTest {
                 .build()
         val snapshotServiceAsync = client.sandboxes().snapshots()
 
-        val snapshotsFuture =
+        val snapshotListResponseFuture =
             snapshotServiceAsync.list(
                 SnapshotListParams.builder()
                     .createdBy("created_by")
@@ -73,8 +73,8 @@ internal class SnapshotServiceAsyncTest {
                     .build()
             )
 
-        val snapshots = snapshotsFuture.get()
-        snapshots.validate()
+        val snapshotListResponse = snapshotListResponseFuture.get()
+        snapshotListResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")

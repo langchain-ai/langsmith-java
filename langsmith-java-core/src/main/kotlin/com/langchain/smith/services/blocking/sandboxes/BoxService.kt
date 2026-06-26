@@ -7,24 +7,21 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.sandboxes.SandboxListResponse
+import com.langchain.smith.models.sandboxes.SandboxResponse
+import com.langchain.smith.models.sandboxes.SandboxStatusResponse
+import com.langchain.smith.models.sandboxes.ServiceUrlResponse
+import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
-import com.langchain.smith.models.sandboxes.boxes.BoxCreateResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
-import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
-import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
-import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
-import com.langchain.smith.models.sandboxes.boxes.BoxListResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
-import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
-import com.langchain.smith.models.sandboxes.boxes.BoxStartResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
-import com.langchain.smith.models.sandboxes.boxes.BoxUpdateResponse
 import java.util.function.Consumer
 
 interface BoxService {
@@ -45,99 +42,99 @@ interface BoxService {
      * Create a new sandbox from a snapshot. Provide at most one of `snapshot_id` or
      * `snapshot_name`; if neither is provided, the server uses the default static blueprint.
      */
-    fun create(): BoxCreateResponse = create(BoxCreateParams.none())
+    fun create(): SandboxResponse = create(BoxCreateParams.none())
 
     /** @see create */
     fun create(
         params: BoxCreateParams = BoxCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxCreateResponse
+    ): SandboxResponse
 
     /** @see create */
-    fun create(params: BoxCreateParams = BoxCreateParams.none()): BoxCreateResponse =
+    fun create(params: BoxCreateParams = BoxCreateParams.none()): SandboxResponse =
         create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): BoxCreateResponse =
+    fun create(requestOptions: RequestOptions): SandboxResponse =
         create(BoxCreateParams.none(), requestOptions)
 
     /** Retrieve a sandbox by name. Stale provisioning sandboxes are auto-failed. */
-    fun retrieve(name: String): BoxRetrieveResponse = retrieve(name, BoxRetrieveParams.none())
+    fun retrieve(name: String): SandboxResponse = retrieve(name, BoxRetrieveParams.none())
 
     /** @see retrieve */
     fun retrieve(
         name: String,
         params: BoxRetrieveParams = BoxRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxRetrieveResponse = retrieve(params.toBuilder().name(name).build(), requestOptions)
+    ): SandboxResponse = retrieve(params.toBuilder().name(name).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         name: String,
         params: BoxRetrieveParams = BoxRetrieveParams.none(),
-    ): BoxRetrieveResponse = retrieve(name, params, RequestOptions.none())
+    ): SandboxResponse = retrieve(name, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: BoxRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxRetrieveResponse
+    ): SandboxResponse
 
     /** @see retrieve */
-    fun retrieve(params: BoxRetrieveParams): BoxRetrieveResponse =
+    fun retrieve(params: BoxRetrieveParams): SandboxResponse =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(name: String, requestOptions: RequestOptions): BoxRetrieveResponse =
+    fun retrieve(name: String, requestOptions: RequestOptions): SandboxResponse =
         retrieve(name, BoxRetrieveParams.none(), requestOptions)
 
     /** Update a sandbox's display name. The name must be unique within the tenant. */
-    fun update(pathName: String): BoxUpdateResponse = update(pathName, BoxUpdateParams.none())
+    fun update(pathName: String): SandboxResponse = update(pathName, BoxUpdateParams.none())
 
     /** @see update */
     fun update(
         pathName: String,
         params: BoxUpdateParams = BoxUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxUpdateResponse = update(params.toBuilder().pathName(pathName).build(), requestOptions)
+    ): SandboxResponse = update(params.toBuilder().pathName(pathName).build(), requestOptions)
 
     /** @see update */
     fun update(
         pathName: String,
         params: BoxUpdateParams = BoxUpdateParams.none(),
-    ): BoxUpdateResponse = update(pathName, params, RequestOptions.none())
+    ): SandboxResponse = update(pathName, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: BoxUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxUpdateResponse
+    ): SandboxResponse
 
     /** @see update */
-    fun update(params: BoxUpdateParams): BoxUpdateResponse = update(params, RequestOptions.none())
+    fun update(params: BoxUpdateParams): SandboxResponse = update(params, RequestOptions.none())
 
     /** @see update */
-    fun update(pathName: String, requestOptions: RequestOptions): BoxUpdateResponse =
+    fun update(pathName: String, requestOptions: RequestOptions): SandboxResponse =
         update(pathName, BoxUpdateParams.none(), requestOptions)
 
     /**
      * List sandboxes for the authenticated tenant, with optional filtering, sorting, and
      * pagination.
      */
-    fun list(): BoxListResponse = list(BoxListParams.none())
+    fun list(): SandboxListResponse = list(BoxListParams.none())
 
     /** @see list */
     fun list(
         params: BoxListParams = BoxListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxListResponse
+    ): SandboxListResponse
 
     /** @see list */
-    fun list(params: BoxListParams = BoxListParams.none()): BoxListResponse =
+    fun list(params: BoxListParams = BoxListParams.none()): SandboxListResponse =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): BoxListResponse =
+    fun list(requestOptions: RequestOptions): SandboxListResponse =
         list(BoxListParams.none(), requestOptions)
 
     /**
@@ -170,35 +167,33 @@ interface BoxService {
      * Create a snapshot by capturing the current state of a sandbox or promoting an existing
      * checkpoint.
      */
-    fun createSnapshot(
-        pathName: String,
-        params: BoxCreateSnapshotParams,
-    ): BoxCreateSnapshotResponse = createSnapshot(pathName, params, RequestOptions.none())
+    fun createSnapshot(pathName: String, params: BoxCreateSnapshotParams): SnapshotResponse =
+        createSnapshot(pathName, params, RequestOptions.none())
 
     /** @see createSnapshot */
     fun createSnapshot(
         pathName: String,
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxCreateSnapshotResponse =
+    ): SnapshotResponse =
         createSnapshot(params.toBuilder().pathName(pathName).build(), requestOptions)
 
     /** @see createSnapshot */
-    fun createSnapshot(params: BoxCreateSnapshotParams): BoxCreateSnapshotResponse =
+    fun createSnapshot(params: BoxCreateSnapshotParams): SnapshotResponse =
         createSnapshot(params, RequestOptions.none())
 
     /** @see createSnapshot */
     fun createSnapshot(
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxCreateSnapshotResponse
+    ): SnapshotResponse
 
     /**
      * Create a short-lived JWT for accessing an HTTP service running on a specific port inside a
      * sandbox. Returns a browser_url (sets auth cookie via redirect), a service_url (for use with
      * the X-Langsmith-Sandbox-Service-Token header), the raw token, and its expiry.
      */
-    fun generateServiceUrl(name: String): BoxGenerateServiceUrlResponse =
+    fun generateServiceUrl(name: String): ServiceUrlResponse =
         generateServiceUrl(name, BoxGenerateServiceUrlParams.none())
 
     /** @see generateServiceUrl */
@@ -206,87 +201,84 @@ interface BoxService {
         name: String,
         params: BoxGenerateServiceUrlParams = BoxGenerateServiceUrlParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxGenerateServiceUrlResponse =
+    ): ServiceUrlResponse =
         generateServiceUrl(params.toBuilder().name(name).build(), requestOptions)
 
     /** @see generateServiceUrl */
     fun generateServiceUrl(
         name: String,
         params: BoxGenerateServiceUrlParams = BoxGenerateServiceUrlParams.none(),
-    ): BoxGenerateServiceUrlResponse = generateServiceUrl(name, params, RequestOptions.none())
+    ): ServiceUrlResponse = generateServiceUrl(name, params, RequestOptions.none())
 
     /** @see generateServiceUrl */
     fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxGenerateServiceUrlResponse
+    ): ServiceUrlResponse
 
     /** @see generateServiceUrl */
-    fun generateServiceUrl(params: BoxGenerateServiceUrlParams): BoxGenerateServiceUrlResponse =
+    fun generateServiceUrl(params: BoxGenerateServiceUrlParams): ServiceUrlResponse =
         generateServiceUrl(params, RequestOptions.none())
 
     /** @see generateServiceUrl */
-    fun generateServiceUrl(
-        name: String,
-        requestOptions: RequestOptions,
-    ): BoxGenerateServiceUrlResponse =
+    fun generateServiceUrl(name: String, requestOptions: RequestOptions): ServiceUrlResponse =
         generateServiceUrl(name, BoxGenerateServiceUrlParams.none(), requestOptions)
 
     /** Retrieve the lightweight status of a sandbox for polling. */
-    fun getStatus(name: String): BoxGetStatusResponse = getStatus(name, BoxGetStatusParams.none())
+    fun getStatus(name: String): SandboxStatusResponse = getStatus(name, BoxGetStatusParams.none())
 
     /** @see getStatus */
     fun getStatus(
         name: String,
         params: BoxGetStatusParams = BoxGetStatusParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxGetStatusResponse = getStatus(params.toBuilder().name(name).build(), requestOptions)
+    ): SandboxStatusResponse = getStatus(params.toBuilder().name(name).build(), requestOptions)
 
     /** @see getStatus */
     fun getStatus(
         name: String,
         params: BoxGetStatusParams = BoxGetStatusParams.none(),
-    ): BoxGetStatusResponse = getStatus(name, params, RequestOptions.none())
+    ): SandboxStatusResponse = getStatus(name, params, RequestOptions.none())
 
     /** @see getStatus */
     fun getStatus(
         params: BoxGetStatusParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxGetStatusResponse
+    ): SandboxStatusResponse
 
     /** @see getStatus */
-    fun getStatus(params: BoxGetStatusParams): BoxGetStatusResponse =
+    fun getStatus(params: BoxGetStatusParams): SandboxStatusResponse =
         getStatus(params, RequestOptions.none())
 
     /** @see getStatus */
-    fun getStatus(name: String, requestOptions: RequestOptions): BoxGetStatusResponse =
+    fun getStatus(name: String, requestOptions: RequestOptions): SandboxStatusResponse =
         getStatus(name, BoxGetStatusParams.none(), requestOptions)
 
     /** Start a stopped or failed sandbox. This endpoint is not idempotent. */
-    fun start(name: String): BoxStartResponse = start(name, BoxStartParams.none())
+    fun start(name: String): SandboxResponse = start(name, BoxStartParams.none())
 
     /** @see start */
     fun start(
         name: String,
         params: BoxStartParams = BoxStartParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxStartResponse = start(params.toBuilder().name(name).build(), requestOptions)
+    ): SandboxResponse = start(params.toBuilder().name(name).build(), requestOptions)
 
     /** @see start */
-    fun start(name: String, params: BoxStartParams = BoxStartParams.none()): BoxStartResponse =
+    fun start(name: String, params: BoxStartParams = BoxStartParams.none()): SandboxResponse =
         start(name, params, RequestOptions.none())
 
     /** @see start */
     fun start(
         params: BoxStartParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): BoxStartResponse
+    ): SandboxResponse
 
     /** @see start */
-    fun start(params: BoxStartParams): BoxStartResponse = start(params, RequestOptions.none())
+    fun start(params: BoxStartParams): SandboxResponse = start(params, RequestOptions.none())
 
     /** @see start */
-    fun start(name: String, requestOptions: RequestOptions): BoxStartResponse =
+    fun start(name: String, requestOptions: RequestOptions): SandboxResponse =
         start(name, BoxStartParams.none(), requestOptions)
 
     /**
@@ -331,24 +323,24 @@ interface BoxService {
          * [BoxService.create].
          */
         @MustBeClosed
-        fun create(): HttpResponseFor<BoxCreateResponse> = create(BoxCreateParams.none())
+        fun create(): HttpResponseFor<SandboxResponse> = create(BoxCreateParams.none())
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: BoxCreateParams = BoxCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxCreateResponse>
+        ): HttpResponseFor<SandboxResponse>
 
         /** @see create */
         @MustBeClosed
         fun create(
             params: BoxCreateParams = BoxCreateParams.none()
-        ): HttpResponseFor<BoxCreateResponse> = create(params, RequestOptions.none())
+        ): HttpResponseFor<SandboxResponse> = create(params, RequestOptions.none())
 
         /** @see create */
         @MustBeClosed
-        fun create(requestOptions: RequestOptions): HttpResponseFor<BoxCreateResponse> =
+        fun create(requestOptions: RequestOptions): HttpResponseFor<SandboxResponse> =
             create(BoxCreateParams.none(), requestOptions)
 
         /**
@@ -356,7 +348,7 @@ interface BoxService {
          * same as [BoxService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(name: String): HttpResponseFor<BoxRetrieveResponse> =
+        fun retrieve(name: String): HttpResponseFor<SandboxResponse> =
             retrieve(name, BoxRetrieveParams.none())
 
         /** @see retrieve */
@@ -365,7 +357,7 @@ interface BoxService {
             name: String,
             params: BoxRetrieveParams = BoxRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxRetrieveResponse> =
+        ): HttpResponseFor<SandboxResponse> =
             retrieve(params.toBuilder().name(name).build(), requestOptions)
 
         /** @see retrieve */
@@ -373,18 +365,18 @@ interface BoxService {
         fun retrieve(
             name: String,
             params: BoxRetrieveParams = BoxRetrieveParams.none(),
-        ): HttpResponseFor<BoxRetrieveResponse> = retrieve(name, params, RequestOptions.none())
+        ): HttpResponseFor<SandboxResponse> = retrieve(name, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: BoxRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxRetrieveResponse>
+        ): HttpResponseFor<SandboxResponse>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: BoxRetrieveParams): HttpResponseFor<BoxRetrieveResponse> =
+        fun retrieve(params: BoxRetrieveParams): HttpResponseFor<SandboxResponse> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -392,7 +384,7 @@ interface BoxService {
         fun retrieve(
             name: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxRetrieveResponse> =
+        ): HttpResponseFor<SandboxResponse> =
             retrieve(name, BoxRetrieveParams.none(), requestOptions)
 
         /**
@@ -400,7 +392,7 @@ interface BoxService {
          * same as [BoxService.update].
          */
         @MustBeClosed
-        fun update(pathName: String): HttpResponseFor<BoxUpdateResponse> =
+        fun update(pathName: String): HttpResponseFor<SandboxResponse> =
             update(pathName, BoxUpdateParams.none())
 
         /** @see update */
@@ -409,7 +401,7 @@ interface BoxService {
             pathName: String,
             params: BoxUpdateParams = BoxUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxUpdateResponse> =
+        ): HttpResponseFor<SandboxResponse> =
             update(params.toBuilder().pathName(pathName).build(), requestOptions)
 
         /** @see update */
@@ -417,18 +409,18 @@ interface BoxService {
         fun update(
             pathName: String,
             params: BoxUpdateParams = BoxUpdateParams.none(),
-        ): HttpResponseFor<BoxUpdateResponse> = update(pathName, params, RequestOptions.none())
+        ): HttpResponseFor<SandboxResponse> = update(pathName, params, RequestOptions.none())
 
         /** @see update */
         @MustBeClosed
         fun update(
             params: BoxUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxUpdateResponse>
+        ): HttpResponseFor<SandboxResponse>
 
         /** @see update */
         @MustBeClosed
-        fun update(params: BoxUpdateParams): HttpResponseFor<BoxUpdateResponse> =
+        fun update(params: BoxUpdateParams): HttpResponseFor<SandboxResponse> =
             update(params, RequestOptions.none())
 
         /** @see update */
@@ -436,30 +428,31 @@ interface BoxService {
         fun update(
             pathName: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxUpdateResponse> =
+        ): HttpResponseFor<SandboxResponse> =
             update(pathName, BoxUpdateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v2/sandboxes/boxes`, but is otherwise the same as
          * [BoxService.list].
          */
-        @MustBeClosed fun list(): HttpResponseFor<BoxListResponse> = list(BoxListParams.none())
+        @MustBeClosed fun list(): HttpResponseFor<SandboxListResponse> = list(BoxListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: BoxListParams = BoxListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxListResponse>
+        ): HttpResponseFor<SandboxListResponse>
 
         /** @see list */
         @MustBeClosed
-        fun list(params: BoxListParams = BoxListParams.none()): HttpResponseFor<BoxListResponse> =
-            list(params, RequestOptions.none())
+        fun list(
+            params: BoxListParams = BoxListParams.none()
+        ): HttpResponseFor<SandboxListResponse> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<BoxListResponse> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<SandboxListResponse> =
             list(BoxListParams.none(), requestOptions)
 
         /**
@@ -505,7 +498,7 @@ interface BoxService {
         fun createSnapshot(
             pathName: String,
             params: BoxCreateSnapshotParams,
-        ): HttpResponseFor<BoxCreateSnapshotResponse> =
+        ): HttpResponseFor<SnapshotResponse> =
             createSnapshot(pathName, params, RequestOptions.none())
 
         /** @see createSnapshot */
@@ -514,14 +507,12 @@ interface BoxService {
             pathName: String,
             params: BoxCreateSnapshotParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxCreateSnapshotResponse> =
+        ): HttpResponseFor<SnapshotResponse> =
             createSnapshot(params.toBuilder().pathName(pathName).build(), requestOptions)
 
         /** @see createSnapshot */
         @MustBeClosed
-        fun createSnapshot(
-            params: BoxCreateSnapshotParams
-        ): HttpResponseFor<BoxCreateSnapshotResponse> =
+        fun createSnapshot(params: BoxCreateSnapshotParams): HttpResponseFor<SnapshotResponse> =
             createSnapshot(params, RequestOptions.none())
 
         /** @see createSnapshot */
@@ -529,14 +520,14 @@ interface BoxService {
         fun createSnapshot(
             params: BoxCreateSnapshotParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxCreateSnapshotResponse>
+        ): HttpResponseFor<SnapshotResponse>
 
         /**
          * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/service-url`, but is
          * otherwise the same as [BoxService.generateServiceUrl].
          */
         @MustBeClosed
-        fun generateServiceUrl(name: String): HttpResponseFor<BoxGenerateServiceUrlResponse> =
+        fun generateServiceUrl(name: String): HttpResponseFor<ServiceUrlResponse> =
             generateServiceUrl(name, BoxGenerateServiceUrlParams.none())
 
         /** @see generateServiceUrl */
@@ -545,7 +536,7 @@ interface BoxService {
             name: String,
             params: BoxGenerateServiceUrlParams = BoxGenerateServiceUrlParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxGenerateServiceUrlResponse> =
+        ): HttpResponseFor<ServiceUrlResponse> =
             generateServiceUrl(params.toBuilder().name(name).build(), requestOptions)
 
         /** @see generateServiceUrl */
@@ -553,7 +544,7 @@ interface BoxService {
         fun generateServiceUrl(
             name: String,
             params: BoxGenerateServiceUrlParams = BoxGenerateServiceUrlParams.none(),
-        ): HttpResponseFor<BoxGenerateServiceUrlResponse> =
+        ): HttpResponseFor<ServiceUrlResponse> =
             generateServiceUrl(name, params, RequestOptions.none())
 
         /** @see generateServiceUrl */
@@ -561,21 +552,20 @@ interface BoxService {
         fun generateServiceUrl(
             params: BoxGenerateServiceUrlParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxGenerateServiceUrlResponse>
+        ): HttpResponseFor<ServiceUrlResponse>
 
         /** @see generateServiceUrl */
         @MustBeClosed
         fun generateServiceUrl(
             params: BoxGenerateServiceUrlParams
-        ): HttpResponseFor<BoxGenerateServiceUrlResponse> =
-            generateServiceUrl(params, RequestOptions.none())
+        ): HttpResponseFor<ServiceUrlResponse> = generateServiceUrl(params, RequestOptions.none())
 
         /** @see generateServiceUrl */
         @MustBeClosed
         fun generateServiceUrl(
             name: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxGenerateServiceUrlResponse> =
+        ): HttpResponseFor<ServiceUrlResponse> =
             generateServiceUrl(name, BoxGenerateServiceUrlParams.none(), requestOptions)
 
         /**
@@ -583,7 +573,7 @@ interface BoxService {
          * the same as [BoxService.getStatus].
          */
         @MustBeClosed
-        fun getStatus(name: String): HttpResponseFor<BoxGetStatusResponse> =
+        fun getStatus(name: String): HttpResponseFor<SandboxStatusResponse> =
             getStatus(name, BoxGetStatusParams.none())
 
         /** @see getStatus */
@@ -592,7 +582,7 @@ interface BoxService {
             name: String,
             params: BoxGetStatusParams = BoxGetStatusParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxGetStatusResponse> =
+        ): HttpResponseFor<SandboxStatusResponse> =
             getStatus(params.toBuilder().name(name).build(), requestOptions)
 
         /** @see getStatus */
@@ -600,18 +590,18 @@ interface BoxService {
         fun getStatus(
             name: String,
             params: BoxGetStatusParams = BoxGetStatusParams.none(),
-        ): HttpResponseFor<BoxGetStatusResponse> = getStatus(name, params, RequestOptions.none())
+        ): HttpResponseFor<SandboxStatusResponse> = getStatus(name, params, RequestOptions.none())
 
         /** @see getStatus */
         @MustBeClosed
         fun getStatus(
             params: BoxGetStatusParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxGetStatusResponse>
+        ): HttpResponseFor<SandboxStatusResponse>
 
         /** @see getStatus */
         @MustBeClosed
-        fun getStatus(params: BoxGetStatusParams): HttpResponseFor<BoxGetStatusResponse> =
+        fun getStatus(params: BoxGetStatusParams): HttpResponseFor<SandboxStatusResponse> =
             getStatus(params, RequestOptions.none())
 
         /** @see getStatus */
@@ -619,7 +609,7 @@ interface BoxService {
         fun getStatus(
             name: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxGetStatusResponse> =
+        ): HttpResponseFor<SandboxStatusResponse> =
             getStatus(name, BoxGetStatusParams.none(), requestOptions)
 
         /**
@@ -627,7 +617,7 @@ interface BoxService {
          * the same as [BoxService.start].
          */
         @MustBeClosed
-        fun start(name: String): HttpResponseFor<BoxStartResponse> =
+        fun start(name: String): HttpResponseFor<SandboxResponse> =
             start(name, BoxStartParams.none())
 
         /** @see start */
@@ -636,7 +626,7 @@ interface BoxService {
             name: String,
             params: BoxStartParams = BoxStartParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxStartResponse> =
+        ): HttpResponseFor<SandboxResponse> =
             start(params.toBuilder().name(name).build(), requestOptions)
 
         /** @see start */
@@ -644,23 +634,23 @@ interface BoxService {
         fun start(
             name: String,
             params: BoxStartParams = BoxStartParams.none(),
-        ): HttpResponseFor<BoxStartResponse> = start(name, params, RequestOptions.none())
+        ): HttpResponseFor<SandboxResponse> = start(name, params, RequestOptions.none())
 
         /** @see start */
         @MustBeClosed
         fun start(
             params: BoxStartParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<BoxStartResponse>
+        ): HttpResponseFor<SandboxResponse>
 
         /** @see start */
         @MustBeClosed
-        fun start(params: BoxStartParams): HttpResponseFor<BoxStartResponse> =
+        fun start(params: BoxStartParams): HttpResponseFor<SandboxResponse> =
             start(params, RequestOptions.none())
 
         /** @see start */
         @MustBeClosed
-        fun start(name: String, requestOptions: RequestOptions): HttpResponseFor<BoxStartResponse> =
+        fun start(name: String, requestOptions: RequestOptions): HttpResponseFor<SandboxResponse> =
             start(name, BoxStartParams.none(), requestOptions)
 
         /**

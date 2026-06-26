@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sandboxes.boxes
+package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -15,7 +15,7 @@ import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 
-class BoxCreateSnapshotResponse
+class SnapshotResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
@@ -299,13 +299,11 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [BoxCreateSnapshotResponse].
-         */
+        /** Returns a mutable builder for constructing an instance of [SnapshotResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [BoxCreateSnapshotResponse]. */
+    /** A builder for [SnapshotResponse]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
@@ -325,22 +323,22 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(boxCreateSnapshotResponse: BoxCreateSnapshotResponse) = apply {
-            id = boxCreateSnapshotResponse.id
-            createdAt = boxCreateSnapshotResponse.createdAt
-            createdBy = boxCreateSnapshotResponse.createdBy
-            dockerImage = boxCreateSnapshotResponse.dockerImage
-            fsCapacityBytes = boxCreateSnapshotResponse.fsCapacityBytes
-            fsUsedBytes = boxCreateSnapshotResponse.fsUsedBytes
-            imageDigest = boxCreateSnapshotResponse.imageDigest
-            memorySnapshotSizeBytes = boxCreateSnapshotResponse.memorySnapshotSizeBytes
-            name = boxCreateSnapshotResponse.name
-            registryId = boxCreateSnapshotResponse.registryId
-            sourceSandboxId = boxCreateSnapshotResponse.sourceSandboxId
-            status = boxCreateSnapshotResponse.status
-            statusMessage = boxCreateSnapshotResponse.statusMessage
-            updatedAt = boxCreateSnapshotResponse.updatedAt
-            additionalProperties = boxCreateSnapshotResponse.additionalProperties.toMutableMap()
+        internal fun from(snapshotResponse: SnapshotResponse) = apply {
+            id = snapshotResponse.id
+            createdAt = snapshotResponse.createdAt
+            createdBy = snapshotResponse.createdBy
+            dockerImage = snapshotResponse.dockerImage
+            fsCapacityBytes = snapshotResponse.fsCapacityBytes
+            fsUsedBytes = snapshotResponse.fsUsedBytes
+            imageDigest = snapshotResponse.imageDigest
+            memorySnapshotSizeBytes = snapshotResponse.memorySnapshotSizeBytes
+            name = snapshotResponse.name
+            registryId = snapshotResponse.registryId
+            sourceSandboxId = snapshotResponse.sourceSandboxId
+            status = snapshotResponse.status
+            statusMessage = snapshotResponse.statusMessage
+            updatedAt = snapshotResponse.updatedAt
+            additionalProperties = snapshotResponse.additionalProperties.toMutableMap()
         }
 
         fun id(id: String) = id(JsonField.of(id))
@@ -529,12 +527,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [BoxCreateSnapshotResponse].
+         * Returns an immutable instance of [SnapshotResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): BoxCreateSnapshotResponse =
-            BoxCreateSnapshotResponse(
+        fun build(): SnapshotResponse =
+            SnapshotResponse(
                 id,
                 createdAt,
                 createdBy,
@@ -563,7 +561,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): BoxCreateSnapshotResponse = apply {
+    fun validate(): SnapshotResponse = apply {
         if (validated) {
             return@apply
         }
@@ -620,7 +618,7 @@ private constructor(
             return true
         }
 
-        return other is BoxCreateSnapshotResponse &&
+        return other is SnapshotResponse &&
             id == other.id &&
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
@@ -661,5 +659,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxCreateSnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

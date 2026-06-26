@@ -6,24 +6,21 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.sandboxes.SandboxListResponse
+import com.langchain.smith.models.sandboxes.SandboxResponse
+import com.langchain.smith.models.sandboxes.SandboxStatusResponse
+import com.langchain.smith.models.sandboxes.ServiceUrlResponse
+import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
-import com.langchain.smith.models.sandboxes.boxes.BoxCreateResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
-import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
-import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
-import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
-import com.langchain.smith.models.sandboxes.boxes.BoxListResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
-import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
-import com.langchain.smith.models.sandboxes.boxes.BoxStartResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
-import com.langchain.smith.models.sandboxes.boxes.BoxUpdateResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -45,25 +42,25 @@ interface BoxServiceAsync {
      * Create a new sandbox from a snapshot. Provide at most one of `snapshot_id` or
      * `snapshot_name`; if neither is provided, the server uses the default static blueprint.
      */
-    fun create(): CompletableFuture<BoxCreateResponse> = create(BoxCreateParams.none())
+    fun create(): CompletableFuture<SandboxResponse> = create(BoxCreateParams.none())
 
     /** @see create */
     fun create(
         params: BoxCreateParams = BoxCreateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxCreateResponse>
+    ): CompletableFuture<SandboxResponse>
 
     /** @see create */
     fun create(
         params: BoxCreateParams = BoxCreateParams.none()
-    ): CompletableFuture<BoxCreateResponse> = create(params, RequestOptions.none())
+    ): CompletableFuture<SandboxResponse> = create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(requestOptions: RequestOptions): CompletableFuture<BoxCreateResponse> =
+    fun create(requestOptions: RequestOptions): CompletableFuture<SandboxResponse> =
         create(BoxCreateParams.none(), requestOptions)
 
     /** Retrieve a sandbox by name. Stale provisioning sandboxes are auto-failed. */
-    fun retrieve(name: String): CompletableFuture<BoxRetrieveResponse> =
+    fun retrieve(name: String): CompletableFuture<SandboxResponse> =
         retrieve(name, BoxRetrieveParams.none())
 
     /** @see retrieve */
@@ -71,34 +68,31 @@ interface BoxServiceAsync {
         name: String,
         params: BoxRetrieveParams = BoxRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxRetrieveResponse> =
+    ): CompletableFuture<SandboxResponse> =
         retrieve(params.toBuilder().name(name).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         name: String,
         params: BoxRetrieveParams = BoxRetrieveParams.none(),
-    ): CompletableFuture<BoxRetrieveResponse> = retrieve(name, params, RequestOptions.none())
+    ): CompletableFuture<SandboxResponse> = retrieve(name, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: BoxRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxRetrieveResponse>
+    ): CompletableFuture<SandboxResponse>
 
     /** @see retrieve */
-    fun retrieve(params: BoxRetrieveParams): CompletableFuture<BoxRetrieveResponse> =
+    fun retrieve(params: BoxRetrieveParams): CompletableFuture<SandboxResponse> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(
-        name: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<BoxRetrieveResponse> =
+    fun retrieve(name: String, requestOptions: RequestOptions): CompletableFuture<SandboxResponse> =
         retrieve(name, BoxRetrieveParams.none(), requestOptions)
 
     /** Update a sandbox's display name. The name must be unique within the tenant. */
-    fun update(pathName: String): CompletableFuture<BoxUpdateResponse> =
+    fun update(pathName: String): CompletableFuture<SandboxResponse> =
         update(pathName, BoxUpdateParams.none())
 
     /** @see update */
@@ -106,50 +100,49 @@ interface BoxServiceAsync {
         pathName: String,
         params: BoxUpdateParams = BoxUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxUpdateResponse> =
+    ): CompletableFuture<SandboxResponse> =
         update(params.toBuilder().pathName(pathName).build(), requestOptions)
 
     /** @see update */
     fun update(
         pathName: String,
         params: BoxUpdateParams = BoxUpdateParams.none(),
-    ): CompletableFuture<BoxUpdateResponse> = update(pathName, params, RequestOptions.none())
+    ): CompletableFuture<SandboxResponse> = update(pathName, params, RequestOptions.none())
 
     /** @see update */
     fun update(
         params: BoxUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxUpdateResponse>
+    ): CompletableFuture<SandboxResponse>
 
     /** @see update */
-    fun update(params: BoxUpdateParams): CompletableFuture<BoxUpdateResponse> =
+    fun update(params: BoxUpdateParams): CompletableFuture<SandboxResponse> =
         update(params, RequestOptions.none())
 
     /** @see update */
     fun update(
         pathName: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxUpdateResponse> =
-        update(pathName, BoxUpdateParams.none(), requestOptions)
+    ): CompletableFuture<SandboxResponse> = update(pathName, BoxUpdateParams.none(), requestOptions)
 
     /**
      * List sandboxes for the authenticated tenant, with optional filtering, sorting, and
      * pagination.
      */
-    fun list(): CompletableFuture<BoxListResponse> = list(BoxListParams.none())
+    fun list(): CompletableFuture<SandboxListResponse> = list(BoxListParams.none())
 
     /** @see list */
     fun list(
         params: BoxListParams = BoxListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxListResponse>
+    ): CompletableFuture<SandboxListResponse>
 
     /** @see list */
-    fun list(params: BoxListParams = BoxListParams.none()): CompletableFuture<BoxListResponse> =
+    fun list(params: BoxListParams = BoxListParams.none()): CompletableFuture<SandboxListResponse> =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<BoxListResponse> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<SandboxListResponse> =
         list(BoxListParams.none(), requestOptions)
 
     /**
@@ -191,34 +184,32 @@ interface BoxServiceAsync {
     fun createSnapshot(
         pathName: String,
         params: BoxCreateSnapshotParams,
-    ): CompletableFuture<BoxCreateSnapshotResponse> =
-        createSnapshot(pathName, params, RequestOptions.none())
+    ): CompletableFuture<SnapshotResponse> = createSnapshot(pathName, params, RequestOptions.none())
 
     /** @see createSnapshot */
     fun createSnapshot(
         pathName: String,
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxCreateSnapshotResponse> =
+    ): CompletableFuture<SnapshotResponse> =
         createSnapshot(params.toBuilder().pathName(pathName).build(), requestOptions)
 
     /** @see createSnapshot */
-    fun createSnapshot(
-        params: BoxCreateSnapshotParams
-    ): CompletableFuture<BoxCreateSnapshotResponse> = createSnapshot(params, RequestOptions.none())
+    fun createSnapshot(params: BoxCreateSnapshotParams): CompletableFuture<SnapshotResponse> =
+        createSnapshot(params, RequestOptions.none())
 
     /** @see createSnapshot */
     fun createSnapshot(
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxCreateSnapshotResponse>
+    ): CompletableFuture<SnapshotResponse>
 
     /**
      * Create a short-lived JWT for accessing an HTTP service running on a specific port inside a
      * sandbox. Returns a browser_url (sets auth cookie via redirect), a service_url (for use with
      * the X-Langsmith-Sandbox-Service-Token header), the raw token, and its expiry.
      */
-    fun generateServiceUrl(name: String): CompletableFuture<BoxGenerateServiceUrlResponse> =
+    fun generateServiceUrl(name: String): CompletableFuture<ServiceUrlResponse> =
         generateServiceUrl(name, BoxGenerateServiceUrlParams.none())
 
     /** @see generateServiceUrl */
@@ -226,37 +217,36 @@ interface BoxServiceAsync {
         name: String,
         params: BoxGenerateServiceUrlParams = BoxGenerateServiceUrlParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxGenerateServiceUrlResponse> =
+    ): CompletableFuture<ServiceUrlResponse> =
         generateServiceUrl(params.toBuilder().name(name).build(), requestOptions)
 
     /** @see generateServiceUrl */
     fun generateServiceUrl(
         name: String,
         params: BoxGenerateServiceUrlParams = BoxGenerateServiceUrlParams.none(),
-    ): CompletableFuture<BoxGenerateServiceUrlResponse> =
+    ): CompletableFuture<ServiceUrlResponse> =
         generateServiceUrl(name, params, RequestOptions.none())
 
     /** @see generateServiceUrl */
     fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxGenerateServiceUrlResponse>
+    ): CompletableFuture<ServiceUrlResponse>
 
     /** @see generateServiceUrl */
     fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams
-    ): CompletableFuture<BoxGenerateServiceUrlResponse> =
-        generateServiceUrl(params, RequestOptions.none())
+    ): CompletableFuture<ServiceUrlResponse> = generateServiceUrl(params, RequestOptions.none())
 
     /** @see generateServiceUrl */
     fun generateServiceUrl(
         name: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxGenerateServiceUrlResponse> =
+    ): CompletableFuture<ServiceUrlResponse> =
         generateServiceUrl(name, BoxGenerateServiceUrlParams.none(), requestOptions)
 
     /** Retrieve the lightweight status of a sandbox for polling. */
-    fun getStatus(name: String): CompletableFuture<BoxGetStatusResponse> =
+    fun getStatus(name: String): CompletableFuture<SandboxStatusResponse> =
         getStatus(name, BoxGetStatusParams.none())
 
     /** @see getStatus */
@@ -264,62 +254,61 @@ interface BoxServiceAsync {
         name: String,
         params: BoxGetStatusParams = BoxGetStatusParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxGetStatusResponse> =
+    ): CompletableFuture<SandboxStatusResponse> =
         getStatus(params.toBuilder().name(name).build(), requestOptions)
 
     /** @see getStatus */
     fun getStatus(
         name: String,
         params: BoxGetStatusParams = BoxGetStatusParams.none(),
-    ): CompletableFuture<BoxGetStatusResponse> = getStatus(name, params, RequestOptions.none())
+    ): CompletableFuture<SandboxStatusResponse> = getStatus(name, params, RequestOptions.none())
 
     /** @see getStatus */
     fun getStatus(
         params: BoxGetStatusParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxGetStatusResponse>
+    ): CompletableFuture<SandboxStatusResponse>
 
     /** @see getStatus */
-    fun getStatus(params: BoxGetStatusParams): CompletableFuture<BoxGetStatusResponse> =
+    fun getStatus(params: BoxGetStatusParams): CompletableFuture<SandboxStatusResponse> =
         getStatus(params, RequestOptions.none())
 
     /** @see getStatus */
     fun getStatus(
         name: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<BoxGetStatusResponse> =
+    ): CompletableFuture<SandboxStatusResponse> =
         getStatus(name, BoxGetStatusParams.none(), requestOptions)
 
     /** Start a stopped or failed sandbox. This endpoint is not idempotent. */
-    fun start(name: String): CompletableFuture<BoxStartResponse> =
-        start(name, BoxStartParams.none())
+    fun start(name: String): CompletableFuture<SandboxResponse> = start(name, BoxStartParams.none())
 
     /** @see start */
     fun start(
         name: String,
         params: BoxStartParams = BoxStartParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxStartResponse> =
+    ): CompletableFuture<SandboxResponse> =
         start(params.toBuilder().name(name).build(), requestOptions)
 
     /** @see start */
     fun start(
         name: String,
         params: BoxStartParams = BoxStartParams.none(),
-    ): CompletableFuture<BoxStartResponse> = start(name, params, RequestOptions.none())
+    ): CompletableFuture<SandboxResponse> = start(name, params, RequestOptions.none())
 
     /** @see start */
     fun start(
         params: BoxStartParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<BoxStartResponse>
+    ): CompletableFuture<SandboxResponse>
 
     /** @see start */
-    fun start(params: BoxStartParams): CompletableFuture<BoxStartResponse> =
+    fun start(params: BoxStartParams): CompletableFuture<SandboxResponse> =
         start(params, RequestOptions.none())
 
     /** @see start */
-    fun start(name: String, requestOptions: RequestOptions): CompletableFuture<BoxStartResponse> =
+    fun start(name: String, requestOptions: RequestOptions): CompletableFuture<SandboxResponse> =
         start(name, BoxStartParams.none(), requestOptions)
 
     /**
@@ -366,32 +355,32 @@ interface BoxServiceAsync {
          * Returns a raw HTTP response for `post /v2/sandboxes/boxes`, but is otherwise the same as
          * [BoxServiceAsync.create].
          */
-        fun create(): CompletableFuture<HttpResponseFor<BoxCreateResponse>> =
+        fun create(): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             create(BoxCreateParams.none())
 
         /** @see create */
         fun create(
             params: BoxCreateParams = BoxCreateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxCreateResponse>>
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>>
 
         /** @see create */
         fun create(
             params: BoxCreateParams = BoxCreateParams.none()
-        ): CompletableFuture<HttpResponseFor<BoxCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<BoxCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             create(BoxCreateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v2/sandboxes/boxes/{name}`, but is otherwise the
          * same as [BoxServiceAsync.retrieve].
          */
-        fun retrieve(name: String): CompletableFuture<HttpResponseFor<BoxRetrieveResponse>> =
+        fun retrieve(name: String): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             retrieve(name, BoxRetrieveParams.none())
 
         /** @see retrieve */
@@ -399,40 +388,40 @@ interface BoxServiceAsync {
             name: String,
             params: BoxRetrieveParams = BoxRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             retrieve(params.toBuilder().name(name).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
             name: String,
             params: BoxRetrieveParams = BoxRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<BoxRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             retrieve(name, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: BoxRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxRetrieveResponse>>
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>>
 
         /** @see retrieve */
         fun retrieve(
             params: BoxRetrieveParams
-        ): CompletableFuture<HttpResponseFor<BoxRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             name: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             retrieve(name, BoxRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch /v2/sandboxes/boxes/{name}`, but is otherwise the
          * same as [BoxServiceAsync.update].
          */
-        fun update(pathName: String): CompletableFuture<HttpResponseFor<BoxUpdateResponse>> =
+        fun update(pathName: String): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             update(pathName, BoxUpdateParams.none())
 
         /** @see update */
@@ -440,54 +429,56 @@ interface BoxServiceAsync {
             pathName: String,
             params: BoxUpdateParams = BoxUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             update(params.toBuilder().pathName(pathName).build(), requestOptions)
 
         /** @see update */
         fun update(
             pathName: String,
             params: BoxUpdateParams = BoxUpdateParams.none(),
-        ): CompletableFuture<HttpResponseFor<BoxUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             update(pathName, params, RequestOptions.none())
 
         /** @see update */
         fun update(
             params: BoxUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxUpdateResponse>>
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>>
 
         /** @see update */
-        fun update(params: BoxUpdateParams): CompletableFuture<HttpResponseFor<BoxUpdateResponse>> =
+        fun update(params: BoxUpdateParams): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             update(params, RequestOptions.none())
 
         /** @see update */
         fun update(
             pathName: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxUpdateResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             update(pathName, BoxUpdateParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v2/sandboxes/boxes`, but is otherwise the same as
          * [BoxServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<BoxListResponse>> = list(BoxListParams.none())
+        fun list(): CompletableFuture<HttpResponseFor<SandboxListResponse>> =
+            list(BoxListParams.none())
 
         /** @see list */
         fun list(
             params: BoxListParams = BoxListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxListResponse>>
+        ): CompletableFuture<HttpResponseFor<SandboxListResponse>>
 
         /** @see list */
         fun list(
             params: BoxListParams = BoxListParams.none()
-        ): CompletableFuture<HttpResponseFor<BoxListResponse>> = list(params, RequestOptions.none())
+        ): CompletableFuture<HttpResponseFor<SandboxListResponse>> =
+            list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<BoxListResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxListResponse>> =
             list(BoxListParams.none(), requestOptions)
 
         /**
@@ -532,7 +523,7 @@ interface BoxServiceAsync {
         fun createSnapshot(
             pathName: String,
             params: BoxCreateSnapshotParams,
-        ): CompletableFuture<HttpResponseFor<BoxCreateSnapshotResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             createSnapshot(pathName, params, RequestOptions.none())
 
         /** @see createSnapshot */
@@ -540,20 +531,20 @@ interface BoxServiceAsync {
             pathName: String,
             params: BoxCreateSnapshotParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxCreateSnapshotResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             createSnapshot(params.toBuilder().pathName(pathName).build(), requestOptions)
 
         /** @see createSnapshot */
         fun createSnapshot(
             params: BoxCreateSnapshotParams
-        ): CompletableFuture<HttpResponseFor<BoxCreateSnapshotResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             createSnapshot(params, RequestOptions.none())
 
         /** @see createSnapshot */
         fun createSnapshot(
             params: BoxCreateSnapshotParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxCreateSnapshotResponse>>
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>>
 
         /**
          * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/service-url`, but is
@@ -561,7 +552,7 @@ interface BoxServiceAsync {
          */
         fun generateServiceUrl(
             name: String
-        ): CompletableFuture<HttpResponseFor<BoxGenerateServiceUrlResponse>> =
+        ): CompletableFuture<HttpResponseFor<ServiceUrlResponse>> =
             generateServiceUrl(name, BoxGenerateServiceUrlParams.none())
 
         /** @see generateServiceUrl */
@@ -569,40 +560,40 @@ interface BoxServiceAsync {
             name: String,
             params: BoxGenerateServiceUrlParams = BoxGenerateServiceUrlParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxGenerateServiceUrlResponse>> =
+        ): CompletableFuture<HttpResponseFor<ServiceUrlResponse>> =
             generateServiceUrl(params.toBuilder().name(name).build(), requestOptions)
 
         /** @see generateServiceUrl */
         fun generateServiceUrl(
             name: String,
             params: BoxGenerateServiceUrlParams = BoxGenerateServiceUrlParams.none(),
-        ): CompletableFuture<HttpResponseFor<BoxGenerateServiceUrlResponse>> =
+        ): CompletableFuture<HttpResponseFor<ServiceUrlResponse>> =
             generateServiceUrl(name, params, RequestOptions.none())
 
         /** @see generateServiceUrl */
         fun generateServiceUrl(
             params: BoxGenerateServiceUrlParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxGenerateServiceUrlResponse>>
+        ): CompletableFuture<HttpResponseFor<ServiceUrlResponse>>
 
         /** @see generateServiceUrl */
         fun generateServiceUrl(
             params: BoxGenerateServiceUrlParams
-        ): CompletableFuture<HttpResponseFor<BoxGenerateServiceUrlResponse>> =
+        ): CompletableFuture<HttpResponseFor<ServiceUrlResponse>> =
             generateServiceUrl(params, RequestOptions.none())
 
         /** @see generateServiceUrl */
         fun generateServiceUrl(
             name: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxGenerateServiceUrlResponse>> =
+        ): CompletableFuture<HttpResponseFor<ServiceUrlResponse>> =
             generateServiceUrl(name, BoxGenerateServiceUrlParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /v2/sandboxes/boxes/{name}/status`, but is otherwise
          * the same as [BoxServiceAsync.getStatus].
          */
-        fun getStatus(name: String): CompletableFuture<HttpResponseFor<BoxGetStatusResponse>> =
+        fun getStatus(name: String): CompletableFuture<HttpResponseFor<SandboxStatusResponse>> =
             getStatus(name, BoxGetStatusParams.none())
 
         /** @see getStatus */
@@ -610,40 +601,40 @@ interface BoxServiceAsync {
             name: String,
             params: BoxGetStatusParams = BoxGetStatusParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxGetStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxStatusResponse>> =
             getStatus(params.toBuilder().name(name).build(), requestOptions)
 
         /** @see getStatus */
         fun getStatus(
             name: String,
             params: BoxGetStatusParams = BoxGetStatusParams.none(),
-        ): CompletableFuture<HttpResponseFor<BoxGetStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxStatusResponse>> =
             getStatus(name, params, RequestOptions.none())
 
         /** @see getStatus */
         fun getStatus(
             params: BoxGetStatusParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxGetStatusResponse>>
+        ): CompletableFuture<HttpResponseFor<SandboxStatusResponse>>
 
         /** @see getStatus */
         fun getStatus(
             params: BoxGetStatusParams
-        ): CompletableFuture<HttpResponseFor<BoxGetStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxStatusResponse>> =
             getStatus(params, RequestOptions.none())
 
         /** @see getStatus */
         fun getStatus(
             name: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxGetStatusResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxStatusResponse>> =
             getStatus(name, BoxGetStatusParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/start`, but is otherwise
          * the same as [BoxServiceAsync.start].
          */
-        fun start(name: String): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
+        fun start(name: String): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             start(name, BoxStartParams.none())
 
         /** @see start */
@@ -651,31 +642,31 @@ interface BoxServiceAsync {
             name: String,
             params: BoxStartParams = BoxStartParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             start(params.toBuilder().name(name).build(), requestOptions)
 
         /** @see start */
         fun start(
             name: String,
             params: BoxStartParams = BoxStartParams.none(),
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             start(name, params, RequestOptions.none())
 
         /** @see start */
         fun start(
             params: BoxStartParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>>
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>>
 
         /** @see start */
-        fun start(params: BoxStartParams): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
+        fun start(params: BoxStartParams): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             start(params, RequestOptions.none())
 
         /** @see start */
         fun start(
             name: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<BoxStartResponse>> =
+        ): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             start(name, BoxStartParams.none(), requestOptions)
 
         /**

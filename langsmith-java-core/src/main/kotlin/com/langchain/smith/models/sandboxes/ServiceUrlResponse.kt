@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.sandboxes.boxes
+package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -15,7 +15,7 @@ import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 
-class BoxGenerateServiceUrlResponse
+class ServiceUrlResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val token: JsonField<String>,
@@ -103,14 +103,11 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of
-         * [BoxGenerateServiceUrlResponse].
-         */
+        /** Returns a mutable builder for constructing an instance of [ServiceUrlResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [BoxGenerateServiceUrlResponse]. */
+    /** A builder for [ServiceUrlResponse]. */
     class Builder internal constructor() {
 
         private var token: JsonField<String> = JsonMissing.of()
@@ -120,12 +117,12 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(boxGenerateServiceUrlResponse: BoxGenerateServiceUrlResponse) = apply {
-            token = boxGenerateServiceUrlResponse.token
-            browserUrl = boxGenerateServiceUrlResponse.browserUrl
-            expiresAt = boxGenerateServiceUrlResponse.expiresAt
-            serviceUrl = boxGenerateServiceUrlResponse.serviceUrl
-            additionalProperties = boxGenerateServiceUrlResponse.additionalProperties.toMutableMap()
+        internal fun from(serviceUrlResponse: ServiceUrlResponse) = apply {
+            token = serviceUrlResponse.token
+            browserUrl = serviceUrlResponse.browserUrl
+            expiresAt = serviceUrlResponse.expiresAt
+            serviceUrl = serviceUrlResponse.serviceUrl
+            additionalProperties = serviceUrlResponse.additionalProperties.toMutableMap()
         }
 
         fun token(token: String) = token(JsonField.of(token))
@@ -191,12 +188,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [BoxGenerateServiceUrlResponse].
+         * Returns an immutable instance of [ServiceUrlResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): BoxGenerateServiceUrlResponse =
-            BoxGenerateServiceUrlResponse(
+        fun build(): ServiceUrlResponse =
+            ServiceUrlResponse(
                 token,
                 browserUrl,
                 expiresAt,
@@ -215,7 +212,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): BoxGenerateServiceUrlResponse = apply {
+    fun validate(): ServiceUrlResponse = apply {
         if (validated) {
             return@apply
         }
@@ -252,7 +249,7 @@ private constructor(
             return true
         }
 
-        return other is BoxGenerateServiceUrlResponse &&
+        return other is ServiceUrlResponse &&
             token == other.token &&
             browserUrl == other.browserUrl &&
             expiresAt == other.expiresAt &&
@@ -267,5 +264,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "BoxGenerateServiceUrlResponse{token=$token, browserUrl=$browserUrl, expiresAt=$expiresAt, serviceUrl=$serviceUrl, additionalProperties=$additionalProperties}"
+        "ServiceUrlResponse{token=$token, browserUrl=$browserUrl, expiresAt=$expiresAt, serviceUrl=$serviceUrl, additionalProperties=$additionalProperties}"
 }

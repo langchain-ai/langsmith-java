@@ -21,7 +21,7 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val box =
+        val sandboxResponse =
             boxService.create(
                 BoxCreateParams.builder()
                     .deleteAfterStopSeconds(0L)
@@ -268,7 +268,7 @@ internal class BoxServiceTest {
                     .build()
             )
 
-        box.validate()
+        sandboxResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -278,9 +278,9 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val box = boxService.retrieve("name")
+        val sandboxResponse = boxService.retrieve("name")
 
-        box.validate()
+        sandboxResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -290,7 +290,7 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val box =
+        val sandboxResponse =
             boxService.update(
                 BoxUpdateParams.builder()
                     .pathName("name")
@@ -404,7 +404,7 @@ internal class BoxServiceTest {
                     .build()
             )
 
-        box.validate()
+        sandboxResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -414,7 +414,7 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val boxes =
+        val sandboxListResponse =
             boxService.list(
                 BoxListParams.builder()
                     .createdBy("created_by")
@@ -427,7 +427,7 @@ internal class BoxServiceTest {
                     .build()
             )
 
-        boxes.validate()
+        sandboxListResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -447,7 +447,7 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val response =
+        val snapshotResponse =
             boxService.createSnapshot(
                 BoxCreateSnapshotParams.builder()
                     .pathName("name")
@@ -459,7 +459,7 @@ internal class BoxServiceTest {
                     .build()
             )
 
-        response.validate()
+        snapshotResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -469,7 +469,7 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val response =
+        val serviceUrlResponse =
             boxService.generateServiceUrl(
                 BoxGenerateServiceUrlParams.builder()
                     .name("name")
@@ -478,7 +478,7 @@ internal class BoxServiceTest {
                     .build()
             )
 
-        response.validate()
+        serviceUrlResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -488,9 +488,9 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val response = boxService.getStatus("name")
+        val sandboxStatusResponse = boxService.getStatus("name")
 
-        response.validate()
+        sandboxStatusResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -500,9 +500,9 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val response = boxService.start("name")
+        val sandboxResponse = boxService.start("name")
 
-        response.validate()
+        sandboxResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
