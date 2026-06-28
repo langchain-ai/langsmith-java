@@ -24,6 +24,7 @@ internal class BoxServiceTest {
         val sandboxResponse =
             boxService.create(
                 BoxCreateParams.builder()
+                    .cpuMillicores(0L)
                     .deleteAfterStopSeconds(0L)
                     .envVars(
                         BoxCreateParams.EnvVars.builder()
@@ -294,6 +295,7 @@ internal class BoxServiceTest {
             boxService.update(
                 BoxUpdateParams.builder()
                     .pathName("name")
+                    .cpuMillicores(0L)
                     .deleteAfterStopSeconds(0L)
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)

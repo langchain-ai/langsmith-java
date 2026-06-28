@@ -12,6 +12,7 @@ internal class BoxCreateParamsTest {
     @Test
     fun create() {
         BoxCreateParams.builder()
+            .cpuMillicores(0L)
             .deleteAfterStopSeconds(0L)
             .envVars(
                 BoxCreateParams.EnvVars.builder()
@@ -237,6 +238,7 @@ internal class BoxCreateParamsTest {
     fun body() {
         val params =
             BoxCreateParams.builder()
+                .cpuMillicores(0L)
                 .deleteAfterStopSeconds(0L)
                 .envVars(
                     BoxCreateParams.EnvVars.builder()
@@ -469,6 +471,7 @@ internal class BoxCreateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.cpuMillicores()).contains(0L)
         assertThat(body.deleteAfterStopSeconds()).contains(0L)
         assertThat(body.envVars())
             .contains(

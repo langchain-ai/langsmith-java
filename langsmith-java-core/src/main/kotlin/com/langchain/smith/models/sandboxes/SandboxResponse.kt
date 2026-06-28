@@ -35,6 +35,7 @@ class SandboxResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
+    private val cpuMillicores: JsonField<Long>,
     private val createdAt: JsonField<String>,
     private val createdBy: JsonField<String>,
     private val dataplaneUrl: JsonField<String>,
@@ -59,6 +60,9 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("cpu_millicores")
+        @ExcludeMissing
+        cpuMillicores: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("created_at") @ExcludeMissing createdAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("dataplane_url")
@@ -95,6 +99,7 @@ private constructor(
         @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
     ) : this(
         id,
+        cpuMillicores,
         createdAt,
         createdBy,
         dataplaneUrl,
@@ -121,6 +126,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun id(): Optional<String> = id.getOptional("id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun cpuMillicores(): Optional<Long> = cpuMillicores.getOptional("cpu_millicores")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -237,6 +248,15 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [cpuMillicores].
+     *
+     * Unlike [cpuMillicores], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("cpu_millicores")
+    @ExcludeMissing
+    fun _cpuMillicores(): JsonField<Long> = cpuMillicores
 
     /**
      * Returns the raw JSON value of [createdAt].
@@ -401,6 +421,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
+        private var cpuMillicores: JsonField<Long> = JsonMissing.of()
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var createdBy: JsonField<String> = JsonMissing.of()
         private var dataplaneUrl: JsonField<String> = JsonMissing.of()
@@ -424,6 +445,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(sandboxResponse: SandboxResponse) = apply {
             id = sandboxResponse.id
+            cpuMillicores = sandboxResponse.cpuMillicores
             createdAt = sandboxResponse.createdAt
             createdBy = sandboxResponse.createdBy
             dataplaneUrl = sandboxResponse.dataplaneUrl
@@ -454,6 +476,19 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
+
+        fun cpuMillicores(cpuMillicores: Long) = cpuMillicores(JsonField.of(cpuMillicores))
+
+        /**
+         * Sets [Builder.cpuMillicores] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.cpuMillicores] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun cpuMillicores(cpuMillicores: JsonField<Long>) = apply {
+            this.cpuMillicores = cpuMillicores
+        }
 
         fun createdAt(createdAt: String) = createdAt(JsonField.of(createdAt))
 
@@ -691,6 +726,7 @@ private constructor(
         fun build(): SandboxResponse =
             SandboxResponse(
                 id,
+                cpuMillicores,
                 createdAt,
                 createdBy,
                 dataplaneUrl,
@@ -729,6 +765,7 @@ private constructor(
         }
 
         id()
+        cpuMillicores()
         createdAt()
         createdBy()
         dataplaneUrl()
@@ -766,6 +803,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
+            (if (cpuMillicores.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (createdBy.asKnown().isPresent) 1 else 0) +
             (if (dataplaneUrl.asKnown().isPresent) 1 else 0) +
@@ -12930,6 +12968,7 @@ private constructor(
 
         return other is SandboxResponse &&
             id == other.id &&
+            cpuMillicores == other.cpuMillicores &&
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
             dataplaneUrl == other.dataplaneUrl &&
@@ -12954,6 +12993,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             id,
+            cpuMillicores,
             createdAt,
             createdBy,
             dataplaneUrl,
@@ -12979,5 +13019,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

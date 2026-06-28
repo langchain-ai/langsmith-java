@@ -18,6 +18,7 @@ internal class SandboxListResponseTest {
                 .addSandbox(
                     SandboxResponse.builder()
                         .id("id")
+                        .cpuMillicores(0L)
                         .createdAt("created_at")
                         .createdBy("created_by")
                         .dataplaneUrl("dataplane_url")
@@ -273,6 +274,7 @@ internal class SandboxListResponseTest {
             .containsExactly(
                 SandboxResponse.builder()
                     .id("id")
+                    .cpuMillicores(0L)
                     .createdAt("created_at")
                     .createdBy("created_by")
                     .dataplaneUrl("dataplane_url")
@@ -528,6 +530,7 @@ internal class SandboxListResponseTest {
                 .addSandbox(
                     SandboxResponse.builder()
                         .id("id")
+                        .cpuMillicores(0L)
                         .createdAt("created_at")
                         .createdBy("created_by")
                         .dataplaneUrl("dataplane_url")

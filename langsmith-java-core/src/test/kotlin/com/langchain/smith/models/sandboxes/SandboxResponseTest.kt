@@ -14,6 +14,7 @@ internal class SandboxResponseTest {
         val sandboxResponse =
             SandboxResponse.builder()
                 .id("id")
+                .cpuMillicores(0L)
                 .createdAt("created_at")
                 .createdBy("created_by")
                 .dataplaneUrl("dataplane_url")
@@ -246,6 +247,7 @@ internal class SandboxResponseTest {
                 .build()
 
         assertThat(sandboxResponse.id()).contains("id")
+        assertThat(sandboxResponse.cpuMillicores()).contains(0L)
         assertThat(sandboxResponse.createdAt()).contains("created_at")
         assertThat(sandboxResponse.createdBy()).contains("created_by")
         assertThat(sandboxResponse.dataplaneUrl()).contains("dataplane_url")
@@ -475,6 +477,7 @@ internal class SandboxResponseTest {
         val sandboxResponse =
             SandboxResponse.builder()
                 .id("id")
+                .cpuMillicores(0L)
                 .createdAt("created_at")
                 .createdBy("created_by")
                 .dataplaneUrl("dataplane_url")
