@@ -11,6 +11,8 @@ import com.langchain.smith.models.workspaces.WorkspaceDeleteParams
 import com.langchain.smith.models.workspaces.WorkspaceDeleteResponse
 import com.langchain.smith.models.workspaces.WorkspaceListParams
 import com.langchain.smith.models.workspaces.WorkspaceListResponse
+import com.langchain.smith.models.workspaces.WorkspaceRetrieveParams
+import com.langchain.smith.models.workspaces.WorkspaceRetrieveResponse
 import com.langchain.smith.models.workspaces.WorkspaceUpdateParams
 import com.langchain.smith.models.workspaces.WorkspaceUpdateResponse
 import java.util.concurrent.CompletableFuture
@@ -39,6 +41,42 @@ interface WorkspaceServiceAsync {
         params: WorkspaceCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<WorkspaceCreateResponse>
+
+    /** Get a single workspace by ID, scoped to the current org and identity. */
+    fun retrieve(workspaceId: String): CompletableFuture<WorkspaceRetrieveResponse> =
+        retrieve(workspaceId, WorkspaceRetrieveParams.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        workspaceId: String,
+        params: WorkspaceRetrieveParams = WorkspaceRetrieveParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<WorkspaceRetrieveResponse> =
+        retrieve(params.toBuilder().workspaceId(workspaceId).build(), requestOptions)
+
+    /** @see retrieve */
+    fun retrieve(
+        workspaceId: String,
+        params: WorkspaceRetrieveParams = WorkspaceRetrieveParams.none(),
+    ): CompletableFuture<WorkspaceRetrieveResponse> =
+        retrieve(workspaceId, params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        params: WorkspaceRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<WorkspaceRetrieveResponse>
+
+    /** @see retrieve */
+    fun retrieve(params: WorkspaceRetrieveParams): CompletableFuture<WorkspaceRetrieveResponse> =
+        retrieve(params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        workspaceId: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<WorkspaceRetrieveResponse> =
+        retrieve(workspaceId, WorkspaceRetrieveParams.none(), requestOptions)
 
     /** Update a workspace. */
     fun update(
@@ -150,6 +188,49 @@ interface WorkspaceServiceAsync {
             params: WorkspaceCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<WorkspaceCreateResponse>>
+
+        /**
+         * Returns a raw HTTP response for `get /api/v1/workspaces/{workspace_id}`, but is otherwise
+         * the same as [WorkspaceServiceAsync.retrieve].
+         */
+        fun retrieve(
+            workspaceId: String
+        ): CompletableFuture<HttpResponseFor<WorkspaceRetrieveResponse>> =
+            retrieve(workspaceId, WorkspaceRetrieveParams.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            workspaceId: String,
+            params: WorkspaceRetrieveParams = WorkspaceRetrieveParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<WorkspaceRetrieveResponse>> =
+            retrieve(params.toBuilder().workspaceId(workspaceId).build(), requestOptions)
+
+        /** @see retrieve */
+        fun retrieve(
+            workspaceId: String,
+            params: WorkspaceRetrieveParams = WorkspaceRetrieveParams.none(),
+        ): CompletableFuture<HttpResponseFor<WorkspaceRetrieveResponse>> =
+            retrieve(workspaceId, params, RequestOptions.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            params: WorkspaceRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<WorkspaceRetrieveResponse>>
+
+        /** @see retrieve */
+        fun retrieve(
+            params: WorkspaceRetrieveParams
+        ): CompletableFuture<HttpResponseFor<WorkspaceRetrieveResponse>> =
+            retrieve(params, RequestOptions.none())
+
+        /** @see retrieve */
+        fun retrieve(
+            workspaceId: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<WorkspaceRetrieveResponse>> =
+            retrieve(workspaceId, WorkspaceRetrieveParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `patch /api/v1/workspaces/{workspace_id}`, but is

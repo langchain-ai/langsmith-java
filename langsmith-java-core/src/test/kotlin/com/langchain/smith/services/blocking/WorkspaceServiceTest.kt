@@ -5,6 +5,7 @@ package com.langchain.smith.services.blocking
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.models.workspaces.WorkspaceCreateParams
 import com.langchain.smith.models.workspaces.WorkspaceListParams
+import com.langchain.smith.models.workspaces.WorkspaceRetrieveParams
 import com.langchain.smith.models.workspaces.WorkspaceUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -24,6 +25,25 @@ internal class WorkspaceServiceTest {
                     .displayName("display_name")
                     .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .tenantHandle("tenant_handle")
+                    .build()
+            )
+
+        workspace.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieve() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val workspaceService = client.workspaces()
+
+        val workspace =
+            workspaceService.retrieve(
+                WorkspaceRetrieveParams.builder()
+                    .workspaceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .dataPlaneId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .includeDeleted(true)
                     .build()
             )
 

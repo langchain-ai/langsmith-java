@@ -22,6 +22,8 @@ import com.langchain.smith.models.workspaces.WorkspaceDeleteParams
 import com.langchain.smith.models.workspaces.WorkspaceDeleteResponse
 import com.langchain.smith.models.workspaces.WorkspaceListParams
 import com.langchain.smith.models.workspaces.WorkspaceListResponse
+import com.langchain.smith.models.workspaces.WorkspaceRetrieveParams
+import com.langchain.smith.models.workspaces.WorkspaceRetrieveResponse
 import com.langchain.smith.models.workspaces.WorkspaceUpdateParams
 import com.langchain.smith.models.workspaces.WorkspaceUpdateResponse
 import java.util.concurrent.CompletableFuture
@@ -46,6 +48,13 @@ class WorkspaceServiceAsyncImpl internal constructor(private val clientOptions: 
     ): CompletableFuture<WorkspaceCreateResponse> =
         // post /api/v1/workspaces
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+
+    override fun retrieve(
+        params: WorkspaceRetrieveParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<WorkspaceRetrieveResponse> =
+        // get /api/v1/workspaces/{workspace_id}
+        withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: WorkspaceUpdateParams,
@@ -103,6 +112,39 @@ class WorkspaceServiceAsyncImpl internal constructor(private val clientOptions: 
                     errorHandler.handle(response).parseable {
                         response
                             .use { createHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val retrieveHandler: Handler<WorkspaceRetrieveResponse> =
+            jsonHandler<WorkspaceRetrieveResponse>(clientOptions.jsonMapper)
+
+        override fun retrieve(
+            params: WorkspaceRetrieveParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<WorkspaceRetrieveResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("workspaceId", params.workspaceId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v1", "workspaces", params._pathParam(0))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
