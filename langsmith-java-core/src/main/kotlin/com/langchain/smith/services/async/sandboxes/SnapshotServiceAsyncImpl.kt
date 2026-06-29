@@ -17,13 +17,12 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
+import com.langchain.smith.models.sandboxes.SnapshotListResponse
+import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -43,14 +42,14 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun create(
         params: SnapshotCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SnapshotCreateResponse> =
+    ): CompletableFuture<SnapshotResponse> =
         // post /v2/sandboxes/snapshots
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
         params: SnapshotRetrieveParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SnapshotRetrieveResponse> =
+    ): CompletableFuture<SnapshotResponse> =
         // get /v2/sandboxes/snapshots/{snapshot_id}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
@@ -81,13 +80,13 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<SnapshotCreateResponse> =
-            jsonHandler<SnapshotCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<SnapshotResponse> =
+            jsonHandler<SnapshotResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: SnapshotCreateParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SnapshotCreateResponse>> {
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -112,13 +111,13 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
                 }
         }
 
-        private val retrieveHandler: Handler<SnapshotRetrieveResponse> =
-            jsonHandler<SnapshotRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<SnapshotResponse> =
+            jsonHandler<SnapshotResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: SnapshotRetrieveParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SnapshotRetrieveResponse>> {
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("snapshotId", params.snapshotId().getOrNull())

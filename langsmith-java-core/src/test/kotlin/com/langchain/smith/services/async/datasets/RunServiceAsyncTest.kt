@@ -4,9 +4,7 @@ package com.langchain.smith.services.async.datasets
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.datasets.runs.QueryFeedbackDelta
 import com.langchain.smith.models.datasets.runs.RunCreateParams
-import com.langchain.smith.models.datasets.runs.RunDeltaParams
 import com.langchain.smith.models.datasets.runs.SortParamsForRunsComparisonView
 import kotlin.jvm.optionals.getOrNull
 import org.junit.jupiter.api.Disabled
@@ -53,41 +51,5 @@ internal class RunServiceAsyncTest {
         val exampleWithRunsChes = exampleWithRunsChesFuture.get()
         val unwrappedExampleWithRunsChes = exampleWithRunsChes.getOrNull()
         unwrappedExampleWithRunsChes?.forEach { it.validate() }
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
-    fun delta() {
-        val client =
-            LangsmithOkHttpClientAsync.builder()
-                .apiKey("My API Key")
-                .tenantId("My Tenant ID")
-                .build()
-        val runServiceAsync = client.datasets().runs()
-
-        val sessionFeedbackDeltaFuture =
-            runServiceAsync.delta(
-                RunDeltaParams.builder()
-                    .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .queryFeedbackDelta(
-                        QueryFeedbackDelta.builder()
-                            .baselineSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .addComparisonSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .feedbackKey("feedback_key")
-                            .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .filters(
-                                QueryFeedbackDelta.Filters.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
-                                    .build()
-                            )
-                            .limit(1L)
-                            .offset(0L)
-                            .build()
-                    )
-                    .build()
-            )
-
-        val sessionFeedbackDelta = sessionFeedbackDeltaFuture.get()
-        sessionFeedbackDelta.validate()
     }
 }

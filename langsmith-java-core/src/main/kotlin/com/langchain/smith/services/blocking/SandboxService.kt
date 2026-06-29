@@ -4,6 +4,7 @@ package com.langchain.smith.services.blocking
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.blocking.sandboxes.BoxService
+import com.langchain.smith.services.blocking.sandboxes.RegistryService
 import com.langchain.smith.services.blocking.sandboxes.SnapshotService
 import java.util.function.Consumer
 
@@ -23,6 +24,8 @@ interface SandboxService {
 
     fun boxes(): BoxService
 
+    fun registries(): RegistryService
+
     fun snapshots(): SnapshotService
 
     /** A view of [SandboxService] that provides access to raw HTTP responses for each method. */
@@ -36,6 +39,8 @@ interface SandboxService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): SandboxService.WithRawResponse
 
         fun boxes(): BoxService.WithRawResponse
+
+        fun registries(): RegistryService.WithRawResponse
 
         fun snapshots(): SnapshotService.WithRawResponse
     }

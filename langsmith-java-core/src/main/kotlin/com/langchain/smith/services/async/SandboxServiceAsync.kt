@@ -4,6 +4,7 @@ package com.langchain.smith.services.async
 
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.services.async.sandboxes.BoxServiceAsync
+import com.langchain.smith.services.async.sandboxes.RegistryServiceAsync
 import com.langchain.smith.services.async.sandboxes.SnapshotServiceAsync
 import java.util.function.Consumer
 
@@ -23,6 +24,8 @@ interface SandboxServiceAsync {
 
     fun boxes(): BoxServiceAsync
 
+    fun registries(): RegistryServiceAsync
+
     fun snapshots(): SnapshotServiceAsync
 
     /**
@@ -40,6 +43,8 @@ interface SandboxServiceAsync {
         ): SandboxServiceAsync.WithRawResponse
 
         fun boxes(): BoxServiceAsync.WithRawResponse
+
+        fun registries(): RegistryServiceAsync.WithRawResponse
 
         fun snapshots(): SnapshotServiceAsync.WithRawResponse
     }

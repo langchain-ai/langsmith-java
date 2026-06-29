@@ -17,7 +17,7 @@ internal class SnapshotServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val snapshotService = client.sandboxes().snapshots()
 
-        val snapshot =
+        val snapshotResponse =
             snapshotService.create(
                 SnapshotCreateParams.builder()
                     .dockerImage("docker_image")
@@ -27,7 +27,7 @@ internal class SnapshotServiceTest {
                     .build()
             )
 
-        snapshot.validate()
+        snapshotResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -37,9 +37,9 @@ internal class SnapshotServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val snapshotService = client.sandboxes().snapshots()
 
-        val snapshot = snapshotService.retrieve("snapshot_id")
+        val snapshotResponse = snapshotService.retrieve("snapshot_id")
 
-        snapshot.validate()
+        snapshotResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -49,7 +49,7 @@ internal class SnapshotServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val snapshotService = client.sandboxes().snapshots()
 
-        val snapshots =
+        val snapshotListResponse =
             snapshotService.list(
                 SnapshotListParams.builder()
                     .createdBy("created_by")
@@ -62,7 +62,7 @@ internal class SnapshotServiceTest {
                     .build()
             )
 
-        snapshots.validate()
+        snapshotListResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")

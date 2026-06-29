@@ -17,24 +17,21 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.sandboxes.SandboxListResponse
+import com.langchain.smith.models.sandboxes.SandboxResponse
+import com.langchain.smith.models.sandboxes.SandboxStatusResponse
+import com.langchain.smith.models.sandboxes.ServiceUrlResponse
+import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
-import com.langchain.smith.models.sandboxes.boxes.BoxCreateResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
-import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
-import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
-import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
-import com.langchain.smith.models.sandboxes.boxes.BoxListResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
-import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
-import com.langchain.smith.models.sandboxes.boxes.BoxStartResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxStopParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
-import com.langchain.smith.models.sandboxes.boxes.BoxUpdateResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -49,28 +46,22 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): BoxService =
         BoxServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun create(
-        params: BoxCreateParams,
-        requestOptions: RequestOptions,
-    ): BoxCreateResponse =
+    override fun create(params: BoxCreateParams, requestOptions: RequestOptions): SandboxResponse =
         // post /v2/sandboxes/boxes
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: BoxRetrieveParams,
         requestOptions: RequestOptions,
-    ): BoxRetrieveResponse =
+    ): SandboxResponse =
         // get /v2/sandboxes/boxes/{name}
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    override fun update(
-        params: BoxUpdateParams,
-        requestOptions: RequestOptions,
-    ): BoxUpdateResponse =
+    override fun update(params: BoxUpdateParams, requestOptions: RequestOptions): SandboxResponse =
         // patch /v2/sandboxes/boxes/{name}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(params: BoxListParams, requestOptions: RequestOptions): BoxListResponse =
+    override fun list(params: BoxListParams, requestOptions: RequestOptions): SandboxListResponse =
         // get /v2/sandboxes/boxes
         withRawResponse().list(params, requestOptions).parse()
 
@@ -82,25 +73,25 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
     override fun createSnapshot(
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions,
-    ): BoxCreateSnapshotResponse =
+    ): SnapshotResponse =
         // post /v2/sandboxes/boxes/{name}/snapshot
         withRawResponse().createSnapshot(params, requestOptions).parse()
 
     override fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams,
         requestOptions: RequestOptions,
-    ): BoxGenerateServiceUrlResponse =
+    ): ServiceUrlResponse =
         // post /v2/sandboxes/boxes/{name}/service-url
         withRawResponse().generateServiceUrl(params, requestOptions).parse()
 
     override fun getStatus(
         params: BoxGetStatusParams,
         requestOptions: RequestOptions,
-    ): BoxGetStatusResponse =
+    ): SandboxStatusResponse =
         // get /v2/sandboxes/boxes/{name}/status
         withRawResponse().getStatus(params, requestOptions).parse()
 
-    override fun start(params: BoxStartParams, requestOptions: RequestOptions): BoxStartResponse =
+    override fun start(params: BoxStartParams, requestOptions: RequestOptions): SandboxResponse =
         // post /v2/sandboxes/boxes/{name}/start
         withRawResponse().start(params, requestOptions).parse()
 
@@ -122,13 +113,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<BoxCreateResponse> =
-            jsonHandler<BoxCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<SandboxResponse> =
+            jsonHandler<SandboxResponse>(clientOptions.jsonMapper)
 
         override fun create(
             params: BoxCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxCreateResponse> {
+        ): HttpResponseFor<SandboxResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -150,13 +141,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val retrieveHandler: Handler<BoxRetrieveResponse> =
-            jsonHandler<BoxRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<SandboxResponse> =
+            jsonHandler<SandboxResponse>(clientOptions.jsonMapper)
 
         override fun retrieve(
             params: BoxRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxRetrieveResponse> {
+        ): HttpResponseFor<SandboxResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("name", params.name().getOrNull())
@@ -180,13 +171,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val updateHandler: Handler<BoxUpdateResponse> =
-            jsonHandler<BoxUpdateResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<SandboxResponse> =
+            jsonHandler<SandboxResponse>(clientOptions.jsonMapper)
 
         override fun update(
             params: BoxUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxUpdateResponse> {
+        ): HttpResponseFor<SandboxResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("pathName", params.pathName().getOrNull())
@@ -211,13 +202,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val listHandler: Handler<BoxListResponse> =
-            jsonHandler<BoxListResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<SandboxListResponse> =
+            jsonHandler<SandboxListResponse>(clientOptions.jsonMapper)
 
         override fun list(
             params: BoxListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxListResponse> {
+        ): HttpResponseFor<SandboxListResponse> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -259,13 +250,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val createSnapshotHandler: Handler<BoxCreateSnapshotResponse> =
-            jsonHandler<BoxCreateSnapshotResponse>(clientOptions.jsonMapper)
+        private val createSnapshotHandler: Handler<SnapshotResponse> =
+            jsonHandler<SnapshotResponse>(clientOptions.jsonMapper)
 
         override fun createSnapshot(
             params: BoxCreateSnapshotParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxCreateSnapshotResponse> {
+        ): HttpResponseFor<SnapshotResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("pathName", params.pathName().getOrNull())
@@ -290,13 +281,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val generateServiceUrlHandler: Handler<BoxGenerateServiceUrlResponse> =
-            jsonHandler<BoxGenerateServiceUrlResponse>(clientOptions.jsonMapper)
+        private val generateServiceUrlHandler: Handler<ServiceUrlResponse> =
+            jsonHandler<ServiceUrlResponse>(clientOptions.jsonMapper)
 
         override fun generateServiceUrl(
             params: BoxGenerateServiceUrlParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxGenerateServiceUrlResponse> {
+        ): HttpResponseFor<ServiceUrlResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("name", params.name().getOrNull())
@@ -327,13 +318,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val getStatusHandler: Handler<BoxGetStatusResponse> =
-            jsonHandler<BoxGetStatusResponse>(clientOptions.jsonMapper)
+        private val getStatusHandler: Handler<SandboxStatusResponse> =
+            jsonHandler<SandboxStatusResponse>(clientOptions.jsonMapper)
 
         override fun getStatus(
             params: BoxGetStatusParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxGetStatusResponse> {
+        ): HttpResponseFor<SandboxStatusResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("name", params.name().getOrNull())
@@ -357,13 +348,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val startHandler: Handler<BoxStartResponse> =
-            jsonHandler<BoxStartResponse>(clientOptions.jsonMapper)
+        private val startHandler: Handler<SandboxResponse> =
+            jsonHandler<SandboxResponse>(clientOptions.jsonMapper)
 
         override fun start(
             params: BoxStartParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<BoxStartResponse> {
+        ): HttpResponseFor<SandboxResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("name", params.name().getOrNull())

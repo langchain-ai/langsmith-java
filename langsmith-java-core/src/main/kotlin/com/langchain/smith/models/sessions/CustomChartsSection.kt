@@ -7243,13 +7243,15 @@ private constructor(
                     class Params
                     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                     private constructor(
-                        private val p: JsonField<Long>,
+                        private val p: JsonField<Double>,
                         private val additionalProperties: MutableMap<String, JsonValue>,
                     ) {
 
                         @JsonCreator
                         private constructor(
-                            @JsonProperty("p") @ExcludeMissing p: JsonField<Long> = JsonMissing.of()
+                            @JsonProperty("p")
+                            @ExcludeMissing
+                            p: JsonField<Double> = JsonMissing.of()
                         ) : this(p, mutableMapOf())
 
                         /**
@@ -7257,7 +7259,7 @@ private constructor(
                          *   type or is unexpectedly missing or null (e.g. if the server responded
                          *   with an unexpected value).
                          */
-                        fun p(): Long = p.getRequired("p")
+                        fun p(): Double = p.getRequired("p")
 
                         /**
                          * Returns the raw JSON value of [p].
@@ -7265,7 +7267,7 @@ private constructor(
                          * Unlike [p], this method doesn't throw if the JSON field has an unexpected
                          * type.
                          */
-                        @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+                        @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
 
                         @JsonAnySetter
                         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -7295,7 +7297,7 @@ private constructor(
                         /** A builder for [Params]. */
                         class Builder internal constructor() {
 
-                            private var p: JsonField<Long>? = null
+                            private var p: JsonField<Double>? = null
                             private var additionalProperties: MutableMap<String, JsonValue> =
                                 mutableMapOf()
 
@@ -7305,16 +7307,16 @@ private constructor(
                                 additionalProperties = params.additionalProperties.toMutableMap()
                             }
 
-                            fun p(p: Long) = p(JsonField.of(p))
+                            fun p(p: Double) = p(JsonField.of(p))
 
                             /**
                              * Sets [Builder.p] to an arbitrary JSON value.
                              *
-                             * You should usually call [Builder.p] with a well-typed [Long] value
+                             * You should usually call [Builder.p] with a well-typed [Double] value
                              * instead. This method is primarily for setting the field to an
                              * undocumented or not yet supported value.
                              */
-                            fun p(p: JsonField<Long>) = apply { this.p = p }
+                            fun p(p: JsonField<Double>) = apply { this.p = p }
 
                             fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
                                 apply {
@@ -9543,7 +9545,7 @@ private constructor(
                             class Params
                             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                             private constructor(
-                                private val p: JsonField<Long>,
+                                private val p: JsonField<Double>,
                                 private val additionalProperties: MutableMap<String, JsonValue>,
                             ) {
 
@@ -9551,7 +9553,7 @@ private constructor(
                                 private constructor(
                                     @JsonProperty("p")
                                     @ExcludeMissing
-                                    p: JsonField<Long> = JsonMissing.of()
+                                    p: JsonField<Double> = JsonMissing.of()
                                 ) : this(p, mutableMapOf())
 
                                 /**
@@ -9559,7 +9561,7 @@ private constructor(
                                  *   unexpected type or is unexpectedly missing or null (e.g. if the
                                  *   server responded with an unexpected value).
                                  */
-                                fun p(): Long = p.getRequired("p")
+                                fun p(): Double = p.getRequired("p")
 
                                 /**
                                  * Returns the raw JSON value of [p].
@@ -9567,7 +9569,7 @@ private constructor(
                                  * Unlike [p], this method doesn't throw if the JSON field has an
                                  * unexpected type.
                                  */
-                                @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+                                @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
 
                                 @JsonAnySetter
                                 private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -9598,7 +9600,7 @@ private constructor(
                                 /** A builder for [Params]. */
                                 class Builder internal constructor() {
 
-                                    private var p: JsonField<Long>? = null
+                                    private var p: JsonField<Double>? = null
                                     private var additionalProperties:
                                         MutableMap<String, JsonValue> =
                                         mutableMapOf()
@@ -9610,16 +9612,16 @@ private constructor(
                                             params.additionalProperties.toMutableMap()
                                     }
 
-                                    fun p(p: Long) = p(JsonField.of(p))
+                                    fun p(p: Double) = p(JsonField.of(p))
 
                                     /**
                                      * Sets [Builder.p] to an arbitrary JSON value.
                                      *
-                                     * You should usually call [Builder.p] with a well-typed [Long]
-                                     * value instead. This method is primarily for setting the field
-                                     * to an undocumented or not yet supported value.
+                                     * You should usually call [Builder.p] with a well-typed
+                                     * [Double] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
                                      */
-                                    fun p(p: JsonField<Long>) = apply { this.p = p }
+                                    fun p(p: JsonField<Double>) = apply { this.p = p }
 
                                     fun additionalProperties(
                                         additionalProperties: Map<String, JsonValue>
@@ -11548,7 +11550,7 @@ private constructor(
                             class Params
                             @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                             private constructor(
-                                private val p: JsonField<Long>,
+                                private val p: JsonField<Double>,
                                 private val additionalProperties: MutableMap<String, JsonValue>,
                             ) {
 
@@ -11556,7 +11558,7 @@ private constructor(
                                 private constructor(
                                     @JsonProperty("p")
                                     @ExcludeMissing
-                                    p: JsonField<Long> = JsonMissing.of()
+                                    p: JsonField<Double> = JsonMissing.of()
                                 ) : this(p, mutableMapOf())
 
                                 /**
@@ -11564,7 +11566,7 @@ private constructor(
                                  *   unexpected type or is unexpectedly missing or null (e.g. if the
                                  *   server responded with an unexpected value).
                                  */
-                                fun p(): Long = p.getRequired("p")
+                                fun p(): Double = p.getRequired("p")
 
                                 /**
                                  * Returns the raw JSON value of [p].
@@ -11572,7 +11574,7 @@ private constructor(
                                  * Unlike [p], this method doesn't throw if the JSON field has an
                                  * unexpected type.
                                  */
-                                @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+                                @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
 
                                 @JsonAnySetter
                                 private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -11603,7 +11605,7 @@ private constructor(
                                 /** A builder for [Params]. */
                                 class Builder internal constructor() {
 
-                                    private var p: JsonField<Long>? = null
+                                    private var p: JsonField<Double>? = null
                                     private var additionalProperties:
                                         MutableMap<String, JsonValue> =
                                         mutableMapOf()
@@ -11615,16 +11617,16 @@ private constructor(
                                             params.additionalProperties.toMutableMap()
                                     }
 
-                                    fun p(p: Long) = p(JsonField.of(p))
+                                    fun p(p: Double) = p(JsonField.of(p))
 
                                     /**
                                      * Sets [Builder.p] to an arbitrary JSON value.
                                      *
-                                     * You should usually call [Builder.p] with a well-typed [Long]
-                                     * value instead. This method is primarily for setting the field
-                                     * to an undocumented or not yet supported value.
+                                     * You should usually call [Builder.p] with a well-typed
+                                     * [Double] value instead. This method is primarily for setting
+                                     * the field to an undocumented or not yet supported value.
                                      */
-                                    fun p(p: JsonField<Long>) = apply { this.p = p }
+                                    fun p(p: JsonField<Double>) = apply { this.p = p }
 
                                     fun additionalProperties(
                                         additionalProperties: Map<String, JsonValue>
@@ -19739,7 +19741,7 @@ private constructor(
                         class Params
                         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                         private constructor(
-                            private val p: JsonField<Long>,
+                            private val p: JsonField<Double>,
                             private val additionalProperties: MutableMap<String, JsonValue>,
                         ) {
 
@@ -19747,7 +19749,7 @@ private constructor(
                             private constructor(
                                 @JsonProperty("p")
                                 @ExcludeMissing
-                                p: JsonField<Long> = JsonMissing.of()
+                                p: JsonField<Double> = JsonMissing.of()
                             ) : this(p, mutableMapOf())
 
                             /**
@@ -19755,7 +19757,7 @@ private constructor(
                              *   unexpected type or is unexpectedly missing or null (e.g. if the
                              *   server responded with an unexpected value).
                              */
-                            fun p(): Long = p.getRequired("p")
+                            fun p(): Double = p.getRequired("p")
 
                             /**
                              * Returns the raw JSON value of [p].
@@ -19763,7 +19765,7 @@ private constructor(
                              * Unlike [p], this method doesn't throw if the JSON field has an
                              * unexpected type.
                              */
-                            @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+                            @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Double> = p
 
                             @JsonAnySetter
                             private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -19794,7 +19796,7 @@ private constructor(
                             /** A builder for [Params]. */
                             class Builder internal constructor() {
 
-                                private var p: JsonField<Long>? = null
+                                private var p: JsonField<Double>? = null
                                 private var additionalProperties: MutableMap<String, JsonValue> =
                                     mutableMapOf()
 
@@ -19805,16 +19807,16 @@ private constructor(
                                         params.additionalProperties.toMutableMap()
                                 }
 
-                                fun p(p: Long) = p(JsonField.of(p))
+                                fun p(p: Double) = p(JsonField.of(p))
 
                                 /**
                                  * Sets [Builder.p] to an arbitrary JSON value.
                                  *
-                                 * You should usually call [Builder.p] with a well-typed [Long]
+                                 * You should usually call [Builder.p] with a well-typed [Double]
                                  * value instead. This method is primarily for setting the field to
                                  * an undocumented or not yet supported value.
                                  */
-                                fun p(p: JsonField<Long>) = apply { this.p = p }
+                                fun p(p: JsonField<Double>) = apply { this.p = p }
 
                                 fun additionalProperties(
                                     additionalProperties: Map<String, JsonValue>
@@ -22105,7 +22107,7 @@ private constructor(
                                 class Params
                                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                                 private constructor(
-                                    private val p: JsonField<Long>,
+                                    private val p: JsonField<Double>,
                                     private val additionalProperties: MutableMap<String, JsonValue>,
                                 ) {
 
@@ -22113,7 +22115,7 @@ private constructor(
                                     private constructor(
                                         @JsonProperty("p")
                                         @ExcludeMissing
-                                        p: JsonField<Long> = JsonMissing.of()
+                                        p: JsonField<Double> = JsonMissing.of()
                                     ) : this(p, mutableMapOf())
 
                                     /**
@@ -22121,7 +22123,7 @@ private constructor(
                                      *   an unexpected type or is unexpectedly missing or null (e.g.
                                      *   if the server responded with an unexpected value).
                                      */
-                                    fun p(): Long = p.getRequired("p")
+                                    fun p(): Double = p.getRequired("p")
 
                                     /**
                                      * Returns the raw JSON value of [p].
@@ -22129,7 +22131,9 @@ private constructor(
                                      * Unlike [p], this method doesn't throw if the JSON field has
                                      * an unexpected type.
                                      */
-                                    @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+                                    @JsonProperty("p")
+                                    @ExcludeMissing
+                                    fun _p(): JsonField<Double> = p
 
                                     @JsonAnySetter
                                     private fun putAdditionalProperty(
@@ -22163,7 +22167,7 @@ private constructor(
                                     /** A builder for [Params]. */
                                     class Builder internal constructor() {
 
-                                        private var p: JsonField<Long>? = null
+                                        private var p: JsonField<Double>? = null
                                         private var additionalProperties:
                                             MutableMap<String, JsonValue> =
                                             mutableMapOf()
@@ -22175,17 +22179,17 @@ private constructor(
                                                 params.additionalProperties.toMutableMap()
                                         }
 
-                                        fun p(p: Long) = p(JsonField.of(p))
+                                        fun p(p: Double) = p(JsonField.of(p))
 
                                         /**
                                          * Sets [Builder.p] to an arbitrary JSON value.
                                          *
                                          * You should usually call [Builder.p] with a well-typed
-                                         * [Long] value instead. This method is primarily for
+                                         * [Double] value instead. This method is primarily for
                                          * setting the field to an undocumented or not yet supported
                                          * value.
                                          */
-                                        fun p(p: JsonField<Long>) = apply { this.p = p }
+                                        fun p(p: JsonField<Double>) = apply { this.p = p }
 
                                         fun additionalProperties(
                                             additionalProperties: Map<String, JsonValue>
@@ -24164,7 +24168,7 @@ private constructor(
                                 class Params
                                 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
                                 private constructor(
-                                    private val p: JsonField<Long>,
+                                    private val p: JsonField<Double>,
                                     private val additionalProperties: MutableMap<String, JsonValue>,
                                 ) {
 
@@ -24172,7 +24176,7 @@ private constructor(
                                     private constructor(
                                         @JsonProperty("p")
                                         @ExcludeMissing
-                                        p: JsonField<Long> = JsonMissing.of()
+                                        p: JsonField<Double> = JsonMissing.of()
                                     ) : this(p, mutableMapOf())
 
                                     /**
@@ -24180,7 +24184,7 @@ private constructor(
                                      *   an unexpected type or is unexpectedly missing or null (e.g.
                                      *   if the server responded with an unexpected value).
                                      */
-                                    fun p(): Long = p.getRequired("p")
+                                    fun p(): Double = p.getRequired("p")
 
                                     /**
                                      * Returns the raw JSON value of [p].
@@ -24188,7 +24192,9 @@ private constructor(
                                      * Unlike [p], this method doesn't throw if the JSON field has
                                      * an unexpected type.
                                      */
-                                    @JsonProperty("p") @ExcludeMissing fun _p(): JsonField<Long> = p
+                                    @JsonProperty("p")
+                                    @ExcludeMissing
+                                    fun _p(): JsonField<Double> = p
 
                                     @JsonAnySetter
                                     private fun putAdditionalProperty(
@@ -24222,7 +24228,7 @@ private constructor(
                                     /** A builder for [Params]. */
                                     class Builder internal constructor() {
 
-                                        private var p: JsonField<Long>? = null
+                                        private var p: JsonField<Double>? = null
                                         private var additionalProperties:
                                             MutableMap<String, JsonValue> =
                                             mutableMapOf()
@@ -24234,17 +24240,17 @@ private constructor(
                                                 params.additionalProperties.toMutableMap()
                                         }
 
-                                        fun p(p: Long) = p(JsonField.of(p))
+                                        fun p(p: Double) = p(JsonField.of(p))
 
                                         /**
                                          * Sets [Builder.p] to an arbitrary JSON value.
                                          *
                                          * You should usually call [Builder.p] with a well-typed
-                                         * [Long] value instead. This method is primarily for
+                                         * [Double] value instead. This method is primarily for
                                          * setting the field to an undocumented or not yet supported
                                          * value.
                                          */
-                                        fun p(p: JsonField<Long>) = apply { this.p = p }
+                                        fun p(p: JsonField<Double>) = apply { this.p = p }
 
                                         fun additionalProperties(
                                             additionalProperties: Map<String, JsonValue>

@@ -29,8 +29,7 @@ import com.langchain.smith.models.datasets.DatasetUpdateTagsParams
 import com.langchain.smith.models.datasets.DatasetUploadParams
 import com.langchain.smith.models.datasets.DatasetVersion
 import com.langchain.smith.services.async.datasets.ComparativeServiceAsync
-import com.langchain.smith.services.async.datasets.ExperimentServiceAsync
-import com.langchain.smith.services.async.datasets.GroupServiceAsync
+import com.langchain.smith.services.async.datasets.ExperimentRunServiceAsync
 import com.langchain.smith.services.async.datasets.RunServiceAsync
 import com.langchain.smith.services.async.datasets.ShareServiceAsync
 import com.langchain.smith.services.async.datasets.SplitServiceAsync
@@ -56,9 +55,7 @@ interface DatasetServiceAsync {
 
     fun runs(): RunServiceAsync
 
-    fun group(): GroupServiceAsync
-
-    fun experiments(): ExperimentServiceAsync
+    fun experimentRuns(): ExperimentRunServiceAsync
 
     fun share(): ShareServiceAsync
 
@@ -444,9 +441,7 @@ interface DatasetServiceAsync {
 
         fun runs(): RunServiceAsync.WithRawResponse
 
-        fun group(): GroupServiceAsync.WithRawResponse
-
-        fun experiments(): ExperimentServiceAsync.WithRawResponse
+        fun experimentRuns(): ExperimentRunServiceAsync.WithRawResponse
 
         fun share(): ShareServiceAsync.WithRawResponse
 

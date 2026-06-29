@@ -38,6 +38,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun cpuMillicores(): Optional<Long> = body.cpuMillicores()
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun deleteAfterStopSeconds(): Optional<Long> = body.deleteAfterStopSeconds()
 
     /**
@@ -81,6 +87,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun vcpus(): Optional<Long> = body.vcpus()
+
+    /**
+     * Returns the raw JSON value of [cpuMillicores].
+     *
+     * Unlike [cpuMillicores], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _cpuMillicores(): JsonField<Long> = body._cpuMillicores()
 
     /**
      * Returns the raw JSON value of [deleteAfterStopSeconds].
@@ -183,14 +196,27 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [cpuMillicores]
          * - [deleteAfterStopSeconds]
          * - [fsCapacityBytes]
          * - [idleTtlSeconds]
          * - [memBytes]
-         * - [bodyName]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        fun cpuMillicores(cpuMillicores: Long) = apply { body.cpuMillicores(cpuMillicores) }
+
+        /**
+         * Sets [Builder.cpuMillicores] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.cpuMillicores] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun cpuMillicores(cpuMillicores: JsonField<Long>) = apply {
+            body.cpuMillicores(cpuMillicores)
+        }
 
         fun deleteAfterStopSeconds(deleteAfterStopSeconds: Long) = apply {
             body.deleteAfterStopSeconds(deleteAfterStopSeconds)
@@ -442,6 +468,7 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val cpuMillicores: JsonField<Long>,
         private val deleteAfterStopSeconds: JsonField<Long>,
         private val fsCapacityBytes: JsonField<Long>,
         private val idleTtlSeconds: JsonField<Long>,
@@ -455,6 +482,9 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("cpu_millicores")
+            @ExcludeMissing
+            cpuMillicores: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("delete_after_stop_seconds")
             @ExcludeMissing
             deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of(),
@@ -474,6 +504,7 @@ private constructor(
             tagValueIds: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("vcpus") @ExcludeMissing vcpus: JsonField<Long> = JsonMissing.of(),
         ) : this(
+            cpuMillicores,
             deleteAfterStopSeconds,
             fsCapacityBytes,
             idleTtlSeconds,
@@ -484,6 +515,12 @@ private constructor(
             vcpus,
             mutableMapOf(),
         )
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun cpuMillicores(): Optional<Long> = cpuMillicores.getOptional("cpu_millicores")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -533,6 +570,16 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun vcpus(): Optional<Long> = vcpus.getOptional("vcpus")
+
+        /**
+         * Returns the raw JSON value of [cpuMillicores].
+         *
+         * Unlike [cpuMillicores], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("cpu_millicores")
+        @ExcludeMissing
+        fun _cpuMillicores(): JsonField<Long> = cpuMillicores
 
         /**
          * Returns the raw JSON value of [deleteAfterStopSeconds].
@@ -624,6 +671,7 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var cpuMillicores: JsonField<Long> = JsonMissing.of()
             private var deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
             private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
@@ -636,6 +684,7 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                cpuMillicores = body.cpuMillicores
                 deleteAfterStopSeconds = body.deleteAfterStopSeconds
                 fsCapacityBytes = body.fsCapacityBytes
                 idleTtlSeconds = body.idleTtlSeconds
@@ -645,6 +694,19 @@ private constructor(
                 tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 vcpus = body.vcpus
                 additionalProperties = body.additionalProperties.toMutableMap()
+            }
+
+            fun cpuMillicores(cpuMillicores: Long) = cpuMillicores(JsonField.of(cpuMillicores))
+
+            /**
+             * Sets [Builder.cpuMillicores] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.cpuMillicores] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun cpuMillicores(cpuMillicores: JsonField<Long>) = apply {
+                this.cpuMillicores = cpuMillicores
             }
 
             fun deleteAfterStopSeconds(deleteAfterStopSeconds: Long) =
@@ -785,6 +847,7 @@ private constructor(
              */
             fun build(): Body =
                 Body(
+                    cpuMillicores,
                     deleteAfterStopSeconds,
                     fsCapacityBytes,
                     idleTtlSeconds,
@@ -813,6 +876,7 @@ private constructor(
                 return@apply
             }
 
+            cpuMillicores()
             deleteAfterStopSeconds()
             fsCapacityBytes()
             idleTtlSeconds()
@@ -840,7 +904,8 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
+            (if (cpuMillicores.asKnown().isPresent) 1 else 0) +
+                (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
                 (if (memBytes.asKnown().isPresent) 1 else 0) +
@@ -855,6 +920,7 @@ private constructor(
             }
 
             return other is Body &&
+                cpuMillicores == other.cpuMillicores &&
                 deleteAfterStopSeconds == other.deleteAfterStopSeconds &&
                 fsCapacityBytes == other.fsCapacityBytes &&
                 idleTtlSeconds == other.idleTtlSeconds &&
@@ -868,6 +934,7 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
+                cpuMillicores,
                 deleteAfterStopSeconds,
                 fsCapacityBytes,
                 idleTtlSeconds,
@@ -883,7 +950,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, bodyName=$bodyName, proxyConfig=$proxyConfig, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, bodyName=$bodyName, proxyConfig=$proxyConfig, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig

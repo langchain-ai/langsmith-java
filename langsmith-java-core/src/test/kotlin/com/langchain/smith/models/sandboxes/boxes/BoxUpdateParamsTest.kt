@@ -12,6 +12,7 @@ internal class BoxUpdateParamsTest {
     fun create() {
         BoxUpdateParams.builder()
             .pathName("name")
+            .cpuMillicores(0L)
             .deleteAfterStopSeconds(0L)
             .fsCapacityBytes(0L)
             .idleTtlSeconds(0L)
@@ -128,6 +129,7 @@ internal class BoxUpdateParamsTest {
         val params =
             BoxUpdateParams.builder()
                 .pathName("name")
+                .cpuMillicores(0L)
                 .deleteAfterStopSeconds(0L)
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
@@ -235,6 +237,7 @@ internal class BoxUpdateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.cpuMillicores()).contains(0L)
         assertThat(body.deleteAfterStopSeconds()).contains(0L)
         assertThat(body.fsCapacityBytes()).contains(0L)
         assertThat(body.idleTtlSeconds()).contains(0L)

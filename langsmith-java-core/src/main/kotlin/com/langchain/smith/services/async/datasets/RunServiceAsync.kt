@@ -7,8 +7,6 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
 import com.langchain.smith.models.datasets.runs.RunCreateParams
-import com.langchain.smith.models.datasets.runs.RunDeltaParams
-import com.langchain.smith.models.datasets.runs.SessionFeedbackDelta
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -55,31 +53,6 @@ interface RunServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Optional<List<ExampleWithRunsCh>>>
 
-    /**
-     * Fetch the number of regressions/improvements for each example in a dataset, between
-     * sessions[0] and sessions[1].
-     */
-    fun delta(datasetId: String, params: RunDeltaParams): CompletableFuture<SessionFeedbackDelta> =
-        delta(datasetId, params, RequestOptions.none())
-
-    /** @see delta */
-    fun delta(
-        datasetId: String,
-        params: RunDeltaParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SessionFeedbackDelta> =
-        delta(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-    /** @see delta */
-    fun delta(params: RunDeltaParams): CompletableFuture<SessionFeedbackDelta> =
-        delta(params, RequestOptions.none())
-
-    /** @see delta */
-    fun delta(
-        params: RunDeltaParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SessionFeedbackDelta>
-
     /** A view of [RunServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -119,35 +92,5 @@ interface RunServiceAsync {
             params: RunCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>>
-
-        /**
-         * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/runs/delta`, but is
-         * otherwise the same as [RunServiceAsync.delta].
-         */
-        fun delta(
-            datasetId: String,
-            params: RunDeltaParams,
-        ): CompletableFuture<HttpResponseFor<SessionFeedbackDelta>> =
-            delta(datasetId, params, RequestOptions.none())
-
-        /** @see delta */
-        fun delta(
-            datasetId: String,
-            params: RunDeltaParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SessionFeedbackDelta>> =
-            delta(params.toBuilder().datasetId(datasetId).build(), requestOptions)
-
-        /** @see delta */
-        fun delta(
-            params: RunDeltaParams
-        ): CompletableFuture<HttpResponseFor<SessionFeedbackDelta>> =
-            delta(params, RequestOptions.none())
-
-        /** @see delta */
-        fun delta(
-            params: RunDeltaParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SessionFeedbackDelta>>
     }
 }

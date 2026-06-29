@@ -6,13 +6,12 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.sandboxes.SnapshotListResponse
+import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -31,17 +30,17 @@ interface SnapshotServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SnapshotServiceAsync
 
     /** Create a snapshot from a Docker image (async build). */
-    fun create(params: SnapshotCreateParams): CompletableFuture<SnapshotCreateResponse> =
+    fun create(params: SnapshotCreateParams): CompletableFuture<SnapshotResponse> =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: SnapshotCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SnapshotCreateResponse>
+    ): CompletableFuture<SnapshotResponse>
 
     /** Get a sandbox snapshot by ID. */
-    fun retrieve(snapshotId: String): CompletableFuture<SnapshotRetrieveResponse> =
+    fun retrieve(snapshotId: String): CompletableFuture<SnapshotResponse> =
         retrieve(snapshotId, SnapshotRetrieveParams.none())
 
     /** @see retrieve */
@@ -49,31 +48,30 @@ interface SnapshotServiceAsync {
         snapshotId: String,
         params: SnapshotRetrieveParams = SnapshotRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SnapshotRetrieveResponse> =
+    ): CompletableFuture<SnapshotResponse> =
         retrieve(params.toBuilder().snapshotId(snapshotId).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         snapshotId: String,
         params: SnapshotRetrieveParams = SnapshotRetrieveParams.none(),
-    ): CompletableFuture<SnapshotRetrieveResponse> =
-        retrieve(snapshotId, params, RequestOptions.none())
+    ): CompletableFuture<SnapshotResponse> = retrieve(snapshotId, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: SnapshotRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SnapshotRetrieveResponse>
+    ): CompletableFuture<SnapshotResponse>
 
     /** @see retrieve */
-    fun retrieve(params: SnapshotRetrieveParams): CompletableFuture<SnapshotRetrieveResponse> =
+    fun retrieve(params: SnapshotRetrieveParams): CompletableFuture<SnapshotResponse> =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         snapshotId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SnapshotRetrieveResponse> =
+    ): CompletableFuture<SnapshotResponse> =
         retrieve(snapshotId, SnapshotRetrieveParams.none(), requestOptions)
 
     /**
@@ -149,22 +147,20 @@ interface SnapshotServiceAsync {
          */
         fun create(
             params: SnapshotCreateParams
-        ): CompletableFuture<HttpResponseFor<SnapshotCreateResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             create(params, RequestOptions.none())
 
         /** @see create */
         fun create(
             params: SnapshotCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SnapshotCreateResponse>>
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>>
 
         /**
          * Returns a raw HTTP response for `get /v2/sandboxes/snapshots/{snapshot_id}`, but is
          * otherwise the same as [SnapshotServiceAsync.retrieve].
          */
-        fun retrieve(
-            snapshotId: String
-        ): CompletableFuture<HttpResponseFor<SnapshotRetrieveResponse>> =
+        fun retrieve(snapshotId: String): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             retrieve(snapshotId, SnapshotRetrieveParams.none())
 
         /** @see retrieve */
@@ -172,33 +168,33 @@ interface SnapshotServiceAsync {
             snapshotId: String,
             params: SnapshotRetrieveParams = SnapshotRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SnapshotRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             retrieve(params.toBuilder().snapshotId(snapshotId).build(), requestOptions)
 
         /** @see retrieve */
         fun retrieve(
             snapshotId: String,
             params: SnapshotRetrieveParams = SnapshotRetrieveParams.none(),
-        ): CompletableFuture<HttpResponseFor<SnapshotRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             retrieve(snapshotId, params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             params: SnapshotRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SnapshotRetrieveResponse>>
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>>
 
         /** @see retrieve */
         fun retrieve(
             params: SnapshotRetrieveParams
-        ): CompletableFuture<HttpResponseFor<SnapshotRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
         fun retrieve(
             snapshotId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SnapshotRetrieveResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
             retrieve(snapshotId, SnapshotRetrieveParams.none(), requestOptions)
 
         /**

@@ -7,13 +7,12 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.sandboxes.SnapshotListResponse
+import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveResponse
 import java.util.function.Consumer
 
 interface SnapshotService {
@@ -31,17 +30,17 @@ interface SnapshotService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): SnapshotService
 
     /** Create a snapshot from a Docker image (async build). */
-    fun create(params: SnapshotCreateParams): SnapshotCreateResponse =
+    fun create(params: SnapshotCreateParams): SnapshotResponse =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: SnapshotCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): SnapshotCreateResponse
+    ): SnapshotResponse
 
     /** Get a sandbox snapshot by ID. */
-    fun retrieve(snapshotId: String): SnapshotRetrieveResponse =
+    fun retrieve(snapshotId: String): SnapshotResponse =
         retrieve(snapshotId, SnapshotRetrieveParams.none())
 
     /** @see retrieve */
@@ -49,27 +48,27 @@ interface SnapshotService {
         snapshotId: String,
         params: SnapshotRetrieveParams = SnapshotRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): SnapshotRetrieveResponse =
+    ): SnapshotResponse =
         retrieve(params.toBuilder().snapshotId(snapshotId).build(), requestOptions)
 
     /** @see retrieve */
     fun retrieve(
         snapshotId: String,
         params: SnapshotRetrieveParams = SnapshotRetrieveParams.none(),
-    ): SnapshotRetrieveResponse = retrieve(snapshotId, params, RequestOptions.none())
+    ): SnapshotResponse = retrieve(snapshotId, params, RequestOptions.none())
 
     /** @see retrieve */
     fun retrieve(
         params: SnapshotRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): SnapshotRetrieveResponse
+    ): SnapshotResponse
 
     /** @see retrieve */
-    fun retrieve(params: SnapshotRetrieveParams): SnapshotRetrieveResponse =
+    fun retrieve(params: SnapshotRetrieveParams): SnapshotResponse =
         retrieve(params, RequestOptions.none())
 
     /** @see retrieve */
-    fun retrieve(snapshotId: String, requestOptions: RequestOptions): SnapshotRetrieveResponse =
+    fun retrieve(snapshotId: String, requestOptions: RequestOptions): SnapshotResponse =
         retrieve(snapshotId, SnapshotRetrieveParams.none(), requestOptions)
 
     /**
@@ -131,7 +130,7 @@ interface SnapshotService {
          * as [SnapshotService.create].
          */
         @MustBeClosed
-        fun create(params: SnapshotCreateParams): HttpResponseFor<SnapshotCreateResponse> =
+        fun create(params: SnapshotCreateParams): HttpResponseFor<SnapshotResponse> =
             create(params, RequestOptions.none())
 
         /** @see create */
@@ -139,14 +138,14 @@ interface SnapshotService {
         fun create(
             params: SnapshotCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SnapshotCreateResponse>
+        ): HttpResponseFor<SnapshotResponse>
 
         /**
          * Returns a raw HTTP response for `get /v2/sandboxes/snapshots/{snapshot_id}`, but is
          * otherwise the same as [SnapshotService.retrieve].
          */
         @MustBeClosed
-        fun retrieve(snapshotId: String): HttpResponseFor<SnapshotRetrieveResponse> =
+        fun retrieve(snapshotId: String): HttpResponseFor<SnapshotResponse> =
             retrieve(snapshotId, SnapshotRetrieveParams.none())
 
         /** @see retrieve */
@@ -155,7 +154,7 @@ interface SnapshotService {
             snapshotId: String,
             params: SnapshotRetrieveParams = SnapshotRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SnapshotRetrieveResponse> =
+        ): HttpResponseFor<SnapshotResponse> =
             retrieve(params.toBuilder().snapshotId(snapshotId).build(), requestOptions)
 
         /** @see retrieve */
@@ -163,19 +162,18 @@ interface SnapshotService {
         fun retrieve(
             snapshotId: String,
             params: SnapshotRetrieveParams = SnapshotRetrieveParams.none(),
-        ): HttpResponseFor<SnapshotRetrieveResponse> =
-            retrieve(snapshotId, params, RequestOptions.none())
+        ): HttpResponseFor<SnapshotResponse> = retrieve(snapshotId, params, RequestOptions.none())
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(
             params: SnapshotRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SnapshotRetrieveResponse>
+        ): HttpResponseFor<SnapshotResponse>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(params: SnapshotRetrieveParams): HttpResponseFor<SnapshotRetrieveResponse> =
+        fun retrieve(params: SnapshotRetrieveParams): HttpResponseFor<SnapshotResponse> =
             retrieve(params, RequestOptions.none())
 
         /** @see retrieve */
@@ -183,7 +181,7 @@ interface SnapshotService {
         fun retrieve(
             snapshotId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<SnapshotRetrieveResponse> =
+        ): HttpResponseFor<SnapshotResponse> =
             retrieve(snapshotId, SnapshotRetrieveParams.none(), requestOptions)
 
         /**
