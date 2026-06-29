@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.1.0-beta.9](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.8...v0.1.0-beta.9) (2026-06-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **api:** document v2 experiment-runs and de-publicize legacy dataset endpoints
+* **backend:** accept float value for percentile metric [LS-000]
+
+### Features
+
+* add GET endpoint to retrieve single workspace by id [closes ([34f1c52](https://github.com/langchain-ai/langsmith-java/commit/34f1c52fc1088310910de4f21670e2a4d41d196b))
+* add GET endpoint to retrieve single workspace by id [closes ENT-508] ([cdbd369](https://github.com/langchain-ai/langsmith-java/commit/cdbd36936fde80c7c3dea773deefd2789d0feecf))
+* **api:** document v2 experiment-runs and de-publicize legacy dataset endpoints ([387526f](https://github.com/langchain-ai/langsmith-java/commit/387526fd3ac9e892de0786be5b538c53d2f40049))
+* **evaluation:** add Java evaluate orchestrator ([#8](https://github.com/langchain-ai/langsmith-java/issues/8)) ([34f1c52](https://github.com/langchain-ai/langsmith-java/commit/34f1c52fc1088310910de4f21670e2a4d41d196b))
+* **evaluation:** add Java evaluate orchestrator ([#8](https://github.com/langchain-ai/langsmith-java/issues/8)) ([d1420ef](https://github.com/langchain-ai/langsmith-java/commit/d1420efd7a9c307d8b99d64ac57e3f0f26b1580b))
+* **sandbox-host:** per-VM cgroups for CPU bursting (2x), fractional ([34f1c52](https://github.com/langchain-ai/langsmith-java/commit/34f1c52fc1088310910de4f21670e2a4d41d196b))
+* **sandbox-host:** per-VM cgroups for CPU bursting (2x), fractional vCPU, and sustained-burst limiting ([49bf68d](https://github.com/langchain-ai/langsmith-java/commit/49bf68d74763138fa7894d0e04eb1b73e72e82b3))
+* **sandboxes:** expose registry CRUD and generate Python/TypeScript SDK ([34f1c52](https://github.com/langchain-ai/langsmith-java/commit/34f1c52fc1088310910de4f21670e2a4d41d196b))
+* **sandboxes:** expose registry CRUD and generate Python/TypeScript SDK clients ([cfed196](https://github.com/langchain-ai/langsmith-java/commit/cfed196979dce85b747a4171cb1dcacb38f88641))
+
+
+### Bug Fixes
+
+* **backend:** accept float value for percentile metric [LS-000] ([e885608](https://github.com/langchain-ai/langsmith-java/commit/e88560861c9f3de50e7448b97d2cde1cfdfbca46))
+* trigger publish-sonatype workflow after release-please creates a ([34f1c52](https://github.com/langchain-ai/langsmith-java/commit/34f1c52fc1088310910de4f21670e2a4d41d196b))
+* trigger publish-sonatype workflow after release-please creates a release ([#13](https://github.com/langchain-ai/langsmith-java/issues/13)) ([70edc45](https://github.com/langchain-ai/langsmith-java/commit/70edc4514cfc54a98fbf5605795a386b8149300d))
+
 ## [0.1.0-beta.8](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.7...v0.1.0-beta.8) (2026-06-25)
 
 
