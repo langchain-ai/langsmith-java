@@ -82,7 +82,7 @@ private fun buildFeedbackCreateSchema(result: EvaluationResult, run: Run): Feedb
     return builder.build()
 }
 
-private fun applyFeedbackValue(builder: FeedbackCreateSchema.Builder, value: Any?) {
+internal fun applyFeedbackValue(builder: FeedbackCreateSchema.Builder, value: Any?) {
     when (value) {
         null -> Unit
         is Number ->
@@ -111,7 +111,7 @@ private fun applyFeedbackValue(builder: FeedbackCreateSchema.Builder, value: Any
     }
 }
 
-private fun runStartTime(startTime: String): OffsetDateTime? =
+internal fun runStartTime(startTime: String): OffsetDateTime? =
     try {
         OffsetDateTime.parse(startTime)
     } catch (_: Exception) {

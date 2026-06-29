@@ -19,11 +19,13 @@ class ExperimentResults
 internal constructor(
     val experimentName: String,
     /** LangSmith experiment session id. */
-    val experimentId: String,
+    val experimentId: String?,
     val datasetId: String,
     val rows: List<ExperimentResultRow>,
+    val summaryResults: EvaluationResults = EvaluationResults(emptyList()),
+    val url: String? = null,
 ) {
     override fun toString(): String =
         "ExperimentResults{experimentName=$experimentName, experimentId=$experimentId, " +
-            "datasetId=$datasetId, rows=${rows.size}}"
+            "datasetId=$datasetId, rows=${rows.size}, summaryResults=${summaryResults.results.size}}"
 }
