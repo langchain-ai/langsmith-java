@@ -6,10 +6,10 @@ import com.google.errorprone.annotations.MustBeClosed
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.runs.QueryRunResponse
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
 import com.langchain.smith.models.runs.RunQueryPage
@@ -61,11 +61,14 @@ interface RunService {
     fun create(params: RunCreateParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see create */
-    fun create(run: Run, requestOptions: RequestOptions = RequestOptions.none()) =
-        create(RunCreateParams.builder().run(run).build(), requestOptions)
+    fun create(
+        runIngest: RunIngest,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunCreateResponse =
+        create(RunCreateParams.builder().runIngest(runIngest).build(), requestOptions)
 
     /** @see create */
-    fun create(run: Run) = create(run, RequestOptions.none())
+    fun create(runIngest: RunIngest): RunCreateResponse = create(runIngest, RequestOptions.none())
 
     /**
      * Updates a run identified by its ID. The body should contain only the fields to be changed;
@@ -183,7 +186,7 @@ interface RunService {
      * session and start_time. Use the `selects` query parameter (repeatable) to select fields to
      * return.
      */
-    fun retrieveV2(runId: String, params: RunRetrieveV2Params): QueryRunResponse =
+    fun retrieveV2(runId: String, params: RunRetrieveV2Params): Run =
         retrieveV2(runId, params, RequestOptions.none())
 
     /** @see retrieveV2 */
@@ -191,17 +194,16 @@ interface RunService {
         runId: String,
         params: RunRetrieveV2Params,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): QueryRunResponse = retrieveV2(params.toBuilder().runId(runId).build(), requestOptions)
+    ): Run = retrieveV2(params.toBuilder().runId(runId).build(), requestOptions)
 
     /** @see retrieveV2 */
-    fun retrieveV2(params: RunRetrieveV2Params): QueryRunResponse =
-        retrieveV2(params, RequestOptions.none())
+    fun retrieveV2(params: RunRetrieveV2Params): Run = retrieveV2(params, RequestOptions.none())
 
     /** @see retrieveV2 */
     fun retrieveV2(
         params: RunRetrieveV2Params,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): QueryRunResponse
+    ): Run
 
     /** Get all runs by query in body payload. */
     fun stats(params: RunStatsParams): RunStatsResponse = stats(params, RequestOptions.none())
@@ -333,15 +335,15 @@ interface RunService {
         /** @see create */
         @MustBeClosed
         fun create(
-            run: Run,
+            runIngest: RunIngest,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<RunCreateResponse> =
-            create(RunCreateParams.builder().run(run).build(), requestOptions)
+            create(RunCreateParams.builder().runIngest(runIngest).build(), requestOptions)
 
         /** @see create */
         @MustBeClosed
-        fun create(run: Run): HttpResponseFor<RunCreateResponse> =
-            create(run, RequestOptions.none())
+        fun create(runIngest: RunIngest): HttpResponseFor<RunCreateResponse> =
+            create(runIngest, RequestOptions.none())
 
         /**
          * Returns a raw HTTP response for `patch /runs/{run_id}`, but is otherwise the same as
@@ -494,10 +496,8 @@ interface RunService {
          * [RunService.retrieveV2].
          */
         @MustBeClosed
-        fun retrieveV2(
-            runId: String,
-            params: RunRetrieveV2Params,
-        ): HttpResponseFor<QueryRunResponse> = retrieveV2(runId, params, RequestOptions.none())
+        fun retrieveV2(runId: String, params: RunRetrieveV2Params): HttpResponseFor<Run> =
+            retrieveV2(runId, params, RequestOptions.none())
 
         /** @see retrieveV2 */
         @MustBeClosed
@@ -505,12 +505,12 @@ interface RunService {
             runId: String,
             params: RunRetrieveV2Params,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<QueryRunResponse> =
+        ): HttpResponseFor<Run> =
             retrieveV2(params.toBuilder().runId(runId).build(), requestOptions)
 
         /** @see retrieveV2 */
         @MustBeClosed
-        fun retrieveV2(params: RunRetrieveV2Params): HttpResponseFor<QueryRunResponse> =
+        fun retrieveV2(params: RunRetrieveV2Params): HttpResponseFor<Run> =
             retrieveV2(params, RequestOptions.none())
 
         /** @see retrieveV2 */
@@ -518,7 +518,7 @@ interface RunService {
         fun retrieveV2(
             params: RunRetrieveV2Params,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<QueryRunResponse>
+        ): HttpResponseFor<Run>
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/stats`, but is otherwise the same as

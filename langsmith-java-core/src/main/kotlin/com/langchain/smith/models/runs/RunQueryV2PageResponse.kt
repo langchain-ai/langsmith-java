@@ -21,16 +21,14 @@ import kotlin.jvm.optionals.getOrNull
 class RunQueryV2PageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val items: JsonField<List<QueryRunResponse>>,
+    private val items: JsonField<List<Run>>,
     private val nextCursor: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("items")
-        @ExcludeMissing
-        items: JsonField<List<QueryRunResponse>> = JsonMissing.of(),
+        @JsonProperty("items") @ExcludeMissing items: JsonField<List<Run>> = JsonMissing.of(),
         @JsonProperty("next_cursor")
         @ExcludeMissing
         nextCursor: JsonField<String> = JsonMissing.of(),
@@ -42,7 +40,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun items(): Optional<List<QueryRunResponse>> = items.getOptional("items")
+    fun items(): Optional<List<Run>> = items.getOptional("items")
 
     /**
      * `next_cursor` is the opaque cursor to pass as `cursor` on the next request. Null on the final
@@ -58,7 +56,7 @@ private constructor(
      *
      * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<QueryRunResponse>> = items
+    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<Run>> = items
 
     /**
      * Returns the raw JSON value of [nextCursor].
@@ -88,7 +86,7 @@ private constructor(
     /** A builder for [RunQueryV2PageResponse]. */
     class Builder internal constructor() {
 
-        private var items: JsonField<MutableList<QueryRunResponse>>? = null
+        private var items: JsonField<MutableList<Run>>? = null
         private var nextCursor: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -100,25 +98,24 @@ private constructor(
         }
 
         /** `items` is the page of runs, sorted by `start_time` descending. */
-        fun items(items: List<QueryRunResponse>) = items(JsonField.of(items))
+        fun items(items: List<Run>) = items(JsonField.of(items))
 
         /**
          * Sets [Builder.items] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.items] with a well-typed `List<QueryRunResponse>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.items] with a well-typed `List<Run>` value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun items(items: JsonField<List<QueryRunResponse>>) = apply {
+        fun items(items: JsonField<List<Run>>) = apply {
             this.items = items.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [QueryRunResponse] to [items].
+         * Adds a single [Run] to [items].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addItem(item: QueryRunResponse) = apply {
+        fun addItem(item: Run) = apply {
             items =
                 (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
         }

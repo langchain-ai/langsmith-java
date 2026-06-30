@@ -19,14 +19,14 @@ private constructor(
     private val streamHandlerExecutor: Executor,
     private val params: RunQueryV2Params,
     private val response: RunQueryV2PageResponse,
-) : PageAsync<QueryRunResponse> {
+) : PageAsync<Run> {
 
     /**
      * Delegates to [RunQueryV2PageResponse], but gracefully handles missing data.
      *
      * @see RunQueryV2PageResponse.items
      */
-    override fun items(): List<QueryRunResponse> =
+    override fun items(): List<Run> =
         response._items().getOptional("items").getOrNull() ?: emptyList()
 
     /**
@@ -48,8 +48,7 @@ private constructor(
     override fun nextPage(): CompletableFuture<RunQueryV2PageAsync> =
         service.queryV2(nextPageParams())
 
-    fun autoPager(): AutoPagerAsync<QueryRunResponse> =
-        AutoPagerAsync.from(this, streamHandlerExecutor)
+    fun autoPager(): AutoPagerAsync<Run> = AutoPagerAsync.from(this, streamHandlerExecutor)
 
     /** The parameters that were used to request this page. */
     fun params(): RunQueryV2Params = params

@@ -5,7 +5,7 @@ package com.langchain.smith.models.datasets.experimentruns
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.runs.QueryRunResponse
+import com.langchain.smith.models.runs.Run
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -29,11 +29,11 @@ internal class ExperimentRunCreatePageResponseTest {
                         .name("name")
                         .outputs(JsonValue.from(mapOf<String, Any>()))
                         .addRun(
-                            QueryRunResponse.builder()
+                            Run.builder()
                                 .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                                 .appPath("/app/chains/chat.py:invoke")
                                 .attachments(
-                                    QueryRunResponse.Attachments.builder()
+                                    Run.Attachments.builder()
                                         .putAdditionalProperty(
                                             "{\"output.png\"",
                                             JsonValue.from(
@@ -44,18 +44,18 @@ internal class ExperimentRunCreatePageResponseTest {
                                 )
                                 .completionCost(0.0003)
                                 .completionCostDetails(
-                                    QueryRunResponse.CompletionCostDetails.builder()
+                                    Run.CompletionCostDetails.builder()
                                         .raw(
-                                            QueryRunResponse.CompletionCostDetails.Raw.builder()
+                                            Run.CompletionCostDetails.Raw.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                                 .build()
                                         )
                                         .build()
                                 )
                                 .completionTokenDetails(
-                                    QueryRunResponse.CompletionTokenDetails.builder()
+                                    Run.CompletionTokenDetails.builder()
                                         .raw(
-                                            QueryRunResponse.CompletionTokenDetails.Raw.builder()
+                                            Run.CompletionTokenDetails.Raw.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                                 .build()
                                         )
@@ -69,7 +69,7 @@ internal class ExperimentRunCreatePageResponseTest {
                                 .error("context deadline exceeded")
                                 .errorPreview("error_preview")
                                 .addEvent(
-                                    QueryRunResponse.Event.builder()
+                                    Run.Event.builder()
                                         .kwargs(JsonValue.from(mapOf<String, Any>()))
                                         .name("new_token")
                                         .time(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
@@ -77,7 +77,7 @@ internal class ExperimentRunCreatePageResponseTest {
                                 )
                                 .extra(JsonValue.from(mapOf<String, Any>()))
                                 .feedbackStats(
-                                    QueryRunResponse.FeedbackStats.builder()
+                                    Run.FeedbackStats.builder()
                                         .putAdditionalProperty(
                                             "foo",
                                             JsonValue.from(
@@ -115,18 +115,18 @@ internal class ExperimentRunCreatePageResponseTest {
                                 .projectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                                 .promptCost(0.0002)
                                 .promptCostDetails(
-                                    QueryRunResponse.PromptCostDetails.builder()
+                                    Run.PromptCostDetails.builder()
                                         .raw(
-                                            QueryRunResponse.PromptCostDetails.Raw.builder()
+                                            Run.PromptCostDetails.Raw.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                                 .build()
                                         )
                                         .build()
                                 )
                                 .promptTokenDetails(
-                                    QueryRunResponse.PromptTokenDetails.builder()
+                                    Run.PromptTokenDetails.builder()
                                         .raw(
-                                            QueryRunResponse.PromptTokenDetails.Raw.builder()
+                                            Run.PromptTokenDetails.Raw.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                                 .build()
                                         )
@@ -135,12 +135,12 @@ internal class ExperimentRunCreatePageResponseTest {
                                 .promptTokens(200L)
                                 .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                                 .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-                                .runType(QueryRunResponse.RunType.LLM)
+                                .runType(Run.RunType.LLM)
                                 .shareUrl(
                                     "https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r"
                                 )
                                 .startTime(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
-                                .status(QueryRunResponse.Status.SUCCESS)
+                                .status(Run.Status.SUCCESS)
                                 .addTag("production")
                                 .addTag("gpt-4")
                                 .threadEvaluationTime(
@@ -171,11 +171,11 @@ internal class ExperimentRunCreatePageResponseTest {
                     .name("name")
                     .outputs(JsonValue.from(mapOf<String, Any>()))
                     .addRun(
-                        QueryRunResponse.builder()
+                        Run.builder()
                             .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                             .appPath("/app/chains/chat.py:invoke")
                             .attachments(
-                                QueryRunResponse.Attachments.builder()
+                                Run.Attachments.builder()
                                     .putAdditionalProperty(
                                         "{\"output.png\"",
                                         JsonValue.from(
@@ -186,18 +186,18 @@ internal class ExperimentRunCreatePageResponseTest {
                             )
                             .completionCost(0.0003)
                             .completionCostDetails(
-                                QueryRunResponse.CompletionCostDetails.builder()
+                                Run.CompletionCostDetails.builder()
                                     .raw(
-                                        QueryRunResponse.CompletionCostDetails.Raw.builder()
+                                        Run.CompletionCostDetails.Raw.builder()
                                             .putAdditionalProperty("foo", JsonValue.from(0))
                                             .build()
                                     )
                                     .build()
                             )
                             .completionTokenDetails(
-                                QueryRunResponse.CompletionTokenDetails.builder()
+                                Run.CompletionTokenDetails.builder()
                                     .raw(
-                                        QueryRunResponse.CompletionTokenDetails.Raw.builder()
+                                        Run.CompletionTokenDetails.Raw.builder()
                                             .putAdditionalProperty("foo", JsonValue.from(0))
                                             .build()
                                     )
@@ -209,7 +209,7 @@ internal class ExperimentRunCreatePageResponseTest {
                             .error("context deadline exceeded")
                             .errorPreview("error_preview")
                             .addEvent(
-                                QueryRunResponse.Event.builder()
+                                Run.Event.builder()
                                     .kwargs(JsonValue.from(mapOf<String, Any>()))
                                     .name("new_token")
                                     .time(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
@@ -217,7 +217,7 @@ internal class ExperimentRunCreatePageResponseTest {
                             )
                             .extra(JsonValue.from(mapOf<String, Any>()))
                             .feedbackStats(
-                                QueryRunResponse.FeedbackStats.builder()
+                                Run.FeedbackStats.builder()
                                     .putAdditionalProperty(
                                         "foo",
                                         JsonValue.from(
@@ -255,18 +255,18 @@ internal class ExperimentRunCreatePageResponseTest {
                             .projectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                             .promptCost(0.0002)
                             .promptCostDetails(
-                                QueryRunResponse.PromptCostDetails.builder()
+                                Run.PromptCostDetails.builder()
                                     .raw(
-                                        QueryRunResponse.PromptCostDetails.Raw.builder()
+                                        Run.PromptCostDetails.Raw.builder()
                                             .putAdditionalProperty("foo", JsonValue.from(0))
                                             .build()
                                     )
                                     .build()
                             )
                             .promptTokenDetails(
-                                QueryRunResponse.PromptTokenDetails.builder()
+                                Run.PromptTokenDetails.builder()
                                     .raw(
-                                        QueryRunResponse.PromptTokenDetails.Raw.builder()
+                                        Run.PromptTokenDetails.Raw.builder()
                                             .putAdditionalProperty("foo", JsonValue.from(0))
                                             .build()
                                     )
@@ -275,12 +275,12 @@ internal class ExperimentRunCreatePageResponseTest {
                             .promptTokens(200L)
                             .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                             .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-                            .runType(QueryRunResponse.RunType.LLM)
+                            .runType(Run.RunType.LLM)
                             .shareUrl(
                                 "https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r"
                             )
                             .startTime(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
-                            .status(QueryRunResponse.Status.SUCCESS)
+                            .status(Run.Status.SUCCESS)
                             .addTag("production")
                             .addTag("gpt-4")
                             .threadEvaluationTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -313,11 +313,11 @@ internal class ExperimentRunCreatePageResponseTest {
                         .name("name")
                         .outputs(JsonValue.from(mapOf<String, Any>()))
                         .addRun(
-                            QueryRunResponse.builder()
+                            Run.builder()
                                 .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                                 .appPath("/app/chains/chat.py:invoke")
                                 .attachments(
-                                    QueryRunResponse.Attachments.builder()
+                                    Run.Attachments.builder()
                                         .putAdditionalProperty(
                                             "{\"output.png\"",
                                             JsonValue.from(
@@ -328,18 +328,18 @@ internal class ExperimentRunCreatePageResponseTest {
                                 )
                                 .completionCost(0.0003)
                                 .completionCostDetails(
-                                    QueryRunResponse.CompletionCostDetails.builder()
+                                    Run.CompletionCostDetails.builder()
                                         .raw(
-                                            QueryRunResponse.CompletionCostDetails.Raw.builder()
+                                            Run.CompletionCostDetails.Raw.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                                 .build()
                                         )
                                         .build()
                                 )
                                 .completionTokenDetails(
-                                    QueryRunResponse.CompletionTokenDetails.builder()
+                                    Run.CompletionTokenDetails.builder()
                                         .raw(
-                                            QueryRunResponse.CompletionTokenDetails.Raw.builder()
+                                            Run.CompletionTokenDetails.Raw.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                                 .build()
                                         )
@@ -353,7 +353,7 @@ internal class ExperimentRunCreatePageResponseTest {
                                 .error("context deadline exceeded")
                                 .errorPreview("error_preview")
                                 .addEvent(
-                                    QueryRunResponse.Event.builder()
+                                    Run.Event.builder()
                                         .kwargs(JsonValue.from(mapOf<String, Any>()))
                                         .name("new_token")
                                         .time(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
@@ -361,7 +361,7 @@ internal class ExperimentRunCreatePageResponseTest {
                                 )
                                 .extra(JsonValue.from(mapOf<String, Any>()))
                                 .feedbackStats(
-                                    QueryRunResponse.FeedbackStats.builder()
+                                    Run.FeedbackStats.builder()
                                         .putAdditionalProperty(
                                             "foo",
                                             JsonValue.from(
@@ -399,18 +399,18 @@ internal class ExperimentRunCreatePageResponseTest {
                                 .projectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                                 .promptCost(0.0002)
                                 .promptCostDetails(
-                                    QueryRunResponse.PromptCostDetails.builder()
+                                    Run.PromptCostDetails.builder()
                                         .raw(
-                                            QueryRunResponse.PromptCostDetails.Raw.builder()
+                                            Run.PromptCostDetails.Raw.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                                 .build()
                                         )
                                         .build()
                                 )
                                 .promptTokenDetails(
-                                    QueryRunResponse.PromptTokenDetails.builder()
+                                    Run.PromptTokenDetails.builder()
                                         .raw(
-                                            QueryRunResponse.PromptTokenDetails.Raw.builder()
+                                            Run.PromptTokenDetails.Raw.builder()
                                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                                 .build()
                                         )
@@ -419,12 +419,12 @@ internal class ExperimentRunCreatePageResponseTest {
                                 .promptTokens(200L)
                                 .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                                 .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-                                .runType(QueryRunResponse.RunType.LLM)
+                                .runType(Run.RunType.LLM)
                                 .shareUrl(
                                     "https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r"
                                 )
                                 .startTime(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
-                                .status(QueryRunResponse.Status.SUCCESS)
+                                .status(Run.Status.SUCCESS)
                                 .addTag("production")
                                 .addTag("gpt-4")
                                 .threadEvaluationTime(

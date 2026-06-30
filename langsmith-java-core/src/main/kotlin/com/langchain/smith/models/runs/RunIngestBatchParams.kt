@@ -38,27 +38,27 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun patch(): Optional<List<Run>> = body.patch()
+    fun patch(): Optional<List<RunIngest>> = body.patch()
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun post(): Optional<List<Run>> = body.post()
+    fun post(): Optional<List<RunIngest>> = body.post()
 
     /**
      * Returns the raw JSON value of [patch].
      *
      * Unlike [patch], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _patch(): JsonField<List<Run>> = body._patch()
+    fun _patch(): JsonField<List<RunIngest>> = body._patch()
 
     /**
      * Returns the raw JSON value of [post].
      *
      * Unlike [post], this method doesn't throw if the JSON field has an unexpected type.
      */
-    fun _post(): JsonField<List<Run>> = body._post()
+    fun _post(): JsonField<List<RunIngest>> = body._post()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -102,39 +102,41 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        fun patch(patch: List<Run>) = apply { body.patch(patch) }
+        fun patch(patch: List<RunIngest>) = apply { body.patch(patch) }
 
         /**
          * Sets [Builder.patch] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.patch] with a well-typed `List<Run>` value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.patch] with a well-typed `List<RunIngest>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun patch(patch: JsonField<List<Run>>) = apply { body.patch(patch) }
+        fun patch(patch: JsonField<List<RunIngest>>) = apply { body.patch(patch) }
 
         /**
-         * Adds a single [Run] to [Builder.patch].
+         * Adds a single [RunIngest] to [Builder.patch].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addPatch(patch: Run) = apply { body.addPatch(patch) }
+        fun addPatch(patch: RunIngest) = apply { body.addPatch(patch) }
 
-        fun post(post: List<Run>) = apply { body.post(post) }
+        fun post(post: List<RunIngest>) = apply { body.post(post) }
 
         /**
          * Sets [Builder.post] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.post] with a well-typed `List<Run>` value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.post] with a well-typed `List<RunIngest>` value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun post(post: JsonField<List<Run>>) = apply { body.post(post) }
+        fun post(post: JsonField<List<RunIngest>>) = apply { body.post(post) }
 
         /**
-         * Adds a single [Run] to [Builder.post].
+         * Adds a single [RunIngest] to [Builder.post].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addPost(post: Run) = apply { body.addPost(post) }
+        fun addPost(post: RunIngest) = apply { body.addPost(post) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -275,42 +277,46 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
-        private val patch: JsonField<List<Run>>,
-        private val post: JsonField<List<Run>>,
+        private val patch: JsonField<List<RunIngest>>,
+        private val post: JsonField<List<RunIngest>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("patch") @ExcludeMissing patch: JsonField<List<Run>> = JsonMissing.of(),
-            @JsonProperty("post") @ExcludeMissing post: JsonField<List<Run>> = JsonMissing.of(),
+            @JsonProperty("patch")
+            @ExcludeMissing
+            patch: JsonField<List<RunIngest>> = JsonMissing.of(),
+            @JsonProperty("post")
+            @ExcludeMissing
+            post: JsonField<List<RunIngest>> = JsonMissing.of(),
         ) : this(patch, post, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun patch(): Optional<List<Run>> = patch.getOptional("patch")
+        fun patch(): Optional<List<RunIngest>> = patch.getOptional("patch")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun post(): Optional<List<Run>> = post.getOptional("post")
+        fun post(): Optional<List<RunIngest>> = post.getOptional("post")
 
         /**
          * Returns the raw JSON value of [patch].
          *
          * Unlike [patch], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("patch") @ExcludeMissing fun _patch(): JsonField<List<Run>> = patch
+        @JsonProperty("patch") @ExcludeMissing fun _patch(): JsonField<List<RunIngest>> = patch
 
         /**
          * Returns the raw JSON value of [post].
          *
          * Unlike [post], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("post") @ExcludeMissing fun _post(): JsonField<List<Run>> = post
+        @JsonProperty("post") @ExcludeMissing fun _post(): JsonField<List<RunIngest>> = post
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -333,8 +339,8 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
-            private var patch: JsonField<MutableList<Run>>? = null
-            private var post: JsonField<MutableList<Run>>? = null
+            private var patch: JsonField<MutableList<RunIngest>>? = null
+            private var post: JsonField<MutableList<RunIngest>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -344,50 +350,50 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            fun patch(patch: List<Run>) = patch(JsonField.of(patch))
+            fun patch(patch: List<RunIngest>) = patch(JsonField.of(patch))
 
             /**
              * Sets [Builder.patch] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.patch] with a well-typed `List<Run>` value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.patch] with a well-typed `List<RunIngest>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun patch(patch: JsonField<List<Run>>) = apply {
+            fun patch(patch: JsonField<List<RunIngest>>) = apply {
                 this.patch = patch.map { it.toMutableList() }
             }
 
             /**
-             * Adds a single [Run] to [Builder.patch].
+             * Adds a single [RunIngest] to [Builder.patch].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addPatch(patch: Run) = apply {
+            fun addPatch(patch: RunIngest) = apply {
                 this.patch =
                     (this.patch ?: JsonField.of(mutableListOf())).also {
                         checkKnown("patch", it).add(patch)
                     }
             }
 
-            fun post(post: List<Run>) = post(JsonField.of(post))
+            fun post(post: List<RunIngest>) = post(JsonField.of(post))
 
             /**
              * Sets [Builder.post] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.post] with a well-typed `List<Run>` value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.post] with a well-typed `List<RunIngest>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun post(post: JsonField<List<Run>>) = apply {
+            fun post(post: JsonField<List<RunIngest>>) = apply {
                 this.post = post.map { it.toMutableList() }
             }
 
             /**
-             * Adds a single [Run] to [Builder.post].
+             * Adds a single [RunIngest] to [Builder.post].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addPost(post: Run) = apply {
+            fun addPost(post: RunIngest) = apply {
                 this.post =
                     (this.post ?: JsonField.of(mutableListOf())).also {
                         checkKnown("post", it).add(post)

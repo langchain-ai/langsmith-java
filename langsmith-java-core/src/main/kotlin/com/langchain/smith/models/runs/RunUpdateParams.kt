@@ -18,16 +18,16 @@ import kotlin.jvm.optionals.getOrNull
 class RunUpdateParams
 private constructor(
     private val runId: String?,
-    private val run: Run,
+    private val runIngest: RunIngest,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     fun runId(): Optional<String> = Optional.ofNullable(runId)
 
-    fun run(): Run = run
+    fun runIngest(): RunIngest = runIngest
 
-    fun _additionalBodyProperties(): Map<String, JsonValue> = run._additionalProperties()
+    fun _additionalBodyProperties(): Map<String, JsonValue> = runIngest._additionalProperties()
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -44,7 +44,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .run()
+         * .runIngest()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -54,14 +54,14 @@ private constructor(
     class Builder internal constructor() {
 
         private var runId: String? = null
-        private var run: Run? = null
+        private var runIngest: RunIngest? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(runUpdateParams: RunUpdateParams) = apply {
             runId = runUpdateParams.runId
-            run = runUpdateParams.run
+            runIngest = runUpdateParams.runIngest
             additionalHeaders = runUpdateParams.additionalHeaders.toBuilder()
             additionalQueryParams = runUpdateParams.additionalQueryParams.toBuilder()
         }
@@ -71,7 +71,7 @@ private constructor(
         /** Alias for calling [Builder.runId] with `runId.orElse(null)`. */
         fun runId(runId: Optional<String>) = runId(runId.getOrNull())
 
-        fun run(run: Run) = apply { this.run = run }
+        fun runIngest(runIngest: RunIngest) = apply { this.runIngest = runIngest }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -178,7 +178,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .run()
+         * .runIngest()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -186,13 +186,13 @@ private constructor(
         fun build(): RunUpdateParams =
             RunUpdateParams(
                 runId,
-                checkRequired("run", run),
+                checkRequired("runIngest", runIngest),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    fun _body(): Run = run
+    fun _body(): RunIngest = runIngest
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -211,14 +211,14 @@ private constructor(
 
         return other is RunUpdateParams &&
             runId == other.runId &&
-            run == other.run &&
+            runIngest == other.runIngest &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(runId, run, additionalHeaders, additionalQueryParams)
+        Objects.hash(runId, runIngest, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "RunUpdateParams{runId=$runId, run=$run, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RunUpdateParams{runId=$runId, runIngest=$runIngest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
