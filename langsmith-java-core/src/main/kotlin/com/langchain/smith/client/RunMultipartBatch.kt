@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.langchain.smith.core.MultipartField
 import com.langchain.smith.core.http.HttpRequestBody
 import com.langchain.smith.core.http.multipartFormData
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import kotlin.jvm.optionals.getOrNull
 
@@ -37,14 +37,14 @@ internal fun RunIngestBatchParams.toRunMultipartFormData(jsonMapper: JsonMapper)
 private fun multipartFieldsForRuns(
     jsonMapper: JsonMapper,
     operation: String,
-    runs: List<Run>,
+    runs: List<RunIngest>,
 ): List<Pair<String, MultipartField<*>>>? =
     runs.flatMap { run -> multipartFieldsForRun(jsonMapper, operation, run) ?: return null }
 
 private fun multipartFieldsForRun(
     jsonMapper: JsonMapper,
     operation: String,
-    run: Run,
+    run: RunIngest,
 ): List<Pair<String, MultipartField<*>>>? {
     val runId = run.id().getOrNull() ?: return null
     run.traceId().getOrNull() ?: return null

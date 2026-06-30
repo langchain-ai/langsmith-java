@@ -126,11 +126,20 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun rules(): RuleService = rules
 
-    override fun create(params: RunCreateParams, requestOptions: RequestOptions) {
+    override fun create(
+        params: RunCreateParams,
+        requestOptions: RequestOptions,
+    ): RunCreateResponse {
         if (clientOptions.autoBatchTracing) {
-            batchQueue.post(params.run(), params._headers(), params._queryParams(), requestOptions)
+            batchQueue.post(
+                params.runIngest(),
+                params._headers(),
+                params._queryParams(),
+                requestOptions,
+            )
+            return RunCreateResponse.builder().build()
         } else {
-            withRawResponse().create(params, requestOptions).parse()
+            return withRawResponse().create(params, requestOptions).parse()
         }
     }
 
@@ -146,7 +155,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         val runId = checkRequired("runId", params.runId().getOrNull())
 
         batchQueue.patch(
-            params.run().toBuilder().id(runId).build(),
+            params.runIngest().toBuilder().id(runId).build(),
             params._headers(),
             params._queryParams(),
             requestOptions,

@@ -1,19 +1,20 @@
 package com.langchain.smith.evaluation
 
 import com.langchain.smith.models.examples.Example
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 
 /**
  * Wraps a function as a [RunEvaluator], normalizing common evaluator signatures to `(Run,
  * Example?)`.
  */
 class DynamicRunEvaluator
-private constructor(private val evaluator: (Run, Example?) -> EvaluatorOutput) : RunEvaluator {
+private constructor(private val evaluator: (RunIngest, Example?) -> EvaluatorOutput) :
+    RunEvaluator {
 
     override val feedbackKeys: List<String> = emptyList()
 
     override fun evaluateRun(
-        run: Run,
+        run: RunIngest,
         example: Example?,
         evaluatorRunId: String?,
     ): EvaluationOutput {
@@ -25,8 +26,9 @@ private constructor(private val evaluator: (Run, Example?) -> EvaluatorOutput) :
     override fun toString(): String = "DynamicRunEvaluator{feedbackKeys=$feedbackKeys}"
 
     companion object {
-        internal fun fromRunExample(func: (Run, Example?) -> EvaluatorOutput): DynamicRunEvaluator =
-            DynamicRunEvaluator(func)
+        internal fun fromRunExample(
+            func: (RunIngest, Example?) -> EvaluatorOutput
+        ): DynamicRunEvaluator = DynamicRunEvaluator(func)
 
         internal fun fromOutputsReference(
             func:
@@ -49,7 +51,7 @@ private constructor(private val evaluator: (Run, Example?) -> EvaluatorOutput) :
 }
 
 /** Creates a [RunEvaluator] from a function that receives the full [Run] and [Example]. */
-fun runEvaluator(func: (Run, Example?) -> EvaluatorOutput): RunEvaluator =
+fun runEvaluator(func: (RunIngest, Example?) -> EvaluatorOutput): RunEvaluator =
     DynamicRunEvaluator.fromRunExample(func)
 
 /** Creates a [RunEvaluator] from a function that receives model outputs and reference outputs. */
@@ -73,7 +75,7 @@ fun runEvaluator(
 
 /** We pass the full run and dataset row for evaluators that need trace-level details. */
 fun interface RunExampleEvaluator {
-    fun evaluate(run: Run, example: Example?): EvaluatorOutput
+    fun evaluate(run: RunIngest, example: Example?): EvaluatorOutput
 }
 
 /**

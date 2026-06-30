@@ -6,7 +6,7 @@ import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import java.util.concurrent.CompletionException
 import java.util.concurrent.CompletionStage
@@ -76,7 +76,7 @@ class AutoBatchQueue(
 
     /** Enqueues a run create operation. */
     fun post(
-        run: Run,
+        run: RunIngest,
         headers: Headers = Headers.builder().build(),
         queryParams: QueryParams = QueryParams.builder().build(),
         requestOptions: RequestOptions = RequestOptions.none(),
@@ -86,7 +86,7 @@ class AutoBatchQueue(
 
     /** Enqueues a run update (patch) operation. */
     fun patch(
-        run: Run,
+        run: RunIngest,
         headers: Headers = Headers.builder().build(),
         queryParams: QueryParams = QueryParams.builder().build(),
         requestOptions: RequestOptions = RequestOptions.none(),
@@ -168,7 +168,7 @@ class AutoBatchQueue(
 
     private fun enqueue(
         op: BatchOp,
-        run: Run,
+        run: RunIngest,
         headers: Headers,
         queryParams: QueryParams,
         requestOptions: RequestOptions,
@@ -377,8 +377,8 @@ class AutoBatchQueue(
 
     private class BatchGroup(
         val requestOptions: RequestOptions,
-        val posts: MutableList<Run> = mutableListOf(),
-        val patches: MutableList<Run> = mutableListOf(),
+        val posts: MutableList<RunIngest> = mutableListOf(),
+        val patches: MutableList<RunIngest> = mutableListOf(),
         val headers: Headers.Builder = Headers.builder(),
         val queryParams: QueryParams.Builder = QueryParams.builder(),
     ) {
@@ -475,23 +475,23 @@ class AutoBatchQueue(
             )
         }
 
-        private fun mergePostAndPatch(post: Run, patch: Run): Run {
+        private fun mergePostAndPatch(post: RunIngest, patch: RunIngest): RunIngest {
             val merged = objectMapper.valueToTree<ObjectNode>(post)
             val patchFields = objectMapper.valueToTree<ObjectNode>(patch)
             patchFields.fields().forEach { (field, value) -> merged.set<ObjectNode>(field, value) }
-            return objectMapper.treeToValue(merged, Run::class.java)
+            return objectMapper.treeToValue(merged, RunIngest::class.java)
         }
     }
 
     private data class MergeResult(
-        val posts: List<Run>,
-        val patches: List<Run>,
+        val posts: List<RunIngest>,
+        val patches: List<RunIngest>,
         val mergedRunIds: List<String> = emptyList(),
     )
 
     private data class BatchItem(
         val op: BatchOp,
-        val run: Run,
+        val run: RunIngest,
         val headers: Headers,
         val queryParams: QueryParams,
         val requestOptions: RequestOptions,

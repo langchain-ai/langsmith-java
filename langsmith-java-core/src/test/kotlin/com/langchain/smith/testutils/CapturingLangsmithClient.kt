@@ -2,7 +2,7 @@ package com.langchain.smith.testutils
 
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
 import com.langchain.smith.services.blocking.RunService
@@ -15,8 +15,8 @@ import java.lang.reflect.Proxy
  */
 internal class CapturingLangsmithClient {
 
-    val postedRuns = mutableListOf<Run>()
-    val patchedRuns = mutableListOf<Run>()
+    val postedRuns = mutableListOf<RunIngest>()
+    val patchedRuns = mutableListOf<RunIngest>()
 
     private val realClient: LangsmithClient? =
         if (!System.getenv("LANGSMITH_API_KEY").isNullOrBlank()) {
@@ -25,37 +25,40 @@ internal class CapturingLangsmithClient {
             null
         }
 
-    fun awaitAndGetPostedRuns(delayMs: Long = 500): List<Run> {
+    fun awaitAndGetPostedRuns(delayMs: Long = 500): List<RunIngest> {
         Thread.sleep(delayMs)
         return postedRuns.toList()
     }
 
-    fun awaitAndGetPatchedRuns(delayMs: Long = 500): List<Run> {
+    fun awaitAndGetPatchedRuns(delayMs: Long = 500): List<RunIngest> {
         Thread.sleep(delayMs)
         return patchedRuns.toList()
     }
 
     val client: LangsmithClient = createProxy()
 
-    private fun extractRunFromCreateArgs(args: Array<Any?>): Run? {
-        // create(params: RunCreateParams) or create(run: Run)
+    private fun extractRunFromCreateArgs(args: Array<Any?>): RunIngest? {
+        // create(params: RunCreateParams) or create(run: RunIngest)
         val first = args.firstOrNull() ?: return null
         return when (first) {
-            is com.langchain.smith.models.runs.RunCreateParams -> first.run()
-            is Run -> first
+            is com.langchain.smith.models.runs.RunCreateParams -> first.runIngest()
+            is RunIngest -> first
             else -> null
         }
     }
 
-    private fun extractRunFromUpdateArgs(args: Array<Any?>): Run? {
+    private fun extractRunFromUpdateArgs(args: Array<Any?>): RunIngest? {
         // update(params: RunUpdateParams) or update(runId: String, params: RunUpdateParams)
         val first = args.firstOrNull() ?: return null
         return when (first) {
             is com.langchain.smith.models.runs.RunUpdateParams ->
-                first.runId().map { first.run().toBuilder().id(it).build() }.orElse(first.run())
+                first
+                    .runId()
+                    .map { first.runIngest().toBuilder().id(it).build() }
+                    .orElse(first.runIngest())
             is String -> {
                 val params = args.getOrNull(1) as? com.langchain.smith.models.runs.RunUpdateParams
-                params?.run()?.toBuilder()?.id(first)?.build()
+                params?.runIngest()?.toBuilder()?.id(first)?.build()
             }
             else -> null
         }

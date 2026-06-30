@@ -5,7 +5,8 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import com.langchain.smith.models.feedback.FeedbackSchema
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunCreateResponse
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
@@ -40,7 +41,7 @@ internal class EvaluateRunnerTest {
 
         whenever(sessionService.create(any<SessionCreateParams>())).doReturn(sampleSession())
         whenever(feedbackService.create(any<FeedbackCreateSchema>())).doReturn(sampleFeedback())
-        whenever(runService.create(any<Run>())).doAnswer {}
+        whenever(runService.create(any<RunIngest>())).doReturn(RunCreateResponse.builder().build())
         whenever(runService.update(any<RunUpdateParams>())).doAnswer {}
 
         val client =
@@ -94,7 +95,7 @@ internal class EvaluateRunnerTest {
 
         whenever(sessionService.create(any<SessionCreateParams>())).doReturn(sampleSession())
         whenever(feedbackService.create(any<FeedbackCreateSchema>())).doReturn(sampleFeedback())
-        whenever(runService.create(any<Run>())).doAnswer {}
+        whenever(runService.create(any<RunIngest>())).doReturn(RunCreateResponse.builder().build())
         whenever(runService.update(any<RunUpdateParams>())).doAnswer {}
 
         val client =
@@ -155,7 +156,7 @@ internal class EvaluateRunnerTest {
 
         whenever(sessionService.create(any<SessionCreateParams>())).doReturn(sampleSession())
         whenever(feedbackService.create(any<FeedbackCreateSchema>())).doReturn(sampleFeedback())
-        whenever(runService.create(any<Run>())).doAnswer {}
+        whenever(runService.create(any<RunIngest>())).doReturn(RunCreateResponse.builder().build())
         whenever(runService.update(any<RunUpdateParams>())).doAnswer {}
 
         val client =
@@ -194,7 +195,7 @@ internal class EvaluateRunnerTest {
 
         whenever(sessionService.create(any<SessionCreateParams>())).doReturn(sampleSession())
         whenever(feedbackService.create(any<FeedbackCreateSchema>())).doReturn(sampleFeedback())
-        whenever(runService.create(any<Run>())).doAnswer {}
+        whenever(runService.create(any<RunIngest>())).doReturn(RunCreateResponse.builder().build())
         whenever(runService.update(any<RunUpdateParams>())).doAnswer {}
 
         val client =
@@ -233,7 +234,7 @@ internal class EvaluateRunnerTest {
         val sessionService = mock<SessionService>()
         val feedbackService = mock<FeedbackService>()
 
-        whenever(runService.create(any<Run>())).doAnswer {}
+        whenever(runService.create(any<RunIngest>())).doReturn(RunCreateResponse.builder().build())
         whenever(runService.update(any<RunUpdateParams>())).doAnswer {}
 
         val client =

@@ -3,7 +3,7 @@ package com.langchain.smith.evaluation
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.Example
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.SessionUpdateParams
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
@@ -206,7 +206,7 @@ internal class EvaluateRunner(
         experimentName: String,
         sessionId: String?,
         runMetadata: Map<String, Any>,
-    ): Run? {
+    ): RunIngest? {
         var runTree: RunTree? = null
         val wrappedTarget: (Map<String, Any?>) -> Any? = { exampleInputs ->
             target(exampleInputs).also { runTree = getCurrentRunTree() }
@@ -249,10 +249,10 @@ internal class EvaluateRunner(
         target: (Map<String, Any?>) -> Any?,
         inputs: Map<String, Any?>,
         example: Example,
-    ): Run? {
+    ): RunIngest? {
         return try {
             val output = target(inputs)
-            val outputsBuilder = Run.Outputs.builder()
+            val outputsBuilder = RunIngest.Outputs.builder()
             when (output) {
                 is Map<*, *> ->
                     output.forEach { (key, value) ->
@@ -260,7 +260,7 @@ internal class EvaluateRunner(
                     }
                 else -> outputsBuilder.putAdditionalProperty("output", JsonValue.from(output))
             }
-            Run.builder()
+            RunIngest.builder()
                 .id(UUID.randomUUID().toString())
                 .referenceExampleId(example.id())
                 .outputs(outputsBuilder.build())
@@ -277,7 +277,7 @@ internal class EvaluateRunner(
 
     private fun runEvaluator(
         evaluator: RunEvaluator,
-        run: Run,
+        run: RunIngest,
         example: Example,
     ): List<EvaluationResult> {
         val evaluatorRunId = newEvaluatorRunId()

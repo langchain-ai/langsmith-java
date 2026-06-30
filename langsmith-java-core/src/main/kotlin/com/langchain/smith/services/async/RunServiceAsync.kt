@@ -55,14 +55,14 @@ interface RunServiceAsync {
      * Queues a single run for ingestion. The request body must be a JSON-encoded run object that
      * follows the Run schema.
      */
-    fun create(params: RunCreateParams): CompletableFuture<Void?> =
+    fun create(params: RunCreateParams): CompletableFuture<RunCreateResponse> =
         create(params, RequestOptions.none())
 
     /** @see create */
     fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<Void?>
+    ): CompletableFuture<RunCreateResponse>
 
     /** @see create */
     fun create(

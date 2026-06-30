@@ -1,11 +1,11 @@
 package com.langchain.smith.evaluation
 
 import com.langchain.smith.models.examples.Example
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 
 /** One dataset row evaluated in an experiment. */
 data class ExperimentResultRow(
-    val run: Run,
+    val run: RunIngest,
     val example: Example,
     val evaluationResults: EvaluationResults,
 ) {

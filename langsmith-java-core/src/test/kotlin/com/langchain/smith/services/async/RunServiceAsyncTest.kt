@@ -11,7 +11,6 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
-import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunRetrieveParams
@@ -41,7 +40,9 @@ internal class RunServiceAsyncTest {
 
         runService
             .ingestBatch(
-                RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
+                RunIngestBatchParams.builder()
+                    .addPost(RunIngest.builder().id("run-id").build())
+                    .build()
             )
             .get()
 
@@ -646,8 +647,8 @@ internal class RunServiceAsyncTest {
                 .build()
         )
 
-    private fun testRun(id: String): Run =
-        Run.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
+    private fun testRun(id: String): RunIngest =
+        RunIngest.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
 
     private fun capturingHttpClient(
         capturedRequest: AtomicReference<HttpRequest>,

@@ -23,7 +23,6 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
-import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunRetrieveParams
@@ -145,25 +144,25 @@ internal class RunServiceTest {
                 testRun("r1")
                     .toBuilder()
                     .inputs(
-                        Run.Inputs.builder()
+                        RunIngest.Inputs.builder()
                             .putAdditionalProperty("question", JsonValue.from("hello"))
                             .build()
                     )
                     .events(
                         listOf(
-                            Run.Event.builder()
+                            RunIngest.Event.builder()
                                 .putAdditionalProperty("event", JsonValue.from("started"))
                                 .build()
                         )
                     )
                     .extra(
-                        Run.Extra.builder()
+                        RunIngest.Extra.builder()
                             .putAdditionalProperty("metadata", JsonValue.from("value"))
                             .build()
                     )
                     .error("boom")
                     .serialized(
-                        Run.Serialized.builder()
+                        RunIngest.Serialized.builder()
                             .putAdditionalProperty("lc", JsonValue.from(1))
                             .build()
                     )
@@ -172,12 +171,12 @@ internal class RunServiceTest {
             runService.update(
                 RunUpdateParams.builder()
                     .runId("r1")
-                    .run(
-                        Run.builder()
+                    .runIngest(
+                        RunIngest.builder()
                             .traceId("r1")
                             .dottedOrder("order")
                             .outputs(
-                                Run.Outputs.builder()
+                                RunIngest.Outputs.builder()
                                     .putAdditionalProperty("answer", JsonValue.from("world"))
                                     .build()
                             )
@@ -234,12 +233,12 @@ internal class RunServiceTest {
             runService.update(
                 RunUpdateParams.builder()
                     .runId("r1")
-                    .run(
-                        Run.builder()
+                    .runIngest(
+                        RunIngest.builder()
                             .traceId("r1")
                             .dottedOrder("order")
                             .outputs(
-                                Run.Outputs.builder()
+                                RunIngest.Outputs.builder()
                                     .putAdditionalProperty("answer", JsonValue.from("world"))
                                     .build()
                             )
@@ -288,7 +287,7 @@ internal class RunServiceTest {
 
         try {
             runService.create(
-                Run.builder().id("r1").name("missing required multipart fields").build()
+                RunIngest.builder().id("r1").name("missing required multipart fields").build()
             )
             runService.flush()
 
@@ -325,7 +324,7 @@ internal class RunServiceTest {
 
         try {
             runService.create(
-                Run.builder().id("r1").name("missing required multipart fields").build()
+                RunIngest.builder().id("r1").name("missing required multipart fields").build()
             )
             runService.flush()
 
@@ -382,7 +381,7 @@ internal class RunServiceTest {
         val runService = runService(httpClient)
 
         runService.ingestBatch(
-            RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
+            RunIngestBatchParams.builder().addPost(RunIngest.builder().id("run-id").build()).build()
         )
 
         val request = capturedRequest.get()
@@ -447,8 +446,8 @@ internal class RunServiceTest {
         assertThat(decompress(body)).contains("name=\"post.run-id\"")
     }
 
-    private fun testRun(id: String): Run =
-        Run.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
+    private fun testRun(id: String): RunIngest =
+        RunIngest.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
 
     @Disabled("Mock server tests are disabled")
     @Test

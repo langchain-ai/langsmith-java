@@ -11,7 +11,7 @@ import com.langchain.smith.models.datasets.DatasetCreateParams
 import com.langchain.smith.models.datasets.DatasetListParams
 import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.examples.bulk.BulkCreateParams
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.sessions.SessionCreateParams
 import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields
@@ -206,17 +206,17 @@ fun main() {
         val dottedOrderFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssSSSSSS'Z'")
         val dottedOrder = startTime.format(dottedOrderFormatter) + runId
 
-        Run.builder()
+        RunIngest.builder()
             .id(runId)
             .name("Experiment Run - Question ${index + 1}")
-            .runType(Run.RunType.LLM)
+            .runType(RunIngest.RunType.LLM)
             .inputs(
-                Run.Inputs.builder()
+                RunIngest.Inputs.builder()
                     .putAllAdditionalProperties(input.mapValues { JsonValue.from(it.value) })
                     .build()
             )
             .outputs(
-                Run.Outputs.builder()
+                RunIngest.Outputs.builder()
                     .putAllAdditionalProperties(actualOutput.mapValues { JsonValue.from(it.value) })
                     .build()
             )
@@ -228,7 +228,7 @@ fun main() {
             .traceId(runId)  // For root-level runs, trace_id equals run id
             .dottedOrder(dottedOrder)  // Timestamp + UUID for ordering
             .extra(
-                Run.Extra.builder()
+                RunIngest.Extra.builder()
                     .putAllAdditionalProperties(metadata.mapValues { JsonValue.from(it.value) })
                     .build()
             )

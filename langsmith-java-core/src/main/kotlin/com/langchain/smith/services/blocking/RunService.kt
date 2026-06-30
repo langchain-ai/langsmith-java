@@ -55,10 +55,13 @@ interface RunService {
      * Queues a single run for ingestion. The request body must be a JSON-encoded run object that
      * follows the Run schema.
      */
-    fun create(params: RunCreateParams) = create(params, RequestOptions.none())
+    fun create(params: RunCreateParams): RunCreateResponse = create(params, RequestOptions.none())
 
     /** @see create */
-    fun create(params: RunCreateParams, requestOptions: RequestOptions = RequestOptions.none())
+    fun create(
+        params: RunCreateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunCreateResponse
 
     /** @see create */
     fun create(
