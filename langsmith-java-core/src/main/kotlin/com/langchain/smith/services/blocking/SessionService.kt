@@ -36,7 +36,7 @@ interface SessionService {
 
     fun insights(): InsightService
 
-    /** Create a new session. */
+    /** Create a new project. */
     fun create(): TracerSessionWithoutVirtualFields = create(SessionCreateParams.none())
 
     /** @see create */
@@ -54,7 +54,7 @@ interface SessionService {
     fun create(requestOptions: RequestOptions): TracerSessionWithoutVirtualFields =
         create(SessionCreateParams.none(), requestOptions)
 
-    /** Get a specific session. */
+    /** Get a specific project. */
     fun retrieve(sessionId: String): TracerSession =
         retrieve(sessionId, SessionRetrieveParams.none())
 
@@ -85,7 +85,7 @@ interface SessionService {
     fun retrieve(sessionId: String, requestOptions: RequestOptions): TracerSession =
         retrieve(sessionId, SessionRetrieveParams.none(), requestOptions)
 
-    /** Update a session. */
+    /** Update a project. */
     fun update(sessionId: String): TracerSessionWithoutVirtualFields =
         update(sessionId, SessionUpdateParams.none())
 
@@ -120,7 +120,7 @@ interface SessionService {
     ): TracerSessionWithoutVirtualFields =
         update(sessionId, SessionUpdateParams.none(), requestOptions)
 
-    /** Get all sessions. */
+    /** List all projects. */
     fun list(): SessionListPage = list(SessionListParams.none())
 
     /** @see list */
@@ -137,7 +137,7 @@ interface SessionService {
     fun list(requestOptions: RequestOptions): SessionListPage =
         list(SessionListParams.none(), requestOptions)
 
-    /** Delete a specific session. */
+    /** Delete a specific project. */
     fun delete(sessionId: String): SessionDeleteResponse =
         delete(sessionId, SessionDeleteParams.none())
 

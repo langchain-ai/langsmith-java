@@ -22,10 +22,7 @@ import com.langchain.smith.errors.RateLimitException
 import com.langchain.smith.errors.UnauthorizedException
 import com.langchain.smith.errors.UnexpectedStatusCodeException
 import com.langchain.smith.errors.UnprocessableEntityException
-import com.langchain.smith.models.sessions.CustomChartsSectionRequest
-import com.langchain.smith.models.sessions.RunStatsGroupBy
-import com.langchain.smith.models.sessions.SessionDashboardParams
-import com.langchain.smith.models.sessions.TimedeltaInput
+import com.langchain.smith.models.sessions.SessionCreateParams
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
@@ -64,7 +61,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard400() {
+    fun sessionsCreate400() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -75,28 +72,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<BadRequestException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -107,7 +103,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard400WithRawResponse() {
+    fun sessionsCreate400WithRawResponse() {
         val sessionService = client.sessions().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -118,28 +114,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<BadRequestException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -150,7 +145,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard401() {
+    fun sessionsCreate401() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -161,28 +156,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnauthorizedException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -193,7 +187,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard401WithRawResponse() {
+    fun sessionsCreate401WithRawResponse() {
         val sessionService = client.sessions().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -204,28 +198,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnauthorizedException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -236,7 +229,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard403() {
+    fun sessionsCreate403() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -247,28 +240,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<PermissionDeniedException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -279,7 +271,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard403WithRawResponse() {
+    fun sessionsCreate403WithRawResponse() {
         val sessionService = client.sessions().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -290,28 +282,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<PermissionDeniedException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -322,7 +313,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard404() {
+    fun sessionsCreate404() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -333,28 +324,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<NotFoundException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -365,7 +355,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard404WithRawResponse() {
+    fun sessionsCreate404WithRawResponse() {
         val sessionService = client.sessions().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -376,28 +366,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<NotFoundException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -408,7 +397,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard422() {
+    fun sessionsCreate422() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -419,28 +408,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnprocessableEntityException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -451,7 +439,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard422WithRawResponse() {
+    fun sessionsCreate422WithRawResponse() {
         val sessionService = client.sessions().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -462,28 +450,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnprocessableEntityException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -494,7 +481,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard429() {
+    fun sessionsCreate429() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -505,28 +492,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<RateLimitException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -537,7 +523,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard429WithRawResponse() {
+    fun sessionsCreate429WithRawResponse() {
         val sessionService = client.sessions().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -548,28 +534,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<RateLimitException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -580,7 +565,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard500() {
+    fun sessionsCreate500() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -591,28 +576,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<InternalServerException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -623,7 +607,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard500WithRawResponse() {
+    fun sessionsCreate500WithRawResponse() {
         val sessionService = client.sessions().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -634,28 +618,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<InternalServerException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -666,7 +649,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard999() {
+    fun sessionsCreate999() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -677,28 +660,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnexpectedStatusCodeException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -709,7 +691,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboard999WithRawResponse() {
+    fun sessionsCreate999WithRawResponse() {
         val sessionService = client.sessions().withRawResponse()
         stubFor(
             post(anyUrl())
@@ -720,28 +702,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<UnexpectedStatusCodeException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }
@@ -752,7 +733,7 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsDashboardInvalidJsonBody() {
+    fun sessionsCreateInvalidJsonBody() {
         val sessionService = client.sessions()
         stubFor(
             post(anyUrl())
@@ -761,28 +742,27 @@ internal class ErrorHandlingTest {
 
         val e =
             assertThrows<LangChainException> {
-                sessionService.dashboard(
-                    SessionDashboardParams.builder()
-                        .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .accept("accept")
-                        .customChartsSectionRequest(
-                            CustomChartsSectionRequest.builder()
-                                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .groupBy(
-                                    RunStatsGroupBy.builder()
-                                        .attribute(RunStatsGroupBy.Attribute.NAME)
-                                        .maxGroups(0L)
-                                        .path("path")
-                                        .build()
-                                )
-                                .omitData(true)
-                                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                                .stride(
-                                    TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build()
-                                )
-                                .timezone("timezone")
+                sessionService.create(
+                    SessionCreateParams.builder()
+                        .upsert(true)
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .description("description")
+                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addEvaluatorKey("string")
+                        .extra(
+                            SessionCreateParams.Extra.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
+                        .kickedOffBy("kicked_off_by")
+                        .name("name")
+                        .numExamples(0L)
+                        .numRepetitions(0L)
+                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                         .build()
                 )
             }

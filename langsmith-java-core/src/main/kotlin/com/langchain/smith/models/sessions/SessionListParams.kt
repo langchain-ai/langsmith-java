@@ -16,7 +16,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get all sessions. */
+/** List all projects. */
 class SessionListParams
 private constructor(
     private val id: List<String>?,

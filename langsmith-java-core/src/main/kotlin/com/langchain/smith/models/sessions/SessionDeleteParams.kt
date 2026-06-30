@@ -11,7 +11,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Delete a specific session. */
+/** Delete a specific project. */
 class SessionDeleteParams
 private constructor(
     private val sessionId: String?,

@@ -4,6 +4,7 @@ package com.langchain.smith.services
 
 import com.github.tomakehurst.wiremock.client.WireMock.anyUrl
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath
 import com.github.tomakehurst.wiremock.client.WireMock.ok
 import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
@@ -13,10 +14,8 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo
 import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.models.sessions.CustomChartsSectionRequest
-import com.langchain.smith.models.sessions.RunStatsGroupBy
-import com.langchain.smith.models.sessions.SessionDashboardParams
-import com.langchain.smith.models.sessions.TimedeltaInput
+import com.langchain.smith.core.JsonValue
+import com.langchain.smith.models.sessions.SessionCreateParams
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -41,32 +40,34 @@ internal class ServiceParamsTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun dashboard() {
+    fun create() {
         val sessionService = client.sessions()
         stubFor(post(anyUrl()).willReturn(ok("{}")))
 
-        sessionService.dashboard(
-            SessionDashboardParams.builder()
-                .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .accept("accept")
-                .customChartsSectionRequest(
-                    CustomChartsSectionRequest.builder()
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .groupBy(
-                            RunStatsGroupBy.builder()
-                                .attribute(RunStatsGroupBy.Attribute.NAME)
-                                .maxGroups(0L)
-                                .path("path")
-                                .build()
-                        )
-                        .omitData(true)
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .stride(TimedeltaInput.builder().days(0L).hours(0L).minutes(0L).build())
-                        .timezone("timezone")
+        sessionService.create(
+            SessionCreateParams.builder()
+                .upsert(true)
+                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .description("description")
+                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .addEvaluatorKey("string")
+                .extra(
+                    SessionCreateParams.Extra.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .kickedOffBy("kicked_off_by")
+                .name("name")
+                .numExamples(0L)
+                .numRepetitions(0L)
+                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
                 .putAdditionalHeader("Secret-Header", "42")
                 .putAdditionalQueryParam("secret_query_param", "42")
+                .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))
                 .build()
         )
 
@@ -74,6 +75,7 @@ internal class ServiceParamsTest {
             postRequestedFor(anyUrl())
                 .withHeader("Secret-Header", equalTo("42"))
                 .withQueryParam("secret_query_param", equalTo("42"))
+                .withRequestBody(matchingJsonPath("$.secretProperty", equalTo("42")))
         )
     }
 }

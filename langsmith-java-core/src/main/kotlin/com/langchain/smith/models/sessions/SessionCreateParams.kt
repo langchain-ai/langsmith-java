@@ -23,7 +23,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Create a new session. */
+/** Create a new project. */
 class SessionCreateParams
 private constructor(
     private val upsert: Boolean?,
