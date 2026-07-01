@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.1.0-beta.10](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.9...v0.1.0-beta.10) (2026-07-01)
+
+
+### Features
+
+* **evaluation:** add core evaluate() param parity ([#17](https://github.com/langchain-ai/langsmith-java/issues/17)) ([7d9a2fa](https://github.com/langchain-ai/langsmith-java/commit/7d9a2fafd45c60dbe11852c1c4c74565c4517595))
+
+
+### Bug Fixes
+
+* **ci:** add GH_REPO to release-please trigger publish step ([#24](https://github.com/langchain-ai/langsmith-java/issues/24)) ([10a1f9b](https://github.com/langchain-ai/langsmith-java/commit/10a1f9bcbbf662e048b4e4f0a1bb4e9a29f18bc7))
+* update hand-written code to use RunIngest after stainless rename ([#25](https://github.com/langchain-ai/langsmith-java/issues/25)) ([4d45358](https://github.com/langchain-ai/langsmith-java/commit/4d45358e0ef8c0df8905cc3f927a495af2bcbeca))
+
+
+### Chores
+
+* **examples:** dual-write source run lookup coordinates in Python ([2d4900b](https://github.com/langchain-ai/langsmith-java/commit/2d4900b16bdda9512fa71368dd03f4729f55620a))
+* **stainless:** rename run models in runs resource ([2f0ce40](https://github.com/langchain-ai/langsmith-java/commit/2f0ce40b862dc33d52ff8cb0fb8d50fde790ef73))
+
 ## [0.1.0-beta.9](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.8...v0.1.0-beta.9) (2026-06-29)
 
 
