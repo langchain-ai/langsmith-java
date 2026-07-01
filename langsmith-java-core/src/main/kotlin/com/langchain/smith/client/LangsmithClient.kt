@@ -10,6 +10,7 @@ import com.langchain.smith.services.blocking.EvaluatorService
 import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.InfoService
+import com.langchain.smith.services.blocking.IssueService
 import com.langchain.smith.services.blocking.OnlineEvaluatorService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
@@ -84,6 +85,8 @@ interface LangsmithClient {
 
     fun settings(): SettingService
 
+    fun issues(): IssueService
+
     fun sandboxes(): SandboxService
 
     /**
@@ -136,6 +139,8 @@ interface LangsmithClient {
         fun commits(): CommitService.WithRawResponse
 
         fun settings(): SettingService.WithRawResponse
+
+        fun issues(): IssueService.WithRawResponse
 
         fun sandboxes(): SandboxService.WithRawResponse
     }

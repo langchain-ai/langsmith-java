@@ -10,6 +10,7 @@ import com.langchain.smith.services.async.EvaluatorServiceAsync
 import com.langchain.smith.services.async.ExampleServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.InfoServiceAsync
+import com.langchain.smith.services.async.IssueServiceAsync
 import com.langchain.smith.services.async.OnlineEvaluatorServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.RepoServiceAsync
@@ -84,6 +85,8 @@ interface LangsmithClientAsync {
 
     fun settings(): SettingServiceAsync
 
+    fun issues(): IssueServiceAsync
+
     fun sandboxes(): SandboxServiceAsync
 
     /**
@@ -140,6 +143,8 @@ interface LangsmithClientAsync {
         fun commits(): CommitServiceAsync.WithRawResponse
 
         fun settings(): SettingServiceAsync.WithRawResponse
+
+        fun issues(): IssueServiceAsync.WithRawResponse
 
         fun sandboxes(): SandboxServiceAsync.WithRawResponse
     }
