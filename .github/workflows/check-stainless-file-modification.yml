@@ -1,0 +1,72 @@
+name: Check Stainless File Modification
+
+on:
+  pull_request:
+    branches:
+      - next
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - labeled
+      - unlabeled
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check-stainless-files:
+    name: Check for Stainless-generated file modifications
+    runs-on: ubuntu-latest
+    if: github.repository == 'langchain-ai/langsmith-java-staging'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for modifications to Stainless-generated files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          SKIP_LABEL="skip-stainless-generated-file-modification-check"
+
+          # Check if the skip label is present
+          LABELS=$(gh api repos/"$REPO"/pulls/"$PR_NUMBER" --jq '[.labels[].name] | join(",")')
+          if echo "$LABELS" | grep -qF "$SKIP_LABEL"; then
+            echo "Skip label '$SKIP_LABEL' is present — skipping check."
+            exit 0
+          fi
+
+          # Get the list of files changed in this PR
+          CHANGED_FILES=$(git diff --name-only "origin/${{ github.base_ref }}"...HEAD)
+
+          STAINLESS_FILES=""
+          while IFS= read -r FILE; do
+            [ -z "$FILE" ] && continue
+            [ ! -f "$FILE" ] && continue
+            if grep -qF "File generated from our OpenAPI spec by Stainless." "$FILE"; then
+              STAINLESS_FILES="$STAINLESS_FILES\n  - $FILE"
+            fi
+          done <<< "$CHANGED_FILES"
+
+          if [ -n "$STAINLESS_FILES" ]; then
+            echo "::error::This PR modifies Stainless-generated files, which should not be edited directly."
+            printf "Stainless-generated files modified:%b\n" "$STAINLESS_FILES"
+            echo ""
+            echo "Please choose one of the following options:"
+            echo ""
+            echo "  1. Refactor your change to avoid modifying the generated file directly."
+            echo ""
+            echo "  2. Use Stainless configuration instead:"
+            echo "     - OpenAPI extensions: https://www.stainless.com/docs/openapi/extensions/"
+            echo "     - Transforms:         https://www.stainless.com/docs/openapi/transforms/reference/"
+            echo ""
+            echo "  3. If neither option above is feasible, add the label '$SKIP_LABEL' to this PR to bypass this check."
+            echo "     Use this only as a last resort and document why it is necessary."
+            exit 1
+          fi
+
+          echo "No Stainless-generated files were modified."

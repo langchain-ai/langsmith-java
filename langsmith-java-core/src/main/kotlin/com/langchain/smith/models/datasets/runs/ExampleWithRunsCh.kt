@@ -42,6 +42,9 @@ private constructor(
     private val modifiedAt: JsonField<OffsetDateTime>,
     private val outputs: JsonField<Outputs>,
     private val sourceRunId: JsonField<String>,
+    private val sourceRunStartTime: JsonField<OffsetDateTime>,
+    private val sourceSessionId: JsonField<String>,
+    private val sourceTraceId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -66,6 +69,15 @@ private constructor(
         @JsonProperty("source_run_id")
         @ExcludeMissing
         sourceRunId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("source_run_start_time")
+        @ExcludeMissing
+        sourceRunStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("source_session_id")
+        @ExcludeMissing
+        sourceSessionId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("source_trace_id")
+        @ExcludeMissing
+        sourceTraceId: JsonField<String> = JsonMissing.of(),
     ) : this(
         id,
         datasetId,
@@ -78,6 +90,9 @@ private constructor(
         modifiedAt,
         outputs,
         sourceRunId,
+        sourceRunStartTime,
+        sourceSessionId,
+        sourceTraceId,
         mutableMapOf(),
     )
 
@@ -146,6 +161,25 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun sourceRunId(): Optional<String> = sourceRunId.getOptional("source_run_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun sourceRunStartTime(): Optional<OffsetDateTime> =
+        sourceRunStartTime.getOptional("source_run_start_time")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun sourceSessionId(): Optional<String> = sourceSessionId.getOptional("source_session_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun sourceTraceId(): Optional<String> = sourceTraceId.getOptional("source_trace_id")
 
     /**
      * Returns the raw JSON value of [id].
@@ -232,6 +266,34 @@ private constructor(
     @ExcludeMissing
     fun _sourceRunId(): JsonField<String> = sourceRunId
 
+    /**
+     * Returns the raw JSON value of [sourceRunStartTime].
+     *
+     * Unlike [sourceRunStartTime], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("source_run_start_time")
+    @ExcludeMissing
+    fun _sourceRunStartTime(): JsonField<OffsetDateTime> = sourceRunStartTime
+
+    /**
+     * Returns the raw JSON value of [sourceSessionId].
+     *
+     * Unlike [sourceSessionId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("source_session_id")
+    @ExcludeMissing
+    fun _sourceSessionId(): JsonField<String> = sourceSessionId
+
+    /**
+     * Returns the raw JSON value of [sourceTraceId].
+     *
+     * Unlike [sourceTraceId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("source_trace_id")
+    @ExcludeMissing
+    fun _sourceTraceId(): JsonField<String> = sourceTraceId
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -275,6 +337,9 @@ private constructor(
         private var modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var outputs: JsonField<Outputs> = JsonMissing.of()
         private var sourceRunId: JsonField<String> = JsonMissing.of()
+        private var sourceRunStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var sourceSessionId: JsonField<String> = JsonMissing.of()
+        private var sourceTraceId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -290,6 +355,9 @@ private constructor(
             modifiedAt = exampleWithRunsCh.modifiedAt
             outputs = exampleWithRunsCh.outputs
             sourceRunId = exampleWithRunsCh.sourceRunId
+            sourceRunStartTime = exampleWithRunsCh.sourceRunStartTime
+            sourceSessionId = exampleWithRunsCh.sourceSessionId
+            sourceTraceId = exampleWithRunsCh.sourceTraceId
             additionalProperties = exampleWithRunsCh.additionalProperties.toMutableMap()
         }
 
@@ -439,6 +507,62 @@ private constructor(
          */
         fun sourceRunId(sourceRunId: JsonField<String>) = apply { this.sourceRunId = sourceRunId }
 
+        fun sourceRunStartTime(sourceRunStartTime: OffsetDateTime?) =
+            sourceRunStartTime(JsonField.ofNullable(sourceRunStartTime))
+
+        /**
+         * Alias for calling [Builder.sourceRunStartTime] with `sourceRunStartTime.orElse(null)`.
+         */
+        fun sourceRunStartTime(sourceRunStartTime: Optional<OffsetDateTime>) =
+            sourceRunStartTime(sourceRunStartTime.getOrNull())
+
+        /**
+         * Sets [Builder.sourceRunStartTime] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sourceRunStartTime] with a well-typed [OffsetDateTime]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun sourceRunStartTime(sourceRunStartTime: JsonField<OffsetDateTime>) = apply {
+            this.sourceRunStartTime = sourceRunStartTime
+        }
+
+        fun sourceSessionId(sourceSessionId: String?) =
+            sourceSessionId(JsonField.ofNullable(sourceSessionId))
+
+        /** Alias for calling [Builder.sourceSessionId] with `sourceSessionId.orElse(null)`. */
+        fun sourceSessionId(sourceSessionId: Optional<String>) =
+            sourceSessionId(sourceSessionId.getOrNull())
+
+        /**
+         * Sets [Builder.sourceSessionId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sourceSessionId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun sourceSessionId(sourceSessionId: JsonField<String>) = apply {
+            this.sourceSessionId = sourceSessionId
+        }
+
+        fun sourceTraceId(sourceTraceId: String?) =
+            sourceTraceId(JsonField.ofNullable(sourceTraceId))
+
+        /** Alias for calling [Builder.sourceTraceId] with `sourceTraceId.orElse(null)`. */
+        fun sourceTraceId(sourceTraceId: Optional<String>) =
+            sourceTraceId(sourceTraceId.getOrNull())
+
+        /**
+         * Sets [Builder.sourceTraceId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sourceTraceId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun sourceTraceId(sourceTraceId: JsonField<String>) = apply {
+            this.sourceTraceId = sourceTraceId
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -487,6 +611,9 @@ private constructor(
                 modifiedAt,
                 outputs,
                 sourceRunId,
+                sourceRunStartTime,
+                sourceSessionId,
+                sourceTraceId,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -517,6 +644,9 @@ private constructor(
         modifiedAt()
         outputs().ifPresent { it.validate() }
         sourceRunId()
+        sourceRunStartTime()
+        sourceSessionId()
+        sourceTraceId()
         validated = true
     }
 
@@ -545,7 +675,10 @@ private constructor(
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (modifiedAt.asKnown().isPresent) 1 else 0) +
             (outputs.asKnown().getOrNull()?.validity() ?: 0) +
-            (if (sourceRunId.asKnown().isPresent) 1 else 0)
+            (if (sourceRunId.asKnown().isPresent) 1 else 0) +
+            (if (sourceRunStartTime.asKnown().isPresent) 1 else 0) +
+            (if (sourceSessionId.asKnown().isPresent) 1 else 0) +
+            (if (sourceTraceId.asKnown().isPresent) 1 else 0)
 
     class Inputs
     @JsonCreator
@@ -3735,6 +3868,9 @@ private constructor(
             modifiedAt == other.modifiedAt &&
             outputs == other.outputs &&
             sourceRunId == other.sourceRunId &&
+            sourceRunStartTime == other.sourceRunStartTime &&
+            sourceSessionId == other.sourceSessionId &&
+            sourceTraceId == other.sourceTraceId &&
             additionalProperties == other.additionalProperties
     }
 
@@ -3751,6 +3887,9 @@ private constructor(
             modifiedAt,
             outputs,
             sourceRunId,
+            sourceRunStartTime,
+            sourceSessionId,
+            sourceTraceId,
             additionalProperties,
         )
     }
@@ -3758,5 +3897,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ExampleWithRunsCh{id=$id, datasetId=$datasetId, inputs=$inputs, name=$name, runs=$runs, attachmentUrls=$attachmentUrls, createdAt=$createdAt, metadata=$metadata, modifiedAt=$modifiedAt, outputs=$outputs, sourceRunId=$sourceRunId, additionalProperties=$additionalProperties}"
+        "ExampleWithRunsCh{id=$id, datasetId=$datasetId, inputs=$inputs, name=$name, runs=$runs, attachmentUrls=$attachmentUrls, createdAt=$createdAt, metadata=$metadata, modifiedAt=$modifiedAt, outputs=$outputs, sourceRunId=$sourceRunId, sourceRunStartTime=$sourceRunStartTime, sourceSessionId=$sourceSessionId, sourceTraceId=$sourceTraceId, additionalProperties=$additionalProperties}"
 }

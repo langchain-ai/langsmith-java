@@ -3,7 +3,7 @@ package com.langchain.smith.evaluation
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withRunAndExample_returnsEvaluationResult() {
-        val evaluator = runEvaluator { run: Run, example: Example? ->
+        val evaluator = runEvaluator { run: RunIngest, example: Example? ->
             EvaluationResult(
                 key = "accuracy",
                 score = if (run.outputs().isPresent) 1 else 0,
@@ -52,7 +52,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withMapResult_coercesToEvaluationResult() {
-        val evaluator = runEvaluator { _: Run, _: Example? ->
+        val evaluator = runEvaluator { _: RunIngest, _: Example? ->
             mapOf("key" to "helpful", "score" to 0.5)
         }
 
@@ -64,7 +64,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withNumericResult_coercesToScore() {
-        val evaluator = runEvaluator { _: Run, _: Example? -> 1 }
+        val evaluator = runEvaluator { _: RunIngest, _: Example? -> 1 }
 
         val result = singleResult(evaluator.evaluateRun(sampleRun(), sampleExample()))
 
@@ -74,7 +74,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withBooleanResult_coercesToNumericScore() {
-        val evaluator = runEvaluator { _: Run, _: Example? -> true }
+        val evaluator = runEvaluator { _: RunIngest, _: Example? -> true }
 
         val result = singleResult(evaluator.evaluateRun(sampleRun(), sampleExample()))
 
@@ -84,7 +84,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withFalseBooleanResult_coercesToZeroScore() {
-        val evaluator = runEvaluator { _: Run, _: Example? -> false }
+        val evaluator = runEvaluator { _: RunIngest, _: Example? -> false }
 
         val result = singleResult(evaluator.evaluateRun(sampleRun(), sampleExample()))
 
@@ -94,7 +94,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withMultipleResults_returnsEvaluationResults() {
-        val evaluator = runEvaluator { _: Run, _: Example? ->
+        val evaluator = runEvaluator { _: RunIngest, _: Example? ->
             listOf(mapOf("key" to "a", "score" to 1), mapOf("key" to "b", "score" to 0))
         }
 
@@ -109,7 +109,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withMapResultMissingKey_usesDefaultKey() {
-        val evaluator = runEvaluator { _: Run, _: Example? -> mapOf("score" to 1) }
+        val evaluator = runEvaluator { _: RunIngest, _: Example? -> mapOf("score" to 1) }
 
         val result = singleResult(evaluator.evaluateRun(sampleRun(), sampleExample()))
 
@@ -119,7 +119,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withMapResultIncludingFeedbackConfig_coercesFeedbackConfig() {
-        val evaluator = runEvaluator { _: Run, _: Example? ->
+        val evaluator = runEvaluator { _: RunIngest, _: Example? ->
             mapOf(
                 "key" to "accuracy",
                 "score" to 0.8,
@@ -137,7 +137,7 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withSnakeCaseFeedbackConfig_coercesFeedbackConfig() {
-        val evaluator = runEvaluator { _: Run, _: Example? ->
+        val evaluator = runEvaluator { _: RunIngest, _: Example? ->
             mapOf(
                 "key" to "sentiment",
                 "score" to 1,
@@ -157,7 +157,9 @@ internal class DynamicRunEvaluatorTest {
 
     @Test
     fun evaluateRun_withInvalidMap_throws() {
-        val evaluator = runEvaluator { _: Run, _: Example? -> mapOf("key" to "missing_metric") }
+        val evaluator = runEvaluator { _: RunIngest, _: Example? ->
+            mapOf("key" to "missing_metric")
+        }
 
         assertThatThrownBy { evaluator.evaluateRun(sampleRun(), sampleExample()) }
             .isInstanceOf(IllegalArgumentException::class.java)
@@ -187,14 +189,14 @@ internal class DynamicRunEvaluatorTest {
             )
             .build()
 
-    private fun sampleRun(answer: String = "Paris"): Run =
-        Run.builder()
+    private fun sampleRun(answer: String = "Paris"): RunIngest =
+        RunIngest.builder()
             .id(runId)
             .traceId(runId)
             .dottedOrder("2024.01.01T00:00:00.000000Z$runId")
             .name("target")
             .outputs(
-                Run.Outputs.builder()
+                RunIngest.Outputs.builder()
                     .putAdditionalProperty("answer", JsonValue.from(answer))
                     .build()
             )

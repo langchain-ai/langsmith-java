@@ -23,7 +23,7 @@ import com.langchain.smith.core.http.zstd
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.errors.NotFoundException
 import com.langchain.smith.models.info.InfoListResponse
-import com.langchain.smith.models.runs.QueryRunResponse
+import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
@@ -170,16 +170,18 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<Void?> {
+    ): CompletableFuture<RunCreateResponse> {
         if (clientOptions.autoBatchTracing) {
-            batchQueue.post(params.run(), params._headers(), params._queryParams(), requestOptions)
-            return CompletableFuture.completedFuture(null)
+            batchQueue.post(
+                params.runIngest(),
+                params._headers(),
+                params._queryParams(),
+                requestOptions,
+            )
+            return CompletableFuture.completedFuture(RunCreateResponse.builder().build())
         }
 
-        return withRawResponse().create(params, requestOptions).thenApply {
-            it.parse()
-            null
-        }
+        return withRawResponse().create(params, requestOptions).thenApply { it.parse() }
     }
 
     override fun update(
@@ -193,7 +195,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         val runId = checkRequired("runId", params.runId().getOrNull())
 
         batchQueue.patch(
-            params.run().toBuilder().id(runId).build(),
+            params.runIngest().toBuilder().id(runId).build(),
             params._headers(),
             params._queryParams(),
             requestOptions,
@@ -232,7 +234,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun retrieveV2(
         params: RunRetrieveV2Params,
         requestOptions: RequestOptions,
-    ): CompletableFuture<QueryRunResponse> =
+    ): CompletableFuture<Run> =
         // get /v2/runs/{run_id}
         withRawResponse().retrieveV2(params, requestOptions).thenApply { it.parse() }
 
@@ -577,13 +579,12 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 }
         }
 
-        private val retrieveV2Handler: Handler<QueryRunResponse> =
-            jsonHandler<QueryRunResponse>(clientOptions.jsonMapper)
+        private val retrieveV2Handler: Handler<Run> = jsonHandler<Run>(clientOptions.jsonMapper)
 
         override fun retrieveV2(
             params: RunRetrieveV2Params,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<QueryRunResponse>> {
+        ): CompletableFuture<HttpResponseFor<Run>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("runId", params.runId().getOrNull())

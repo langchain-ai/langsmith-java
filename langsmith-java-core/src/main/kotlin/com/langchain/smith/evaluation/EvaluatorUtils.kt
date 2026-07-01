@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.examples.Example
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import java.util.UUID
 
 private val stringAnyMapType = object : TypeReference<Map<String, Any?>>() {}
@@ -12,7 +12,7 @@ private val stringAnyMapType = object : TypeReference<Map<String, Any?>>() {}
 private val feedbackConfigType = object : TypeReference<FeedbackCreateSchema.FeedbackConfig>() {}
 
 /** Gets the app's answer from a finished run as a simple map. */
-internal fun runOutputsMap(run: Run): Map<String, Any?> =
+internal fun runOutputsMap(run: RunIngest): Map<String, Any?> =
     run.outputs().map { it._additionalProperties().toPlainMap() }.orElse(emptyMap())
 
 /** Gets the inputs sent to the app for one dataset row as a simple map. */

@@ -2,7 +2,7 @@ package com.langchain.smith.client
 
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import java.io.ByteArrayOutputStream
 import org.assertj.core.api.Assertions.assertThat
@@ -16,30 +16,32 @@ internal class RunMultipartBatchTest {
             testRun("r1")
                 .toBuilder()
                 .inputs(
-                    Run.Inputs.builder()
+                    RunIngest.Inputs.builder()
                         .putAdditionalProperty("question", JsonValue.from("hello"))
                         .build()
                 )
                 .outputs(
-                    Run.Outputs.builder()
+                    RunIngest.Outputs.builder()
                         .putAdditionalProperty("answer", JsonValue.from("world"))
                         .build()
                 )
                 .events(
                     listOf(
-                        Run.Event.builder()
+                        RunIngest.Event.builder()
                             .putAdditionalProperty("event", JsonValue.from("started"))
                             .build()
                     )
                 )
                 .extra(
-                    Run.Extra.builder()
+                    RunIngest.Extra.builder()
                         .putAdditionalProperty("metadata", JsonValue.from("value"))
                         .build()
                 )
                 .error("boom")
                 .serialized(
-                    Run.Serialized.builder().putAdditionalProperty("lc", JsonValue.from(1)).build()
+                    RunIngest.Serialized.builder()
+                        .putAdditionalProperty("lc", JsonValue.from(1))
+                        .build()
                 )
                 .build()
 
@@ -103,15 +105,15 @@ internal class RunMultipartBatchTest {
     fun `returns null when required multipart fields are missing`() {
         val multipart =
             RunIngestBatchParams.builder()
-                .post(listOf(Run.builder().id("r1").name("missing required fields").build()))
+                .post(listOf(RunIngest.builder().id("r1").name("missing required fields").build()))
                 .build()
                 .toRunMultipartFormData(jsonMapper())
 
         assertThat(multipart).isNull()
     }
 
-    private fun testRun(id: String): Run =
-        Run.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
+    private fun testRun(id: String): RunIngest =
+        RunIngest.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
 
     private fun com.langchain.smith.core.http.HttpRequestBody.asString(): String =
         ByteArrayOutputStream().use { output ->

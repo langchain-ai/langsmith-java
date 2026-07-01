@@ -16,14 +16,14 @@ private constructor(
     private val service: RunService,
     private val params: RunQueryV2Params,
     private val response: RunQueryV2PageResponse,
-) : Page<QueryRunResponse> {
+) : Page<Run> {
 
     /**
      * Delegates to [RunQueryV2PageResponse], but gracefully handles missing data.
      *
      * @see RunQueryV2PageResponse.items
      */
-    override fun items(): List<QueryRunResponse> =
+    override fun items(): List<Run> =
         response._items().getOptional("items").getOrNull() ?: emptyList()
 
     /**
@@ -44,7 +44,7 @@ private constructor(
 
     override fun nextPage(): RunQueryV2Page = service.queryV2(nextPageParams())
 
-    fun autoPager(): AutoPager<QueryRunResponse> = AutoPager.from(this)
+    fun autoPager(): AutoPager<Run> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
     fun params(): RunQueryV2Params = params

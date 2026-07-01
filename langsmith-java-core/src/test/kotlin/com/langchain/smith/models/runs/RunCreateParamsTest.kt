@@ -11,48 +11,48 @@ internal class RunCreateParamsTest {
     @Test
     fun create() {
         RunCreateParams.builder()
-            .run(
-                Run.builder()
+            .runIngest(
+                RunIngest.builder()
                     .id("id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
                     .addEvent(
-                        Run.Event.builder()
+                        RunIngest.Event.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .extra(
-                        Run.Extra.builder()
+                        RunIngest.Extra.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputAttachments(
-                        Run.InputAttachments.builder()
+                        RunIngest.InputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputs(
-                        Run.Inputs.builder()
+                        RunIngest.Inputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .name("name")
                     .outputAttachments(
-                        Run.OutputAttachments.builder()
+                        RunIngest.OutputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .outputs(
-                        Run.Outputs.builder()
+                        RunIngest.Outputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .parentRunId("parent_run_id")
                     .referenceExampleId("reference_example_id")
-                    .runType(Run.RunType.TOOL)
+                    .runType(RunIngest.RunType.TOOL)
                     .serialized(
-                        Run.Serialized.builder()
+                        RunIngest.Serialized.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
@@ -71,48 +71,48 @@ internal class RunCreateParamsTest {
     fun body() {
         val params =
             RunCreateParams.builder()
-                .run(
-                    Run.builder()
+                .runIngest(
+                    RunIngest.builder()
                         .id("id")
                         .dottedOrder("dotted_order")
                         .endTime("end_time")
                         .error("error")
                         .addEvent(
-                            Run.Event.builder()
+                            RunIngest.Event.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .extra(
-                            Run.Extra.builder()
+                            RunIngest.Extra.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .inputAttachments(
-                            Run.InputAttachments.builder()
+                            RunIngest.InputAttachments.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .inputs(
-                            Run.Inputs.builder()
+                            RunIngest.Inputs.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .name("name")
                         .outputAttachments(
-                            Run.OutputAttachments.builder()
+                            RunIngest.OutputAttachments.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .outputs(
-                            Run.Outputs.builder()
+                            RunIngest.Outputs.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .parentRunId("parent_run_id")
                         .referenceExampleId("reference_example_id")
-                        .runType(Run.RunType.TOOL)
+                        .runType(RunIngest.RunType.TOOL)
                         .serialized(
-                            Run.Serialized.builder()
+                            RunIngest.Serialized.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
@@ -130,47 +130,47 @@ internal class RunCreateParamsTest {
 
         assertThat(body)
             .isEqualTo(
-                Run.builder()
+                RunIngest.builder()
                     .id("id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
                     .addEvent(
-                        Run.Event.builder()
+                        RunIngest.Event.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .extra(
-                        Run.Extra.builder()
+                        RunIngest.Extra.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputAttachments(
-                        Run.InputAttachments.builder()
+                        RunIngest.InputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputs(
-                        Run.Inputs.builder()
+                        RunIngest.Inputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .name("name")
                     .outputAttachments(
-                        Run.OutputAttachments.builder()
+                        RunIngest.OutputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .outputs(
-                        Run.Outputs.builder()
+                        RunIngest.Outputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .parentRunId("parent_run_id")
                     .referenceExampleId("reference_example_id")
-                    .runType(Run.RunType.TOOL)
+                    .runType(RunIngest.RunType.TOOL)
                     .serialized(
-                        Run.Serialized.builder()
+                        RunIngest.Serialized.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
@@ -186,10 +186,10 @@ internal class RunCreateParamsTest {
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = RunCreateParams.builder().run(Run.builder().build()).build()
+        val params = RunCreateParams.builder().runIngest(RunIngest.builder().build()).build()
 
         val body = params._body()
 
-        assertThat(body).isEqualTo(Run.builder().build())
+        assertThat(body).isEqualTo(RunIngest.builder().build())
     }
 }

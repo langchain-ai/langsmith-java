@@ -25,3 +25,4 @@ jobs:
         run: gh workflow run publish-sonatype.yml --ref ${{ steps.release.outputs.tag_name }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}

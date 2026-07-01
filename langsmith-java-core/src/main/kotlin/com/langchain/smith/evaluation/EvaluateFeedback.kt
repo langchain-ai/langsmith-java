@@ -4,7 +4,7 @@ import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.feedback.FeedbackCreateSchema
 import com.langchain.smith.models.feedback.ModelFeedbackSource
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 
@@ -19,14 +19,17 @@ internal fun selectEvaluationResults(output: EvaluationOutput): List<EvaluationR
 internal fun logEvaluationFeedback(
     client: LangsmithClient,
     evaluatorResponse: EvaluationOutput,
-    run: Run,
+    run: RunIngest,
 ) {
     for (result in selectEvaluationResults(evaluatorResponse)) {
         client.feedback().create(buildFeedbackCreateSchema(result, run))
     }
 }
 
-private fun buildFeedbackCreateSchema(result: EvaluationResult, run: Run): FeedbackCreateSchema {
+private fun buildFeedbackCreateSchema(
+    result: EvaluationResult,
+    run: RunIngest,
+): FeedbackCreateSchema {
     val builder = FeedbackCreateSchema.builder().key(result.key)
 
     val runId = result.targetRunId ?: run.id().getOrNull()
@@ -82,7 +85,7 @@ private fun buildFeedbackCreateSchema(result: EvaluationResult, run: Run): Feedb
     return builder.build()
 }
 
-private fun applyFeedbackValue(builder: FeedbackCreateSchema.Builder, value: Any?) {
+internal fun applyFeedbackValue(builder: FeedbackCreateSchema.Builder, value: Any?) {
     when (value) {
         null -> Unit
         is Number ->
@@ -111,7 +114,7 @@ private fun applyFeedbackValue(builder: FeedbackCreateSchema.Builder, value: Any
     }
 }
 
-private fun runStartTime(startTime: String): OffsetDateTime? =
+internal fun runStartTime(startTime: String): OffsetDateTime? =
     try {
         OffsetDateTime.parse(startTime)
     } catch (_: Exception) {

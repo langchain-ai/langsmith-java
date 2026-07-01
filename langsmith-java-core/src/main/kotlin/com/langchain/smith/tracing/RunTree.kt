@@ -4,7 +4,7 @@ import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.getJavaVersion
 import com.langchain.smith.core.getPackageVersion
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import java.time.Instant
 import java.util.concurrent.ExecutorService
 import org.slf4j.LoggerFactory
@@ -156,28 +156,28 @@ class RunTree(
                 .update(
                     com.langchain.smith.models.runs.RunUpdateParams.builder()
                         .runId(id)
-                        .run(runData)
+                        .runIngest(runData)
                         .build()
                 )
         }
     }
 
-    /** Builds the [Run] data object for posting/patching to the LangSmith API. */
-    fun buildRunData(): Run = buildRunData(includeInputs = true)
+    /** Builds the [RunIngest] data object for posting/patching to the LangSmith API. */
+    fun buildRunData(): RunIngest = buildRunData(includeInputs = true)
 
-    private fun buildRunData(includeInputs: Boolean): Run {
+    private fun buildRunData(includeInputs: Boolean): RunIngest {
         val builder =
-            Run.builder()
+            RunIngest.builder()
                 .id(id)
                 .traceId(traceId)
                 .dottedOrder(dottedOrder)
                 .name(name)
-                .runType(Run.RunType.of(runType.value))
+                .runType(RunIngest.RunType.of(runType.value))
                 .startTime(startTime)
                 .apply { this@RunTree.projectName?.let { sessionName(it) } }
                 .tags(tags)
                 .extra(
-                    Run.Extra.builder()
+                    RunIngest.Extra.builder()
                         .apply {
                             this@RunTree.extra.forEach { (k, v) ->
                                 putAdditionalProperty(k, JsonValue.from(v))
@@ -192,7 +192,9 @@ class RunTree(
 
         if (includeInputs) {
             builder.inputs(
-                Run.Inputs.builder().putAllAdditionalProperties(toJsonValueMap(inputs)).build()
+                RunIngest.Inputs.builder()
+                    .putAllAdditionalProperties(toJsonValueMap(inputs))
+                    .build()
             )
         }
         endTime?.let { builder.endTime(it) }
@@ -202,7 +204,7 @@ class RunTree(
         sessionId?.let { builder.sessionId(it) }
         outputs?.let {
             builder.outputs(
-                Run.Outputs.builder().putAllAdditionalProperties(toJsonValueMap(it)).build()
+                RunIngest.Outputs.builder().putAllAdditionalProperties(toJsonValueMap(it)).build()
             )
         }
 

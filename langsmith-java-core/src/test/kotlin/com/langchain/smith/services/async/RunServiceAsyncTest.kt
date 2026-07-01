@@ -11,7 +11,7 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunRetrieveParams
 import com.langchain.smith.models.runs.RunRetrieveV1Params
@@ -40,7 +40,9 @@ internal class RunServiceAsyncTest {
 
         runService
             .ingestBatch(
-                RunIngestBatchParams.builder().addPost(Run.builder().id("run-id").build()).build()
+                RunIngestBatchParams.builder()
+                    .addPost(RunIngest.builder().id("run-id").build())
+                    .build()
             )
             .get()
 
@@ -181,47 +183,47 @@ internal class RunServiceAsyncTest {
 
         val runFuture =
             runServiceAsync.create(
-                Run.builder()
+                RunIngest.builder()
                     .id("id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
                     .addEvent(
-                        Run.Event.builder()
+                        RunIngest.Event.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .extra(
-                        Run.Extra.builder()
+                        RunIngest.Extra.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputAttachments(
-                        Run.InputAttachments.builder()
+                        RunIngest.InputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputs(
-                        Run.Inputs.builder()
+                        RunIngest.Inputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .name("name")
                     .outputAttachments(
-                        Run.OutputAttachments.builder()
+                        RunIngest.OutputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .outputs(
-                        Run.Outputs.builder()
+                        RunIngest.Outputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .parentRunId("parent_run_id")
                     .referenceExampleId("reference_example_id")
-                    .runType(Run.RunType.TOOL)
+                    .runType(RunIngest.RunType.TOOL)
                     .serialized(
-                        Run.Serialized.builder()
+                        RunIngest.Serialized.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
@@ -251,48 +253,48 @@ internal class RunServiceAsyncTest {
             runServiceAsync.update(
                 RunUpdateParams.builder()
                     .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .run(
-                        Run.builder()
+                    .runIngest(
+                        RunIngest.builder()
                             .id("id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
                             .addEvent(
-                                Run.Event.builder()
+                                RunIngest.Event.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .extra(
-                                Run.Extra.builder()
+                                RunIngest.Extra.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .inputAttachments(
-                                Run.InputAttachments.builder()
+                                RunIngest.InputAttachments.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .inputs(
-                                Run.Inputs.builder()
+                                RunIngest.Inputs.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .name("name")
                             .outputAttachments(
-                                Run.OutputAttachments.builder()
+                                RunIngest.OutputAttachments.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .outputs(
-                                Run.Outputs.builder()
+                                RunIngest.Outputs.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .parentRunId("parent_run_id")
                             .referenceExampleId("reference_example_id")
-                            .runType(Run.RunType.TOOL)
+                            .runType(RunIngest.RunType.TOOL)
                             .serialized(
-                                Run.Serialized.builder()
+                                RunIngest.Serialized.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
@@ -324,47 +326,47 @@ internal class RunServiceAsyncTest {
             runServiceAsync.ingestBatch(
                 RunIngestBatchParams.builder()
                     .addPatch(
-                        Run.builder()
+                        RunIngest.builder()
                             .id("id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
                             .addEvent(
-                                Run.Event.builder()
+                                RunIngest.Event.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .extra(
-                                Run.Extra.builder()
+                                RunIngest.Extra.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .inputAttachments(
-                                Run.InputAttachments.builder()
+                                RunIngest.InputAttachments.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .inputs(
-                                Run.Inputs.builder()
+                                RunIngest.Inputs.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .name("name")
                             .outputAttachments(
-                                Run.OutputAttachments.builder()
+                                RunIngest.OutputAttachments.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .outputs(
-                                Run.Outputs.builder()
+                                RunIngest.Outputs.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .parentRunId("parent_run_id")
                             .referenceExampleId("reference_example_id")
-                            .runType(Run.RunType.TOOL)
+                            .runType(RunIngest.RunType.TOOL)
                             .serialized(
-                                Run.Serialized.builder()
+                                RunIngest.Serialized.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
@@ -377,47 +379,47 @@ internal class RunServiceAsyncTest {
                             .build()
                     )
                     .addPost(
-                        Run.builder()
+                        RunIngest.builder()
                             .id("id")
                             .dottedOrder("dotted_order")
                             .endTime("end_time")
                             .error("error")
                             .addEvent(
-                                Run.Event.builder()
+                                RunIngest.Event.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .extra(
-                                Run.Extra.builder()
+                                RunIngest.Extra.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .inputAttachments(
-                                Run.InputAttachments.builder()
+                                RunIngest.InputAttachments.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .inputs(
-                                Run.Inputs.builder()
+                                RunIngest.Inputs.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .name("name")
                             .outputAttachments(
-                                Run.OutputAttachments.builder()
+                                RunIngest.OutputAttachments.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .outputs(
-                                Run.Outputs.builder()
+                                RunIngest.Outputs.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .parentRunId("parent_run_id")
                             .referenceExampleId("reference_example_id")
-                            .runType(Run.RunType.TOOL)
+                            .runType(RunIngest.RunType.TOOL)
                             .serialized(
-                                Run.Serialized.builder()
+                                RunIngest.Serialized.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
@@ -504,7 +506,7 @@ internal class RunServiceAsyncTest {
                 .build()
         val runServiceAsync = client.runs()
 
-        val queryRunResponseFuture =
+        val runFuture =
             runServiceAsync.retrieveV2(
                 RunRetrieveV2Params.builder()
                     .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -515,8 +517,8 @@ internal class RunServiceAsyncTest {
                     .build()
             )
 
-        val queryRunResponse = queryRunResponseFuture.get()
-        queryRunResponse.validate()
+        val run = runFuture.get()
+        run.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -645,8 +647,8 @@ internal class RunServiceAsyncTest {
                 .build()
         )
 
-    private fun testRun(id: String): Run =
-        Run.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
+    private fun testRun(id: String): RunIngest =
+        RunIngest.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
 
     private fun capturingHttpClient(
         capturedRequest: AtomicReference<HttpRequest>,

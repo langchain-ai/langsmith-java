@@ -11,7 +11,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Get a specific session. */
+/** Get a specific project. */
 class SessionRetrieveParams
 private constructor(
     private val sessionId: String?,

@@ -119,6 +119,9 @@ internal class ExampleWithRunsChTest {
                         .build()
                 )
                 .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sourceRunStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .sourceSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sourceTraceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         assertThat(exampleWithRunsCh.id()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -231,6 +234,12 @@ internal class ExampleWithRunsChTest {
                     .build()
             )
         assertThat(exampleWithRunsCh.sourceRunId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(exampleWithRunsCh.sourceRunStartTime())
+            .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(exampleWithRunsCh.sourceSessionId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(exampleWithRunsCh.sourceTraceId())
+            .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
 
     @Test
@@ -341,6 +350,9 @@ internal class ExampleWithRunsChTest {
                         .build()
                 )
                 .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sourceRunStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .sourceSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .sourceTraceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
         val roundtrippedExampleWithRunsCh =

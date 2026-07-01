@@ -28,6 +28,7 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
+import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -226,6 +227,9 @@ private constructor(
         private val metadata: JsonField<Metadata>,
         private val outputs: JsonField<Outputs>,
         private val sourceRunId: JsonField<String>,
+        private val sourceRunStartTime: JsonField<OffsetDateTime>,
+        private val sourceSessionId: JsonField<String>,
+        private val sourceTraceId: JsonField<String>,
         private val split: JsonField<Split>,
         private val useLegacyMessageFormat: JsonField<Boolean>,
         private val useSourceRunAttachments: JsonField<List<String>>,
@@ -250,6 +254,15 @@ private constructor(
             @JsonProperty("source_run_id")
             @ExcludeMissing
             sourceRunId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("source_run_start_time")
+            @ExcludeMissing
+            sourceRunStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("source_session_id")
+            @ExcludeMissing
+            sourceSessionId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("source_trace_id")
+            @ExcludeMissing
+            sourceTraceId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("split") @ExcludeMissing split: JsonField<Split> = JsonMissing.of(),
             @JsonProperty("use_legacy_message_format")
             @ExcludeMissing
@@ -268,6 +281,9 @@ private constructor(
             metadata,
             outputs,
             sourceRunId,
+            sourceRunStartTime,
+            sourceSessionId,
+            sourceTraceId,
             split,
             useLegacyMessageFormat,
             useSourceRunAttachments,
@@ -316,6 +332,25 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun sourceRunId(): Optional<String> = sourceRunId.getOptional("source_run_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun sourceRunStartTime(): Optional<OffsetDateTime> =
+            sourceRunStartTime.getOptional("source_run_start_time")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun sourceSessionId(): Optional<String> = sourceSessionId.getOptional("source_session_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun sourceTraceId(): Optional<String> = sourceTraceId.getOptional("source_trace_id")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -397,6 +432,36 @@ private constructor(
         fun _sourceRunId(): JsonField<String> = sourceRunId
 
         /**
+         * Returns the raw JSON value of [sourceRunStartTime].
+         *
+         * Unlike [sourceRunStartTime], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("source_run_start_time")
+        @ExcludeMissing
+        fun _sourceRunStartTime(): JsonField<OffsetDateTime> = sourceRunStartTime
+
+        /**
+         * Returns the raw JSON value of [sourceSessionId].
+         *
+         * Unlike [sourceSessionId], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("source_session_id")
+        @ExcludeMissing
+        fun _sourceSessionId(): JsonField<String> = sourceSessionId
+
+        /**
+         * Returns the raw JSON value of [sourceTraceId].
+         *
+         * Unlike [sourceTraceId], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("source_trace_id")
+        @ExcludeMissing
+        fun _sourceTraceId(): JsonField<String> = sourceTraceId
+
+        /**
          * Returns the raw JSON value of [split].
          *
          * Unlike [split], this method doesn't throw if the JSON field has an unexpected type.
@@ -468,6 +533,9 @@ private constructor(
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var outputs: JsonField<Outputs> = JsonMissing.of()
             private var sourceRunId: JsonField<String> = JsonMissing.of()
+            private var sourceRunStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var sourceSessionId: JsonField<String> = JsonMissing.of()
+            private var sourceTraceId: JsonField<String> = JsonMissing.of()
             private var split: JsonField<Split> = JsonMissing.of()
             private var useLegacyMessageFormat: JsonField<Boolean> = JsonMissing.of()
             private var useSourceRunAttachments: JsonField<MutableList<String>>? = null
@@ -483,6 +551,9 @@ private constructor(
                 metadata = body.metadata
                 outputs = body.outputs
                 sourceRunId = body.sourceRunId
+                sourceRunStartTime = body.sourceRunStartTime
+                sourceSessionId = body.sourceSessionId
+                sourceTraceId = body.sourceTraceId
                 split = body.split
                 useLegacyMessageFormat = body.useLegacyMessageFormat
                 useSourceRunAttachments = body.useSourceRunAttachments.map { it.toMutableList() }
@@ -585,6 +656,63 @@ private constructor(
              */
             fun sourceRunId(sourceRunId: JsonField<String>) = apply {
                 this.sourceRunId = sourceRunId
+            }
+
+            fun sourceRunStartTime(sourceRunStartTime: OffsetDateTime?) =
+                sourceRunStartTime(JsonField.ofNullable(sourceRunStartTime))
+
+            /**
+             * Alias for calling [Builder.sourceRunStartTime] with
+             * `sourceRunStartTime.orElse(null)`.
+             */
+            fun sourceRunStartTime(sourceRunStartTime: Optional<OffsetDateTime>) =
+                sourceRunStartTime(sourceRunStartTime.getOrNull())
+
+            /**
+             * Sets [Builder.sourceRunStartTime] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sourceRunStartTime] with a well-typed
+             * [OffsetDateTime] value instead. This method is primarily for setting the field to an
+             * undocumented or not yet supported value.
+             */
+            fun sourceRunStartTime(sourceRunStartTime: JsonField<OffsetDateTime>) = apply {
+                this.sourceRunStartTime = sourceRunStartTime
+            }
+
+            fun sourceSessionId(sourceSessionId: String?) =
+                sourceSessionId(JsonField.ofNullable(sourceSessionId))
+
+            /** Alias for calling [Builder.sourceSessionId] with `sourceSessionId.orElse(null)`. */
+            fun sourceSessionId(sourceSessionId: Optional<String>) =
+                sourceSessionId(sourceSessionId.getOrNull())
+
+            /**
+             * Sets [Builder.sourceSessionId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sourceSessionId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sourceSessionId(sourceSessionId: JsonField<String>) = apply {
+                this.sourceSessionId = sourceSessionId
+            }
+
+            fun sourceTraceId(sourceTraceId: String?) =
+                sourceTraceId(JsonField.ofNullable(sourceTraceId))
+
+            /** Alias for calling [Builder.sourceTraceId] with `sourceTraceId.orElse(null)`. */
+            fun sourceTraceId(sourceTraceId: Optional<String>) =
+                sourceTraceId(sourceTraceId.getOrNull())
+
+            /**
+             * Sets [Builder.sourceTraceId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.sourceTraceId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun sourceTraceId(sourceTraceId: JsonField<String>) = apply {
+                this.sourceTraceId = sourceTraceId
             }
 
             fun split(split: Split?) = split(JsonField.ofNullable(split))
@@ -702,6 +830,9 @@ private constructor(
                     metadata,
                     outputs,
                     sourceRunId,
+                    sourceRunStartTime,
+                    sourceSessionId,
+                    sourceTraceId,
                     split,
                     useLegacyMessageFormat,
                     (useSourceRunAttachments ?: JsonMissing.of()).map { it.toImmutable() },
@@ -733,6 +864,9 @@ private constructor(
             metadata().ifPresent { it.validate() }
             outputs().ifPresent { it.validate() }
             sourceRunId()
+            sourceRunStartTime()
+            sourceSessionId()
+            sourceTraceId()
             split().ifPresent { it.validate() }
             useLegacyMessageFormat()
             useSourceRunAttachments()
@@ -763,6 +897,9 @@ private constructor(
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (outputs.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (sourceRunId.asKnown().isPresent) 1 else 0) +
+                (if (sourceRunStartTime.asKnown().isPresent) 1 else 0) +
+                (if (sourceSessionId.asKnown().isPresent) 1 else 0) +
+                (if (sourceTraceId.asKnown().isPresent) 1 else 0) +
                 (split.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (useLegacyMessageFormat.asKnown().isPresent) 1 else 0) +
                 (useSourceRunAttachments.asKnown().getOrNull()?.size ?: 0) +
@@ -1327,6 +1464,9 @@ private constructor(
                 metadata == other.metadata &&
                 outputs == other.outputs &&
                 sourceRunId == other.sourceRunId &&
+                sourceRunStartTime == other.sourceRunStartTime &&
+                sourceSessionId == other.sourceSessionId &&
+                sourceTraceId == other.sourceTraceId &&
                 split == other.split &&
                 useLegacyMessageFormat == other.useLegacyMessageFormat &&
                 useSourceRunAttachments == other.useSourceRunAttachments &&
@@ -1343,6 +1483,9 @@ private constructor(
                 metadata,
                 outputs,
                 sourceRunId,
+                sourceRunStartTime,
+                sourceSessionId,
+                sourceTraceId,
                 split,
                 useLegacyMessageFormat,
                 useSourceRunAttachments,
@@ -1354,7 +1497,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{datasetId=$datasetId, id=$id, createdAt=$createdAt, inputs=$inputs, metadata=$metadata, outputs=$outputs, sourceRunId=$sourceRunId, split=$split, useLegacyMessageFormat=$useLegacyMessageFormat, useSourceRunAttachments=$useSourceRunAttachments, useSourceRunIo=$useSourceRunIo, additionalProperties=$additionalProperties}"
+            "Body{datasetId=$datasetId, id=$id, createdAt=$createdAt, inputs=$inputs, metadata=$metadata, outputs=$outputs, sourceRunId=$sourceRunId, sourceRunStartTime=$sourceRunStartTime, sourceSessionId=$sourceSessionId, sourceTraceId=$sourceTraceId, split=$split, useLegacyMessageFormat=$useLegacyMessageFormat, useSourceRunAttachments=$useSourceRunAttachments, useSourceRunIo=$useSourceRunIo, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

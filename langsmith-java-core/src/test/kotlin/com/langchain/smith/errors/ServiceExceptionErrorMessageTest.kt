@@ -1,7 +1,7 @@
 package com.langchain.smith.errors
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -44,7 +44,11 @@ internal class ServiceExceptionErrorMessageTest {
         val params =
             RunIngestBatchParams.builder()
                 .addPost(
-                    Run.builder().id("not-a-uuid").name("test").runType(Run.RunType.CHAIN).build()
+                    RunIngest.builder()
+                        .id("not-a-uuid")
+                        .name("test")
+                        .runType(RunIngest.RunType.CHAIN)
+                        .build()
                 )
                 .build()
 

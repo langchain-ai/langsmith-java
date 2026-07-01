@@ -6,7 +6,7 @@ import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.jsonMapper
-import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.testutils.CapturingLangsmithClient
 import java.time.Duration
@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test
 /** Unit tests for [AutoBatchQueue]. */
 internal class AutoBatchQueueTest {
 
-    private fun testRun(id: String = "run-1"): Run =
-        Run.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
+    private fun testRun(id: String = "run-1"): RunIngest =
+        RunIngest.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
 
     private fun testQueue(
         capture: CapturingLangsmithClient,
@@ -97,16 +97,16 @@ internal class AutoBatchQueueTest {
             testRun("r1")
                 .toBuilder()
                 .inputs(
-                    Run.Inputs.builder()
+                    RunIngest.Inputs.builder()
                         .putAdditionalProperty("question", JsonValue.from("hello"))
                         .build()
                 )
                 .build()
         val patch =
-            Run.builder()
+            RunIngest.builder()
                 .id("r1")
                 .outputs(
-                    Run.Outputs.builder()
+                    RunIngest.Outputs.builder()
                         .putAdditionalProperty("answer", JsonValue.from("world"))
                         .build()
                 )

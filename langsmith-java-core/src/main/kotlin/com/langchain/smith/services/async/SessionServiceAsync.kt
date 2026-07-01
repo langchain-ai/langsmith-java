@@ -36,7 +36,7 @@ interface SessionServiceAsync {
 
     fun insights(): InsightServiceAsync
 
-    /** Create a new session. */
+    /** Create a new project. */
     fun create(): CompletableFuture<TracerSessionWithoutVirtualFields> =
         create(SessionCreateParams.none())
 
@@ -57,7 +57,7 @@ interface SessionServiceAsync {
     ): CompletableFuture<TracerSessionWithoutVirtualFields> =
         create(SessionCreateParams.none(), requestOptions)
 
-    /** Get a specific session. */
+    /** Get a specific project. */
     fun retrieve(sessionId: String): CompletableFuture<TracerSession> =
         retrieve(sessionId, SessionRetrieveParams.none())
 
@@ -92,7 +92,7 @@ interface SessionServiceAsync {
     ): CompletableFuture<TracerSession> =
         retrieve(sessionId, SessionRetrieveParams.none(), requestOptions)
 
-    /** Update a session. */
+    /** Update a project. */
     fun update(sessionId: String): CompletableFuture<TracerSessionWithoutVirtualFields> =
         update(sessionId, SessionUpdateParams.none())
 
@@ -128,7 +128,7 @@ interface SessionServiceAsync {
     ): CompletableFuture<TracerSessionWithoutVirtualFields> =
         update(sessionId, SessionUpdateParams.none(), requestOptions)
 
-    /** Get all sessions. */
+    /** List all projects. */
     fun list(): CompletableFuture<SessionListPageAsync> = list(SessionListParams.none())
 
     /** @see list */
@@ -146,7 +146,7 @@ interface SessionServiceAsync {
     fun list(requestOptions: RequestOptions): CompletableFuture<SessionListPageAsync> =
         list(SessionListParams.none(), requestOptions)
 
-    /** Delete a specific session. */
+    /** Delete a specific project. */
     fun delete(sessionId: String): CompletableFuture<SessionDeleteResponse> =
         delete(sessionId, SessionDeleteParams.none())
 

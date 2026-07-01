@@ -23,7 +23,7 @@ import com.langchain.smith.core.http.zstd
 import com.langchain.smith.core.prepare
 import com.langchain.smith.errors.NotFoundException
 import com.langchain.smith.models.info.InfoListResponse
-import com.langchain.smith.models.runs.QueryRunResponse
+import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
 import com.langchain.smith.models.runs.RunIngestBatchParams
@@ -126,11 +126,20 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun rules(): RuleService = rules
 
-    override fun create(params: RunCreateParams, requestOptions: RequestOptions) {
+    override fun create(
+        params: RunCreateParams,
+        requestOptions: RequestOptions,
+    ): RunCreateResponse {
         if (clientOptions.autoBatchTracing) {
-            batchQueue.post(params.run(), params._headers(), params._queryParams(), requestOptions)
+            batchQueue.post(
+                params.runIngest(),
+                params._headers(),
+                params._queryParams(),
+                requestOptions,
+            )
+            return RunCreateResponse.builder().build()
         } else {
-            withRawResponse().create(params, requestOptions).parse()
+            return withRawResponse().create(params, requestOptions).parse()
         }
     }
 
@@ -146,7 +155,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         val runId = checkRequired("runId", params.runId().getOrNull())
 
         batchQueue.patch(
-            params.run().toBuilder().id(runId).build(),
+            params.runIngest().toBuilder().id(runId).build(),
             params._headers(),
             params._queryParams(),
             requestOptions,
@@ -194,10 +203,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         // get /api/v1/runs/{run_id}
         withRawResponse().retrieveV1(params, requestOptions).parse()
 
-    override fun retrieveV2(
-        params: RunRetrieveV2Params,
-        requestOptions: RequestOptions,
-    ): QueryRunResponse =
+    override fun retrieveV2(params: RunRetrieveV2Params, requestOptions: RequestOptions): Run =
         // get /v2/runs/{run_id}
         withRawResponse().retrieveV2(params, requestOptions).parse()
 
@@ -470,13 +476,12 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val retrieveV2Handler: Handler<QueryRunResponse> =
-            jsonHandler<QueryRunResponse>(clientOptions.jsonMapper)
+        private val retrieveV2Handler: Handler<Run> = jsonHandler<Run>(clientOptions.jsonMapper)
 
         override fun retrieveV2(
             params: RunRetrieveV2Params,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<QueryRunResponse> {
+        ): HttpResponseFor<Run> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("runId", params.runId().getOrNull())

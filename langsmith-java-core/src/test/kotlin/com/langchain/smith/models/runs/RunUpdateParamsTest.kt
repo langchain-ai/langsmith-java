@@ -12,48 +12,48 @@ internal class RunUpdateParamsTest {
     fun create() {
         RunUpdateParams.builder()
             .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .run(
-                Run.builder()
+            .runIngest(
+                RunIngest.builder()
                     .id("id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
                     .addEvent(
-                        Run.Event.builder()
+                        RunIngest.Event.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .extra(
-                        Run.Extra.builder()
+                        RunIngest.Extra.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputAttachments(
-                        Run.InputAttachments.builder()
+                        RunIngest.InputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputs(
-                        Run.Inputs.builder()
+                        RunIngest.Inputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .name("name")
                     .outputAttachments(
-                        Run.OutputAttachments.builder()
+                        RunIngest.OutputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .outputs(
-                        Run.Outputs.builder()
+                        RunIngest.Outputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .parentRunId("parent_run_id")
                     .referenceExampleId("reference_example_id")
-                    .runType(Run.RunType.TOOL)
+                    .runType(RunIngest.RunType.TOOL)
                     .serialized(
-                        Run.Serialized.builder()
+                        RunIngest.Serialized.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
@@ -73,7 +73,7 @@ internal class RunUpdateParamsTest {
         val params =
             RunUpdateParams.builder()
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .run(Run.builder().build())
+                .runIngest(RunIngest.builder().build())
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -86,48 +86,48 @@ internal class RunUpdateParamsTest {
         val params =
             RunUpdateParams.builder()
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .run(
-                    Run.builder()
+                .runIngest(
+                    RunIngest.builder()
                         .id("id")
                         .dottedOrder("dotted_order")
                         .endTime("end_time")
                         .error("error")
                         .addEvent(
-                            Run.Event.builder()
+                            RunIngest.Event.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .extra(
-                            Run.Extra.builder()
+                            RunIngest.Extra.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .inputAttachments(
-                            Run.InputAttachments.builder()
+                            RunIngest.InputAttachments.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .inputs(
-                            Run.Inputs.builder()
+                            RunIngest.Inputs.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .name("name")
                         .outputAttachments(
-                            Run.OutputAttachments.builder()
+                            RunIngest.OutputAttachments.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .outputs(
-                            Run.Outputs.builder()
+                            RunIngest.Outputs.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
                         .parentRunId("parent_run_id")
                         .referenceExampleId("reference_example_id")
-                        .runType(Run.RunType.TOOL)
+                        .runType(RunIngest.RunType.TOOL)
                         .serialized(
-                            Run.Serialized.builder()
+                            RunIngest.Serialized.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
@@ -145,47 +145,47 @@ internal class RunUpdateParamsTest {
 
         assertThat(body)
             .isEqualTo(
-                Run.builder()
+                RunIngest.builder()
                     .id("id")
                     .dottedOrder("dotted_order")
                     .endTime("end_time")
                     .error("error")
                     .addEvent(
-                        Run.Event.builder()
+                        RunIngest.Event.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .extra(
-                        Run.Extra.builder()
+                        RunIngest.Extra.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputAttachments(
-                        Run.InputAttachments.builder()
+                        RunIngest.InputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .inputs(
-                        Run.Inputs.builder()
+                        RunIngest.Inputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .name("name")
                     .outputAttachments(
-                        Run.OutputAttachments.builder()
+                        RunIngest.OutputAttachments.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .outputs(
-                        Run.Outputs.builder()
+                        RunIngest.Outputs.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
                     .parentRunId("parent_run_id")
                     .referenceExampleId("reference_example_id")
-                    .runType(Run.RunType.TOOL)
+                    .runType(RunIngest.RunType.TOOL)
                     .serialized(
-                        Run.Serialized.builder()
+                        RunIngest.Serialized.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
                             .build()
                     )
@@ -204,11 +204,11 @@ internal class RunUpdateParamsTest {
         val params =
             RunUpdateParams.builder()
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .run(Run.builder().build())
+                .runIngest(RunIngest.builder().build())
                 .build()
 
         val body = params._body()
 
-        assertThat(body).isEqualTo(Run.builder().build())
+        assertThat(body).isEqualTo(RunIngest.builder().build())
     }
 }

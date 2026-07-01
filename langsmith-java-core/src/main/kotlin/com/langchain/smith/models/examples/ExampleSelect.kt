@@ -32,6 +32,12 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
 
         @JvmField val SOURCE_RUN_ID = of("source_run_id")
 
+        @JvmField val SOURCE_SESSION_ID = of("source_session_id")
+
+        @JvmField val SOURCE_RUN_START_TIME = of("source_run_start_time")
+
+        @JvmField val SOURCE_TRACE_ID = of("source_trace_id")
+
         @JvmField val METADATA = of("metadata")
 
         @JvmField val INPUTS = of("inputs")
@@ -51,6 +57,9 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
         NAME,
         DATASET_ID,
         SOURCE_RUN_ID,
+        SOURCE_SESSION_ID,
+        SOURCE_RUN_START_TIME,
+        SOURCE_TRACE_ID,
         METADATA,
         INPUTS,
         OUTPUTS,
@@ -73,6 +82,9 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
         NAME,
         DATASET_ID,
         SOURCE_RUN_ID,
+        SOURCE_SESSION_ID,
+        SOURCE_RUN_START_TIME,
+        SOURCE_TRACE_ID,
         METADATA,
         INPUTS,
         OUTPUTS,
@@ -98,6 +110,9 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
             NAME -> Value.NAME
             DATASET_ID -> Value.DATASET_ID
             SOURCE_RUN_ID -> Value.SOURCE_RUN_ID
+            SOURCE_SESSION_ID -> Value.SOURCE_SESSION_ID
+            SOURCE_RUN_START_TIME -> Value.SOURCE_RUN_START_TIME
+            SOURCE_TRACE_ID -> Value.SOURCE_TRACE_ID
             METADATA -> Value.METADATA
             INPUTS -> Value.INPUTS
             OUTPUTS -> Value.OUTPUTS
@@ -121,6 +136,9 @@ class ExampleSelect @JsonCreator private constructor(private val value: JsonFiel
             NAME -> Known.NAME
             DATASET_ID -> Known.DATASET_ID
             SOURCE_RUN_ID -> Known.SOURCE_RUN_ID
+            SOURCE_SESSION_ID -> Known.SOURCE_SESSION_ID
+            SOURCE_RUN_START_TIME -> Known.SOURCE_RUN_START_TIME
+            SOURCE_TRACE_ID -> Known.SOURCE_TRACE_ID
             METADATA -> Known.METADATA
             INPUTS -> Known.INPUTS
             OUTPUTS -> Known.OUTPUTS

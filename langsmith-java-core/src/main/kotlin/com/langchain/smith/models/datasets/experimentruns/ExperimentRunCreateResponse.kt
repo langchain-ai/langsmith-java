@@ -13,7 +13,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
-import com.langchain.smith.models.runs.QueryRunResponse
+import com.langchain.smith.models.runs.Run
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
@@ -32,7 +32,7 @@ private constructor(
     private val modifiedAt: JsonField<OffsetDateTime>,
     private val name: JsonField<String>,
     private val outputs: JsonValue,
-    private val runs: JsonField<List<QueryRunResponse>>,
+    private val runs: JsonField<List<Run>>,
     private val sourceRunId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -54,9 +54,7 @@ private constructor(
         modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("outputs") @ExcludeMissing outputs: JsonValue = JsonMissing.of(),
-        @JsonProperty("runs")
-        @ExcludeMissing
-        runs: JsonField<List<QueryRunResponse>> = JsonMissing.of(),
+        @JsonProperty("runs") @ExcludeMissing runs: JsonField<List<Run>> = JsonMissing.of(),
         @JsonProperty("source_run_id")
         @ExcludeMissing
         sourceRunId: JsonField<String> = JsonMissing.of(),
@@ -163,7 +161,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun runs(): Optional<List<QueryRunResponse>> = runs.getOptional("runs")
+    fun runs(): Optional<List<Run>> = runs.getOptional("runs")
 
     /**
      * `source_run_id` is the run UUID the example was created from, if any.
@@ -217,7 +215,7 @@ private constructor(
      *
      * Unlike [runs], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("runs") @ExcludeMissing fun _runs(): JsonField<List<QueryRunResponse>> = runs
+    @JsonProperty("runs") @ExcludeMissing fun _runs(): JsonField<List<Run>> = runs
 
     /**
      * Returns the raw JSON value of [sourceRunId].
@@ -260,7 +258,7 @@ private constructor(
         private var modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var outputs: JsonValue = JsonMissing.of()
-        private var runs: JsonField<MutableList<QueryRunResponse>>? = null
+        private var runs: JsonField<MutableList<Run>>? = null
         private var sourceRunId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -355,25 +353,22 @@ private constructor(
         fun outputs(outputs: JsonValue) = apply { this.outputs = outputs }
 
         /** `runs` is the list of experiment runs produced for this example. */
-        fun runs(runs: List<QueryRunResponse>) = runs(JsonField.of(runs))
+        fun runs(runs: List<Run>) = runs(JsonField.of(runs))
 
         /**
          * Sets [Builder.runs] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.runs] with a well-typed `List<QueryRunResponse>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.runs] with a well-typed `List<Run>` value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun runs(runs: JsonField<List<QueryRunResponse>>) = apply {
-            this.runs = runs.map { it.toMutableList() }
-        }
+        fun runs(runs: JsonField<List<Run>>) = apply { this.runs = runs.map { it.toMutableList() } }
 
         /**
-         * Adds a single [QueryRunResponse] to [runs].
+         * Adds a single [Run] to [runs].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addRun(run: QueryRunResponse) = apply {
+        fun addRun(run: Run) = apply {
             runs = (runs ?: JsonField.of(mutableListOf())).also { checkKnown("runs", it).add(run) }
         }
 

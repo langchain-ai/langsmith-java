@@ -15,14 +15,14 @@ import java.util.Objects
  */
 class RunCreateParams
 private constructor(
-    private val run: Run,
+    private val runIngest: RunIngest,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    fun run(): Run = run
+    fun runIngest(): RunIngest = runIngest
 
-    fun _additionalBodyProperties(): Map<String, JsonValue> = run._additionalProperties()
+    fun _additionalBodyProperties(): Map<String, JsonValue> = runIngest._additionalProperties()
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -39,7 +39,7 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .run()
+         * .runIngest()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -48,18 +48,18 @@ private constructor(
     /** A builder for [RunCreateParams]. */
     class Builder internal constructor() {
 
-        private var run: Run? = null
+        private var runIngest: RunIngest? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(runCreateParams: RunCreateParams) = apply {
-            run = runCreateParams.run
+            runIngest = runCreateParams.runIngest
             additionalHeaders = runCreateParams.additionalHeaders.toBuilder()
             additionalQueryParams = runCreateParams.additionalQueryParams.toBuilder()
         }
 
-        fun run(run: Run) = apply { this.run = run }
+        fun runIngest(runIngest: RunIngest) = apply { this.runIngest = runIngest }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -166,20 +166,20 @@ private constructor(
          *
          * The following fields are required:
          * ```java
-         * .run()
+         * .runIngest()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
         fun build(): RunCreateParams =
             RunCreateParams(
-                checkRequired("run", run),
+                checkRequired("runIngest", runIngest),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
     }
 
-    fun _body(): Run = run
+    fun _body(): RunIngest = runIngest
 
     override fun _headers(): Headers = additionalHeaders
 
@@ -191,13 +191,13 @@ private constructor(
         }
 
         return other is RunCreateParams &&
-            run == other.run &&
+            runIngest == other.runIngest &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int = Objects.hash(run, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int = Objects.hash(runIngest, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "RunCreateParams{run=$run, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RunCreateParams{runIngest=$runIngest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
