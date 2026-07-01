@@ -36,8 +36,6 @@ private constructor(private val value: JsonField<String>) : Enum {
 
         @JvmField val FEEDBACK = of("feedback")
 
-        @JvmField val RUNS_COUNT = of("runs_count")
-
         @JvmStatic fun of(value: String) = SessionSortableColumns(JsonField.of(value))
     }
 
@@ -50,7 +48,6 @@ private constructor(private val value: JsonField<String>) : Enum {
         LATENCY_P99,
         ERROR_RATE,
         FEEDBACK,
-        RUNS_COUNT,
     }
 
     /**
@@ -70,7 +67,6 @@ private constructor(private val value: JsonField<String>) : Enum {
         LATENCY_P99,
         ERROR_RATE,
         FEEDBACK,
-        RUNS_COUNT,
         /**
          * An enum member indicating that [SessionSortableColumns] was instantiated with an unknown
          * value.
@@ -94,7 +90,6 @@ private constructor(private val value: JsonField<String>) : Enum {
             LATENCY_P99 -> Value.LATENCY_P99
             ERROR_RATE -> Value.ERROR_RATE
             FEEDBACK -> Value.FEEDBACK
-            RUNS_COUNT -> Value.RUNS_COUNT
             else -> Value._UNKNOWN
         }
 
@@ -115,7 +110,6 @@ private constructor(private val value: JsonField<String>) : Enum {
             LATENCY_P99 -> Known.LATENCY_P99
             ERROR_RATE -> Known.ERROR_RATE
             FEEDBACK -> Known.FEEDBACK
-            RUNS_COUNT -> Known.RUNS_COUNT
             else -> throw LangChainInvalidDataException("Unknown SessionSortableColumns: $value")
         }
 
