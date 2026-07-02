@@ -19,7 +19,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
     testImplementation("org.assertj:assertj-core:3.27.7")
-    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.0")
 }
 
 tasks.shadowJar {

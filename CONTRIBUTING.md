@@ -119,4 +119,4 @@ See [AGENTS.md](AGENTS.md) for detailed Kotlin conventions, including:
 
 - **Anthropic SDK** is a `compileOnly` dependency — users must add it themselves. Methods using Anthropic types should catch `NoClassDefFoundError` and throw `IllegalStateException` with a clear message.
 - **SLF4J** (`slf4j-api`) is an `api` dependency for logging. Tests use `slf4j-simple`.
-- **Jackson** 2.18.2 is the default, but the SDK is compatible with 2.13.4+. Tests compile against 2.14.0.
+- **Jackson** 2.22.0 is the default, but the SDK is compatible with 2.13.4+.
