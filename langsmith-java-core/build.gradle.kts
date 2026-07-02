@@ -19,30 +19,36 @@ sourceSets.main {
     resources.srcDir(generateVersionProperties)
 }
 
+val jacksonVersion = "2.22.0"
+val jacksonAnnotationsVersion = "2.22"
+
+configurations.matching { it.name in setOf("testCompileClasspath", "testRuntimeClasspath") }.configureEach {
+    // Test-only WireMock 4 requires Java 17+ dependencies. Published artifacts still target Java 8.
+    attributes.attribute(org.gradle.api.attributes.java.TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 17)
+}
+
 configurations.all {
     resolutionStrategy {
-        // Compile and test against a lower Jackson version to ensure we're compatible with it. Note that
-        // we generally support 2.13.4, but test against 2.14.0 because 2.13.4 has some annoying (but
-        // niche) bugs (users should upgrade if they encounter them). We publish with a higher version
-        // (see below) to ensure users depend on a secure version by default.
-        force("com.fasterxml.jackson.core:jackson-core:2.14.0")
-        force("com.fasterxml.jackson.core:jackson-databind:2.14.0")
-        force("com.fasterxml.jackson.core:jackson-annotations:2.14.0")
-        force("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.0")
-        force("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
-        force("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.0")
+        // Keep all Jackson modules aligned so dependency resolution cannot select a vulnerable
+        // transitive version from SDK or test dependencies.
+        force("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+        force("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+        force("com.fasterxml.jackson.core:jackson-annotations:$jacksonAnnotationsVersion")
+        force("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
+        force("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+        force("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     }
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-core:2.18.6")
-    api("com.fasterxml.jackson.core:jackson-databind:2.18.6")
+    api("com.fasterxml.jackson.core:jackson-core:$jacksonVersion")
+    api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     api("com.google.errorprone:error_prone_annotations:2.33.0")
 
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.18.6")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.6")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.6")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.6")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:$jacksonAnnotationsVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.github.luben:zstd-jni:1.5.7-7")
     implementation("org.apache.httpcomponents.core5:httpcore5:5.2.4")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
@@ -67,29 +73,39 @@ dependencies {
     compileOnly("com.anthropic:anthropic-java:2.18.0")
     testImplementation("com.anthropic:anthropic-java:2.18.0")
 
-    // Security: constrain vulnerable transitive test dependencies (from wiremock-jre8).
+    // Security: constrain vulnerable transitive test dependencies.
     // These constraints apply to the test scope only and do not affect published artifacts.
     constraints {
-        // CVE-2024-13009, CVE-2025-5115, CVE-2024-22201, CVE-2023-36478
-        testImplementation("org.eclipse.jetty:jetty-server") { version { require("9.4.58.v20250814") } }
-        testImplementation("org.eclipse.jetty.http2:http2-common") { version { require("9.4.58.v20250814") } }
-        testImplementation("org.eclipse.jetty.http2:http2-hpack") { version { require("9.4.58.v20250814") } }
-        // CVE-2023-6481, CVE-2023-6378, CVE-2025-11226, CVE-2024-12798, CVE-2024-12801, CVE-2026-1225
-        testImplementation("ch.qos.logback:logback-core") { version { require("1.5.32") } }
-        testImplementation("ch.qos.logback:logback-classic") { version { require("1.5.32") } }
-        // CVE-2025-48976, CVE-2023-24998
+        testImplementation("org.eclipse.jetty:jetty-server") { version { require("12.1.10") } }
+        testImplementation("org.eclipse.jetty:jetty-http") { version { require("12.1.10") } }
+        testImplementation("org.eclipse.jetty:jetty-servlets") { version { require("12.1.10") } }
+        testImplementation("org.eclipse.jetty:jetty-xml") { version { require("12.1.10") } }
+        testImplementation("org.eclipse.jetty.http2:http2-common") { version { require("12.1.10") } }
+        testImplementation("org.eclipse.jetty.http2:http2-hpack") { version { require("12.1.10") } }
+        testImplementation("org.eclipse.jetty.http2:http2-server") { version { require("12.1.10") } }
+        testImplementation("org.bouncycastle:bcpg-jdk18on") { version { require("1.84") } }
+        testImplementation("org.bouncycastle:bcpkix-jdk18on") { version { require("1.84") } }
+        testImplementation("org.bouncycastle:bcprov-jdk18on") { version { require("1.84") } }
+        testImplementation("org.apache.logging.log4j:log4j-core") { version { require("2.25.4") } }
+        testImplementation("org.apache.opennlp:opennlp-tools") { version { require("2.5.9") } }
+        testImplementation("com.github.jknack:handlebars") { version { require("4.5.2") } }
+        testImplementation("org.codehaus.plexus:plexus-utils") { version { require("4.0.3") } }
+        testImplementation("org.apache.commons:commons-lang3") { version { require("3.20.0") } }
+        testImplementation("org.apache.commons:commons-compress") { version { require("1.28.0") } }
         testImplementation("commons-fileupload:commons-fileupload") { version { require("1.6.0") } }
-        // CVE-2024-47554
-        testImplementation("commons-io:commons-io") { version { require("2.14.0") } }
-        // CVE-2023-1370
-        testImplementation("net.minidev:json-smart") { version { require("2.4.9") } }
+        testImplementation("commons-io:commons-io") { version { require("2.22.0") } }
+        testImplementation("com.google.guava:guava") { version { require("33.6.0-jre") } }
+        testImplementation("com.jayway.jsonpath:json-path") { version { require("2.10.0") } }
+        testImplementation("org.xmlunit:xmlunit-core") { version { require("2.12.0") } }
+        testImplementation("net.minidev:json-smart") { version { require("2.6.0") } }
     }
 
     testImplementation(kotlin("test"))
     // Simple logging for tests only
     testImplementation("org.slf4j:slf4j-simple:2.0.17")
     testImplementation(project(":langsmith-java-client-okhttp"))
-    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.2")
+    testImplementation("org.wiremock:wiremock:4.0.0-beta.37")
+    testImplementation("org.wiremock:wiremock-junit5:4.0.0-beta.37")
     testImplementation("org.assertj:assertj-core:3.27.7")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")

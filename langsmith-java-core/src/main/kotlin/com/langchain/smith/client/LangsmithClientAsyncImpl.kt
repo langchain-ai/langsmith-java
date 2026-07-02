@@ -18,6 +18,8 @@ import com.langchain.smith.services.async.FeedbackServiceAsync
 import com.langchain.smith.services.async.FeedbackServiceAsyncImpl
 import com.langchain.smith.services.async.InfoServiceAsync
 import com.langchain.smith.services.async.InfoServiceAsyncImpl
+import com.langchain.smith.services.async.IssueServiceAsync
+import com.langchain.smith.services.async.IssueServiceAsyncImpl
 import com.langchain.smith.services.async.OnlineEvaluatorServiceAsync
 import com.langchain.smith.services.async.OnlineEvaluatorServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
@@ -103,6 +105,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         SettingServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val issues: IssueServiceAsync by lazy {
+        IssueServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val sandboxes: SandboxServiceAsync by lazy {
         SandboxServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -141,6 +147,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun commits(): CommitServiceAsync = commits
 
     override fun settings(): SettingServiceAsync = settings
+
+    override fun issues(): IssueServiceAsync = issues
 
     override fun sandboxes(): SandboxServiceAsync = sandboxes
 
@@ -214,6 +222,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             SettingServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val issues: IssueServiceAsync.WithRawResponse by lazy {
+            IssueServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val sandboxes: SandboxServiceAsync.WithRawResponse by lazy {
             SandboxServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -254,6 +266,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun commits(): CommitServiceAsync.WithRawResponse = commits
 
         override fun settings(): SettingServiceAsync.WithRawResponse = settings
+
+        override fun issues(): IssueServiceAsync.WithRawResponse = issues
 
         override fun sandboxes(): SandboxServiceAsync.WithRawResponse = sandboxes
     }

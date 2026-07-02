@@ -4,7 +4,7 @@ import com.langchain.smith.otel.OtelTraceExporter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
-import javax.annotation.PreDestroy
+import jakarta.annotation.PreDestroy
 
 /**
  * Ensures OpenTelemetry traces are flushed on application shutdown.
