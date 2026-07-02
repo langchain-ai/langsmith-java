@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.0-beta.11](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.10...v0.1.0-beta.11) (2026-07-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* disallow run_count session sort
+
+### Bug Fixes
+
+* restore title/additionalProperties on v2 RunResponse JSON fields for Stainless ([e3b4784](https://github.com/langchain-ai/langsmith-java/commit/e3b478437ef307d6895f0256b4945e68f5e32a23))
+
+
+### Refactors
+
+* disallow run_count session sort ([a00b1f1](https://github.com/langchain-ai/langsmith-java/commit/a00b1f18ca2c9b6048f4789df0da60704852a79a))
+
 ## [0.1.0-beta.10](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.9...v0.1.0-beta.10) (2026-07-01)
 
 
