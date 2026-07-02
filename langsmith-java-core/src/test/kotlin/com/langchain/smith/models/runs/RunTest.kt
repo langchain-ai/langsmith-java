@@ -59,7 +59,9 @@ internal class RunTest {
                         .time(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
                         .build()
                 )
-                .extra(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    Run.Extra.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+                )
                 .feedbackStats(
                     Run.FeedbackStats.builder()
                         .putAdditionalProperty(
@@ -82,15 +84,29 @@ internal class RunTest {
                         .build()
                 )
                 .firstTokenTime(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
-                .inputs(JsonValue.from(mapOf<String, Any>()))
+                .inputs(
+                    Run.Inputs.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+                )
                 .inputsPreview("inputs_preview")
                 .isInDataset(true)
                 .isRoot(true)
                 .latencySeconds(1.523)
-                .manifest(JsonValue.from(mapOf<String, Any>()))
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .manifest(
+                    Run.Manifest.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .metadata(
+                    Run.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("ChatOpenAI")
-                .outputs(JsonValue.from(mapOf<String, Any>()))
+                .outputs(
+                    Run.Outputs.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .outputsPreview("outputs_preview")
                 .addParentRunId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .addParentRunId("a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d")
@@ -181,7 +197,10 @@ internal class RunTest {
                     .time(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
                     .build()
             )
-        assertThat(run._extra()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(run.extra())
+            .contains(
+                Run.Extra.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+            )
         assertThat(run.feedbackStats())
             .contains(
                 Run.FeedbackStats.builder()
@@ -205,15 +224,27 @@ internal class RunTest {
                     .build()
             )
         assertThat(run.firstTokenTime()).contains(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
-        assertThat(run._inputs()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(run.inputs())
+            .contains(
+                Run.Inputs.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+            )
         assertThat(run.inputsPreview()).contains("inputs_preview")
         assertThat(run.isInDataset()).contains(true)
         assertThat(run.isRoot()).contains(true)
         assertThat(run.latencySeconds()).contains(1.523)
-        assertThat(run._manifest()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(run._metadata()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(run.manifest())
+            .contains(
+                Run.Manifest.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+            )
+        assertThat(run.metadata())
+            .contains(
+                Run.Metadata.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+            )
         assertThat(run.name()).contains("ChatOpenAI")
-        assertThat(run._outputs()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
+        assertThat(run.outputs())
+            .contains(
+                Run.Outputs.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+            )
         assertThat(run.outputsPreview()).contains("outputs_preview")
         assertThat(run.parentRunIds().getOrNull())
             .containsExactly(
@@ -308,7 +339,9 @@ internal class RunTest {
                         .time(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
                         .build()
                 )
-                .extra(JsonValue.from(mapOf<String, Any>()))
+                .extra(
+                    Run.Extra.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+                )
                 .feedbackStats(
                     Run.FeedbackStats.builder()
                         .putAdditionalProperty(
@@ -331,15 +364,29 @@ internal class RunTest {
                         .build()
                 )
                 .firstTokenTime(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
-                .inputs(JsonValue.from(mapOf<String, Any>()))
+                .inputs(
+                    Run.Inputs.builder().putAdditionalProperty("foo", JsonValue.from("bar")).build()
+                )
                 .inputsPreview("inputs_preview")
                 .isInDataset(true)
                 .isRoot(true)
                 .latencySeconds(1.523)
-                .manifest(JsonValue.from(mapOf<String, Any>()))
-                .metadata(JsonValue.from(mapOf<String, Any>()))
+                .manifest(
+                    Run.Manifest.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .metadata(
+                    Run.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .name("ChatOpenAI")
-                .outputs(JsonValue.from(mapOf<String, Any>()))
+                .outputs(
+                    Run.Outputs.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
                 .outputsPreview("outputs_preview")
                 .addParentRunId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .addParentRunId("a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d")
