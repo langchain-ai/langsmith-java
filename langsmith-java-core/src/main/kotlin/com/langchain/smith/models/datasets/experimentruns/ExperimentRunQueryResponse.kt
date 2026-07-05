@@ -20,7 +20,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class ExperimentRunCreateResponse
+class ExperimentRunQueryResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
@@ -86,7 +86,7 @@ private constructor(
      *
      * This arbitrary value can be deserialized into a custom type using the `convert` method:
      * ```java
-     * MyClass myObject = experimentRunCreateResponse.attachmentUrls().convert(MyClass.class);
+     * MyClass myObject = experimentRunQueryResponse.attachmentUrls().convert(MyClass.class);
      * ```
      */
     @JsonProperty("attachment_urls")
@@ -114,7 +114,7 @@ private constructor(
      *
      * This arbitrary value can be deserialized into a custom type using the `convert` method:
      * ```java
-     * MyClass myObject = experimentRunCreateResponse.inputs().convert(MyClass.class);
+     * MyClass myObject = experimentRunQueryResponse.inputs().convert(MyClass.class);
      * ```
      */
     @JsonProperty("inputs") @ExcludeMissing fun _inputs(): JsonValue = inputs
@@ -124,7 +124,7 @@ private constructor(
      *
      * This arbitrary value can be deserialized into a custom type using the `convert` method:
      * ```java
-     * MyClass myObject = experimentRunCreateResponse.metadata().convert(MyClass.class);
+     * MyClass myObject = experimentRunQueryResponse.metadata().convert(MyClass.class);
      * ```
      */
     @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonValue = metadata
@@ -150,7 +150,7 @@ private constructor(
      *
      * This arbitrary value can be deserialized into a custom type using the `convert` method:
      * ```java
-     * MyClass myObject = experimentRunCreateResponse.outputs().convert(MyClass.class);
+     * MyClass myObject = experimentRunQueryResponse.outputs().convert(MyClass.class);
      * ```
      */
     @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonValue = outputs
@@ -241,12 +241,12 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [ExperimentRunCreateResponse].
+         * Returns a mutable builder for constructing an instance of [ExperimentRunQueryResponse].
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ExperimentRunCreateResponse]. */
+    /** A builder for [ExperimentRunQueryResponse]. */
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
@@ -263,19 +263,19 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(experimentRunCreateResponse: ExperimentRunCreateResponse) = apply {
-            id = experimentRunCreateResponse.id
-            attachmentUrls = experimentRunCreateResponse.attachmentUrls
-            createdAt = experimentRunCreateResponse.createdAt
-            datasetId = experimentRunCreateResponse.datasetId
-            inputs = experimentRunCreateResponse.inputs
-            metadata = experimentRunCreateResponse.metadata
-            modifiedAt = experimentRunCreateResponse.modifiedAt
-            name = experimentRunCreateResponse.name
-            outputs = experimentRunCreateResponse.outputs
-            runs = experimentRunCreateResponse.runs.map { it.toMutableList() }
-            sourceRunId = experimentRunCreateResponse.sourceRunId
-            additionalProperties = experimentRunCreateResponse.additionalProperties.toMutableMap()
+        internal fun from(experimentRunQueryResponse: ExperimentRunQueryResponse) = apply {
+            id = experimentRunQueryResponse.id
+            attachmentUrls = experimentRunQueryResponse.attachmentUrls
+            createdAt = experimentRunQueryResponse.createdAt
+            datasetId = experimentRunQueryResponse.datasetId
+            inputs = experimentRunQueryResponse.inputs
+            metadata = experimentRunQueryResponse.metadata
+            modifiedAt = experimentRunQueryResponse.modifiedAt
+            name = experimentRunQueryResponse.name
+            outputs = experimentRunQueryResponse.outputs
+            runs = experimentRunQueryResponse.runs.map { it.toMutableList() }
+            sourceRunId = experimentRunQueryResponse.sourceRunId
+            additionalProperties = experimentRunQueryResponse.additionalProperties.toMutableMap()
         }
 
         /** `id` is the dataset example UUID. */
@@ -404,12 +404,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ExperimentRunCreateResponse].
+         * Returns an immutable instance of [ExperimentRunQueryResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ExperimentRunCreateResponse =
-            ExperimentRunCreateResponse(
+        fun build(): ExperimentRunQueryResponse =
+            ExperimentRunQueryResponse(
                 id,
                 attachmentUrls,
                 createdAt,
@@ -435,7 +435,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ExperimentRunCreateResponse = apply {
+    fun validate(): ExperimentRunQueryResponse = apply {
         if (validated) {
             return@apply
         }
@@ -478,7 +478,7 @@ private constructor(
             return true
         }
 
-        return other is ExperimentRunCreateResponse &&
+        return other is ExperimentRunQueryResponse &&
             id == other.id &&
             attachmentUrls == other.attachmentUrls &&
             createdAt == other.createdAt &&
@@ -513,5 +513,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ExperimentRunCreateResponse{id=$id, attachmentUrls=$attachmentUrls, createdAt=$createdAt, datasetId=$datasetId, inputs=$inputs, metadata=$metadata, modifiedAt=$modifiedAt, name=$name, outputs=$outputs, runs=$runs, sourceRunId=$sourceRunId, additionalProperties=$additionalProperties}"
+        "ExperimentRunQueryResponse{id=$id, attachmentUrls=$attachmentUrls, createdAt=$createdAt, datasetId=$datasetId, inputs=$inputs, metadata=$metadata, modifiedAt=$modifiedAt, name=$name, outputs=$outputs, runs=$runs, sourceRunId=$sourceRunId, additionalProperties=$additionalProperties}"
 }

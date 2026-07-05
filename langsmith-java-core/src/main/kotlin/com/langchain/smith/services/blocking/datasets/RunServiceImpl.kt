@@ -17,7 +17,7 @@ import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
-import com.langchain.smith.models.datasets.runs.RunCreateParams
+import com.langchain.smith.models.datasets.runs.RunQueryParams
 import java.util.Optional
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -33,12 +33,12 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
         RunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun create(
-        params: RunCreateParams,
+    override fun query(
+        params: RunQueryParams,
         requestOptions: RequestOptions,
     ): Optional<List<ExampleWithRunsCh>> =
         // post /api/v1/datasets/{dataset_id}/runs
-        withRawResponse().create(params, requestOptions).parse()
+        withRawResponse().query(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunService.WithRawResponse {
@@ -53,11 +53,11 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<Optional<List<ExampleWithRunsCh>>> =
+        private val queryHandler: Handler<Optional<List<ExampleWithRunsCh>>> =
             jsonHandler<Optional<List<ExampleWithRunsCh>>>(clientOptions.jsonMapper)
 
-        override fun create(
-            params: RunCreateParams,
+        override fun query(
+            params: RunQueryParams,
             requestOptions: RequestOptions,
         ): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> {
             // We check here instead of in the params builder because this can be specified
@@ -75,7 +75,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { createHandler.handle(it) }
+                    .use { queryHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.ifPresent { it.forEach { it.validate() } }

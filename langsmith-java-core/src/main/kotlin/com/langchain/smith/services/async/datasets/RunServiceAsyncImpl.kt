@@ -17,7 +17,7 @@ import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
-import com.langchain.smith.models.datasets.runs.RunCreateParams
+import com.langchain.smith.models.datasets.runs.RunQueryParams
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -35,12 +35,12 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync =
         RunServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun create(
-        params: RunCreateParams,
+    override fun query(
+        params: RunQueryParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
         // post /api/v1/datasets/{dataset_id}/runs
-        withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().query(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         RunServiceAsync.WithRawResponse {
@@ -55,11 +55,11 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<Optional<List<ExampleWithRunsCh>>> =
+        private val queryHandler: Handler<Optional<List<ExampleWithRunsCh>>> =
             jsonHandler<Optional<List<ExampleWithRunsCh>>>(clientOptions.jsonMapper)
 
-        override fun create(
-            params: RunCreateParams,
+        override fun query(
+            params: RunQueryParams,
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>> {
             // We check here instead of in the params builder because this can be specified
@@ -79,7 +79,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { createHandler.handle(it) }
+                            .use { queryHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.ifPresent { it.forEach { it.validate() } }

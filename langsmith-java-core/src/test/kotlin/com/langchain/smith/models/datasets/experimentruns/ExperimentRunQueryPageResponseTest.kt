@@ -11,14 +11,14 @@ import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ExperimentRunCreatePageResponseTest {
+internal class ExperimentRunQueryPageResponseTest {
 
     @Test
     fun create() {
-        val experimentRunCreatePageResponse =
-            ExperimentRunCreatePageResponse.builder()
+        val experimentRunQueryPageResponse =
+            ExperimentRunQueryPageResponse.builder()
                 .addItem(
-                    ExperimentRunCreateResponse.builder()
+                    ExperimentRunQueryResponse.builder()
                         .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                         .attachmentUrls(JsonValue.from(mapOf<String, Any>()))
                         .createdAt(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
@@ -178,9 +178,9 @@ internal class ExperimentRunCreatePageResponseTest {
                 .nextCursor("next_cursor")
                 .build()
 
-        assertThat(experimentRunCreatePageResponse.items().getOrNull())
+        assertThat(experimentRunQueryPageResponse.items().getOrNull())
             .containsExactly(
-                ExperimentRunCreateResponse.builder()
+                ExperimentRunQueryResponse.builder()
                     .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                     .attachmentUrls(JsonValue.from(mapOf<String, Any>()))
                     .createdAt(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
@@ -333,16 +333,16 @@ internal class ExperimentRunCreatePageResponseTest {
                     .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .build()
             )
-        assertThat(experimentRunCreatePageResponse.nextCursor()).contains("next_cursor")
+        assertThat(experimentRunQueryPageResponse.nextCursor()).contains("next_cursor")
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val experimentRunCreatePageResponse =
-            ExperimentRunCreatePageResponse.builder()
+        val experimentRunQueryPageResponse =
+            ExperimentRunQueryPageResponse.builder()
                 .addItem(
-                    ExperimentRunCreateResponse.builder()
+                    ExperimentRunQueryResponse.builder()
                         .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                         .attachmentUrls(JsonValue.from(mapOf<String, Any>()))
                         .createdAt(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
@@ -502,13 +502,13 @@ internal class ExperimentRunCreatePageResponseTest {
                 .nextCursor("next_cursor")
                 .build()
 
-        val roundtrippedExperimentRunCreatePageResponse =
+        val roundtrippedExperimentRunQueryPageResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(experimentRunCreatePageResponse),
-                jacksonTypeRef<ExperimentRunCreatePageResponse>(),
+                jsonMapper.writeValueAsString(experimentRunQueryPageResponse),
+                jacksonTypeRef<ExperimentRunQueryPageResponse>(),
             )
 
-        assertThat(roundtrippedExperimentRunCreatePageResponse)
-            .isEqualTo(experimentRunCreatePageResponse)
+        assertThat(roundtrippedExperimentRunQueryPageResponse)
+            .isEqualTo(experimentRunQueryPageResponse)
     }
 }

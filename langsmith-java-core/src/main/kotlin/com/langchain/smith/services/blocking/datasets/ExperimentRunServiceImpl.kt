@@ -16,9 +16,9 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
-import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePage
-import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePageResponse
-import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreateParams
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunQueryPage
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunQueryPageResponse
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunQueryParams
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -34,12 +34,12 @@ class ExperimentRunServiceImpl internal constructor(private val clientOptions: C
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ExperimentRunService =
         ExperimentRunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun create(
-        params: ExperimentRunCreateParams,
+    override fun query(
+        params: ExperimentRunQueryParams,
         requestOptions: RequestOptions,
-    ): ExperimentRunCreatePage =
+    ): ExperimentRunQueryPage =
         // post /v2/datasets/{dataset_id}/experiment-runs
-        withRawResponse().create(params, requestOptions).parse()
+        withRawResponse().query(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ExperimentRunService.WithRawResponse {
@@ -54,13 +54,13 @@ class ExperimentRunServiceImpl internal constructor(private val clientOptions: C
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ExperimentRunCreatePageResponse> =
-            jsonHandler<ExperimentRunCreatePageResponse>(clientOptions.jsonMapper)
+        private val queryHandler: Handler<ExperimentRunQueryPageResponse> =
+            jsonHandler<ExperimentRunQueryPageResponse>(clientOptions.jsonMapper)
 
-        override fun create(
-            params: ExperimentRunCreateParams,
+        override fun query(
+            params: ExperimentRunQueryParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ExperimentRunCreatePage> {
+        ): HttpResponseFor<ExperimentRunQueryPage> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -76,14 +76,14 @@ class ExperimentRunServiceImpl internal constructor(private val clientOptions: C
             val response = clientOptions.httpClient.execute(request, requestOptions)
             return errorHandler.handle(response).parseable {
                 response
-                    .use { createHandler.handle(it) }
+                    .use { queryHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
                     }
                     .let {
-                        ExperimentRunCreatePage.builder()
+                        ExperimentRunQueryPage.builder()
                             .service(ExperimentRunServiceImpl(clientOptions))
                             .params(params)
                             .response(it)

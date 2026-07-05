@@ -10,12 +10,12 @@ internal class ExperimentRunServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun create() {
+    fun query() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val experimentRunService = client.datasets().experimentRuns()
 
-        val page = experimentRunService.create("dataset_id")
+        val page = experimentRunService.query("dataset_id")
 
         page.response().validate()
     }

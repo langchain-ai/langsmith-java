@@ -26,7 +26,7 @@ import kotlin.jvm.optionals.getOrNull
  * Returns a paginated page of dataset examples with runs from the requested experiments. Response
  * uses the canonical `{items, next_cursor}` envelope.
  */
-class ExperimentRunCreateParams
+class ExperimentRunQueryParams
 private constructor(
     private val datasetId: String?,
     private val body: Body,
@@ -171,15 +171,13 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): ExperimentRunCreateParams = builder().build()
+        @JvmStatic fun none(): ExperimentRunQueryParams = builder().build()
 
-        /**
-         * Returns a mutable builder for constructing an instance of [ExperimentRunCreateParams].
-         */
+        /** Returns a mutable builder for constructing an instance of [ExperimentRunQueryParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ExperimentRunCreateParams]. */
+    /** A builder for [ExperimentRunQueryParams]. */
     class Builder internal constructor() {
 
         private var datasetId: String? = null
@@ -188,11 +186,11 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(experimentRunCreateParams: ExperimentRunCreateParams) = apply {
-            datasetId = experimentRunCreateParams.datasetId
-            body = experimentRunCreateParams.body.toBuilder()
-            additionalHeaders = experimentRunCreateParams.additionalHeaders.toBuilder()
-            additionalQueryParams = experimentRunCreateParams.additionalQueryParams.toBuilder()
+        internal fun from(experimentRunQueryParams: ExperimentRunQueryParams) = apply {
+            datasetId = experimentRunQueryParams.datasetId
+            body = experimentRunQueryParams.body.toBuilder()
+            additionalHeaders = experimentRunQueryParams.additionalHeaders.toBuilder()
+            additionalQueryParams = experimentRunQueryParams.additionalQueryParams.toBuilder()
         }
 
         fun datasetId(datasetId: String?) = apply { this.datasetId = datasetId }
@@ -465,12 +463,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ExperimentRunCreateParams].
+         * Returns an immutable instance of [ExperimentRunQueryParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ExperimentRunCreateParams =
-            ExperimentRunCreateParams(
+        fun build(): ExperimentRunQueryParams =
+            ExperimentRunQueryParams(
                 datasetId,
                 body.build(),
                 additionalHeaders.build(),
@@ -1689,7 +1687,7 @@ private constructor(
             return true
         }
 
-        return other is ExperimentRunCreateParams &&
+        return other is ExperimentRunQueryParams &&
             datasetId == other.datasetId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
@@ -1700,5 +1698,5 @@ private constructor(
         Objects.hash(datasetId, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ExperimentRunCreateParams{datasetId=$datasetId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ExperimentRunQueryParams{datasetId=$datasetId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

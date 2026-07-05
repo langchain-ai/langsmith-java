@@ -18,10 +18,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class ExperimentRunCreatePageResponse
+class ExperimentRunQueryPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val items: JsonField<List<ExperimentRunCreateResponse>>,
+    private val items: JsonField<List<ExperimentRunQueryResponse>>,
     private val nextCursor: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -30,7 +30,7 @@ private constructor(
     private constructor(
         @JsonProperty("items")
         @ExcludeMissing
-        items: JsonField<List<ExperimentRunCreateResponse>> = JsonMissing.of(),
+        items: JsonField<List<ExperimentRunQueryResponse>> = JsonMissing.of(),
         @JsonProperty("next_cursor")
         @ExcludeMissing
         nextCursor: JsonField<String> = JsonMissing.of(),
@@ -40,7 +40,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun items(): Optional<List<ExperimentRunCreateResponse>> = items.getOptional("items")
+    fun items(): Optional<List<ExperimentRunQueryResponse>> = items.getOptional("items")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -55,7 +55,7 @@ private constructor(
      */
     @JsonProperty("items")
     @ExcludeMissing
-    fun _items(): JsonField<List<ExperimentRunCreateResponse>> = items
+    fun _items(): JsonField<List<ExperimentRunQueryResponse>> = items
 
     /**
      * Returns the raw JSON value of [nextCursor].
@@ -80,46 +80,45 @@ private constructor(
 
         /**
          * Returns a mutable builder for constructing an instance of
-         * [ExperimentRunCreatePageResponse].
+         * [ExperimentRunQueryPageResponse].
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ExperimentRunCreatePageResponse]. */
+    /** A builder for [ExperimentRunQueryPageResponse]. */
     class Builder internal constructor() {
 
-        private var items: JsonField<MutableList<ExperimentRunCreateResponse>>? = null
+        private var items: JsonField<MutableList<ExperimentRunQueryResponse>>? = null
         private var nextCursor: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(experimentRunCreatePageResponse: ExperimentRunCreatePageResponse) =
-            apply {
-                items = experimentRunCreatePageResponse.items.map { it.toMutableList() }
-                nextCursor = experimentRunCreatePageResponse.nextCursor
-                additionalProperties =
-                    experimentRunCreatePageResponse.additionalProperties.toMutableMap()
-            }
+        internal fun from(experimentRunQueryPageResponse: ExperimentRunQueryPageResponse) = apply {
+            items = experimentRunQueryPageResponse.items.map { it.toMutableList() }
+            nextCursor = experimentRunQueryPageResponse.nextCursor
+            additionalProperties =
+                experimentRunQueryPageResponse.additionalProperties.toMutableMap()
+        }
 
-        fun items(items: List<ExperimentRunCreateResponse>) = items(JsonField.of(items))
+        fun items(items: List<ExperimentRunQueryResponse>) = items(JsonField.of(items))
 
         /**
          * Sets [Builder.items] to an arbitrary JSON value.
          *
          * You should usually call [Builder.items] with a well-typed
-         * `List<ExperimentRunCreateResponse>` value instead. This method is primarily for setting
+         * `List<ExperimentRunQueryResponse>` value instead. This method is primarily for setting
          * the field to an undocumented or not yet supported value.
          */
-        fun items(items: JsonField<List<ExperimentRunCreateResponse>>) = apply {
+        fun items(items: JsonField<List<ExperimentRunQueryResponse>>) = apply {
             this.items = items.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [ExperimentRunCreateResponse] to [items].
+         * Adds a single [ExperimentRunQueryResponse] to [items].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addItem(item: ExperimentRunCreateResponse) = apply {
+        fun addItem(item: ExperimentRunQueryResponse) = apply {
             items =
                 (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
         }
@@ -155,12 +154,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ExperimentRunCreatePageResponse].
+         * Returns an immutable instance of [ExperimentRunQueryPageResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ExperimentRunCreatePageResponse =
-            ExperimentRunCreatePageResponse(
+        fun build(): ExperimentRunQueryPageResponse =
+            ExperimentRunQueryPageResponse(
                 (items ?: JsonMissing.of()).map { it.toImmutable() },
                 nextCursor,
                 additionalProperties.toMutableMap(),
@@ -177,7 +176,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ExperimentRunCreatePageResponse = apply {
+    fun validate(): ExperimentRunQueryPageResponse = apply {
         if (validated) {
             return@apply
         }
@@ -210,7 +209,7 @@ private constructor(
             return true
         }
 
-        return other is ExperimentRunCreatePageResponse &&
+        return other is ExperimentRunQueryPageResponse &&
             items == other.items &&
             nextCursor == other.nextCursor &&
             additionalProperties == other.additionalProperties
@@ -221,5 +220,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ExperimentRunCreatePageResponse{items=$items, nextCursor=$nextCursor, additionalProperties=$additionalProperties}"
+        "ExperimentRunQueryPageResponse{items=$items, nextCursor=$nextCursor, additionalProperties=$additionalProperties}"
 }

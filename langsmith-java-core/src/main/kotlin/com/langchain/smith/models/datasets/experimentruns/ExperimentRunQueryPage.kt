@@ -10,54 +10,54 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** @see ExperimentRunService.create */
-class ExperimentRunCreatePage
+/** @see ExperimentRunService.query */
+class ExperimentRunQueryPage
 private constructor(
     private val service: ExperimentRunService,
-    private val params: ExperimentRunCreateParams,
-    private val response: ExperimentRunCreatePageResponse,
-) : Page<ExperimentRunCreateResponse> {
+    private val params: ExperimentRunQueryParams,
+    private val response: ExperimentRunQueryPageResponse,
+) : Page<ExperimentRunQueryResponse> {
 
     /**
-     * Delegates to [ExperimentRunCreatePageResponse], but gracefully handles missing data.
+     * Delegates to [ExperimentRunQueryPageResponse], but gracefully handles missing data.
      *
-     * @see ExperimentRunCreatePageResponse.items
+     * @see ExperimentRunQueryPageResponse.items
      */
-    override fun items(): List<ExperimentRunCreateResponse> =
+    override fun items(): List<ExperimentRunQueryResponse> =
         response._items().getOptional("items").getOrNull() ?: emptyList()
 
     /**
-     * Delegates to [ExperimentRunCreatePageResponse], but gracefully handles missing data.
+     * Delegates to [ExperimentRunQueryPageResponse], but gracefully handles missing data.
      *
-     * @see ExperimentRunCreatePageResponse.nextCursor
+     * @see ExperimentRunQueryPageResponse.nextCursor
      */
     fun nextCursor(): Optional<String> = response._nextCursor().getOptional("next_cursor")
 
     override fun hasNextPage(): Boolean = items().isNotEmpty() && nextCursor().isPresent
 
-    fun nextPageParams(): ExperimentRunCreateParams {
+    fun nextPageParams(): ExperimentRunQueryParams {
         val nextCursor =
             nextCursor().getOrNull()
                 ?: throw IllegalStateException("Cannot construct next page params")
         return params.toBuilder().cursor(nextCursor).build()
     }
 
-    override fun nextPage(): ExperimentRunCreatePage = service.create(nextPageParams())
+    override fun nextPage(): ExperimentRunQueryPage = service.query(nextPageParams())
 
-    fun autoPager(): AutoPager<ExperimentRunCreateResponse> = AutoPager.from(this)
+    fun autoPager(): AutoPager<ExperimentRunQueryResponse> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
-    fun params(): ExperimentRunCreateParams = params
+    fun params(): ExperimentRunQueryParams = params
 
     /** The response that this page was parsed from. */
-    fun response(): ExperimentRunCreatePageResponse = response
+    fun response(): ExperimentRunQueryPageResponse = response
 
     fun toBuilder() = Builder().from(this)
 
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [ExperimentRunCreatePage].
+         * Returns a mutable builder for constructing an instance of [ExperimentRunQueryPage].
          *
          * The following fields are required:
          * ```java
@@ -69,30 +69,30 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ExperimentRunCreatePage]. */
+    /** A builder for [ExperimentRunQueryPage]. */
     class Builder internal constructor() {
 
         private var service: ExperimentRunService? = null
-        private var params: ExperimentRunCreateParams? = null
-        private var response: ExperimentRunCreatePageResponse? = null
+        private var params: ExperimentRunQueryParams? = null
+        private var response: ExperimentRunQueryPageResponse? = null
 
         @JvmSynthetic
-        internal fun from(experimentRunCreatePage: ExperimentRunCreatePage) = apply {
-            service = experimentRunCreatePage.service
-            params = experimentRunCreatePage.params
-            response = experimentRunCreatePage.response
+        internal fun from(experimentRunQueryPage: ExperimentRunQueryPage) = apply {
+            service = experimentRunQueryPage.service
+            params = experimentRunQueryPage.params
+            response = experimentRunQueryPage.response
         }
 
         fun service(service: ExperimentRunService) = apply { this.service = service }
 
         /** The parameters that were used to request this page. */
-        fun params(params: ExperimentRunCreateParams) = apply { this.params = params }
+        fun params(params: ExperimentRunQueryParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun response(response: ExperimentRunCreatePageResponse) = apply { this.response = response }
+        fun response(response: ExperimentRunQueryPageResponse) = apply { this.response = response }
 
         /**
-         * Returns an immutable instance of [ExperimentRunCreatePage].
+         * Returns an immutable instance of [ExperimentRunQueryPage].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -105,8 +105,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): ExperimentRunCreatePage =
-            ExperimentRunCreatePage(
+        fun build(): ExperimentRunQueryPage =
+            ExperimentRunQueryPage(
                 checkRequired("service", service),
                 checkRequired("params", params),
                 checkRequired("response", response),
@@ -118,7 +118,7 @@ private constructor(
             return true
         }
 
-        return other is ExperimentRunCreatePage &&
+        return other is ExperimentRunQueryPage &&
             service == other.service &&
             params == other.params &&
             response == other.response
@@ -127,5 +127,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
     override fun toString() =
-        "ExperimentRunCreatePage{service=$service, params=$params, response=$response}"
+        "ExperimentRunQueryPage{service=$service, params=$params, response=$response}"
 }

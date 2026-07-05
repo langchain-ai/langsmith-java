@@ -8,18 +8,18 @@ import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class RunCreateParamsTest {
+internal class RunQueryParamsTest {
 
     @Test
     fun create() {
-        RunCreateParams.builder()
+        RunQueryParams.builder()
             .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .format(RunCreateParams.Format.CSV)
+            .format(RunQueryParams.Format.CSV)
             .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .filters(
-                RunCreateParams.Filters.builder()
+                RunQueryParams.Filters.builder()
                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                     .build()
             )
@@ -39,7 +39,7 @@ internal class RunCreateParamsTest {
     @Test
     fun pathParams() {
         val params =
-            RunCreateParams.builder()
+            RunQueryParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
@@ -52,14 +52,14 @@ internal class RunCreateParamsTest {
     @Test
     fun queryParams() {
         val params =
-            RunCreateParams.builder()
+            RunQueryParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .format(RunCreateParams.Format.CSV)
+                .format(RunQueryParams.Format.CSV)
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .filters(
-                    RunCreateParams.Filters.builder()
+                    RunQueryParams.Filters.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                         .build()
                 )
@@ -83,7 +83,7 @@ internal class RunCreateParamsTest {
     @Test
     fun queryParamsWithoutOptionalFields() {
         val params =
-            RunCreateParams.builder()
+            RunQueryParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
@@ -96,14 +96,14 @@ internal class RunCreateParamsTest {
     @Test
     fun body() {
         val params =
-            RunCreateParams.builder()
+            RunQueryParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .format(RunCreateParams.Format.CSV)
+                .format(RunQueryParams.Format.CSV)
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .filters(
-                    RunCreateParams.Filters.builder()
+                    RunQueryParams.Filters.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                         .build()
                 )
@@ -127,7 +127,7 @@ internal class RunCreateParamsTest {
             .containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(body.filters())
             .contains(
-                RunCreateParams.Filters.builder()
+                RunQueryParams.Filters.builder()
                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                     .build()
             )
@@ -147,7 +147,7 @@ internal class RunCreateParamsTest {
     @Test
     fun bodyWithoutOptionalFields() {
         val params =
-            RunCreateParams.builder()
+            RunQueryParams.builder()
                 .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
