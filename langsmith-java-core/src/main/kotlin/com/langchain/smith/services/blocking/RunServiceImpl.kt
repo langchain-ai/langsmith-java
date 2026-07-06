@@ -65,7 +65,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         WithRawResponseImpl(clientOptions = clientOptions, getServerInfo = { serverInfo })
     }
 
-    private val rulesService: RuleService by lazy { RuleServiceImpl(clientOptions) }
+    private val rules: RuleService by lazy { RuleServiceImpl(clientOptions) }
     private val multipartDisabled = AtomicBoolean(false)
 
     private val batchQueue: AutoBatchQueue by lazy {
@@ -79,7 +79,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun withRawResponse(): RunService.WithRawResponse = withRawResponse
 
-    override fun rules(): RuleService = rulesService
+    override fun rules(): RuleService = rules
 
     private fun sendAutoBatch(
         params: RunIngestBatchParams,
@@ -245,11 +245,11 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
-        private val rulesWithRawResponse: RuleService.WithRawResponse by lazy {
+        private val rules: RuleService.WithRawResponse by lazy {
             RuleServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        override fun rules(): RuleService.WithRawResponse = rulesWithRawResponse
+        override fun rules(): RuleService.WithRawResponse = rules
 
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
