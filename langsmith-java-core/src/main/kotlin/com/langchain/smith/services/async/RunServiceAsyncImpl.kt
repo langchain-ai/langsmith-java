@@ -67,7 +67,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         WithRawResponseImpl(clientOptions = clientOptions, getServerInfo = { serverInfo })
     }
 
-    private val rulesService: RuleServiceAsync by lazy { RuleServiceAsyncImpl(clientOptions) }
+    private val rules: RuleServiceAsync by lazy { RuleServiceAsyncImpl(clientOptions) }
     private val multipartDisabled = AtomicBoolean(false)
 
     private val batchQueue: AutoBatchQueue by lazy {
@@ -81,7 +81,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
 
     override fun withRawResponse(): RunServiceAsync.WithRawResponse = withRawResponse
 
-    override fun rules(): RuleServiceAsync = rulesService
+    override fun rules(): RuleServiceAsync = rules
 
     private fun sendAutoBatch(
         params: RunIngestBatchParams,
