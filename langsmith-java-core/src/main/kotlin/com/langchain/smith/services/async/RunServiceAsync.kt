@@ -146,6 +146,41 @@ interface RunServiceAsync {
     fun ingestBatch(requestOptions: RequestOptions): CompletableFuture<RunIngestBatchResponse> =
         ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
+    /**
+     * Ingests runs through `/runs/multipart`, allowing large run fields and per-run binary
+     * attachments. This mirrors the Python/JS multipart ingest shape: create runs and update runs
+     * are provided separately, and attachments are set on each [Run].
+     */
+    fun multipartIngest(): CompletableFuture<Void?> = multipartIngest(emptyList(), emptyList())
+
+    /** @see multipartIngest */
+    fun multipartIngest(
+        create: List<Run> = emptyList(),
+        update: List<Run> = emptyList(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?>
+
+    /** @see multipartIngest */
+    fun multipartIngest(
+        create: List<Run> = emptyList(),
+        update: List<Run> = emptyList(),
+    ): CompletableFuture<Void?> = multipartIngest(create, update, RequestOptions.none())
+
+    /** @see multipartIngest */
+    fun multipartIngest(requestOptions: RequestOptions): CompletableFuture<Void?> =
+        multipartIngest(emptyList(), emptyList(), requestOptions)
+
+    /** @see multipartIngest */
+    fun multipartIngest(
+        params: RunIngestBatchParams = RunIngestBatchParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Void?> =
+        multipartIngest(
+            params.post().orElse(emptyList()),
+            params.patch().orElse(emptyList()),
+            requestOptions,
+        )
+
     /** Query Runs */
     fun query(): CompletableFuture<RunQueryResponse> = query(RunQueryParams.none())
 
@@ -349,6 +384,44 @@ interface RunServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<RunIngestBatchResponse>> =
             ingestBatch(RunIngestBatchParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /runs/multipart`, but is otherwise the same as
+         * [RunServiceAsync.multipartIngest].
+         */
+        fun multipartIngest(): CompletableFuture<HttpResponseFor<Void?>> =
+            multipartIngest(emptyList(), emptyList())
+
+        /** @see multipartIngest */
+        fun multipartIngest(
+            create: List<Run> = emptyList(),
+            update: List<Run> = emptyList(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Void?>>
+
+        /** @see multipartIngest */
+        fun multipartIngest(
+            create: List<Run> = emptyList(),
+            update: List<Run> = emptyList(),
+        ): CompletableFuture<HttpResponseFor<Void?>> =
+            multipartIngest(create, update, RequestOptions.none())
+
+        /** @see multipartIngest */
+        fun multipartIngest(
+            requestOptions: RequestOptions
+        ): CompletableFuture<HttpResponseFor<Void?>> =
+            multipartIngest(emptyList(), emptyList(), requestOptions)
+
+        /** @see multipartIngest */
+        fun multipartIngest(
+            params: RunIngestBatchParams = RunIngestBatchParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Void?>> =
+            multipartIngest(
+                params.post().orElse(emptyList()),
+                params.patch().orElse(emptyList()),
+                requestOptions,
+            )
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as

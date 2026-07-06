@@ -3,6 +3,7 @@ package com.langchain.smith.client
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunAttachment
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import java.io.ByteArrayOutputStream
 import org.assertj.core.api.Assertions.assertThat
@@ -97,6 +98,29 @@ internal class RunMultipartBatchTest {
         assertThat(body).doesNotContain("name=\"post.r1.error\"")
         assertThat(body).doesNotContain("name=\"post.r1.serialized\"")
         assertThat(body.multipartPayload("post.r1")).doesNotContain("null")
+    }
+
+    @Test
+    fun `serializes attachments as attachment multipart fields and omits attachments from main payload`() {
+        val run =
+            testRun("r1")
+                .toBuilder()
+                .putAttachment("foo", RunAttachment.of("text/plain", "bar".toByteArray()))
+                .putAttachment("bad.name", RunAttachment.of("text/plain", "skip".toByteArray()))
+                .build()
+        val multipart =
+            RunIngestBatchParams.builder()
+                .post(listOf(run))
+                .build()
+                .toRunMultipartFormData(jsonMapper())
+        assertThat(multipart).isNotNull()
+        val body = multipart!!.asString()
+
+        assertThat(body).contains("name=\"attachment.r1.foo\"")
+        assertThat(body).contains("Content-Type: text/plain; length=3")
+        assertThat(body.multipartPayload("attachment.r1.foo")).contains("bar")
+        assertThat(body).doesNotContain("attachment.r1.bad.name")
+        assertThat(body.multipartPayload("post.r1")).doesNotContain("attachments")
     }
 
     @Test

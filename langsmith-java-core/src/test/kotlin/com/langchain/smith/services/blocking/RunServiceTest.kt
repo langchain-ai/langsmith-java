@@ -24,6 +24,7 @@ import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.models.runs.Run
+import com.langchain.smith.models.runs.RunAttachment
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunRetrieveParams
@@ -37,6 +38,7 @@ import java.time.OffsetDateTime
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.atomic.AtomicReference
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
@@ -44,6 +46,47 @@ import org.junit.jupiter.api.parallel.ResourceLock
 @WireMockTest
 @ResourceLock("https://github.com/wiremock/wiremock/issues/169")
 internal class RunServiceTest {
+
+    @Test
+    fun `direct multipart ingest with input stream attachment is compressed and not retried`(
+        wmRuntimeInfo: WireMockRuntimeInfo
+    ) {
+        stubFor(
+            get(urlPathEqualTo("/info"))
+                .willReturn(okJson("""{"instance_flags":{"zstd_compression_enabled":true}}"""))
+        )
+        stubFor(post(urlPathEqualTo("/runs/multipart")).willReturn(aResponse().withStatus(503)))
+        val client =
+            LangsmithOkHttpClient.builder()
+                .apiKey("My API Key")
+                .baseUrl(wmRuntimeInfo.httpBaseUrl)
+                .build()
+        val inputStream = ByteArrayInputStream("streamed attachment".toByteArray()).buffered()
+        val run =
+            testRun("run-id")
+                .toBuilder()
+                .putAttachment(
+                    "stream",
+                    RunAttachment.builder()
+                        .contentType("text/plain")
+                        .data(inputStream)
+                        .length("streamed attachment".toByteArray().size.toLong())
+                        .build(),
+                )
+                .build()
+
+        try {
+            assertThatThrownBy { client.runs().multipartIngest(listOf(run), emptyList()) }
+
+            verify(
+                1,
+                postRequestedFor(urlPathEqualTo("/runs/multipart"))
+                    .withHeader("Content-Encoding", containing("zstd")),
+            )
+        } finally {
+            client.close()
+        }
+    }
 
     @Test
     fun `auto batch queue uses server batch ingest size limit`(wmRuntimeInfo: WireMockRuntimeInfo) {
@@ -427,6 +470,79 @@ internal class RunServiceTest {
         assertThat(body.contentType()).startsWith("multipart/form-data")
         assertThat(body.repeatable()).isTrue()
         assertThat(readBody(body)).contains("name=\"post.run-id\"")
+    }
+
+    @Test
+    fun `auto batch queue sends input stream attachment as non-repeatable compressed multipart body`() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest)
+        val runService = autoBatchRunService(httpClient)
+        val inputStream = ByteArrayInputStream("streamed attachment".toByteArray()).buffered()
+
+        runService.create(
+            testRun("run-id")
+                .toBuilder()
+                .putAttachment(
+                    "stream",
+                    RunAttachment.builder()
+                        .contentType("text/plain")
+                        .data(inputStream)
+                        .length("streamed attachment".toByteArray().size.toLong())
+                        .build(),
+                )
+                .build()
+        )
+        runService.flush()
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "multipart")
+        assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+        assertThat(body.contentType()).startsWith("multipart/form-data")
+        // RetryingHttpClient uses repeatable() to decide if a request can be retried. InputStream
+        // attachments are intentionally non-repeatable, and zstd preserves that signal.
+        assertThat(body.repeatable()).isFalse()
+        val decompressed = decompress(body)
+        assertThat(decompressed).contains("name=\"attachment.run-id.stream\"")
+        assertThat(decompressed).contains("Content-Type: text/plain; length=19")
+        assertThat(decompressed).contains("streamed attachment")
+    }
+
+    @Test
+    fun `direct multipart ingest sends create and update runs with per-run attachments`() {
+        val capturedRequest = AtomicReference<HttpRequest>()
+        val httpClient = capturingHttpClient(capturedRequest)
+        val runService = autoBatchRunService(httpClient)
+        val create =
+            testRun("create-id")
+                .toBuilder()
+                .putAttachment(
+                    "create-file",
+                    RunAttachment.of("text/plain", "create data".toByteArray()),
+                )
+                .build()
+        val update =
+            testRun("update-id")
+                .toBuilder()
+                .putAttachment(
+                    "update-file",
+                    RunAttachment.of("text/plain", "update data".toByteArray()),
+                )
+                .build()
+
+        runService.multipartIngest(listOf(create), listOf(update))
+
+        val request = capturedRequest.get()
+        val body = request.body!!
+        assertThat(request.pathSegments).containsExactly("runs", "multipart")
+        assertThat(request.headers.values("Content-Encoding")).containsExactly("zstd")
+        val decompressed = decompress(body)
+        assertThat(decompressed).contains("name=\"post.create-id\"")
+        assertThat(decompressed).contains("name=\"patch.update-id\"")
+        assertThat(decompressed).contains("name=\"attachment.create-id.create-file\"")
+        assertThat(decompressed).contains("name=\"attachment.update-id.update-file\"")
+        assertThat(decompressed).contains("create data")
+        assertThat(decompressed).contains("update data")
     }
 
     @Test
