@@ -38,12 +38,15 @@ import kotlin.jvm.optionals.getOrNull
 class RunCreateParams
 private constructor(
     private val queueId: String?,
+    private val extendTraceRetention: Boolean?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
     fun queueId(): Optional<String> = Optional.ofNullable(queueId)
+
+    fun extendTraceRetention(): Optional<Boolean> = Optional.ofNullable(extendTraceRetention)
 
     fun body(): Body = body
 
@@ -72,6 +75,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var queueId: String? = null
+        private var extendTraceRetention: Boolean? = null
         private var body: Body? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -79,6 +83,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(runCreateParams: RunCreateParams) = apply {
             queueId = runCreateParams.queueId
+            extendTraceRetention = runCreateParams.extendTraceRetention
             body = runCreateParams.body
             additionalHeaders = runCreateParams.additionalHeaders.toBuilder()
             additionalQueryParams = runCreateParams.additionalQueryParams.toBuilder()
@@ -88,6 +93,25 @@ private constructor(
 
         /** Alias for calling [Builder.queueId] with `queueId.orElse(null)`. */
         fun queueId(queueId: Optional<String>) = queueId(queueId.getOrNull())
+
+        fun extendTraceRetention(extendTraceRetention: Boolean?) = apply {
+            this.extendTraceRetention = extendTraceRetention
+        }
+
+        /**
+         * Alias for [Builder.extendTraceRetention].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun extendTraceRetention(extendTraceRetention: Boolean) =
+            extendTraceRetention(extendTraceRetention as Boolean?)
+
+        /**
+         * Alias for calling [Builder.extendTraceRetention] with
+         * `extendTraceRetention.orElse(null)`.
+         */
+        fun extendTraceRetention(extendTraceRetention: Optional<Boolean>) =
+            extendTraceRetention(extendTraceRetention.getOrNull())
 
         fun body(body: Body) = apply { this.body = body }
 
@@ -224,6 +248,7 @@ private constructor(
         fun build(): RunCreateParams =
             RunCreateParams(
                 queueId,
+                extendTraceRetention,
                 checkRequired("body", body),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -240,7 +265,13 @@ private constructor(
 
     override fun _headers(): Headers = additionalHeaders
 
-    override fun _queryParams(): QueryParams = additionalQueryParams
+    override fun _queryParams(): QueryParams =
+        QueryParams.builder()
+            .apply {
+                extendTraceRetention?.let { put("extend_trace_retention", it.toString()) }
+                putAll(additionalQueryParams)
+            }
+            .build()
 
     @JsonDeserialize(using = Body.Deserializer::class)
     @JsonSerialize(using = Body.Serializer::class)
@@ -1322,14 +1353,15 @@ private constructor(
 
         return other is RunCreateParams &&
             queueId == other.queueId &&
+            extendTraceRetention == other.extendTraceRetention &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(queueId, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(queueId, extendTraceRetention, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "RunCreateParams{queueId=$queueId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RunCreateParams{queueId=$queueId, extendTraceRetention=$extendTraceRetention, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
