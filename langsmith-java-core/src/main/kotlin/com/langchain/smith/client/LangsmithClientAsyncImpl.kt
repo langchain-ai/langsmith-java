@@ -81,14 +81,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         TraceServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val threads: ThreadServiceAsync by lazy {
-        ThreadServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
-    private val traces: TraceServiceAsync by lazy {
-        TraceServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
     private val evaluators: EvaluatorServiceAsync by lazy {
         EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -147,10 +139,6 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun datasets(): DatasetServiceAsync = datasets
 
     override fun runs(): RunServiceAsync = runs.value
-
-    override fun threads(): ThreadServiceAsync = threads
-
-    override fun traces(): TraceServiceAsync = traces
 
     override fun threads(): ThreadServiceAsync = threads
 

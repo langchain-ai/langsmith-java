@@ -71,10 +71,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val traces: TraceService by lazy { TraceServiceImpl(clientOptionsWithUserAgent) }
 
-    private val threads: ThreadService by lazy { ThreadServiceImpl(clientOptionsWithUserAgent) }
-
-    private val traces: TraceService by lazy { TraceServiceImpl(clientOptionsWithUserAgent) }
-
     private val evaluators: EvaluatorService by lazy {
         EvaluatorServiceImpl(clientOptionsWithUserAgent)
     }
@@ -123,10 +119,6 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun datasets(): DatasetService = datasets
 
     override fun runs(): RunService = runs.value
-
-    override fun threads(): ThreadService = threads
-
-    override fun traces(): TraceService = traces
 
     override fun threads(): ThreadService = threads
 
