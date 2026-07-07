@@ -56,6 +56,8 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.examples()).isNotNull()
         assertThat(client.datasets()).isNotNull()
         assertThat(client.runs()).isNotNull()
+        assertThat(client.threads()).isNotNull()
+        assertThat(client.traces()).isNotNull()
         assertThat(client.evaluators()).isNotNull()
         assertThat(client.onlineEvaluators()).isNotNull()
         assertThat(client.feedback()).isNotNull()

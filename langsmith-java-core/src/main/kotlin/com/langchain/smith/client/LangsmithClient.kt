@@ -18,6 +18,8 @@ import com.langchain.smith.services.blocking.RunService
 import com.langchain.smith.services.blocking.SandboxService
 import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SettingService
+import com.langchain.smith.services.blocking.ThreadService
+import com.langchain.smith.services.blocking.TraceService
 import com.langchain.smith.services.blocking.WorkspaceService
 import java.util.function.Consumer
 
@@ -64,6 +66,10 @@ interface LangsmithClient {
     fun datasets(): DatasetService
 
     fun runs(): RunService
+
+    fun threads(): ThreadService
+
+    fun traces(): TraceService
 
     fun evaluators(): EvaluatorService
 
@@ -119,6 +125,10 @@ interface LangsmithClient {
         fun datasets(): DatasetService.WithRawResponse
 
         fun runs(): RunService.WithRawResponse
+
+        fun threads(): ThreadService.WithRawResponse
+
+        fun traces(): TraceService.WithRawResponse
 
         fun evaluators(): EvaluatorService.WithRawResponse
 

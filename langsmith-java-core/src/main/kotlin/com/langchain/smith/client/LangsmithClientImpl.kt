@@ -34,6 +34,10 @@ import com.langchain.smith.services.blocking.SessionService
 import com.langchain.smith.services.blocking.SessionServiceImpl
 import com.langchain.smith.services.blocking.SettingService
 import com.langchain.smith.services.blocking.SettingServiceImpl
+import com.langchain.smith.services.blocking.ThreadService
+import com.langchain.smith.services.blocking.ThreadServiceImpl
+import com.langchain.smith.services.blocking.TraceService
+import com.langchain.smith.services.blocking.TraceServiceImpl
 import com.langchain.smith.services.blocking.WorkspaceService
 import com.langchain.smith.services.blocking.WorkspaceServiceImpl
 import java.util.function.Consumer
@@ -62,6 +66,14 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     private val datasets: DatasetService by lazy { DatasetServiceImpl(clientOptionsWithUserAgent) }
 
     private val runs = lazy { RunServiceImpl(clientOptionsWithUserAgent) }
+
+    private val threads: ThreadService by lazy { ThreadServiceImpl(clientOptionsWithUserAgent) }
+
+    private val traces: TraceService by lazy { TraceServiceImpl(clientOptionsWithUserAgent) }
+
+    private val threads: ThreadService by lazy { ThreadServiceImpl(clientOptionsWithUserAgent) }
+
+    private val traces: TraceService by lazy { TraceServiceImpl(clientOptionsWithUserAgent) }
 
     private val evaluators: EvaluatorService by lazy {
         EvaluatorServiceImpl(clientOptionsWithUserAgent)
@@ -112,6 +124,14 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     override fun runs(): RunService = runs.value
 
+    override fun threads(): ThreadService = threads
+
+    override fun traces(): TraceService = traces
+
+    override fun threads(): ThreadService = threads
+
+    override fun traces(): TraceService = traces
+
     override fun evaluators(): EvaluatorService = evaluators
 
     override fun onlineEvaluators(): OnlineEvaluatorService = onlineEvaluators
@@ -160,6 +180,14 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
         private val runs: RunService.WithRawResponse by lazy {
             RunServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val threads: ThreadService.WithRawResponse by lazy {
+            ThreadServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val traces: TraceService.WithRawResponse by lazy {
+            TraceServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val evaluators: EvaluatorService.WithRawResponse by lazy {
@@ -224,6 +252,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
         override fun datasets(): DatasetService.WithRawResponse = datasets
 
         override fun runs(): RunService.WithRawResponse = runs
+
+        override fun threads(): ThreadService.WithRawResponse = threads
+
+        override fun traces(): TraceService.WithRawResponse = traces
 
         override fun evaluators(): EvaluatorService.WithRawResponse = evaluators
 
