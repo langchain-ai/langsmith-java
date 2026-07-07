@@ -48,17 +48,17 @@ This library requires Java 8 or later.
 ```java
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.runs.RunQueryV2Page;
+import com.langchain.smith.models.runs.RunQueryV2Params;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
 // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGSMITH_ENDPOINT` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
-SessionCreateParams params = SessionCreateParams.builder()
-    .name("my-project")
+RunQueryV2Params params = RunQueryV2Params.builder()
+    .addProjectId("00000000-0000-0000-0000-000000000000")
     .build();
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(params);
+RunQueryV2Page page = client.runs().queryV2(params);
 ```
 
 ## Examples
@@ -159,7 +159,7 @@ The `withOptions()` method does not affect the original client or service.
 
 To send a request to the LangChain API, build an instance of some `Params` class and pass it to the corresponding client method. When the response is received, it will be deserialized into an instance of a Java class.
 
-For example, `client.sessions().create(...)` should be called with an instance of `SessionCreateParams`, and it will return an instance of `TracerSessionWithoutVirtualFields`.
+For example, `client.runs().queryV2(...)` should be called with an instance of `RunQueryV2Params`, and it will return an instance of `RunQueryV2Page`.
 
 ## Immutability
 
@@ -176,18 +176,18 @@ The default client is synchronous. To switch to asynchronous execution, call the
 ```java
 import com.langchain.smith.client.LangsmithClient;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.runs.RunQueryV2PageAsync;
+import com.langchain.smith.models.runs.RunQueryV2Params;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
 // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGSMITH_ENDPOINT` environment variables
 LangsmithClient client = LangsmithOkHttpClient.fromEnv();
 
-SessionCreateParams params = SessionCreateParams.builder()
-    .name("my-project")
+RunQueryV2Params params = RunQueryV2Params.builder()
+    .addProjectId("00000000-0000-0000-0000-000000000000")
     .build();
-CompletableFuture<TracerSessionWithoutVirtualFields> tracerSessionWithoutVirtualFields = client.async().sessions().create(params);
+CompletableFuture<RunQueryV2PageAsync> page = client.async().runs().queryV2(params);
 ```
 
 Or create an asynchronous client from the beginning:
@@ -195,18 +195,18 @@ Or create an asynchronous client from the beginning:
 ```java
 import com.langchain.smith.client.LangsmithClientAsync;
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.runs.RunQueryV2PageAsync;
+import com.langchain.smith.models.runs.RunQueryV2Params;
 import java.util.concurrent.CompletableFuture;
 
 // Configures using the `langchain.langsmithApiKey`, `langchain.langsmithTenantId` and `langchain.baseUrl` system properties
 // Or configures using the `LANGSMITH_API_KEY`, `LANGSMITH_TENANT_ID` and `LANGSMITH_ENDPOINT` environment variables
 LangsmithClientAsync client = LangsmithOkHttpClientAsync.fromEnv();
 
-SessionCreateParams params = SessionCreateParams.builder()
-    .name("my-project")
+RunQueryV2Params params = RunQueryV2Params.builder()
+    .addProjectId("00000000-0000-0000-0000-000000000000")
     .build();
-CompletableFuture<TracerSessionWithoutVirtualFields> tracerSessionWithoutVirtualFields = client.sessions().create(params);
+CompletableFuture<RunQueryV2PageAsync> page = client.runs().queryV2(params);
 ```
 
 The asynchronous client supports the same options as the synchronous one, except most methods return `CompletableFuture`s.
@@ -288,24 +288,24 @@ To access this data, prefix any HTTP method call on a client or service with `wi
 ```java
 import com.langchain.smith.core.http.Headers;
 import com.langchain.smith.core.http.HttpResponseFor;
-import com.langchain.smith.models.sessions.SessionCreateParams;
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.runs.RunQueryV2Page;
+import com.langchain.smith.models.runs.RunQueryV2Params;
 
-SessionCreateParams params = SessionCreateParams.builder()
-    .name("my-project")
+RunQueryV2Params params = RunQueryV2Params.builder()
+    .addProjectId("00000000-0000-0000-0000-000000000000")
     .build();
-HttpResponseFor<TracerSessionWithoutVirtualFields> tracerSessionWithoutVirtualFields = client.sessions().withRawResponse().create(params);
+HttpResponseFor<RunQueryV2Page> page = client.runs().withRawResponse().queryV2(params);
 
-int statusCode = tracerSessionWithoutVirtualFields.statusCode();
-Headers headers = tracerSessionWithoutVirtualFields.headers();
+int statusCode = page.statusCode();
+Headers headers = page.headers();
 ```
 
 You can still deserialize the response into an instance of a Java class if needed:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.runs.RunQueryV2Page;
 
-TracerSessionWithoutVirtualFields parsedTracerSessionWithoutVirtualFields = tracerSessionWithoutVirtualFields.parse();
+RunQueryV2Page parsedPage = page.parse();
 ```
 
 ## Error handling
@@ -344,43 +344,43 @@ To iterate through all results across all pages, use the `autoPager()` method, w
 When using the synchronous client, the method returns an [`Iterable`](https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html)
 
 ```java
-import com.langchain.smith.models.datasets.Dataset;
-import com.langchain.smith.models.datasets.DatasetListPage;
+import com.langchain.smith.models.runs.Run;
+import com.langchain.smith.models.runs.RunQueryV2Page;
 
-DatasetListPage page = client.datasets().list();
+RunQueryV2Page page = client.runs().queryV2();
 
 // Process as an Iterable
-for (Dataset dataset : page.autoPager()) {
-    System.out.println(dataset);
+for (Run run : page.autoPager()) {
+    System.out.println(run);
 }
 
 // Process as a Stream
 page.autoPager()
     .stream()
     .limit(50)
-    .forEach(dataset -> System.out.println(dataset));
+    .forEach(run -> System.out.println(run));
 ```
 
 When using the asynchronous client, the method returns an [`AsyncStreamResponse`](langsmith-java-core/src/main/kotlin/com/langchain/smith/core/http/AsyncStreamResponse.kt):
 
 ```java
 import com.langchain.smith.core.http.AsyncStreamResponse;
-import com.langchain.smith.models.datasets.Dataset;
-import com.langchain.smith.models.datasets.DatasetListPageAsync;
+import com.langchain.smith.models.runs.Run;
+import com.langchain.smith.models.runs.RunQueryV2PageAsync;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-CompletableFuture<DatasetListPageAsync> pageFuture = client.async().datasets().list();
+CompletableFuture<RunQueryV2PageAsync> pageFuture = client.async().runs().queryV2();
 
-pageFuture.thenRun(page -> page.autoPager().subscribe(dataset -> {
-    System.out.println(dataset);
+pageFuture.thenRun(page -> page.autoPager().subscribe(run -> {
+    System.out.println(run);
 }));
 
 // If you need to handle errors or completion of the stream
 pageFuture.thenRun(page -> page.autoPager().subscribe(new AsyncStreamResponse.Handler<>() {
     @Override
-    public void onNext(Dataset dataset) {
-        System.out.println(dataset);
+    public void onNext(Run run) {
+        System.out.println(run);
     }
 
     @Override
@@ -396,8 +396,8 @@ pageFuture.thenRun(page -> page.autoPager().subscribe(new AsyncStreamResponse.Ha
 
 // Or use futures
 pageFuture.thenRun(page -> page.autoPager()
-    .subscribe(dataset -> {
-        System.out.println(dataset);
+    .subscribe(run -> {
+        System.out.println(run);
     })
     .onCompleteFuture()
     .whenComplete((unused, error) -> {
@@ -416,13 +416,13 @@ To access individual page items and manually request the next page, use the `ite
 `hasNextPage()`, and `nextPage()` methods:
 
 ```java
-import com.langchain.smith.models.datasets.Dataset;
-import com.langchain.smith.models.datasets.DatasetListPage;
+import com.langchain.smith.models.runs.Run;
+import com.langchain.smith.models.runs.RunQueryV2Page;
 
-DatasetListPage page = client.datasets().list();
+RunQueryV2Page page = client.runs().queryV2();
 while (true) {
-    for (Dataset dataset : page.items()) {
-        System.out.println(dataset);
+    for (Run run : page.items()) {
+        System.out.println(run);
     }
 
     if (!page.hasNextPage()) {
@@ -514,9 +514,9 @@ Requests time out after 90 seconds by default.
 To set a custom timeout, configure the method call using the `timeout` method:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.runs.RunQueryV2Page;
 
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
+RunQueryV2Page page = client.runs().queryV2(RequestOptions.builder().timeout(Duration.ofSeconds(30)).build());
 ```
 
 Or configure the default for all method calls at the client level:
@@ -653,9 +653,9 @@ To set undocumented parameters, call the `putAdditionalHeader`, `putAdditionalQu
 
 ```java
 import com.langchain.smith.core.JsonValue;
-import com.langchain.smith.models.sessions.SessionCreateParams;
+import com.langchain.smith.models.runs.RunQueryV2Params;
 
-SessionCreateParams params = SessionCreateParams.builder()
+RunQueryV2Params params = RunQueryV2Params.builder()
     .putAdditionalHeader("Secret-Header", "42")
     .putAdditionalQueryParam("secret_query_param", "42")
     .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))
@@ -668,10 +668,10 @@ To set a documented parameter or property to an undocumented or not yet supporte
 
 ```java
 import com.langchain.smith.core.JsonValue;
-import com.langchain.smith.models.sessions.SessionCreateParams;
+import com.langchain.smith.models.runs.RunQueryV2Params;
 
-SessionCreateParams params = SessionCreateParams.builder()
-    .name(JsonValue.from(42))
+RunQueryV2Params params = RunQueryV2Params.builder()
+    .projectIds(JsonValue.from(42))
     .build();
 ```
 
@@ -720,10 +720,10 @@ To forcibly omit a required parameter or property, pass [`JsonMissing`](langsmit
 
 ```java
 import com.langchain.smith.core.JsonMissing;
-import com.langchain.smith.models.sessions.SessionCreateParams;
+import com.langchain.smith.models.runs.RunQueryV2Params;
 import com.langchain.smith.models.sessions.SessionRetrieveParams;
 
-SessionCreateParams params = SessionRetrieveParams.builder()
+RunQueryV2Params params = SessionRetrieveParams.builder()
     .sessionId(JsonMissing.of())
     .build();
 ```
@@ -801,9 +801,9 @@ TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.ses
 Or configure the method call to validate the response using the `responseValidation` method:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.runs.RunQueryV2Page;
 
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(RequestOptions.builder().responseValidation(true).build());
+RunQueryV2Page page = client.runs().queryV2(RequestOptions.builder().responseValidation(true).build());
 ```
 
 Or configure the default for all method calls at the client level:

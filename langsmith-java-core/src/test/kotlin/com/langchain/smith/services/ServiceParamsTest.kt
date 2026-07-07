@@ -15,8 +15,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import com.langchain.smith.client.LangsmithClient
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.sessions.SessionCreateParams
-import java.time.OffsetDateTime
+import com.langchain.smith.models.runs.RunQueryV2Params
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -40,31 +39,12 @@ internal class ServiceParamsTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun create() {
-        val sessionService = client.sessions()
+    fun queryV2() {
+        val runService = client.runs()
         stubFor(post(anyUrl()).willReturn(ok("{}")))
 
-        sessionService.create(
-            SessionCreateParams.builder()
-                .upsert(true)
-                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .description("description")
-                .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .addEvaluatorKey("string")
-                .extra(
-                    SessionCreateParams.Extra.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("bar"))
-                        .build()
-                )
-                .kickedOffBy("kicked_off_by")
-                .name("name")
-                .numExamples(0L)
-                .numRepetitions(0L)
-                .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
+        runService.queryV2(
+            RunQueryV2Params.builder()
                 .putAdditionalHeader("Secret-Header", "42")
                 .putAdditionalQueryParam("secret_query_param", "42")
                 .putAdditionalBodyProperty("secretProperty", JsonValue.from("42"))
