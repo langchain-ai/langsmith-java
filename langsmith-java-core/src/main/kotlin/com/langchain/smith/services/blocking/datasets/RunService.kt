@@ -7,7 +7,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
-import com.langchain.smith.models.datasets.runs.RunCreateParams
+import com.langchain.smith.models.datasets.runs.RunQueryParams
 import java.util.Optional
 import java.util.function.Consumer
 
@@ -29,24 +29,24 @@ interface RunService {
      * Fetch examples for a dataset, and fetch the runs for each example if they are associated with
      * the given session_ids.
      */
-    fun create(datasetId: String, params: RunCreateParams): Optional<List<ExampleWithRunsCh>> =
-        create(datasetId, params, RequestOptions.none())
+    fun query(datasetId: String, params: RunQueryParams): Optional<List<ExampleWithRunsCh>> =
+        query(datasetId, params, RequestOptions.none())
 
-    /** @see create */
-    fun create(
+    /** @see query */
+    fun query(
         datasetId: String,
-        params: RunCreateParams,
+        params: RunQueryParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Optional<List<ExampleWithRunsCh>> =
-        create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+        query(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see create */
-    fun create(params: RunCreateParams): Optional<List<ExampleWithRunsCh>> =
-        create(params, RequestOptions.none())
+    /** @see query */
+    fun query(params: RunQueryParams): Optional<List<ExampleWithRunsCh>> =
+        query(params, RequestOptions.none())
 
-    /** @see create */
-    fun create(
-        params: RunCreateParams,
+    /** @see query */
+    fun query(
+        params: RunQueryParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Optional<List<ExampleWithRunsCh>>
 
@@ -62,33 +62,33 @@ interface RunService {
 
         /**
          * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/runs`, but is
-         * otherwise the same as [RunService.create].
+         * otherwise the same as [RunService.query].
          */
         @MustBeClosed
-        fun create(
+        fun query(
             datasetId: String,
-            params: RunCreateParams,
+            params: RunQueryParams,
         ): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> =
-            create(datasetId, params, RequestOptions.none())
+            query(datasetId, params, RequestOptions.none())
 
-        /** @see create */
+        /** @see query */
         @MustBeClosed
-        fun create(
+        fun query(
             datasetId: String,
-            params: RunCreateParams,
+            params: RunQueryParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> =
-            create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+            query(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see create */
+        /** @see query */
         @MustBeClosed
-        fun create(params: RunCreateParams): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> =
-            create(params, RequestOptions.none())
+        fun query(params: RunQueryParams): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> =
+            query(params, RequestOptions.none())
 
-        /** @see create */
+        /** @see query */
         @MustBeClosed
-        fun create(
-            params: RunCreateParams,
+        fun query(
+            params: RunQueryParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Optional<List<ExampleWithRunsCh>>>
     }

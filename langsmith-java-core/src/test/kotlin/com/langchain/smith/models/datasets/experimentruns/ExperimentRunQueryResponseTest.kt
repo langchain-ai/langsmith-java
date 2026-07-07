@@ -11,12 +11,12 @@ import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ExperimentRunCreateResponseTest {
+internal class ExperimentRunQueryResponseTest {
 
     @Test
     fun create() {
-        val experimentRunCreateResponse =
-            ExperimentRunCreateResponse.builder()
+        val experimentRunQueryResponse =
+            ExperimentRunQueryResponse.builder()
                 .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .attachmentUrls(JsonValue.from(mapOf<String, Any>()))
                 .createdAt(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
@@ -168,24 +168,23 @@ internal class ExperimentRunCreateResponseTest {
                 .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
-        assertThat(experimentRunCreateResponse.id())
-            .contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
-        assertThat(experimentRunCreateResponse._attachmentUrls())
+        assertThat(experimentRunQueryResponse.id()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+        assertThat(experimentRunQueryResponse._attachmentUrls())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(experimentRunCreateResponse.createdAt())
+        assertThat(experimentRunQueryResponse.createdAt())
             .contains(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
-        assertThat(experimentRunCreateResponse.datasetId())
+        assertThat(experimentRunQueryResponse.datasetId())
             .contains("0190a1b2-c3d4-7ef0-a5b6-6ea3a82e9328")
-        assertThat(experimentRunCreateResponse._inputs())
+        assertThat(experimentRunQueryResponse._inputs())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(experimentRunCreateResponse._metadata())
+        assertThat(experimentRunQueryResponse._metadata())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(experimentRunCreateResponse.modifiedAt())
+        assertThat(experimentRunQueryResponse.modifiedAt())
             .contains(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
-        assertThat(experimentRunCreateResponse.name()).contains("name")
-        assertThat(experimentRunCreateResponse._outputs())
+        assertThat(experimentRunQueryResponse.name()).contains("name")
+        assertThat(experimentRunQueryResponse._outputs())
             .isEqualTo(JsonValue.from(mapOf<String, Any>()))
-        assertThat(experimentRunCreateResponse.runs().getOrNull())
+        assertThat(experimentRunQueryResponse.runs().getOrNull())
             .containsExactly(
                 Run.builder()
                     .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -325,15 +324,15 @@ internal class ExperimentRunCreateResponseTest {
                     .traceId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                     .build()
             )
-        assertThat(experimentRunCreateResponse.sourceRunId())
+        assertThat(experimentRunQueryResponse.sourceRunId())
             .contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val experimentRunCreateResponse =
-            ExperimentRunCreateResponse.builder()
+        val experimentRunQueryResponse =
+            ExperimentRunQueryResponse.builder()
                 .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .attachmentUrls(JsonValue.from(mapOf<String, Any>()))
                 .createdAt(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
@@ -485,12 +484,12 @@ internal class ExperimentRunCreateResponseTest {
                 .sourceRunId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .build()
 
-        val roundtrippedExperimentRunCreateResponse =
+        val roundtrippedExperimentRunQueryResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(experimentRunCreateResponse),
-                jacksonTypeRef<ExperimentRunCreateResponse>(),
+                jsonMapper.writeValueAsString(experimentRunQueryResponse),
+                jacksonTypeRef<ExperimentRunQueryResponse>(),
             )
 
-        assertThat(roundtrippedExperimentRunCreateResponse).isEqualTo(experimentRunCreateResponse)
+        assertThat(roundtrippedExperimentRunQueryResponse).isEqualTo(experimentRunQueryResponse)
     }
 }

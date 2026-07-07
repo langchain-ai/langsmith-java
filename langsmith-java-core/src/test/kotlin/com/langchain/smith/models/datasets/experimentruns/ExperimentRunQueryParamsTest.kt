@@ -7,30 +7,30 @@ import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ExperimentRunCreateParamsTest {
+internal class ExperimentRunQueryParamsTest {
 
     @Test
     fun create() {
-        ExperimentRunCreateParams.builder()
+        ExperimentRunQueryParams.builder()
             .datasetId("dataset_id")
             .comparativeExperimentId("comparative_experiment_id")
             .cursor("cursor")
             .addExampleId("string")
             .addExperimentId("string")
             .filters(
-                ExperimentRunCreateParams.Filters.builder()
+                ExperimentRunQueryParams.Filters.builder()
                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                     .build()
             )
             .pageSize(0L)
-            .addSelect(ExperimentRunCreateParams.Select.ID)
-            .sort(ExperimentRunCreateParams.Sort.builder().by("by").order("order").build())
+            .addSelect(ExperimentRunQueryParams.Select.ID)
+            .sort(ExperimentRunQueryParams.Sort.builder().by("by").order("order").build())
             .build()
     }
 
     @Test
     fun pathParams() {
-        val params = ExperimentRunCreateParams.builder().datasetId("dataset_id").build()
+        val params = ExperimentRunQueryParams.builder().datasetId("dataset_id").build()
 
         assertThat(params._pathParam(0)).isEqualTo("dataset_id")
         // out-of-bound path param
@@ -40,20 +40,20 @@ internal class ExperimentRunCreateParamsTest {
     @Test
     fun body() {
         val params =
-            ExperimentRunCreateParams.builder()
+            ExperimentRunQueryParams.builder()
                 .datasetId("dataset_id")
                 .comparativeExperimentId("comparative_experiment_id")
                 .cursor("cursor")
                 .addExampleId("string")
                 .addExperimentId("string")
                 .filters(
-                    ExperimentRunCreateParams.Filters.builder()
+                    ExperimentRunQueryParams.Filters.builder()
                         .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                         .build()
                 )
                 .pageSize(0L)
-                .addSelect(ExperimentRunCreateParams.Select.ID)
-                .sort(ExperimentRunCreateParams.Sort.builder().by("by").order("order").build())
+                .addSelect(ExperimentRunQueryParams.Select.ID)
+                .sort(ExperimentRunQueryParams.Sort.builder().by("by").order("order").build())
                 .build()
 
         val body = params._body()
@@ -64,19 +64,19 @@ internal class ExperimentRunCreateParamsTest {
         assertThat(body.experimentIds().getOrNull()).containsExactly("string")
         assertThat(body.filters())
             .contains(
-                ExperimentRunCreateParams.Filters.builder()
+                ExperimentRunQueryParams.Filters.builder()
                     .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                     .build()
             )
         assertThat(body.pageSize()).contains(0L)
-        assertThat(body.selects().getOrNull()).containsExactly(ExperimentRunCreateParams.Select.ID)
+        assertThat(body.selects().getOrNull()).containsExactly(ExperimentRunQueryParams.Select.ID)
         assertThat(body.sort())
-            .contains(ExperimentRunCreateParams.Sort.builder().by("by").order("order").build())
+            .contains(ExperimentRunQueryParams.Sort.builder().by("by").order("order").build())
     }
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = ExperimentRunCreateParams.builder().datasetId("dataset_id").build()
+        val params = ExperimentRunQueryParams.builder().datasetId("dataset_id").build()
 
         val body = params._body()
     }

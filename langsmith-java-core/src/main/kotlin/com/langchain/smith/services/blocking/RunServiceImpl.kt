@@ -79,6 +79,8 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun withRawResponse(): RunService.WithRawResponse = withRawResponse
 
+    override fun rules(): RuleService = rules
+
     private fun sendAutoBatch(
         params: RunIngestBatchParams,
         requestOptions: RequestOptions,
@@ -123,8 +125,6 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
         RunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
-
-    override fun rules(): RuleService = rules
 
     override fun create(
         params: RunCreateParams,
@@ -249,14 +249,14 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             RuleServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        override fun rules(): RuleService.WithRawResponse = rules
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): RunService.WithRawResponse =
             RunServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun rules(): RuleService.WithRawResponse = rules
 
         private val createHandler: Handler<RunCreateResponse> =
             jsonHandler<RunCreateResponse>(clientOptions.jsonMapper)

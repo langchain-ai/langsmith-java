@@ -12,57 +12,57 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executor
 import kotlin.jvm.optionals.getOrNull
 
-/** @see ExperimentRunServiceAsync.create */
-class ExperimentRunCreatePageAsync
+/** @see ExperimentRunServiceAsync.query */
+class ExperimentRunQueryPageAsync
 private constructor(
     private val service: ExperimentRunServiceAsync,
     private val streamHandlerExecutor: Executor,
-    private val params: ExperimentRunCreateParams,
-    private val response: ExperimentRunCreatePageResponse,
-) : PageAsync<ExperimentRunCreateResponse> {
+    private val params: ExperimentRunQueryParams,
+    private val response: ExperimentRunQueryPageResponse,
+) : PageAsync<ExperimentRunQueryResponse> {
 
     /**
-     * Delegates to [ExperimentRunCreatePageResponse], but gracefully handles missing data.
+     * Delegates to [ExperimentRunQueryPageResponse], but gracefully handles missing data.
      *
-     * @see ExperimentRunCreatePageResponse.items
+     * @see ExperimentRunQueryPageResponse.items
      */
-    override fun items(): List<ExperimentRunCreateResponse> =
+    override fun items(): List<ExperimentRunQueryResponse> =
         response._items().getOptional("items").getOrNull() ?: emptyList()
 
     /**
-     * Delegates to [ExperimentRunCreatePageResponse], but gracefully handles missing data.
+     * Delegates to [ExperimentRunQueryPageResponse], but gracefully handles missing data.
      *
-     * @see ExperimentRunCreatePageResponse.nextCursor
+     * @see ExperimentRunQueryPageResponse.nextCursor
      */
     fun nextCursor(): Optional<String> = response._nextCursor().getOptional("next_cursor")
 
     override fun hasNextPage(): Boolean = items().isNotEmpty() && nextCursor().isPresent
 
-    fun nextPageParams(): ExperimentRunCreateParams {
+    fun nextPageParams(): ExperimentRunQueryParams {
         val nextCursor =
             nextCursor().getOrNull()
                 ?: throw IllegalStateException("Cannot construct next page params")
         return params.toBuilder().cursor(nextCursor).build()
     }
 
-    override fun nextPage(): CompletableFuture<ExperimentRunCreatePageAsync> =
-        service.create(nextPageParams())
+    override fun nextPage(): CompletableFuture<ExperimentRunQueryPageAsync> =
+        service.query(nextPageParams())
 
-    fun autoPager(): AutoPagerAsync<ExperimentRunCreateResponse> =
+    fun autoPager(): AutoPagerAsync<ExperimentRunQueryResponse> =
         AutoPagerAsync.from(this, streamHandlerExecutor)
 
     /** The parameters that were used to request this page. */
-    fun params(): ExperimentRunCreateParams = params
+    fun params(): ExperimentRunQueryParams = params
 
     /** The response that this page was parsed from. */
-    fun response(): ExperimentRunCreatePageResponse = response
+    fun response(): ExperimentRunQueryPageResponse = response
 
     fun toBuilder() = Builder().from(this)
 
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [ExperimentRunCreatePageAsync].
+         * Returns a mutable builder for constructing an instance of [ExperimentRunQueryPageAsync].
          *
          * The following fields are required:
          * ```java
@@ -75,20 +75,20 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ExperimentRunCreatePageAsync]. */
+    /** A builder for [ExperimentRunQueryPageAsync]. */
     class Builder internal constructor() {
 
         private var service: ExperimentRunServiceAsync? = null
         private var streamHandlerExecutor: Executor? = null
-        private var params: ExperimentRunCreateParams? = null
-        private var response: ExperimentRunCreatePageResponse? = null
+        private var params: ExperimentRunQueryParams? = null
+        private var response: ExperimentRunQueryPageResponse? = null
 
         @JvmSynthetic
-        internal fun from(experimentRunCreatePageAsync: ExperimentRunCreatePageAsync) = apply {
-            service = experimentRunCreatePageAsync.service
-            streamHandlerExecutor = experimentRunCreatePageAsync.streamHandlerExecutor
-            params = experimentRunCreatePageAsync.params
-            response = experimentRunCreatePageAsync.response
+        internal fun from(experimentRunQueryPageAsync: ExperimentRunQueryPageAsync) = apply {
+            service = experimentRunQueryPageAsync.service
+            streamHandlerExecutor = experimentRunQueryPageAsync.streamHandlerExecutor
+            params = experimentRunQueryPageAsync.params
+            response = experimentRunQueryPageAsync.response
         }
 
         fun service(service: ExperimentRunServiceAsync) = apply { this.service = service }
@@ -98,13 +98,13 @@ private constructor(
         }
 
         /** The parameters that were used to request this page. */
-        fun params(params: ExperimentRunCreateParams) = apply { this.params = params }
+        fun params(params: ExperimentRunQueryParams) = apply { this.params = params }
 
         /** The response that this page was parsed from. */
-        fun response(response: ExperimentRunCreatePageResponse) = apply { this.response = response }
+        fun response(response: ExperimentRunQueryPageResponse) = apply { this.response = response }
 
         /**
-         * Returns an immutable instance of [ExperimentRunCreatePageAsync].
+         * Returns an immutable instance of [ExperimentRunQueryPageAsync].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -118,8 +118,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): ExperimentRunCreatePageAsync =
-            ExperimentRunCreatePageAsync(
+        fun build(): ExperimentRunQueryPageAsync =
+            ExperimentRunQueryPageAsync(
                 checkRequired("service", service),
                 checkRequired("streamHandlerExecutor", streamHandlerExecutor),
                 checkRequired("params", params),
@@ -132,7 +132,7 @@ private constructor(
             return true
         }
 
-        return other is ExperimentRunCreatePageAsync &&
+        return other is ExperimentRunQueryPageAsync &&
             service == other.service &&
             streamHandlerExecutor == other.streamHandlerExecutor &&
             params == other.params &&
@@ -142,5 +142,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(service, streamHandlerExecutor, params, response)
 
     override fun toString() =
-        "ExperimentRunCreatePageAsync{service=$service, streamHandlerExecutor=$streamHandlerExecutor, params=$params, response=$response}"
+        "ExperimentRunQueryPageAsync{service=$service, streamHandlerExecutor=$streamHandlerExecutor, params=$params, response=$response}"
 }

@@ -5,8 +5,8 @@ package com.langchain.smith.services.async.datasets
 import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePageAsync
-import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreateParams
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunQueryPageAsync
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunQueryParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -28,40 +28,40 @@ interface ExperimentRunServiceAsync {
      * Returns a paginated page of dataset examples with runs from the requested experiments.
      * Response uses the canonical `{items, next_cursor}` envelope.
      */
-    fun create(datasetId: String): CompletableFuture<ExperimentRunCreatePageAsync> =
-        create(datasetId, ExperimentRunCreateParams.none())
+    fun query(datasetId: String): CompletableFuture<ExperimentRunQueryPageAsync> =
+        query(datasetId, ExperimentRunQueryParams.none())
 
-    /** @see create */
-    fun create(
+    /** @see query */
+    fun query(
         datasetId: String,
-        params: ExperimentRunCreateParams = ExperimentRunCreateParams.none(),
+        params: ExperimentRunQueryParams = ExperimentRunQueryParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ExperimentRunCreatePageAsync> =
-        create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+    ): CompletableFuture<ExperimentRunQueryPageAsync> =
+        query(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see create */
-    fun create(
+    /** @see query */
+    fun query(
         datasetId: String,
-        params: ExperimentRunCreateParams = ExperimentRunCreateParams.none(),
-    ): CompletableFuture<ExperimentRunCreatePageAsync> =
-        create(datasetId, params, RequestOptions.none())
+        params: ExperimentRunQueryParams = ExperimentRunQueryParams.none(),
+    ): CompletableFuture<ExperimentRunQueryPageAsync> =
+        query(datasetId, params, RequestOptions.none())
 
-    /** @see create */
-    fun create(
-        params: ExperimentRunCreateParams,
+    /** @see query */
+    fun query(
+        params: ExperimentRunQueryParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ExperimentRunCreatePageAsync>
+    ): CompletableFuture<ExperimentRunQueryPageAsync>
 
-    /** @see create */
-    fun create(params: ExperimentRunCreateParams): CompletableFuture<ExperimentRunCreatePageAsync> =
-        create(params, RequestOptions.none())
+    /** @see query */
+    fun query(params: ExperimentRunQueryParams): CompletableFuture<ExperimentRunQueryPageAsync> =
+        query(params, RequestOptions.none())
 
-    /** @see create */
-    fun create(
+    /** @see query */
+    fun query(
         datasetId: String,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ExperimentRunCreatePageAsync> =
-        create(datasetId, ExperimentRunCreateParams.none(), requestOptions)
+    ): CompletableFuture<ExperimentRunQueryPageAsync> =
+        query(datasetId, ExperimentRunQueryParams.none(), requestOptions)
 
     /**
      * A view of [ExperimentRunServiceAsync] that provides access to raw HTTP responses for each
@@ -80,45 +80,45 @@ interface ExperimentRunServiceAsync {
 
         /**
          * Returns a raw HTTP response for `post /v2/datasets/{dataset_id}/experiment-runs`, but is
-         * otherwise the same as [ExperimentRunServiceAsync.create].
+         * otherwise the same as [ExperimentRunServiceAsync.query].
          */
-        fun create(
+        fun query(
             datasetId: String
-        ): CompletableFuture<HttpResponseFor<ExperimentRunCreatePageAsync>> =
-            create(datasetId, ExperimentRunCreateParams.none())
+        ): CompletableFuture<HttpResponseFor<ExperimentRunQueryPageAsync>> =
+            query(datasetId, ExperimentRunQueryParams.none())
 
-        /** @see create */
-        fun create(
+        /** @see query */
+        fun query(
             datasetId: String,
-            params: ExperimentRunCreateParams = ExperimentRunCreateParams.none(),
+            params: ExperimentRunQueryParams = ExperimentRunQueryParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ExperimentRunCreatePageAsync>> =
-            create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<ExperimentRunQueryPageAsync>> =
+            query(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see create */
-        fun create(
+        /** @see query */
+        fun query(
             datasetId: String,
-            params: ExperimentRunCreateParams = ExperimentRunCreateParams.none(),
-        ): CompletableFuture<HttpResponseFor<ExperimentRunCreatePageAsync>> =
-            create(datasetId, params, RequestOptions.none())
+            params: ExperimentRunQueryParams = ExperimentRunQueryParams.none(),
+        ): CompletableFuture<HttpResponseFor<ExperimentRunQueryPageAsync>> =
+            query(datasetId, params, RequestOptions.none())
 
-        /** @see create */
-        fun create(
-            params: ExperimentRunCreateParams,
+        /** @see query */
+        fun query(
+            params: ExperimentRunQueryParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ExperimentRunCreatePageAsync>>
+        ): CompletableFuture<HttpResponseFor<ExperimentRunQueryPageAsync>>
 
-        /** @see create */
-        fun create(
-            params: ExperimentRunCreateParams
-        ): CompletableFuture<HttpResponseFor<ExperimentRunCreatePageAsync>> =
-            create(params, RequestOptions.none())
+        /** @see query */
+        fun query(
+            params: ExperimentRunQueryParams
+        ): CompletableFuture<HttpResponseFor<ExperimentRunQueryPageAsync>> =
+            query(params, RequestOptions.none())
 
-        /** @see create */
-        fun create(
+        /** @see query */
+        fun query(
             datasetId: String,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ExperimentRunCreatePageAsync>> =
-            create(datasetId, ExperimentRunCreateParams.none(), requestOptions)
+        ): CompletableFuture<HttpResponseFor<ExperimentRunQueryPageAsync>> =
+            query(datasetId, ExperimentRunQueryParams.none(), requestOptions)
     }
 }

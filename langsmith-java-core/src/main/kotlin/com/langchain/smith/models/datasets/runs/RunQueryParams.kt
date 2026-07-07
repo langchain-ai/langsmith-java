@@ -27,7 +27,7 @@ import kotlin.jvm.optionals.getOrNull
  * Fetch examples for a dataset, and fetch the runs for each example if they are associated with the
  * given session_ids.
  */
-class RunCreateParams
+class RunQueryParams
 private constructor(
     private val datasetId: String?,
     private val format: Format?,
@@ -173,7 +173,7 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [RunCreateParams].
+         * Returns a mutable builder for constructing an instance of [RunQueryParams].
          *
          * The following fields are required:
          * ```java
@@ -183,7 +183,7 @@ private constructor(
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [RunCreateParams]. */
+    /** A builder for [RunQueryParams]. */
     class Builder internal constructor() {
 
         private var datasetId: String? = null
@@ -193,12 +193,12 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(runCreateParams: RunCreateParams) = apply {
-            datasetId = runCreateParams.datasetId
-            format = runCreateParams.format
-            body = runCreateParams.body.toBuilder()
-            additionalHeaders = runCreateParams.additionalHeaders.toBuilder()
-            additionalQueryParams = runCreateParams.additionalQueryParams.toBuilder()
+        internal fun from(runQueryParams: RunQueryParams) = apply {
+            datasetId = runQueryParams.datasetId
+            format = runQueryParams.format
+            body = runQueryParams.body.toBuilder()
+            additionalHeaders = runQueryParams.additionalHeaders.toBuilder()
+            additionalQueryParams = runQueryParams.additionalQueryParams.toBuilder()
         }
 
         fun datasetId(datasetId: String?) = apply { this.datasetId = datasetId }
@@ -492,7 +492,7 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [RunCreateParams].
+         * Returns an immutable instance of [RunQueryParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
@@ -503,8 +503,8 @@ private constructor(
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): RunCreateParams =
-            RunCreateParams(
+        fun build(): RunQueryParams =
+            RunQueryParams(
                 datasetId,
                 format,
                 body.build(),
@@ -1317,7 +1317,7 @@ private constructor(
             return true
         }
 
-        return other is RunCreateParams &&
+        return other is RunQueryParams &&
             datasetId == other.datasetId &&
             format == other.format &&
             body == other.body &&
@@ -1329,5 +1329,5 @@ private constructor(
         Objects.hash(datasetId, format, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "RunCreateParams{datasetId=$datasetId, format=$format, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RunQueryParams{datasetId=$datasetId, format=$format, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -16,9 +16,9 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
-import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePageAsync
-import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreatePageResponse
-import com.langchain.smith.models.datasets.experimentruns.ExperimentRunCreateParams
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunQueryPageAsync
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunQueryPageResponse
+import com.langchain.smith.models.datasets.experimentruns.ExperimentRunQueryParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -35,12 +35,12 @@ class ExperimentRunServiceAsyncImpl internal constructor(private val clientOptio
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ExperimentRunServiceAsync =
         ExperimentRunServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun create(
-        params: ExperimentRunCreateParams,
+    override fun query(
+        params: ExperimentRunQueryParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ExperimentRunCreatePageAsync> =
+    ): CompletableFuture<ExperimentRunQueryPageAsync> =
         // post /v2/datasets/{dataset_id}/experiment-runs
-        withRawResponse().create(params, requestOptions).thenApply { it.parse() }
+        withRawResponse().query(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ExperimentRunServiceAsync.WithRawResponse {
@@ -55,13 +55,13 @@ class ExperimentRunServiceAsyncImpl internal constructor(private val clientOptio
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
 
-        private val createHandler: Handler<ExperimentRunCreatePageResponse> =
-            jsonHandler<ExperimentRunCreatePageResponse>(clientOptions.jsonMapper)
+        private val queryHandler: Handler<ExperimentRunQueryPageResponse> =
+            jsonHandler<ExperimentRunQueryPageResponse>(clientOptions.jsonMapper)
 
-        override fun create(
-            params: ExperimentRunCreateParams,
+        override fun query(
+            params: ExperimentRunQueryParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ExperimentRunCreatePageAsync>> {
+        ): CompletableFuture<HttpResponseFor<ExperimentRunQueryPageAsync>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("datasetId", params.datasetId().getOrNull())
@@ -79,14 +79,14 @@ class ExperimentRunServiceAsyncImpl internal constructor(private val clientOptio
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response
-                            .use { createHandler.handle(it) }
+                            .use { queryHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
                             }
                             .let {
-                                ExperimentRunCreatePageAsync.builder()
+                                ExperimentRunQueryPageAsync.builder()
                                     .service(ExperimentRunServiceAsyncImpl(clientOptions))
                                     .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
                                     .params(params)

@@ -10,7 +10,7 @@ internal class ExperimentRunServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun create() {
+    fun query() {
         val client =
             LangsmithOkHttpClientAsync.builder()
                 .apiKey("My API Key")
@@ -18,7 +18,7 @@ internal class ExperimentRunServiceAsyncTest {
                 .build()
         val experimentRunServiceAsync = client.datasets().experimentRuns()
 
-        val pageFuture = experimentRunServiceAsync.create("dataset_id")
+        val pageFuture = experimentRunServiceAsync.query("dataset_id")
 
         val page = pageFuture.get()
         page.response().validate()

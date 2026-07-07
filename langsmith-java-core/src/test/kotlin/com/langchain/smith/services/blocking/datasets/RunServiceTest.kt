@@ -4,7 +4,7 @@ package com.langchain.smith.services.blocking.datasets
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.models.datasets.runs.RunCreateParams
+import com.langchain.smith.models.datasets.runs.RunQueryParams
 import com.langchain.smith.models.datasets.runs.SortParamsForRunsComparisonView
 import kotlin.jvm.optionals.getOrNull
 import org.junit.jupiter.api.Disabled
@@ -14,21 +14,21 @@ internal class RunServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
-    fun create() {
+    fun query() {
         val client =
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.datasets().runs()
 
         val exampleWithRunsChes =
-            runService.create(
-                RunCreateParams.builder()
+            runService.query(
+                RunQueryParams.builder()
                     .datasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .format(RunCreateParams.Format.CSV)
+                    .format(RunQueryParams.Format.CSV)
                     .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .comparativeExperimentId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .filters(
-                        RunCreateParams.Filters.builder()
+                        RunQueryParams.Filters.builder()
                             .putAdditionalProperty("foo", JsonValue.from(listOf("string")))
                             .build()
                     )

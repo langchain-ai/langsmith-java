@@ -339,8 +339,6 @@ interface RunServiceAsync {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync.WithRawResponse
 
-        fun rules(): RuleServiceAsync.WithRawResponse
-
         /**
          * Returns a raw HTTP response for `post /runs`, but is otherwise the same as
          * [RunServiceAsync.create].

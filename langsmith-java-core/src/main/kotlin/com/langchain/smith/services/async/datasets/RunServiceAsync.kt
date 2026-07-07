@@ -6,7 +6,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.datasets.runs.ExampleWithRunsCh
-import com.langchain.smith.models.datasets.runs.RunCreateParams
+import com.langchain.smith.models.datasets.runs.RunQueryParams
 import java.util.Optional
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -29,27 +29,27 @@ interface RunServiceAsync {
      * Fetch examples for a dataset, and fetch the runs for each example if they are associated with
      * the given session_ids.
      */
-    fun create(
+    fun query(
         datasetId: String,
-        params: RunCreateParams,
+        params: RunQueryParams,
     ): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
-        create(datasetId, params, RequestOptions.none())
+        query(datasetId, params, RequestOptions.none())
 
-    /** @see create */
-    fun create(
+    /** @see query */
+    fun query(
         datasetId: String,
-        params: RunCreateParams,
+        params: RunQueryParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
-        create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+        query(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-    /** @see create */
-    fun create(params: RunCreateParams): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
-        create(params, RequestOptions.none())
+    /** @see query */
+    fun query(params: RunQueryParams): CompletableFuture<Optional<List<ExampleWithRunsCh>>> =
+        query(params, RequestOptions.none())
 
-    /** @see create */
-    fun create(
-        params: RunCreateParams,
+    /** @see query */
+    fun query(
+        params: RunQueryParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Optional<List<ExampleWithRunsCh>>>
 
@@ -65,31 +65,31 @@ interface RunServiceAsync {
 
         /**
          * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/runs`, but is
-         * otherwise the same as [RunServiceAsync.create].
+         * otherwise the same as [RunServiceAsync.query].
          */
-        fun create(
+        fun query(
             datasetId: String,
-            params: RunCreateParams,
+            params: RunQueryParams,
         ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>> =
-            create(datasetId, params, RequestOptions.none())
+            query(datasetId, params, RequestOptions.none())
 
-        /** @see create */
-        fun create(
+        /** @see query */
+        fun query(
             datasetId: String,
-            params: RunCreateParams,
+            params: RunQueryParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>> =
-            create(params.toBuilder().datasetId(datasetId).build(), requestOptions)
+            query(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
-        /** @see create */
-        fun create(
-            params: RunCreateParams
+        /** @see query */
+        fun query(
+            params: RunQueryParams
         ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>> =
-            create(params, RequestOptions.none())
+            query(params, RequestOptions.none())
 
-        /** @see create */
-        fun create(
-            params: RunCreateParams,
+        /** @see query */
+        fun query(
+            params: RunQueryParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<Optional<List<ExampleWithRunsCh>>>>
     }
