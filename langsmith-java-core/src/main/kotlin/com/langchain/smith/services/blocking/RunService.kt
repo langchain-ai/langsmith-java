@@ -116,6 +116,41 @@ interface RunService {
     fun ingestBatch(requestOptions: RequestOptions): RunIngestBatchResponse =
         ingestBatch(RunIngestBatchParams.none(), requestOptions)
 
+    /**
+     * Ingests runs through `/runs/multipart`, allowing large run fields and per-run binary
+     * attachments. This mirrors the Python/JS multipart ingest shape: create runs and update runs
+     * are provided separately, and attachments are set on each [RunIngest].
+     */
+    fun multipartIngest(): Void? = multipartIngest(emptyList(), emptyList())
+
+    /** @see multipartIngest */
+    fun multipartIngest(
+        create: List<RunIngest> = emptyList(),
+        update: List<RunIngest> = emptyList(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Void?
+
+    /** @see multipartIngest */
+    fun multipartIngest(
+        create: List<RunIngest> = emptyList(),
+        update: List<RunIngest> = emptyList(),
+    ): Void? = multipartIngest(create, update, RequestOptions.none())
+
+    /** @see multipartIngest */
+    fun multipartIngest(requestOptions: RequestOptions): Void? =
+        multipartIngest(emptyList(), emptyList(), requestOptions)
+
+    /** @see multipartIngest */
+    fun multipartIngest(
+        params: RunIngestBatchParams = RunIngestBatchParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Void? =
+        multipartIngest(
+            params.post().orElse(emptyList()),
+            params.patch().orElse(emptyList()),
+            requestOptions,
+        )
+
     /** Query Runs */
     fun queryV1(): RunQueryV1Page = queryV1(RunQueryV1Params.none())
 
@@ -402,6 +437,45 @@ interface RunService {
         @MustBeClosed
         fun ingestBatch(requestOptions: RequestOptions): HttpResponseFor<RunIngestBatchResponse> =
             ingestBatch(RunIngestBatchParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /runs/multipart`, but is otherwise the same as
+         * [RunService.multipartIngest].
+         */
+        @MustBeClosed
+        fun multipartIngest(): HttpResponseFor<Void?> = multipartIngest(emptyList(), emptyList())
+
+        /** @see multipartIngest */
+        @MustBeClosed
+        fun multipartIngest(
+            create: List<RunIngest> = emptyList(),
+            update: List<RunIngest> = emptyList(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Void?>
+
+        /** @see multipartIngest */
+        @MustBeClosed
+        fun multipartIngest(
+            create: List<RunIngest> = emptyList(),
+            update: List<RunIngest> = emptyList(),
+        ): HttpResponseFor<Void?> = multipartIngest(create, update, RequestOptions.none())
+
+        /** @see multipartIngest */
+        @MustBeClosed
+        fun multipartIngest(requestOptions: RequestOptions): HttpResponseFor<Void?> =
+            multipartIngest(emptyList(), emptyList(), requestOptions)
+
+        /** @see multipartIngest */
+        @MustBeClosed
+        fun multipartIngest(
+            params: RunIngestBatchParams = RunIngestBatchParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Void?> =
+            multipartIngest(
+                params.post().orElse(emptyList()),
+                params.patch().orElse(emptyList()),
+                requestOptions,
+            )
 
         /**
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as

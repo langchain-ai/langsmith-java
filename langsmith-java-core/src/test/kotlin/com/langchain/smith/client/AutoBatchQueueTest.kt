@@ -6,6 +6,7 @@ import com.langchain.smith.core.Timeout
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.jsonMapper
+import com.langchain.smith.models.runs.RunAttachment
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.testutils.CapturingLangsmithClient
@@ -126,6 +127,40 @@ internal class AutoBatchQueueTest {
         assertThat(mergedRun.outputs().get()._additionalProperties()["answer"])
             .isEqualTo(JsonValue.from("world"))
         assertThat(mergedRun.endTime().getOrNull()).isEqualTo("2024-01-01T00:00:01Z")
+    }
+
+    @Test
+    fun `merges post and patch attachments for same run id`() {
+        val capture = CapturingLangsmithClient()
+        val queue = testQueue(capture)
+        val postAttachment = RunAttachment.of("text/plain", "post".toByteArray())
+        val overriddenPostAttachment = RunAttachment.of("text/plain", "old".toByteArray())
+        val patchAttachment = RunAttachment.of("application/json", "patch".toByteArray())
+        val overridingPatchAttachment = RunAttachment.of("text/markdown", "new".toByteArray())
+        val post =
+            testRun("r1")
+                .toBuilder()
+                .putAttachment("post-file", postAttachment)
+                .putAttachment("shared-file", overriddenPostAttachment)
+                .build()
+        val patch =
+            RunIngest.builder()
+                .id("r1")
+                .putAttachment("patch-file", patchAttachment)
+                .putAttachment("shared-file", overridingPatchAttachment)
+                .build()
+
+        queue.post(post)
+        queue.patch(patch)
+        queue.flush()
+
+        val mergedAttachments = capture.postedRuns.single().attachments()
+        assertThat(capture.patchedRuns).isEmpty()
+        assertThat(mergedAttachments.keys)
+            .containsExactlyInAnyOrder("post-file", "patch-file", "shared-file")
+        assertThat(mergedAttachments["post-file"]).isSameAs(postAttachment)
+        assertThat(mergedAttachments["patch-file"]).isSameAs(patchAttachment)
+        assertThat(mergedAttachments["shared-file"]).isSameAs(overridingPatchAttachment)
     }
 
     @Test

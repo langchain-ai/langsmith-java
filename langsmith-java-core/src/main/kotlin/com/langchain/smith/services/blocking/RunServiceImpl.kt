@@ -26,6 +26,7 @@ import com.langchain.smith.models.info.InfoListResponse
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
+import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
 import com.langchain.smith.models.runs.RunQueryPage
@@ -188,6 +189,12 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         // post /runs/batch
         withRawResponse().ingestBatch(params, requestOptions).parse()
 
+    override fun multipartIngest(
+        create: List<RunIngest>,
+        update: List<RunIngest>,
+        requestOptions: RequestOptions,
+    ): Void? = withRawResponse().multipartIngest(create, update, requestOptions).parse()
+
     override fun queryV1(params: RunQueryV1Params, requestOptions: RequestOptions): RunQueryV1Page =
         // post /api/v1/runs/query
         withRawResponse().queryV1(params, requestOptions).parse()
@@ -345,6 +352,23 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             }
         }
 
+        override fun multipartIngest(
+            create: List<RunIngest>,
+            update: List<RunIngest>,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Void?> {
+            val params = RunIngestBatchParams.builder().post(create).patch(update).build()
+            val body =
+                params.toRunMultipartFormData(clientOptions.jsonMapper)
+                    ?: throw IllegalArgumentException(
+                        "Multipart ingest requires every run to include id, traceId, and dottedOrder"
+                    )
+            val request = multipartRequest(params, body).prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable { response.use { null } }
+        }
+
         internal fun ingestMultipartBatch(
             params: RunIngestBatchParams,
             requestOptions: RequestOptions,
@@ -355,6 +379,17 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 // back to legacy JSON batch ingest for this batch only.
                 return false
             }
+            val request = multipartRequest(params, body).prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            errorHandler.handle(response).use {}
+            return true
+        }
+
+        private fun multipartRequest(
+            params: RunIngestBatchParams,
+            body: com.langchain.smith.core.http.HttpRequestBody,
+        ): HttpRequest {
             val requestBuilder =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -369,11 +404,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 "Sending LangSmith run batch to multipart ingest endpoint (zstd compression: {})",
                 if (zstdCompressionEnabled) "enabled" else "disabled",
             )
-            val request = requestBuilder.build().prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            errorHandler.handle(response).use {}
-            return true
+            return requestBuilder.build()
         }
 
         private val queryV1Handler: Handler<RunQueryV1PageResponse> =

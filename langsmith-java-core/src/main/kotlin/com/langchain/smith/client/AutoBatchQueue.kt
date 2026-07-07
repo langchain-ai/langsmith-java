@@ -479,7 +479,11 @@ class AutoBatchQueue(
             val merged = objectMapper.valueToTree<ObjectNode>(post)
             val patchFields = objectMapper.valueToTree<ObjectNode>(patch)
             patchFields.fields().forEach { (field, value) -> merged.set<ObjectNode>(field, value) }
-            return objectMapper.treeToValue(merged, RunIngest::class.java)
+            val mergedRun = objectMapper.treeToValue(merged, RunIngest::class.java)
+            return mergedRun
+                .toBuilder()
+                .attachments(post.attachments() + patch.attachments())
+                .build()
         }
     }
 
