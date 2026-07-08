@@ -40,7 +40,7 @@ interface BoxServiceAsync {
 
     /**
      * Create a new sandbox from a snapshot. Provide at most one of `snapshot_id` or
-     * `snapshot_name`; if neither is provided, the server uses the default static blueprint.
+     * `snapshot_name`; if neither is provided, the server uses the default snapshot.
      */
     fun create(): CompletableFuture<SandboxResponse> = create(BoxCreateParams.none())
 

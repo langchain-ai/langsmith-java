@@ -19,6 +19,7 @@ import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Populate annotation queue with runs from an experiment. */
@@ -42,6 +43,12 @@ private constructor(
     fun sessionIds(): List<String> = body.sessionIds()
 
     /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun extendTraceRetention(): Optional<Boolean> = body.extendTraceRetention()
+
+    /**
      * Returns the raw JSON value of [queueId].
      *
      * Unlike [queueId], this method doesn't throw if the JSON field has an unexpected type.
@@ -54,6 +61,14 @@ private constructor(
      * Unlike [sessionIds], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _sessionIds(): JsonField<List<String>> = body._sessionIds()
+
+    /**
+     * Returns the raw JSON value of [extendTraceRetention].
+     *
+     * Unlike [extendTraceRetention], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _extendTraceRetention(): JsonField<Boolean> = body._extendTraceRetention()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -101,6 +116,7 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [queueId]
          * - [sessionIds]
+         * - [extendTraceRetention]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -131,6 +147,21 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addSessionId(sessionId: String) = apply { body.addSessionId(sessionId) }
+
+        fun extendTraceRetention(extendTraceRetention: Boolean) = apply {
+            body.extendTraceRetention(extendTraceRetention)
+        }
+
+        /**
+         * Sets [Builder.extendTraceRetention] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.extendTraceRetention] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun extendTraceRetention(extendTraceRetention: JsonField<Boolean>) = apply {
+            body.extendTraceRetention(extendTraceRetention)
+        }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -281,6 +312,7 @@ private constructor(
     private constructor(
         private val queueId: JsonField<String>,
         private val sessionIds: JsonField<List<String>>,
+        private val extendTraceRetention: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -290,7 +322,10 @@ private constructor(
             @JsonProperty("session_ids")
             @ExcludeMissing
             sessionIds: JsonField<List<String>> = JsonMissing.of(),
-        ) : this(queueId, sessionIds, mutableMapOf())
+            @JsonProperty("extend_trace_retention")
+            @ExcludeMissing
+            extendTraceRetention: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(queueId, sessionIds, extendTraceRetention, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -303,6 +338,13 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun sessionIds(): List<String> = sessionIds.getRequired("session_ids")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun extendTraceRetention(): Optional<Boolean> =
+            extendTraceRetention.getOptional("extend_trace_retention")
 
         /**
          * Returns the raw JSON value of [queueId].
@@ -319,6 +361,16 @@ private constructor(
         @JsonProperty("session_ids")
         @ExcludeMissing
         fun _sessionIds(): JsonField<List<String>> = sessionIds
+
+        /**
+         * Returns the raw JSON value of [extendTraceRetention].
+         *
+         * Unlike [extendTraceRetention], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("extend_trace_retention")
+        @ExcludeMissing
+        fun _extendTraceRetention(): JsonField<Boolean> = extendTraceRetention
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -351,12 +403,14 @@ private constructor(
 
             private var queueId: JsonField<String>? = null
             private var sessionIds: JsonField<MutableList<String>>? = null
+            private var extendTraceRetention: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 queueId = body.queueId
                 sessionIds = body.sessionIds.map { it.toMutableList() }
+                extendTraceRetention = body.extendTraceRetention
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -396,6 +450,20 @@ private constructor(
                     }
             }
 
+            fun extendTraceRetention(extendTraceRetention: Boolean) =
+                extendTraceRetention(JsonField.of(extendTraceRetention))
+
+            /**
+             * Sets [Builder.extendTraceRetention] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.extendTraceRetention] with a well-typed [Boolean]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun extendTraceRetention(extendTraceRetention: JsonField<Boolean>) = apply {
+                this.extendTraceRetention = extendTraceRetention
+            }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -432,6 +500,7 @@ private constructor(
                 Body(
                     checkRequired("queueId", queueId),
                     checkRequired("sessionIds", sessionIds).map { it.toImmutable() },
+                    extendTraceRetention,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -454,6 +523,7 @@ private constructor(
 
             queueId()
             sessionIds()
+            extendTraceRetention()
             validated = true
         }
 
@@ -474,7 +544,8 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (if (queueId.asKnown().isPresent) 1 else 0) +
-                (sessionIds.asKnown().getOrNull()?.size ?: 0)
+                (sessionIds.asKnown().getOrNull()?.size ?: 0) +
+                (if (extendTraceRetention.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -484,17 +555,18 @@ private constructor(
             return other is Body &&
                 queueId == other.queueId &&
                 sessionIds == other.sessionIds &&
+                extendTraceRetention == other.extendTraceRetention &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(queueId, sessionIds, additionalProperties)
+            Objects.hash(queueId, sessionIds, extendTraceRetention, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{queueId=$queueId, sessionIds=$sessionIds, additionalProperties=$additionalProperties}"
+            "Body{queueId=$queueId, sessionIds=$sessionIds, extendTraceRetention=$extendTraceRetention, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

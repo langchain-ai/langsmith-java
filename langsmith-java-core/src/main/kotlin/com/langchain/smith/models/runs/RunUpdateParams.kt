@@ -73,6 +73,31 @@ private constructor(
 
         fun runIngest(runIngest: RunIngest) = apply { this.runIngest = runIngest }
 
+        /** Binary attachments to upload with this run via `/runs/multipart`. */
+        fun attachments(attachments: Map<String, RunAttachment>) = apply {
+            runIngest = runIngestBuilder().attachments(attachments).build()
+        }
+
+        /** Adds a binary attachment to upload with this run via `/runs/multipart`. */
+        fun putAttachment(name: String, attachment: RunAttachment) = apply {
+            runIngest = runIngestBuilder().putAttachment(name, attachment).build()
+        }
+
+        fun putAllAttachments(attachments: Map<String, RunAttachment>) = apply {
+            runIngest = runIngestBuilder().putAllAttachments(attachments).build()
+        }
+
+        fun removeAttachment(name: String) = apply {
+            runIngest = runIngestBuilder().removeAttachment(name).build()
+        }
+
+        fun removeAllAttachments(names: Set<String>) = apply {
+            runIngest = runIngestBuilder().removeAllAttachments(names).build()
+        }
+
+        private fun runIngestBuilder(): RunIngest.Builder =
+            (runIngest ?: RunIngest.builder().build()).toBuilder()
+
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
             putAllAdditionalHeaders(additionalHeaders)

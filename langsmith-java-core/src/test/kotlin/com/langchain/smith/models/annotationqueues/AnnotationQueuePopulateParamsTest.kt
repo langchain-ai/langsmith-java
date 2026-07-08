@@ -12,11 +12,28 @@ internal class AnnotationQueuePopulateParamsTest {
         AnnotationQueuePopulateParams.builder()
             .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .extendTraceRetention(true)
             .build()
     }
 
     @Test
     fun body() {
+        val params =
+            AnnotationQueuePopulateParams.builder()
+                .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .addSessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .extendTraceRetention(true)
+                .build()
+
+        val body = params._body()
+
+        assertThat(body.queueId()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(body.sessionIds()).containsExactly("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        assertThat(body.extendTraceRetention()).contains(true)
+    }
+
+    @Test
+    fun bodyWithoutOptionalFields() {
         val params =
             AnnotationQueuePopulateParams.builder()
                 .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")

@@ -5,6 +5,7 @@ package com.langchain.smith.models.runs
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.langchain.smith.core.Enum
 import com.langchain.smith.core.ExcludeMissing
@@ -43,6 +44,7 @@ private constructor(
     private val status: JsonField<String>,
     private val tags: JsonField<List<String>>,
     private val traceId: JsonField<String>,
+    private val attachments: Map<String, RunAttachment>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -105,6 +107,7 @@ private constructor(
         status,
         tags,
         traceId,
+        emptyMap(),
         mutableMapOf(),
     )
 
@@ -401,6 +404,10 @@ private constructor(
      */
     @JsonProperty("trace_id") @ExcludeMissing fun _traceId(): JsonField<String> = traceId
 
+    /** Binary attachments to upload with this run via `/runs/multipart`. */
+    @JsonIgnore
+    fun attachments(): Map<String, RunAttachment> = Collections.unmodifiableMap(attachments)
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -443,6 +450,7 @@ private constructor(
         private var status: JsonField<String> = JsonMissing.of()
         private var tags: JsonField<MutableList<String>>? = null
         private var traceId: JsonField<String> = JsonMissing.of()
+        private var attachments: MutableMap<String, RunAttachment> = mutableMapOf()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -468,6 +476,7 @@ private constructor(
             status = runIngest.status
             tags = runIngest.tags.map { it.toMutableList() }
             traceId = runIngest.traceId
+            attachments = runIngest.attachments.toMutableMap()
             additionalProperties = runIngest.additionalProperties.toMutableMap()
         }
 
@@ -726,6 +735,25 @@ private constructor(
          */
         fun traceId(traceId: JsonField<String>) = apply { this.traceId = traceId }
 
+        /** Binary attachments to upload with this run via `/runs/multipart`. */
+        fun attachments(attachments: Map<String, RunAttachment>) = apply {
+            this.attachments.clear()
+            putAllAttachments(attachments)
+        }
+
+        /** Adds a binary attachment to upload with this run via `/runs/multipart`. */
+        fun putAttachment(name: String, attachment: RunAttachment) = apply {
+            attachments[name] = attachment
+        }
+
+        fun putAllAttachments(attachments: Map<String, RunAttachment>) = apply {
+            this.attachments.putAll(attachments)
+        }
+
+        fun removeAttachment(name: String) = apply { attachments.remove(name) }
+
+        fun removeAllAttachments(names: Set<String>) = apply { names.forEach(::removeAttachment) }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -773,6 +801,7 @@ private constructor(
                 status,
                 (tags ?: JsonMissing.of()).map { it.toImmutable() },
                 traceId,
+                attachments.toImmutable(),
                 additionalProperties.toMutableMap(),
             )
     }
@@ -1802,6 +1831,7 @@ private constructor(
             status == other.status &&
             tags == other.tags &&
             traceId == other.traceId &&
+            attachments == other.attachments &&
             additionalProperties == other.additionalProperties
     }
 
@@ -1828,6 +1858,7 @@ private constructor(
             status,
             tags,
             traceId,
+            attachments,
             additionalProperties,
         )
     }
@@ -1835,5 +1866,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunIngest{id=$id, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, events=$events, extra=$extra, inputAttachments=$inputAttachments, inputs=$inputs, name=$name, outputAttachments=$outputAttachments, outputs=$outputs, parentRunId=$parentRunId, referenceExampleId=$referenceExampleId, runType=$runType, serialized=$serialized, sessionId=$sessionId, sessionName=$sessionName, startTime=$startTime, status=$status, tags=$tags, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "RunIngest{id=$id, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, events=$events, extra=$extra, inputAttachments=$inputAttachments, inputs=$inputs, name=$name, outputAttachments=$outputAttachments, outputs=$outputs, parentRunId=$parentRunId, referenceExampleId=$referenceExampleId, runType=$runType, serialized=$serialized, sessionId=$sessionId, sessionName=$sessionName, startTime=$startTime, status=$status, tags=$tags, traceId=$traceId, attachments=$attachments, additionalProperties=$additionalProperties}"
 }
