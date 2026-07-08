@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.1.0-beta.12](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.11...v0.1.0-beta.12) (2026-07-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* **stainless:** skip sessions resource for python and typescript
+
+### Features
+
+* **managed-eval:** expose is_managed_evaluator on run-rule read/write paths ([8e17124](https://github.com/langchain-ai/langsmith-java/commit/8e17124b681e504789b3bcb7b03653e327339d1a))
+* **smith-sdks:** expose threads and traces v2 endpoints in public SDK ([3bc6173](https://github.com/langchain-ai/langsmith-java/commit/3bc61733286b179f5567439dd65cf94e6faff571))
+* **stainless:** skip sessions resource for python and typescript ([d71cff9](https://github.com/langchain-ai/langsmith-java/commit/d71cff9f592c797a6b7383755ebfde6feea7e7c6))
+
+
+### Bug Fixes
+
+* remove duplicate threads/traces declarations in client impls ([#35](https://github.com/langchain-ai/langsmith-java/issues/35)) ([fdba8e6](https://github.com/langchain-ai/langsmith-java/commit/fdba8e6123bda467312acd260ef7cf20e21dba9b))
+* **smith-sdks:** remove dead retrieve_thread_preview SDK mapping ([585b12d](https://github.com/langchain-ai/langsmith-java/commit/585b12dd2672808df97c6221c783342e17dd6755))
+* **smith-sdks:** rename dataset runs POST methods from create to query ([4513b3f](https://github.com/langchain-ai/langsmith-java/commit/4513b3ffb05b51ec5be3e5f394d312726de1dd13))
+
+
+### Chores
+
+* **stainless:** skip all datasets endpoints in Python/TS SDKs except experiment-runs ([6ab6fa2](https://github.com/langchain-ai/langsmith-java/commit/6ab6fa281f3f9db790121a94d20a32323e56dc80))
+
 ## [0.1.0-beta.11](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.10...v0.1.0-beta.11) (2026-07-02)
 
 
