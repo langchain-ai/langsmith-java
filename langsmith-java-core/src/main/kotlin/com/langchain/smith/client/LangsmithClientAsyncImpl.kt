@@ -34,6 +34,10 @@ import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsyncImpl
 import com.langchain.smith.services.async.SettingServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsyncImpl
+import com.langchain.smith.services.async.ThreadServiceAsync
+import com.langchain.smith.services.async.ThreadServiceAsyncImpl
+import com.langchain.smith.services.async.TraceServiceAsync
+import com.langchain.smith.services.async.TraceServiceAsyncImpl
 import com.langchain.smith.services.async.WorkspaceServiceAsync
 import com.langchain.smith.services.async.WorkspaceServiceAsyncImpl
 import java.util.function.Consumer
@@ -68,6 +72,14 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     }
 
     private val runs = lazy { RunServiceAsyncImpl(clientOptionsWithUserAgent) }
+
+    private val threads: ThreadServiceAsync by lazy {
+        ThreadServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
+    private val traces: TraceServiceAsync by lazy {
+        TraceServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
 
     private val evaluators: EvaluatorServiceAsync by lazy {
         EvaluatorServiceAsyncImpl(clientOptionsWithUserAgent)
@@ -128,6 +140,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     override fun runs(): RunServiceAsync = runs.value
 
+    override fun threads(): ThreadServiceAsync = threads
+
+    override fun traces(): TraceServiceAsync = traces
+
     override fun evaluators(): EvaluatorServiceAsync = evaluators
 
     override fun onlineEvaluators(): OnlineEvaluatorServiceAsync = onlineEvaluators
@@ -180,6 +196,14 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
         private val runs: RunServiceAsync.WithRawResponse by lazy {
             RunServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val threads: ThreadServiceAsync.WithRawResponse by lazy {
+            ThreadServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val traces: TraceServiceAsync.WithRawResponse by lazy {
+            TraceServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val evaluators: EvaluatorServiceAsync.WithRawResponse by lazy {
@@ -244,6 +268,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
         override fun datasets(): DatasetServiceAsync.WithRawResponse = datasets
 
         override fun runs(): RunServiceAsync.WithRawResponse = runs
+
+        override fun threads(): ThreadServiceAsync.WithRawResponse = threads
+
+        override fun traces(): TraceServiceAsync.WithRawResponse = traces
 
         override fun evaluators(): EvaluatorServiceAsync.WithRawResponse = evaluators
 

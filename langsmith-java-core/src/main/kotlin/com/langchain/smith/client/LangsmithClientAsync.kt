@@ -18,6 +18,8 @@ import com.langchain.smith.services.async.RunServiceAsync
 import com.langchain.smith.services.async.SandboxServiceAsync
 import com.langchain.smith.services.async.SessionServiceAsync
 import com.langchain.smith.services.async.SettingServiceAsync
+import com.langchain.smith.services.async.ThreadServiceAsync
+import com.langchain.smith.services.async.TraceServiceAsync
 import com.langchain.smith.services.async.WorkspaceServiceAsync
 import java.util.function.Consumer
 
@@ -64,6 +66,10 @@ interface LangsmithClientAsync {
     fun datasets(): DatasetServiceAsync
 
     fun runs(): RunServiceAsync
+
+    fun threads(): ThreadServiceAsync
+
+    fun traces(): TraceServiceAsync
 
     fun evaluators(): EvaluatorServiceAsync
 
@@ -123,6 +129,10 @@ interface LangsmithClientAsync {
         fun datasets(): DatasetServiceAsync.WithRawResponse
 
         fun runs(): RunServiceAsync.WithRawResponse
+
+        fun threads(): ThreadServiceAsync.WithRawResponse
+
+        fun traces(): TraceServiceAsync.WithRawResponse
 
         fun evaluators(): EvaluatorServiceAsync.WithRawResponse
 

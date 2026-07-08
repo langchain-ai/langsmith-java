@@ -22,8 +22,6 @@ import com.langchain.smith.errors.RateLimitException
 import com.langchain.smith.errors.UnauthorizedException
 import com.langchain.smith.errors.UnexpectedStatusCodeException
 import com.langchain.smith.errors.UnprocessableEntityException
-import com.langchain.smith.models.sessions.SessionCreateParams
-import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.jupiter.api.BeforeEach
@@ -61,8 +59,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate400() {
-        val sessionService = client.sessions()
+    fun runsQueryV2_400() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -70,32 +68,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<BadRequestException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<BadRequestException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(400)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -103,8 +76,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate400WithRawResponse() {
-        val sessionService = client.sessions().withRawResponse()
+    fun runsQueryV2_400WithRawResponse() {
+        val runService = client.runs().withRawResponse()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -112,32 +85,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<BadRequestException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<BadRequestException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(400)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -145,8 +93,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate401() {
-        val sessionService = client.sessions()
+    fun runsQueryV2_401() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -154,32 +102,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<UnauthorizedException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<UnauthorizedException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(401)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -187,8 +110,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate401WithRawResponse() {
-        val sessionService = client.sessions().withRawResponse()
+    fun runsQueryV2_401WithRawResponse() {
+        val runService = client.runs().withRawResponse()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -196,32 +119,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<UnauthorizedException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<UnauthorizedException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(401)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -229,8 +127,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate403() {
-        val sessionService = client.sessions()
+    fun runsQueryV2_403() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -238,32 +136,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<PermissionDeniedException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<PermissionDeniedException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(403)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -271,8 +144,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate403WithRawResponse() {
-        val sessionService = client.sessions().withRawResponse()
+    fun runsQueryV2_403WithRawResponse() {
+        val runService = client.runs().withRawResponse()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -280,32 +153,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<PermissionDeniedException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<PermissionDeniedException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(403)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -313,8 +161,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate404() {
-        val sessionService = client.sessions()
+    fun runsQueryV2_404() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -322,32 +170,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<NotFoundException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<NotFoundException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(404)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -355,8 +178,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate404WithRawResponse() {
-        val sessionService = client.sessions().withRawResponse()
+    fun runsQueryV2_404WithRawResponse() {
+        val runService = client.runs().withRawResponse()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -364,32 +187,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<NotFoundException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<NotFoundException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(404)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -397,8 +195,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate422() {
-        val sessionService = client.sessions()
+    fun runsQueryV2_422() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -406,32 +204,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<UnprocessableEntityException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<UnprocessableEntityException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(422)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -439,8 +212,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate422WithRawResponse() {
-        val sessionService = client.sessions().withRawResponse()
+    fun runsQueryV2_422WithRawResponse() {
+        val runService = client.runs().withRawResponse()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -448,32 +221,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<UnprocessableEntityException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<UnprocessableEntityException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(422)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -481,8 +229,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate429() {
-        val sessionService = client.sessions()
+    fun runsQueryV2_429() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -490,32 +238,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<RateLimitException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<RateLimitException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(429)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -523,8 +246,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate429WithRawResponse() {
-        val sessionService = client.sessions().withRawResponse()
+    fun runsQueryV2_429WithRawResponse() {
+        val runService = client.runs().withRawResponse()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -532,32 +255,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<RateLimitException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<RateLimitException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(429)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -565,8 +263,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate500() {
-        val sessionService = client.sessions()
+    fun runsQueryV2_500() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -574,32 +272,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<InternalServerException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<InternalServerException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(500)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -607,8 +280,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate500WithRawResponse() {
-        val sessionService = client.sessions().withRawResponse()
+    fun runsQueryV2_500WithRawResponse() {
+        val runService = client.runs().withRawResponse()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -616,32 +289,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<InternalServerException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<InternalServerException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(500)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -649,8 +297,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate999() {
-        val sessionService = client.sessions()
+    fun runsQueryV2_999() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -658,32 +306,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<UnexpectedStatusCodeException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<UnexpectedStatusCodeException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(999)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -691,8 +314,8 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreate999WithRawResponse() {
-        val sessionService = client.sessions().withRawResponse()
+    fun runsQueryV2_999WithRawResponse() {
+        val runService = client.runs().withRawResponse()
         stubFor(
             post(anyUrl())
                 .willReturn(
@@ -700,32 +323,7 @@ internal class ErrorHandlingTest {
                 )
         )
 
-        val e =
-            assertThrows<UnexpectedStatusCodeException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<UnexpectedStatusCodeException> { runService.queryV2() }
 
         assertThat(e.statusCode()).isEqualTo(999)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
@@ -733,39 +331,14 @@ internal class ErrorHandlingTest {
     }
 
     @Test
-    fun sessionsCreateInvalidJsonBody() {
-        val sessionService = client.sessions()
+    fun runsQueryV2InvalidJsonBody() {
+        val runService = client.runs()
         stubFor(
             post(anyUrl())
                 .willReturn(status(200).withHeader(HEADER_NAME, HEADER_VALUE).withBody(NOT_JSON))
         )
 
-        val e =
-            assertThrows<LangChainException> {
-                sessionService.create(
-                    SessionCreateParams.builder()
-                        .upsert(true)
-                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .defaultDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .description("description")
-                        .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addEvaluatorKey("string")
-                        .extra(
-                            SessionCreateParams.Extra.builder()
-                                .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                .build()
-                        )
-                        .kickedOffBy("kicked_off_by")
-                        .name("name")
-                        .numExamples(0L)
-                        .numRepetitions(0L)
-                        .referenceDatasetId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                        .addTagValueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .traceTier(SessionCreateParams.TraceTier.LONGLIVED)
-                        .build()
-                )
-            }
+        val e = assertThrows<LangChainException> { runService.queryV2() }
 
         assertThat(e).hasMessage("Error reading response")
     }
