@@ -254,6 +254,9 @@ private constructor(
     fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
 
     /**
+     * Filter runs by trace ID. When set, limit and cursor-based pagination are not applied — all
+     * runs in the trace are returned in a single response.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -906,6 +909,10 @@ private constructor(
          */
         fun startTime(startTime: JsonField<OffsetDateTime>) = apply { this.startTime = startTime }
 
+        /**
+         * Filter runs by trace ID. When set, limit and cursor-based pagination are not applied —
+         * all runs in the trace are returned in a single response.
+         */
         fun trace(trace: String?) = trace(JsonField.ofNullable(trace))
 
         /** Alias for calling [Builder.trace] with `trace.orElse(null)`. */
