@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.1.0-beta.13](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.12...v0.1.0-beta.13) (2026-07-08)
+
+
+### Features
+
+* Adds attachment support to Java multipart requests ([#33](https://github.com/langchain-ai/langsmith-java/issues/33)) ([38646cb](https://github.com/langchain-ai/langsmith-java/commit/38646cb1fabc1155b36ea8db43c69f2dd38dede9))
+* **backend:** extend_trace_retention field for annotation queue adds ([38646cb](https://github.com/langchain-ai/langsmith-java/commit/38646cb1fabc1155b36ea8db43c69f2dd38dede9))
+
+
+### Bug Fixes
+
+* re-emit commits missed by release-please due to timestamp ordering ([#181](https://github.com/langchain-ai/langsmith-java/issues/181)) ([38646cb](https://github.com/langchain-ai/langsmith-java/commit/38646cb1fabc1155b36ea8db43c69f2dd38dede9))
+
+
+### Refactors
+
+* **sandboxes:** resolve default sandbox via snapshot tag instead of blueprint ([38646cb](https://github.com/langchain-ai/langsmith-java/commit/38646cb1fabc1155b36ea8db43c69f2dd38dede9))
+
 ## [0.1.0-beta.12](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.11...v0.1.0-beta.12) (2026-07-08)
 
 
