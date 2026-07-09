@@ -14,6 +14,7 @@ internal class ThreadStatsParamsTest {
             .threadId("thread_id")
             .addSelect(ThreadStatsParams.Select.TURNS)
             .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .filter("filter")
             .build()
     }
 
@@ -33,6 +34,28 @@ internal class ThreadStatsParamsTest {
 
     @Test
     fun queryParams() {
+        val params =
+            ThreadStatsParams.builder()
+                .threadId("thread_id")
+                .addSelect(ThreadStatsParams.Select.TURNS)
+                .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .filter("filter")
+                .build()
+
+        val queryParams = params._queryParams()
+
+        assertThat(queryParams)
+            .isEqualTo(
+                QueryParams.builder()
+                    .put("selects", "TURNS")
+                    .put("session_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .put("filter", "filter")
+                    .build()
+            )
+    }
+
+    @Test
+    fun queryParamsWithoutOptionalFields() {
         val params =
             ThreadStatsParams.builder()
                 .threadId("thread_id")
