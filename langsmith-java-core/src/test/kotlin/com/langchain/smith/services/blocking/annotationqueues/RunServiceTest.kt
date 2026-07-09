@@ -3,6 +3,7 @@
 package com.langchain.smith.services.blocking.annotationqueues
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import com.langchain.smith.models.annotationqueues.runs.RunCreateByKeyParams
 import com.langchain.smith.models.annotationqueues.runs.RunCreateParams
 import com.langchain.smith.models.annotationqueues.runs.RunDeleteAllParams
 import com.langchain.smith.models.annotationqueues.runs.RunDeleteQueueParams
@@ -73,6 +74,32 @@ internal class RunServiceTest {
             )
 
         runSchemaWithAnnotationQueueInfos.forEach { it.validate() }
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun createByKey() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val runService = client.annotationQueues().runs()
+
+        val response =
+            runService.createByKey(
+                RunCreateByKeyParams.builder()
+                    .queueId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .extendTraceRetention(true)
+                    .addBody(
+                        RunCreateByKeyParams.Body.builder()
+                            .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                            .sourceProposedExampleId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                            .build()
+                    )
+                    .build()
+            )
+
+        response.forEach { it.validate() }
     }
 
     @Disabled("Mock server tests are disabled")
