@@ -26,6 +26,7 @@ internal class OnlineEvaluatorTest {
                 .createdAt("created_at")
                 .createdBy("created_by")
                 .addFeedbackKey("string")
+                .isManaged(true)
                 .llmEvaluator(
                     OnlineLlmEvaluator.builder()
                         .annotationQueueId("annotation_queue_id")
@@ -79,6 +80,7 @@ internal class OnlineEvaluatorTest {
         assertThat(onlineEvaluator.createdAt()).contains("created_at")
         assertThat(onlineEvaluator.createdBy()).contains("created_by")
         assertThat(onlineEvaluator.feedbackKeys().getOrNull()).containsExactly("string")
+        assertThat(onlineEvaluator.isManaged()).contains(true)
         assertThat(onlineEvaluator.llmEvaluator())
             .contains(
                 OnlineLlmEvaluator.builder()
@@ -138,6 +140,7 @@ internal class OnlineEvaluatorTest {
                 .createdAt("created_at")
                 .createdBy("created_by")
                 .addFeedbackKey("string")
+                .isManaged(true)
                 .llmEvaluator(
                     OnlineLlmEvaluator.builder()
                         .annotationQueueId("annotation_queue_id")
