@@ -101,6 +101,14 @@ internal class SandboxResponseTest {
                                         .writebackSeconds(0L)
                                         .build()
                                 )
+                                .contexthub(
+                                    SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                        .Contexthub
+                                        .builder()
+                                        .repo("repo")
+                                        .initialPullOnly(true)
+                                        .build()
+                                )
                                 .gcs(
                                     SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
                                         .Gcs
@@ -329,6 +337,14 @@ internal class SandboxResponseTest {
                                     .builder()
                                     .maxSizeBytes(0L)
                                     .writebackSeconds(0L)
+                                    .build()
+                            )
+                            .contexthub(
+                                SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                    .Contexthub
+                                    .builder()
+                                    .repo("repo")
+                                    .initialPullOnly(true)
                                     .build()
                             )
                             .gcs(
@@ -562,6 +578,14 @@ internal class SandboxResponseTest {
                                         .builder()
                                         .maxSizeBytes(0L)
                                         .writebackSeconds(0L)
+                                        .build()
+                                )
+                                .contexthub(
+                                    SandboxResponse.MountConfig.Mount.SandboxapiS3BucketMountSpec
+                                        .Contexthub
+                                        .builder()
+                                        .repo("repo")
+                                        .initialPullOnly(true)
                                         .build()
                                 )
                                 .gcs(

@@ -120,6 +120,15 @@ internal class BoxServiceTest {
                                             .writebackSeconds(0L)
                                             .build()
                                     )
+                                    .contexthub(
+                                        BoxCreateParams.MountConfig.Mount
+                                            .SandboxapiS3BucketMountSpec
+                                            .Contexthub
+                                            .builder()
+                                            .repo("repo")
+                                            .initialPullOnly(true)
+                                            .build()
+                                    )
                                     .gcs(
                                         BoxCreateParams.MountConfig.Mount
                                             .SandboxapiS3BucketMountSpec

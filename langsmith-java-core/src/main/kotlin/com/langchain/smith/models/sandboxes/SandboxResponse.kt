@@ -954,6 +954,17 @@ private constructor(
             fun addMount(sandboxapiGitRepoMountSpec: Mount.SandboxapiGitRepoMountSpec) =
                 addMount(Mount.ofSandboxapiGitRepoMountSpec(sandboxapiGitRepoMountSpec))
 
+            /**
+             * Alias for calling [addMount] with
+             * `Mount.ofSandboxapiContextHubRepoMountSpec(sandboxapiContextHubRepoMountSpec)`.
+             */
+            fun addMount(
+                sandboxapiContextHubRepoMountSpec: Mount.SandboxapiContextHubRepoMountSpec
+            ) =
+                addMount(
+                    Mount.ofSandboxapiContextHubRepoMountSpec(sandboxapiContextHubRepoMountSpec)
+                )
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -2828,6 +2839,8 @@ private constructor(
             private val sandboxapiS3BucketMountSpec: SandboxapiS3BucketMountSpec? = null,
             private val sandboxapiGcsBucketMountSpec: SandboxapiGcsBucketMountSpec? = null,
             private val sandboxapiGitRepoMountSpec: SandboxapiGitRepoMountSpec? = null,
+            private val sandboxapiContextHubRepoMountSpec: SandboxapiContextHubRepoMountSpec? =
+                null,
             private val _json: JsonValue? = null,
         ) {
 
@@ -2840,11 +2853,17 @@ private constructor(
             fun sandboxapiGitRepoMountSpec(): Optional<SandboxapiGitRepoMountSpec> =
                 Optional.ofNullable(sandboxapiGitRepoMountSpec)
 
+            fun sandboxapiContextHubRepoMountSpec(): Optional<SandboxapiContextHubRepoMountSpec> =
+                Optional.ofNullable(sandboxapiContextHubRepoMountSpec)
+
             fun isSandboxapiS3BucketMountSpec(): Boolean = sandboxapiS3BucketMountSpec != null
 
             fun isSandboxapiGcsBucketMountSpec(): Boolean = sandboxapiGcsBucketMountSpec != null
 
             fun isSandboxapiGitRepoMountSpec(): Boolean = sandboxapiGitRepoMountSpec != null
+
+            fun isSandboxapiContextHubRepoMountSpec(): Boolean =
+                sandboxapiContextHubRepoMountSpec != null
 
             fun asSandboxapiS3BucketMountSpec(): SandboxapiS3BucketMountSpec =
                 sandboxapiS3BucketMountSpec.getOrThrow("sandboxapiS3BucketMountSpec")
@@ -2854,6 +2873,9 @@ private constructor(
 
             fun asSandboxapiGitRepoMountSpec(): SandboxapiGitRepoMountSpec =
                 sandboxapiGitRepoMountSpec.getOrThrow("sandboxapiGitRepoMountSpec")
+
+            fun asSandboxapiContextHubRepoMountSpec(): SandboxapiContextHubRepoMountSpec =
+                sandboxapiContextHubRepoMountSpec.getOrThrow("sandboxapiContextHubRepoMountSpec")
 
             fun _json(): Optional<JsonValue> = Optional.ofNullable(_json)
 
@@ -2895,6 +2917,10 @@ private constructor(
                         visitor.visitSandboxapiGcsBucketMountSpec(sandboxapiGcsBucketMountSpec)
                     sandboxapiGitRepoMountSpec != null ->
                         visitor.visitSandboxapiGitRepoMountSpec(sandboxapiGitRepoMountSpec)
+                    sandboxapiContextHubRepoMountSpec != null ->
+                        visitor.visitSandboxapiContextHubRepoMountSpec(
+                            sandboxapiContextHubRepoMountSpec
+                        )
                     else -> visitor.unknown(_json)
                 }
 
@@ -2934,6 +2960,12 @@ private constructor(
                         ) {
                             sandboxapiGitRepoMountSpec.validate()
                         }
+
+                        override fun visitSandboxapiContextHubRepoMountSpec(
+                            sandboxapiContextHubRepoMountSpec: SandboxapiContextHubRepoMountSpec
+                        ) {
+                            sandboxapiContextHubRepoMountSpec.validate()
+                        }
                     }
                 )
                 validated = true
@@ -2969,6 +3001,10 @@ private constructor(
                             sandboxapiGitRepoMountSpec: SandboxapiGitRepoMountSpec
                         ) = sandboxapiGitRepoMountSpec.validity()
 
+                        override fun visitSandboxapiContextHubRepoMountSpec(
+                            sandboxapiContextHubRepoMountSpec: SandboxapiContextHubRepoMountSpec
+                        ) = sandboxapiContextHubRepoMountSpec.validity()
+
                         override fun unknown(json: JsonValue?) = 0
                     }
                 )
@@ -2981,7 +3017,8 @@ private constructor(
                 return other is Mount &&
                     sandboxapiS3BucketMountSpec == other.sandboxapiS3BucketMountSpec &&
                     sandboxapiGcsBucketMountSpec == other.sandboxapiGcsBucketMountSpec &&
-                    sandboxapiGitRepoMountSpec == other.sandboxapiGitRepoMountSpec
+                    sandboxapiGitRepoMountSpec == other.sandboxapiGitRepoMountSpec &&
+                    sandboxapiContextHubRepoMountSpec == other.sandboxapiContextHubRepoMountSpec
             }
 
             override fun hashCode(): Int =
@@ -2989,6 +3026,7 @@ private constructor(
                     sandboxapiS3BucketMountSpec,
                     sandboxapiGcsBucketMountSpec,
                     sandboxapiGitRepoMountSpec,
+                    sandboxapiContextHubRepoMountSpec,
                 )
 
             override fun toString(): String =
@@ -2999,6 +3037,8 @@ private constructor(
                         "Mount{sandboxapiGcsBucketMountSpec=$sandboxapiGcsBucketMountSpec}"
                     sandboxapiGitRepoMountSpec != null ->
                         "Mount{sandboxapiGitRepoMountSpec=$sandboxapiGitRepoMountSpec}"
+                    sandboxapiContextHubRepoMountSpec != null ->
+                        "Mount{sandboxapiContextHubRepoMountSpec=$sandboxapiContextHubRepoMountSpec}"
                     _json != null -> "Mount{_unknown=$_json}"
                     else -> throw IllegalStateException("Invalid Mount")
                 }
@@ -3019,6 +3059,11 @@ private constructor(
                 fun ofSandboxapiGitRepoMountSpec(
                     sandboxapiGitRepoMountSpec: SandboxapiGitRepoMountSpec
                 ) = Mount(sandboxapiGitRepoMountSpec = sandboxapiGitRepoMountSpec)
+
+                @JvmStatic
+                fun ofSandboxapiContextHubRepoMountSpec(
+                    sandboxapiContextHubRepoMountSpec: SandboxapiContextHubRepoMountSpec
+                ) = Mount(sandboxapiContextHubRepoMountSpec = sandboxapiContextHubRepoMountSpec)
             }
 
             /**
@@ -3036,6 +3081,10 @@ private constructor(
 
                 fun visitSandboxapiGitRepoMountSpec(
                     sandboxapiGitRepoMountSpec: SandboxapiGitRepoMountSpec
+                ): T
+
+                fun visitSandboxapiContextHubRepoMountSpec(
+                    sandboxapiContextHubRepoMountSpec: SandboxapiContextHubRepoMountSpec
                 ): T
 
                 /**
@@ -3071,6 +3120,13 @@ private constructor(
                                     },
                                 tryDeserialize(node, jacksonTypeRef<SandboxapiGitRepoMountSpec>())
                                     ?.let { Mount(sandboxapiGitRepoMountSpec = it, _json = json) },
+                                tryDeserialize(
+                                        node,
+                                        jacksonTypeRef<SandboxapiContextHubRepoMountSpec>(),
+                                    )
+                                    ?.let {
+                                        Mount(sandboxapiContextHubRepoMountSpec = it, _json = json)
+                                    },
                             )
                             .filterNotNull()
                             .allMaxBy { it.validity() }
@@ -3102,6 +3158,8 @@ private constructor(
                             generator.writeObject(value.sandboxapiGcsBucketMountSpec)
                         value.sandboxapiGitRepoMountSpec != null ->
                             generator.writeObject(value.sandboxapiGitRepoMountSpec)
+                        value.sandboxapiContextHubRepoMountSpec != null ->
+                            generator.writeObject(value.sandboxapiContextHubRepoMountSpec)
                         value._json != null -> generator.writeObject(value._json)
                         else -> throw IllegalStateException("Invalid Mount")
                     }
@@ -3116,6 +3174,7 @@ private constructor(
                 private val s3: JsonField<S3>,
                 private val type: JsonField<Type>,
                 private val cache: JsonField<Cache>,
+                private val contexthub: JsonField<Contexthub>,
                 private val gcs: JsonField<Gcs>,
                 private val git: JsonField<Git>,
                 private val readOnly: JsonField<Boolean>,
@@ -3133,12 +3192,26 @@ private constructor(
                     @JsonProperty("cache")
                     @ExcludeMissing
                     cache: JsonField<Cache> = JsonMissing.of(),
+                    @JsonProperty("contexthub")
+                    @ExcludeMissing
+                    contexthub: JsonField<Contexthub> = JsonMissing.of(),
                     @JsonProperty("gcs") @ExcludeMissing gcs: JsonField<Gcs> = JsonMissing.of(),
                     @JsonProperty("git") @ExcludeMissing git: JsonField<Git> = JsonMissing.of(),
                     @JsonProperty("read_only")
                     @ExcludeMissing
                     readOnly: JsonField<Boolean> = JsonMissing.of(),
-                ) : this(id, mountPath, s3, type, cache, gcs, git, readOnly, mutableMapOf())
+                ) : this(
+                    id,
+                    mountPath,
+                    s3,
+                    type,
+                    cache,
+                    contexthub,
+                    gcs,
+                    git,
+                    readOnly,
+                    mutableMapOf(),
+                )
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
@@ -3173,6 +3246,12 @@ private constructor(
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun cache(): Optional<Cache> = cache.getOptional("cache")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun contexthub(): Optional<Contexthub> = contexthub.getOptional("contexthub")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type
@@ -3231,6 +3310,16 @@ private constructor(
                  * type.
                  */
                 @JsonProperty("cache") @ExcludeMissing fun _cache(): JsonField<Cache> = cache
+
+                /**
+                 * Returns the raw JSON value of [contexthub].
+                 *
+                 * Unlike [contexthub], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("contexthub")
+                @ExcludeMissing
+                fun _contexthub(): JsonField<Contexthub> = contexthub
 
                 /**
                  * Returns the raw JSON value of [gcs].
@@ -3293,6 +3382,7 @@ private constructor(
                     private var s3: JsonField<S3>? = null
                     private var type: JsonField<Type>? = null
                     private var cache: JsonField<Cache> = JsonMissing.of()
+                    private var contexthub: JsonField<Contexthub> = JsonMissing.of()
                     private var gcs: JsonField<Gcs> = JsonMissing.of()
                     private var git: JsonField<Git> = JsonMissing.of()
                     private var readOnly: JsonField<Boolean> = JsonMissing.of()
@@ -3306,6 +3396,7 @@ private constructor(
                             s3 = sandboxapiS3BucketMountSpec.s3
                             type = sandboxapiS3BucketMountSpec.type
                             cache = sandboxapiS3BucketMountSpec.cache
+                            contexthub = sandboxapiS3BucketMountSpec.contexthub
                             gcs = sandboxapiS3BucketMountSpec.gcs
                             git = sandboxapiS3BucketMountSpec.git
                             readOnly = sandboxapiS3BucketMountSpec.readOnly
@@ -3369,6 +3460,19 @@ private constructor(
                      * not yet supported value.
                      */
                     fun cache(cache: JsonField<Cache>) = apply { this.cache = cache }
+
+                    fun contexthub(contexthub: Contexthub) = contexthub(JsonField.of(contexthub))
+
+                    /**
+                     * Sets [Builder.contexthub] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.contexthub] with a well-typed [Contexthub]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun contexthub(contexthub: JsonField<Contexthub>) = apply {
+                        this.contexthub = contexthub
+                    }
 
                     fun gcs(gcs: Gcs) = gcs(JsonField.of(gcs))
 
@@ -3447,6 +3551,7 @@ private constructor(
                             checkRequired("s3", s3),
                             checkRequired("type", type),
                             cache,
+                            contexthub,
                             gcs,
                             git,
                             readOnly,
@@ -3476,6 +3581,7 @@ private constructor(
                     s3().validate()
                     type().validate()
                     cache().ifPresent { it.validate() }
+                    contexthub().ifPresent { it.validate() }
                     gcs().ifPresent { it.validate() }
                     git().ifPresent { it.validate() }
                     readOnly()
@@ -3503,6 +3609,7 @@ private constructor(
                         (s3.asKnown().getOrNull()?.validity() ?: 0) +
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (cache.asKnown().getOrNull()?.validity() ?: 0) +
+                        (contexthub.asKnown().getOrNull()?.validity() ?: 0) +
                         (gcs.asKnown().getOrNull()?.validity() ?: 0) +
                         (git.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (readOnly.asKnown().isPresent) 1 else 0)
@@ -3872,6 +3979,8 @@ private constructor(
 
                         @JvmField val GIT = of("git")
 
+                        @JvmField val CONTEXTHUB = of("contexthub")
+
                         @JvmStatic fun of(value: String) = Type(JsonField.of(value))
                     }
 
@@ -3880,6 +3989,7 @@ private constructor(
                         S3,
                         GCS,
                         GIT,
+                        CONTEXTHUB,
                     }
 
                     /**
@@ -3895,6 +4005,7 @@ private constructor(
                         S3,
                         GCS,
                         GIT,
+                        CONTEXTHUB,
                         /**
                          * An enum member indicating that [Type] was instantiated with an unknown
                          * value.
@@ -3914,6 +4025,7 @@ private constructor(
                             S3 -> Value.S3
                             GCS -> Value.GCS
                             GIT -> Value.GIT
+                            CONTEXTHUB -> Value.CONTEXTHUB
                             else -> Value._UNKNOWN
                         }
 
@@ -3931,6 +4043,7 @@ private constructor(
                             S3 -> Known.S3
                             GCS -> Known.GCS
                             GIT -> Known.GIT
+                            CONTEXTHUB -> Known.CONTEXTHUB
                             else -> throw LangChainInvalidDataException("Unknown Type: $value")
                         }
 
@@ -4206,6 +4319,241 @@ private constructor(
 
                     override fun toString() =
                         "Cache{maxSizeBytes=$maxSizeBytes, writebackSeconds=$writebackSeconds, additionalProperties=$additionalProperties}"
+                }
+
+                class Contexthub
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val repo: JsonField<String>,
+                    private val initialPullOnly: JsonField<Boolean>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("repo")
+                        @ExcludeMissing
+                        repo: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("initial_pull_only")
+                        @ExcludeMissing
+                        initialPullOnly: JsonField<Boolean> = JsonMissing.of(),
+                    ) : this(repo, initialPullOnly, mutableMapOf())
+
+                    /**
+                     * Repo is the Context Hub repository to sync, as "owner/repo" (e.g.
+                     * "-/my-agent", where "-" is the current workspace). The repo's latest commit
+                     * tree is mirrored into the mount path.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun repo(): String = repo.getRequired("repo")
+
+                    /**
+                     * InitialPullOnly syncs the repo once at startup instead of polling for updates
+                     * for the sandbox's lifetime.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun initialPullOnly(): Optional<Boolean> =
+                        initialPullOnly.getOptional("initial_pull_only")
+
+                    /**
+                     * Returns the raw JSON value of [repo].
+                     *
+                     * Unlike [repo], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("repo") @ExcludeMissing fun _repo(): JsonField<String> = repo
+
+                    /**
+                     * Returns the raw JSON value of [initialPullOnly].
+                     *
+                     * Unlike [initialPullOnly], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("initial_pull_only")
+                    @ExcludeMissing
+                    fun _initialPullOnly(): JsonField<Boolean> = initialPullOnly
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Contexthub].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .repo()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Contexthub]. */
+                    class Builder internal constructor() {
+
+                        private var repo: JsonField<String>? = null
+                        private var initialPullOnly: JsonField<Boolean> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(contexthub: Contexthub) = apply {
+                            repo = contexthub.repo
+                            initialPullOnly = contexthub.initialPullOnly
+                            additionalProperties = contexthub.additionalProperties.toMutableMap()
+                        }
+
+                        /**
+                         * Repo is the Context Hub repository to sync, as "owner/repo" (e.g.
+                         * "-/my-agent", where "-" is the current workspace). The repo's latest
+                         * commit tree is mirrored into the mount path.
+                         */
+                        fun repo(repo: String) = repo(JsonField.of(repo))
+
+                        /**
+                         * Sets [Builder.repo] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.repo] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun repo(repo: JsonField<String>) = apply { this.repo = repo }
+
+                        /**
+                         * InitialPullOnly syncs the repo once at startup instead of polling for
+                         * updates for the sandbox's lifetime.
+                         */
+                        fun initialPullOnly(initialPullOnly: Boolean) =
+                            initialPullOnly(JsonField.of(initialPullOnly))
+
+                        /**
+                         * Sets [Builder.initialPullOnly] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.initialPullOnly] with a well-typed
+                         * [Boolean] value instead. This method is primarily for setting the field
+                         * to an undocumented or not yet supported value.
+                         */
+                        fun initialPullOnly(initialPullOnly: JsonField<Boolean>) = apply {
+                            this.initialPullOnly = initialPullOnly
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Contexthub].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .repo()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Contexthub =
+                            Contexthub(
+                                checkRequired("repo", repo),
+                                initialPullOnly,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Contexthub = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        repo()
+                        initialPullOnly()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (repo.asKnown().isPresent) 1 else 0) +
+                            (if (initialPullOnly.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Contexthub &&
+                            repo == other.repo &&
+                            initialPullOnly == other.initialPullOnly &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(repo, initialPullOnly, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Contexthub{repo=$repo, initialPullOnly=$initialPullOnly, additionalProperties=$additionalProperties}"
                 }
 
                 class Gcs
@@ -5058,6 +5406,7 @@ private constructor(
                         s3 == other.s3 &&
                         type == other.type &&
                         cache == other.cache &&
+                        contexthub == other.contexthub &&
                         gcs == other.gcs &&
                         git == other.git &&
                         readOnly == other.readOnly &&
@@ -5071,6 +5420,7 @@ private constructor(
                         s3,
                         type,
                         cache,
+                        contexthub,
                         gcs,
                         git,
                         readOnly,
@@ -5081,7 +5431,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "SandboxapiS3BucketMountSpec{id=$id, mountPath=$mountPath, s3=$s3, type=$type, cache=$cache, gcs=$gcs, git=$git, readOnly=$readOnly, additionalProperties=$additionalProperties}"
+                    "SandboxapiS3BucketMountSpec{id=$id, mountPath=$mountPath, s3=$s3, type=$type, cache=$cache, contexthub=$contexthub, gcs=$gcs, git=$git, readOnly=$readOnly, additionalProperties=$additionalProperties}"
             }
 
             class SandboxapiGcsBucketMountSpec
@@ -5092,6 +5442,7 @@ private constructor(
                 private val mountPath: JsonField<String>,
                 private val type: JsonField<Type>,
                 private val cache: JsonField<Cache>,
+                private val contexthub: JsonField<Contexthub>,
                 private val git: JsonField<Git>,
                 private val readOnly: JsonField<Boolean>,
                 private val s3: JsonField<S3>,
@@ -5109,12 +5460,26 @@ private constructor(
                     @JsonProperty("cache")
                     @ExcludeMissing
                     cache: JsonField<Cache> = JsonMissing.of(),
+                    @JsonProperty("contexthub")
+                    @ExcludeMissing
+                    contexthub: JsonField<Contexthub> = JsonMissing.of(),
                     @JsonProperty("git") @ExcludeMissing git: JsonField<Git> = JsonMissing.of(),
                     @JsonProperty("read_only")
                     @ExcludeMissing
                     readOnly: JsonField<Boolean> = JsonMissing.of(),
                     @JsonProperty("s3") @ExcludeMissing s3: JsonField<S3> = JsonMissing.of(),
-                ) : this(id, gcs, mountPath, type, cache, git, readOnly, s3, mutableMapOf())
+                ) : this(
+                    id,
+                    gcs,
+                    mountPath,
+                    type,
+                    cache,
+                    contexthub,
+                    git,
+                    readOnly,
+                    s3,
+                    mutableMapOf(),
+                )
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
@@ -5149,6 +5514,12 @@ private constructor(
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun cache(): Optional<Cache> = cache.getOptional("cache")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun contexthub(): Optional<Contexthub> = contexthub.getOptional("contexthub")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type
@@ -5207,6 +5578,16 @@ private constructor(
                  * type.
                  */
                 @JsonProperty("cache") @ExcludeMissing fun _cache(): JsonField<Cache> = cache
+
+                /**
+                 * Returns the raw JSON value of [contexthub].
+                 *
+                 * Unlike [contexthub], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("contexthub")
+                @ExcludeMissing
+                fun _contexthub(): JsonField<Contexthub> = contexthub
 
                 /**
                  * Returns the raw JSON value of [git].
@@ -5269,6 +5650,7 @@ private constructor(
                     private var mountPath: JsonField<String>? = null
                     private var type: JsonField<Type>? = null
                     private var cache: JsonField<Cache> = JsonMissing.of()
+                    private var contexthub: JsonField<Contexthub> = JsonMissing.of()
                     private var git: JsonField<Git> = JsonMissing.of()
                     private var readOnly: JsonField<Boolean> = JsonMissing.of()
                     private var s3: JsonField<S3> = JsonMissing.of()
@@ -5282,6 +5664,7 @@ private constructor(
                             mountPath = sandboxapiGcsBucketMountSpec.mountPath
                             type = sandboxapiGcsBucketMountSpec.type
                             cache = sandboxapiGcsBucketMountSpec.cache
+                            contexthub = sandboxapiGcsBucketMountSpec.contexthub
                             git = sandboxapiGcsBucketMountSpec.git
                             readOnly = sandboxapiGcsBucketMountSpec.readOnly
                             s3 = sandboxapiGcsBucketMountSpec.s3
@@ -5345,6 +5728,19 @@ private constructor(
                      * not yet supported value.
                      */
                     fun cache(cache: JsonField<Cache>) = apply { this.cache = cache }
+
+                    fun contexthub(contexthub: Contexthub) = contexthub(JsonField.of(contexthub))
+
+                    /**
+                     * Sets [Builder.contexthub] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.contexthub] with a well-typed [Contexthub]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun contexthub(contexthub: JsonField<Contexthub>) = apply {
+                        this.contexthub = contexthub
+                    }
 
                     fun git(git: Git) = git(JsonField.of(git))
 
@@ -5423,6 +5819,7 @@ private constructor(
                             checkRequired("mountPath", mountPath),
                             checkRequired("type", type),
                             cache,
+                            contexthub,
                             git,
                             readOnly,
                             s3,
@@ -5452,6 +5849,7 @@ private constructor(
                     mountPath()
                     type().validate()
                     cache().ifPresent { it.validate() }
+                    contexthub().ifPresent { it.validate() }
                     git().ifPresent { it.validate() }
                     readOnly()
                     s3().ifPresent { it.validate() }
@@ -5479,6 +5877,7 @@ private constructor(
                         (if (mountPath.asKnown().isPresent) 1 else 0) +
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (cache.asKnown().getOrNull()?.validity() ?: 0) +
+                        (contexthub.asKnown().getOrNull()?.validity() ?: 0) +
                         (git.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (readOnly.asKnown().isPresent) 1 else 0) +
                         (s3.asKnown().getOrNull()?.validity() ?: 0)
@@ -5722,6 +6121,8 @@ private constructor(
 
                         @JvmField val GIT = of("git")
 
+                        @JvmField val CONTEXTHUB = of("contexthub")
+
                         @JvmStatic fun of(value: String) = Type(JsonField.of(value))
                     }
 
@@ -5730,6 +6131,7 @@ private constructor(
                         S3,
                         GCS,
                         GIT,
+                        CONTEXTHUB,
                     }
 
                     /**
@@ -5745,6 +6147,7 @@ private constructor(
                         S3,
                         GCS,
                         GIT,
+                        CONTEXTHUB,
                         /**
                          * An enum member indicating that [Type] was instantiated with an unknown
                          * value.
@@ -5764,6 +6167,7 @@ private constructor(
                             S3 -> Value.S3
                             GCS -> Value.GCS
                             GIT -> Value.GIT
+                            CONTEXTHUB -> Value.CONTEXTHUB
                             else -> Value._UNKNOWN
                         }
 
@@ -5781,6 +6185,7 @@ private constructor(
                             S3 -> Known.S3
                             GCS -> Known.GCS
                             GIT -> Known.GIT
+                            CONTEXTHUB -> Known.CONTEXTHUB
                             else -> throw LangChainInvalidDataException("Unknown Type: $value")
                         }
 
@@ -6056,6 +6461,241 @@ private constructor(
 
                     override fun toString() =
                         "Cache{maxSizeBytes=$maxSizeBytes, writebackSeconds=$writebackSeconds, additionalProperties=$additionalProperties}"
+                }
+
+                class Contexthub
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val repo: JsonField<String>,
+                    private val initialPullOnly: JsonField<Boolean>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("repo")
+                        @ExcludeMissing
+                        repo: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("initial_pull_only")
+                        @ExcludeMissing
+                        initialPullOnly: JsonField<Boolean> = JsonMissing.of(),
+                    ) : this(repo, initialPullOnly, mutableMapOf())
+
+                    /**
+                     * Repo is the Context Hub repository to sync, as "owner/repo" (e.g.
+                     * "-/my-agent", where "-" is the current workspace). The repo's latest commit
+                     * tree is mirrored into the mount path.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun repo(): String = repo.getRequired("repo")
+
+                    /**
+                     * InitialPullOnly syncs the repo once at startup instead of polling for updates
+                     * for the sandbox's lifetime.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun initialPullOnly(): Optional<Boolean> =
+                        initialPullOnly.getOptional("initial_pull_only")
+
+                    /**
+                     * Returns the raw JSON value of [repo].
+                     *
+                     * Unlike [repo], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("repo") @ExcludeMissing fun _repo(): JsonField<String> = repo
+
+                    /**
+                     * Returns the raw JSON value of [initialPullOnly].
+                     *
+                     * Unlike [initialPullOnly], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("initial_pull_only")
+                    @ExcludeMissing
+                    fun _initialPullOnly(): JsonField<Boolean> = initialPullOnly
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Contexthub].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .repo()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Contexthub]. */
+                    class Builder internal constructor() {
+
+                        private var repo: JsonField<String>? = null
+                        private var initialPullOnly: JsonField<Boolean> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(contexthub: Contexthub) = apply {
+                            repo = contexthub.repo
+                            initialPullOnly = contexthub.initialPullOnly
+                            additionalProperties = contexthub.additionalProperties.toMutableMap()
+                        }
+
+                        /**
+                         * Repo is the Context Hub repository to sync, as "owner/repo" (e.g.
+                         * "-/my-agent", where "-" is the current workspace). The repo's latest
+                         * commit tree is mirrored into the mount path.
+                         */
+                        fun repo(repo: String) = repo(JsonField.of(repo))
+
+                        /**
+                         * Sets [Builder.repo] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.repo] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun repo(repo: JsonField<String>) = apply { this.repo = repo }
+
+                        /**
+                         * InitialPullOnly syncs the repo once at startup instead of polling for
+                         * updates for the sandbox's lifetime.
+                         */
+                        fun initialPullOnly(initialPullOnly: Boolean) =
+                            initialPullOnly(JsonField.of(initialPullOnly))
+
+                        /**
+                         * Sets [Builder.initialPullOnly] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.initialPullOnly] with a well-typed
+                         * [Boolean] value instead. This method is primarily for setting the field
+                         * to an undocumented or not yet supported value.
+                         */
+                        fun initialPullOnly(initialPullOnly: JsonField<Boolean>) = apply {
+                            this.initialPullOnly = initialPullOnly
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Contexthub].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .repo()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Contexthub =
+                            Contexthub(
+                                checkRequired("repo", repo),
+                                initialPullOnly,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Contexthub = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        repo()
+                        initialPullOnly()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (repo.asKnown().isPresent) 1 else 0) +
+                            (if (initialPullOnly.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Contexthub &&
+                            repo == other.repo &&
+                            initialPullOnly == other.initialPullOnly &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(repo, initialPullOnly, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Contexthub{repo=$repo, initialPullOnly=$initialPullOnly, additionalProperties=$additionalProperties}"
                 }
 
                 class Git
@@ -7034,6 +7674,7 @@ private constructor(
                         mountPath == other.mountPath &&
                         type == other.type &&
                         cache == other.cache &&
+                        contexthub == other.contexthub &&
                         git == other.git &&
                         readOnly == other.readOnly &&
                         s3 == other.s3 &&
@@ -7047,6 +7688,7 @@ private constructor(
                         mountPath,
                         type,
                         cache,
+                        contexthub,
                         git,
                         readOnly,
                         s3,
@@ -7057,7 +7699,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "SandboxapiGcsBucketMountSpec{id=$id, gcs=$gcs, mountPath=$mountPath, type=$type, cache=$cache, git=$git, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
+                    "SandboxapiGcsBucketMountSpec{id=$id, gcs=$gcs, mountPath=$mountPath, type=$type, cache=$cache, contexthub=$contexthub, git=$git, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
             }
 
             class SandboxapiGitRepoMountSpec
@@ -7068,6 +7710,7 @@ private constructor(
                 private val mountPath: JsonField<String>,
                 private val type: JsonField<Type>,
                 private val cache: JsonField<Cache>,
+                private val contexthub: JsonField<Contexthub>,
                 private val gcs: JsonField<Gcs>,
                 private val readOnly: JsonField<Boolean>,
                 private val s3: JsonField<S3>,
@@ -7085,12 +7728,26 @@ private constructor(
                     @JsonProperty("cache")
                     @ExcludeMissing
                     cache: JsonField<Cache> = JsonMissing.of(),
+                    @JsonProperty("contexthub")
+                    @ExcludeMissing
+                    contexthub: JsonField<Contexthub> = JsonMissing.of(),
                     @JsonProperty("gcs") @ExcludeMissing gcs: JsonField<Gcs> = JsonMissing.of(),
                     @JsonProperty("read_only")
                     @ExcludeMissing
                     readOnly: JsonField<Boolean> = JsonMissing.of(),
                     @JsonProperty("s3") @ExcludeMissing s3: JsonField<S3> = JsonMissing.of(),
-                ) : this(id, git, mountPath, type, cache, gcs, readOnly, s3, mutableMapOf())
+                ) : this(
+                    id,
+                    git,
+                    mountPath,
+                    type,
+                    cache,
+                    contexthub,
+                    gcs,
+                    readOnly,
+                    s3,
+                    mutableMapOf(),
+                )
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
@@ -7125,6 +7782,12 @@ private constructor(
                  *   (e.g. if the server responded with an unexpected value).
                  */
                 fun cache(): Optional<Cache> = cache.getOptional("cache")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun contexthub(): Optional<Contexthub> = contexthub.getOptional("contexthub")
 
                 /**
                  * @throws LangChainInvalidDataException if the JSON field has an unexpected type
@@ -7183,6 +7846,16 @@ private constructor(
                  * type.
                  */
                 @JsonProperty("cache") @ExcludeMissing fun _cache(): JsonField<Cache> = cache
+
+                /**
+                 * Returns the raw JSON value of [contexthub].
+                 *
+                 * Unlike [contexthub], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("contexthub")
+                @ExcludeMissing
+                fun _contexthub(): JsonField<Contexthub> = contexthub
 
                 /**
                  * Returns the raw JSON value of [gcs].
@@ -7245,6 +7918,7 @@ private constructor(
                     private var mountPath: JsonField<String>? = null
                     private var type: JsonField<Type>? = null
                     private var cache: JsonField<Cache> = JsonMissing.of()
+                    private var contexthub: JsonField<Contexthub> = JsonMissing.of()
                     private var gcs: JsonField<Gcs> = JsonMissing.of()
                     private var readOnly: JsonField<Boolean> = JsonMissing.of()
                     private var s3: JsonField<S3> = JsonMissing.of()
@@ -7258,6 +7932,7 @@ private constructor(
                             mountPath = sandboxapiGitRepoMountSpec.mountPath
                             type = sandboxapiGitRepoMountSpec.type
                             cache = sandboxapiGitRepoMountSpec.cache
+                            contexthub = sandboxapiGitRepoMountSpec.contexthub
                             gcs = sandboxapiGitRepoMountSpec.gcs
                             readOnly = sandboxapiGitRepoMountSpec.readOnly
                             s3 = sandboxapiGitRepoMountSpec.s3
@@ -7321,6 +7996,19 @@ private constructor(
                      * not yet supported value.
                      */
                     fun cache(cache: JsonField<Cache>) = apply { this.cache = cache }
+
+                    fun contexthub(contexthub: Contexthub) = contexthub(JsonField.of(contexthub))
+
+                    /**
+                     * Sets [Builder.contexthub] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.contexthub] with a well-typed [Contexthub]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun contexthub(contexthub: JsonField<Contexthub>) = apply {
+                        this.contexthub = contexthub
+                    }
 
                     fun gcs(gcs: Gcs) = gcs(JsonField.of(gcs))
 
@@ -7399,6 +8087,7 @@ private constructor(
                             checkRequired("mountPath", mountPath),
                             checkRequired("type", type),
                             cache,
+                            contexthub,
                             gcs,
                             readOnly,
                             s3,
@@ -7428,6 +8117,7 @@ private constructor(
                     mountPath()
                     type().validate()
                     cache().ifPresent { it.validate() }
+                    contexthub().ifPresent { it.validate() }
                     gcs().ifPresent { it.validate() }
                     readOnly()
                     s3().ifPresent { it.validate() }
@@ -7455,6 +8145,7 @@ private constructor(
                         (if (mountPath.asKnown().isPresent) 1 else 0) +
                         (type.asKnown().getOrNull()?.validity() ?: 0) +
                         (cache.asKnown().getOrNull()?.validity() ?: 0) +
+                        (contexthub.asKnown().getOrNull()?.validity() ?: 0) +
                         (gcs.asKnown().getOrNull()?.validity() ?: 0) +
                         (if (readOnly.asKnown().isPresent) 1 else 0) +
                         (s3.asKnown().getOrNull()?.validity() ?: 0)
@@ -8103,6 +8794,8 @@ private constructor(
 
                         @JvmField val GIT = of("git")
 
+                        @JvmField val CONTEXTHUB = of("contexthub")
+
                         @JvmStatic fun of(value: String) = Type(JsonField.of(value))
                     }
 
@@ -8111,6 +8804,7 @@ private constructor(
                         S3,
                         GCS,
                         GIT,
+                        CONTEXTHUB,
                     }
 
                     /**
@@ -8126,6 +8820,7 @@ private constructor(
                         S3,
                         GCS,
                         GIT,
+                        CONTEXTHUB,
                         /**
                          * An enum member indicating that [Type] was instantiated with an unknown
                          * value.
@@ -8145,6 +8840,7 @@ private constructor(
                             S3 -> Value.S3
                             GCS -> Value.GCS
                             GIT -> Value.GIT
+                            CONTEXTHUB -> Value.CONTEXTHUB
                             else -> Value._UNKNOWN
                         }
 
@@ -8162,6 +8858,7 @@ private constructor(
                             S3 -> Known.S3
                             GCS -> Known.GCS
                             GIT -> Known.GIT
+                            CONTEXTHUB -> Known.CONTEXTHUB
                             else -> throw LangChainInvalidDataException("Unknown Type: $value")
                         }
 
@@ -8437,6 +9134,241 @@ private constructor(
 
                     override fun toString() =
                         "Cache{maxSizeBytes=$maxSizeBytes, writebackSeconds=$writebackSeconds, additionalProperties=$additionalProperties}"
+                }
+
+                class Contexthub
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val repo: JsonField<String>,
+                    private val initialPullOnly: JsonField<Boolean>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("repo")
+                        @ExcludeMissing
+                        repo: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("initial_pull_only")
+                        @ExcludeMissing
+                        initialPullOnly: JsonField<Boolean> = JsonMissing.of(),
+                    ) : this(repo, initialPullOnly, mutableMapOf())
+
+                    /**
+                     * Repo is the Context Hub repository to sync, as "owner/repo" (e.g.
+                     * "-/my-agent", where "-" is the current workspace). The repo's latest commit
+                     * tree is mirrored into the mount path.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun repo(): String = repo.getRequired("repo")
+
+                    /**
+                     * InitialPullOnly syncs the repo once at startup instead of polling for updates
+                     * for the sandbox's lifetime.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun initialPullOnly(): Optional<Boolean> =
+                        initialPullOnly.getOptional("initial_pull_only")
+
+                    /**
+                     * Returns the raw JSON value of [repo].
+                     *
+                     * Unlike [repo], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("repo") @ExcludeMissing fun _repo(): JsonField<String> = repo
+
+                    /**
+                     * Returns the raw JSON value of [initialPullOnly].
+                     *
+                     * Unlike [initialPullOnly], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("initial_pull_only")
+                    @ExcludeMissing
+                    fun _initialPullOnly(): JsonField<Boolean> = initialPullOnly
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Contexthub].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .repo()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Contexthub]. */
+                    class Builder internal constructor() {
+
+                        private var repo: JsonField<String>? = null
+                        private var initialPullOnly: JsonField<Boolean> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(contexthub: Contexthub) = apply {
+                            repo = contexthub.repo
+                            initialPullOnly = contexthub.initialPullOnly
+                            additionalProperties = contexthub.additionalProperties.toMutableMap()
+                        }
+
+                        /**
+                         * Repo is the Context Hub repository to sync, as "owner/repo" (e.g.
+                         * "-/my-agent", where "-" is the current workspace). The repo's latest
+                         * commit tree is mirrored into the mount path.
+                         */
+                        fun repo(repo: String) = repo(JsonField.of(repo))
+
+                        /**
+                         * Sets [Builder.repo] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.repo] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun repo(repo: JsonField<String>) = apply { this.repo = repo }
+
+                        /**
+                         * InitialPullOnly syncs the repo once at startup instead of polling for
+                         * updates for the sandbox's lifetime.
+                         */
+                        fun initialPullOnly(initialPullOnly: Boolean) =
+                            initialPullOnly(JsonField.of(initialPullOnly))
+
+                        /**
+                         * Sets [Builder.initialPullOnly] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.initialPullOnly] with a well-typed
+                         * [Boolean] value instead. This method is primarily for setting the field
+                         * to an undocumented or not yet supported value.
+                         */
+                        fun initialPullOnly(initialPullOnly: JsonField<Boolean>) = apply {
+                            this.initialPullOnly = initialPullOnly
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Contexthub].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .repo()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Contexthub =
+                            Contexthub(
+                                checkRequired("repo", repo),
+                                initialPullOnly,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Contexthub = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        repo()
+                        initialPullOnly()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (repo.asKnown().isPresent) 1 else 0) +
+                            (if (initialPullOnly.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Contexthub &&
+                            repo == other.repo &&
+                            initialPullOnly == other.initialPullOnly &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(repo, initialPullOnly, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Contexthub{repo=$repo, initialPullOnly=$initialPullOnly, additionalProperties=$additionalProperties}"
                 }
 
                 class Gcs
@@ -9010,6 +9942,7 @@ private constructor(
                         mountPath == other.mountPath &&
                         type == other.type &&
                         cache == other.cache &&
+                        contexthub == other.contexthub &&
                         gcs == other.gcs &&
                         readOnly == other.readOnly &&
                         s3 == other.s3 &&
@@ -9023,6 +9956,7 @@ private constructor(
                         mountPath,
                         type,
                         cache,
+                        contexthub,
                         gcs,
                         readOnly,
                         s3,
@@ -9033,7 +9967,2276 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "SandboxapiGitRepoMountSpec{id=$id, git=$git, mountPath=$mountPath, type=$type, cache=$cache, gcs=$gcs, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
+                    "SandboxapiGitRepoMountSpec{id=$id, git=$git, mountPath=$mountPath, type=$type, cache=$cache, contexthub=$contexthub, gcs=$gcs, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
+            }
+
+            class SandboxapiContextHubRepoMountSpec
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val id: JsonField<String>,
+                private val contexthub: JsonField<Contexthub>,
+                private val mountPath: JsonField<String>,
+                private val type: JsonField<Type>,
+                private val cache: JsonField<Cache>,
+                private val gcs: JsonField<Gcs>,
+                private val git: JsonField<Git>,
+                private val readOnly: JsonField<Boolean>,
+                private val s3: JsonField<S3>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("contexthub")
+                    @ExcludeMissing
+                    contexthub: JsonField<Contexthub> = JsonMissing.of(),
+                    @JsonProperty("mount_path")
+                    @ExcludeMissing
+                    mountPath: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
+                    @JsonProperty("cache")
+                    @ExcludeMissing
+                    cache: JsonField<Cache> = JsonMissing.of(),
+                    @JsonProperty("gcs") @ExcludeMissing gcs: JsonField<Gcs> = JsonMissing.of(),
+                    @JsonProperty("git") @ExcludeMissing git: JsonField<Git> = JsonMissing.of(),
+                    @JsonProperty("read_only")
+                    @ExcludeMissing
+                    readOnly: JsonField<Boolean> = JsonMissing.of(),
+                    @JsonProperty("s3") @ExcludeMissing s3: JsonField<S3> = JsonMissing.of(),
+                ) : this(
+                    id,
+                    contexthub,
+                    mountPath,
+                    type,
+                    cache,
+                    gcs,
+                    git,
+                    readOnly,
+                    s3,
+                    mutableMapOf(),
+                )
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun id(): String = id.getRequired("id")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun contexthub(): Contexthub = contexthub.getRequired("contexthub")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun mountPath(): String = mountPath.getRequired("mount_path")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun type(): Type = type.getRequired("type")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun cache(): Optional<Cache> = cache.getOptional("cache")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun gcs(): Optional<Gcs> = gcs.getOptional("gcs")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun git(): Optional<Git> = git.getOptional("git")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun readOnly(): Optional<Boolean> = readOnly.getOptional("read_only")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun s3(): Optional<S3> = s3.getOptional("s3")
+
+                /**
+                 * Returns the raw JSON value of [id].
+                 *
+                 * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
+                 */
+                @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+                /**
+                 * Returns the raw JSON value of [contexthub].
+                 *
+                 * Unlike [contexthub], this method doesn't throw if the JSON field has an
+                 * unexpected type.
+                 */
+                @JsonProperty("contexthub")
+                @ExcludeMissing
+                fun _contexthub(): JsonField<Contexthub> = contexthub
+
+                /**
+                 * Returns the raw JSON value of [mountPath].
+                 *
+                 * Unlike [mountPath], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("mount_path")
+                @ExcludeMissing
+                fun _mountPath(): JsonField<String> = mountPath
+
+                /**
+                 * Returns the raw JSON value of [type].
+                 *
+                 * Unlike [type], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                /**
+                 * Returns the raw JSON value of [cache].
+                 *
+                 * Unlike [cache], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("cache") @ExcludeMissing fun _cache(): JsonField<Cache> = cache
+
+                /**
+                 * Returns the raw JSON value of [gcs].
+                 *
+                 * Unlike [gcs], this method doesn't throw if the JSON field has an unexpected type.
+                 */
+                @JsonProperty("gcs") @ExcludeMissing fun _gcs(): JsonField<Gcs> = gcs
+
+                /**
+                 * Returns the raw JSON value of [git].
+                 *
+                 * Unlike [git], this method doesn't throw if the JSON field has an unexpected type.
+                 */
+                @JsonProperty("git") @ExcludeMissing fun _git(): JsonField<Git> = git
+
+                /**
+                 * Returns the raw JSON value of [readOnly].
+                 *
+                 * Unlike [readOnly], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("read_only")
+                @ExcludeMissing
+                fun _readOnly(): JsonField<Boolean> = readOnly
+
+                /**
+                 * Returns the raw JSON value of [s3].
+                 *
+                 * Unlike [s3], this method doesn't throw if the JSON field has an unexpected type.
+                 */
+                @JsonProperty("s3") @ExcludeMissing fun _s3(): JsonField<S3> = s3
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /**
+                     * Returns a mutable builder for constructing an instance of
+                     * [SandboxapiContextHubRepoMountSpec].
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .id()
+                     * .contexthub()
+                     * .mountPath()
+                     * .type()
+                     * ```
+                     */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [SandboxapiContextHubRepoMountSpec]. */
+                class Builder internal constructor() {
+
+                    private var id: JsonField<String>? = null
+                    private var contexthub: JsonField<Contexthub>? = null
+                    private var mountPath: JsonField<String>? = null
+                    private var type: JsonField<Type>? = null
+                    private var cache: JsonField<Cache> = JsonMissing.of()
+                    private var gcs: JsonField<Gcs> = JsonMissing.of()
+                    private var git: JsonField<Git> = JsonMissing.of()
+                    private var readOnly: JsonField<Boolean> = JsonMissing.of()
+                    private var s3: JsonField<S3> = JsonMissing.of()
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(
+                        sandboxapiContextHubRepoMountSpec: SandboxapiContextHubRepoMountSpec
+                    ) = apply {
+                        id = sandboxapiContextHubRepoMountSpec.id
+                        contexthub = sandboxapiContextHubRepoMountSpec.contexthub
+                        mountPath = sandboxapiContextHubRepoMountSpec.mountPath
+                        type = sandboxapiContextHubRepoMountSpec.type
+                        cache = sandboxapiContextHubRepoMountSpec.cache
+                        gcs = sandboxapiContextHubRepoMountSpec.gcs
+                        git = sandboxapiContextHubRepoMountSpec.git
+                        readOnly = sandboxapiContextHubRepoMountSpec.readOnly
+                        s3 = sandboxapiContextHubRepoMountSpec.s3
+                        additionalProperties =
+                            sandboxapiContextHubRepoMountSpec.additionalProperties.toMutableMap()
+                    }
+
+                    fun id(id: String) = id(JsonField.of(id))
+
+                    /**
+                     * Sets [Builder.id] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.id] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun id(id: JsonField<String>) = apply { this.id = id }
+
+                    fun contexthub(contexthub: Contexthub) = contexthub(JsonField.of(contexthub))
+
+                    /**
+                     * Sets [Builder.contexthub] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.contexthub] with a well-typed [Contexthub]
+                     * value instead. This method is primarily for setting the field to an
+                     * undocumented or not yet supported value.
+                     */
+                    fun contexthub(contexthub: JsonField<Contexthub>) = apply {
+                        this.contexthub = contexthub
+                    }
+
+                    fun mountPath(mountPath: String) = mountPath(JsonField.of(mountPath))
+
+                    /**
+                     * Sets [Builder.mountPath] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.mountPath] with a well-typed [String] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun mountPath(mountPath: JsonField<String>) = apply {
+                        this.mountPath = mountPath
+                    }
+
+                    fun type(type: Type) = type(JsonField.of(type))
+
+                    /**
+                     * Sets [Builder.type] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.type] with a well-typed [Type] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                    fun cache(cache: Cache) = cache(JsonField.of(cache))
+
+                    /**
+                     * Sets [Builder.cache] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.cache] with a well-typed [Cache] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun cache(cache: JsonField<Cache>) = apply { this.cache = cache }
+
+                    fun gcs(gcs: Gcs) = gcs(JsonField.of(gcs))
+
+                    /**
+                     * Sets [Builder.gcs] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.gcs] with a well-typed [Gcs] value instead.
+                     * This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
+                     */
+                    fun gcs(gcs: JsonField<Gcs>) = apply { this.gcs = gcs }
+
+                    fun git(git: Git) = git(JsonField.of(git))
+
+                    /**
+                     * Sets [Builder.git] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.git] with a well-typed [Git] value instead.
+                     * This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
+                     */
+                    fun git(git: JsonField<Git>) = apply { this.git = git }
+
+                    fun readOnly(readOnly: Boolean) = readOnly(JsonField.of(readOnly))
+
+                    /**
+                     * Sets [Builder.readOnly] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.readOnly] with a well-typed [Boolean] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun readOnly(readOnly: JsonField<Boolean>) = apply { this.readOnly = readOnly }
+
+                    fun s3(s3: S3) = s3(JsonField.of(s3))
+
+                    /**
+                     * Sets [Builder.s3] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.s3] with a well-typed [S3] value instead.
+                     * This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
+                     */
+                    fun s3(s3: JsonField<S3>) = apply { this.s3 = s3 }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [SandboxapiContextHubRepoMountSpec].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .id()
+                     * .contexthub()
+                     * .mountPath()
+                     * .type()
+                     * ```
+                     *
+                     * @throws IllegalStateException if any required field is unset.
+                     */
+                    fun build(): SandboxapiContextHubRepoMountSpec =
+                        SandboxapiContextHubRepoMountSpec(
+                            checkRequired("id", id),
+                            checkRequired("contexthub", contexthub),
+                            checkRequired("mountPath", mountPath),
+                            checkRequired("type", type),
+                            cache,
+                            gcs,
+                            git,
+                            readOnly,
+                            s3,
+                            additionalProperties.toMutableMap(),
+                        )
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): SandboxapiContextHubRepoMountSpec = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    id()
+                    contexthub().validate()
+                    mountPath()
+                    type().validate()
+                    cache().ifPresent { it.validate() }
+                    gcs().ifPresent { it.validate() }
+                    git().ifPresent { it.validate() }
+                    readOnly()
+                    s3().ifPresent { it.validate() }
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (if (id.asKnown().isPresent) 1 else 0) +
+                        (contexthub.asKnown().getOrNull()?.validity() ?: 0) +
+                        (if (mountPath.asKnown().isPresent) 1 else 0) +
+                        (type.asKnown().getOrNull()?.validity() ?: 0) +
+                        (cache.asKnown().getOrNull()?.validity() ?: 0) +
+                        (gcs.asKnown().getOrNull()?.validity() ?: 0) +
+                        (git.asKnown().getOrNull()?.validity() ?: 0) +
+                        (if (readOnly.asKnown().isPresent) 1 else 0) +
+                        (s3.asKnown().getOrNull()?.validity() ?: 0)
+
+                class Contexthub
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val repo: JsonField<String>,
+                    private val initialPullOnly: JsonField<Boolean>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("repo")
+                        @ExcludeMissing
+                        repo: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("initial_pull_only")
+                        @ExcludeMissing
+                        initialPullOnly: JsonField<Boolean> = JsonMissing.of(),
+                    ) : this(repo, initialPullOnly, mutableMapOf())
+
+                    /**
+                     * Repo is the Context Hub repository to sync, as "owner/repo" (e.g.
+                     * "-/my-agent", where "-" is the current workspace). The repo's latest commit
+                     * tree is mirrored into the mount path.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun repo(): String = repo.getRequired("repo")
+
+                    /**
+                     * InitialPullOnly syncs the repo once at startup instead of polling for updates
+                     * for the sandbox's lifetime.
+                     *
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun initialPullOnly(): Optional<Boolean> =
+                        initialPullOnly.getOptional("initial_pull_only")
+
+                    /**
+                     * Returns the raw JSON value of [repo].
+                     *
+                     * Unlike [repo], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("repo") @ExcludeMissing fun _repo(): JsonField<String> = repo
+
+                    /**
+                     * Returns the raw JSON value of [initialPullOnly].
+                     *
+                     * Unlike [initialPullOnly], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("initial_pull_only")
+                    @ExcludeMissing
+                    fun _initialPullOnly(): JsonField<Boolean> = initialPullOnly
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Contexthub].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .repo()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Contexthub]. */
+                    class Builder internal constructor() {
+
+                        private var repo: JsonField<String>? = null
+                        private var initialPullOnly: JsonField<Boolean> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(contexthub: Contexthub) = apply {
+                            repo = contexthub.repo
+                            initialPullOnly = contexthub.initialPullOnly
+                            additionalProperties = contexthub.additionalProperties.toMutableMap()
+                        }
+
+                        /**
+                         * Repo is the Context Hub repository to sync, as "owner/repo" (e.g.
+                         * "-/my-agent", where "-" is the current workspace). The repo's latest
+                         * commit tree is mirrored into the mount path.
+                         */
+                        fun repo(repo: String) = repo(JsonField.of(repo))
+
+                        /**
+                         * Sets [Builder.repo] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.repo] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun repo(repo: JsonField<String>) = apply { this.repo = repo }
+
+                        /**
+                         * InitialPullOnly syncs the repo once at startup instead of polling for
+                         * updates for the sandbox's lifetime.
+                         */
+                        fun initialPullOnly(initialPullOnly: Boolean) =
+                            initialPullOnly(JsonField.of(initialPullOnly))
+
+                        /**
+                         * Sets [Builder.initialPullOnly] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.initialPullOnly] with a well-typed
+                         * [Boolean] value instead. This method is primarily for setting the field
+                         * to an undocumented or not yet supported value.
+                         */
+                        fun initialPullOnly(initialPullOnly: JsonField<Boolean>) = apply {
+                            this.initialPullOnly = initialPullOnly
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Contexthub].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .repo()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Contexthub =
+                            Contexthub(
+                                checkRequired("repo", repo),
+                                initialPullOnly,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Contexthub = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        repo()
+                        initialPullOnly()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (repo.asKnown().isPresent) 1 else 0) +
+                            (if (initialPullOnly.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Contexthub &&
+                            repo == other.repo &&
+                            initialPullOnly == other.initialPullOnly &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(repo, initialPullOnly, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Contexthub{repo=$repo, initialPullOnly=$initialPullOnly, additionalProperties=$additionalProperties}"
+                }
+
+                class Type @JsonCreator private constructor(private val value: JsonField<String>) :
+                    Enum {
+
+                    /**
+                     * Returns this class instance's raw value.
+                     *
+                     * This is usually only useful if this instance was deserialized from data that
+                     * doesn't match any known member, and you want to know that value. For example,
+                     * if the SDK is on an older version than the API, then the API may respond with
+                     * new members that the SDK is unaware of.
+                     */
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    fun _value(): JsonField<String> = value
+
+                    companion object {
+
+                        @JvmField val S3 = of("s3")
+
+                        @JvmField val GCS = of("gcs")
+
+                        @JvmField val GIT = of("git")
+
+                        @JvmField val CONTEXTHUB = of("contexthub")
+
+                        @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                    }
+
+                    /** An enum containing [Type]'s known values. */
+                    enum class Known {
+                        S3,
+                        GCS,
+                        GIT,
+                        CONTEXTHUB,
+                    }
+
+                    /**
+                     * An enum containing [Type]'s known values, as well as an [_UNKNOWN] member.
+                     *
+                     * An instance of [Type] can contain an unknown value in a couple of cases:
+                     * - It was deserialized from data that doesn't match any known member. For
+                     *   example, if the SDK is on an older version than the API, then the API may
+                     *   respond with new members that the SDK is unaware of.
+                     * - It was constructed with an arbitrary value using the [of] method.
+                     */
+                    enum class Value {
+                        S3,
+                        GCS,
+                        GIT,
+                        CONTEXTHUB,
+                        /**
+                         * An enum member indicating that [Type] was instantiated with an unknown
+                         * value.
+                         */
+                        _UNKNOWN,
+                    }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value, or
+                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     *
+                     * Use the [known] method instead if you're certain the value is always known or
+                     * if you want to throw for the unknown case.
+                     */
+                    fun value(): Value =
+                        when (this) {
+                            S3 -> Value.S3
+                            GCS -> Value.GCS
+                            GIT -> Value.GIT
+                            CONTEXTHUB -> Value.CONTEXTHUB
+                            else -> Value._UNKNOWN
+                        }
+
+                    /**
+                     * Returns an enum member corresponding to this class instance's value.
+                     *
+                     * Use the [value] method instead if you're uncertain the value is always known
+                     * and don't want to throw for the unknown case.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value is a not
+                     *   a known member.
+                     */
+                    fun known(): Known =
+                        when (this) {
+                            S3 -> Known.S3
+                            GCS -> Known.GCS
+                            GIT -> Known.GIT
+                            CONTEXTHUB -> Known.CONTEXTHUB
+                            else -> throw LangChainInvalidDataException("Unknown Type: $value")
+                        }
+
+                    /**
+                     * Returns this class instance's primitive wire representation.
+                     *
+                     * This differs from the [toString] method because that method is primarily for
+                     * debugging and generally doesn't throw.
+                     *
+                     * @throws LangChainInvalidDataException if this class instance's value does not
+                     *   have the expected primitive type.
+                     */
+                    fun asString(): String =
+                        _value().asString().orElseThrow {
+                            LangChainInvalidDataException("Value is not a String")
+                        }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Type = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        known()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Type && value == other.value
+                    }
+
+                    override fun hashCode() = value.hashCode()
+
+                    override fun toString() = value.toString()
+                }
+
+                class Cache
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val maxSizeBytes: JsonField<Long>,
+                    private val writebackSeconds: JsonField<Long>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("max_size_bytes")
+                        @ExcludeMissing
+                        maxSizeBytes: JsonField<Long> = JsonMissing.of(),
+                        @JsonProperty("writeback_seconds")
+                        @ExcludeMissing
+                        writebackSeconds: JsonField<Long> = JsonMissing.of(),
+                    ) : this(maxSizeBytes, writebackSeconds, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun maxSizeBytes(): Optional<Long> = maxSizeBytes.getOptional("max_size_bytes")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun writebackSeconds(): Optional<Long> =
+                        writebackSeconds.getOptional("writeback_seconds")
+
+                    /**
+                     * Returns the raw JSON value of [maxSizeBytes].
+                     *
+                     * Unlike [maxSizeBytes], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("max_size_bytes")
+                    @ExcludeMissing
+                    fun _maxSizeBytes(): JsonField<Long> = maxSizeBytes
+
+                    /**
+                     * Returns the raw JSON value of [writebackSeconds].
+                     *
+                     * Unlike [writebackSeconds], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("writeback_seconds")
+                    @ExcludeMissing
+                    fun _writebackSeconds(): JsonField<Long> = writebackSeconds
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /** Returns a mutable builder for constructing an instance of [Cache]. */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Cache]. */
+                    class Builder internal constructor() {
+
+                        private var maxSizeBytes: JsonField<Long> = JsonMissing.of()
+                        private var writebackSeconds: JsonField<Long> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(cache: Cache) = apply {
+                            maxSizeBytes = cache.maxSizeBytes
+                            writebackSeconds = cache.writebackSeconds
+                            additionalProperties = cache.additionalProperties.toMutableMap()
+                        }
+
+                        fun maxSizeBytes(maxSizeBytes: Long) =
+                            maxSizeBytes(JsonField.of(maxSizeBytes))
+
+                        /**
+                         * Sets [Builder.maxSizeBytes] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.maxSizeBytes] with a well-typed [Long]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun maxSizeBytes(maxSizeBytes: JsonField<Long>) = apply {
+                            this.maxSizeBytes = maxSizeBytes
+                        }
+
+                        fun writebackSeconds(writebackSeconds: Long) =
+                            writebackSeconds(JsonField.of(writebackSeconds))
+
+                        /**
+                         * Sets [Builder.writebackSeconds] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.writebackSeconds] with a well-typed
+                         * [Long] value instead. This method is primarily for setting the field to
+                         * an undocumented or not yet supported value.
+                         */
+                        fun writebackSeconds(writebackSeconds: JsonField<Long>) = apply {
+                            this.writebackSeconds = writebackSeconds
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Cache].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): Cache =
+                            Cache(
+                                maxSizeBytes,
+                                writebackSeconds,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Cache = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        maxSizeBytes()
+                        writebackSeconds()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (maxSizeBytes.asKnown().isPresent) 1 else 0) +
+                            (if (writebackSeconds.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Cache &&
+                            maxSizeBytes == other.maxSizeBytes &&
+                            writebackSeconds == other.writebackSeconds &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(maxSizeBytes, writebackSeconds, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Cache{maxSizeBytes=$maxSizeBytes, writebackSeconds=$writebackSeconds, additionalProperties=$additionalProperties}"
+                }
+
+                class Gcs
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val bucket: JsonField<String>,
+                    private val prefix: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("bucket")
+                        @ExcludeMissing
+                        bucket: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("prefix")
+                        @ExcludeMissing
+                        prefix: JsonField<String> = JsonMissing.of(),
+                    ) : this(bucket, prefix, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun bucket(): String = bucket.getRequired("bucket")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun prefix(): Optional<String> = prefix.getOptional("prefix")
+
+                    /**
+                     * Returns the raw JSON value of [bucket].
+                     *
+                     * Unlike [bucket], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("bucket")
+                    @ExcludeMissing
+                    fun _bucket(): JsonField<String> = bucket
+
+                    /**
+                     * Returns the raw JSON value of [prefix].
+                     *
+                     * Unlike [prefix], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("prefix")
+                    @ExcludeMissing
+                    fun _prefix(): JsonField<String> = prefix
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Gcs].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .bucket()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Gcs]. */
+                    class Builder internal constructor() {
+
+                        private var bucket: JsonField<String>? = null
+                        private var prefix: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(gcs: Gcs) = apply {
+                            bucket = gcs.bucket
+                            prefix = gcs.prefix
+                            additionalProperties = gcs.additionalProperties.toMutableMap()
+                        }
+
+                        fun bucket(bucket: String) = bucket(JsonField.of(bucket))
+
+                        /**
+                         * Sets [Builder.bucket] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.bucket] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun bucket(bucket: JsonField<String>) = apply { this.bucket = bucket }
+
+                        fun prefix(prefix: String) = prefix(JsonField.of(prefix))
+
+                        /**
+                         * Sets [Builder.prefix] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.prefix] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun prefix(prefix: JsonField<String>) = apply { this.prefix = prefix }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Gcs].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .bucket()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Gcs =
+                            Gcs(
+                                checkRequired("bucket", bucket),
+                                prefix,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Gcs = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        bucket()
+                        prefix()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (bucket.asKnown().isPresent) 1 else 0) +
+                            (if (prefix.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Gcs &&
+                            bucket == other.bucket &&
+                            prefix == other.prefix &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(bucket, prefix, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Gcs{bucket=$bucket, prefix=$prefix, additionalProperties=$additionalProperties}"
+                }
+
+                class Git
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val remoteUrl: JsonField<String>,
+                    private val ref: JsonField<Ref>,
+                    private val refreshIntervalSeconds: JsonField<Long>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("remote_url")
+                        @ExcludeMissing
+                        remoteUrl: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("ref") @ExcludeMissing ref: JsonField<Ref> = JsonMissing.of(),
+                        @JsonProperty("refresh_interval_seconds")
+                        @ExcludeMissing
+                        refreshIntervalSeconds: JsonField<Long> = JsonMissing.of(),
+                    ) : this(remoteUrl, ref, refreshIntervalSeconds, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun remoteUrl(): String = remoteUrl.getRequired("remote_url")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun ref(): Optional<Ref> = ref.getOptional("ref")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun refreshIntervalSeconds(): Optional<Long> =
+                        refreshIntervalSeconds.getOptional("refresh_interval_seconds")
+
+                    /**
+                     * Returns the raw JSON value of [remoteUrl].
+                     *
+                     * Unlike [remoteUrl], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("remote_url")
+                    @ExcludeMissing
+                    fun _remoteUrl(): JsonField<String> = remoteUrl
+
+                    /**
+                     * Returns the raw JSON value of [ref].
+                     *
+                     * Unlike [ref], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("ref") @ExcludeMissing fun _ref(): JsonField<Ref> = ref
+
+                    /**
+                     * Returns the raw JSON value of [refreshIntervalSeconds].
+                     *
+                     * Unlike [refreshIntervalSeconds], this method doesn't throw if the JSON field
+                     * has an unexpected type.
+                     */
+                    @JsonProperty("refresh_interval_seconds")
+                    @ExcludeMissing
+                    fun _refreshIntervalSeconds(): JsonField<Long> = refreshIntervalSeconds
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Git].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .remoteUrl()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Git]. */
+                    class Builder internal constructor() {
+
+                        private var remoteUrl: JsonField<String>? = null
+                        private var ref: JsonField<Ref> = JsonMissing.of()
+                        private var refreshIntervalSeconds: JsonField<Long> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(git: Git) = apply {
+                            remoteUrl = git.remoteUrl
+                            ref = git.ref
+                            refreshIntervalSeconds = git.refreshIntervalSeconds
+                            additionalProperties = git.additionalProperties.toMutableMap()
+                        }
+
+                        fun remoteUrl(remoteUrl: String) = remoteUrl(JsonField.of(remoteUrl))
+
+                        /**
+                         * Sets [Builder.remoteUrl] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.remoteUrl] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun remoteUrl(remoteUrl: JsonField<String>) = apply {
+                            this.remoteUrl = remoteUrl
+                        }
+
+                        fun ref(ref: Ref) = ref(JsonField.of(ref))
+
+                        /**
+                         * Sets [Builder.ref] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.ref] with a well-typed [Ref] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun ref(ref: JsonField<Ref>) = apply { this.ref = ref }
+
+                        fun refreshIntervalSeconds(refreshIntervalSeconds: Long) =
+                            refreshIntervalSeconds(JsonField.of(refreshIntervalSeconds))
+
+                        /**
+                         * Sets [Builder.refreshIntervalSeconds] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.refreshIntervalSeconds] with a
+                         * well-typed [Long] value instead. This method is primarily for setting the
+                         * field to an undocumented or not yet supported value.
+                         */
+                        fun refreshIntervalSeconds(refreshIntervalSeconds: JsonField<Long>) =
+                            apply {
+                                this.refreshIntervalSeconds = refreshIntervalSeconds
+                            }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Git].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .remoteUrl()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Git =
+                            Git(
+                                checkRequired("remoteUrl", remoteUrl),
+                                ref,
+                                refreshIntervalSeconds,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Git = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        remoteUrl()
+                        ref().ifPresent { it.validate() }
+                        refreshIntervalSeconds()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (remoteUrl.asKnown().isPresent) 1 else 0) +
+                            (ref.asKnown().getOrNull()?.validity() ?: 0) +
+                            (if (refreshIntervalSeconds.asKnown().isPresent) 1 else 0)
+
+                    class Ref
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val name: JsonField<String>,
+                        private val type: JsonField<Type>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("name")
+                            @ExcludeMissing
+                            name: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("type")
+                            @ExcludeMissing
+                            type: JsonField<Type> = JsonMissing.of(),
+                        ) : this(name, type, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun name(): String = name.getRequired("name")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun type(): Type = type.getRequired("type")
+
+                        /**
+                         * Returns the raw JSON value of [name].
+                         *
+                         * Unlike [name], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+                        /**
+                         * Returns the raw JSON value of [type].
+                         *
+                         * Unlike [type], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<Type> = type
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of [Ref].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .name()
+                             * .type()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [Ref]. */
+                        class Builder internal constructor() {
+
+                            private var name: JsonField<String>? = null
+                            private var type: JsonField<Type>? = null
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(ref: Ref) = apply {
+                                name = ref.name
+                                type = ref.type
+                                additionalProperties = ref.additionalProperties.toMutableMap()
+                            }
+
+                            fun name(name: String) = name(JsonField.of(name))
+
+                            /**
+                             * Sets [Builder.name] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.name] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun name(name: JsonField<String>) = apply { this.name = name }
+
+                            fun type(type: Type) = type(JsonField.of(type))
+
+                            /**
+                             * Sets [Builder.type] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.type] with a well-typed [Type] value
+                             * instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun type(type: JsonField<Type>) = apply { this.type = type }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [Ref].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .name()
+                             * .type()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): Ref =
+                                Ref(
+                                    checkRequired("name", name),
+                                    checkRequired("type", type),
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Ref = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            name()
+                            type().validate()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (if (name.asKnown().isPresent) 1 else 0) +
+                                (type.asKnown().getOrNull()?.validity() ?: 0)
+
+                        class Type
+                        @JsonCreator
+                        private constructor(private val value: JsonField<String>) : Enum {
+
+                            /**
+                             * Returns this class instance's raw value.
+                             *
+                             * This is usually only useful if this instance was deserialized from
+                             * data that doesn't match any known member, and you want to know that
+                             * value. For example, if the SDK is on an older version than the API,
+                             * then the API may respond with new members that the SDK is unaware of.
+                             */
+                            @com.fasterxml.jackson.annotation.JsonValue
+                            fun _value(): JsonField<String> = value
+
+                            companion object {
+
+                                @JvmField val BRANCH = of("branch")
+
+                                @JvmField val TAG = of("tag")
+
+                                @JvmStatic fun of(value: String) = Type(JsonField.of(value))
+                            }
+
+                            /** An enum containing [Type]'s known values. */
+                            enum class Known {
+                                BRANCH,
+                                TAG,
+                            }
+
+                            /**
+                             * An enum containing [Type]'s known values, as well as an [_UNKNOWN]
+                             * member.
+                             *
+                             * An instance of [Type] can contain an unknown value in a couple of
+                             * cases:
+                             * - It was deserialized from data that doesn't match any known member.
+                             *   For example, if the SDK is on an older version than the API, then
+                             *   the API may respond with new members that the SDK is unaware of.
+                             * - It was constructed with an arbitrary value using the [of] method.
+                             */
+                            enum class Value {
+                                BRANCH,
+                                TAG,
+                                /**
+                                 * An enum member indicating that [Type] was instantiated with an
+                                 * unknown value.
+                                 */
+                                _UNKNOWN,
+                            }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value,
+                             * or [Value._UNKNOWN] if the class was instantiated with an unknown
+                             * value.
+                             *
+                             * Use the [known] method instead if you're certain the value is always
+                             * known or if you want to throw for the unknown case.
+                             */
+                            fun value(): Value =
+                                when (this) {
+                                    BRANCH -> Value.BRANCH
+                                    TAG -> Value.TAG
+                                    else -> Value._UNKNOWN
+                                }
+
+                            /**
+                             * Returns an enum member corresponding to this class instance's value.
+                             *
+                             * Use the [value] method instead if you're uncertain the value is
+                             * always known and don't want to throw for the unknown case.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   is a not a known member.
+                             */
+                            fun known(): Known =
+                                when (this) {
+                                    BRANCH -> Known.BRANCH
+                                    TAG -> Known.TAG
+                                    else ->
+                                        throw LangChainInvalidDataException("Unknown Type: $value")
+                                }
+
+                            /**
+                             * Returns this class instance's primitive wire representation.
+                             *
+                             * This differs from the [toString] method because that method is
+                             * primarily for debugging and generally doesn't throw.
+                             *
+                             * @throws LangChainInvalidDataException if this class instance's value
+                             *   does not have the expected primitive type.
+                             */
+                            fun asString(): String =
+                                _value().asString().orElseThrow {
+                                    LangChainInvalidDataException("Value is not a String")
+                                }
+
+                            private var validated: Boolean = false
+
+                            /**
+                             * Validates that the types of all values in this object match their
+                             * expected types recursively.
+                             *
+                             * This method is _not_ forwards compatible with new types from the API
+                             * for existing fields.
+                             *
+                             * @throws LangChainInvalidDataException if any value type in this
+                             *   object doesn't match its expected type.
+                             */
+                            fun validate(): Type = apply {
+                                if (validated) {
+                                    return@apply
+                                }
+
+                                known()
+                                validated = true
+                            }
+
+                            fun isValid(): Boolean =
+                                try {
+                                    validate()
+                                    true
+                                } catch (e: LangChainInvalidDataException) {
+                                    false
+                                }
+
+                            /**
+                             * Returns a score indicating how many valid values are contained in
+                             * this object recursively.
+                             *
+                             * Used for best match union deserialization.
+                             */
+                            @JvmSynthetic
+                            internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+                            override fun equals(other: Any?): Boolean {
+                                if (this === other) {
+                                    return true
+                                }
+
+                                return other is Type && value == other.value
+                            }
+
+                            override fun hashCode() = value.hashCode()
+
+                            override fun toString() = value.toString()
+                        }
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Ref &&
+                                name == other.name &&
+                                type == other.type &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(name, type, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "Ref{name=$name, type=$type, additionalProperties=$additionalProperties}"
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Git &&
+                            remoteUrl == other.remoteUrl &&
+                            ref == other.ref &&
+                            refreshIntervalSeconds == other.refreshIntervalSeconds &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(remoteUrl, ref, refreshIntervalSeconds, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Git{remoteUrl=$remoteUrl, ref=$ref, refreshIntervalSeconds=$refreshIntervalSeconds, additionalProperties=$additionalProperties}"
+                }
+
+                class S3
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val bucket: JsonField<String>,
+                    private val region: JsonField<String>,
+                    private val endpointUrl: JsonField<String>,
+                    private val pathStyle: JsonField<Boolean>,
+                    private val prefix: JsonField<String>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("bucket")
+                        @ExcludeMissing
+                        bucket: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("region")
+                        @ExcludeMissing
+                        region: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("endpoint_url")
+                        @ExcludeMissing
+                        endpointUrl: JsonField<String> = JsonMissing.of(),
+                        @JsonProperty("path_style")
+                        @ExcludeMissing
+                        pathStyle: JsonField<Boolean> = JsonMissing.of(),
+                        @JsonProperty("prefix")
+                        @ExcludeMissing
+                        prefix: JsonField<String> = JsonMissing.of(),
+                    ) : this(bucket, region, endpointUrl, pathStyle, prefix, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun bucket(): String = bucket.getRequired("bucket")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun region(): String = region.getRequired("region")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun endpointUrl(): Optional<String> = endpointUrl.getOptional("endpoint_url")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun pathStyle(): Optional<Boolean> = pathStyle.getOptional("path_style")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type (e.g. if the server responded with an unexpected value).
+                     */
+                    fun prefix(): Optional<String> = prefix.getOptional("prefix")
+
+                    /**
+                     * Returns the raw JSON value of [bucket].
+                     *
+                     * Unlike [bucket], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("bucket")
+                    @ExcludeMissing
+                    fun _bucket(): JsonField<String> = bucket
+
+                    /**
+                     * Returns the raw JSON value of [region].
+                     *
+                     * Unlike [region], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("region")
+                    @ExcludeMissing
+                    fun _region(): JsonField<String> = region
+
+                    /**
+                     * Returns the raw JSON value of [endpointUrl].
+                     *
+                     * Unlike [endpointUrl], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("endpoint_url")
+                    @ExcludeMissing
+                    fun _endpointUrl(): JsonField<String> = endpointUrl
+
+                    /**
+                     * Returns the raw JSON value of [pathStyle].
+                     *
+                     * Unlike [pathStyle], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("path_style")
+                    @ExcludeMissing
+                    fun _pathStyle(): JsonField<Boolean> = pathStyle
+
+                    /**
+                     * Returns the raw JSON value of [prefix].
+                     *
+                     * Unlike [prefix], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("prefix")
+                    @ExcludeMissing
+                    fun _prefix(): JsonField<String> = prefix
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [S3].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .bucket()
+                         * .region()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [S3]. */
+                    class Builder internal constructor() {
+
+                        private var bucket: JsonField<String>? = null
+                        private var region: JsonField<String>? = null
+                        private var endpointUrl: JsonField<String> = JsonMissing.of()
+                        private var pathStyle: JsonField<Boolean> = JsonMissing.of()
+                        private var prefix: JsonField<String> = JsonMissing.of()
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(s3: S3) = apply {
+                            bucket = s3.bucket
+                            region = s3.region
+                            endpointUrl = s3.endpointUrl
+                            pathStyle = s3.pathStyle
+                            prefix = s3.prefix
+                            additionalProperties = s3.additionalProperties.toMutableMap()
+                        }
+
+                        fun bucket(bucket: String) = bucket(JsonField.of(bucket))
+
+                        /**
+                         * Sets [Builder.bucket] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.bucket] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun bucket(bucket: JsonField<String>) = apply { this.bucket = bucket }
+
+                        fun region(region: String) = region(JsonField.of(region))
+
+                        /**
+                         * Sets [Builder.region] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.region] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun region(region: JsonField<String>) = apply { this.region = region }
+
+                        fun endpointUrl(endpointUrl: String) =
+                            endpointUrl(JsonField.of(endpointUrl))
+
+                        /**
+                         * Sets [Builder.endpointUrl] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.endpointUrl] with a well-typed [String]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun endpointUrl(endpointUrl: JsonField<String>) = apply {
+                            this.endpointUrl = endpointUrl
+                        }
+
+                        fun pathStyle(pathStyle: Boolean) = pathStyle(JsonField.of(pathStyle))
+
+                        /**
+                         * Sets [Builder.pathStyle] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.pathStyle] with a well-typed [Boolean]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun pathStyle(pathStyle: JsonField<Boolean>) = apply {
+                            this.pathStyle = pathStyle
+                        }
+
+                        fun prefix(prefix: String) = prefix(JsonField.of(prefix))
+
+                        /**
+                         * Sets [Builder.prefix] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.prefix] with a well-typed [String] value
+                         * instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun prefix(prefix: JsonField<String>) = apply { this.prefix = prefix }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [S3].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .bucket()
+                         * .region()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): S3 =
+                            S3(
+                                checkRequired("bucket", bucket),
+                                checkRequired("region", region),
+                                endpointUrl,
+                                pathStyle,
+                                prefix,
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): S3 = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        bucket()
+                        region()
+                        endpointUrl()
+                        pathStyle()
+                        prefix()
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (bucket.asKnown().isPresent) 1 else 0) +
+                            (if (region.asKnown().isPresent) 1 else 0) +
+                            (if (endpointUrl.asKnown().isPresent) 1 else 0) +
+                            (if (pathStyle.asKnown().isPresent) 1 else 0) +
+                            (if (prefix.asKnown().isPresent) 1 else 0)
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is S3 &&
+                            bucket == other.bucket &&
+                            region == other.region &&
+                            endpointUrl == other.endpointUrl &&
+                            pathStyle == other.pathStyle &&
+                            prefix == other.prefix &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(
+                            bucket,
+                            region,
+                            endpointUrl,
+                            pathStyle,
+                            prefix,
+                            additionalProperties,
+                        )
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "S3{bucket=$bucket, region=$region, endpointUrl=$endpointUrl, pathStyle=$pathStyle, prefix=$prefix, additionalProperties=$additionalProperties}"
+                }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is SandboxapiContextHubRepoMountSpec &&
+                        id == other.id &&
+                        contexthub == other.contexthub &&
+                        mountPath == other.mountPath &&
+                        type == other.type &&
+                        cache == other.cache &&
+                        gcs == other.gcs &&
+                        git == other.git &&
+                        readOnly == other.readOnly &&
+                        s3 == other.s3 &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy {
+                    Objects.hash(
+                        id,
+                        contexthub,
+                        mountPath,
+                        type,
+                        cache,
+                        gcs,
+                        git,
+                        readOnly,
+                        s3,
+                        additionalProperties,
+                    )
+                }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "SandboxapiContextHubRepoMountSpec{id=$id, contexthub=$contexthub, mountPath=$mountPath, type=$type, cache=$cache, gcs=$gcs, git=$git, readOnly=$readOnly, s3=$s3, additionalProperties=$additionalProperties}"
             }
         }
 
