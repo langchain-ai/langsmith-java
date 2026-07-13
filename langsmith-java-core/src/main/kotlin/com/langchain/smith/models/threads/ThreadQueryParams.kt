@@ -52,6 +52,7 @@ private constructor(
 
     /**
      * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
+     * Defaults to now (UTC) when omitted.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -60,6 +61,7 @@ private constructor(
 
     /**
      * `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time).
+     * Defaults to 1 day before now (UTC) when omitted.
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -202,7 +204,10 @@ private constructor(
          */
         fun filter(filter: JsonField<String>) = apply { body.filter(filter) }
 
-        /** `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time). */
+        /**
+         * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
+         * Defaults to now (UTC) when omitted.
+         */
         fun maxStartTime(maxStartTime: OffsetDateTime) = apply { body.maxStartTime(maxStartTime) }
 
         /**
@@ -216,7 +221,10 @@ private constructor(
             body.maxStartTime(maxStartTime)
         }
 
-        /** `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time). */
+        /**
+         * `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time).
+         * Defaults to 1 day before now (UTC) when omitted.
+         */
         fun minStartTime(minStartTime: OffsetDateTime) = apply { body.minStartTime(minStartTime) }
 
         /**
@@ -443,6 +451,7 @@ private constructor(
 
         /**
          * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
+         * Defaults to now (UTC) when omitted.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -451,6 +460,7 @@ private constructor(
 
         /**
          * `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time).
+         * Defaults to 1 day before now (UTC) when omitted.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -598,6 +608,7 @@ private constructor(
 
             /**
              * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
+             * Defaults to now (UTC) when omitted.
              */
             fun maxStartTime(maxStartTime: OffsetDateTime) =
                 maxStartTime(JsonField.of(maxStartTime))
@@ -615,6 +626,7 @@ private constructor(
 
             /**
              * `min_start_time` is the inclusive lower bound on thread activity (RFC3339 date-time).
+             * Defaults to 1 day before now (UTC) when omitted.
              */
             fun minStartTime(minStartTime: OffsetDateTime) =
                 minStartTime(JsonField.of(minStartTime))
