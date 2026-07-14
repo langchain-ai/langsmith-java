@@ -45,6 +45,7 @@ private constructor(
     private val memBytes: JsonField<Long>,
     private val mountConfig: JsonField<MountConfig>,
     private val name: JsonField<String>,
+    private val preserveMemoryOnStop: JsonField<Boolean>,
     private val proxyConfig: JsonField<ProxyConfig>,
     private val sizeClass: JsonField<String>,
     private val snapshotId: JsonField<String>,
@@ -82,6 +83,9 @@ private constructor(
         @ExcludeMissing
         mountConfig: JsonField<MountConfig> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("preserve_memory_on_stop")
+        @ExcludeMissing
+        preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("proxy_config")
         @ExcludeMissing
         proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
@@ -109,6 +113,7 @@ private constructor(
         memBytes,
         mountConfig,
         name,
+        preserveMemoryOnStop,
         proxyConfig,
         sizeClass,
         snapshotId,
@@ -187,6 +192,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun name(): Optional<String> = name.getOptional("name")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun preserveMemoryOnStop(): Optional<Boolean> =
+        preserveMemoryOnStop.getOptional("preserve_memory_on_stop")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -333,6 +345,16 @@ private constructor(
     @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
     /**
+     * Returns the raw JSON value of [preserveMemoryOnStop].
+     *
+     * Unlike [preserveMemoryOnStop], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("preserve_memory_on_stop")
+    @ExcludeMissing
+    fun _preserveMemoryOnStop(): JsonField<Boolean> = preserveMemoryOnStop
+
+    /**
      * Returns the raw JSON value of [proxyConfig].
      *
      * Unlike [proxyConfig], this method doesn't throw if the JSON field has an unexpected type.
@@ -431,6 +453,7 @@ private constructor(
         private var memBytes: JsonField<Long> = JsonMissing.of()
         private var mountConfig: JsonField<MountConfig> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
+        private var preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of()
         private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
         private var sizeClass: JsonField<String> = JsonMissing.of()
         private var snapshotId: JsonField<String> = JsonMissing.of()
@@ -455,6 +478,7 @@ private constructor(
             memBytes = sandboxResponse.memBytes
             mountConfig = sandboxResponse.mountConfig
             name = sandboxResponse.name
+            preserveMemoryOnStop = sandboxResponse.preserveMemoryOnStop
             proxyConfig = sandboxResponse.proxyConfig
             sizeClass = sandboxResponse.sizeClass
             snapshotId = sandboxResponse.snapshotId
@@ -598,6 +622,20 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { this.name = name }
 
+        fun preserveMemoryOnStop(preserveMemoryOnStop: Boolean) =
+            preserveMemoryOnStop(JsonField.of(preserveMemoryOnStop))
+
+        /**
+         * Sets [Builder.preserveMemoryOnStop] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.preserveMemoryOnStop] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun preserveMemoryOnStop(preserveMemoryOnStop: JsonField<Boolean>) = apply {
+            this.preserveMemoryOnStop = preserveMemoryOnStop
+        }
+
         fun proxyConfig(proxyConfig: ProxyConfig) = proxyConfig(JsonField.of(proxyConfig))
 
         /**
@@ -736,6 +774,7 @@ private constructor(
                 memBytes,
                 mountConfig,
                 name,
+                preserveMemoryOnStop,
                 proxyConfig,
                 sizeClass,
                 snapshotId,
@@ -775,6 +814,7 @@ private constructor(
         memBytes()
         mountConfig().ifPresent { it.validate() }
         name()
+        preserveMemoryOnStop()
         proxyConfig().ifPresent { it.validate() }
         sizeClass()
         snapshotId()
@@ -813,6 +853,7 @@ private constructor(
             (if (memBytes.asKnown().isPresent) 1 else 0) +
             (mountConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
+            (if (preserveMemoryOnStop.asKnown().isPresent) 1 else 0) +
             (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sizeClass.asKnown().isPresent) 1 else 0) +
             (if (snapshotId.asKnown().isPresent) 1 else 0) +
@@ -16181,6 +16222,7 @@ private constructor(
             memBytes == other.memBytes &&
             mountConfig == other.mountConfig &&
             name == other.name &&
+            preserveMemoryOnStop == other.preserveMemoryOnStop &&
             proxyConfig == other.proxyConfig &&
             sizeClass == other.sizeClass &&
             snapshotId == other.snapshotId &&
@@ -16206,6 +16248,7 @@ private constructor(
             memBytes,
             mountConfig,
             name,
+            preserveMemoryOnStop,
             proxyConfig,
             sizeClass,
             snapshotId,
@@ -16222,5 +16265,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

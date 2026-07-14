@@ -163,6 +163,7 @@ internal class SandboxListResponseTest {
                                 .build()
                         )
                         .name("name")
+                        .preserveMemoryOnStop(true)
                         .proxyConfig(
                             SandboxResponse.ProxyConfig.builder()
                                 .accessControl(
@@ -427,6 +428,7 @@ internal class SandboxListResponseTest {
                             .build()
                     )
                     .name("name")
+                    .preserveMemoryOnStop(true)
                     .proxyConfig(
                         SandboxResponse.ProxyConfig.builder()
                             .accessControl(
@@ -693,6 +695,7 @@ internal class SandboxListResponseTest {
                                 .build()
                         )
                         .name("name")
+                        .preserveMemoryOnStop(true)
                         .proxyConfig(
                             SandboxResponse.ProxyConfig.builder()
                                 .accessControl(

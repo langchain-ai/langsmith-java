@@ -170,6 +170,7 @@ internal class BoxServiceTest {
                             .build()
                     )
                     .name("name")
+                    .preserveMemoryOnStop(true)
                     .proxyConfig(
                         BoxCreateParams.ProxyConfig.builder()
                             .accessControl(
