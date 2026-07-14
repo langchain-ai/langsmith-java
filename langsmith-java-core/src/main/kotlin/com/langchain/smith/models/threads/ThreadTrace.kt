@@ -26,12 +26,15 @@ private constructor(
     private val completionTokenDetails: JsonField<CompletionTokenDetails>,
     private val completionTokens: JsonField<Long>,
     private val endTime: JsonField<OffsetDateTime>,
+    private val error: JsonField<String>,
     private val errorPreview: JsonField<String>,
     private val firstTokenTime: JsonField<OffsetDateTime>,
+    private val inputs: JsonValue,
     private val inputsPreview: JsonField<String>,
     private val latency: JsonField<Double>,
     private val name: JsonField<String>,
     private val op: JsonField<Double>,
+    private val outputs: JsonValue,
     private val outputsPreview: JsonField<String>,
     private val promptCost: JsonField<Double>,
     private val promptCostDetails: JsonField<PromptCostDetails>,
@@ -62,18 +65,21 @@ private constructor(
         @JsonProperty("end_time")
         @ExcludeMissing
         endTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("error") @ExcludeMissing error: JsonField<String> = JsonMissing.of(),
         @JsonProperty("error_preview")
         @ExcludeMissing
         errorPreview: JsonField<String> = JsonMissing.of(),
         @JsonProperty("first_token_time")
         @ExcludeMissing
         firstTokenTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        @JsonProperty("inputs") @ExcludeMissing inputs: JsonValue = JsonMissing.of(),
         @JsonProperty("inputs_preview")
         @ExcludeMissing
         inputsPreview: JsonField<String> = JsonMissing.of(),
         @JsonProperty("latency") @ExcludeMissing latency: JsonField<Double> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("op") @ExcludeMissing op: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("outputs") @ExcludeMissing outputs: JsonValue = JsonMissing.of(),
         @JsonProperty("outputs_preview")
         @ExcludeMissing
         outputsPreview: JsonField<String> = JsonMissing.of(),
@@ -104,12 +110,15 @@ private constructor(
         completionTokenDetails,
         completionTokens,
         endTime,
+        error,
         errorPreview,
         firstTokenTime,
+        inputs,
         inputsPreview,
         latency,
         name,
         op,
+        outputs,
         outputsPreview,
         promptCost,
         promptCostDetails,
@@ -170,6 +179,15 @@ private constructor(
     fun endTime(): Optional<OffsetDateTime> = endTime.getOptional("end_time")
 
     /**
+     * `error` is the full root run error message when the run failed. Omitted unless included in
+     * `selects`.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun error(): Optional<String> = error.getOptional("error")
+
+    /**
      * `error_preview` is a short error summary when the run failed. Omitted unless included in
      * `selects`.
      *
@@ -186,6 +204,16 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun firstTokenTime(): Optional<OffsetDateTime> = firstTokenTime.getOptional("first_token_time")
+
+    /**
+     * `inputs` is the full root run input payload. Omitted unless included in `selects`.
+     *
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = threadTrace.inputs().convert(MyClass.class);
+     * ```
+     */
+    @JsonProperty("inputs") @ExcludeMissing fun _inputs(): JsonValue = inputs
 
     /**
      * `inputs_preview` is a truncated text preview of inputs. Omitted unless included in `selects`.
@@ -222,6 +250,16 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun op(): Optional<Double> = op.getOptional("op")
+
+    /**
+     * `outputs` is the full root run output payload. Omitted unless included in `selects`.
+     *
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = threadTrace.outputs().convert(MyClass.class);
+     * ```
+     */
+    @JsonProperty("outputs") @ExcludeMissing fun _outputs(): JsonValue = outputs
 
     /**
      * `outputs_preview` is a truncated text preview of outputs. Omitted unless included in
@@ -357,6 +395,13 @@ private constructor(
      * Unlike [endTime], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("end_time") @ExcludeMissing fun _endTime(): JsonField<OffsetDateTime> = endTime
+
+    /**
+     * Returns the raw JSON value of [error].
+     *
+     * Unlike [error], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("error") @ExcludeMissing fun _error(): JsonField<String> = error
 
     /**
      * Returns the raw JSON value of [errorPreview].
@@ -514,12 +559,15 @@ private constructor(
         private var completionTokenDetails: JsonField<CompletionTokenDetails> = JsonMissing.of()
         private var completionTokens: JsonField<Long> = JsonMissing.of()
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var error: JsonField<String> = JsonMissing.of()
         private var errorPreview: JsonField<String> = JsonMissing.of()
         private var firstTokenTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var inputs: JsonValue = JsonMissing.of()
         private var inputsPreview: JsonField<String> = JsonMissing.of()
         private var latency: JsonField<Double> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var op: JsonField<Double> = JsonMissing.of()
+        private var outputs: JsonValue = JsonMissing.of()
         private var outputsPreview: JsonField<String> = JsonMissing.of()
         private var promptCost: JsonField<Double> = JsonMissing.of()
         private var promptCostDetails: JsonField<PromptCostDetails> = JsonMissing.of()
@@ -539,12 +587,15 @@ private constructor(
             completionTokenDetails = threadTrace.completionTokenDetails
             completionTokens = threadTrace.completionTokens
             endTime = threadTrace.endTime
+            error = threadTrace.error
             errorPreview = threadTrace.errorPreview
             firstTokenTime = threadTrace.firstTokenTime
+            inputs = threadTrace.inputs
             inputsPreview = threadTrace.inputsPreview
             latency = threadTrace.latency
             name = threadTrace.name
             op = threadTrace.op
+            outputs = threadTrace.outputs
             outputsPreview = threadTrace.outputsPreview
             promptCost = threadTrace.promptCost
             promptCostDetails = threadTrace.promptCostDetails
@@ -646,6 +697,20 @@ private constructor(
         fun endTime(endTime: JsonField<OffsetDateTime>) = apply { this.endTime = endTime }
 
         /**
+         * `error` is the full root run error message when the run failed. Omitted unless included
+         * in `selects`.
+         */
+        fun error(error: String) = error(JsonField.of(error))
+
+        /**
+         * Sets [Builder.error] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.error] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun error(error: JsonField<String>) = apply { this.error = error }
+
+        /**
          * `error_preview` is a short error summary when the run failed. Omitted unless included in
          * `selects`.
          */
@@ -679,6 +744,9 @@ private constructor(
         fun firstTokenTime(firstTokenTime: JsonField<OffsetDateTime>) = apply {
             this.firstTokenTime = firstTokenTime
         }
+
+        /** `inputs` is the full root run input payload. Omitted unless included in `selects`. */
+        fun inputs(inputs: JsonValue) = apply { this.inputs = inputs }
 
         /**
          * `inputs_preview` is a truncated text preview of inputs. Omitted unless included in
@@ -739,6 +807,9 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun op(op: JsonField<Double>) = apply { this.op = op }
+
+        /** `outputs` is the full root run output payload. Omitted unless included in `selects`. */
+        fun outputs(outputs: JsonValue) = apply { this.outputs = outputs }
 
         /**
          * `outputs_preview` is a truncated text preview of outputs. Omitted unless included in
@@ -921,12 +992,15 @@ private constructor(
                 completionTokenDetails,
                 completionTokens,
                 endTime,
+                error,
                 errorPreview,
                 firstTokenTime,
+                inputs,
                 inputsPreview,
                 latency,
                 name,
                 op,
+                outputs,
                 outputsPreview,
                 promptCost,
                 promptCostDetails,
@@ -961,6 +1035,7 @@ private constructor(
         completionTokenDetails().ifPresent { it.validate() }
         completionTokens()
         endTime()
+        error()
         errorPreview()
         firstTokenTime()
         inputsPreview()
@@ -1000,6 +1075,7 @@ private constructor(
             (completionTokenDetails.asKnown().getOrNull()?.validity() ?: 0) +
             (if (completionTokens.asKnown().isPresent) 1 else 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
+            (if (error.asKnown().isPresent) 1 else 0) +
             (if (errorPreview.asKnown().isPresent) 1 else 0) +
             (if (firstTokenTime.asKnown().isPresent) 1 else 0) +
             (if (inputsPreview.asKnown().isPresent) 1 else 0) +
@@ -2104,12 +2180,15 @@ private constructor(
             completionTokenDetails == other.completionTokenDetails &&
             completionTokens == other.completionTokens &&
             endTime == other.endTime &&
+            error == other.error &&
             errorPreview == other.errorPreview &&
             firstTokenTime == other.firstTokenTime &&
+            inputs == other.inputs &&
             inputsPreview == other.inputsPreview &&
             latency == other.latency &&
             name == other.name &&
             op == other.op &&
+            outputs == other.outputs &&
             outputsPreview == other.outputsPreview &&
             promptCost == other.promptCost &&
             promptCostDetails == other.promptCostDetails &&
@@ -2130,12 +2209,15 @@ private constructor(
             completionTokenDetails,
             completionTokens,
             endTime,
+            error,
             errorPreview,
             firstTokenTime,
+            inputs,
             inputsPreview,
             latency,
             name,
             op,
+            outputs,
             outputsPreview,
             promptCost,
             promptCostDetails,
@@ -2153,5 +2235,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ThreadTrace{completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, endTime=$endTime, errorPreview=$errorPreview, firstTokenTime=$firstTokenTime, inputsPreview=$inputsPreview, latency=$latency, name=$name, op=$op, outputsPreview=$outputsPreview, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "ThreadTrace{completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, endTime=$endTime, error=$error, errorPreview=$errorPreview, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, latency=$latency, name=$name, op=$op, outputs=$outputs, outputsPreview=$outputsPreview, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
 }
