@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.0-beta.14](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.13...v0.1.0-beta.14) (2026-07-14)
+
+
+### Features
+
+* **dashboards:** convert prebuilts to v2 charts on clone [LSO-3306, LSO-3322] ([0a29041](https://github.com/langchain-ai/langsmith-java/commit/0a2904189719cead7198fcc1765e2c44ab36dec9))
+* **evaluators:** expose is_managed on Go evaluator reads [LSE-2532] ([17551de](https://github.com/langchain-ai/langsmith-java/commit/17551decf77e4e2141473fe9cdbf33ea4b4648b6))
+* forward filter param to thread stats API ([12185be](https://github.com/langchain-ai/langsmith-java/commit/12185beb4cf348a4252af15257ae2b0133027a42))
+* **sdk:** wire annotation-queue runs/by-key into stainless [LSAQ-141] ([18d7867](https://github.com/langchain-ai/langsmith-java/commit/18d7867206e7b66a91a3d4452811636aa173e55c))
+
+
+### Bug Fixes
+
+* patch remaining Java security alerts ([#38](https://github.com/langchain-ai/langsmith-java/issues/38)) ([e639046](https://github.com/langchain-ai/langsmith-java/commit/e639046090177450d005f9fa511d4c03a565a504))
+* **smith-go:** default time bounds for POST /v2/threads/query ([63bde3c](https://github.com/langchain-ai/langsmith-java/commit/63bde3c6e4ef1c470a82a7814dd5f6083f98c110))
+* **smith-sdks:** name thread stats response model ThreadStats ([1893f83](https://github.com/langchain-ai/langsmith-java/commit/1893f83cf27ed269a62fba637c829e31c1a94bf8))
+
+
+### Refactors
+
+* **sandboxes:** make context hub sync a generic mount ([9cfd26b](https://github.com/langchain-ai/langsmith-java/commit/9cfd26bef9d4efc3d66d25f6a54f2224393d935b))
+
 ## [0.1.0-beta.13](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.12...v0.1.0-beta.13) (2026-07-08)
 
 
