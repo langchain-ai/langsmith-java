@@ -55,6 +55,7 @@ internal class DirectoryServiceTest {
                             .build()
                     )
                     .parentCommit("parent_commit")
+                    .skipWebhooks(true)
                     .build()
             )
 
