@@ -20,7 +20,7 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     // Jackson for JSON handling in examples
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.1")
 
     // Spring Boot dependencies (optional - only needed for Spring Boot example)
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.5.16"))

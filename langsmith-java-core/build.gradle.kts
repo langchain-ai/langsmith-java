@@ -19,7 +19,7 @@ sourceSets.main {
     resources.srcDir(generateVersionProperties)
 }
 
-val jacksonVersion = "2.22.0"
+val jacksonVersion = "2.22.1"
 val jacksonAnnotationsVersion = "2.22"
 
 configurations.matching { it.name in setOf("testCompileClasspath", "testRuntimeClasspath") }.configureEach {
@@ -83,14 +83,14 @@ dependencies {
         testImplementation("org.eclipse.jetty.http2:http2-common") { version { require("12.1.10") } }
         testImplementation("org.eclipse.jetty.http2:http2-hpack") { version { require("12.1.10") } }
         testImplementation("org.eclipse.jetty.http2:http2-server") { version { require("12.1.10") } }
-        testImplementation("org.bouncycastle:bcpg-jdk18on") { version { require("1.84") } }
-        testImplementation("org.bouncycastle:bcpkix-jdk18on") { version { require("1.84") } }
-        testImplementation("org.bouncycastle:bcprov-jdk18on") { version { require("1.84") } }
-        testImplementation("org.apache.logging.log4j:log4j-core") { version { require("2.25.4") } }
+        testImplementation("org.bouncycastle:bcpg-jdk18on:1.84")
+        testImplementation("org.bouncycastle:bcpkix-jdk18on:1.84")
+        testImplementation("org.bouncycastle:bcprov-jdk18on:1.84")
+        testImplementation("org.apache.logging.log4j:log4j-core:2.25.4")
         testImplementation("org.apache.opennlp:opennlp-tools") { version { require("2.5.9") } }
         testImplementation("com.github.jknack:handlebars") { version { require("4.5.2") } }
-        testImplementation("org.codehaus.plexus:plexus-utils") { version { require("4.0.3") } }
-        testImplementation("org.apache.commons:commons-lang3") { version { require("3.20.0") } }
+        testImplementation("org.codehaus.plexus:plexus-utils:4.0.3")
+        testImplementation("org.apache.commons:commons-lang3:3.18.0")
         testImplementation("org.apache.commons:commons-compress") { version { require("1.28.0") } }
         testImplementation("commons-fileupload:commons-fileupload") { version { require("1.6.0") } }
         testImplementation("commons-io:commons-io") { version { require("2.22.0") } }
