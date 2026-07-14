@@ -37,6 +37,7 @@ private constructor(
     private val isRoot: JsonField<Boolean>,
     private val parentRun: JsonField<String>,
     private val query: JsonField<String>,
+    private val referenceDatasetId: JsonField<String>,
     private val referenceExample: JsonField<List<String>>,
     private val runType: JsonField<RunTypeEnum>,
     private val searchFilter: JsonField<String>,
@@ -75,6 +76,9 @@ private constructor(
         @JsonProperty("is_root") @ExcludeMissing isRoot: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("parent_run") @ExcludeMissing parentRun: JsonField<String> = JsonMissing.of(),
         @JsonProperty("query") @ExcludeMissing query: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("reference_dataset_id")
+        @ExcludeMissing
+        referenceDatasetId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("reference_example")
         @ExcludeMissing
         referenceExample: JsonField<List<String>> = JsonMissing.of(),
@@ -117,6 +121,7 @@ private constructor(
         isRoot,
         parentRun,
         query,
+        referenceDatasetId,
         referenceExample,
         runType,
         searchFilter,
@@ -207,6 +212,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun query(): Optional<String> = query.getOptional("query")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun referenceDatasetId(): Optional<String> =
+        referenceDatasetId.getOptional("reference_dataset_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -372,6 +384,16 @@ private constructor(
     @JsonProperty("query") @ExcludeMissing fun _query(): JsonField<String> = query
 
     /**
+     * Returns the raw JSON value of [referenceDatasetId].
+     *
+     * Unlike [referenceDatasetId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("reference_dataset_id")
+    @ExcludeMissing
+    fun _referenceDatasetId(): JsonField<String> = referenceDatasetId
+
+    /**
      * Returns the raw JSON value of [referenceExample].
      *
      * Unlike [referenceExample], this method doesn't throw if the JSON field has an unexpected
@@ -495,6 +517,7 @@ private constructor(
         private var isRoot: JsonField<Boolean> = JsonMissing.of()
         private var parentRun: JsonField<String> = JsonMissing.of()
         private var query: JsonField<String> = JsonMissing.of()
+        private var referenceDatasetId: JsonField<String> = JsonMissing.of()
         private var referenceExample: JsonField<MutableList<String>>? = null
         private var runType: JsonField<RunTypeEnum> = JsonMissing.of()
         private var searchFilter: JsonField<String> = JsonMissing.of()
@@ -522,6 +545,7 @@ private constructor(
             isRoot = runStatsQueryParams.isRoot
             parentRun = runStatsQueryParams.parentRun
             query = runStatsQueryParams.query
+            referenceDatasetId = runStatsQueryParams.referenceDatasetId
             referenceExample = runStatsQueryParams.referenceExample.map { it.toMutableList() }
             runType = runStatsQueryParams.runType
             searchFilter = runStatsQueryParams.searchFilter
@@ -752,6 +776,26 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun query(query: JsonField<String>) = apply { this.query = query }
+
+        fun referenceDatasetId(referenceDatasetId: String?) =
+            referenceDatasetId(JsonField.ofNullable(referenceDatasetId))
+
+        /**
+         * Alias for calling [Builder.referenceDatasetId] with `referenceDatasetId.orElse(null)`.
+         */
+        fun referenceDatasetId(referenceDatasetId: Optional<String>) =
+            referenceDatasetId(referenceDatasetId.getOrNull())
+
+        /**
+         * Sets [Builder.referenceDatasetId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.referenceDatasetId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun referenceDatasetId(referenceDatasetId: JsonField<String>) = apply {
+            this.referenceDatasetId = referenceDatasetId
+        }
 
         fun referenceExample(referenceExample: List<String>?) =
             referenceExample(JsonField.ofNullable(referenceExample))
@@ -1006,6 +1050,7 @@ private constructor(
                 isRoot,
                 parentRun,
                 query,
+                referenceDatasetId,
                 (referenceExample ?: JsonMissing.of()).map { it.toImmutable() },
                 runType,
                 searchFilter,
@@ -1048,6 +1093,7 @@ private constructor(
         isRoot()
         parentRun()
         query()
+        referenceDatasetId()
         referenceExample()
         runType().ifPresent { it.validate() }
         searchFilter()
@@ -1089,6 +1135,7 @@ private constructor(
             (if (isRoot.asKnown().isPresent) 1 else 0) +
             (if (parentRun.asKnown().isPresent) 1 else 0) +
             (if (query.asKnown().isPresent) 1 else 0) +
+            (if (referenceDatasetId.asKnown().isPresent) 1 else 0) +
             (referenceExample.asKnown().getOrNull()?.size ?: 0) +
             (runType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (searchFilter.asKnown().isPresent) 1 else 0) +
@@ -1448,6 +1495,7 @@ private constructor(
             isRoot == other.isRoot &&
             parentRun == other.parentRun &&
             query == other.query &&
+            referenceDatasetId == other.referenceDatasetId &&
             referenceExample == other.referenceExample &&
             runType == other.runType &&
             searchFilter == other.searchFilter &&
@@ -1476,6 +1524,7 @@ private constructor(
             isRoot,
             parentRun,
             query,
+            referenceDatasetId,
             referenceExample,
             runType,
             searchFilter,
@@ -1494,5 +1543,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunStatsQueryParams{id=$id, dataSourceType=$dataSourceType, endTime=$endTime, error=$error, executionOrder=$executionOrder, filter=$filter, groupBy=$groupBy, groups=$groups, includeDetails=$includeDetails, isRoot=$isRoot, parentRun=$parentRun, query=$query, referenceExample=$referenceExample, runType=$runType, searchFilter=$searchFilter, select=$select, session=$session, skipPagination=$skipPagination, startTime=$startTime, trace=$trace, traceFilter=$traceFilter, treeFilter=$treeFilter, useExperimentalSearch=$useExperimentalSearch, additionalProperties=$additionalProperties}"
+        "RunStatsQueryParams{id=$id, dataSourceType=$dataSourceType, endTime=$endTime, error=$error, executionOrder=$executionOrder, filter=$filter, groupBy=$groupBy, groups=$groups, includeDetails=$includeDetails, isRoot=$isRoot, parentRun=$parentRun, query=$query, referenceDatasetId=$referenceDatasetId, referenceExample=$referenceExample, runType=$runType, searchFilter=$searchFilter, select=$select, session=$session, skipPagination=$skipPagination, startTime=$startTime, trace=$trace, traceFilter=$traceFilter, treeFilter=$treeFilter, useExperimentalSearch=$useExperimentalSearch, additionalProperties=$additionalProperties}"
 }
