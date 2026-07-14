@@ -22,8 +22,8 @@ import com.langchain.smith.models.threads.ThreadListTracesParams
 import com.langchain.smith.models.threads.ThreadQueryPage
 import com.langchain.smith.models.threads.ThreadQueryPageResponse
 import com.langchain.smith.models.threads.ThreadQueryParams
+import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
-import com.langchain.smith.models.threads.ThreadStatsResponse
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -50,10 +50,7 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         // post /v2/threads/query
         withRawResponse().query(params, requestOptions).parse()
 
-    override fun stats(
-        params: ThreadStatsParams,
-        requestOptions: RequestOptions,
-    ): ThreadStatsResponse =
+    override fun stats(params: ThreadStatsParams, requestOptions: RequestOptions): ThreadStats =
         // get /v2/threads/{thread_id}/stats
         withRawResponse().stats(params, requestOptions).parse()
 
@@ -142,13 +139,13 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
             }
         }
 
-        private val statsHandler: Handler<ThreadStatsResponse> =
-            jsonHandler<ThreadStatsResponse>(clientOptions.jsonMapper)
+        private val statsHandler: Handler<ThreadStats> =
+            jsonHandler<ThreadStats>(clientOptions.jsonMapper)
 
         override fun stats(
             params: ThreadStatsParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<ThreadStatsResponse> {
+        ): HttpResponseFor<ThreadStats> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("threadId", params.threadId().getOrNull())

@@ -10,8 +10,8 @@ import com.langchain.smith.models.threads.ThreadListTracesPage
 import com.langchain.smith.models.threads.ThreadListTracesParams
 import com.langchain.smith.models.threads.ThreadQueryPage
 import com.langchain.smith.models.threads.ThreadQueryParams
+import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
-import com.langchain.smith.models.threads.ThreadStatsResponse
 import java.util.function.Consumer
 
 interface ThreadService {
@@ -79,7 +79,7 @@ interface ThreadService {
      * thread (turn count, latency percentiles, token/cost sums, and detail breakdowns) within a
      * project.
      */
-    fun stats(threadId: String, params: ThreadStatsParams): ThreadStatsResponse =
+    fun stats(threadId: String, params: ThreadStatsParams): ThreadStats =
         stats(threadId, params, RequestOptions.none())
 
     /** @see stats */
@@ -87,16 +87,16 @@ interface ThreadService {
         threadId: String,
         params: ThreadStatsParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ThreadStatsResponse = stats(params.toBuilder().threadId(threadId).build(), requestOptions)
+    ): ThreadStats = stats(params.toBuilder().threadId(threadId).build(), requestOptions)
 
     /** @see stats */
-    fun stats(params: ThreadStatsParams): ThreadStatsResponse = stats(params, RequestOptions.none())
+    fun stats(params: ThreadStatsParams): ThreadStats = stats(params, RequestOptions.none())
 
     /** @see stats */
     fun stats(
         params: ThreadStatsParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): ThreadStatsResponse
+    ): ThreadStats
 
     /** A view of [ThreadService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -170,10 +170,8 @@ interface ThreadService {
          * same as [ThreadService.stats].
          */
         @MustBeClosed
-        fun stats(
-            threadId: String,
-            params: ThreadStatsParams,
-        ): HttpResponseFor<ThreadStatsResponse> = stats(threadId, params, RequestOptions.none())
+        fun stats(threadId: String, params: ThreadStatsParams): HttpResponseFor<ThreadStats> =
+            stats(threadId, params, RequestOptions.none())
 
         /** @see stats */
         @MustBeClosed
@@ -181,12 +179,12 @@ interface ThreadService {
             threadId: String,
             params: ThreadStatsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ThreadStatsResponse> =
+        ): HttpResponseFor<ThreadStats> =
             stats(params.toBuilder().threadId(threadId).build(), requestOptions)
 
         /** @see stats */
         @MustBeClosed
-        fun stats(params: ThreadStatsParams): HttpResponseFor<ThreadStatsResponse> =
+        fun stats(params: ThreadStatsParams): HttpResponseFor<ThreadStats> =
             stats(params, RequestOptions.none())
 
         /** @see stats */
@@ -194,6 +192,6 @@ interface ThreadService {
         fun stats(
             params: ThreadStatsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ThreadStatsResponse>
+        ): HttpResponseFor<ThreadStats>
     }
 }

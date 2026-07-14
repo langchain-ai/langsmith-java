@@ -19,14 +19,14 @@ private constructor(
     private val streamHandlerExecutor: Executor,
     private val params: ThreadQueryParams,
     private val response: ThreadQueryPageResponse,
-) : PageAsync<ThreadListItem> {
+) : PageAsync<Thread> {
 
     /**
      * Delegates to [ThreadQueryPageResponse], but gracefully handles missing data.
      *
      * @see ThreadQueryPageResponse.items
      */
-    override fun items(): List<ThreadListItem> =
+    override fun items(): List<Thread> =
         response._items().getOptional("items").getOrNull() ?: emptyList()
 
     /**
@@ -48,8 +48,7 @@ private constructor(
     override fun nextPage(): CompletableFuture<ThreadQueryPageAsync> =
         service.query(nextPageParams())
 
-    fun autoPager(): AutoPagerAsync<ThreadListItem> =
-        AutoPagerAsync.from(this, streamHandlerExecutor)
+    fun autoPager(): AutoPagerAsync<Thread> = AutoPagerAsync.from(this, streamHandlerExecutor)
 
     /** The parameters that were used to request this page. */
     fun params(): ThreadQueryParams = params

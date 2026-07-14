@@ -17,21 +17,21 @@ internal class ThreadListTracesPageResponseTest {
         val threadListTracesPageResponse =
             ThreadListTracesPageResponse.builder()
                 .addItem(
-                    ThreadTraceListItem.builder()
+                    ThreadTrace.builder()
                         .completionCost(0.0)
                         .completionCostDetails(
-                            ThreadTraceListItem.CompletionCostDetails.builder()
+                            ThreadTrace.CompletionCostDetails.builder()
                                 .raw(
-                                    ThreadTraceListItem.CompletionCostDetails.Raw.builder()
+                                    ThreadTrace.CompletionCostDetails.Raw.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
                                 .build()
                         )
                         .completionTokenDetails(
-                            ThreadTraceListItem.CompletionTokenDetails.builder()
+                            ThreadTrace.CompletionTokenDetails.builder()
                                 .raw(
-                                    ThreadTraceListItem.CompletionTokenDetails.Raw.builder()
+                                    ThreadTrace.CompletionTokenDetails.Raw.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
@@ -48,18 +48,18 @@ internal class ThreadListTracesPageResponseTest {
                         .outputsPreview("outputs_preview")
                         .promptCost(0.0)
                         .promptCostDetails(
-                            ThreadTraceListItem.PromptCostDetails.builder()
+                            ThreadTrace.PromptCostDetails.builder()
                                 .raw(
-                                    ThreadTraceListItem.PromptCostDetails.Raw.builder()
+                                    ThreadTrace.PromptCostDetails.Raw.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
                                 .build()
                         )
                         .promptTokenDetails(
-                            ThreadTraceListItem.PromptTokenDetails.builder()
+                            ThreadTrace.PromptTokenDetails.builder()
                                 .raw(
-                                    ThreadTraceListItem.PromptTokenDetails.Raw.builder()
+                                    ThreadTrace.PromptTokenDetails.Raw.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
@@ -78,21 +78,21 @@ internal class ThreadListTracesPageResponseTest {
 
         assertThat(threadListTracesPageResponse.items().getOrNull())
             .containsExactly(
-                ThreadTraceListItem.builder()
+                ThreadTrace.builder()
                     .completionCost(0.0)
                     .completionCostDetails(
-                        ThreadTraceListItem.CompletionCostDetails.builder()
+                        ThreadTrace.CompletionCostDetails.builder()
                             .raw(
-                                ThreadTraceListItem.CompletionCostDetails.Raw.builder()
+                                ThreadTrace.CompletionCostDetails.Raw.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(0))
                                     .build()
                             )
                             .build()
                     )
                     .completionTokenDetails(
-                        ThreadTraceListItem.CompletionTokenDetails.builder()
+                        ThreadTrace.CompletionTokenDetails.builder()
                             .raw(
-                                ThreadTraceListItem.CompletionTokenDetails.Raw.builder()
+                                ThreadTrace.CompletionTokenDetails.Raw.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(0))
                                     .build()
                             )
@@ -109,18 +109,18 @@ internal class ThreadListTracesPageResponseTest {
                     .outputsPreview("outputs_preview")
                     .promptCost(0.0)
                     .promptCostDetails(
-                        ThreadTraceListItem.PromptCostDetails.builder()
+                        ThreadTrace.PromptCostDetails.builder()
                             .raw(
-                                ThreadTraceListItem.PromptCostDetails.Raw.builder()
+                                ThreadTrace.PromptCostDetails.Raw.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(0))
                                     .build()
                             )
                             .build()
                     )
                     .promptTokenDetails(
-                        ThreadTraceListItem.PromptTokenDetails.builder()
+                        ThreadTrace.PromptTokenDetails.builder()
                             .raw(
-                                ThreadTraceListItem.PromptTokenDetails.Raw.builder()
+                                ThreadTrace.PromptTokenDetails.Raw.builder()
                                     .putAdditionalProperty("foo", JsonValue.from(0))
                                     .build()
                             )
@@ -144,21 +144,21 @@ internal class ThreadListTracesPageResponseTest {
         val threadListTracesPageResponse =
             ThreadListTracesPageResponse.builder()
                 .addItem(
-                    ThreadTraceListItem.builder()
+                    ThreadTrace.builder()
                         .completionCost(0.0)
                         .completionCostDetails(
-                            ThreadTraceListItem.CompletionCostDetails.builder()
+                            ThreadTrace.CompletionCostDetails.builder()
                                 .raw(
-                                    ThreadTraceListItem.CompletionCostDetails.Raw.builder()
+                                    ThreadTrace.CompletionCostDetails.Raw.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
                                 .build()
                         )
                         .completionTokenDetails(
-                            ThreadTraceListItem.CompletionTokenDetails.builder()
+                            ThreadTrace.CompletionTokenDetails.builder()
                                 .raw(
-                                    ThreadTraceListItem.CompletionTokenDetails.Raw.builder()
+                                    ThreadTrace.CompletionTokenDetails.Raw.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
@@ -175,18 +175,18 @@ internal class ThreadListTracesPageResponseTest {
                         .outputsPreview("outputs_preview")
                         .promptCost(0.0)
                         .promptCostDetails(
-                            ThreadTraceListItem.PromptCostDetails.builder()
+                            ThreadTrace.PromptCostDetails.builder()
                                 .raw(
-                                    ThreadTraceListItem.PromptCostDetails.Raw.builder()
+                                    ThreadTrace.PromptCostDetails.Raw.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )
                                 .build()
                         )
                         .promptTokenDetails(
-                            ThreadTraceListItem.PromptTokenDetails.builder()
+                            ThreadTrace.PromptTokenDetails.builder()
                                 .raw(
-                                    ThreadTraceListItem.PromptTokenDetails.Raw.builder()
+                                    ThreadTrace.PromptTokenDetails.Raw.builder()
                                         .putAdditionalProperty("foo", JsonValue.from(0))
                                         .build()
                                 )

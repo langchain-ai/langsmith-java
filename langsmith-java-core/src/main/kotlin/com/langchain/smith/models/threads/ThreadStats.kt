@@ -18,7 +18,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class ThreadStatsResponse
+class ThreadStats
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val completionCost: JsonField<Double>,
@@ -434,11 +434,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [ThreadStatsResponse]. */
+        /** Returns a mutable builder for constructing an instance of [ThreadStats]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ThreadStatsResponse]. */
+    /** A builder for [ThreadStats]. */
     class Builder internal constructor() {
 
         private var completionCost: JsonField<Double> = JsonMissing.of()
@@ -461,25 +461,25 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(threadStatsResponse: ThreadStatsResponse) = apply {
-            completionCost = threadStatsResponse.completionCost
-            completionCostDetails = threadStatsResponse.completionCostDetails
-            completionTokenDetails = threadStatsResponse.completionTokenDetails
-            completionTokens = threadStatsResponse.completionTokens
-            feedbackStats = threadStatsResponse.feedbackStats
-            firstStartTime = threadStatsResponse.firstStartTime
-            lastEndTime = threadStatsResponse.lastEndTime
-            lastStartTime = threadStatsResponse.lastStartTime
-            latencyP50Seconds = threadStatsResponse.latencyP50Seconds
-            latencyP99Seconds = threadStatsResponse.latencyP99Seconds
-            promptCost = threadStatsResponse.promptCost
-            promptCostDetails = threadStatsResponse.promptCostDetails
-            promptTokenDetails = threadStatsResponse.promptTokenDetails
-            promptTokens = threadStatsResponse.promptTokens
-            totalCost = threadStatsResponse.totalCost
-            totalTokens = threadStatsResponse.totalTokens
-            turns = threadStatsResponse.turns
-            additionalProperties = threadStatsResponse.additionalProperties.toMutableMap()
+        internal fun from(threadStats: ThreadStats) = apply {
+            completionCost = threadStats.completionCost
+            completionCostDetails = threadStats.completionCostDetails
+            completionTokenDetails = threadStats.completionTokenDetails
+            completionTokens = threadStats.completionTokens
+            feedbackStats = threadStats.feedbackStats
+            firstStartTime = threadStats.firstStartTime
+            lastEndTime = threadStats.lastEndTime
+            lastStartTime = threadStats.lastStartTime
+            latencyP50Seconds = threadStats.latencyP50Seconds
+            latencyP99Seconds = threadStats.latencyP99Seconds
+            promptCost = threadStats.promptCost
+            promptCostDetails = threadStats.promptCostDetails
+            promptTokenDetails = threadStats.promptTokenDetails
+            promptTokens = threadStats.promptTokens
+            totalCost = threadStats.totalCost
+            totalTokens = threadStats.totalTokens
+            turns = threadStats.turns
+            additionalProperties = threadStats.additionalProperties.toMutableMap()
         }
 
         /**
@@ -790,12 +790,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ThreadStatsResponse].
+         * Returns an immutable instance of [ThreadStats].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ThreadStatsResponse =
-            ThreadStatsResponse(
+        fun build(): ThreadStats =
+            ThreadStats(
                 completionCost,
                 completionCostDetails,
                 completionTokenDetails,
@@ -827,7 +827,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ThreadStatsResponse = apply {
+    fun validate(): ThreadStats = apply {
         if (validated) {
             return@apply
         }
@@ -2078,7 +2078,7 @@ private constructor(
             return true
         }
 
-        return other is ThreadStatsResponse &&
+        return other is ThreadStats &&
             completionCost == other.completionCost &&
             completionCostDetails == other.completionCostDetails &&
             completionTokenDetails == other.completionTokenDetails &&
@@ -2125,5 +2125,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ThreadStatsResponse{completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, feedbackStats=$feedbackStats, firstStartTime=$firstStartTime, lastEndTime=$lastEndTime, lastStartTime=$lastStartTime, latencyP50Seconds=$latencyP50Seconds, latencyP99Seconds=$latencyP99Seconds, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, totalCost=$totalCost, totalTokens=$totalTokens, turns=$turns, additionalProperties=$additionalProperties}"
+        "ThreadStats{completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, feedbackStats=$feedbackStats, firstStartTime=$firstStartTime, lastEndTime=$lastEndTime, lastStartTime=$lastStartTime, latencyP50Seconds=$latencyP50Seconds, latencyP99Seconds=$latencyP99Seconds, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, totalCost=$totalCost, totalTokens=$totalTokens, turns=$turns, additionalProperties=$additionalProperties}"
 }

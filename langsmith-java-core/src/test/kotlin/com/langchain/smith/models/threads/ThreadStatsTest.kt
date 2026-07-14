@@ -9,26 +9,26 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ThreadStatsResponseTest {
+internal class ThreadStatsTest {
 
     @Test
     fun create() {
-        val threadStatsResponse =
-            ThreadStatsResponse.builder()
+        val threadStats =
+            ThreadStats.builder()
                 .completionCost(0.0)
                 .completionCostDetails(
-                    ThreadStatsResponse.CompletionCostDetails.builder()
+                    ThreadStats.CompletionCostDetails.builder()
                         .raw(
-                            ThreadStatsResponse.CompletionCostDetails.Raw.builder()
+                            ThreadStats.CompletionCostDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .build()
                 )
                 .completionTokenDetails(
-                    ThreadStatsResponse.CompletionTokenDetails.builder()
+                    ThreadStats.CompletionTokenDetails.builder()
                         .raw(
-                            ThreadStatsResponse.CompletionTokenDetails.Raw.builder()
+                            ThreadStats.CompletionTokenDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -36,7 +36,7 @@ internal class ThreadStatsResponseTest {
                 )
                 .completionTokens(0L)
                 .feedbackStats(
-                    ThreadStatsResponse.FeedbackStats.builder()
+                    ThreadStats.FeedbackStats.builder()
                         .putAdditionalProperty(
                             "foo",
                             JsonValue.from(
@@ -63,18 +63,18 @@ internal class ThreadStatsResponseTest {
                 .latencyP99Seconds(0.0)
                 .promptCost(0.0)
                 .promptCostDetails(
-                    ThreadStatsResponse.PromptCostDetails.builder()
+                    ThreadStats.PromptCostDetails.builder()
                         .raw(
-                            ThreadStatsResponse.PromptCostDetails.Raw.builder()
+                            ThreadStats.PromptCostDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .build()
                 )
                 .promptTokenDetails(
-                    ThreadStatsResponse.PromptTokenDetails.builder()
+                    ThreadStats.PromptTokenDetails.builder()
                         .raw(
-                            ThreadStatsResponse.PromptTokenDetails.Raw.builder()
+                            ThreadStats.PromptTokenDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -86,31 +86,31 @@ internal class ThreadStatsResponseTest {
                 .turns(0L)
                 .build()
 
-        assertThat(threadStatsResponse.completionCost()).contains(0.0)
-        assertThat(threadStatsResponse.completionCostDetails())
+        assertThat(threadStats.completionCost()).contains(0.0)
+        assertThat(threadStats.completionCostDetails())
             .contains(
-                ThreadStatsResponse.CompletionCostDetails.builder()
+                ThreadStats.CompletionCostDetails.builder()
                     .raw(
-                        ThreadStatsResponse.CompletionCostDetails.Raw.builder()
+                        ThreadStats.CompletionCostDetails.Raw.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .build()
             )
-        assertThat(threadStatsResponse.completionTokenDetails())
+        assertThat(threadStats.completionTokenDetails())
             .contains(
-                ThreadStatsResponse.CompletionTokenDetails.builder()
+                ThreadStats.CompletionTokenDetails.builder()
                     .raw(
-                        ThreadStatsResponse.CompletionTokenDetails.Raw.builder()
+                        ThreadStats.CompletionTokenDetails.Raw.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .build()
             )
-        assertThat(threadStatsResponse.completionTokens()).contains(0L)
-        assertThat(threadStatsResponse.feedbackStats())
+        assertThat(threadStats.completionTokens()).contains(0L)
+        assertThat(threadStats.feedbackStats())
             .contains(
-                ThreadStatsResponse.FeedbackStats.builder()
+                ThreadStats.FeedbackStats.builder()
                     .putAdditionalProperty(
                         "foo",
                         JsonValue.from(
@@ -130,60 +130,60 @@ internal class ThreadStatsResponseTest {
                     )
                     .build()
             )
-        assertThat(threadStatsResponse.firstStartTime())
+        assertThat(threadStats.firstStartTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(threadStatsResponse.lastEndTime())
+        assertThat(threadStats.lastEndTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(threadStatsResponse.lastStartTime())
+        assertThat(threadStats.lastStartTime())
             .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-        assertThat(threadStatsResponse.latencyP50Seconds()).contains(0.0)
-        assertThat(threadStatsResponse.latencyP99Seconds()).contains(0.0)
-        assertThat(threadStatsResponse.promptCost()).contains(0.0)
-        assertThat(threadStatsResponse.promptCostDetails())
+        assertThat(threadStats.latencyP50Seconds()).contains(0.0)
+        assertThat(threadStats.latencyP99Seconds()).contains(0.0)
+        assertThat(threadStats.promptCost()).contains(0.0)
+        assertThat(threadStats.promptCostDetails())
             .contains(
-                ThreadStatsResponse.PromptCostDetails.builder()
+                ThreadStats.PromptCostDetails.builder()
                     .raw(
-                        ThreadStatsResponse.PromptCostDetails.Raw.builder()
+                        ThreadStats.PromptCostDetails.Raw.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .build()
             )
-        assertThat(threadStatsResponse.promptTokenDetails())
+        assertThat(threadStats.promptTokenDetails())
             .contains(
-                ThreadStatsResponse.PromptTokenDetails.builder()
+                ThreadStats.PromptTokenDetails.builder()
                     .raw(
-                        ThreadStatsResponse.PromptTokenDetails.Raw.builder()
+                        ThreadStats.PromptTokenDetails.Raw.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .build()
             )
-        assertThat(threadStatsResponse.promptTokens()).contains(0L)
-        assertThat(threadStatsResponse.totalCost()).contains(0.0)
-        assertThat(threadStatsResponse.totalTokens()).contains(0L)
-        assertThat(threadStatsResponse.turns()).contains(0L)
+        assertThat(threadStats.promptTokens()).contains(0L)
+        assertThat(threadStats.totalCost()).contains(0.0)
+        assertThat(threadStats.totalTokens()).contains(0L)
+        assertThat(threadStats.turns()).contains(0L)
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val threadStatsResponse =
-            ThreadStatsResponse.builder()
+        val threadStats =
+            ThreadStats.builder()
                 .completionCost(0.0)
                 .completionCostDetails(
-                    ThreadStatsResponse.CompletionCostDetails.builder()
+                    ThreadStats.CompletionCostDetails.builder()
                         .raw(
-                            ThreadStatsResponse.CompletionCostDetails.Raw.builder()
+                            ThreadStats.CompletionCostDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .build()
                 )
                 .completionTokenDetails(
-                    ThreadStatsResponse.CompletionTokenDetails.builder()
+                    ThreadStats.CompletionTokenDetails.builder()
                         .raw(
-                            ThreadStatsResponse.CompletionTokenDetails.Raw.builder()
+                            ThreadStats.CompletionTokenDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -191,7 +191,7 @@ internal class ThreadStatsResponseTest {
                 )
                 .completionTokens(0L)
                 .feedbackStats(
-                    ThreadStatsResponse.FeedbackStats.builder()
+                    ThreadStats.FeedbackStats.builder()
                         .putAdditionalProperty(
                             "foo",
                             JsonValue.from(
@@ -218,18 +218,18 @@ internal class ThreadStatsResponseTest {
                 .latencyP99Seconds(0.0)
                 .promptCost(0.0)
                 .promptCostDetails(
-                    ThreadStatsResponse.PromptCostDetails.builder()
+                    ThreadStats.PromptCostDetails.builder()
                         .raw(
-                            ThreadStatsResponse.PromptCostDetails.Raw.builder()
+                            ThreadStats.PromptCostDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .build()
                 )
                 .promptTokenDetails(
-                    ThreadStatsResponse.PromptTokenDetails.builder()
+                    ThreadStats.PromptTokenDetails.builder()
                         .raw(
-                            ThreadStatsResponse.PromptTokenDetails.Raw.builder()
+                            ThreadStats.PromptTokenDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -241,12 +241,12 @@ internal class ThreadStatsResponseTest {
                 .turns(0L)
                 .build()
 
-        val roundtrippedThreadStatsResponse =
+        val roundtrippedThreadStats =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(threadStatsResponse),
-                jacksonTypeRef<ThreadStatsResponse>(),
+                jsonMapper.writeValueAsString(threadStats),
+                jacksonTypeRef<ThreadStats>(),
             )
 
-        assertThat(roundtrippedThreadStatsResponse).isEqualTo(threadStatsResponse)
+        assertThat(roundtrippedThreadStats).isEqualTo(threadStats)
     }
 }

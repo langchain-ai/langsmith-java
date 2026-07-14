@@ -9,8 +9,8 @@ import com.langchain.smith.models.threads.ThreadListTracesPageAsync
 import com.langchain.smith.models.threads.ThreadListTracesParams
 import com.langchain.smith.models.threads.ThreadQueryPageAsync
 import com.langchain.smith.models.threads.ThreadQueryParams
+import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
-import com.langchain.smith.models.threads.ThreadStatsResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -83,7 +83,7 @@ interface ThreadServiceAsync {
      * thread (turn count, latency percentiles, token/cost sums, and detail breakdowns) within a
      * project.
      */
-    fun stats(threadId: String, params: ThreadStatsParams): CompletableFuture<ThreadStatsResponse> =
+    fun stats(threadId: String, params: ThreadStatsParams): CompletableFuture<ThreadStats> =
         stats(threadId, params, RequestOptions.none())
 
     /** @see stats */
@@ -91,18 +91,18 @@ interface ThreadServiceAsync {
         threadId: String,
         params: ThreadStatsParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ThreadStatsResponse> =
+    ): CompletableFuture<ThreadStats> =
         stats(params.toBuilder().threadId(threadId).build(), requestOptions)
 
     /** @see stats */
-    fun stats(params: ThreadStatsParams): CompletableFuture<ThreadStatsResponse> =
+    fun stats(params: ThreadStatsParams): CompletableFuture<ThreadStats> =
         stats(params, RequestOptions.none())
 
     /** @see stats */
     fun stats(
         params: ThreadStatsParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ThreadStatsResponse>
+    ): CompletableFuture<ThreadStats>
 
     /**
      * A view of [ThreadServiceAsync] that provides access to raw HTTP responses for each method.
@@ -180,7 +180,7 @@ interface ThreadServiceAsync {
         fun stats(
             threadId: String,
             params: ThreadStatsParams,
-        ): CompletableFuture<HttpResponseFor<ThreadStatsResponse>> =
+        ): CompletableFuture<HttpResponseFor<ThreadStats>> =
             stats(threadId, params, RequestOptions.none())
 
         /** @see stats */
@@ -188,19 +188,17 @@ interface ThreadServiceAsync {
             threadId: String,
             params: ThreadStatsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ThreadStatsResponse>> =
+        ): CompletableFuture<HttpResponseFor<ThreadStats>> =
             stats(params.toBuilder().threadId(threadId).build(), requestOptions)
 
         /** @see stats */
-        fun stats(
-            params: ThreadStatsParams
-        ): CompletableFuture<HttpResponseFor<ThreadStatsResponse>> =
+        fun stats(params: ThreadStatsParams): CompletableFuture<HttpResponseFor<ThreadStats>> =
             stats(params, RequestOptions.none())
 
         /** @see stats */
         fun stats(
             params: ThreadStatsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ThreadStatsResponse>>
+        ): CompletableFuture<HttpResponseFor<ThreadStats>>
     }
 }

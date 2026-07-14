@@ -22,8 +22,8 @@ import com.langchain.smith.models.threads.ThreadListTracesParams
 import com.langchain.smith.models.threads.ThreadQueryPageAsync
 import com.langchain.smith.models.threads.ThreadQueryPageResponse
 import com.langchain.smith.models.threads.ThreadQueryParams
+import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
-import com.langchain.smith.models.threads.ThreadStatsResponse
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -57,7 +57,7 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
     override fun stats(
         params: ThreadStatsParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<ThreadStatsResponse> =
+    ): CompletableFuture<ThreadStats> =
         // get /v2/threads/{thread_id}/stats
         withRawResponse().stats(params, requestOptions).thenApply { it.parse() }
 
@@ -154,13 +154,13 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 }
         }
 
-        private val statsHandler: Handler<ThreadStatsResponse> =
-            jsonHandler<ThreadStatsResponse>(clientOptions.jsonMapper)
+        private val statsHandler: Handler<ThreadStats> =
+            jsonHandler<ThreadStats>(clientOptions.jsonMapper)
 
         override fun stats(
             params: ThreadStatsParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ThreadStatsResponse>> {
+        ): CompletableFuture<HttpResponseFor<ThreadStats>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("threadId", params.threadId().getOrNull())
