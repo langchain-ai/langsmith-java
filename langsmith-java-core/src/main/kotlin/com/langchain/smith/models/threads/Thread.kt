@@ -18,7 +18,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class ThreadListItem
+class Thread
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val count: JsonField<Long>,
@@ -459,11 +459,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [ThreadListItem]. */
+        /** Returns a mutable builder for constructing an instance of [Thread]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ThreadListItem]. */
+    /** A builder for [Thread]. */
     class Builder internal constructor() {
 
         private var count: JsonField<Long> = JsonMissing.of()
@@ -488,27 +488,27 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(threadListItem: ThreadListItem) = apply {
-            count = threadListItem.count
-            feedbackStats = threadListItem.feedbackStats
-            firstInputs = threadListItem.firstInputs
-            firstTraceId = threadListItem.firstTraceId
-            lastError = threadListItem.lastError
-            lastOutputs = threadListItem.lastOutputs
-            lastTraceId = threadListItem.lastTraceId
-            latencyP50 = threadListItem.latencyP50
-            latencyP99 = threadListItem.latencyP99
-            maxStartTime = threadListItem.maxStartTime
-            minStartTime = threadListItem.minStartTime
-            numErroredTurns = threadListItem.numErroredTurns
-            startTime = threadListItem.startTime
-            threadId = threadListItem.threadId
-            totalCost = threadListItem.totalCost
-            totalCostDetails = threadListItem.totalCostDetails
-            totalTokenDetails = threadListItem.totalTokenDetails
-            totalTokens = threadListItem.totalTokens
-            traceId = threadListItem.traceId
-            additionalProperties = threadListItem.additionalProperties.toMutableMap()
+        internal fun from(thread: Thread) = apply {
+            count = thread.count
+            feedbackStats = thread.feedbackStats
+            firstInputs = thread.firstInputs
+            firstTraceId = thread.firstTraceId
+            lastError = thread.lastError
+            lastOutputs = thread.lastOutputs
+            lastTraceId = thread.lastTraceId
+            latencyP50 = thread.latencyP50
+            latencyP99 = thread.latencyP99
+            maxStartTime = thread.maxStartTime
+            minStartTime = thread.minStartTime
+            numErroredTurns = thread.numErroredTurns
+            startTime = thread.startTime
+            threadId = thread.threadId
+            totalCost = thread.totalCost
+            totalCostDetails = thread.totalCostDetails
+            totalTokenDetails = thread.totalTokenDetails
+            totalTokens = thread.totalTokens
+            traceId = thread.traceId
+            additionalProperties = thread.additionalProperties.toMutableMap()
         }
 
         /**
@@ -822,12 +822,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ThreadListItem].
+         * Returns an immutable instance of [Thread].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ThreadListItem =
-            ThreadListItem(
+        fun build(): Thread =
+            Thread(
                 count,
                 feedbackStats,
                 firstInputs,
@@ -861,7 +861,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ThreadListItem = apply {
+    fun validate(): Thread = apply {
         if (validated) {
             return@apply
         }
@@ -1269,7 +1269,7 @@ private constructor(
             return true
         }
 
-        return other is ThreadListItem &&
+        return other is Thread &&
             count == other.count &&
             feedbackStats == other.feedbackStats &&
             firstInputs == other.firstInputs &&
@@ -1320,5 +1320,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ThreadListItem{count=$count, feedbackStats=$feedbackStats, firstInputs=$firstInputs, firstTraceId=$firstTraceId, lastError=$lastError, lastOutputs=$lastOutputs, lastTraceId=$lastTraceId, latencyP50=$latencyP50, latencyP99=$latencyP99, maxStartTime=$maxStartTime, minStartTime=$minStartTime, numErroredTurns=$numErroredTurns, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalCostDetails=$totalCostDetails, totalTokenDetails=$totalTokenDetails, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "Thread{count=$count, feedbackStats=$feedbackStats, firstInputs=$firstInputs, firstTraceId=$firstTraceId, lastError=$lastError, lastOutputs=$lastOutputs, lastTraceId=$lastTraceId, latencyP50=$latencyP50, latencyP99=$latencyP99, maxStartTime=$maxStartTime, minStartTime=$minStartTime, numErroredTurns=$numErroredTurns, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalCostDetails=$totalCostDetails, totalTokenDetails=$totalTokenDetails, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
 }

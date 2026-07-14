@@ -26,6 +26,7 @@ private constructor(
     private val createdAt: JsonField<String>,
     private val createdBy: JsonField<String>,
     private val feedbackKeys: JsonField<List<String>>,
+    private val isManaged: JsonField<Boolean>,
     private val llmEvaluator: JsonField<OnlineLlmEvaluator>,
     private val name: JsonField<String>,
     private val runRules: JsonField<List<OnlineEvaluatorRunRule>>,
@@ -46,6 +47,9 @@ private constructor(
         @JsonProperty("feedback_keys")
         @ExcludeMissing
         feedbackKeys: JsonField<List<String>> = JsonMissing.of(),
+        @JsonProperty("is_managed")
+        @ExcludeMissing
+        isManaged: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("llm_evaluator")
         @ExcludeMissing
         llmEvaluator: JsonField<OnlineLlmEvaluator> = JsonMissing.of(),
@@ -64,6 +68,7 @@ private constructor(
         createdAt,
         createdBy,
         feedbackKeys,
+        isManaged,
         llmEvaluator,
         name,
         runRules,
@@ -102,6 +107,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun feedbackKeys(): Optional<List<String>> = feedbackKeys.getOptional("feedback_keys")
+
+    /**
+     * IsManaged marks a LangChain-managed evaluator (currently the managed Perceived Error judge).
+     * NULL in the DB is read as false via COALESCE.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isManaged(): Optional<Boolean> = isManaged.getOptional("is_managed")
 
     /**
      * Embedded child evaluator (populated based on type)
@@ -181,6 +195,13 @@ private constructor(
     fun _feedbackKeys(): JsonField<List<String>> = feedbackKeys
 
     /**
+     * Returns the raw JSON value of [isManaged].
+     *
+     * Unlike [isManaged], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("is_managed") @ExcludeMissing fun _isManaged(): JsonField<Boolean> = isManaged
+
+    /**
      * Returns the raw JSON value of [llmEvaluator].
      *
      * Unlike [llmEvaluator], this method doesn't throw if the JSON field has an unexpected type.
@@ -252,6 +273,7 @@ private constructor(
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var createdBy: JsonField<String> = JsonMissing.of()
         private var feedbackKeys: JsonField<MutableList<String>>? = null
+        private var isManaged: JsonField<Boolean> = JsonMissing.of()
         private var llmEvaluator: JsonField<OnlineLlmEvaluator> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var runRules: JsonField<MutableList<OnlineEvaluatorRunRule>>? = null
@@ -267,6 +289,7 @@ private constructor(
             createdAt = onlineEvaluator.createdAt
             createdBy = onlineEvaluator.createdBy
             feedbackKeys = onlineEvaluator.feedbackKeys.map { it.toMutableList() }
+            isManaged = onlineEvaluator.isManaged
             llmEvaluator = onlineEvaluator.llmEvaluator
             name = onlineEvaluator.name
             runRules = onlineEvaluator.runRules.map { it.toMutableList() }
@@ -346,6 +369,21 @@ private constructor(
                     checkKnown("feedbackKeys", it).add(feedbackKey)
                 }
         }
+
+        /**
+         * IsManaged marks a LangChain-managed evaluator (currently the managed Perceived Error
+         * judge). NULL in the DB is read as false via COALESCE.
+         */
+        fun isManaged(isManaged: Boolean) = isManaged(JsonField.of(isManaged))
+
+        /**
+         * Sets [Builder.isManaged] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isManaged] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isManaged(isManaged: JsonField<Boolean>) = apply { this.isManaged = isManaged }
 
         /** Embedded child evaluator (populated based on type) */
         fun llmEvaluator(llmEvaluator: OnlineLlmEvaluator) =
@@ -460,6 +498,7 @@ private constructor(
                 createdAt,
                 createdBy,
                 (feedbackKeys ?: JsonMissing.of()).map { it.toImmutable() },
+                isManaged,
                 llmEvaluator,
                 name,
                 (runRules ?: JsonMissing.of()).map { it.toImmutable() },
@@ -490,6 +529,7 @@ private constructor(
         createdAt()
         createdBy()
         feedbackKeys()
+        isManaged()
         llmEvaluator().ifPresent { it.validate() }
         name()
         runRules().ifPresent { it.forEach { it.validate() } }
@@ -519,6 +559,7 @@ private constructor(
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (createdBy.asKnown().isPresent) 1 else 0) +
             (feedbackKeys.asKnown().getOrNull()?.size ?: 0) +
+            (if (isManaged.asKnown().isPresent) 1 else 0) +
             (llmEvaluator.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (runRules.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
@@ -537,6 +578,7 @@ private constructor(
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
             feedbackKeys == other.feedbackKeys &&
+            isManaged == other.isManaged &&
             llmEvaluator == other.llmEvaluator &&
             name == other.name &&
             runRules == other.runRules &&
@@ -553,6 +595,7 @@ private constructor(
             createdAt,
             createdBy,
             feedbackKeys,
+            isManaged,
             llmEvaluator,
             name,
             runRules,
@@ -566,5 +609,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "OnlineEvaluator{id=$id, codeEvaluator=$codeEvaluator, createdAt=$createdAt, createdBy=$createdBy, feedbackKeys=$feedbackKeys, llmEvaluator=$llmEvaluator, name=$name, runRules=$runRules, tenantId=$tenantId, type=$type, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "OnlineEvaluator{id=$id, codeEvaluator=$codeEvaluator, createdAt=$createdAt, createdBy=$createdBy, feedbackKeys=$feedbackKeys, isManaged=$isManaged, llmEvaluator=$llmEvaluator, name=$name, runRules=$runRules, tenantId=$tenantId, type=$type, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

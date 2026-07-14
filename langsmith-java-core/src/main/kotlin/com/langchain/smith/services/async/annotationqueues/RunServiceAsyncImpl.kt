@@ -17,6 +17,8 @@ import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepareAsync
 import com.langchain.smith.models.annotationqueues.RunSchemaWithAnnotationQueueInfo
+import com.langchain.smith.models.annotationqueues.runs.RunCreateByKeyParams
+import com.langchain.smith.models.annotationqueues.runs.RunCreateByKeyResponse
 import com.langchain.smith.models.annotationqueues.runs.RunCreateParams
 import com.langchain.smith.models.annotationqueues.runs.RunCreateResponse
 import com.langchain.smith.models.annotationqueues.runs.RunDeleteAllParams
@@ -62,6 +64,13 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<List<RunSchemaWithAnnotationQueueInfo>> =
         // get /api/v1/annotation-queues/{queue_id}/runs
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
+
+    override fun createByKey(
+        params: RunCreateByKeyParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<List<RunCreateByKeyResponse>> =
+        // post /api/v1/annotation-queues/{queue_id}/runs/by-key
+        withRawResponse().createByKey(params, requestOptions).thenApply { it.parse() }
 
     override fun deleteAll(
         params: RunDeleteAllParams,
@@ -189,6 +198,47 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                     errorHandler.handle(response).parseable {
                         response
                             .use { listHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.forEach { it.validate() }
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val createByKeyHandler: Handler<List<RunCreateByKeyResponse>> =
+            jsonHandler<List<RunCreateByKeyResponse>>(clientOptions.jsonMapper)
+
+        override fun createByKey(
+            params: RunCreateByKeyParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<List<RunCreateByKeyResponse>>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("queueId", params.queueId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "annotation-queues",
+                        params._pathParam(0),
+                        "runs",
+                        "by-key",
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { createByKeyHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.forEach { it.validate() }

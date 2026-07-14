@@ -25,6 +25,7 @@ private constructor(
     private val threadId: String?,
     private val selects: List<Select>,
     private val sessionId: String,
+    private val filter: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -39,6 +40,14 @@ private constructor(
 
     /** `session_id` is the tracing project (session) UUID (required). */
     fun sessionId(): String = sessionId
+
+    /**
+     * `filter` narrows which of the thread's traces are aggregated, using a LangSmith filter
+     * expression. For example: lt(start_time, "2025-01-01T00:00:00Z") or eq(trace_id,
+     * "0190a1b2-c3d4-7ef0-a5b6-6ea3a82e9328"). See
+     * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+     */
+    fun filter(): Optional<String> = Optional.ofNullable(filter)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -68,6 +77,7 @@ private constructor(
         private var threadId: String? = null
         private var selects: MutableList<Select>? = null
         private var sessionId: String? = null
+        private var filter: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -76,6 +86,7 @@ private constructor(
             threadId = threadStatsParams.threadId
             selects = threadStatsParams.selects.toMutableList()
             sessionId = threadStatsParams.sessionId
+            filter = threadStatsParams.filter
             additionalHeaders = threadStatsParams.additionalHeaders.toBuilder()
             additionalQueryParams = threadStatsParams.additionalQueryParams.toBuilder()
         }
@@ -102,6 +113,17 @@ private constructor(
 
         /** `session_id` is the tracing project (session) UUID (required). */
         fun sessionId(sessionId: String) = apply { this.sessionId = sessionId }
+
+        /**
+         * `filter` narrows which of the thread's traces are aggregated, using a LangSmith filter
+         * expression. For example: lt(start_time, "2025-01-01T00:00:00Z") or eq(trace_id,
+         * "0190a1b2-c3d4-7ef0-a5b6-6ea3a82e9328"). See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         */
+        fun filter(filter: String?) = apply { this.filter = filter }
+
+        /** Alias for calling [Builder.filter] with `filter.orElse(null)`. */
+        fun filter(filter: Optional<String>) = filter(filter.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -219,6 +241,7 @@ private constructor(
                 threadId,
                 checkRequired("selects", selects).toImmutable(),
                 checkRequired("sessionId", sessionId),
+                filter,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -237,6 +260,7 @@ private constructor(
             .apply {
                 selects.forEach { put("selects", it.toString()) }
                 put("session_id", sessionId)
+                filter?.let { put("filter", it) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -476,13 +500,14 @@ private constructor(
             threadId == other.threadId &&
             selects == other.selects &&
             sessionId == other.sessionId &&
+            filter == other.filter &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(threadId, selects, sessionId, additionalHeaders, additionalQueryParams)
+        Objects.hash(threadId, selects, sessionId, filter, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ThreadStatsParams{threadId=$threadId, selects=$selects, sessionId=$sessionId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ThreadStatsParams{threadId=$threadId, selects=$selects, sessionId=$sessionId, filter=$filter, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

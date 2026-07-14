@@ -9,15 +9,15 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ThreadListItemTest {
+internal class ThreadTest {
 
     @Test
     fun create() {
-        val threadListItem =
-            ThreadListItem.builder()
+        val thread =
+            Thread.builder()
                 .count(3L)
                 .feedbackStats(
-                    ThreadListItem.FeedbackStats.builder()
+                    Thread.FeedbackStats.builder()
                         .putAdditionalProperty(
                             "foo",
                             JsonValue.from(
@@ -51,12 +51,12 @@ internal class ThreadListItemTest {
                 .threadId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .totalCost(0.045)
                 .totalCostDetails(
-                    ThreadListItem.TotalCostDetails.builder()
+                    Thread.TotalCostDetails.builder()
                         .putAdditionalProperty("foo", JsonValue.from(0))
                         .build()
                 )
                 .totalTokenDetails(
-                    ThreadListItem.TotalTokenDetails.builder()
+                    Thread.TotalTokenDetails.builder()
                         .putAdditionalProperty("foo", JsonValue.from(0))
                         .build()
                 )
@@ -64,10 +64,10 @@ internal class ThreadListItemTest {
                 .traceId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9328")
                 .build()
 
-        assertThat(threadListItem.count()).contains(3L)
-        assertThat(threadListItem.feedbackStats())
+        assertThat(thread.count()).contains(3L)
+        assertThat(thread.feedbackStats())
             .contains(
-                ThreadListItem.FeedbackStats.builder()
+                Thread.FeedbackStats.builder()
                     .putAdditionalProperty(
                         "foo",
                         JsonValue.from(
@@ -87,46 +87,43 @@ internal class ThreadListItemTest {
                     )
                     .build()
             )
-        assertThat(threadListItem.firstInputs()).contains("first_inputs")
-        assertThat(threadListItem.firstTraceId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
-        assertThat(threadListItem.lastError()).contains("last_error")
-        assertThat(threadListItem.lastOutputs()).contains("last_outputs")
-        assertThat(threadListItem.lastTraceId()).contains("0190a1b2-c3d4-7ef0-a5b6-6ea3a82e9328")
-        assertThat(threadListItem.latencyP50()).contains(0.15)
-        assertThat(threadListItem.latencyP99()).contains(0.42)
-        assertThat(threadListItem.maxStartTime())
-            .contains(OffsetDateTime.parse("2025-01-15T12:05:00.000Z"))
-        assertThat(threadListItem.minStartTime())
-            .contains(OffsetDateTime.parse("2025-01-15T12:00:00.000Z"))
-        assertThat(threadListItem.numErroredTurns()).contains(1L)
-        assertThat(threadListItem.startTime())
-            .contains(OffsetDateTime.parse("2025-01-15T12:00:00.000Z"))
-        assertThat(threadListItem.threadId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
-        assertThat(threadListItem.totalCost()).contains(0.045)
-        assertThat(threadListItem.totalCostDetails())
+        assertThat(thread.firstInputs()).contains("first_inputs")
+        assertThat(thread.firstTraceId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+        assertThat(thread.lastError()).contains("last_error")
+        assertThat(thread.lastOutputs()).contains("last_outputs")
+        assertThat(thread.lastTraceId()).contains("0190a1b2-c3d4-7ef0-a5b6-6ea3a82e9328")
+        assertThat(thread.latencyP50()).contains(0.15)
+        assertThat(thread.latencyP99()).contains(0.42)
+        assertThat(thread.maxStartTime()).contains(OffsetDateTime.parse("2025-01-15T12:05:00.000Z"))
+        assertThat(thread.minStartTime()).contains(OffsetDateTime.parse("2025-01-15T12:00:00.000Z"))
+        assertThat(thread.numErroredTurns()).contains(1L)
+        assertThat(thread.startTime()).contains(OffsetDateTime.parse("2025-01-15T12:00:00.000Z"))
+        assertThat(thread.threadId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+        assertThat(thread.totalCost()).contains(0.045)
+        assertThat(thread.totalCostDetails())
             .contains(
-                ThreadListItem.TotalCostDetails.builder()
+                Thread.TotalCostDetails.builder()
                     .putAdditionalProperty("foo", JsonValue.from(0))
                     .build()
             )
-        assertThat(threadListItem.totalTokenDetails())
+        assertThat(thread.totalTokenDetails())
             .contains(
-                ThreadListItem.TotalTokenDetails.builder()
+                Thread.TotalTokenDetails.builder()
                     .putAdditionalProperty("foo", JsonValue.from(0))
                     .build()
             )
-        assertThat(threadListItem.totalTokens()).contains(450L)
-        assertThat(threadListItem.traceId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9328")
+        assertThat(thread.totalTokens()).contains(450L)
+        assertThat(thread.traceId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9328")
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val threadListItem =
-            ThreadListItem.builder()
+        val thread =
+            Thread.builder()
                 .count(3L)
                 .feedbackStats(
-                    ThreadListItem.FeedbackStats.builder()
+                    Thread.FeedbackStats.builder()
                         .putAdditionalProperty(
                             "foo",
                             JsonValue.from(
@@ -160,12 +157,12 @@ internal class ThreadListItemTest {
                 .threadId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .totalCost(0.045)
                 .totalCostDetails(
-                    ThreadListItem.TotalCostDetails.builder()
+                    Thread.TotalCostDetails.builder()
                         .putAdditionalProperty("foo", JsonValue.from(0))
                         .build()
                 )
                 .totalTokenDetails(
-                    ThreadListItem.TotalTokenDetails.builder()
+                    Thread.TotalTokenDetails.builder()
                         .putAdditionalProperty("foo", JsonValue.from(0))
                         .build()
                 )
@@ -173,12 +170,9 @@ internal class ThreadListItemTest {
                 .traceId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9328")
                 .build()
 
-        val roundtrippedThreadListItem =
-            jsonMapper.readValue(
-                jsonMapper.writeValueAsString(threadListItem),
-                jacksonTypeRef<ThreadListItem>(),
-            )
+        val roundtrippedThread =
+            jsonMapper.readValue(jsonMapper.writeValueAsString(thread), jacksonTypeRef<Thread>())
 
-        assertThat(roundtrippedThreadListItem).isEqualTo(threadListItem)
+        assertThat(roundtrippedThread).isEqualTo(thread)
     }
 }

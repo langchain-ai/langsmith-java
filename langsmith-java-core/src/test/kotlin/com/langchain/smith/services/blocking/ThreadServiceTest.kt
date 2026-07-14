@@ -47,15 +47,16 @@ internal class ThreadServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val threadService = client.threads()
 
-        val response =
+        val threadStats =
             threadService.stats(
                 ThreadStatsParams.builder()
                     .threadId("thread_id")
                     .addSelect(ThreadStatsParams.Select.TURNS)
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .filter("filter")
                     .build()
             )
 
-        response.validate()
+        threadStats.validate()
     }
 }

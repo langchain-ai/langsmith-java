@@ -19,14 +19,14 @@ private constructor(
     private val streamHandlerExecutor: Executor,
     private val params: ThreadListTracesParams,
     private val response: ThreadListTracesPageResponse,
-) : PageAsync<ThreadTraceListItem> {
+) : PageAsync<ThreadTrace> {
 
     /**
      * Delegates to [ThreadListTracesPageResponse], but gracefully handles missing data.
      *
      * @see ThreadListTracesPageResponse.items
      */
-    override fun items(): List<ThreadTraceListItem> =
+    override fun items(): List<ThreadTrace> =
         response._items().getOptional("items").getOrNull() ?: emptyList()
 
     /**
@@ -48,8 +48,7 @@ private constructor(
     override fun nextPage(): CompletableFuture<ThreadListTracesPageAsync> =
         service.listTraces(nextPageParams())
 
-    fun autoPager(): AutoPagerAsync<ThreadTraceListItem> =
-        AutoPagerAsync.from(this, streamHandlerExecutor)
+    fun autoPager(): AutoPagerAsync<ThreadTrace> = AutoPagerAsync.from(this, streamHandlerExecutor)
 
     /** The parameters that were used to request this page. */
     fun params(): ThreadListTracesParams = params

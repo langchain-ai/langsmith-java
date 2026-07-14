@@ -27,6 +27,7 @@ internal class CreateOnlineEvaluatorResponseTest {
                         .createdAt("created_at")
                         .createdBy("created_by")
                         .addFeedbackKey("string")
+                        .isManaged(true)
                         .llmEvaluator(
                             OnlineLlmEvaluator.builder()
                                 .annotationQueueId("annotation_queue_id")
@@ -84,6 +85,7 @@ internal class CreateOnlineEvaluatorResponseTest {
                     .createdAt("created_at")
                     .createdBy("created_by")
                     .addFeedbackKey("string")
+                    .isManaged(true)
                     .llmEvaluator(
                         OnlineLlmEvaluator.builder()
                             .annotationQueueId("annotation_queue_id")
@@ -145,6 +147,7 @@ internal class CreateOnlineEvaluatorResponseTest {
                         .createdAt("created_at")
                         .createdBy("created_by")
                         .addFeedbackKey("string")
+                        .isManaged(true)
                         .llmEvaluator(
                             OnlineLlmEvaluator.builder()
                                 .annotationQueueId("annotation_queue_id")

@@ -21,16 +21,14 @@ import kotlin.jvm.optionals.getOrNull
 class ThreadQueryPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val items: JsonField<List<ThreadListItem>>,
+    private val items: JsonField<List<Thread>>,
     private val nextCursor: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("items")
-        @ExcludeMissing
-        items: JsonField<List<ThreadListItem>> = JsonMissing.of(),
+        @JsonProperty("items") @ExcludeMissing items: JsonField<List<Thread>> = JsonMissing.of(),
         @JsonProperty("next_cursor")
         @ExcludeMissing
         nextCursor: JsonField<String> = JsonMissing.of(),
@@ -42,7 +40,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun items(): Optional<List<ThreadListItem>> = items.getOptional("items")
+    fun items(): Optional<List<Thread>> = items.getOptional("items")
 
     /**
      * `next_cursor` is the opaque cursor to pass as `cursor` on the next request. Null on the final
@@ -58,7 +56,7 @@ private constructor(
      *
      * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<ThreadListItem>> = items
+    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<Thread>> = items
 
     /**
      * Returns the raw JSON value of [nextCursor].
@@ -88,7 +86,7 @@ private constructor(
     /** A builder for [ThreadQueryPageResponse]. */
     class Builder internal constructor() {
 
-        private var items: JsonField<MutableList<ThreadListItem>>? = null
+        private var items: JsonField<MutableList<Thread>>? = null
         private var nextCursor: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -100,25 +98,25 @@ private constructor(
         }
 
         /** `items` is the page of thread summaries, sorted by the thread's most recent activity. */
-        fun items(items: List<ThreadListItem>) = items(JsonField.of(items))
+        fun items(items: List<Thread>) = items(JsonField.of(items))
 
         /**
          * Sets [Builder.items] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.items] with a well-typed `List<ThreadListItem>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
+         * You should usually call [Builder.items] with a well-typed `List<Thread>` value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
-        fun items(items: JsonField<List<ThreadListItem>>) = apply {
+        fun items(items: JsonField<List<Thread>>) = apply {
             this.items = items.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [ThreadListItem] to [items].
+         * Adds a single [Thread] to [items].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addItem(item: ThreadListItem) = apply {
+        fun addItem(item: Thread) = apply {
             items =
                 (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
         }

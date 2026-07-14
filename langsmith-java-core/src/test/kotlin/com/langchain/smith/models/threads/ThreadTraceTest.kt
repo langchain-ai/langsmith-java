@@ -9,26 +9,26 @@ import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ThreadTraceListItemTest {
+internal class ThreadTraceTest {
 
     @Test
     fun create() {
-        val threadTraceListItem =
-            ThreadTraceListItem.builder()
+        val threadTrace =
+            ThreadTrace.builder()
                 .completionCost(0.0)
                 .completionCostDetails(
-                    ThreadTraceListItem.CompletionCostDetails.builder()
+                    ThreadTrace.CompletionCostDetails.builder()
                         .raw(
-                            ThreadTraceListItem.CompletionCostDetails.Raw.builder()
+                            ThreadTrace.CompletionCostDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .build()
                 )
                 .completionTokenDetails(
-                    ThreadTraceListItem.CompletionTokenDetails.builder()
+                    ThreadTrace.CompletionTokenDetails.builder()
                         .raw(
-                            ThreadTraceListItem.CompletionTokenDetails.Raw.builder()
+                            ThreadTrace.CompletionTokenDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -45,18 +45,18 @@ internal class ThreadTraceListItemTest {
                 .outputsPreview("outputs_preview")
                 .promptCost(0.0)
                 .promptCostDetails(
-                    ThreadTraceListItem.PromptCostDetails.builder()
+                    ThreadTrace.PromptCostDetails.builder()
                         .raw(
-                            ThreadTraceListItem.PromptCostDetails.Raw.builder()
+                            ThreadTrace.PromptCostDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .build()
                 )
                 .promptTokenDetails(
-                    ThreadTraceListItem.PromptTokenDetails.builder()
+                    ThreadTrace.PromptTokenDetails.builder()
                         .raw(
-                            ThreadTraceListItem.PromptTokenDetails.Raw.builder()
+                            ThreadTrace.PromptTokenDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -70,87 +70,86 @@ internal class ThreadTraceListItemTest {
                 .traceId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .build()
 
-        assertThat(threadTraceListItem.completionCost()).contains(0.0)
-        assertThat(threadTraceListItem.completionCostDetails())
+        assertThat(threadTrace.completionCost()).contains(0.0)
+        assertThat(threadTrace.completionCostDetails())
             .contains(
-                ThreadTraceListItem.CompletionCostDetails.builder()
+                ThreadTrace.CompletionCostDetails.builder()
                     .raw(
-                        ThreadTraceListItem.CompletionCostDetails.Raw.builder()
+                        ThreadTrace.CompletionCostDetails.Raw.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .build()
             )
-        assertThat(threadTraceListItem.completionTokenDetails())
+        assertThat(threadTrace.completionTokenDetails())
             .contains(
-                ThreadTraceListItem.CompletionTokenDetails.builder()
+                ThreadTrace.CompletionTokenDetails.builder()
                     .raw(
-                        ThreadTraceListItem.CompletionTokenDetails.Raw.builder()
+                        ThreadTrace.CompletionTokenDetails.Raw.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .build()
             )
-        assertThat(threadTraceListItem.completionTokens()).contains(0L)
-        assertThat(threadTraceListItem.endTime())
-            .contains(OffsetDateTime.parse("2025-01-15T12:00:01.500Z"))
-        assertThat(threadTraceListItem.errorPreview()).contains("error_preview")
-        assertThat(threadTraceListItem.firstTokenTime())
+        assertThat(threadTrace.completionTokens()).contains(0L)
+        assertThat(threadTrace.endTime()).contains(OffsetDateTime.parse("2025-01-15T12:00:01.500Z"))
+        assertThat(threadTrace.errorPreview()).contains("error_preview")
+        assertThat(threadTrace.firstTokenTime())
             .contains(OffsetDateTime.parse("2024-01-15T10:30:00.312Z"))
-        assertThat(threadTraceListItem.inputsPreview()).contains("inputs_preview")
-        assertThat(threadTraceListItem.latency()).contains(0.0)
-        assertThat(threadTraceListItem.name()).contains("name")
-        assertThat(threadTraceListItem.op()).contains(0.0)
-        assertThat(threadTraceListItem.outputsPreview()).contains("outputs_preview")
-        assertThat(threadTraceListItem.promptCost()).contains(0.0)
-        assertThat(threadTraceListItem.promptCostDetails())
+        assertThat(threadTrace.inputsPreview()).contains("inputs_preview")
+        assertThat(threadTrace.latency()).contains(0.0)
+        assertThat(threadTrace.name()).contains("name")
+        assertThat(threadTrace.op()).contains(0.0)
+        assertThat(threadTrace.outputsPreview()).contains("outputs_preview")
+        assertThat(threadTrace.promptCost()).contains(0.0)
+        assertThat(threadTrace.promptCostDetails())
             .contains(
-                ThreadTraceListItem.PromptCostDetails.builder()
+                ThreadTrace.PromptCostDetails.builder()
                     .raw(
-                        ThreadTraceListItem.PromptCostDetails.Raw.builder()
+                        ThreadTrace.PromptCostDetails.Raw.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .build()
             )
-        assertThat(threadTraceListItem.promptTokenDetails())
+        assertThat(threadTrace.promptTokenDetails())
             .contains(
-                ThreadTraceListItem.PromptTokenDetails.builder()
+                ThreadTrace.PromptTokenDetails.builder()
                     .raw(
-                        ThreadTraceListItem.PromptTokenDetails.Raw.builder()
+                        ThreadTrace.PromptTokenDetails.Raw.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .build()
             )
-        assertThat(threadTraceListItem.promptTokens()).contains(0L)
-        assertThat(threadTraceListItem.startTime())
+        assertThat(threadTrace.promptTokens()).contains(0L)
+        assertThat(threadTrace.startTime())
             .contains(OffsetDateTime.parse("2025-01-15T12:00:00.000Z"))
-        assertThat(threadTraceListItem.threadId()).contains("d4e5f6a7-b8c9-4d5e-1f2a-3b4c5d6e7f8a")
-        assertThat(threadTraceListItem.totalCost()).contains(0.0)
-        assertThat(threadTraceListItem.totalTokens()).contains(0L)
-        assertThat(threadTraceListItem.traceId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+        assertThat(threadTrace.threadId()).contains("d4e5f6a7-b8c9-4d5e-1f2a-3b4c5d6e7f8a")
+        assertThat(threadTrace.totalCost()).contains(0.0)
+        assertThat(threadTrace.totalTokens()).contains(0L)
+        assertThat(threadTrace.traceId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val threadTraceListItem =
-            ThreadTraceListItem.builder()
+        val threadTrace =
+            ThreadTrace.builder()
                 .completionCost(0.0)
                 .completionCostDetails(
-                    ThreadTraceListItem.CompletionCostDetails.builder()
+                    ThreadTrace.CompletionCostDetails.builder()
                         .raw(
-                            ThreadTraceListItem.CompletionCostDetails.Raw.builder()
+                            ThreadTrace.CompletionCostDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .build()
                 )
                 .completionTokenDetails(
-                    ThreadTraceListItem.CompletionTokenDetails.builder()
+                    ThreadTrace.CompletionTokenDetails.builder()
                         .raw(
-                            ThreadTraceListItem.CompletionTokenDetails.Raw.builder()
+                            ThreadTrace.CompletionTokenDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -167,18 +166,18 @@ internal class ThreadTraceListItemTest {
                 .outputsPreview("outputs_preview")
                 .promptCost(0.0)
                 .promptCostDetails(
-                    ThreadTraceListItem.PromptCostDetails.builder()
+                    ThreadTrace.PromptCostDetails.builder()
                         .raw(
-                            ThreadTraceListItem.PromptCostDetails.Raw.builder()
+                            ThreadTrace.PromptCostDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .build()
                 )
                 .promptTokenDetails(
-                    ThreadTraceListItem.PromptTokenDetails.builder()
+                    ThreadTrace.PromptTokenDetails.builder()
                         .raw(
-                            ThreadTraceListItem.PromptTokenDetails.Raw.builder()
+                            ThreadTrace.PromptTokenDetails.Raw.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -192,12 +191,12 @@ internal class ThreadTraceListItemTest {
                 .traceId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .build()
 
-        val roundtrippedThreadTraceListItem =
+        val roundtrippedThreadTrace =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(threadTraceListItem),
-                jacksonTypeRef<ThreadTraceListItem>(),
+                jsonMapper.writeValueAsString(threadTrace),
+                jacksonTypeRef<ThreadTrace>(),
             )
 
-        assertThat(roundtrippedThreadTraceListItem).isEqualTo(threadTraceListItem)
+        assertThat(roundtrippedThreadTrace).isEqualTo(threadTrace)
     }
 }

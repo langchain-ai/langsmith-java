@@ -6,6 +6,8 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.annotationqueues.RunSchemaWithAnnotationQueueInfo
+import com.langchain.smith.models.annotationqueues.runs.RunCreateByKeyParams
+import com.langchain.smith.models.annotationqueues.runs.RunCreateByKeyResponse
 import com.langchain.smith.models.annotationqueues.runs.RunCreateParams
 import com.langchain.smith.models.annotationqueues.runs.RunCreateResponse
 import com.langchain.smith.models.annotationqueues.runs.RunDeleteAllParams
@@ -113,6 +115,31 @@ interface RunServiceAsync {
         requestOptions: RequestOptions,
     ): CompletableFuture<List<RunSchemaWithAnnotationQueueInfo>> =
         list(queueId, RunListParams.none(), requestOptions)
+
+    /** Add Runs To Annotation Queue By Key */
+    fun createByKey(
+        queueId: String,
+        params: RunCreateByKeyParams,
+    ): CompletableFuture<List<RunCreateByKeyResponse>> =
+        createByKey(queueId, params, RequestOptions.none())
+
+    /** @see createByKey */
+    fun createByKey(
+        queueId: String,
+        params: RunCreateByKeyParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<List<RunCreateByKeyResponse>> =
+        createByKey(params.toBuilder().queueId(queueId).build(), requestOptions)
+
+    /** @see createByKey */
+    fun createByKey(params: RunCreateByKeyParams): CompletableFuture<List<RunCreateByKeyResponse>> =
+        createByKey(params, RequestOptions.none())
+
+    /** @see createByKey */
+    fun createByKey(
+        params: RunCreateByKeyParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<List<RunCreateByKeyResponse>>
 
     /** Delete Runs From Annotation Queue */
     fun deleteAll(queueId: String): CompletableFuture<RunDeleteAllResponse> =
@@ -285,6 +312,36 @@ interface RunServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<List<RunSchemaWithAnnotationQueueInfo>>> =
             list(queueId, RunListParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/runs/by-key`,
+         * but is otherwise the same as [RunServiceAsync.createByKey].
+         */
+        fun createByKey(
+            queueId: String,
+            params: RunCreateByKeyParams,
+        ): CompletableFuture<HttpResponseFor<List<RunCreateByKeyResponse>>> =
+            createByKey(queueId, params, RequestOptions.none())
+
+        /** @see createByKey */
+        fun createByKey(
+            queueId: String,
+            params: RunCreateByKeyParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<List<RunCreateByKeyResponse>>> =
+            createByKey(params.toBuilder().queueId(queueId).build(), requestOptions)
+
+        /** @see createByKey */
+        fun createByKey(
+            params: RunCreateByKeyParams
+        ): CompletableFuture<HttpResponseFor<List<RunCreateByKeyResponse>>> =
+            createByKey(params, RequestOptions.none())
+
+        /** @see createByKey */
+        fun createByKey(
+            params: RunCreateByKeyParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<List<RunCreateByKeyResponse>>>
 
         /**
          * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/runs/delete`,

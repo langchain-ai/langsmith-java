@@ -17,10 +17,10 @@ internal class ThreadQueryPageResponseTest {
         val threadQueryPageResponse =
             ThreadQueryPageResponse.builder()
                 .addItem(
-                    ThreadListItem.builder()
+                    Thread.builder()
                         .count(3L)
                         .feedbackStats(
-                            ThreadListItem.FeedbackStats.builder()
+                            Thread.FeedbackStats.builder()
                                 .putAdditionalProperty(
                                     "foo",
                                     JsonValue.from(
@@ -54,12 +54,12 @@ internal class ThreadQueryPageResponseTest {
                         .threadId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                         .totalCost(0.045)
                         .totalCostDetails(
-                            ThreadListItem.TotalCostDetails.builder()
+                            Thread.TotalCostDetails.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .totalTokenDetails(
-                            ThreadListItem.TotalTokenDetails.builder()
+                            Thread.TotalTokenDetails.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
@@ -72,10 +72,10 @@ internal class ThreadQueryPageResponseTest {
 
         assertThat(threadQueryPageResponse.items().getOrNull())
             .containsExactly(
-                ThreadListItem.builder()
+                Thread.builder()
                     .count(3L)
                     .feedbackStats(
-                        ThreadListItem.FeedbackStats.builder()
+                        Thread.FeedbackStats.builder()
                             .putAdditionalProperty(
                                 "foo",
                                 JsonValue.from(
@@ -109,12 +109,12 @@ internal class ThreadQueryPageResponseTest {
                     .threadId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                     .totalCost(0.045)
                     .totalCostDetails(
-                        ThreadListItem.TotalCostDetails.builder()
+                        Thread.TotalCostDetails.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
                     .totalTokenDetails(
-                        ThreadListItem.TotalTokenDetails.builder()
+                        Thread.TotalTokenDetails.builder()
                             .putAdditionalProperty("foo", JsonValue.from(0))
                             .build()
                     )
@@ -132,10 +132,10 @@ internal class ThreadQueryPageResponseTest {
         val threadQueryPageResponse =
             ThreadQueryPageResponse.builder()
                 .addItem(
-                    ThreadListItem.builder()
+                    Thread.builder()
                         .count(3L)
                         .feedbackStats(
-                            ThreadListItem.FeedbackStats.builder()
+                            Thread.FeedbackStats.builder()
                                 .putAdditionalProperty(
                                     "foo",
                                     JsonValue.from(
@@ -169,12 +169,12 @@ internal class ThreadQueryPageResponseTest {
                         .threadId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                         .totalCost(0.045)
                         .totalCostDetails(
-                            ThreadListItem.TotalCostDetails.builder()
+                            Thread.TotalCostDetails.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )
                         .totalTokenDetails(
-                            ThreadListItem.TotalTokenDetails.builder()
+                            Thread.TotalTokenDetails.builder()
                                 .putAdditionalProperty("foo", JsonValue.from(0))
                                 .build()
                         )

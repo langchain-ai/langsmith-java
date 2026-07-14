@@ -21,7 +21,7 @@ import kotlin.jvm.optionals.getOrNull
 class ThreadListTracesPageResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val items: JsonField<List<ThreadTraceListItem>>,
+    private val items: JsonField<List<ThreadTrace>>,
     private val nextCursor: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -30,7 +30,7 @@ private constructor(
     private constructor(
         @JsonProperty("items")
         @ExcludeMissing
-        items: JsonField<List<ThreadTraceListItem>> = JsonMissing.of(),
+        items: JsonField<List<ThreadTrace>> = JsonMissing.of(),
         @JsonProperty("next_cursor")
         @ExcludeMissing
         nextCursor: JsonField<String> = JsonMissing.of(),
@@ -43,7 +43,7 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun items(): Optional<List<ThreadTraceListItem>> = items.getOptional("items")
+    fun items(): Optional<List<ThreadTrace>> = items.getOptional("items")
 
     /**
      * `next_cursor` is the opaque cursor to pass as `cursor` on the next request. Null on the final
@@ -59,9 +59,7 @@ private constructor(
      *
      * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("items")
-    @ExcludeMissing
-    fun _items(): JsonField<List<ThreadTraceListItem>> = items
+    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<ThreadTrace>> = items
 
     /**
      * Returns the raw JSON value of [nextCursor].
@@ -93,7 +91,7 @@ private constructor(
     /** A builder for [ThreadListTracesPageResponse]. */
     class Builder internal constructor() {
 
-        private var items: JsonField<MutableList<ThreadTraceListItem>>? = null
+        private var items: JsonField<MutableList<ThreadTrace>>? = null
         private var nextCursor: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -108,25 +106,25 @@ private constructor(
          * `items` is the page of root traces in this thread. Which properties are populated on each
          * trace depends on the `selects` query parameter.
          */
-        fun items(items: List<ThreadTraceListItem>) = items(JsonField.of(items))
+        fun items(items: List<ThreadTrace>) = items(JsonField.of(items))
 
         /**
          * Sets [Builder.items] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.items] with a well-typed `List<ThreadTraceListItem>`
-         * value instead. This method is primarily for setting the field to an undocumented or not
-         * yet supported value.
+         * You should usually call [Builder.items] with a well-typed `List<ThreadTrace>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun items(items: JsonField<List<ThreadTraceListItem>>) = apply {
+        fun items(items: JsonField<List<ThreadTrace>>) = apply {
             this.items = items.map { it.toMutableList() }
         }
 
         /**
-         * Adds a single [ThreadTraceListItem] to [items].
+         * Adds a single [ThreadTrace] to [items].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addItem(item: ThreadTraceListItem) = apply {
+        fun addItem(item: ThreadTrace) = apply {
             items =
                 (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
         }

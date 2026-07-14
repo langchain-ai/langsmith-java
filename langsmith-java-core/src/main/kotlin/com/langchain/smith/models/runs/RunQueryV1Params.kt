@@ -82,6 +82,9 @@ private constructor(
     fun isRoot(): Optional<Boolean> = body.isRoot()
 
     /**
+     * Maximum number of runs to return. Not applied when trace is set — all runs in the trace are
+     * returned in a single response.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -158,6 +161,9 @@ private constructor(
     fun startTime(): Optional<OffsetDateTime> = body.startTime()
 
     /**
+     * Filter runs by trace ID. When set, limit and cursor-based pagination are not applied — all
+     * runs in the trace are returned in a single response.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -541,6 +547,10 @@ private constructor(
          */
         fun isRoot(isRoot: JsonField<Boolean>) = apply { body.isRoot(isRoot) }
 
+        /**
+         * Maximum number of runs to return. Not applied when trace is set — all runs in the trace
+         * are returned in a single response.
+         */
         fun limit(limit: Long) = apply { body.limit(limit) }
 
         /**
@@ -738,6 +748,10 @@ private constructor(
          */
         fun startTime(startTime: JsonField<OffsetDateTime>) = apply { body.startTime(startTime) }
 
+        /**
+         * Filter runs by trace ID. When set, limit and cursor-based pagination are not applied —
+         * all runs in the trace are returned in a single response.
+         */
         fun trace(trace: String?) = apply { body.trace(trace) }
 
         /** Alias for calling [Builder.trace] with `trace.orElse(null)`. */
@@ -1093,6 +1107,9 @@ private constructor(
         fun isRoot(): Optional<Boolean> = isRoot.getOptional("is_root")
 
         /**
+         * Maximum number of runs to return. Not applied when trace is set — all runs in the trace
+         * are returned in a single response.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -1170,6 +1187,9 @@ private constructor(
         fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
 
         /**
+         * Filter runs by trace ID. When set, limit and cursor-based pagination are not applied —
+         * all runs in the trace are returned in a single response.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -1619,6 +1639,10 @@ private constructor(
              */
             fun isRoot(isRoot: JsonField<Boolean>) = apply { this.isRoot = isRoot }
 
+            /**
+             * Maximum number of runs to return. Not applied when trace is set — all runs in the
+             * trace are returned in a single response.
+             */
             fun limit(limit: Long) = limit(JsonField.of(limit))
 
             /**
@@ -1843,6 +1867,10 @@ private constructor(
                 this.startTime = startTime
             }
 
+            /**
+             * Filter runs by trace ID. When set, limit and cursor-based pagination are not applied
+             * — all runs in the trace are returned in a single response.
+             */
             fun trace(trace: String?) = trace(JsonField.ofNullable(trace))
 
             /** Alias for calling [Builder.trace] with `trace.orElse(null)`. */

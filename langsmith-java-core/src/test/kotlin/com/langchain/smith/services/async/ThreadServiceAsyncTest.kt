@@ -58,16 +58,17 @@ internal class ThreadServiceAsyncTest {
                 .build()
         val threadServiceAsync = client.threads()
 
-        val responseFuture =
+        val threadStatsFuture =
             threadServiceAsync.stats(
                 ThreadStatsParams.builder()
                     .threadId("thread_id")
                     .addSelect(ThreadStatsParams.Select.TURNS)
                     .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .filter("filter")
                     .build()
             )
 
-        val response = responseFuture.get()
-        response.validate()
+        val threadStats = threadStatsFuture.get()
+        threadStats.validate()
     }
 }

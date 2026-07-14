@@ -17,6 +17,8 @@ import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
 import com.langchain.smith.models.annotationqueues.RunSchemaWithAnnotationQueueInfo
+import com.langchain.smith.models.annotationqueues.runs.RunCreateByKeyParams
+import com.langchain.smith.models.annotationqueues.runs.RunCreateByKeyResponse
 import com.langchain.smith.models.annotationqueues.runs.RunCreateParams
 import com.langchain.smith.models.annotationqueues.runs.RunCreateResponse
 import com.langchain.smith.models.annotationqueues.runs.RunDeleteAllParams
@@ -60,6 +62,13 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     ): List<RunSchemaWithAnnotationQueueInfo> =
         // get /api/v1/annotation-queues/{queue_id}/runs
         withRawResponse().list(params, requestOptions).parse()
+
+    override fun createByKey(
+        params: RunCreateByKeyParams,
+        requestOptions: RequestOptions,
+    ): List<RunCreateByKeyResponse> =
+        // post /api/v1/annotation-queues/{queue_id}/runs/by-key
+        withRawResponse().createByKey(params, requestOptions).parse()
 
     override fun deleteAll(
         params: RunDeleteAllParams,
@@ -179,6 +188,44 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             return errorHandler.handle(response).parseable {
                 response
                     .use { listHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.forEach { it.validate() }
+                        }
+                    }
+            }
+        }
+
+        private val createByKeyHandler: Handler<List<RunCreateByKeyResponse>> =
+            jsonHandler<List<RunCreateByKeyResponse>>(clientOptions.jsonMapper)
+
+        override fun createByKey(
+            params: RunCreateByKeyParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<List<RunCreateByKeyResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("queueId", params.queueId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "annotation-queues",
+                        params._pathParam(0),
+                        "runs",
+                        "by-key",
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { createByKeyHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.forEach { it.validate() }

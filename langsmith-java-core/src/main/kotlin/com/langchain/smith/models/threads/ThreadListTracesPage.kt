@@ -16,14 +16,14 @@ private constructor(
     private val service: ThreadService,
     private val params: ThreadListTracesParams,
     private val response: ThreadListTracesPageResponse,
-) : Page<ThreadTraceListItem> {
+) : Page<ThreadTrace> {
 
     /**
      * Delegates to [ThreadListTracesPageResponse], but gracefully handles missing data.
      *
      * @see ThreadListTracesPageResponse.items
      */
-    override fun items(): List<ThreadTraceListItem> =
+    override fun items(): List<ThreadTrace> =
         response._items().getOptional("items").getOrNull() ?: emptyList()
 
     /**
@@ -44,7 +44,7 @@ private constructor(
 
     override fun nextPage(): ThreadListTracesPage = service.listTraces(nextPageParams())
 
-    fun autoPager(): AutoPager<ThreadTraceListItem> = AutoPager.from(this)
+    fun autoPager(): AutoPager<ThreadTrace> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
     fun params(): ThreadListTracesParams = params

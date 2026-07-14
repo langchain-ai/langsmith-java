@@ -16,14 +16,14 @@ private constructor(
     private val service: ThreadService,
     private val params: ThreadQueryParams,
     private val response: ThreadQueryPageResponse,
-) : Page<ThreadListItem> {
+) : Page<Thread> {
 
     /**
      * Delegates to [ThreadQueryPageResponse], but gracefully handles missing data.
      *
      * @see ThreadQueryPageResponse.items
      */
-    override fun items(): List<ThreadListItem> =
+    override fun items(): List<Thread> =
         response._items().getOptional("items").getOrNull() ?: emptyList()
 
     /**
@@ -44,7 +44,7 @@ private constructor(
 
     override fun nextPage(): ThreadQueryPage = service.query(nextPageParams())
 
-    fun autoPager(): AutoPager<ThreadListItem> = AutoPager.from(this)
+    fun autoPager(): AutoPager<Thread> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
     fun params(): ThreadQueryParams = params

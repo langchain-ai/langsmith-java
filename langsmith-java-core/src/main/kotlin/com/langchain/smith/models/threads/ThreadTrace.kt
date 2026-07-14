@@ -18,7 +18,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-class ThreadTraceListItem
+class ThreadTrace
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val completionCost: JsonField<Double>,
@@ -502,11 +502,11 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [ThreadTraceListItem]. */
+        /** Returns a mutable builder for constructing an instance of [ThreadTrace]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ThreadTraceListItem]. */
+    /** A builder for [ThreadTrace]. */
     class Builder internal constructor() {
 
         private var completionCost: JsonField<Double> = JsonMissing.of()
@@ -533,29 +533,29 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(threadTraceListItem: ThreadTraceListItem) = apply {
-            completionCost = threadTraceListItem.completionCost
-            completionCostDetails = threadTraceListItem.completionCostDetails
-            completionTokenDetails = threadTraceListItem.completionTokenDetails
-            completionTokens = threadTraceListItem.completionTokens
-            endTime = threadTraceListItem.endTime
-            errorPreview = threadTraceListItem.errorPreview
-            firstTokenTime = threadTraceListItem.firstTokenTime
-            inputsPreview = threadTraceListItem.inputsPreview
-            latency = threadTraceListItem.latency
-            name = threadTraceListItem.name
-            op = threadTraceListItem.op
-            outputsPreview = threadTraceListItem.outputsPreview
-            promptCost = threadTraceListItem.promptCost
-            promptCostDetails = threadTraceListItem.promptCostDetails
-            promptTokenDetails = threadTraceListItem.promptTokenDetails
-            promptTokens = threadTraceListItem.promptTokens
-            startTime = threadTraceListItem.startTime
-            threadId = threadTraceListItem.threadId
-            totalCost = threadTraceListItem.totalCost
-            totalTokens = threadTraceListItem.totalTokens
-            traceId = threadTraceListItem.traceId
-            additionalProperties = threadTraceListItem.additionalProperties.toMutableMap()
+        internal fun from(threadTrace: ThreadTrace) = apply {
+            completionCost = threadTrace.completionCost
+            completionCostDetails = threadTrace.completionCostDetails
+            completionTokenDetails = threadTrace.completionTokenDetails
+            completionTokens = threadTrace.completionTokens
+            endTime = threadTrace.endTime
+            errorPreview = threadTrace.errorPreview
+            firstTokenTime = threadTrace.firstTokenTime
+            inputsPreview = threadTrace.inputsPreview
+            latency = threadTrace.latency
+            name = threadTrace.name
+            op = threadTrace.op
+            outputsPreview = threadTrace.outputsPreview
+            promptCost = threadTrace.promptCost
+            promptCostDetails = threadTrace.promptCostDetails
+            promptTokenDetails = threadTrace.promptTokenDetails
+            promptTokens = threadTrace.promptTokens
+            startTime = threadTrace.startTime
+            threadId = threadTrace.threadId
+            totalCost = threadTrace.totalCost
+            totalTokens = threadTrace.totalTokens
+            traceId = threadTrace.traceId
+            additionalProperties = threadTrace.additionalProperties.toMutableMap()
         }
 
         /**
@@ -910,12 +910,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ThreadTraceListItem].
+         * Returns an immutable instance of [ThreadTrace].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): ThreadTraceListItem =
-            ThreadTraceListItem(
+        fun build(): ThreadTrace =
+            ThreadTrace(
                 completionCost,
                 completionCostDetails,
                 completionTokenDetails,
@@ -951,7 +951,7 @@ private constructor(
      * @throws LangChainInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ThreadTraceListItem = apply {
+    fun validate(): ThreadTrace = apply {
         if (validated) {
             return@apply
         }
@@ -2098,7 +2098,7 @@ private constructor(
             return true
         }
 
-        return other is ThreadTraceListItem &&
+        return other is ThreadTrace &&
             completionCost == other.completionCost &&
             completionCostDetails == other.completionCostDetails &&
             completionTokenDetails == other.completionTokenDetails &&
@@ -2153,5 +2153,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ThreadTraceListItem{completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, endTime=$endTime, errorPreview=$errorPreview, firstTokenTime=$firstTokenTime, inputsPreview=$inputsPreview, latency=$latency, name=$name, op=$op, outputsPreview=$outputsPreview, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "ThreadTrace{completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, endTime=$endTime, errorPreview=$errorPreview, firstTokenTime=$firstTokenTime, inputsPreview=$inputsPreview, latency=$latency, name=$name, op=$op, outputsPreview=$outputsPreview, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, startTime=$startTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
 }
