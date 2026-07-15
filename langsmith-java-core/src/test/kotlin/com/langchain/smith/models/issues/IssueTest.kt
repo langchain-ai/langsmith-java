@@ -31,6 +31,7 @@ internal class IssueTest {
                 .addProposedExample(JsonValue.from(mapOf<String, Any>()))
                 .proposedFix("proposed_fix")
                 .addProposedPromptFix(JsonValue.from(mapOf<String, Any>()))
+                .recurrencesSinceWatching(0L)
                 .sessionId("session_id")
                 .severity(Issue.Severity._0)
                 .status(Issue.Status.OPEN)
@@ -38,6 +39,7 @@ internal class IssueTest {
                 .tenantId("tenant_id")
                 .traces(JsonValue.from(mapOf<String, Any>()))
                 .updatedAt("updated_at")
+                .watchingSince("watching_since")
                 .build()
 
         assertThat(issue.id()).contains("id")
@@ -59,6 +61,7 @@ internal class IssueTest {
         assertThat(issue.proposedFix()).contains("proposed_fix")
         assertThat(issue.proposedPromptFixes().getOrNull())
             .containsExactly(JsonValue.from(mapOf<String, Any>()))
+        assertThat(issue.recurrencesSinceWatching()).contains(0L)
         assertThat(issue.sessionId()).contains("session_id")
         assertThat(issue.severity()).contains(Issue.Severity._0)
         assertThat(issue.status()).contains(Issue.Status.OPEN)
@@ -66,6 +69,7 @@ internal class IssueTest {
         assertThat(issue.tenantId()).contains("tenant_id")
         assertThat(issue._traces()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(issue.updatedAt()).contains("updated_at")
+        assertThat(issue.watchingSince()).contains("watching_since")
     }
 
     @Test
@@ -89,6 +93,7 @@ internal class IssueTest {
                 .addProposedExample(JsonValue.from(mapOf<String, Any>()))
                 .proposedFix("proposed_fix")
                 .addProposedPromptFix(JsonValue.from(mapOf<String, Any>()))
+                .recurrencesSinceWatching(0L)
                 .sessionId("session_id")
                 .severity(Issue.Severity._0)
                 .status(Issue.Status.OPEN)
@@ -96,6 +101,7 @@ internal class IssueTest {
                 .tenantId("tenant_id")
                 .traces(JsonValue.from(mapOf<String, Any>()))
                 .updatedAt("updated_at")
+                .watchingSince("watching_since")
                 .build()
 
         val roundtrippedIssue =

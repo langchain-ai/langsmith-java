@@ -38,6 +38,7 @@ private constructor(
     private val proposedExamples: JsonField<List<JsonValue>>,
     private val proposedFix: JsonField<String>,
     private val proposedPromptFixes: JsonField<List<JsonValue>>,
+    private val recurrencesSinceWatching: JsonField<Long>,
     private val sessionId: JsonField<String>,
     private val severity: JsonField<Severity>,
     private val status: JsonField<Status>,
@@ -45,6 +46,7 @@ private constructor(
     private val tenantId: JsonField<String>,
     private val traces: JsonValue,
     private val updatedAt: JsonField<String>,
+    private val watchingSince: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -86,6 +88,9 @@ private constructor(
         @JsonProperty("proposed_prompt_fixes")
         @ExcludeMissing
         proposedPromptFixes: JsonField<List<JsonValue>> = JsonMissing.of(),
+        @JsonProperty("recurrences_since_watching")
+        @ExcludeMissing
+        recurrencesSinceWatching: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("session_id") @ExcludeMissing sessionId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("severity") @ExcludeMissing severity: JsonField<Severity> = JsonMissing.of(),
         @JsonProperty("status") @ExcludeMissing status: JsonField<Status> = JsonMissing.of(),
@@ -93,6 +98,9 @@ private constructor(
         @JsonProperty("tenant_id") @ExcludeMissing tenantId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("traces") @ExcludeMissing traces: JsonValue = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("watching_since")
+        @ExcludeMissing
+        watchingSince: JsonField<String> = JsonMissing.of(),
     ) : this(
         id,
         actions,
@@ -110,6 +118,7 @@ private constructor(
         proposedExamples,
         proposedFix,
         proposedPromptFixes,
+        recurrencesSinceWatching,
         sessionId,
         severity,
         status,
@@ -117,6 +126,7 @@ private constructor(
         tenantId,
         traces,
         updatedAt,
+        watchingSince,
         mutableMapOf(),
     )
 
@@ -226,6 +236,16 @@ private constructor(
         proposedPromptFixes.getOptional("proposed_prompt_fixes")
 
     /**
+     * RecurrencesSinceWatching counts linked traces whose run start_time is after watching_since —
+     * i.e. recurrences observed during the current watch period.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun recurrencesSinceWatching(): Optional<Long> =
+        recurrencesSinceWatching.getOptional("recurrences_since_watching")
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -268,6 +288,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun updatedAt(): Optional<String> = updatedAt.getOptional("updated_at")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun watchingSince(): Optional<String> = watchingSince.getOptional("watching_since")
 
     /**
      * Returns the raw JSON value of [id].
@@ -383,6 +409,16 @@ private constructor(
     fun _proposedPromptFixes(): JsonField<List<JsonValue>> = proposedPromptFixes
 
     /**
+     * Returns the raw JSON value of [recurrencesSinceWatching].
+     *
+     * Unlike [recurrencesSinceWatching], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("recurrences_since_watching")
+    @ExcludeMissing
+    fun _recurrencesSinceWatching(): JsonField<Long> = recurrencesSinceWatching
+
+    /**
      * Returns the raw JSON value of [sessionId].
      *
      * Unlike [sessionId], this method doesn't throw if the JSON field has an unexpected type.
@@ -424,6 +460,15 @@ private constructor(
      */
     @JsonProperty("updated_at") @ExcludeMissing fun _updatedAt(): JsonField<String> = updatedAt
 
+    /**
+     * Returns the raw JSON value of [watchingSince].
+     *
+     * Unlike [watchingSince], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("watching_since")
+    @ExcludeMissing
+    fun _watchingSince(): JsonField<String> = watchingSince
+
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -461,6 +506,7 @@ private constructor(
         private var proposedExamples: JsonField<MutableList<JsonValue>>? = null
         private var proposedFix: JsonField<String> = JsonMissing.of()
         private var proposedPromptFixes: JsonField<MutableList<JsonValue>>? = null
+        private var recurrencesSinceWatching: JsonField<Long> = JsonMissing.of()
         private var sessionId: JsonField<String> = JsonMissing.of()
         private var severity: JsonField<Severity> = JsonMissing.of()
         private var status: JsonField<Status> = JsonMissing.of()
@@ -468,6 +514,7 @@ private constructor(
         private var tenantId: JsonField<String> = JsonMissing.of()
         private var traces: JsonValue = JsonMissing.of()
         private var updatedAt: JsonField<String> = JsonMissing.of()
+        private var watchingSince: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -488,6 +535,7 @@ private constructor(
             proposedExamples = issue.proposedExamples.map { it.toMutableList() }
             proposedFix = issue.proposedFix
             proposedPromptFixes = issue.proposedPromptFixes.map { it.toMutableList() }
+            recurrencesSinceWatching = issue.recurrencesSinceWatching
             sessionId = issue.sessionId
             severity = issue.severity
             status = issue.status
@@ -495,6 +543,7 @@ private constructor(
             tenantId = issue.tenantId
             traces = issue.traces
             updatedAt = issue.updatedAt
+            watchingSince = issue.watchingSince
             additionalProperties = issue.additionalProperties.toMutableMap()
         }
 
@@ -704,6 +753,24 @@ private constructor(
                 }
         }
 
+        /**
+         * RecurrencesSinceWatching counts linked traces whose run start_time is after
+         * watching_since — i.e. recurrences observed during the current watch period.
+         */
+        fun recurrencesSinceWatching(recurrencesSinceWatching: Long) =
+            recurrencesSinceWatching(JsonField.of(recurrencesSinceWatching))
+
+        /**
+         * Sets [Builder.recurrencesSinceWatching] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.recurrencesSinceWatching] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun recurrencesSinceWatching(recurrencesSinceWatching: JsonField<Long>) = apply {
+            this.recurrencesSinceWatching = recurrencesSinceWatching
+        }
+
         fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
 
         /**
@@ -781,6 +848,19 @@ private constructor(
          */
         fun updatedAt(updatedAt: JsonField<String>) = apply { this.updatedAt = updatedAt }
 
+        fun watchingSince(watchingSince: String) = watchingSince(JsonField.of(watchingSince))
+
+        /**
+         * Sets [Builder.watchingSince] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.watchingSince] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun watchingSince(watchingSince: JsonField<String>) = apply {
+            this.watchingSince = watchingSince
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -823,6 +903,7 @@ private constructor(
                 (proposedExamples ?: JsonMissing.of()).map { it.toImmutable() },
                 proposedFix,
                 (proposedPromptFixes ?: JsonMissing.of()).map { it.toImmutable() },
+                recurrencesSinceWatching,
                 sessionId,
                 severity,
                 status,
@@ -830,6 +911,7 @@ private constructor(
                 tenantId,
                 traces,
                 updatedAt,
+                watchingSince,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -863,12 +945,14 @@ private constructor(
         proposedExamples()
         proposedFix()
         proposedPromptFixes()
+        recurrencesSinceWatching()
         sessionId()
         severity().ifPresent { it.validate() }
         status().ifPresent { it.validate() }
         tags()
         tenantId()
         updatedAt()
+        watchingSince()
         validated = true
     }
 
@@ -901,12 +985,14 @@ private constructor(
             (proposedExamples.asKnown().getOrNull()?.size ?: 0) +
             (if (proposedFix.asKnown().isPresent) 1 else 0) +
             (proposedPromptFixes.asKnown().getOrNull()?.size ?: 0) +
+            (if (recurrencesSinceWatching.asKnown().isPresent) 1 else 0) +
             (if (sessionId.asKnown().isPresent) 1 else 0) +
             (severity.asKnown().getOrNull()?.validity() ?: 0) +
             (status.asKnown().getOrNull()?.validity() ?: 0) +
             (tags.asKnown().getOrNull()?.size ?: 0) +
             (if (tenantId.asKnown().isPresent) 1 else 0) +
-            (if (updatedAt.asKnown().isPresent) 1 else 0)
+            (if (updatedAt.asKnown().isPresent) 1 else 0) +
+            (if (watchingSince.asKnown().isPresent) 1 else 0)
 
     class Severity @JsonCreator private constructor(private val value: JsonField<Long>) : Enum {
 
@@ -1069,6 +1155,10 @@ private constructor(
 
             @JvmField val OPEN = of("open")
 
+            @JvmField val FIXING = of("fixing")
+
+            @JvmField val WATCHING = of("watching")
+
             @JvmField val COMPLETED = of("completed")
 
             @JvmField val IGNORED = of("ignored")
@@ -1079,6 +1169,8 @@ private constructor(
         /** An enum containing [Status]'s known values. */
         enum class Known {
             OPEN,
+            FIXING,
+            WATCHING,
             COMPLETED,
             IGNORED,
         }
@@ -1094,6 +1186,8 @@ private constructor(
          */
         enum class Value {
             OPEN,
+            FIXING,
+            WATCHING,
             COMPLETED,
             IGNORED,
             /** An enum member indicating that [Status] was instantiated with an unknown value. */
@@ -1110,6 +1204,8 @@ private constructor(
         fun value(): Value =
             when (this) {
                 OPEN -> Value.OPEN
+                FIXING -> Value.FIXING
+                WATCHING -> Value.WATCHING
                 COMPLETED -> Value.COMPLETED
                 IGNORED -> Value.IGNORED
                 else -> Value._UNKNOWN
@@ -1127,6 +1223,8 @@ private constructor(
         fun known(): Known =
             when (this) {
                 OPEN -> Known.OPEN
+                FIXING -> Known.FIXING
+                WATCHING -> Known.WATCHING
                 COMPLETED -> Known.COMPLETED
                 IGNORED -> Known.IGNORED
                 else -> throw LangChainInvalidDataException("Unknown Status: $value")
@@ -1217,6 +1315,7 @@ private constructor(
             proposedExamples == other.proposedExamples &&
             proposedFix == other.proposedFix &&
             proposedPromptFixes == other.proposedPromptFixes &&
+            recurrencesSinceWatching == other.recurrencesSinceWatching &&
             sessionId == other.sessionId &&
             severity == other.severity &&
             status == other.status &&
@@ -1224,6 +1323,7 @@ private constructor(
             tenantId == other.tenantId &&
             traces == other.traces &&
             updatedAt == other.updatedAt &&
+            watchingSince == other.watchingSince &&
             additionalProperties == other.additionalProperties
     }
 
@@ -1245,6 +1345,7 @@ private constructor(
             proposedExamples,
             proposedFix,
             proposedPromptFixes,
+            recurrencesSinceWatching,
             sessionId,
             severity,
             status,
@@ -1252,6 +1353,7 @@ private constructor(
             tenantId,
             traces,
             updatedAt,
+            watchingSince,
             additionalProperties,
         )
     }
@@ -1259,5 +1361,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Issue{id=$id, actions=$actions, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "Issue{id=$id, actions=$actions, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
 }
