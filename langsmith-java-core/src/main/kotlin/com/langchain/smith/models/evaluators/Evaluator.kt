@@ -62,6 +62,7 @@ private constructor(
     private val includeExtendedStats: JsonField<Boolean>,
     private val isEnabled: JsonField<Boolean>,
     private val isManagedEvaluator: JsonField<Boolean>,
+    private val isTracingDisabled: JsonField<Boolean>,
     private val numFewShotExamples: JsonField<Long>,
     private val sessionId: JsonField<String>,
     private val sessionName: JsonField<String>,
@@ -178,6 +179,9 @@ private constructor(
         @JsonProperty("is_managed_evaluator")
         @ExcludeMissing
         isManagedEvaluator: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("is_tracing_disabled")
+        @ExcludeMissing
+        isTracingDisabled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("num_few_shot_examples")
         @ExcludeMissing
         numFewShotExamples: JsonField<Long> = JsonMissing.of(),
@@ -240,6 +244,7 @@ private constructor(
         includeExtendedStats,
         isEnabled,
         isManagedEvaluator,
+        isTracingDisabled,
         numFewShotExamples,
         sessionId,
         sessionName,
@@ -487,6 +492,13 @@ private constructor(
      */
     fun isManagedEvaluator(): Optional<Boolean> =
         isManagedEvaluator.getOptional("is_managed_evaluator")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isTracingDisabled(): Optional<Boolean> =
+        isTracingDisabled.getOptional("is_tracing_disabled")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -884,6 +896,16 @@ private constructor(
     fun _isManagedEvaluator(): JsonField<Boolean> = isManagedEvaluator
 
     /**
+     * Returns the raw JSON value of [isTracingDisabled].
+     *
+     * Unlike [isTracingDisabled], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("is_tracing_disabled")
+    @ExcludeMissing
+    fun _isTracingDisabled(): JsonField<Boolean> = isTracingDisabled
+
+    /**
      * Returns the raw JSON value of [numFewShotExamples].
      *
      * Unlike [numFewShotExamples], this method doesn't throw if the JSON field has an unexpected
@@ -1037,6 +1059,7 @@ private constructor(
         private var includeExtendedStats: JsonField<Boolean> = JsonMissing.of()
         private var isEnabled: JsonField<Boolean> = JsonMissing.of()
         private var isManagedEvaluator: JsonField<Boolean> = JsonMissing.of()
+        private var isTracingDisabled: JsonField<Boolean> = JsonMissing.of()
         private var numFewShotExamples: JsonField<Long> = JsonMissing.of()
         private var sessionId: JsonField<String> = JsonMissing.of()
         private var sessionName: JsonField<String> = JsonMissing.of()
@@ -1088,6 +1111,7 @@ private constructor(
             includeExtendedStats = evaluator.includeExtendedStats
             isEnabled = evaluator.isEnabled
             isManagedEvaluator = evaluator.isManagedEvaluator
+            isTracingDisabled = evaluator.isTracingDisabled
             numFewShotExamples = evaluator.numFewShotExamples
             sessionId = evaluator.sessionId
             sessionName = evaluator.sessionName
@@ -1783,6 +1807,20 @@ private constructor(
             this.isManagedEvaluator = isManagedEvaluator
         }
 
+        fun isTracingDisabled(isTracingDisabled: Boolean) =
+            isTracingDisabled(JsonField.of(isTracingDisabled))
+
+        /**
+         * Sets [Builder.isTracingDisabled] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isTracingDisabled] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun isTracingDisabled(isTracingDisabled: JsonField<Boolean>) = apply {
+            this.isTracingDisabled = isTracingDisabled
+        }
+
         fun numFewShotExamples(numFewShotExamples: Long?) =
             numFewShotExamples(JsonField.ofNullable(numFewShotExamples))
 
@@ -2023,6 +2061,7 @@ private constructor(
                 includeExtendedStats,
                 isEnabled,
                 isManagedEvaluator,
+                isTracingDisabled,
                 numFewShotExamples,
                 sessionId,
                 sessionName,
@@ -2089,6 +2128,7 @@ private constructor(
         includeExtendedStats()
         isEnabled()
         isManagedEvaluator()
+        isTracingDisabled()
         numFewShotExamples()
         sessionId()
         sessionName()
@@ -2154,6 +2194,7 @@ private constructor(
             (if (includeExtendedStats.asKnown().isPresent) 1 else 0) +
             (if (isEnabled.asKnown().isPresent) 1 else 0) +
             (if (isManagedEvaluator.asKnown().isPresent) 1 else 0) +
+            (if (isTracingDisabled.asKnown().isPresent) 1 else 0) +
             (if (numFewShotExamples.asKnown().isPresent) 1 else 0) +
             (if (sessionId.asKnown().isPresent) 1 else 0) +
             (if (sessionName.asKnown().isPresent) 1 else 0) +
@@ -2674,6 +2715,7 @@ private constructor(
             includeExtendedStats == other.includeExtendedStats &&
             isEnabled == other.isEnabled &&
             isManagedEvaluator == other.isManagedEvaluator &&
+            isTracingDisabled == other.isTracingDisabled &&
             numFewShotExamples == other.numFewShotExamples &&
             sessionId == other.sessionId &&
             sessionName == other.sessionName &&
@@ -2726,6 +2768,7 @@ private constructor(
             includeExtendedStats,
             isEnabled,
             isManagedEvaluator,
+            isTracingDisabled,
             numFewShotExamples,
             sessionId,
             sessionName,
@@ -2743,5 +2786,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }
