@@ -97,6 +97,17 @@ private constructor(
     fun name(): Optional<String> = body.name()
 
     /**
+     * PreserveMemoryOnStop, when true, suspends the sandbox's memory on a voluntary stop (idle
+     * timeout or explicit stop) so the next start resumes from where it left off. Default false
+     * discards memory and keeps only the filesystem, so the next start is a cold boot. Restarts
+     * triggered by infrastructure maintenance always preserve memory regardless of this setting.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun preserveMemoryOnStop(): Optional<Boolean> = body.preserveMemoryOnStop()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -196,6 +207,14 @@ private constructor(
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _name(): JsonField<String> = body._name()
+
+    /**
+     * Returns the raw JSON value of [preserveMemoryOnStop].
+     *
+     * Unlike [preserveMemoryOnStop], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    fun _preserveMemoryOnStop(): JsonField<Boolean> = body._preserveMemoryOnStop()
 
     /**
      * Returns the raw JSON value of [proxyConfig].
@@ -386,6 +405,28 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        /**
+         * PreserveMemoryOnStop, when true, suspends the sandbox's memory on a voluntary stop (idle
+         * timeout or explicit stop) so the next start resumes from where it left off. Default false
+         * discards memory and keeps only the filesystem, so the next start is a cold boot. Restarts
+         * triggered by infrastructure maintenance always preserve memory regardless of this
+         * setting.
+         */
+        fun preserveMemoryOnStop(preserveMemoryOnStop: Boolean) = apply {
+            body.preserveMemoryOnStop(preserveMemoryOnStop)
+        }
+
+        /**
+         * Sets [Builder.preserveMemoryOnStop] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.preserveMemoryOnStop] with a well-typed [Boolean] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun preserveMemoryOnStop(preserveMemoryOnStop: JsonField<Boolean>) = apply {
+            body.preserveMemoryOnStop(preserveMemoryOnStop)
+        }
 
         fun proxyConfig(proxyConfig: ProxyConfig) = apply { body.proxyConfig(proxyConfig) }
 
@@ -619,6 +660,7 @@ private constructor(
         private val memBytes: JsonField<Long>,
         private val mountConfig: JsonField<MountConfig>,
         private val name: JsonField<String>,
+        private val preserveMemoryOnStop: JsonField<Boolean>,
         private val proxyConfig: JsonField<ProxyConfig>,
         private val restoreMemory: JsonField<Boolean>,
         private val snapshotId: JsonField<String>,
@@ -650,6 +692,9 @@ private constructor(
             @ExcludeMissing
             mountConfig: JsonField<MountConfig> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("preserve_memory_on_stop")
+            @ExcludeMissing
+            preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("proxy_config")
             @ExcludeMissing
             proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
@@ -675,6 +720,7 @@ private constructor(
             memBytes,
             mountConfig,
             name,
+            preserveMemoryOnStop,
             proxyConfig,
             restoreMemory,
             snapshotId,
@@ -736,6 +782,19 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun name(): Optional<String> = name.getOptional("name")
+
+        /**
+         * PreserveMemoryOnStop, when true, suspends the sandbox's memory on a voluntary stop (idle
+         * timeout or explicit stop) so the next start resumes from where it left off. Default false
+         * discards memory and keeps only the filesystem, so the next start is a cold boot. Restarts
+         * triggered by infrastructure maintenance always preserve memory regardless of this
+         * setting.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun preserveMemoryOnStop(): Optional<Boolean> =
+            preserveMemoryOnStop.getOptional("preserve_memory_on_stop")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -852,6 +911,16 @@ private constructor(
         @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
 
         /**
+         * Returns the raw JSON value of [preserveMemoryOnStop].
+         *
+         * Unlike [preserveMemoryOnStop], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("preserve_memory_on_stop")
+        @ExcludeMissing
+        fun _preserveMemoryOnStop(): JsonField<Boolean> = preserveMemoryOnStop
+
+        /**
          * Returns the raw JSON value of [proxyConfig].
          *
          * Unlike [proxyConfig], this method doesn't throw if the JSON field has an unexpected type.
@@ -934,6 +1003,7 @@ private constructor(
             private var memBytes: JsonField<Long> = JsonMissing.of()
             private var mountConfig: JsonField<MountConfig> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
+            private var preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of()
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
             private var restoreMemory: JsonField<Boolean> = JsonMissing.of()
             private var snapshotId: JsonField<String> = JsonMissing.of()
@@ -952,6 +1022,7 @@ private constructor(
                 memBytes = body.memBytes
                 mountConfig = body.mountConfig
                 name = body.name
+                preserveMemoryOnStop = body.preserveMemoryOnStop
                 proxyConfig = body.proxyConfig
                 restoreMemory = body.restoreMemory
                 snapshotId = body.snapshotId
@@ -1065,6 +1136,27 @@ private constructor(
              * value.
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
+
+            /**
+             * PreserveMemoryOnStop, when true, suspends the sandbox's memory on a voluntary stop
+             * (idle timeout or explicit stop) so the next start resumes from where it left off.
+             * Default false discards memory and keeps only the filesystem, so the next start is a
+             * cold boot. Restarts triggered by infrastructure maintenance always preserve memory
+             * regardless of this setting.
+             */
+            fun preserveMemoryOnStop(preserveMemoryOnStop: Boolean) =
+                preserveMemoryOnStop(JsonField.of(preserveMemoryOnStop))
+
+            /**
+             * Sets [Builder.preserveMemoryOnStop] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.preserveMemoryOnStop] with a well-typed [Boolean]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun preserveMemoryOnStop(preserveMemoryOnStop: JsonField<Boolean>) = apply {
+                this.preserveMemoryOnStop = preserveMemoryOnStop
+            }
 
             fun proxyConfig(proxyConfig: ProxyConfig) = proxyConfig(JsonField.of(proxyConfig))
 
@@ -1195,6 +1287,7 @@ private constructor(
                     memBytes,
                     mountConfig,
                     name,
+                    preserveMemoryOnStop,
                     proxyConfig,
                     restoreMemory,
                     snapshotId,
@@ -1229,6 +1322,7 @@ private constructor(
             memBytes()
             mountConfig().ifPresent { it.validate() }
             name()
+            preserveMemoryOnStop()
             proxyConfig().ifPresent { it.validate() }
             restoreMemory()
             snapshotId()
@@ -1262,6 +1356,7 @@ private constructor(
                 (if (memBytes.asKnown().isPresent) 1 else 0) +
                 (mountConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
+                (if (preserveMemoryOnStop.asKnown().isPresent) 1 else 0) +
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (restoreMemory.asKnown().isPresent) 1 else 0) +
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
@@ -1283,6 +1378,7 @@ private constructor(
                 memBytes == other.memBytes &&
                 mountConfig == other.mountConfig &&
                 name == other.name &&
+                preserveMemoryOnStop == other.preserveMemoryOnStop &&
                 proxyConfig == other.proxyConfig &&
                 restoreMemory == other.restoreMemory &&
                 snapshotId == other.snapshotId &&
@@ -1302,6 +1398,7 @@ private constructor(
                 memBytes,
                 mountConfig,
                 name,
+                preserveMemoryOnStop,
                 proxyConfig,
                 restoreMemory,
                 snapshotId,
@@ -1315,7 +1412,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class EnvVars

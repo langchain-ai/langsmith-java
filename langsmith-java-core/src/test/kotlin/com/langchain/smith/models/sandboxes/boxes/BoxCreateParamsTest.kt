@@ -142,6 +142,7 @@ internal class BoxCreateParamsTest {
                     .build()
             )
             .name("name")
+            .preserveMemoryOnStop(true)
             .proxyConfig(
                 BoxCreateParams.ProxyConfig.builder()
                     .accessControl(
@@ -382,6 +383,7 @@ internal class BoxCreateParamsTest {
                         .build()
                 )
                 .name("name")
+                .preserveMemoryOnStop(true)
                 .proxyConfig(
                     BoxCreateParams.ProxyConfig.builder()
                         .accessControl(
@@ -619,6 +621,7 @@ internal class BoxCreateParamsTest {
                     .build()
             )
         assertThat(body.name()).contains("name")
+        assertThat(body.preserveMemoryOnStop()).contains(true)
         assertThat(body.proxyConfig())
             .contains(
                 BoxCreateParams.ProxyConfig.builder()

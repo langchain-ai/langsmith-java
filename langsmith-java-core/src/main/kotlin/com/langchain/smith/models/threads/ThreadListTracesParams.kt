@@ -352,6 +352,12 @@ private constructor(
 
             @JvmField val OUTPUTS_PREVIEW = of("OUTPUTS_PREVIEW")
 
+            @JvmField val INPUTS = of("INPUTS")
+
+            @JvmField val OUTPUTS = of("OUTPUTS")
+
+            @JvmField val ERROR = of("ERROR")
+
             @JvmField val PROMPT_COST = of("PROMPT_COST")
 
             @JvmField val COMPLETION_COST = of("COMPLETION_COST")
@@ -387,6 +393,9 @@ private constructor(
             FIRST_TOKEN_TIME,
             INPUTS_PREVIEW,
             OUTPUTS_PREVIEW,
+            INPUTS,
+            OUTPUTS,
+            ERROR,
             PROMPT_COST,
             COMPLETION_COST,
             TOTAL_COST,
@@ -420,6 +429,9 @@ private constructor(
             FIRST_TOKEN_TIME,
             INPUTS_PREVIEW,
             OUTPUTS_PREVIEW,
+            INPUTS,
+            OUTPUTS,
+            ERROR,
             PROMPT_COST,
             COMPLETION_COST,
             TOTAL_COST,
@@ -454,6 +466,9 @@ private constructor(
                 FIRST_TOKEN_TIME -> Value.FIRST_TOKEN_TIME
                 INPUTS_PREVIEW -> Value.INPUTS_PREVIEW
                 OUTPUTS_PREVIEW -> Value.OUTPUTS_PREVIEW
+                INPUTS -> Value.INPUTS
+                OUTPUTS -> Value.OUTPUTS
+                ERROR -> Value.ERROR
                 PROMPT_COST -> Value.PROMPT_COST
                 COMPLETION_COST -> Value.COMPLETION_COST
                 TOTAL_COST -> Value.TOTAL_COST
@@ -489,6 +504,9 @@ private constructor(
                 FIRST_TOKEN_TIME -> Known.FIRST_TOKEN_TIME
                 INPUTS_PREVIEW -> Known.INPUTS_PREVIEW
                 OUTPUTS_PREVIEW -> Known.OUTPUTS_PREVIEW
+                INPUTS -> Known.INPUTS
+                OUTPUTS -> Known.OUTPUTS
+                ERROR -> Known.ERROR
                 PROMPT_COST -> Known.PROMPT_COST
                 COMPLETION_COST -> Known.COMPLETION_COST
                 TOTAL_COST -> Known.TOTAL_COST

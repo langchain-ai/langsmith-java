@@ -19,6 +19,7 @@ internal class DirectoryCommitParamsTest {
                     .build()
             )
             .parentCommit("parent_commit")
+            .skipWebhooks(true)
             .build()
     }
 
@@ -44,6 +45,7 @@ internal class DirectoryCommitParamsTest {
                         .build()
                 )
                 .parentCommit("parent_commit")
+                .skipWebhooks(true)
                 .build()
 
         val body = params._body()
@@ -55,6 +57,7 @@ internal class DirectoryCommitParamsTest {
                     .build()
             )
         assertThat(body.parentCommit()).contains("parent_commit")
+        assertThat(body.skipWebhooks()).contains(true)
     }
 
     @Test

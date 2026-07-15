@@ -70,6 +70,7 @@ internal class DirectoryServiceAsyncTest {
                             .build()
                     )
                     .parentCommit("parent_commit")
+                    .skipWebhooks(true)
                     .build()
             )
 

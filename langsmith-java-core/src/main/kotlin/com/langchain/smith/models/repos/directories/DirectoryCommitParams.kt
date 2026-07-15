@@ -53,6 +53,17 @@ private constructor(
     fun parentCommit(): Optional<String> = body.parentCommit()
 
     /**
+     * SkipWebhooks, when true, suppresses Context Hub commit webhooks for this commit. Deliberately
+     * a plain bool, not the any (bool | []string) shape of the prompt-hub
+     * CreateCommitReq.SkipWebhooks: Context Hub v1 has no per-webhook filtering, so a bool is the
+     * correct shape.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun skipWebhooks(): Optional<Boolean> = body.skipWebhooks()
+
+    /**
      * Returns the raw JSON value of [files].
      *
      * Unlike [files], this method doesn't throw if the JSON field has an unexpected type.
@@ -65,6 +76,13 @@ private constructor(
      * Unlike [parentCommit], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _parentCommit(): JsonField<String> = body._parentCommit()
+
+    /**
+     * Returns the raw JSON value of [skipWebhooks].
+     *
+     * Unlike [skipWebhooks], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _skipWebhooks(): JsonField<Boolean> = body._skipWebhooks()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -121,6 +139,7 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [files]
          * - [parentCommit]
+         * - [skipWebhooks]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -146,6 +165,25 @@ private constructor(
          */
         fun parentCommit(parentCommit: JsonField<String>) = apply {
             body.parentCommit(parentCommit)
+        }
+
+        /**
+         * SkipWebhooks, when true, suppresses Context Hub commit webhooks for this commit.
+         * Deliberately a plain bool, not the any (bool | []string) shape of the prompt-hub
+         * CreateCommitReq.SkipWebhooks: Context Hub v1 has no per-webhook filtering, so a bool is
+         * the correct shape.
+         */
+        fun skipWebhooks(skipWebhooks: Boolean) = apply { body.skipWebhooks(skipWebhooks) }
+
+        /**
+         * Sets [Builder.skipWebhooks] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.skipWebhooks] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun skipWebhooks(skipWebhooks: JsonField<Boolean>) = apply {
+            body.skipWebhooks(skipWebhooks)
         }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
@@ -305,6 +343,7 @@ private constructor(
     private constructor(
         private val files: JsonField<Files>,
         private val parentCommit: JsonField<String>,
+        private val skipWebhooks: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -314,7 +353,10 @@ private constructor(
             @JsonProperty("parent_commit")
             @ExcludeMissing
             parentCommit: JsonField<String> = JsonMissing.of(),
-        ) : this(files, parentCommit, mutableMapOf())
+            @JsonProperty("skip_webhooks")
+            @ExcludeMissing
+            skipWebhooks: JsonField<Boolean> = JsonMissing.of(),
+        ) : this(files, parentCommit, skipWebhooks, mutableMapOf())
 
         /**
          * Files maps path to an Entry (object = create/update/link, null = delete/unlink).
@@ -329,6 +371,17 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun parentCommit(): Optional<String> = parentCommit.getOptional("parent_commit")
+
+        /**
+         * SkipWebhooks, when true, suppresses Context Hub commit webhooks for this commit.
+         * Deliberately a plain bool, not the any (bool | []string) shape of the prompt-hub
+         * CreateCommitReq.SkipWebhooks: Context Hub v1 has no per-webhook filtering, so a bool is
+         * the correct shape.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun skipWebhooks(): Optional<Boolean> = skipWebhooks.getOptional("skip_webhooks")
 
         /**
          * Returns the raw JSON value of [files].
@@ -346,6 +399,16 @@ private constructor(
         @JsonProperty("parent_commit")
         @ExcludeMissing
         fun _parentCommit(): JsonField<String> = parentCommit
+
+        /**
+         * Returns the raw JSON value of [skipWebhooks].
+         *
+         * Unlike [skipWebhooks], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("skip_webhooks")
+        @ExcludeMissing
+        fun _skipWebhooks(): JsonField<Boolean> = skipWebhooks
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -370,12 +433,14 @@ private constructor(
 
             private var files: JsonField<Files> = JsonMissing.of()
             private var parentCommit: JsonField<String> = JsonMissing.of()
+            private var skipWebhooks: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 files = body.files
                 parentCommit = body.parentCommit
+                skipWebhooks = body.skipWebhooks
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -404,6 +469,25 @@ private constructor(
                 this.parentCommit = parentCommit
             }
 
+            /**
+             * SkipWebhooks, when true, suppresses Context Hub commit webhooks for this commit.
+             * Deliberately a plain bool, not the any (bool | []string) shape of the prompt-hub
+             * CreateCommitReq.SkipWebhooks: Context Hub v1 has no per-webhook filtering, so a bool
+             * is the correct shape.
+             */
+            fun skipWebhooks(skipWebhooks: Boolean) = skipWebhooks(JsonField.of(skipWebhooks))
+
+            /**
+             * Sets [Builder.skipWebhooks] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.skipWebhooks] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun skipWebhooks(skipWebhooks: JsonField<Boolean>) = apply {
+                this.skipWebhooks = skipWebhooks
+            }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -428,7 +512,8 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Body = Body(files, parentCommit, additionalProperties.toMutableMap())
+            fun build(): Body =
+                Body(files, parentCommit, skipWebhooks, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -449,6 +534,7 @@ private constructor(
 
             files().ifPresent { it.validate() }
             parentCommit()
+            skipWebhooks()
             validated = true
         }
 
@@ -469,7 +555,8 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (files.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (parentCommit.asKnown().isPresent) 1 else 0)
+                (if (parentCommit.asKnown().isPresent) 1 else 0) +
+                (if (skipWebhooks.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -479,17 +566,18 @@ private constructor(
             return other is Body &&
                 files == other.files &&
                 parentCommit == other.parentCommit &&
+                skipWebhooks == other.skipWebhooks &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(files, parentCommit, additionalProperties)
+            Objects.hash(files, parentCommit, skipWebhooks, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{files=$files, parentCommit=$parentCommit, additionalProperties=$additionalProperties}"
+            "Body{files=$files, parentCommit=$parentCommit, skipWebhooks=$skipWebhooks, additionalProperties=$additionalProperties}"
     }
 
     /** Files maps path to an Entry (object = create/update/link, null = delete/unlink). */
