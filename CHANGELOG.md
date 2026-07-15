@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.0-beta.15](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.14...v0.1.0-beta.15) (2026-07-15)
+
+
+### Features
+
+* add July 2026 startup and premier plan tiers ([b2ed882](https://github.com/langchain-ai/langsmith-java/commit/b2ed882d0edd038733fcdeda5448519a5f4dfe9b))
+* **context-hub:** fire commit webhook and deliver async ([2c9704f](https://github.com/langchain-ai/langsmith-java/commit/2c9704f3c0151bd51ff57ecc54edbcfb527e61d7))
+* **sandboxes:** add preserve_memory_on_stop create attribute ([99fe7db](https://github.com/langchain-ai/langsmith-java/commit/99fe7dbe33f3a0bb8709577bcd08a3f24113d5e4))
+
+
+### Chores
+
+* update smithdb proto generated code ([d35ada2](https://github.com/langchain-ai/langsmith-java/commit/d35ada22c7e73d60b6fc44185d7a65a99a4255e1))
+
 ## [0.1.0-beta.14](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.13...v0.1.0-beta.14) (2026-07-14)
 
 
