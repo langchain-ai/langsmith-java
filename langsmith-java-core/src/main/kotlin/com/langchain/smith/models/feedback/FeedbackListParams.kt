@@ -17,6 +17,7 @@ import kotlin.jvm.optionals.getOrNull
 class FeedbackListParams
 private constructor(
     private val comparativeExperimentId: String?,
+    private val feedbackThreadId: String?,
     private val hasComment: Boolean?,
     private val hasScore: Boolean?,
     private val includeUserNames: Boolean?,
@@ -35,6 +36,8 @@ private constructor(
 ) : Params {
 
     fun comparativeExperimentId(): Optional<String> = Optional.ofNullable(comparativeExperimentId)
+
+    fun feedbackThreadId(): Optional<String> = Optional.ofNullable(feedbackThreadId)
 
     fun hasComment(): Optional<Boolean> = Optional.ofNullable(hasComment)
 
@@ -83,6 +86,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var comparativeExperimentId: String? = null
+        private var feedbackThreadId: String? = null
         private var hasComment: Boolean? = null
         private var hasScore: Boolean? = null
         private var includeUserNames: Boolean? = null
@@ -102,6 +106,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(feedbackListParams: FeedbackListParams) = apply {
             comparativeExperimentId = feedbackListParams.comparativeExperimentId
+            feedbackThreadId = feedbackListParams.feedbackThreadId
             hasComment = feedbackListParams.hasComment
             hasScore = feedbackListParams.hasScore
             includeUserNames = feedbackListParams.includeUserNames
@@ -129,6 +134,14 @@ private constructor(
          */
         fun comparativeExperimentId(comparativeExperimentId: Optional<String>) =
             comparativeExperimentId(comparativeExperimentId.getOrNull())
+
+        fun feedbackThreadId(feedbackThreadId: String?) = apply {
+            this.feedbackThreadId = feedbackThreadId
+        }
+
+        /** Alias for calling [Builder.feedbackThreadId] with `feedbackThreadId.orElse(null)`. */
+        fun feedbackThreadId(feedbackThreadId: Optional<String>) =
+            feedbackThreadId(feedbackThreadId.getOrNull())
 
         fun hasComment(hasComment: Boolean?) = apply { this.hasComment = hasComment }
 
@@ -382,6 +395,7 @@ private constructor(
         fun build(): FeedbackListParams =
             FeedbackListParams(
                 comparativeExperimentId,
+                feedbackThreadId,
                 hasComment,
                 hasScore,
                 includeUserNames,
@@ -406,6 +420,7 @@ private constructor(
         QueryParams.builder()
             .apply {
                 comparativeExperimentId?.let { put("comparative_experiment_id", it) }
+                feedbackThreadId?.let { put("feedback_thread_id", it) }
                 hasComment?.let { put("has_comment", it.toString()) }
                 hasScore?.let { put("has_score", it.toString()) }
                 includeUserNames?.let { put("include_user_names", it.toString()) }
@@ -579,6 +594,7 @@ private constructor(
 
         return other is FeedbackListParams &&
             comparativeExperimentId == other.comparativeExperimentId &&
+            feedbackThreadId == other.feedbackThreadId &&
             hasComment == other.hasComment &&
             hasScore == other.hasScore &&
             includeUserNames == other.includeUserNames &&
@@ -599,6 +615,7 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             comparativeExperimentId,
+            feedbackThreadId,
             hasComment,
             hasScore,
             includeUserNames,
@@ -617,5 +634,5 @@ private constructor(
         )
 
     override fun toString() =
-        "FeedbackListParams{comparativeExperimentId=$comparativeExperimentId, hasComment=$hasComment, hasScore=$hasScore, includeUserNames=$includeUserNames, key=$key, level=$level, limit=$limit, maxCreatedAt=$maxCreatedAt, minCreatedAt=$minCreatedAt, offset=$offset, run=$run, session=$session, source=$source, user=$user, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "FeedbackListParams{comparativeExperimentId=$comparativeExperimentId, feedbackThreadId=$feedbackThreadId, hasComment=$hasComment, hasScore=$hasScore, includeUserNames=$includeUserNames, key=$key, level=$level, limit=$limit, maxCreatedAt=$maxCreatedAt, minCreatedAt=$minCreatedAt, offset=$offset, run=$run, session=$session, source=$source, user=$user, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -60,6 +60,7 @@ internal class FeedbackServiceTest {
                             .type(AppFeedbackSource.Type.APP)
                             .build()
                     )
+                    .feedbackThreadId("feedback_thread_id")
                     .modifiedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .score(0.0)
