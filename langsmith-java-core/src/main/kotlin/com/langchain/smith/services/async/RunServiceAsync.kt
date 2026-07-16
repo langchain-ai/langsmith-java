@@ -29,6 +29,7 @@ import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.async.runs.RuleServiceAsync
+import com.langchain.smith.services.async.runs.ShareServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -45,6 +46,8 @@ interface RunServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync
+
+    fun share(): ShareServiceAsync
 
     fun rules(): RuleServiceAsync
 
@@ -373,6 +376,8 @@ interface RunServiceAsync {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync.WithRawResponse
+
+        fun share(): ShareServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /runs`, but is otherwise the same as

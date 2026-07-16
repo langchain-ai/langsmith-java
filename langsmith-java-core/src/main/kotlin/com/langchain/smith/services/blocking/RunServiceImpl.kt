@@ -50,6 +50,8 @@ import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.blocking.runs.RuleService
 import com.langchain.smith.services.blocking.runs.RuleServiceImpl
+import com.langchain.smith.services.blocking.runs.ShareService
+import com.langchain.smith.services.blocking.runs.ShareServiceImpl
 import com.langchain.smith.services.isZstdCompressionEnabled
 import com.langchain.smith.services.shouldDefaultRunCompressionEnabled
 import java.util.concurrent.CompletableFuture
@@ -77,6 +79,8 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             batchSizeLimitBytes = limits.batchSizeLimitBytes,
         )
     }
+
+    private val share: ShareService by lazy { ShareServiceImpl(clientOptions) }
 
     override fun withRawResponse(): RunService.WithRawResponse = withRawResponse
 
@@ -126,6 +130,8 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
         RunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun share(): ShareService = share
 
     override fun create(
         params: RunCreateParams,
@@ -258,12 +264,18 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
 
         override fun rules(): RuleService.WithRawResponse = rules
 
+        private val share: ShareService.WithRawResponse by lazy {
+            ShareServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): RunService.WithRawResponse =
             RunServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun share(): ShareService.WithRawResponse = share
 
         private val createHandler: Handler<RunCreateResponse> =
             jsonHandler<RunCreateResponse>(clientOptions.jsonMapper)
