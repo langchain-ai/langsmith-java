@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.langchain.smith.models.traces
+package com.langchain.smith.models.public_.runs
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
@@ -12,12 +12,12 @@ import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class TraceListRunsResponseTest {
+internal class RunQueryResponseTest {
 
     @Test
     fun create() {
-        val traceListRunsResponse =
-            TraceListRunsResponse.builder()
+        val runQueryResponse =
+            RunQueryResponse.builder()
                 .addItem(
                     Run.builder()
                         .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -159,7 +159,7 @@ internal class TraceListRunsResponseTest {
                 )
                 .build()
 
-        assertThat(traceListRunsResponse.items().getOrNull())
+        assertThat(runQueryResponse.items().getOrNull())
             .containsExactly(
                 Run.builder()
                     .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -304,8 +304,8 @@ internal class TraceListRunsResponseTest {
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val traceListRunsResponse =
-            TraceListRunsResponse.builder()
+        val runQueryResponse =
+            RunQueryResponse.builder()
                 .addItem(
                     Run.builder()
                         .id("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
@@ -447,12 +447,12 @@ internal class TraceListRunsResponseTest {
                 )
                 .build()
 
-        val roundtrippedTraceListRunsResponse =
+        val roundtrippedRunQueryResponse =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(traceListRunsResponse),
-                jacksonTypeRef<TraceListRunsResponse>(),
+                jsonMapper.writeValueAsString(runQueryResponse),
+                jacksonTypeRef<RunQueryResponse>(),
             )
 
-        assertThat(roundtrippedTraceListRunsResponse).isEqualTo(traceListRunsResponse)
+        assertThat(roundtrippedRunQueryResponse).isEqualTo(runQueryResponse)
     }
 }

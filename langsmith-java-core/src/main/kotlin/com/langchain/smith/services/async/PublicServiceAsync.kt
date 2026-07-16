@@ -8,6 +8,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksPageAsync
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import com.langchain.smith.services.async.public_.DatasetServiceAsync
+import com.langchain.smith.services.async.public_.RunServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -26,6 +27,8 @@ interface PublicServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): PublicServiceAsync
 
     fun datasets(): DatasetServiceAsync
+
+    fun runs(): RunServiceAsync
 
     /** Read Shared Feedbacks */
     fun retrieveFeedbacks(shareToken: String): CompletableFuture<PublicRetrieveFeedbacksPageAsync> =
@@ -80,6 +83,8 @@ interface PublicServiceAsync {
         ): PublicServiceAsync.WithRawResponse
 
         fun datasets(): DatasetServiceAsync.WithRawResponse
+
+        fun runs(): RunServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v1/public/{share_token}/feedbacks`, but is

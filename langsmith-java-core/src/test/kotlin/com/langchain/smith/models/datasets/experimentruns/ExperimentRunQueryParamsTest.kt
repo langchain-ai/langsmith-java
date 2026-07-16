@@ -3,6 +3,7 @@
 package com.langchain.smith.models.datasets.experimentruns
 
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.models.runs.RunSelectField
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,7 +24,7 @@ internal class ExperimentRunQueryParamsTest {
                     .build()
             )
             .pageSize(0L)
-            .addSelect(ExperimentRunQueryParams.Select.ID)
+            .addSelect(RunSelectField.ID)
             .sort(ExperimentRunQueryParams.Sort.builder().by("by").order("order").build())
             .build()
     }
@@ -52,7 +53,7 @@ internal class ExperimentRunQueryParamsTest {
                         .build()
                 )
                 .pageSize(0L)
-                .addSelect(ExperimentRunQueryParams.Select.ID)
+                .addSelect(RunSelectField.ID)
                 .sort(ExperimentRunQueryParams.Sort.builder().by("by").order("order").build())
                 .build()
 
@@ -69,7 +70,7 @@ internal class ExperimentRunQueryParamsTest {
                     .build()
             )
         assertThat(body.pageSize()).contains(0L)
-        assertThat(body.selects().getOrNull()).containsExactly(ExperimentRunQueryParams.Select.ID)
+        assertThat(body.selects().getOrNull()).containsExactly(RunSelectField.ID)
         assertThat(body.sort())
             .contains(ExperimentRunQueryParams.Sort.builder().by("by").order("order").build())
     }

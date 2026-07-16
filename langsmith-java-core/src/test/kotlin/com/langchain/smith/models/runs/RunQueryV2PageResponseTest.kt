@@ -140,7 +140,7 @@ internal class RunQueryV2PageResponseTest {
                         .promptTokens(200L)
                         .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                         .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-                        .runType(Run.RunType.LLM)
+                        .runType(RunType.LLM)
                         .shareUrl(
                             "https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r"
                         )
@@ -285,7 +285,7 @@ internal class RunQueryV2PageResponseTest {
                     .promptTokens(200L)
                     .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                     .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-                    .runType(Run.RunType.LLM)
+                    .runType(RunType.LLM)
                     .shareUrl(
                         "https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r"
                     )
@@ -435,7 +435,7 @@ internal class RunQueryV2PageResponseTest {
                         .promptTokens(200L)
                         .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                         .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-                        .runType(Run.RunType.LLM)
+                        .runType(RunType.LLM)
                         .shareUrl(
                             "https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r"
                         )

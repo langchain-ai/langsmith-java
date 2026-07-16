@@ -134,7 +134,7 @@ internal class RunTest {
                 .promptTokens(200L)
                 .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                 .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-                .runType(Run.RunType.LLM)
+                .runType(RunType.LLM)
                 .shareUrl(
                     "https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r"
                 )
@@ -277,7 +277,7 @@ internal class RunTest {
         assertThat(run.promptTokens()).contains(200L)
         assertThat(run.referenceDatasetId()).contains("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
         assertThat(run.referenceExampleId()).contains("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-        assertThat(run.runType()).contains(Run.RunType.LLM)
+        assertThat(run.runType()).contains(RunType.LLM)
         assertThat(run.shareUrl())
             .contains("https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r")
         assertThat(run.startTime()).contains(OffsetDateTime.parse("2024-01-15T10:30:00.000Z"))
@@ -414,7 +414,7 @@ internal class RunTest {
                 .promptTokens(200L)
                 .referenceDatasetId("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
                 .referenceExampleId("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
-                .runType(Run.RunType.LLM)
+                .runType(RunType.LLM)
                 .shareUrl(
                     "https://smith.langchain.com/public/4f7a1b2c-8d9e-4a0b-9c1d-2e3f4a5b6c7d/r"
                 )

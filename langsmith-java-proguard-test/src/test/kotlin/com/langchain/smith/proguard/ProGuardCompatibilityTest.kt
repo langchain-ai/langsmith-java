@@ -7,8 +7,8 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import com.langchain.smith.models.runs.ResponseBodyForRunsGenerateQuery
+import com.langchain.smith.models.runs.RunSelectField
 import com.langchain.smith.models.runs.RunStatsResponse
-import com.langchain.smith.models.runs.RunTypeEnum
 import java.time.OffsetDateTime
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
@@ -166,16 +166,16 @@ internal class ProGuardCompatibilityTest {
     }
 
     @Test
-    fun runTypeEnumRoundtrip() {
+    fun runSelectFieldRoundtrip() {
         val jsonMapper = jsonMapper()
-        val runTypeEnum = RunTypeEnum.TOOL
+        val runSelectField = RunSelectField.ID
 
-        val roundtrippedRunTypeEnum =
+        val roundtrippedRunSelectField =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(runTypeEnum),
-                jacksonTypeRef<RunTypeEnum>(),
+                jsonMapper.writeValueAsString(runSelectField),
+                jacksonTypeRef<RunSelectField>(),
             )
 
-        assertThat(roundtrippedRunTypeEnum).isEqualTo(runTypeEnum)
+        assertThat(roundtrippedRunSelectField).isEqualTo(runSelectField)
     }
 }

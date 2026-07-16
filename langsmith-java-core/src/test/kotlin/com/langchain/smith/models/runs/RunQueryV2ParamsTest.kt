@@ -30,15 +30,15 @@ internal class RunQueryV2ParamsTest {
             .referenceDatasetId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
             .addReferenceExample("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
             .addReferenceExample("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
-            .runType(RunQueryV2Params.RunType.LLM)
+            .runType(RunType.LLM)
             .selects(
                 listOf(
-                    RunQueryV2Params.Select.ID,
-                    RunQueryV2Params.Select.NAME,
-                    RunQueryV2Params.Select.PROJECT_ID,
-                    RunQueryV2Params.Select.START_TIME,
-                    RunQueryV2Params.Select.RUN_TYPE,
-                    RunQueryV2Params.Select.STATUS,
+                    RunSelectField.ID,
+                    RunSelectField.NAME,
+                    RunSelectField.PROJECT_ID,
+                    RunSelectField.START_TIME,
+                    RunSelectField.RUN_TYPE,
+                    RunSelectField.STATUS,
                 )
             )
             .traceFilter("eq(status, \"success\")")
@@ -68,15 +68,15 @@ internal class RunQueryV2ParamsTest {
                 .referenceDatasetId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .addReferenceExample("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
                 .addReferenceExample("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
-                .runType(RunQueryV2Params.RunType.LLM)
+                .runType(RunType.LLM)
                 .selects(
                     listOf(
-                        RunQueryV2Params.Select.ID,
-                        RunQueryV2Params.Select.NAME,
-                        RunQueryV2Params.Select.PROJECT_ID,
-                        RunQueryV2Params.Select.START_TIME,
-                        RunQueryV2Params.Select.RUN_TYPE,
-                        RunQueryV2Params.Select.STATUS,
+                        RunSelectField.ID,
+                        RunSelectField.NAME,
+                        RunSelectField.PROJECT_ID,
+                        RunSelectField.START_TIME,
+                        RunSelectField.RUN_TYPE,
+                        RunSelectField.STATUS,
                     )
                 )
                 .traceFilter("eq(status, \"success\")")
@@ -119,15 +119,15 @@ internal class RunQueryV2ParamsTest {
                 .referenceDatasetId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .addReferenceExample("b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e")
                 .addReferenceExample("c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f")
-                .runType(RunQueryV2Params.RunType.LLM)
+                .runType(RunType.LLM)
                 .selects(
                     listOf(
-                        RunQueryV2Params.Select.ID,
-                        RunQueryV2Params.Select.NAME,
-                        RunQueryV2Params.Select.PROJECT_ID,
-                        RunQueryV2Params.Select.START_TIME,
-                        RunQueryV2Params.Select.RUN_TYPE,
-                        RunQueryV2Params.Select.STATUS,
+                        RunSelectField.ID,
+                        RunSelectField.NAME,
+                        RunSelectField.PROJECT_ID,
+                        RunSelectField.START_TIME,
+                        RunSelectField.RUN_TYPE,
+                        RunSelectField.STATUS,
                     )
                 )
                 .traceFilter("eq(status, \"success\")")
@@ -163,15 +163,15 @@ internal class RunQueryV2ParamsTest {
                 "b2c3d4e5-f6a7-4b5c-9d0e-1f2a3b4c5d6e",
                 "c3d4e5f6-a7b8-4c5d-0e1f-2a3b4c5d6e7f",
             )
-        assertThat(body.runType()).contains(RunQueryV2Params.RunType.LLM)
+        assertThat(body.runType()).contains(RunType.LLM)
         assertThat(body.selects().getOrNull())
             .containsExactly(
-                RunQueryV2Params.Select.ID,
-                RunQueryV2Params.Select.NAME,
-                RunQueryV2Params.Select.PROJECT_ID,
-                RunQueryV2Params.Select.START_TIME,
-                RunQueryV2Params.Select.RUN_TYPE,
-                RunQueryV2Params.Select.STATUS,
+                RunSelectField.ID,
+                RunSelectField.NAME,
+                RunSelectField.PROJECT_ID,
+                RunSelectField.START_TIME,
+                RunSelectField.RUN_TYPE,
+                RunSelectField.STATUS,
             )
         assertThat(body.traceFilter()).contains("eq(status, \"success\")")
         assertThat(body.traceId()).contains("f47ac10b-58cc-4372-a567-0e02b2c3d479")
