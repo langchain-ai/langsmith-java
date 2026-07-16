@@ -47,9 +47,9 @@ interface RunServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync
 
-    fun share(): ShareServiceAsync
-
     fun rules(): RuleServiceAsync
+
+    fun share(): ShareServiceAsync
 
     /** Flushes any queued runs, completing when all pending requests have been sent. */
     fun flush(): CompletableFuture<Void?> = CompletableFuture.completedFuture(null)

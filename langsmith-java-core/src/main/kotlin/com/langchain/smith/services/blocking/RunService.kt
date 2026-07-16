@@ -47,9 +47,9 @@ interface RunService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService
 
-    fun share(): ShareService
-
     fun rules(): RuleService
+
+    fun share(): ShareService
 
     /** Flushes any queued runs, blocking until all pending requests have been sent. */
     fun flush() {}
@@ -353,9 +353,9 @@ interface RunService {
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService.WithRawResponse
 
-        fun share(): ShareService.WithRawResponse
-
         fun rules(): RuleService.WithRawResponse
+
+        fun share(): ShareService.WithRawResponse
 
         /** Flushes any queued runs, blocking until all pending requests have been sent. */
         fun flush() {}
