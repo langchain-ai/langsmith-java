@@ -1,0 +1,99 @@
+name: "stlc: trigger promote on next → main approval"
+
+# Dispatches the promote workflow in langchainplus whenever the next → main
+# PR in this repo receives an approving review, or whenever checks on `next`
+# finish passing (covers the case where the PR was approved before checks
+# completed, since the approval event alone won't fire again once CI is green).
+on:
+  pull_request_review:
+    types: [submitted]
+  check_suite:
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  trigger-promote:
+    if: |
+      github.repository == 'langchain-ai/langsmith-java-staging' &&
+      (
+        (github.event_name == 'pull_request_review' &&
+         github.event.review.state == 'approved' &&
+         github.event.pull_request.base.ref == 'main' &&
+         github.event.pull_request.head.ref == 'next') ||
+        (github.event_name == 'check_suite' &&
+         github.event.check_suite.conclusion == 'success' &&
+         github.event.check_suite.head_branch == 'next')
+      )
+    runs-on: self-hosted-ubuntu-small-amd64
+    steps:
+      - name: Check whether the next → main PR is already approved
+        id: gate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request_review" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          pr_number=$(gh pr list \
+            --repo "${{ github.repository }}" \
+            --base main \
+            --head next \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -z "$pr_number" ]; then
+            echo "No open next -> main PR found; skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          decision=$(gh pr view "$pr_number" \
+            --repo "${{ github.repository }}" \
+            --json reviewDecision \
+            --jq '.reviewDecision // empty')
+
+          if [ "$decision" != "APPROVED" ]; then
+            echo "PR #$pr_number is not approved yet; skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "PR #$pr_number is already approved; proceeding."
+          echo "should_run=true" >> "$GITHUB_OUTPUT"
+
+      - name: Load GitHub App key from 1Password
+        id: load-gh-app-secrets
+        if: steps.gate.outputs.should_run == 'true'
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN_INTERNAL }}
+          OP_CONNECT_HOST: ${{ secrets.OP_CONNECT_HOST }}
+          LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY: op://${{ secrets.INTERNAL_INFRA_OP_VAULT }}/langchain-actions-pr-bot/private_key
+
+      - name: Generate GitHub App token
+        id: app-token
+        if: steps.gate.outputs.should_run == 'true'
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: "Iv23liMFOFBcPTKFWi3S"
+          private-key: ${{ steps.load-gh-app-secrets.outputs.LANGCHAINPLUS_GITHUB_APP_PRIVATE_KEY }}
+          repositories: langchainplus
+
+      - name: Dispatch ff-only merge workflow in langchainplus
+        if: steps.gate.outputs.should_run == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run git-ff-only-merge.yml \
+            --repo langchain-ai/langchainplus \
+            --field repo=langsmith-java-staging \
+            --field src_branch=next \
+            --field target_branch=main
