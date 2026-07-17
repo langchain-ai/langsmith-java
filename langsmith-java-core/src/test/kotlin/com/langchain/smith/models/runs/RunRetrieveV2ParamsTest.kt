@@ -15,8 +15,8 @@ internal class RunRetrieveV2ParamsTest {
         RunRetrieveV2Params.builder()
             .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .projectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-            .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .addSelect(RunRetrieveV2Params.Select.ID)
+            .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .accept("Accept")
             .build()
     }
@@ -27,7 +27,6 @@ internal class RunRetrieveV2ParamsTest {
             RunRetrieveV2Params.builder()
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .projectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -41,8 +40,8 @@ internal class RunRetrieveV2ParamsTest {
             RunRetrieveV2Params.builder()
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .projectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addSelect(RunRetrieveV2Params.Select.ID)
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .accept("Accept")
                 .build()
 
@@ -57,7 +56,6 @@ internal class RunRetrieveV2ParamsTest {
             RunRetrieveV2Params.builder()
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .projectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 
         val headers = params._headers()
@@ -71,8 +69,8 @@ internal class RunRetrieveV2ParamsTest {
             RunRetrieveV2Params.builder()
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .projectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .addSelect(RunRetrieveV2Params.Select.ID)
+                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .accept("Accept")
                 .build()
 
@@ -82,8 +80,8 @@ internal class RunRetrieveV2ParamsTest {
             .isEqualTo(
                 QueryParams.builder()
                     .put("project_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .put("start_time", "2019-12-27T18:11:19.117Z")
                     .put("selects", "ID")
+                    .put("start_time", "2019-12-27T18:11:19.117Z")
                     .build()
             )
     }
@@ -94,7 +92,6 @@ internal class RunRetrieveV2ParamsTest {
             RunRetrieveV2Params.builder()
                 .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .projectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .build()
 
         val queryParams = params._queryParams()
@@ -103,7 +100,6 @@ internal class RunRetrieveV2ParamsTest {
             .isEqualTo(
                 QueryParams.builder()
                     .put("project_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .put("start_time", "2019-12-27T18:11:19.117Z")
                     .build()
             )
     }

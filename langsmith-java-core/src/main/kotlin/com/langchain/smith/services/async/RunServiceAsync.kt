@@ -235,8 +235,7 @@ interface RunServiceAsync {
 
     /**
      * **Alpha:** The request and response contract may change; Returns one run by ID for the given
-     * session and start_time. Use the `selects` query parameter (repeatable) to select fields to
-     * return.
+     * session. Use the `selects` query parameter (repeatable) to select fields to return.
      */
     fun retrieveV2(runId: String, params: RunRetrieveV2Params): CompletableFuture<Run> =
         retrieveV2(runId, params, RequestOptions.none())
