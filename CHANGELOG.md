@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.1.0-beta.16](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.15...v0.1.0-beta.16) (2026-07-17)
+
+
+### Features
+
+* add run rule evaluator tracing flag [LSO-3323] ([d53da42](https://github.com/langchain-ai/langsmith-java/commit/d53da42ffaa0d5072409f45d4398a03741013c6a))
+* **engine:** issue lifecycle backend + webhook status filter (2/8) ([cbc0080](https://github.com/langchain-ai/langsmith-java/commit/cbc00807ee3991638b76430095c521243bcf5675))
+* **feedback:** support GET /feedback for thread AQs ([5052542](https://github.com/langchain-ai/langsmith-java/commit/50525423cca7d2024be967a074267a97068c33ed))
+
+
+### Bug Fixes
+
+* **datasets:** serve public dataset sessions via Go, fixing SmithDB-only 501 ([8eb0670](https://github.com/langchain-ai/langsmith-java/commit/8eb067064eedc528a7e3381e9a84c9bceff0886f))
+* patch 6 high-severity security alerts ([#42](https://github.com/langchain-ai/langsmith-java/issues/42)) ([8b1dff9](https://github.com/langchain-ai/langsmith-java/commit/8b1dff9a1ed8a7982278f393ca2859a3d96a97a0))
+* remove July 2026 premier plan ([1409dd8](https://github.com/langchain-ai/langsmith-java/commit/1409dd89d8da75b5650ca15509c6e73d545364df))
+
+
+### Chores
+
+* new unshare endpoint that doesn't require lookup ([8391078](https://github.com/langchain-ai/langsmith-java/commit/839107858ca208c7238ef83e4fbd9379e31bf220))
+* Stainless SDK methods for V2 public-run APIs ([306a079](https://github.com/langchain-ai/langsmith-java/commit/306a079479b914fc67a0d7627f29c8c95b6b5c4c))
+
 ## [0.1.0-beta.15](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.14...v0.1.0-beta.15) (2026-07-15)
 
 
