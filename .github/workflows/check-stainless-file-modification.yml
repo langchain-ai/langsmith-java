@@ -3,7 +3,7 @@ name: Check Stainless File Modification
 on:
   pull_request:
     branches:
-      - next
+      - main
     types:
       - opened
       - synchronize

@@ -19,15 +19,14 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * **Alpha:** The request and response contract may change; Returns one run by ID for the given
- * session and start_time. Use the `selects` query parameter (repeatable) to select fields to
- * return.
+ * session. Use the `selects` query parameter (repeatable) to select fields to return.
  */
 class RunRetrieveV2Params
 private constructor(
     private val runId: String?,
     private val projectId: String,
-    private val startTime: OffsetDateTime,
     private val selects: List<Select>?,
+    private val startTime: OffsetDateTime?,
     private val accept: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -39,16 +38,15 @@ private constructor(
     fun projectId(): String = projectId
 
     /**
-     * `start_time` is the run's `start_time` (RFC3339 date-time), used together with `project_id`
-     * to locate the run.
-     */
-    fun startTime(): OffsetDateTime = startTime
-
-    /**
      * `selects` lists which properties to include on the returned run (repeatable query parameter).
      * Accepts any value of the `RunSelectField` enum. If omitted, only `id` is returned.
      */
     fun selects(): Optional<List<Select>> = Optional.ofNullable(selects)
+
+    /**
+     * `start_time` is the run's `start_time` (RFC3339 date-time). Providing it speeds up retrieval.
+     */
+    fun startTime(): Optional<OffsetDateTime> = Optional.ofNullable(startTime)
 
     fun accept(): Optional<String> = Optional.ofNullable(accept)
 
@@ -68,7 +66,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .projectId()
-         * .startTime()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -79,8 +76,8 @@ private constructor(
 
         private var runId: String? = null
         private var projectId: String? = null
-        private var startTime: OffsetDateTime? = null
         private var selects: MutableList<Select>? = null
+        private var startTime: OffsetDateTime? = null
         private var accept: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -89,8 +86,8 @@ private constructor(
         internal fun from(runRetrieveV2Params: RunRetrieveV2Params) = apply {
             runId = runRetrieveV2Params.runId
             projectId = runRetrieveV2Params.projectId
-            startTime = runRetrieveV2Params.startTime
             selects = runRetrieveV2Params.selects?.toMutableList()
+            startTime = runRetrieveV2Params.startTime
             accept = runRetrieveV2Params.accept
             additionalHeaders = runRetrieveV2Params.additionalHeaders.toBuilder()
             additionalQueryParams = runRetrieveV2Params.additionalQueryParams.toBuilder()
@@ -103,12 +100,6 @@ private constructor(
 
         /** `project_id` is the UUID of the tracing project that owns the run. */
         fun projectId(projectId: String) = apply { this.projectId = projectId }
-
-        /**
-         * `start_time` is the run's `start_time` (RFC3339 date-time), used together with
-         * `project_id` to locate the run.
-         */
-        fun startTime(startTime: OffsetDateTime) = apply { this.startTime = startTime }
 
         /**
          * `selects` lists which properties to include on the returned run (repeatable query
@@ -128,6 +119,15 @@ private constructor(
         fun addSelect(select: Select) = apply {
             selects = (selects ?: mutableListOf()).apply { add(select) }
         }
+
+        /**
+         * `start_time` is the run's `start_time` (RFC3339 date-time). Providing it speeds up
+         * retrieval.
+         */
+        fun startTime(startTime: OffsetDateTime?) = apply { this.startTime = startTime }
+
+        /** Alias for calling [Builder.startTime] with `startTime.orElse(null)`. */
+        fun startTime(startTime: Optional<OffsetDateTime>) = startTime(startTime.getOrNull())
 
         fun accept(accept: String?) = apply { this.accept = accept }
 
@@ -240,7 +240,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .projectId()
-         * .startTime()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -249,8 +248,8 @@ private constructor(
             RunRetrieveV2Params(
                 runId,
                 checkRequired("projectId", projectId),
-                checkRequired("startTime", startTime),
                 selects?.toImmutable(),
+                startTime,
                 accept,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -275,8 +274,10 @@ private constructor(
         QueryParams.builder()
             .apply {
                 put("project_id", projectId)
-                put("start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(startTime))
                 selects?.forEach { put("selects", it.toString()) }
+                startTime?.let {
+                    put("start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
+                }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -677,8 +678,8 @@ private constructor(
         return other is RunRetrieveV2Params &&
             runId == other.runId &&
             projectId == other.projectId &&
-            startTime == other.startTime &&
             selects == other.selects &&
+            startTime == other.startTime &&
             accept == other.accept &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -688,13 +689,13 @@ private constructor(
         Objects.hash(
             runId,
             projectId,
-            startTime,
             selects,
+            startTime,
             accept,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "RunRetrieveV2Params{runId=$runId, projectId=$projectId, startTime=$startTime, selects=$selects, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RunRetrieveV2Params{runId=$runId, projectId=$projectId, selects=$selects, startTime=$startTime, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
