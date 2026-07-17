@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.0-beta.17](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.16...v0.1.0-beta.17) (2026-07-17)
+
+
+### Features
+
+* **runs/v2:** make start_time optional in GET /v2/runs/:id ([101472f](https://github.com/langchain-ai/langsmith-java/commit/101472f4ce1210028bb37a577a3992a49511af40))
+
+
+### Chores
+
+* remove stlc-promote-to-main workflow ([#45](https://github.com/langchain-ai/langsmith-java/issues/45)) ([df8f95a](https://github.com/langchain-ai/langsmith-java/commit/df8f95af97e784a035da210551d5aa17c63608c3))
+
+
+### Documentation
+
+* minor rewording of List Commits endpoint description ([2f1ca87](https://github.com/langchain-ai/langsmith-java/commit/2f1ca870dd9a60016d2c0bad66b1ece2826d41da))
+
 ## [0.1.0-beta.16](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.15...v0.1.0-beta.16) (2026-07-17)
 
 
