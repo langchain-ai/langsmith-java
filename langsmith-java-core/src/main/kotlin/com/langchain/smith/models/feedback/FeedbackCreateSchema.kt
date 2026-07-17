@@ -47,6 +47,7 @@ private constructor(
     private val feedbackConfig: JsonField<FeedbackConfig>,
     private val feedbackGroupId: JsonField<String>,
     private val feedbackSource: JsonField<FeedbackSource>,
+    private val feedbackThreadId: JsonField<String>,
     private val modifiedAt: JsonField<OffsetDateTime>,
     private val runId: JsonField<String>,
     private val score: JsonField<Score>,
@@ -84,6 +85,9 @@ private constructor(
         @JsonProperty("feedback_source")
         @ExcludeMissing
         feedbackSource: JsonField<FeedbackSource> = JsonMissing.of(),
+        @JsonProperty("feedback_thread_id")
+        @ExcludeMissing
+        feedbackThreadId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("modified_at")
         @ExcludeMissing
         modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -107,6 +111,7 @@ private constructor(
         feedbackConfig,
         feedbackGroupId,
         feedbackSource,
+        feedbackThreadId,
         modifiedAt,
         runId,
         score,
@@ -186,6 +191,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun feedbackSource(): Optional<FeedbackSource> = feedbackSource.getOptional("feedback_source")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun feedbackThreadId(): Optional<String> = feedbackThreadId.getOptional("feedback_thread_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -323,6 +334,16 @@ private constructor(
     fun _feedbackSource(): JsonField<FeedbackSource> = feedbackSource
 
     /**
+     * Returns the raw JSON value of [feedbackThreadId].
+     *
+     * Unlike [feedbackThreadId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("feedback_thread_id")
+    @ExcludeMissing
+    fun _feedbackThreadId(): JsonField<String> = feedbackThreadId
+
+    /**
      * Returns the raw JSON value of [modifiedAt].
      *
      * Unlike [modifiedAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -414,6 +435,7 @@ private constructor(
         private var feedbackConfig: JsonField<FeedbackConfig> = JsonMissing.of()
         private var feedbackGroupId: JsonField<String> = JsonMissing.of()
         private var feedbackSource: JsonField<FeedbackSource> = JsonMissing.of()
+        private var feedbackThreadId: JsonField<String> = JsonMissing.of()
         private var modifiedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var runId: JsonField<String> = JsonMissing.of()
         private var score: JsonField<Score> = JsonMissing.of()
@@ -436,6 +458,7 @@ private constructor(
             feedbackConfig = feedbackCreateSchema.feedbackConfig
             feedbackGroupId = feedbackCreateSchema.feedbackGroupId
             feedbackSource = feedbackCreateSchema.feedbackSource
+            feedbackThreadId = feedbackCreateSchema.feedbackThreadId
             modifiedAt = feedbackCreateSchema.modifiedAt
             runId = feedbackCreateSchema.runId
             score = feedbackCreateSchema.score
@@ -635,6 +658,24 @@ private constructor(
         fun feedbackSource(autoEval: AutoEvalFeedbackSource) =
             feedbackSource(FeedbackSource.ofAutoEval(autoEval))
 
+        fun feedbackThreadId(feedbackThreadId: String?) =
+            feedbackThreadId(JsonField.ofNullable(feedbackThreadId))
+
+        /** Alias for calling [Builder.feedbackThreadId] with `feedbackThreadId.orElse(null)`. */
+        fun feedbackThreadId(feedbackThreadId: Optional<String>) =
+            feedbackThreadId(feedbackThreadId.getOrNull())
+
+        /**
+         * Sets [Builder.feedbackThreadId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.feedbackThreadId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun feedbackThreadId(feedbackThreadId: JsonField<String>) = apply {
+            this.feedbackThreadId = feedbackThreadId
+        }
+
         fun modifiedAt(modifiedAt: OffsetDateTime) = modifiedAt(JsonField.of(modifiedAt))
 
         /**
@@ -790,6 +831,7 @@ private constructor(
                 feedbackConfig,
                 feedbackGroupId,
                 feedbackSource,
+                feedbackThreadId,
                 modifiedAt,
                 runId,
                 score,
@@ -827,6 +869,7 @@ private constructor(
         feedbackConfig().ifPresent { it.validate() }
         feedbackGroupId()
         feedbackSource().ifPresent { it.validate() }
+        feedbackThreadId()
         modifiedAt()
         runId()
         score().ifPresent { it.validate() }
@@ -863,6 +906,7 @@ private constructor(
             (feedbackConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (feedbackGroupId.asKnown().isPresent) 1 else 0) +
             (feedbackSource.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (feedbackThreadId.asKnown().isPresent) 1 else 0) +
             (if (modifiedAt.asKnown().isPresent) 1 else 0) +
             (if (runId.asKnown().isPresent) 1 else 0) +
             (score.asKnown().getOrNull()?.validity() ?: 0) +
@@ -2726,6 +2770,7 @@ private constructor(
             feedbackConfig == other.feedbackConfig &&
             feedbackGroupId == other.feedbackGroupId &&
             feedbackSource == other.feedbackSource &&
+            feedbackThreadId == other.feedbackThreadId &&
             modifiedAt == other.modifiedAt &&
             runId == other.runId &&
             score == other.score &&
@@ -2749,6 +2794,7 @@ private constructor(
             feedbackConfig,
             feedbackGroupId,
             feedbackSource,
+            feedbackThreadId,
             modifiedAt,
             runId,
             score,
@@ -2763,5 +2809,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
+        "FeedbackCreateSchema{key=$key, id=$id, comment=$comment, comparativeExperimentId=$comparativeExperimentId, correction=$correction, createdAt=$createdAt, error=$error, extendTraceRetention=$extendTraceRetention, feedbackConfig=$feedbackConfig, feedbackGroupId=$feedbackGroupId, feedbackSource=$feedbackSource, feedbackThreadId=$feedbackThreadId, modifiedAt=$modifiedAt, runId=$runId, score=$score, sessionId=$sessionId, startTime=$startTime, traceId=$traceId, value=$value, additionalProperties=$additionalProperties}"
 }

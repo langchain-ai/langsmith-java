@@ -44,9 +44,14 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-val palantir by configurations.creating
+val palantir by configurations.creating {
+    resolutionStrategy {
+        // CVE-2026-54515: remove once Palantir resolves jackson-databind >= 2.21.5.
+        force("com.fasterxml.jackson.core:jackson-databind:2.21.5")
+    }
+}
 dependencies {
-    palantir("com.palantir.javaformat:palantir-java-format:2.89.0")
+    palantir("com.palantir.javaformat:palantir-java-format:2.93.0")
 }
 
 fun registerPalantir(

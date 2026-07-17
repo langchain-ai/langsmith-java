@@ -50,6 +50,8 @@ import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.async.runs.RuleServiceAsync
 import com.langchain.smith.services.async.runs.RuleServiceAsyncImpl
+import com.langchain.smith.services.async.runs.ShareServiceAsync
+import com.langchain.smith.services.async.runs.ShareServiceAsyncImpl
 import com.langchain.smith.services.isZstdCompressionEnabled
 import com.langchain.smith.services.shouldDefaultRunCompressionEnabled
 import java.util.concurrent.CompletableFuture
@@ -79,6 +81,8 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             batchSizeLimitBytes = limits.batchSizeLimitBytes,
         )
     }
+
+    private val share: ShareServiceAsync by lazy { ShareServiceAsyncImpl(clientOptions) }
 
     override fun withRawResponse(): RunServiceAsync.WithRawResponse = withRawResponse
 
@@ -167,6 +171,8 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync =
         RunServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun share(): ShareServiceAsync = share
 
     override fun create(
         params: RunCreateParams,
@@ -335,12 +341,18 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
             RuleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val share: ShareServiceAsync.WithRawResponse by lazy {
+            ShareServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): RunServiceAsync.WithRawResponse =
             RunServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun share(): ShareServiceAsync.WithRawResponse = share
 
         private val createHandler: Handler<RunCreateResponse> =
             jsonHandler<RunCreateResponse>(clientOptions.jsonMapper)

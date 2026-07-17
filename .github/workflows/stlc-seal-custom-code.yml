@@ -1,12 +1,12 @@
 name: "stlc: seal custom code"
 
-# Triggered on every push to the `next` branch of langsmith-java-staging.
+# Triggered on every push to the `main` branch of langsmith-java-staging.
 # Delegates to the stlc_seal_custom_code workflow in langchainplus (where
 # the stainless workspace and reusable actions live) by dispatching it via
 # the GitHub API, scoped to the java target only.
 on:
   push:
-    branches: [next]
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}

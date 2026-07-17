@@ -9,6 +9,14 @@ repositories {
     mavenCentral()
 }
 
+configurations.configureEach {
+    // CVE-2026-10532: remove once the Spring Boot BOM manages Logback >= 1.5.35.
+    resolutionStrategy.force(
+        "ch.qos.logback:logback-classic:1.5.35",
+        "ch.qos.logback:logback-core:1.5.35",
+    )
+}
+
 // Align with Kotlin JVM target (Kotlin plugin applies Java plugin; keep targets consistent)
 java {
     sourceCompatibility = JavaVersion.VERSION_21

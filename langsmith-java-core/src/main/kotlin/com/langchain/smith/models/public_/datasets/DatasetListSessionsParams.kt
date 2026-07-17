@@ -7,6 +7,8 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.models.sessions.SessionSortableColumns
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -25,6 +27,11 @@ private constructor(
     private val sortBy: SessionSortableColumns?,
     private val sortByDesc: Boolean?,
     private val sortByFeedbackKey: String?,
+    private val sortByFeedbackSource: String?,
+    private val statsFilter: String?,
+    private val statsSelect: List<String>?,
+    private val statsStartTime: OffsetDateTime?,
+    private val useApproxStats: Boolean?,
     private val accept: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -51,6 +58,16 @@ private constructor(
     fun sortByDesc(): Optional<Boolean> = Optional.ofNullable(sortByDesc)
 
     fun sortByFeedbackKey(): Optional<String> = Optional.ofNullable(sortByFeedbackKey)
+
+    fun sortByFeedbackSource(): Optional<String> = Optional.ofNullable(sortByFeedbackSource)
+
+    fun statsFilter(): Optional<String> = Optional.ofNullable(statsFilter)
+
+    fun statsSelect(): Optional<List<String>> = Optional.ofNullable(statsSelect)
+
+    fun statsStartTime(): Optional<OffsetDateTime> = Optional.ofNullable(statsStartTime)
+
+    fun useApproxStats(): Optional<Boolean> = Optional.ofNullable(useApproxStats)
 
     fun accept(): Optional<String> = Optional.ofNullable(accept)
 
@@ -86,6 +103,11 @@ private constructor(
         private var sortBy: SessionSortableColumns? = null
         private var sortByDesc: Boolean? = null
         private var sortByFeedbackKey: String? = null
+        private var sortByFeedbackSource: String? = null
+        private var statsFilter: String? = null
+        private var statsSelect: MutableList<String>? = null
+        private var statsStartTime: OffsetDateTime? = null
+        private var useApproxStats: Boolean? = null
         private var accept: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -103,6 +125,11 @@ private constructor(
             sortBy = datasetListSessionsParams.sortBy
             sortByDesc = datasetListSessionsParams.sortByDesc
             sortByFeedbackKey = datasetListSessionsParams.sortByFeedbackKey
+            sortByFeedbackSource = datasetListSessionsParams.sortByFeedbackSource
+            statsFilter = datasetListSessionsParams.statsFilter
+            statsSelect = datasetListSessionsParams.statsSelect?.toMutableList()
+            statsStartTime = datasetListSessionsParams.statsStartTime
+            useApproxStats = datasetListSessionsParams.useApproxStats
             accept = datasetListSessionsParams.accept
             additionalHeaders = datasetListSessionsParams.additionalHeaders.toBuilder()
             additionalQueryParams = datasetListSessionsParams.additionalQueryParams.toBuilder()
@@ -201,6 +228,61 @@ private constructor(
         /** Alias for calling [Builder.sortByFeedbackKey] with `sortByFeedbackKey.orElse(null)`. */
         fun sortByFeedbackKey(sortByFeedbackKey: Optional<String>) =
             sortByFeedbackKey(sortByFeedbackKey.getOrNull())
+
+        fun sortByFeedbackSource(sortByFeedbackSource: String?) = apply {
+            this.sortByFeedbackSource = sortByFeedbackSource
+        }
+
+        /**
+         * Alias for calling [Builder.sortByFeedbackSource] with
+         * `sortByFeedbackSource.orElse(null)`.
+         */
+        fun sortByFeedbackSource(sortByFeedbackSource: Optional<String>) =
+            sortByFeedbackSource(sortByFeedbackSource.getOrNull())
+
+        fun statsFilter(statsFilter: String?) = apply { this.statsFilter = statsFilter }
+
+        /** Alias for calling [Builder.statsFilter] with `statsFilter.orElse(null)`. */
+        fun statsFilter(statsFilter: Optional<String>) = statsFilter(statsFilter.getOrNull())
+
+        fun statsSelect(statsSelect: List<String>?) = apply {
+            this.statsSelect = statsSelect?.toMutableList()
+        }
+
+        /** Alias for calling [Builder.statsSelect] with `statsSelect.orElse(null)`. */
+        fun statsSelect(statsSelect: Optional<List<String>>) = statsSelect(statsSelect.getOrNull())
+
+        /**
+         * Adds a single [String] to [Builder.statsSelect].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addStatsSelect(statsSelect: String) = apply {
+            this.statsSelect = (this.statsSelect ?: mutableListOf()).apply { add(statsSelect) }
+        }
+
+        fun statsStartTime(statsStartTime: OffsetDateTime?) = apply {
+            this.statsStartTime = statsStartTime
+        }
+
+        /** Alias for calling [Builder.statsStartTime] with `statsStartTime.orElse(null)`. */
+        fun statsStartTime(statsStartTime: Optional<OffsetDateTime>) =
+            statsStartTime(statsStartTime.getOrNull())
+
+        fun useApproxStats(useApproxStats: Boolean?) = apply {
+            this.useApproxStats = useApproxStats
+        }
+
+        /**
+         * Alias for [Builder.useApproxStats].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun useApproxStats(useApproxStats: Boolean) = useApproxStats(useApproxStats as Boolean?)
+
+        /** Alias for calling [Builder.useApproxStats] with `useApproxStats.orElse(null)`. */
+        fun useApproxStats(useApproxStats: Optional<Boolean>) =
+            useApproxStats(useApproxStats.getOrNull())
 
         fun accept(accept: String?) = apply { this.accept = accept }
 
@@ -323,6 +405,11 @@ private constructor(
                 sortBy,
                 sortByDesc,
                 sortByFeedbackKey,
+                sortByFeedbackSource,
+                statsFilter,
+                statsSelect?.toImmutable(),
+                statsStartTime,
+                useApproxStats,
                 accept,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -356,6 +443,13 @@ private constructor(
                 sortBy?.let { put("sort_by", it.toString()) }
                 sortByDesc?.let { put("sort_by_desc", it.toString()) }
                 sortByFeedbackKey?.let { put("sort_by_feedback_key", it) }
+                sortByFeedbackSource?.let { put("sort_by_feedback_source", it) }
+                statsFilter?.let { put("stats_filter", it) }
+                statsSelect?.forEach { put("stats_select", it) }
+                statsStartTime?.let {
+                    put("stats_start_time", DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it))
+                }
+                useApproxStats?.let { put("use_approx_stats", it.toString()) }
                 putAll(additionalQueryParams)
             }
             .build()
@@ -377,6 +471,11 @@ private constructor(
             sortBy == other.sortBy &&
             sortByDesc == other.sortByDesc &&
             sortByFeedbackKey == other.sortByFeedbackKey &&
+            sortByFeedbackSource == other.sortByFeedbackSource &&
+            statsFilter == other.statsFilter &&
+            statsSelect == other.statsSelect &&
+            statsStartTime == other.statsStartTime &&
+            useApproxStats == other.useApproxStats &&
             accept == other.accept &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -395,11 +494,16 @@ private constructor(
             sortBy,
             sortByDesc,
             sortByFeedbackKey,
+            sortByFeedbackSource,
+            statsFilter,
+            statsSelect,
+            statsStartTime,
+            useApproxStats,
             accept,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "DatasetListSessionsParams{shareToken=$shareToken, id=$id, datasetVersion=$datasetVersion, facets=$facets, limit=$limit, name=$name, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortByDesc=$sortByDesc, sortByFeedbackKey=$sortByFeedbackKey, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "DatasetListSessionsParams{shareToken=$shareToken, id=$id, datasetVersion=$datasetVersion, facets=$facets, limit=$limit, name=$name, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortByDesc=$sortByDesc, sortByFeedbackKey=$sortByFeedbackKey, sortByFeedbackSource=$sortByFeedbackSource, statsFilter=$statsFilter, statsSelect=$statsSelect, statsStartTime=$statsStartTime, useApproxStats=$useApproxStats, accept=$accept, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

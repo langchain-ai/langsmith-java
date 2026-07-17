@@ -20,6 +20,8 @@ import com.langchain.smith.models.public_.PublicRetrieveFeedbacksPage
 import com.langchain.smith.models.public_.PublicRetrieveFeedbacksParams
 import com.langchain.smith.services.blocking.public_.DatasetService
 import com.langchain.smith.services.blocking.public_.DatasetServiceImpl
+import com.langchain.smith.services.blocking.public_.RunService
+import com.langchain.smith.services.blocking.public_.RunServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -32,12 +34,16 @@ class PublicServiceImpl internal constructor(private val clientOptions: ClientOp
 
     private val datasets: DatasetService by lazy { DatasetServiceImpl(clientOptions) }
 
+    private val runs: RunService by lazy { RunServiceImpl(clientOptions) }
+
     override fun withRawResponse(): PublicService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): PublicService =
         PublicServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun datasets(): DatasetService = datasets
+
+    override fun runs(): RunService = runs
 
     override fun retrieveFeedbacks(
         params: PublicRetrieveFeedbacksParams,
@@ -56,6 +62,10 @@ class PublicServiceImpl internal constructor(private val clientOptions: ClientOp
             DatasetServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val runs: RunService.WithRawResponse by lazy {
+            RunServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): PublicService.WithRawResponse =
@@ -64,6 +74,8 @@ class PublicServiceImpl internal constructor(private val clientOptions: ClientOp
             )
 
         override fun datasets(): DatasetService.WithRawResponse = datasets
+
+        override fun runs(): RunService.WithRawResponse = runs
 
         private val retrieveFeedbacksHandler: Handler<List<FeedbackSchema>> =
             jsonHandler<List<FeedbackSchema>>(clientOptions.jsonMapper)

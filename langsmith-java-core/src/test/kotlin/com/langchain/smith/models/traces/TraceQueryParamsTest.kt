@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.traces
 
+import com.langchain.smith.models.runs.RunSelectField
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -19,13 +20,13 @@ internal class TraceQueryParamsTest {
             .projectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
             .selects(
                 listOf(
-                    TraceQueryParams.Select.ID,
-                    TraceQueryParams.Select.NAME,
-                    TraceQueryParams.Select.START_TIME,
-                    TraceQueryParams.Select.STATUS,
-                    TraceQueryParams.Select.TOTAL_TOKENS,
-                    TraceQueryParams.Select.TOTAL_COST,
-                    TraceQueryParams.Select.FIRST_TOKEN_TIME,
+                    RunSelectField.ID,
+                    RunSelectField.NAME,
+                    RunSelectField.START_TIME,
+                    RunSelectField.STATUS,
+                    RunSelectField.TOTAL_TOKENS,
+                    RunSelectField.TOTAL_COST,
+                    RunSelectField.FIRST_TOKEN_TIME,
                 )
             )
             .traceFilter("eq(status, \"error\")")
@@ -45,13 +46,13 @@ internal class TraceQueryParamsTest {
                 .projectId("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
                 .selects(
                     listOf(
-                        TraceQueryParams.Select.ID,
-                        TraceQueryParams.Select.NAME,
-                        TraceQueryParams.Select.START_TIME,
-                        TraceQueryParams.Select.STATUS,
-                        TraceQueryParams.Select.TOTAL_TOKENS,
-                        TraceQueryParams.Select.TOTAL_COST,
-                        TraceQueryParams.Select.FIRST_TOKEN_TIME,
+                        RunSelectField.ID,
+                        RunSelectField.NAME,
+                        RunSelectField.START_TIME,
+                        RunSelectField.STATUS,
+                        RunSelectField.TOTAL_TOKENS,
+                        RunSelectField.TOTAL_COST,
+                        RunSelectField.FIRST_TOKEN_TIME,
                     )
                 )
                 .traceFilter("eq(status, \"error\")")
@@ -68,13 +69,13 @@ internal class TraceQueryParamsTest {
         assertThat(body.projectId()).contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
         assertThat(body.selects().getOrNull())
             .containsExactly(
-                TraceQueryParams.Select.ID,
-                TraceQueryParams.Select.NAME,
-                TraceQueryParams.Select.START_TIME,
-                TraceQueryParams.Select.STATUS,
-                TraceQueryParams.Select.TOTAL_TOKENS,
-                TraceQueryParams.Select.TOTAL_COST,
-                TraceQueryParams.Select.FIRST_TOKEN_TIME,
+                RunSelectField.ID,
+                RunSelectField.NAME,
+                RunSelectField.START_TIME,
+                RunSelectField.STATUS,
+                RunSelectField.TOTAL_TOKENS,
+                RunSelectField.TOTAL_COST,
+                RunSelectField.FIRST_TOKEN_TIME,
             )
         assertThat(body.traceFilter()).contains("eq(status, \"error\")")
         assertThat(body.traceIds().getOrNull())

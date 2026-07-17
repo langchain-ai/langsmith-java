@@ -30,6 +30,7 @@ import com.langchain.smith.models.runs.RunUpdate2Response
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunUpdateResponse
 import com.langchain.smith.services.blocking.runs.RuleService
+import com.langchain.smith.services.blocking.runs.ShareService
 import java.util.function.Consumer
 
 interface RunService {
@@ -47,6 +48,8 @@ interface RunService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService
 
     fun rules(): RuleService
+
+    fun share(): ShareService
 
     /** Flushes any queued runs, blocking until all pending requests have been sent. */
     fun flush() {}
@@ -351,6 +354,8 @@ interface RunService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService.WithRawResponse
 
         fun rules(): RuleService.WithRawResponse
+
+        fun share(): ShareService.WithRawResponse
 
         /** Flushes any queued runs, blocking until all pending requests have been sent. */
         fun flush() {}

@@ -5,6 +5,7 @@ package com.langchain.smith.models.public_.datasets
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import com.langchain.smith.models.sessions.SessionSortableColumns
+import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -25,6 +26,12 @@ internal class DatasetListSessionsParamsTest {
             .sortBy(SessionSortableColumns.NAME)
             .sortByDesc(true)
             .sortByFeedbackKey("sort_by_feedback_key")
+            .sortByFeedbackSource("sort_by_feedback_source")
+            .statsFilter("stats_filter")
+            .addStatsSelect("string")
+            .addStatsSelect("string")
+            .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+            .useApproxStats(true)
             .accept("accept")
             .build()
     }
@@ -57,6 +64,12 @@ internal class DatasetListSessionsParamsTest {
                 .sortBy(SessionSortableColumns.NAME)
                 .sortByDesc(true)
                 .sortByFeedbackKey("sort_by_feedback_key")
+                .sortByFeedbackSource("sort_by_feedback_source")
+                .statsFilter("stats_filter")
+                .addStatsSelect("string")
+                .addStatsSelect("string")
+                .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .useApproxStats(true)
                 .accept("accept")
                 .build()
 
@@ -93,6 +106,12 @@ internal class DatasetListSessionsParamsTest {
                 .sortBy(SessionSortableColumns.NAME)
                 .sortByDesc(true)
                 .sortByFeedbackKey("sort_by_feedback_key")
+                .sortByFeedbackSource("sort_by_feedback_source")
+                .statsFilter("stats_filter")
+                .addStatsSelect("string")
+                .addStatsSelect("string")
+                .statsStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .useApproxStats(true)
                 .accept("accept")
                 .build()
 
@@ -112,6 +131,12 @@ internal class DatasetListSessionsParamsTest {
                     .put("sort_by", "name")
                     .put("sort_by_desc", "true")
                     .put("sort_by_feedback_key", "sort_by_feedback_key")
+                    .put("sort_by_feedback_source", "sort_by_feedback_source")
+                    .put("stats_filter", "stats_filter")
+                    .put("stats_select", "string")
+                    .put("stats_select", "string")
+                    .put("stats_start_time", "2019-12-27T18:11:19.117Z")
+                    .put("use_approx_stats", "true")
                     .build()
             )
     }
