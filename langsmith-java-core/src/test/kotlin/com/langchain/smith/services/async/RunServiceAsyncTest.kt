@@ -11,6 +11,7 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.HttpClient
 import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
+import com.langchain.smith.models.runs.RunGetUrlParams
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunRetrieveParams
@@ -310,6 +311,30 @@ internal class RunServiceAsyncTest {
             )
 
         runFuture.get()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun getUrl() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val runServiceAsync = client.runs()
+
+        val responseFuture =
+            runServiceAsync.getUrl(
+                RunGetUrlParams.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .projectId("project_id")
+                    .traceId("trace_id")
+                    .startTime("start_time")
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")
