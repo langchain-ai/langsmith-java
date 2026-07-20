@@ -8,6 +8,8 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
+import com.langchain.smith.models.runs.RunGetUrlParams
+import com.langchain.smith.models.runs.RunGetUrlResponse
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
@@ -101,6 +103,31 @@ interface RunServiceAsync {
         params: RunUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<Void?>
+
+    /**
+     * Returns the URL to view a specific run in the LangSmith UI. The caller must supply the run's
+     * project_id and trace_id as query parameters; start_time is optional.
+     */
+    fun getUrl(runId: String, params: RunGetUrlParams): CompletableFuture<RunGetUrlResponse> =
+        getUrl(runId, params, RequestOptions.none())
+
+    /** @see getUrl */
+    fun getUrl(
+        runId: String,
+        params: RunGetUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunGetUrlResponse> =
+        getUrl(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see getUrl */
+    fun getUrl(params: RunGetUrlParams): CompletableFuture<RunGetUrlResponse> =
+        getUrl(params, RequestOptions.none())
+
+    /** @see getUrl */
+    fun getUrl(
+        params: RunGetUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunGetUrlResponse>
 
     /**
      * Ingests a batch of runs in a single JSON payload. The payload must have `post` and/or `patch`
@@ -429,6 +456,34 @@ interface RunServiceAsync {
             params: RunUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<RunUpdateResponse>>
+
+        /**
+         * Returns a raw HTTP response for `get /v2/runs/{run_id}/url`, but is otherwise the same as
+         * [RunServiceAsync.getUrl].
+         */
+        fun getUrl(
+            runId: String,
+            params: RunGetUrlParams,
+        ): CompletableFuture<HttpResponseFor<RunGetUrlResponse>> =
+            getUrl(runId, params, RequestOptions.none())
+
+        /** @see getUrl */
+        fun getUrl(
+            runId: String,
+            params: RunGetUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunGetUrlResponse>> =
+            getUrl(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see getUrl */
+        fun getUrl(params: RunGetUrlParams): CompletableFuture<HttpResponseFor<RunGetUrlResponse>> =
+            getUrl(params, RequestOptions.none())
+
+        /** @see getUrl */
+        fun getUrl(
+            params: RunGetUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunGetUrlResponse>>
 
         /**
          * Returns a raw HTTP response for `post /runs/batch`, but is otherwise the same as

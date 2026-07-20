@@ -25,6 +25,7 @@ import com.langchain.smith.core.http.HttpRequest
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.models.runs.RunAttachment
 import com.langchain.smith.models.runs.RunCreateParams
+import com.langchain.smith.models.runs.RunGetUrlParams
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunRetrieveParams
@@ -604,6 +605,26 @@ internal class RunServiceTest {
 
     private fun testRun(id: String): RunIngest =
         RunIngest.builder().id(id).traceId(id).dottedOrder("order").name("test").build()
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun getUrl() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val runService = client.runs()
+
+        val response =
+            runService.getUrl(
+                RunGetUrlParams.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .projectId("project_id")
+                    .traceId("trace_id")
+                    .startTime("start_time")
+                    .build()
+            )
+
+        response.validate()
+    }
 
     @Disabled("Mock server tests are disabled")
     @Test

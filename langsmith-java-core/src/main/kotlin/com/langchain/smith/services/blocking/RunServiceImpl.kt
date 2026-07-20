@@ -26,6 +26,8 @@ import com.langchain.smith.models.info.InfoListResponse
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
+import com.langchain.smith.models.runs.RunGetUrlParams
+import com.langchain.smith.models.runs.RunGetUrlResponse
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
@@ -188,6 +190,13 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         private val logger = LoggerFactory.getLogger(RunServiceImpl::class.java)
     }
 
+    override fun getUrl(
+        params: RunGetUrlParams,
+        requestOptions: RequestOptions,
+    ): RunGetUrlResponse =
+        // get /v2/runs/{run_id}/url
+        withRawResponse().getUrl(params, requestOptions).parse()
+
     override fun ingestBatch(
         params: RunIngestBatchParams,
         requestOptions: RequestOptions,
@@ -328,6 +337,36 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             return errorHandler.handle(response).parseable {
                 response
                     .use { updateHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val getUrlHandler: Handler<RunGetUrlResponse> =
+            jsonHandler<RunGetUrlResponse>(clientOptions.jsonMapper)
+
+        override fun getUrl(
+            params: RunGetUrlParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<RunGetUrlResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("runId", params.runId().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("v2", "runs", params._pathParam(0), "url")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { getUrlHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

@@ -9,6 +9,8 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.runs.Run
 import com.langchain.smith.models.runs.RunCreateParams
 import com.langchain.smith.models.runs.RunCreateResponse
+import com.langchain.smith.models.runs.RunGetUrlParams
+import com.langchain.smith.models.runs.RunGetUrlResponse
 import com.langchain.smith.models.runs.RunIngest
 import com.langchain.smith.models.runs.RunIngestBatchParams
 import com.langchain.smith.models.runs.RunIngestBatchResponse
@@ -95,6 +97,29 @@ interface RunService {
 
     /** @see update */
     fun update(params: RunUpdateParams, requestOptions: RequestOptions = RequestOptions.none())
+
+    /**
+     * Returns the URL to view a specific run in the LangSmith UI. The caller must supply the run's
+     * project_id and trace_id as query parameters; start_time is optional.
+     */
+    fun getUrl(runId: String, params: RunGetUrlParams): RunGetUrlResponse =
+        getUrl(runId, params, RequestOptions.none())
+
+    /** @see getUrl */
+    fun getUrl(
+        runId: String,
+        params: RunGetUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunGetUrlResponse = getUrl(params.toBuilder().runId(runId).build(), requestOptions)
+
+    /** @see getUrl */
+    fun getUrl(params: RunGetUrlParams): RunGetUrlResponse = getUrl(params, RequestOptions.none())
+
+    /** @see getUrl */
+    fun getUrl(
+        params: RunGetUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunGetUrlResponse
 
     /**
      * Ingests a batch of runs in a single JSON payload. The payload must have `post` and/or `patch`
@@ -415,6 +440,35 @@ interface RunService {
             params: RunUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<RunUpdateResponse>
+
+        /**
+         * Returns a raw HTTP response for `get /v2/runs/{run_id}/url`, but is otherwise the same as
+         * [RunService.getUrl].
+         */
+        @MustBeClosed
+        fun getUrl(runId: String, params: RunGetUrlParams): HttpResponseFor<RunGetUrlResponse> =
+            getUrl(runId, params, RequestOptions.none())
+
+        /** @see getUrl */
+        @MustBeClosed
+        fun getUrl(
+            runId: String,
+            params: RunGetUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunGetUrlResponse> =
+            getUrl(params.toBuilder().runId(runId).build(), requestOptions)
+
+        /** @see getUrl */
+        @MustBeClosed
+        fun getUrl(params: RunGetUrlParams): HttpResponseFor<RunGetUrlResponse> =
+            getUrl(params, RequestOptions.none())
+
+        /** @see getUrl */
+        @MustBeClosed
+        fun getUrl(
+            params: RunGetUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunGetUrlResponse>
 
         /**
          * Returns a raw HTTP response for `post /runs/batch`, but is otherwise the same as
