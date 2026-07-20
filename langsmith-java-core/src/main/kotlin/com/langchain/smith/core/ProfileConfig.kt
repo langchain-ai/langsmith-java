@@ -14,6 +14,10 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+import java.nio.file.StandardOpenOption
+import java.nio.file.attribute.PosixFilePermission
+import java.nio.file.attribute.PosixFilePermissions
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -100,9 +104,13 @@ private fun refreshProfileOAuthToken(
     refreshToken: String,
 ): OAuthTokenResponse? {
     return runCatching {
+            val tokenEndpoint =
+                requireSecureAuthUrl(
+                    "${normalizeConfigUrl(baseUrl)}/oauth/token",
+                    "OAuth token endpoint",
+                )
             val connection =
-                (URL("${normalizeConfigUrl(baseUrl)}/oauth/token").openConnection()
-                        as HttpURLConnection)
+                (URL(tokenEndpoint).openConnection() as HttpURLConnection)
                     .apply {
                         requestMethod = "POST"
                         connectTimeout = TOKEN_REFRESH_TIMEOUT.toMillis().toInt()
@@ -159,6 +167,63 @@ private fun expiresAt(node: JsonNode?): Instant? =
     }
 
 private fun String.trimQuotes(): String = trim().trim('"', '\'')
+
+private val CREDENTIAL_DIRECTORY_PERMISSIONS: Set<PosixFilePermission> =
+    PosixFilePermissions.fromString("rwx------")
+
+private val CREDENTIAL_FILE_PERMISSIONS: Set<PosixFilePermission> =
+    PosixFilePermissions.fromString("rw-------")
+
+private fun createCredentialDirectory(path: Path) {
+    if (supportsPosix(path.toAbsolutePath().parent ?: path)) {
+        Files.createDirectories(
+            path,
+            PosixFilePermissions.asFileAttribute(CREDENTIAL_DIRECTORY_PERMISSIONS),
+        )
+    } else {
+        Files.createDirectories(path)
+    }
+    setPosixPermissionsIfSupported(path, CREDENTIAL_DIRECTORY_PERMISSIONS)
+}
+
+private fun createCredentialTempFile(parent: Path): Path =
+    if (supportsPosix(parent)) {
+        Files.createTempFile(
+            parent,
+            "config",
+            ".json.tmp",
+            PosixFilePermissions.asFileAttribute(CREDENTIAL_FILE_PERMISSIONS),
+        )
+    } else {
+        Files.createTempFile(parent, "config", ".json.tmp")
+    }
+
+private fun setCredentialFilePermissions(path: Path) {
+    setPosixPermissionsIfSupported(path, CREDENTIAL_FILE_PERMISSIONS)
+}
+
+private fun moveCredentialFile(source: Path, target: Path) {
+    runCatching {
+            Files.move(
+                source,
+                target,
+                StandardCopyOption.ATOMIC_MOVE,
+                StandardCopyOption.REPLACE_EXISTING,
+            )
+        }
+        .getOrElse {
+            Files.move(source, target, StandardCopyOption.REPLACE_EXISTING)
+        }
+}
+
+private fun setPosixPermissionsIfSupported(path: Path, permissions: Set<PosixFilePermission>) {
+    if (supportsPosix(path)) {
+        Files.setPosixFilePermissions(path, permissions)
+    }
+}
+
+private fun supportsPosix(path: Path): Boolean =
+    runCatching { Files.getFileStore(path).supportsFileAttributeView("posix") }.getOrDefault(false)
 
 internal class ProfileAuth(
     private val jsonMapper: JsonMapper,
@@ -224,8 +289,25 @@ internal class ProfileAuth(
 
     private fun saveConfig() {
         runCatching {
-            configPath.parent?.let { Files.createDirectories(it) }
-            jsonMapper.writerWithDefaultPrettyPrinter().writeValue(configPath.toFile(), config)
+            val targetPath = configPath.toAbsolutePath()
+            val parent = targetPath.parent
+            parent?.let { createCredentialDirectory(it) }
+            val tempFile =
+                if (parent != null) createCredentialTempFile(parent)
+                else Files.createTempFile("config", ".json.tmp")
+            try {
+                Files.newOutputStream(
+                        tempFile,
+                        StandardOpenOption.WRITE,
+                        StandardOpenOption.TRUNCATE_EXISTING,
+                    )
+                    .use { jsonMapper.writerWithDefaultPrettyPrinter().writeValue(it, config) }
+                setCredentialFilePermissions(tempFile)
+                moveCredentialFile(tempFile, targetPath)
+                setCredentialFilePermissions(targetPath)
+            } finally {
+                Files.deleteIfExists(tempFile)
+            }
         }
     }
 }

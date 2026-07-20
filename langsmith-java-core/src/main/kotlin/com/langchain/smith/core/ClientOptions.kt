@@ -522,6 +522,9 @@ private constructor(
             // We replace after all the default headers to allow end-users to overwrite them.
             headers.replaceAll(this.headers.build())
             queryParams.replaceAll(this.queryParams.build())
+            if (hasAuthConfiguration()) {
+                requireSecureAuthUrl(baseUrl ?: PRODUCTION_URL, "baseUrl")
+            }
             apiKey
                 ?.takeIf { it.isNotEmpty() }
                 ?.let {
@@ -606,6 +609,13 @@ private constructor(
             return currentHeaders.values("X-API-Key").any { it.isNotBlank() } ||
                 currentHeaders.values("Authorization").any { it.isNotBlank() }
         }
+
+        private fun hasAuthConfiguration(): Boolean =
+            !apiKey.isNullOrBlank() ||
+                !oauthAccessToken.isNullOrBlank() ||
+                !tenantId.isNullOrBlank() ||
+                profileAuth != null ||
+                hasAuthHeader()
 
         private fun langsmithEndpoint(): String? =
             System.getProperty("langchain.baseUrl")

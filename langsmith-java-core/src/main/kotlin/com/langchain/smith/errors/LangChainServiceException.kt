@@ -2,7 +2,6 @@
 
 package com.langchain.smith.errors
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.http.Headers
 
@@ -18,16 +17,10 @@ protected constructor(message: String, cause: Throwable? = null) :
 
     companion object {
 
-        /** Formats a status code and [JsonValue] error body into an error message. */
+        /** Formats a status code and [JsonValue] error body into a redacted error message. */
+        @Suppress("UNUSED_PARAMETER")
         @JvmStatic
-        fun formatMessage(statusCode: Int, body: JsonValue): String {
-            val bodyStr =
-                try {
-                    ObjectMapper().writeValueAsString(body)
-                } catch (_: Exception) {
-                    body.toString()
-                }
-            return "$statusCode: $bodyStr"
-        }
+        fun formatMessage(statusCode: Int, body: JsonValue): String =
+            "$statusCode: response body redacted; inspect body() for details"
     }
 }

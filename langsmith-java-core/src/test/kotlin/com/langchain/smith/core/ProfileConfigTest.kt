@@ -12,11 +12,13 @@ import java.net.InetSocketAddress
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.attribute.PosixFilePermissions
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
 import java.util.concurrent.CompletableFuture
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 
@@ -196,6 +198,103 @@ internal class ProfileConfigTest {
 
             assertThat(capturedAuthHeaders)
                 .containsExactly("Bearer new-access-token", "Bearer new-access-token")
+        } finally {
+            server.stop(0)
+        }
+    }
+
+    @Test
+    fun profileAuthDoesNotRefreshOauthTokenOverNonLocalHttp() {
+        val configPath =
+            writeConfig(
+                """
+                {
+                  "profiles": {
+                    "default": {
+                      "api_url": "http://example.com/api/v1/",
+                      "oauth": {
+                        "access_token": "old-access-token",
+                        "refresh_token": "old-refresh-token",
+                        "expires_at": "2000-01-01T00:00:00Z"
+                      }
+                    }
+                  }
+                }
+                """
+                    .trimIndent()
+            )
+
+        val config =
+            loadProfileClientConfig(
+                jsonMapper = jsonMapper(),
+                clock = clock,
+                configPathOverride = configPath,
+            )
+
+        assertThat(config?.profileAuth?.authHeader())
+            .isEqualTo("Authorization" to "Bearer old-access-token")
+        assertThat(String(Files.readAllBytes(configPath), StandardCharsets.UTF_8))
+            .contains("old-refresh-token")
+            .doesNotContain("new-access-token")
+    }
+
+    @Test
+    fun profileAuthWritesConfigWithOwnerOnlyPosixPermissions() {
+        assumeTrue(Files.getFileStore(tempDir).supportsFileAttributeView("posix"))
+        val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
+        server.createContext("/oauth/token") { exchange ->
+            exchange.requestBody.close()
+            val response =
+                """
+                {
+                  "access_token": "new-access-token",
+                  "refresh_token": "new-refresh-token",
+                  "expires_in": 3600
+                }
+                """
+                    .trimIndent()
+                    .toByteArray(StandardCharsets.UTF_8)
+            exchange.responseHeaders.add("Content-Type", "application/json")
+            exchange.sendResponseHeaders(200, response.size.toLong())
+            exchange.responseBody.use { it.write(response) }
+        }
+        server.start()
+        try {
+            val configPath = tempDir.resolve(".langsmith").resolve("config.json")
+            Files.createDirectories(configPath.parent)
+            Files.write(
+                configPath,
+                """
+                {
+                  "profiles": {
+                    "default": {
+                      "api_url": "http://127.0.0.1:${server.address.port}/api/v1/",
+                      "oauth": {
+                        "access_token": "old-access-token",
+                        "refresh_token": "old-refresh-token",
+                        "expires_at": "2000-01-01T00:00:00Z"
+                      }
+                    }
+                  }
+                }
+                """
+                    .trimIndent()
+                    .toByteArray(StandardCharsets.UTF_8),
+            )
+
+            val config =
+                loadProfileClientConfig(
+                    jsonMapper = jsonMapper(),
+                    clock = clock,
+                    configPathOverride = configPath,
+                )
+
+            assertThat(config?.profileAuth?.authHeader())
+                .isEqualTo("Authorization" to "Bearer new-access-token")
+            assertThat(Files.getPosixFilePermissions(configPath))
+                .isEqualTo(PosixFilePermissions.fromString("rw-------"))
+            assertThat(Files.getPosixFilePermissions(configPath.parent))
+                .isEqualTo(PosixFilePermissions.fromString("rwx------"))
         } finally {
             server.stop(0)
         }
