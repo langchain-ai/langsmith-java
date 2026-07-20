@@ -167,7 +167,7 @@ private constructor(
     private fun logHeaders(headers: Headers) =
         headers.names().forEach { name ->
             headers.values(name).forEach { value ->
-                System.err.println("$name: ${if (redactedHeaders.contains(name)) "██" else value}")
+                System.err.println("$name: ${if (isSensitiveHeader(name, redactedHeaders)) "██" else value}")
             }
         }
 
@@ -193,8 +193,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var httpClient: HttpClient? = null
-        private var redactedHeaders: Set<String> =
-            setOf("authorization", "api-key", "x-api-key", "cookie", "set-cookie", "x-tenant-id")
+        private var redactedHeaders: Set<String> = DEFAULT_REDACTED_HEADERS
         private var clock: Clock = Clock.systemUTC()
         private var level: LogLevel? = null
 

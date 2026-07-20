@@ -4,6 +4,7 @@ package com.langchain.smith.core
 
 import com.langchain.smith.core.http.HttpClient
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
@@ -41,6 +42,31 @@ internal class ClientOptionsTest {
         clientOptions = clientOptions.toBuilder().apiKey("another My API Key").build()
 
         assertThat(clientOptions.headers.values("X-API-Key")).containsExactly("another My API Key")
+    }
+
+    @Test
+    fun buildRejectsNonLocalHttpBaseUrlWhenSendingCredentials() {
+        assertThatThrownBy {
+                ClientOptions.builder()
+                    .httpClient(httpClient)
+                    .baseUrl("http://example.com")
+                    .apiKey("My API Key")
+                    .build()
+            }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageContaining("baseUrl must use https")
+    }
+
+    @Test
+    fun buildAllowsLocalHttpBaseUrlWhenSendingCredentials() {
+        val clientOptions =
+            ClientOptions.builder()
+                .httpClient(httpClient)
+                .baseUrl("http://127.0.0.1:8080")
+                .apiKey("My API Key")
+                .build()
+
+        assertThat(clientOptions.baseUrl()).isEqualTo("http://127.0.0.1:8080")
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.langchain.smith.otel
 
+import com.langchain.smith.core.http.isSensitiveHeader
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
@@ -12,6 +13,9 @@ import io.opentelemetry.semconv.ServiceAttributes
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 import org.slf4j.LoggerFactory
+
+internal fun redactHeadersForLogging(headers: Map<String, String>): Map<String, String> =
+    headers.mapValues { (name, value) -> if (isSensitiveHeader(name)) "[REDACTED]" else value }
 
 /**
  * Manages OpenTelemetry SDK for exporting traces to OTLP endpoints.
@@ -89,7 +93,7 @@ private constructor(
                 config.endpoint,
                 config.timeout,
             )
-            logger.debug("Headers: {}", config.headers)
+            logger.debug("Headers: {}", redactHeadersForLogging(config.headers))
             logger.debug("Service name: {}, Project name: {}", serviceName, projectName)
 
             return OtelTraceExporter(config, openTelemetry, tracer, tracerProvider, projectName)
