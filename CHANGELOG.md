@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.0-beta.18](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.17...v0.1.0-beta.18) (2026-07-20)
+
+
+### Features
+
+* **runs:** add GET /v2/runs/{run_id}/url endpoint and SDK runs.get_url method ([57da309](https://github.com/langchain-ai/langsmith-java/commit/57da3096437fe210865bab3a7560eff50d20feef))
+
+
+### Bug Fixes
+
+* build, lint, and test failures (feat(gateway): rate limit policy CRUD, validation, and materialization [ENT-1138]) ([388984c](https://github.com/langchain-ai/langsmith-java/commit/388984c00503fe2dd39aacb93fe4053ae2030d43))
+
 ## [0.1.0-beta.17](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.16...v0.1.0-beta.17) (2026-07-17)
 
 
