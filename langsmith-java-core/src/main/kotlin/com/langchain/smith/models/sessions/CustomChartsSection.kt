@@ -14069,6 +14069,8 @@ private constructor(
 
                     @JvmField val P95_LATENCY = of("p95_latency")
 
+                    @JvmField val RUN_QUEUE_WAIT_TIME = of("run_queue_wait_time")
+
                     @JvmStatic fun of(value: String) = ProjectMetric(JsonField.of(value))
                 }
 
@@ -14084,6 +14086,7 @@ private constructor(
                     RESPONSES_PER_SECOND,
                     ERROR_RESPONSES_PER_SECOND,
                     P95_LATENCY,
+                    RUN_QUEUE_WAIT_TIME,
                 }
 
                 /**
@@ -14107,6 +14110,7 @@ private constructor(
                     RESPONSES_PER_SECOND,
                     ERROR_RESPONSES_PER_SECOND,
                     P95_LATENCY,
+                    RUN_QUEUE_WAIT_TIME,
                     /**
                      * An enum member indicating that [ProjectMetric] was instantiated with an
                      * unknown value.
@@ -14133,6 +14137,7 @@ private constructor(
                         RESPONSES_PER_SECOND -> Value.RESPONSES_PER_SECOND
                         ERROR_RESPONSES_PER_SECOND -> Value.ERROR_RESPONSES_PER_SECOND
                         P95_LATENCY -> Value.P95_LATENCY
+                        RUN_QUEUE_WAIT_TIME -> Value.RUN_QUEUE_WAIT_TIME
                         else -> Value._UNKNOWN
                     }
 
@@ -14157,6 +14162,7 @@ private constructor(
                         RESPONSES_PER_SECOND -> Known.RESPONSES_PER_SECOND
                         ERROR_RESPONSES_PER_SECOND -> Known.ERROR_RESPONSES_PER_SECOND
                         P95_LATENCY -> Known.P95_LATENCY
+                        RUN_QUEUE_WAIT_TIME -> Known.RUN_QUEUE_WAIT_TIME
                         else -> throw LangChainInvalidDataException("Unknown ProjectMetric: $value")
                     }
 
@@ -29005,6 +29011,8 @@ private constructor(
 
                         @JvmField val P95_LATENCY = of("p95_latency")
 
+                        @JvmField val RUN_QUEUE_WAIT_TIME = of("run_queue_wait_time")
+
                         @JvmStatic fun of(value: String) = ProjectMetric(JsonField.of(value))
                     }
 
@@ -29020,6 +29028,7 @@ private constructor(
                         RESPONSES_PER_SECOND,
                         ERROR_RESPONSES_PER_SECOND,
                         P95_LATENCY,
+                        RUN_QUEUE_WAIT_TIME,
                     }
 
                     /**
@@ -29044,6 +29053,7 @@ private constructor(
                         RESPONSES_PER_SECOND,
                         ERROR_RESPONSES_PER_SECOND,
                         P95_LATENCY,
+                        RUN_QUEUE_WAIT_TIME,
                         /**
                          * An enum member indicating that [ProjectMetric] was instantiated with an
                          * unknown value.
@@ -29070,6 +29080,7 @@ private constructor(
                             RESPONSES_PER_SECOND -> Value.RESPONSES_PER_SECOND
                             ERROR_RESPONSES_PER_SECOND -> Value.ERROR_RESPONSES_PER_SECOND
                             P95_LATENCY -> Value.P95_LATENCY
+                            RUN_QUEUE_WAIT_TIME -> Value.RUN_QUEUE_WAIT_TIME
                             else -> Value._UNKNOWN
                         }
 
@@ -29094,6 +29105,7 @@ private constructor(
                             RESPONSES_PER_SECOND -> Known.RESPONSES_PER_SECOND
                             ERROR_RESPONSES_PER_SECOND -> Known.ERROR_RESPONSES_PER_SECOND
                             P95_LATENCY -> Known.P95_LATENCY
+                            RUN_QUEUE_WAIT_TIME -> Known.RUN_QUEUE_WAIT_TIME
                             else ->
                                 throw LangChainInvalidDataException("Unknown ProjectMetric: $value")
                         }
