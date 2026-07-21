@@ -42,6 +42,7 @@ private constructor(
     private val inputsPreview: JsonField<String>,
     private val isInDataset: JsonField<Boolean>,
     private val isRoot: JsonField<Boolean>,
+    private val lastQueuedAt: JsonField<OffsetDateTime>,
     private val latencySeconds: JsonField<Double>,
     private val manifest: JsonField<Manifest>,
     private val metadata: JsonField<Metadata>,
@@ -115,6 +116,9 @@ private constructor(
         @ExcludeMissing
         isInDataset: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("is_root") @ExcludeMissing isRoot: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("last_queued_at")
+        @ExcludeMissing
+        lastQueuedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
         @JsonProperty("latency_seconds")
         @ExcludeMissing
         latencySeconds: JsonField<Double> = JsonMissing.of(),
@@ -186,6 +190,7 @@ private constructor(
         inputsPreview,
         isInDataset,
         isRoot,
+        lastQueuedAt,
         latencySeconds,
         manifest,
         metadata,
@@ -373,6 +378,14 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun isRoot(): Optional<Boolean> = isRoot.getOptional("is_root")
+
+    /**
+     * `last_queued_at` is the most recent time this run was added to an annotation queue.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun lastQueuedAt(): Optional<OffsetDateTime> = lastQueuedAt.getOptional("last_queued_at")
 
     /**
      * `latency_seconds` is wall-clock duration from start to end in seconds.
@@ -750,6 +763,15 @@ private constructor(
     @JsonProperty("is_root") @ExcludeMissing fun _isRoot(): JsonField<Boolean> = isRoot
 
     /**
+     * Returns the raw JSON value of [lastQueuedAt].
+     *
+     * Unlike [lastQueuedAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("last_queued_at")
+    @ExcludeMissing
+    fun _lastQueuedAt(): JsonField<OffsetDateTime> = lastQueuedAt
+
+    /**
      * Returns the raw JSON value of [latencySeconds].
      *
      * Unlike [latencySeconds], this method doesn't throw if the JSON field has an unexpected type.
@@ -991,6 +1013,7 @@ private constructor(
         private var inputsPreview: JsonField<String> = JsonMissing.of()
         private var isInDataset: JsonField<Boolean> = JsonMissing.of()
         private var isRoot: JsonField<Boolean> = JsonMissing.of()
+        private var lastQueuedAt: JsonField<OffsetDateTime> = JsonMissing.of()
         private var latencySeconds: JsonField<Double> = JsonMissing.of()
         private var manifest: JsonField<Manifest> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
@@ -1039,6 +1062,7 @@ private constructor(
             inputsPreview = run.inputsPreview
             isInDataset = run.isInDataset
             isRoot = run.isRoot
+            lastQueuedAt = run.lastQueuedAt
             latencySeconds = run.latencySeconds
             manifest = run.manifest
             metadata = run.metadata
@@ -1341,6 +1365,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun isRoot(isRoot: JsonField<Boolean>) = apply { this.isRoot = isRoot }
+
+        /** `last_queued_at` is the most recent time this run was added to an annotation queue. */
+        fun lastQueuedAt(lastQueuedAt: OffsetDateTime) = lastQueuedAt(JsonField.of(lastQueuedAt))
+
+        /**
+         * Sets [Builder.lastQueuedAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.lastQueuedAt] with a well-typed [OffsetDateTime] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun lastQueuedAt(lastQueuedAt: JsonField<OffsetDateTime>) = apply {
+            this.lastQueuedAt = lastQueuedAt
+        }
 
         /** `latency_seconds` is wall-clock duration from start to end in seconds. */
         fun latencySeconds(latencySeconds: Double) = latencySeconds(JsonField.of(latencySeconds))
@@ -1760,6 +1798,7 @@ private constructor(
                 inputsPreview,
                 isInDataset,
                 isRoot,
+                lastQueuedAt,
                 latencySeconds,
                 manifest,
                 metadata,
@@ -1823,6 +1862,7 @@ private constructor(
         inputsPreview()
         isInDataset()
         isRoot()
+        lastQueuedAt()
         latencySeconds()
         manifest().ifPresent { it.validate() }
         metadata().ifPresent { it.validate() }
@@ -1885,6 +1925,7 @@ private constructor(
             (if (inputsPreview.asKnown().isPresent) 1 else 0) +
             (if (isInDataset.asKnown().isPresent) 1 else 0) +
             (if (isRoot.asKnown().isPresent) 1 else 0) +
+            (if (lastQueuedAt.asKnown().isPresent) 1 else 0) +
             (if (latencySeconds.asKnown().isPresent) 1 else 0) +
             (manifest.asKnown().getOrNull()?.validity() ?: 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
@@ -4144,6 +4185,7 @@ private constructor(
             inputsPreview == other.inputsPreview &&
             isInDataset == other.isInDataset &&
             isRoot == other.isRoot &&
+            lastQueuedAt == other.lastQueuedAt &&
             latencySeconds == other.latencySeconds &&
             manifest == other.manifest &&
             metadata == other.metadata &&
@@ -4193,6 +4235,7 @@ private constructor(
             inputsPreview,
             isInDataset,
             isRoot,
+            lastQueuedAt,
             latencySeconds,
             manifest,
             metadata,
@@ -4225,5 +4268,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Run{id=$id, appPath=$appPath, attachments=$attachments, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, errorPreview=$errorPreview, events=$events, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, isInDataset=$isInDataset, isRoot=$isRoot, latencySeconds=$latencySeconds, manifest=$manifest, metadata=$metadata, name=$name, outputs=$outputs, outputsPreview=$outputsPreview, parentRunIds=$parentRunIds, priceModelId=$priceModelId, projectId=$projectId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, runType=$runType, shareUrl=$shareUrl, startTime=$startTime, status=$status, tags=$tags, threadEvaluationTime=$threadEvaluationTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
+        "Run{id=$id, appPath=$appPath, attachments=$attachments, completionCost=$completionCost, completionCostDetails=$completionCostDetails, completionTokenDetails=$completionTokenDetails, completionTokens=$completionTokens, dottedOrder=$dottedOrder, endTime=$endTime, error=$error, errorPreview=$errorPreview, events=$events, extra=$extra, feedbackStats=$feedbackStats, firstTokenTime=$firstTokenTime, inputs=$inputs, inputsPreview=$inputsPreview, isInDataset=$isInDataset, isRoot=$isRoot, lastQueuedAt=$lastQueuedAt, latencySeconds=$latencySeconds, manifest=$manifest, metadata=$metadata, name=$name, outputs=$outputs, outputsPreview=$outputsPreview, parentRunIds=$parentRunIds, priceModelId=$priceModelId, projectId=$projectId, promptCost=$promptCost, promptCostDetails=$promptCostDetails, promptTokenDetails=$promptTokenDetails, promptTokens=$promptTokens, referenceDatasetId=$referenceDatasetId, referenceExampleId=$referenceExampleId, runType=$runType, shareUrl=$shareUrl, startTime=$startTime, status=$status, tags=$tags, threadEvaluationTime=$threadEvaluationTime, threadId=$threadId, totalCost=$totalCost, totalTokens=$totalTokens, traceId=$traceId, additionalProperties=$additionalProperties}"
 }

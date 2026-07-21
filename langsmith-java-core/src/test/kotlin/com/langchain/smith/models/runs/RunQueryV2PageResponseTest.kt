@@ -96,6 +96,7 @@ internal class RunQueryV2PageResponseTest {
                         .inputsPreview("inputs_preview")
                         .isInDataset(true)
                         .isRoot(true)
+                        .lastQueuedAt(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
                         .latencySeconds(1.523)
                         .manifest(
                             Run.Manifest.builder()
@@ -241,6 +242,7 @@ internal class RunQueryV2PageResponseTest {
                     .inputsPreview("inputs_preview")
                     .isInDataset(true)
                     .isRoot(true)
+                    .lastQueuedAt(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
                     .latencySeconds(1.523)
                     .manifest(
                         Run.Manifest.builder()
@@ -391,6 +393,7 @@ internal class RunQueryV2PageResponseTest {
                         .inputsPreview("inputs_preview")
                         .isInDataset(true)
                         .isRoot(true)
+                        .lastQueuedAt(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
                         .latencySeconds(1.523)
                         .manifest(
                             Run.Manifest.builder()

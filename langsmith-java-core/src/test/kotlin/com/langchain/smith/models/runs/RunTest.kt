@@ -90,6 +90,7 @@ internal class RunTest {
                 .inputsPreview("inputs_preview")
                 .isInDataset(true)
                 .isRoot(true)
+                .lastQueuedAt(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
                 .latencySeconds(1.523)
                 .manifest(
                     Run.Manifest.builder()
@@ -231,6 +232,7 @@ internal class RunTest {
         assertThat(run.inputsPreview()).contains("inputs_preview")
         assertThat(run.isInDataset()).contains(true)
         assertThat(run.isRoot()).contains(true)
+        assertThat(run.lastQueuedAt()).contains(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
         assertThat(run.latencySeconds()).contains(1.523)
         assertThat(run.manifest())
             .contains(
@@ -370,6 +372,7 @@ internal class RunTest {
                 .inputsPreview("inputs_preview")
                 .isInDataset(true)
                 .isRoot(true)
+                .lastQueuedAt(OffsetDateTime.parse("2024-01-15T10:31:00Z"))
                 .latencySeconds(1.523)
                 .manifest(
                     Run.Manifest.builder()
