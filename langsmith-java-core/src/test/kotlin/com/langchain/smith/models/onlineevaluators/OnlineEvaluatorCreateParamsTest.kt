@@ -22,6 +22,7 @@ internal class OnlineEvaluatorCreateParamsTest {
                     .llmEvaluator(
                         CreateOnlineLlmEvaluatorRequest.builder()
                             .commitHashOrTag("commit_hash_or_tag")
+                            .playgroundSettingsId("playground_settings_id")
                             .promptRepoHandle("prompt_repo_handle")
                             .variableMapping(JsonValue.from(mapOf<String, Any>()))
                             .build()
@@ -48,6 +49,7 @@ internal class OnlineEvaluatorCreateParamsTest {
                         .llmEvaluator(
                             CreateOnlineLlmEvaluatorRequest.builder()
                                 .commitHashOrTag("commit_hash_or_tag")
+                                .playgroundSettingsId("playground_settings_id")
                                 .promptRepoHandle("prompt_repo_handle")
                                 .variableMapping(JsonValue.from(mapOf<String, Any>()))
                                 .build()
@@ -72,6 +74,7 @@ internal class OnlineEvaluatorCreateParamsTest {
                     .llmEvaluator(
                         CreateOnlineLlmEvaluatorRequest.builder()
                             .commitHashOrTag("commit_hash_or_tag")
+                            .playgroundSettingsId("playground_settings_id")
                             .promptRepoHandle("prompt_repo_handle")
                             .variableMapping(JsonValue.from(mapOf<String, Any>()))
                             .build()

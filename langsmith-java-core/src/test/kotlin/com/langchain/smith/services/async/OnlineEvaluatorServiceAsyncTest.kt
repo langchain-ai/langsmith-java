@@ -42,6 +42,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
                     .llmEvaluator(
                         CreateOnlineLlmEvaluatorRequest.builder()
                             .commitHashOrTag("commit_hash_or_tag")
+                            .playgroundSettingsId("playground_settings_id")
                             .promptRepoHandle("prompt_repo_handle")
                             .variableMapping(JsonValue.from(mapOf<String, Any>()))
                             .build()
@@ -97,6 +98,7 @@ internal class OnlineEvaluatorServiceAsyncTest {
                                 UpdateOnlineLlmEvaluatorRequest.builder()
                                     .commitHashOrTag("commit_hash_or_tag")
                                     .numFewShotExamples(0L)
+                                    .playgroundSettingsId("playground_settings_id")
                                     .promptRepoHandle("prompt_repo_handle")
                                     .useCorrectionsDataset(true)
                                     .variableMapping(JsonValue.from(mapOf<String, Any>()))

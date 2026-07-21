@@ -15,11 +15,14 @@ internal class CreateOnlineLlmEvaluatorRequestTest {
         val createOnlineLlmEvaluatorRequest =
             CreateOnlineLlmEvaluatorRequest.builder()
                 .commitHashOrTag("commit_hash_or_tag")
+                .playgroundSettingsId("playground_settings_id")
                 .promptRepoHandle("prompt_repo_handle")
                 .variableMapping(JsonValue.from(mapOf<String, Any>()))
                 .build()
 
         assertThat(createOnlineLlmEvaluatorRequest.commitHashOrTag()).contains("commit_hash_or_tag")
+        assertThat(createOnlineLlmEvaluatorRequest.playgroundSettingsId())
+            .contains("playground_settings_id")
         assertThat(createOnlineLlmEvaluatorRequest.promptRepoHandle())
             .contains("prompt_repo_handle")
         assertThat(createOnlineLlmEvaluatorRequest._variableMapping())
@@ -32,6 +35,7 @@ internal class CreateOnlineLlmEvaluatorRequestTest {
         val createOnlineLlmEvaluatorRequest =
             CreateOnlineLlmEvaluatorRequest.builder()
                 .commitHashOrTag("commit_hash_or_tag")
+                .playgroundSettingsId("playground_settings_id")
                 .promptRepoHandle("prompt_repo_handle")
                 .variableMapping(JsonValue.from(mapOf<String, Any>()))
                 .build()
