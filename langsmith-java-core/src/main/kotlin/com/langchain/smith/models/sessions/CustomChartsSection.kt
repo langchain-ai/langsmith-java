@@ -1746,6 +1746,7 @@ private constructor(
             private val filters: JsonField<Filters>,
             private val groupBy: JsonField<GroupBy>,
             private val groupByDefinitions: JsonField<List<GroupByDefinition>>,
+            private val metadata: JsonField<Metadata>,
             private val metric: JsonField<Metric>,
             private val metricDefinition: JsonField<MetricDefinition>,
             private val projectMetric: JsonField<ProjectMetric>,
@@ -1772,6 +1773,9 @@ private constructor(
                 @JsonProperty("group_by_definitions")
                 @ExcludeMissing
                 groupByDefinitions: JsonField<List<GroupByDefinition>> = JsonMissing.of(),
+                @JsonProperty("metadata")
+                @ExcludeMissing
+                metadata: JsonField<Metadata> = JsonMissing.of(),
                 @JsonProperty("metric")
                 @ExcludeMissing
                 metric: JsonField<Metric> = JsonMissing.of(),
@@ -1792,6 +1796,7 @@ private constructor(
                 filters,
                 groupBy,
                 groupByDefinitions,
+                metadata,
                 metric,
                 metricDefinition,
                 projectMetric,
@@ -1846,6 +1851,12 @@ private constructor(
              */
             fun groupByDefinitions(): Optional<List<GroupByDefinition>> =
                 groupByDefinitions.getOptional("group_by_definitions")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
             /**
              * Metrics you can chart. Feedback metrics are not available for organization-scoped
@@ -1937,6 +1948,16 @@ private constructor(
             fun _groupByDefinitions(): JsonField<List<GroupByDefinition>> = groupByDefinitions
 
             /**
+             * Returns the raw JSON value of [metadata].
+             *
+             * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("metadata")
+            @ExcludeMissing
+            fun _metadata(): JsonField<Metadata> = metadata
+
+            /**
              * Returns the raw JSON value of [metric].
              *
              * Unlike [metric], this method doesn't throw if the JSON field has an unexpected type.
@@ -2009,6 +2030,7 @@ private constructor(
                 private var filters: JsonField<Filters> = JsonMissing.of()
                 private var groupBy: JsonField<GroupBy> = JsonMissing.of()
                 private var groupByDefinitions: JsonField<MutableList<GroupByDefinition>>? = null
+                private var metadata: JsonField<Metadata> = JsonMissing.of()
                 private var metric: JsonField<Metric> = JsonMissing.of()
                 private var metricDefinition: JsonField<MetricDefinition> = JsonMissing.of()
                 private var projectMetric: JsonField<ProjectMetric> = JsonMissing.of()
@@ -2024,6 +2046,7 @@ private constructor(
                     filters = series.filters
                     groupBy = series.groupBy
                     groupByDefinitions = series.groupByDefinitions.map { it.toMutableList() }
+                    metadata = series.metadata
                     metric = series.metric
                     metricDefinition = series.metricDefinition
                     projectMetric = series.projectMetric
@@ -2201,6 +2224,20 @@ private constructor(
                     addGroupByDefinition(
                         GroupByDefinition.ofCustomChartGroupByComplex(customChartGroupByComplex)
                     )
+
+                fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+                /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+                fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+                /**
+                 * Sets [Builder.metadata] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.metadata] with a well-typed [Metadata] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
                 /**
                  * Metrics you can chart. Feedback metrics are not available for organization-scoped
@@ -2382,6 +2419,7 @@ private constructor(
                         filters,
                         groupBy,
                         (groupByDefinitions ?: JsonMissing.of()).map { it.toImmutable() },
+                        metadata,
                         metric,
                         metricDefinition,
                         projectMetric,
@@ -2414,6 +2452,7 @@ private constructor(
                 filters().ifPresent { it.validate() }
                 groupBy().ifPresent { it.validate() }
                 groupByDefinitions().ifPresent { it.forEach { it.validate() } }
+                metadata().ifPresent { it.validate() }
                 metric().ifPresent { it.validate() }
                 metricDefinition().ifPresent { it.validate() }
                 projectMetric().ifPresent { it.validate() }
@@ -2445,6 +2484,7 @@ private constructor(
                     (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
                     (groupByDefinitions.asKnown().getOrNull()?.sumOf { it.validity().toInt() }
                         ?: 0) +
+                    (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                     (metric.asKnown().getOrNull()?.validity() ?: 0) +
                     (metricDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                     (projectMetric.asKnown().getOrNull()?.validity() ?: 0) +
@@ -5248,6 +5288,120 @@ private constructor(
                     override fun toString() =
                         "CustomChartGroupByComplex{attribute=$attribute, path=$path, additionalProperties=$additionalProperties}"
                 }
+            }
+
+            class Metadata
+            @JsonCreator
+            private constructor(
+                @com.fasterxml.jackson.annotation.JsonValue
+                private val additionalProperties: Map<String, JsonValue>
+            ) {
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [Metadata]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Metadata]. */
+                class Builder internal constructor() {
+
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(metadata: Metadata) = apply {
+                        additionalProperties = metadata.additionalProperties.toMutableMap()
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Metadata].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Metadata = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    additionalProperties.count { (_, value) ->
+                        !value.isNull() && !value.isMissing()
+                    }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Metadata && additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
             }
 
             /**
@@ -14276,6 +14430,7 @@ private constructor(
                     filters == other.filters &&
                     groupBy == other.groupBy &&
                     groupByDefinitions == other.groupByDefinitions &&
+                    metadata == other.metadata &&
                     metric == other.metric &&
                     metricDefinition == other.metricDefinition &&
                     projectMetric == other.projectMetric &&
@@ -14292,6 +14447,7 @@ private constructor(
                     filters,
                     groupBy,
                     groupByDefinitions,
+                    metadata,
                     metric,
                     metricDefinition,
                     projectMetric,
@@ -14303,7 +14459,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
+                "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metadata=$metadata, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
         }
 
         class CommonFilters
@@ -18114,6 +18270,7 @@ private constructor(
                 private val filters: JsonField<Filters>,
                 private val groupBy: JsonField<GroupBy>,
                 private val groupByDefinitions: JsonField<List<GroupByDefinition>>,
+                private val metadata: JsonField<Metadata>,
                 private val metric: JsonField<Metric>,
                 private val metricDefinition: JsonField<MetricDefinition>,
                 private val projectMetric: JsonField<ProjectMetric>,
@@ -18142,6 +18299,9 @@ private constructor(
                     @JsonProperty("group_by_definitions")
                     @ExcludeMissing
                     groupByDefinitions: JsonField<List<GroupByDefinition>> = JsonMissing.of(),
+                    @JsonProperty("metadata")
+                    @ExcludeMissing
+                    metadata: JsonField<Metadata> = JsonMissing.of(),
                     @JsonProperty("metric")
                     @ExcludeMissing
                     metric: JsonField<Metric> = JsonMissing.of(),
@@ -18162,6 +18322,7 @@ private constructor(
                     filters,
                     groupBy,
                     groupByDefinitions,
+                    metadata,
                     metric,
                     metricDefinition,
                     projectMetric,
@@ -18216,6 +18377,12 @@ private constructor(
                  */
                 fun groupByDefinitions(): Optional<List<GroupByDefinition>> =
                     groupByDefinitions.getOptional("group_by_definitions")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
                 /**
                  * Metrics you can chart. Feedback metrics are not available for organization-scoped
@@ -18314,6 +18481,16 @@ private constructor(
                 fun _groupByDefinitions(): JsonField<List<GroupByDefinition>> = groupByDefinitions
 
                 /**
+                 * Returns the raw JSON value of [metadata].
+                 *
+                 * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("metadata")
+                @ExcludeMissing
+                fun _metadata(): JsonField<Metadata> = metadata
+
+                /**
                  * Returns the raw JSON value of [metric].
                  *
                  * Unlike [metric], this method doesn't throw if the JSON field has an unexpected
@@ -18388,6 +18565,7 @@ private constructor(
                     private var groupBy: JsonField<GroupBy> = JsonMissing.of()
                     private var groupByDefinitions: JsonField<MutableList<GroupByDefinition>>? =
                         null
+                    private var metadata: JsonField<Metadata> = JsonMissing.of()
                     private var metric: JsonField<Metric> = JsonMissing.of()
                     private var metricDefinition: JsonField<MetricDefinition> = JsonMissing.of()
                     private var projectMetric: JsonField<ProjectMetric> = JsonMissing.of()
@@ -18403,6 +18581,7 @@ private constructor(
                         filters = series.filters
                         groupBy = series.groupBy
                         groupByDefinitions = series.groupByDefinitions.map { it.toMutableList() }
+                        metadata = series.metadata
                         metric = series.metric
                         metricDefinition = series.metricDefinition
                         projectMetric = series.projectMetric
@@ -18582,6 +18761,20 @@ private constructor(
                         addGroupByDefinition(
                             GroupByDefinition.ofCustomChartGroupByComplex(customChartGroupByComplex)
                         )
+
+                    fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+                    /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+                    fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+                    /**
+                     * Sets [Builder.metadata] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.metadata] with a well-typed [Metadata] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
                     /**
                      * Metrics you can chart. Feedback metrics are not available for
@@ -18767,6 +18960,7 @@ private constructor(
                             filters,
                             groupBy,
                             (groupByDefinitions ?: JsonMissing.of()).map { it.toImmutable() },
+                            metadata,
                             metric,
                             metricDefinition,
                             projectMetric,
@@ -18799,6 +18993,7 @@ private constructor(
                     filters().ifPresent { it.validate() }
                     groupBy().ifPresent { it.validate() }
                     groupByDefinitions().ifPresent { it.forEach { it.validate() } }
+                    metadata().ifPresent { it.validate() }
                     metric().ifPresent { it.validate() }
                     metricDefinition().ifPresent { it.validate() }
                     projectMetric().ifPresent { it.validate() }
@@ -18830,6 +19025,7 @@ private constructor(
                         (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
                         (groupByDefinitions.asKnown().getOrNull()?.sumOf { it.validity().toInt() }
                             ?: 0) +
+                        (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                         (metric.asKnown().getOrNull()?.validity() ?: 0) +
                         (metricDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                         (projectMetric.asKnown().getOrNull()?.validity() ?: 0) +
@@ -21683,6 +21879,122 @@ private constructor(
                         override fun toString() =
                             "CustomChartGroupByComplex{attribute=$attribute, path=$path, additionalProperties=$additionalProperties}"
                     }
+                }
+
+                class Metadata
+                @JsonCreator
+                private constructor(
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    private val additionalProperties: Map<String, JsonValue>
+                ) {
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /** Returns a mutable builder for constructing an instance of [Metadata]. */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Metadata]. */
+                    class Builder internal constructor() {
+
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(metadata: Metadata) = apply {
+                            additionalProperties = metadata.additionalProperties.toMutableMap()
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Metadata].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Metadata = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        additionalProperties.count { (_, value) ->
+                            !value.isNull() && !value.isMissing()
+                        }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Metadata &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
                 }
 
                 /**
@@ -30942,6 +31254,7 @@ private constructor(
                         filters == other.filters &&
                         groupBy == other.groupBy &&
                         groupByDefinitions == other.groupByDefinitions &&
+                        metadata == other.metadata &&
                         metric == other.metric &&
                         metricDefinition == other.metricDefinition &&
                         projectMetric == other.projectMetric &&
@@ -30958,6 +31271,7 @@ private constructor(
                         filters,
                         groupBy,
                         groupByDefinitions,
+                        metadata,
                         metric,
                         metricDefinition,
                         projectMetric,
@@ -30969,7 +31283,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
+                    "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metadata=$metadata, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
             }
 
             class CommonFilters

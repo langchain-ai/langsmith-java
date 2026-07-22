@@ -77,6 +77,11 @@ internal class CustomChartsSectionTest {
                                         )
                                         .build()
                                 )
+                                .metadata(
+                                    CustomChartsSection.Chart.Series.Metadata.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
                                 .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
                                 .metricDefinition(
                                     CustomChartsSection.Chart.Series.MetricDefinition
@@ -240,6 +245,12 @@ internal class CustomChartsSectionTest {
                                                 )
                                                 .build()
                                         )
+                                        .metadata(
+                                            CustomChartsSection.SubSection.Chart.Series.Metadata
+                                                .builder()
+                                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                                .build()
+                                        )
                                         .metric(
                                             CustomChartsSection.SubSection.Chart.Series.Metric
                                                 .RUN_COUNT
@@ -349,6 +360,11 @@ internal class CustomChartsSectionTest {
                                             .Attribute
                                             .NAME
                                     )
+                                    .build()
+                            )
+                            .metadata(
+                                CustomChartsSection.Chart.Series.Metadata.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
                             .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
@@ -505,6 +521,12 @@ internal class CustomChartsSectionTest {
                                             )
                                             .build()
                                     )
+                                    .metadata(
+                                        CustomChartsSection.SubSection.Chart.Series.Metadata
+                                            .builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                            .build()
+                                    )
                                     .metric(
                                         CustomChartsSection.SubSection.Chart.Series.Metric.RUN_COUNT
                                     )
@@ -617,6 +639,11 @@ internal class CustomChartsSectionTest {
                                                 .Attribute
                                                 .NAME
                                         )
+                                        .build()
+                                )
+                                .metadata(
+                                    CustomChartsSection.Chart.Series.Metadata.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
@@ -780,6 +807,12 @@ internal class CustomChartsSectionTest {
                                                         .Attribute
                                                         .NAME
                                                 )
+                                                .build()
+                                        )
+                                        .metadata(
+                                            CustomChartsSection.SubSection.Chart.Series.Metadata
+                                                .builder()
+                                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )
                                         .metric(
