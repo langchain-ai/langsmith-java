@@ -14,7 +14,6 @@ internal class RunStatsParamsTest {
         RunStatsParams.builder()
             .runStatsQueryParams(
                 RunStatsQueryParams.builder()
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
                     .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -38,6 +37,7 @@ internal class RunStatsParamsTest {
                     .runType(RunTypeEnum.TOOL)
                     .searchFilter("search_filter")
                     .addSelect(RunStatsQueryParams.Select.RUN_COUNT)
+                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .skipPagination(true)
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -55,7 +55,6 @@ internal class RunStatsParamsTest {
             RunStatsParams.builder()
                 .runStatsQueryParams(
                     RunStatsQueryParams.builder()
-                        .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
                         .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -79,6 +78,7 @@ internal class RunStatsParamsTest {
                         .runType(RunTypeEnum.TOOL)
                         .searchFilter("search_filter")
                         .addSelect(RunStatsQueryParams.Select.RUN_COUNT)
+                        .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .skipPagination(true)
                         .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                         .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -94,7 +94,6 @@ internal class RunStatsParamsTest {
         assertThat(body)
             .isEqualTo(
                 RunStatsQueryParams.builder()
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
                     .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -118,6 +117,7 @@ internal class RunStatsParamsTest {
                     .runType(RunTypeEnum.TOOL)
                     .searchFilter("search_filter")
                     .addSelect(RunStatsQueryParams.Select.RUN_COUNT)
+                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .skipPagination(true)
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -132,20 +132,11 @@ internal class RunStatsParamsTest {
     fun bodyWithoutOptionalFields() {
         val params =
             RunStatsParams.builder()
-                .runStatsQueryParams(
-                    RunStatsQueryParams.builder()
-                        .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .build()
-                )
+                .runStatsQueryParams(RunStatsQueryParams.builder().build())
                 .build()
 
         val body = params._body()
 
-        assertThat(body)
-            .isEqualTo(
-                RunStatsQueryParams.builder()
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .build()
-            )
+        assertThat(body).isEqualTo(RunStatsQueryParams.builder().build())
     }
 }
