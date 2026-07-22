@@ -825,6 +825,7 @@ internal class RunServiceTest {
         val response =
             runService.stats(
                 RunStatsQueryParams.builder()
+                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
                     .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -848,7 +849,6 @@ internal class RunServiceTest {
                     .runType(RunTypeEnum.TOOL)
                     .searchFilter("search_filter")
                     .addSelect(RunStatsQueryParams.Select.RUN_COUNT)
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .skipPagination(true)
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
