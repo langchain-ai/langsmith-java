@@ -237,6 +237,11 @@ internal class BoxServiceAsyncTest {
                                             .build()
                                     )
                                     .enabled(true)
+                                    .envVars(
+                                        BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                                            .build()
+                                    )
                                     .gcp(
                                         BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
                                             .addScope("string")
@@ -385,6 +390,11 @@ internal class BoxServiceAsyncTest {
                                             .build()
                                     )
                                     .enabled(true)
+                                    .envVars(
+                                        BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                                            .build()
+                                    )
                                     .gcp(
                                         BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
                                             .addScope("string")
