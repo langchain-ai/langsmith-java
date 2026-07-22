@@ -14,6 +14,7 @@ import com.langchain.smith.core.Params
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -76,6 +77,14 @@ private constructor(
     fun includeMemory(): Optional<Boolean> = body.includeMemory()
 
     /**
+     * Labels seed the captured snapshot's labels.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun labels(): Optional<Labels> = body.labels()
+
+    /**
      * Returns the raw JSON value of [bodyName].
      *
      * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
@@ -109,6 +118,13 @@ private constructor(
      * Unlike [includeMemory], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _includeMemory(): JsonField<Boolean> = body._includeMemory()
+
+    /**
+     * Returns the raw JSON value of [labels].
+     *
+     * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _labels(): JsonField<Labels> = body._labels()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -234,6 +250,17 @@ private constructor(
         fun includeMemory(includeMemory: JsonField<Boolean>) = apply {
             body.includeMemory(includeMemory)
         }
+
+        /** Labels seed the captured snapshot's labels. */
+        fun labels(labels: Labels) = apply { body.labels(labels) }
+
+        /**
+         * Sets [Builder.labels] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.labels] with a well-typed [Labels] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun labels(labels: JsonField<Labels>) = apply { body.labels(labels) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -393,6 +420,7 @@ private constructor(
         private val dockerImage: JsonField<String>,
         private val fsCapacityBytes: JsonField<Long>,
         private val includeMemory: JsonField<Boolean>,
+        private val labels: JsonField<Labels>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -411,7 +439,16 @@ private constructor(
             @JsonProperty("include_memory")
             @ExcludeMissing
             includeMemory: JsonField<Boolean> = JsonMissing.of(),
-        ) : this(bodyName, checkpoint, dockerImage, fsCapacityBytes, includeMemory, mutableMapOf())
+            @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
+        ) : this(
+            bodyName,
+            checkpoint,
+            dockerImage,
+            fsCapacityBytes,
+            includeMemory,
+            labels,
+            mutableMapOf(),
+        )
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -453,6 +490,14 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun includeMemory(): Optional<Boolean> = includeMemory.getOptional("include_memory")
+
+        /**
+         * Labels seed the captured snapshot's labels.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun labels(): Optional<Labels> = labels.getOptional("labels")
 
         /**
          * Returns the raw JSON value of [bodyName].
@@ -499,6 +544,13 @@ private constructor(
         @ExcludeMissing
         fun _includeMemory(): JsonField<Boolean> = includeMemory
 
+        /**
+         * Returns the raw JSON value of [labels].
+         *
+         * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("labels") @ExcludeMissing fun _labels(): JsonField<Labels> = labels
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -532,6 +584,7 @@ private constructor(
             private var dockerImage: JsonField<String> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
             private var includeMemory: JsonField<Boolean> = JsonMissing.of()
+            private var labels: JsonField<Labels> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -541,6 +594,7 @@ private constructor(
                 dockerImage = body.dockerImage
                 fsCapacityBytes = body.fsCapacityBytes
                 includeMemory = body.includeMemory
+                labels = body.labels
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -615,6 +669,18 @@ private constructor(
                 this.includeMemory = includeMemory
             }
 
+            /** Labels seed the captured snapshot's labels. */
+            fun labels(labels: Labels) = labels(JsonField.of(labels))
+
+            /**
+             * Sets [Builder.labels] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.labels] with a well-typed [Labels] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun labels(labels: JsonField<Labels>) = apply { this.labels = labels }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -653,6 +719,7 @@ private constructor(
                     dockerImage,
                     fsCapacityBytes,
                     includeMemory,
+                    labels,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -678,6 +745,7 @@ private constructor(
             dockerImage()
             fsCapacityBytes()
             includeMemory()
+            labels().ifPresent { it.validate() }
             validated = true
         }
 
@@ -701,7 +769,8 @@ private constructor(
                 (if (checkpoint.asKnown().isPresent) 1 else 0) +
                 (if (dockerImage.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
-                (if (includeMemory.asKnown().isPresent) 1 else 0)
+                (if (includeMemory.asKnown().isPresent) 1 else 0) +
+                (labels.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -714,6 +783,7 @@ private constructor(
                 dockerImage == other.dockerImage &&
                 fsCapacityBytes == other.fsCapacityBytes &&
                 includeMemory == other.includeMemory &&
+                labels == other.labels &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -724,6 +794,7 @@ private constructor(
                 dockerImage,
                 fsCapacityBytes,
                 includeMemory,
+                labels,
                 additionalProperties,
             )
         }
@@ -731,7 +802,116 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{bodyName=$bodyName, checkpoint=$checkpoint, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, includeMemory=$includeMemory, additionalProperties=$additionalProperties}"
+            "Body{bodyName=$bodyName, checkpoint=$checkpoint, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, includeMemory=$includeMemory, labels=$labels, additionalProperties=$additionalProperties}"
+    }
+
+    /** Labels seed the captured snapshot's labels. */
+    class Labels
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Labels]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Labels]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(labels: Labels) = apply {
+                additionalProperties = labels.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Labels].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Labels = Labels(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Labels = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Labels && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Labels{additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.snapshots
 
+import com.langchain.smith.core.JsonValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -13,6 +14,11 @@ internal class SnapshotCreateParamsTest {
             .dockerImage("docker_image")
             .fsCapacityBytes(0L)
             .name("name")
+            .labels(
+                SnapshotCreateParams.Labels.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
             .registryId("registry_id")
             .build()
     }
@@ -24,6 +30,11 @@ internal class SnapshotCreateParamsTest {
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
                 .name("name")
+                .labels(
+                    SnapshotCreateParams.Labels.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .registryId("registry_id")
                 .build()
 
@@ -32,6 +43,12 @@ internal class SnapshotCreateParamsTest {
         assertThat(body.dockerImage()).isEqualTo("docker_image")
         assertThat(body.fsCapacityBytes()).isEqualTo(0L)
         assertThat(body.name()).isEqualTo("name")
+        assertThat(body.labels())
+            .contains(
+                SnapshotCreateParams.Labels.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
         assertThat(body.registryId()).contains("registry_id")
     }
 

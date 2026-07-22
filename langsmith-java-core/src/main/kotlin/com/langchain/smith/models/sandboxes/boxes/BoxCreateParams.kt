@@ -79,6 +79,15 @@ private constructor(
     fun idleTtlSeconds(): Optional<Long> = body.idleTtlSeconds()
 
     /**
+     * Labels are free-form key/value metadata persisted with the sandbox and returned on reads.
+     * Labels from the source snapshot are inherited unless overridden here.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun labels(): Optional<Labels> = body.labels()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -186,6 +195,13 @@ private constructor(
      * Unlike [idleTtlSeconds], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _idleTtlSeconds(): JsonField<Long> = body._idleTtlSeconds()
+
+    /**
+     * Returns the raw JSON value of [labels].
+     *
+     * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _labels(): JsonField<Labels> = body._labels()
 
     /**
      * Returns the raw JSON value of [memBytes].
@@ -372,6 +388,20 @@ private constructor(
         fun idleTtlSeconds(idleTtlSeconds: JsonField<Long>) = apply {
             body.idleTtlSeconds(idleTtlSeconds)
         }
+
+        /**
+         * Labels are free-form key/value metadata persisted with the sandbox and returned on reads.
+         * Labels from the source snapshot are inherited unless overridden here.
+         */
+        fun labels(labels: Labels) = apply { body.labels(labels) }
+
+        /**
+         * Sets [Builder.labels] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.labels] with a well-typed [Labels] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun labels(labels: JsonField<Labels>) = apply { body.labels(labels) }
 
         fun memBytes(memBytes: Long) = apply { body.memBytes(memBytes) }
 
@@ -657,6 +687,7 @@ private constructor(
         private val envVars: JsonField<EnvVars>,
         private val fsCapacityBytes: JsonField<Long>,
         private val idleTtlSeconds: JsonField<Long>,
+        private val labels: JsonField<Labels>,
         private val memBytes: JsonField<Long>,
         private val mountConfig: JsonField<MountConfig>,
         private val name: JsonField<String>,
@@ -687,6 +718,7 @@ private constructor(
             @JsonProperty("idle_ttl_seconds")
             @ExcludeMissing
             idleTtlSeconds: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
             @JsonProperty("mem_bytes") @ExcludeMissing memBytes: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("mount_config")
             @ExcludeMissing
@@ -717,6 +749,7 @@ private constructor(
             envVars,
             fsCapacityBytes,
             idleTtlSeconds,
+            labels,
             memBytes,
             mountConfig,
             name,
@@ -764,6 +797,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun idleTtlSeconds(): Optional<Long> = idleTtlSeconds.getOptional("idle_ttl_seconds")
+
+        /**
+         * Labels are free-form key/value metadata persisted with the sandbox and returned on reads.
+         * Labels from the source snapshot are inherited unless overridden here.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun labels(): Optional<Labels> = labels.getOptional("labels")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -888,6 +930,13 @@ private constructor(
         fun _idleTtlSeconds(): JsonField<Long> = idleTtlSeconds
 
         /**
+         * Returns the raw JSON value of [labels].
+         *
+         * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("labels") @ExcludeMissing fun _labels(): JsonField<Labels> = labels
+
+        /**
          * Returns the raw JSON value of [memBytes].
          *
          * Unlike [memBytes], this method doesn't throw if the JSON field has an unexpected type.
@@ -1000,6 +1049,7 @@ private constructor(
             private var envVars: JsonField<EnvVars> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
             private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
+            private var labels: JsonField<Labels> = JsonMissing.of()
             private var memBytes: JsonField<Long> = JsonMissing.of()
             private var mountConfig: JsonField<MountConfig> = JsonMissing.of()
             private var name: JsonField<String> = JsonMissing.of()
@@ -1019,6 +1069,7 @@ private constructor(
                 envVars = body.envVars
                 fsCapacityBytes = body.fsCapacityBytes
                 idleTtlSeconds = body.idleTtlSeconds
+                labels = body.labels
                 memBytes = body.memBytes
                 mountConfig = body.mountConfig
                 name = body.name
@@ -1101,6 +1152,21 @@ private constructor(
             fun idleTtlSeconds(idleTtlSeconds: JsonField<Long>) = apply {
                 this.idleTtlSeconds = idleTtlSeconds
             }
+
+            /**
+             * Labels are free-form key/value metadata persisted with the sandbox and returned on
+             * reads. Labels from the source snapshot are inherited unless overridden here.
+             */
+            fun labels(labels: Labels) = labels(JsonField.of(labels))
+
+            /**
+             * Sets [Builder.labels] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.labels] with a well-typed [Labels] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun labels(labels: JsonField<Labels>) = apply { this.labels = labels }
 
             fun memBytes(memBytes: Long) = memBytes(JsonField.of(memBytes))
 
@@ -1284,6 +1350,7 @@ private constructor(
                     envVars,
                     fsCapacityBytes,
                     idleTtlSeconds,
+                    labels,
                     memBytes,
                     mountConfig,
                     name,
@@ -1319,6 +1386,7 @@ private constructor(
             envVars().ifPresent { it.validate() }
             fsCapacityBytes()
             idleTtlSeconds()
+            labels().ifPresent { it.validate() }
             memBytes()
             mountConfig().ifPresent { it.validate() }
             name()
@@ -1353,6 +1421,7 @@ private constructor(
                 (envVars.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
+                (labels.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (memBytes.asKnown().isPresent) 1 else 0) +
                 (mountConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
@@ -1375,6 +1444,7 @@ private constructor(
                 envVars == other.envVars &&
                 fsCapacityBytes == other.fsCapacityBytes &&
                 idleTtlSeconds == other.idleTtlSeconds &&
+                labels == other.labels &&
                 memBytes == other.memBytes &&
                 mountConfig == other.mountConfig &&
                 name == other.name &&
@@ -1395,6 +1465,7 @@ private constructor(
                 envVars,
                 fsCapacityBytes,
                 idleTtlSeconds,
+                labels,
                 memBytes,
                 mountConfig,
                 name,
@@ -1412,7 +1483,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class EnvVars
@@ -1521,6 +1592,118 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() = "EnvVars{additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * Labels are free-form key/value metadata persisted with the sandbox and returned on reads.
+     * Labels from the source snapshot are inherited unless overridden here.
+     */
+    class Labels
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Labels]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Labels]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(labels: Labels) = apply {
+                additionalProperties = labels.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Labels].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Labels = Labels(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Labels = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Labels && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Labels{additionalProperties=$additionalProperties}"
     }
 
     class MountConfig

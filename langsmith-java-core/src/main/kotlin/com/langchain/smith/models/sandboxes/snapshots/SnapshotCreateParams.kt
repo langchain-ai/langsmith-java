@@ -14,10 +14,12 @@ import com.langchain.smith.core.Params
 import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 /** Create a snapshot from a Docker image (async build). */
 class SnapshotCreateParams
@@ -46,6 +48,15 @@ private constructor(
     fun name(): String = body.name()
 
     /**
+     * Labels seed the snapshot's labels, overriding any label of the same key derived from the
+     * Docker image.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun labels(): Optional<Labels> = body.labels()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -71,6 +82,13 @@ private constructor(
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _name(): JsonField<String> = body._name()
+
+    /**
+     * Returns the raw JSON value of [labels].
+     *
+     * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _labels(): JsonField<Labels> = body._labels()
 
     /**
      * Returns the raw JSON value of [registryId].
@@ -126,7 +144,9 @@ private constructor(
          * - [dockerImage]
          * - [fsCapacityBytes]
          * - [name]
+         * - [labels]
          * - [registryId]
+         * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -163,6 +183,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        /**
+         * Labels seed the snapshot's labels, overriding any label of the same key derived from the
+         * Docker image.
+         */
+        fun labels(labels: Labels) = apply { body.labels(labels) }
+
+        /**
+         * Sets [Builder.labels] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.labels] with a well-typed [Labels] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun labels(labels: JsonField<Labels>) = apply { body.labels(labels) }
 
         fun registryId(registryId: String) = apply { body.registryId(registryId) }
 
@@ -326,6 +360,7 @@ private constructor(
         private val dockerImage: JsonField<String>,
         private val fsCapacityBytes: JsonField<Long>,
         private val name: JsonField<String>,
+        private val labels: JsonField<Labels>,
         private val registryId: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -339,10 +374,11 @@ private constructor(
             @ExcludeMissing
             fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
             @JsonProperty("registry_id")
             @ExcludeMissing
             registryId: JsonField<String> = JsonMissing.of(),
-        ) : this(dockerImage, fsCapacityBytes, name, registryId, mutableMapOf())
+        ) : this(dockerImage, fsCapacityBytes, name, labels, registryId, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -361,6 +397,15 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun name(): String = name.getRequired("name")
+
+        /**
+         * Labels seed the snapshot's labels, overriding any label of the same key derived from the
+         * Docker image.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun labels(): Optional<Labels> = labels.getOptional("labels")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -393,6 +438,13 @@ private constructor(
          * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+        /**
+         * Returns the raw JSON value of [labels].
+         *
+         * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("labels") @ExcludeMissing fun _labels(): JsonField<Labels> = labels
 
         /**
          * Returns the raw JSON value of [registryId].
@@ -436,6 +488,7 @@ private constructor(
             private var dockerImage: JsonField<String>? = null
             private var fsCapacityBytes: JsonField<Long>? = null
             private var name: JsonField<String>? = null
+            private var labels: JsonField<Labels> = JsonMissing.of()
             private var registryId: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -444,6 +497,7 @@ private constructor(
                 dockerImage = body.dockerImage
                 fsCapacityBytes = body.fsCapacityBytes
                 name = body.name
+                labels = body.labels
                 registryId = body.registryId
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -485,6 +539,21 @@ private constructor(
              * value.
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
+
+            /**
+             * Labels seed the snapshot's labels, overriding any label of the same key derived from
+             * the Docker image.
+             */
+            fun labels(labels: Labels) = labels(JsonField.of(labels))
+
+            /**
+             * Sets [Builder.labels] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.labels] with a well-typed [Labels] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun labels(labels: JsonField<Labels>) = apply { this.labels = labels }
 
             fun registryId(registryId: String) = registryId(JsonField.of(registryId))
 
@@ -535,6 +604,7 @@ private constructor(
                     checkRequired("dockerImage", dockerImage),
                     checkRequired("fsCapacityBytes", fsCapacityBytes),
                     checkRequired("name", name),
+                    labels,
                     registryId,
                     additionalProperties.toMutableMap(),
                 )
@@ -559,6 +629,7 @@ private constructor(
             dockerImage()
             fsCapacityBytes()
             name()
+            labels().ifPresent { it.validate() }
             registryId()
             validated = true
         }
@@ -582,6 +653,7 @@ private constructor(
             (if (dockerImage.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
+                (labels.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (registryId.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -593,18 +665,138 @@ private constructor(
                 dockerImage == other.dockerImage &&
                 fsCapacityBytes == other.fsCapacityBytes &&
                 name == other.name &&
+                labels == other.labels &&
                 registryId == other.registryId &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(dockerImage, fsCapacityBytes, name, registryId, additionalProperties)
+            Objects.hash(
+                dockerImage,
+                fsCapacityBytes,
+                name,
+                labels,
+                registryId,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, name=$name, registryId=$registryId, additionalProperties=$additionalProperties}"
+            "Body{dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, name=$name, labels=$labels, registryId=$registryId, additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * Labels seed the snapshot's labels, overriding any label of the same key derived from the
+     * Docker image.
+     */
+    class Labels
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Labels]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Labels]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(labels: Labels) = apply {
+                additionalProperties = labels.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Labels].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Labels = Labels(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Labels = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Labels && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Labels{additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -42,6 +42,7 @@ private constructor(
     private val deleteAfterStopSeconds: JsonField<Long>,
     private val fsCapacityBytes: JsonField<Long>,
     private val idleTtlSeconds: JsonField<Long>,
+    private val labels: JsonField<Labels>,
     private val memBytes: JsonField<Long>,
     private val mountConfig: JsonField<MountConfig>,
     private val name: JsonField<String>,
@@ -78,6 +79,7 @@ private constructor(
         @JsonProperty("idle_ttl_seconds")
         @ExcludeMissing
         idleTtlSeconds: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
         @JsonProperty("mem_bytes") @ExcludeMissing memBytes: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("mount_config")
         @ExcludeMissing
@@ -110,6 +112,7 @@ private constructor(
         deleteAfterStopSeconds,
         fsCapacityBytes,
         idleTtlSeconds,
+        labels,
         memBytes,
         mountConfig,
         name,
@@ -174,6 +177,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun idleTtlSeconds(): Optional<Long> = idleTtlSeconds.getOptional("idle_ttl_seconds")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun labels(): Optional<Labels> = labels.getOptional("labels")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -322,6 +331,13 @@ private constructor(
     fun _idleTtlSeconds(): JsonField<Long> = idleTtlSeconds
 
     /**
+     * Returns the raw JSON value of [labels].
+     *
+     * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("labels") @ExcludeMissing fun _labels(): JsonField<Labels> = labels
+
+    /**
      * Returns the raw JSON value of [memBytes].
      *
      * Unlike [memBytes], this method doesn't throw if the JSON field has an unexpected type.
@@ -450,6 +466,7 @@ private constructor(
         private var deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of()
         private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
         private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
+        private var labels: JsonField<Labels> = JsonMissing.of()
         private var memBytes: JsonField<Long> = JsonMissing.of()
         private var mountConfig: JsonField<MountConfig> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
@@ -475,6 +492,7 @@ private constructor(
             deleteAfterStopSeconds = sandboxResponse.deleteAfterStopSeconds
             fsCapacityBytes = sandboxResponse.fsCapacityBytes
             idleTtlSeconds = sandboxResponse.idleTtlSeconds
+            labels = sandboxResponse.labels
             memBytes = sandboxResponse.memBytes
             mountConfig = sandboxResponse.mountConfig
             name = sandboxResponse.name
@@ -588,6 +606,16 @@ private constructor(
         fun idleTtlSeconds(idleTtlSeconds: JsonField<Long>) = apply {
             this.idleTtlSeconds = idleTtlSeconds
         }
+
+        fun labels(labels: Labels) = labels(JsonField.of(labels))
+
+        /**
+         * Sets [Builder.labels] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.labels] with a well-typed [Labels] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun labels(labels: JsonField<Labels>) = apply { this.labels = labels }
 
         fun memBytes(memBytes: Long) = memBytes(JsonField.of(memBytes))
 
@@ -771,6 +799,7 @@ private constructor(
                 deleteAfterStopSeconds,
                 fsCapacityBytes,
                 idleTtlSeconds,
+                labels,
                 memBytes,
                 mountConfig,
                 name,
@@ -811,6 +840,7 @@ private constructor(
         deleteAfterStopSeconds()
         fsCapacityBytes()
         idleTtlSeconds()
+        labels().ifPresent { it.validate() }
         memBytes()
         mountConfig().ifPresent { it.validate() }
         name()
@@ -850,6 +880,7 @@ private constructor(
             (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
             (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
             (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
+            (labels.asKnown().getOrNull()?.validity() ?: 0) +
             (if (memBytes.asKnown().isPresent) 1 else 0) +
             (mountConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
@@ -863,6 +894,114 @@ private constructor(
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (updatedBy.asKnown().isPresent) 1 else 0) +
             (if (vcpus.asKnown().isPresent) 1 else 0)
+
+    class Labels
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Labels]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Labels]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(labels: Labels) = apply {
+                additionalProperties = labels.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Labels].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Labels = Labels(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Labels = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Labels && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Labels{additionalProperties=$additionalProperties}"
+    }
 
     class MountConfig
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -16400,6 +16539,7 @@ private constructor(
             deleteAfterStopSeconds == other.deleteAfterStopSeconds &&
             fsCapacityBytes == other.fsCapacityBytes &&
             idleTtlSeconds == other.idleTtlSeconds &&
+            labels == other.labels &&
             memBytes == other.memBytes &&
             mountConfig == other.mountConfig &&
             name == other.name &&
@@ -16426,6 +16566,7 @@ private constructor(
             deleteAfterStopSeconds,
             fsCapacityBytes,
             idleTtlSeconds,
+            labels,
             memBytes,
             mountConfig,
             name,
@@ -16446,5 +16587,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

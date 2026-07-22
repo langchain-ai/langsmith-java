@@ -36,6 +36,11 @@ internal class BoxServiceAsyncTest {
                     )
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
+                    .labels(
+                        BoxCreateParams.Labels.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .memBytes(0L)
                     .mountConfig(
                         BoxCreateParams.MountConfig.builder()
@@ -455,6 +460,7 @@ internal class BoxServiceAsyncTest {
             boxServiceAsync.list(
                 BoxListParams.builder()
                     .createdBy("created_by")
+                    .addLabel("string")
                     .limit(0L)
                     .nameContains("name_contains")
                     .offset(0L)
@@ -502,6 +508,11 @@ internal class BoxServiceAsyncTest {
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
                     .includeMemory(true)
+                    .labels(
+                        BoxCreateSnapshotParams.Labels.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .build()
             )
 

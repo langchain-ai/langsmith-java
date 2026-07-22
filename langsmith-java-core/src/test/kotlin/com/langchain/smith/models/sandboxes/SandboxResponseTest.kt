@@ -22,6 +22,11 @@ internal class SandboxResponseTest {
                 .deleteAfterStopSeconds(0L)
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
+                .labels(
+                    SandboxResponse.Labels.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .memBytes(0L)
                 .mountConfig(
                     SandboxResponse.MountConfig.builder()
@@ -269,6 +274,12 @@ internal class SandboxResponseTest {
         assertThat(sandboxResponse.deleteAfterStopSeconds()).contains(0L)
         assertThat(sandboxResponse.fsCapacityBytes()).contains(0L)
         assertThat(sandboxResponse.idleTtlSeconds()).contains(0L)
+        assertThat(sandboxResponse.labels())
+            .contains(
+                SandboxResponse.Labels.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
         assertThat(sandboxResponse.memBytes()).contains(0L)
         assertThat(sandboxResponse.mountConfig())
             .contains(
@@ -513,6 +524,11 @@ internal class SandboxResponseTest {
                 .deleteAfterStopSeconds(0L)
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
+                .labels(
+                    SandboxResponse.Labels.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .memBytes(0L)
                 .mountConfig(
                     SandboxResponse.MountConfig.builder()

@@ -26,6 +26,11 @@ internal class SandboxListResponseTest {
                         .deleteAfterStopSeconds(0L)
                         .fsCapacityBytes(0L)
                         .idleTtlSeconds(0L)
+                        .labels(
+                            SandboxResponse.Labels.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
                         .memBytes(0L)
                         .mountConfig(
                             SandboxResponse.MountConfig.builder()
@@ -300,6 +305,11 @@ internal class SandboxListResponseTest {
                     .deleteAfterStopSeconds(0L)
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
+                    .labels(
+                        SandboxResponse.Labels.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .memBytes(0L)
                     .mountConfig(
                         SandboxResponse.MountConfig.builder()
@@ -571,6 +581,11 @@ internal class SandboxListResponseTest {
                         .deleteAfterStopSeconds(0L)
                         .fsCapacityBytes(0L)
                         .idleTtlSeconds(0L)
+                        .labels(
+                            SandboxResponse.Labels.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
                         .memBytes(0L)
                         .mountConfig(
                             SandboxResponse.MountConfig.builder()
