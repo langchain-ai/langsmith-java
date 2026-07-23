@@ -33,6 +33,11 @@ internal class BoxServiceTest {
                     )
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
+                    .labels(
+                        BoxCreateParams.Labels.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .memBytes(0L)
                     .mountConfig(
                         BoxCreateParams.MountConfig.builder()
@@ -234,6 +239,11 @@ internal class BoxServiceTest {
                                             .build()
                                     )
                                     .enabled(true)
+                                    .envVars(
+                                        BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                                            .build()
+                                    )
                                     .gcp(
                                         BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
                                             .addScope("string")
@@ -374,6 +384,11 @@ internal class BoxServiceTest {
                                             .build()
                                     )
                                     .enabled(true)
+                                    .envVars(
+                                        BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                                            .build()
+                                    )
                                     .gcp(
                                         BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
                                             .addScope("string")
@@ -430,6 +445,7 @@ internal class BoxServiceTest {
             boxService.list(
                 BoxListParams.builder()
                     .createdBy("created_by")
+                    .addLabel("string")
                     .limit(0L)
                     .nameContains("name_contains")
                     .offset(0L)
@@ -468,6 +484,11 @@ internal class BoxServiceTest {
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
                     .includeMemory(true)
+                    .labels(
+                        BoxCreateSnapshotParams.Labels.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .build()
             )
 

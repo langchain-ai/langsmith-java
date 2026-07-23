@@ -19,6 +19,7 @@ class CreateOnlineLlmEvaluatorRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val commitHashOrTag: JsonField<String>,
+    private val playgroundSettingsId: JsonField<String>,
     private val promptRepoHandle: JsonField<String>,
     private val variableMapping: JsonValue,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -29,19 +30,37 @@ private constructor(
         @JsonProperty("commit_hash_or_tag")
         @ExcludeMissing
         commitHashOrTag: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("playground_settings_id")
+        @ExcludeMissing
+        playgroundSettingsId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("prompt_repo_handle")
         @ExcludeMissing
         promptRepoHandle: JsonField<String> = JsonMissing.of(),
         @JsonProperty("variable_mapping")
         @ExcludeMissing
         variableMapping: JsonValue = JsonMissing.of(),
-    ) : this(commitHashOrTag, promptRepoHandle, variableMapping, mutableMapOf())
+    ) : this(
+        commitHashOrTag,
+        playgroundSettingsId,
+        promptRepoHandle,
+        variableMapping,
+        mutableMapOf(),
+    )
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun commitHashOrTag(): Optional<String> = commitHashOrTag.getOptional("commit_hash_or_tag")
+
+    /**
+     * Model Configuration ID
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun playgroundSettingsId(): Optional<String> =
+        playgroundSettingsId.getOptional("playground_settings_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -67,6 +86,16 @@ private constructor(
     @JsonProperty("commit_hash_or_tag")
     @ExcludeMissing
     fun _commitHashOrTag(): JsonField<String> = commitHashOrTag
+
+    /**
+     * Returns the raw JSON value of [playgroundSettingsId].
+     *
+     * Unlike [playgroundSettingsId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("playground_settings_id")
+    @ExcludeMissing
+    fun _playgroundSettingsId(): JsonField<String> = playgroundSettingsId
 
     /**
      * Returns the raw JSON value of [promptRepoHandle].
@@ -103,6 +132,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var commitHashOrTag: JsonField<String> = JsonMissing.of()
+        private var playgroundSettingsId: JsonField<String> = JsonMissing.of()
         private var promptRepoHandle: JsonField<String> = JsonMissing.of()
         private var variableMapping: JsonValue = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -111,6 +141,7 @@ private constructor(
         internal fun from(createOnlineLlmEvaluatorRequest: CreateOnlineLlmEvaluatorRequest) =
             apply {
                 commitHashOrTag = createOnlineLlmEvaluatorRequest.commitHashOrTag
+                playgroundSettingsId = createOnlineLlmEvaluatorRequest.playgroundSettingsId
                 promptRepoHandle = createOnlineLlmEvaluatorRequest.promptRepoHandle
                 variableMapping = createOnlineLlmEvaluatorRequest.variableMapping
                 additionalProperties =
@@ -129,6 +160,21 @@ private constructor(
          */
         fun commitHashOrTag(commitHashOrTag: JsonField<String>) = apply {
             this.commitHashOrTag = commitHashOrTag
+        }
+
+        /** Model Configuration ID */
+        fun playgroundSettingsId(playgroundSettingsId: String) =
+            playgroundSettingsId(JsonField.of(playgroundSettingsId))
+
+        /**
+         * Sets [Builder.playgroundSettingsId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.playgroundSettingsId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun playgroundSettingsId(playgroundSettingsId: JsonField<String>) = apply {
+            this.playgroundSettingsId = playgroundSettingsId
         }
 
         fun promptRepoHandle(promptRepoHandle: String) =
@@ -176,6 +222,7 @@ private constructor(
         fun build(): CreateOnlineLlmEvaluatorRequest =
             CreateOnlineLlmEvaluatorRequest(
                 commitHashOrTag,
+                playgroundSettingsId,
                 promptRepoHandle,
                 variableMapping,
                 additionalProperties.toMutableMap(),
@@ -198,6 +245,7 @@ private constructor(
         }
 
         commitHashOrTag()
+        playgroundSettingsId()
         promptRepoHandle()
         validated = true
     }
@@ -218,6 +266,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (commitHashOrTag.asKnown().isPresent) 1 else 0) +
+            (if (playgroundSettingsId.asKnown().isPresent) 1 else 0) +
             (if (promptRepoHandle.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
@@ -227,17 +276,24 @@ private constructor(
 
         return other is CreateOnlineLlmEvaluatorRequest &&
             commitHashOrTag == other.commitHashOrTag &&
+            playgroundSettingsId == other.playgroundSettingsId &&
             promptRepoHandle == other.promptRepoHandle &&
             variableMapping == other.variableMapping &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(commitHashOrTag, promptRepoHandle, variableMapping, additionalProperties)
+        Objects.hash(
+            commitHashOrTag,
+            playgroundSettingsId,
+            promptRepoHandle,
+            variableMapping,
+            additionalProperties,
+        )
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateOnlineLlmEvaluatorRequest{commitHashOrTag=$commitHashOrTag, promptRepoHandle=$promptRepoHandle, variableMapping=$variableMapping, additionalProperties=$additionalProperties}"
+        "CreateOnlineLlmEvaluatorRequest{commitHashOrTag=$commitHashOrTag, playgroundSettingsId=$playgroundSettingsId, promptRepoHandle=$promptRepoHandle, variableMapping=$variableMapping, additionalProperties=$additionalProperties}"
 }

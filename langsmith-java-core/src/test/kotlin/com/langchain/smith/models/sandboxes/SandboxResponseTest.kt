@@ -3,6 +3,7 @@
 package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -21,6 +22,11 @@ internal class SandboxResponseTest {
                 .deleteAfterStopSeconds(0L)
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
+                .labels(
+                    SandboxResponse.Labels.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .memBytes(0L)
                 .mountConfig(
                     SandboxResponse.MountConfig.builder()
@@ -210,6 +216,11 @@ internal class SandboxResponseTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .envVars(
+                                    SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                                        .build()
+                                )
                                 .gcp(
                                     SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                         .addScope("string")
@@ -263,6 +274,12 @@ internal class SandboxResponseTest {
         assertThat(sandboxResponse.deleteAfterStopSeconds()).contains(0L)
         assertThat(sandboxResponse.fsCapacityBytes()).contains(0L)
         assertThat(sandboxResponse.idleTtlSeconds()).contains(0L)
+        assertThat(sandboxResponse.labels())
+            .contains(
+                SandboxResponse.Labels.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
         assertThat(sandboxResponse.memBytes()).contains(0L)
         assertThat(sandboxResponse.mountConfig())
             .contains(
@@ -446,6 +463,11 @@ internal class SandboxResponseTest {
                                     .build()
                             )
                             .enabled(true)
+                            .envVars(
+                                SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
                             .gcp(
                                 SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")
@@ -502,6 +524,11 @@ internal class SandboxResponseTest {
                 .deleteAfterStopSeconds(0L)
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
+                .labels(
+                    SandboxResponse.Labels.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .memBytes(0L)
                 .mountConfig(
                     SandboxResponse.MountConfig.builder()
@@ -691,6 +718,11 @@ internal class SandboxResponseTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .envVars(
+                                    SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                                        .build()
+                                )
                                 .gcp(
                                     SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                         .addScope("string")

@@ -42,6 +42,7 @@ private constructor(
     private val deleteAfterStopSeconds: JsonField<Long>,
     private val fsCapacityBytes: JsonField<Long>,
     private val idleTtlSeconds: JsonField<Long>,
+    private val labels: JsonField<Labels>,
     private val memBytes: JsonField<Long>,
     private val mountConfig: JsonField<MountConfig>,
     private val name: JsonField<String>,
@@ -78,6 +79,7 @@ private constructor(
         @JsonProperty("idle_ttl_seconds")
         @ExcludeMissing
         idleTtlSeconds: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
         @JsonProperty("mem_bytes") @ExcludeMissing memBytes: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("mount_config")
         @ExcludeMissing
@@ -110,6 +112,7 @@ private constructor(
         deleteAfterStopSeconds,
         fsCapacityBytes,
         idleTtlSeconds,
+        labels,
         memBytes,
         mountConfig,
         name,
@@ -174,6 +177,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun idleTtlSeconds(): Optional<Long> = idleTtlSeconds.getOptional("idle_ttl_seconds")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun labels(): Optional<Labels> = labels.getOptional("labels")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -322,6 +331,13 @@ private constructor(
     fun _idleTtlSeconds(): JsonField<Long> = idleTtlSeconds
 
     /**
+     * Returns the raw JSON value of [labels].
+     *
+     * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("labels") @ExcludeMissing fun _labels(): JsonField<Labels> = labels
+
+    /**
      * Returns the raw JSON value of [memBytes].
      *
      * Unlike [memBytes], this method doesn't throw if the JSON field has an unexpected type.
@@ -450,6 +466,7 @@ private constructor(
         private var deleteAfterStopSeconds: JsonField<Long> = JsonMissing.of()
         private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
         private var idleTtlSeconds: JsonField<Long> = JsonMissing.of()
+        private var labels: JsonField<Labels> = JsonMissing.of()
         private var memBytes: JsonField<Long> = JsonMissing.of()
         private var mountConfig: JsonField<MountConfig> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
@@ -475,6 +492,7 @@ private constructor(
             deleteAfterStopSeconds = sandboxResponse.deleteAfterStopSeconds
             fsCapacityBytes = sandboxResponse.fsCapacityBytes
             idleTtlSeconds = sandboxResponse.idleTtlSeconds
+            labels = sandboxResponse.labels
             memBytes = sandboxResponse.memBytes
             mountConfig = sandboxResponse.mountConfig
             name = sandboxResponse.name
@@ -588,6 +606,16 @@ private constructor(
         fun idleTtlSeconds(idleTtlSeconds: JsonField<Long>) = apply {
             this.idleTtlSeconds = idleTtlSeconds
         }
+
+        fun labels(labels: Labels) = labels(JsonField.of(labels))
+
+        /**
+         * Sets [Builder.labels] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.labels] with a well-typed [Labels] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun labels(labels: JsonField<Labels>) = apply { this.labels = labels }
 
         fun memBytes(memBytes: Long) = memBytes(JsonField.of(memBytes))
 
@@ -771,6 +799,7 @@ private constructor(
                 deleteAfterStopSeconds,
                 fsCapacityBytes,
                 idleTtlSeconds,
+                labels,
                 memBytes,
                 mountConfig,
                 name,
@@ -811,6 +840,7 @@ private constructor(
         deleteAfterStopSeconds()
         fsCapacityBytes()
         idleTtlSeconds()
+        labels().ifPresent { it.validate() }
         memBytes()
         mountConfig().ifPresent { it.validate() }
         name()
@@ -850,6 +880,7 @@ private constructor(
             (if (deleteAfterStopSeconds.asKnown().isPresent) 1 else 0) +
             (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
             (if (idleTtlSeconds.asKnown().isPresent) 1 else 0) +
+            (labels.asKnown().getOrNull()?.validity() ?: 0) +
             (if (memBytes.asKnown().isPresent) 1 else 0) +
             (mountConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
@@ -863,6 +894,114 @@ private constructor(
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (updatedBy.asKnown().isPresent) 1 else 0) +
             (if (vcpus.asKnown().isPresent) 1 else 0)
+
+    class Labels
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Labels]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Labels]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(labels: Labels) = apply {
+                additionalProperties = labels.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Labels].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Labels = Labels(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Labels = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Labels && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Labels{additionalProperties=$additionalProperties}"
+    }
 
     class MountConfig
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -13618,6 +13757,7 @@ private constructor(
             private val name: JsonField<String>,
             private val aws: JsonField<Aws>,
             private val enabled: JsonField<Boolean>,
+            private val envVars: JsonField<EnvVars>,
             private val gcp: JsonField<Gcp>,
             private val headers: JsonField<List<Header>>,
             private val matchHosts: JsonField<List<String>>,
@@ -13633,6 +13773,9 @@ private constructor(
                 @JsonProperty("enabled")
                 @ExcludeMissing
                 enabled: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("env_vars")
+                @ExcludeMissing
+                envVars: JsonField<EnvVars> = JsonMissing.of(),
                 @JsonProperty("gcp") @ExcludeMissing gcp: JsonField<Gcp> = JsonMissing.of(),
                 @JsonProperty("headers")
                 @ExcludeMissing
@@ -13644,7 +13787,18 @@ private constructor(
                 @ExcludeMissing
                 matchPaths: JsonField<List<String>> = JsonMissing.of(),
                 @JsonProperty("type") @ExcludeMissing type: JsonField<String> = JsonMissing.of(),
-            ) : this(name, aws, enabled, gcp, headers, matchHosts, matchPaths, type, mutableMapOf())
+            ) : this(
+                name,
+                aws,
+                enabled,
+                envVars,
+                gcp,
+                headers,
+                matchHosts,
+                matchPaths,
+                type,
+                mutableMapOf(),
+            )
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -13664,6 +13818,18 @@ private constructor(
              *   if the server responded with an unexpected value).
              */
             fun enabled(): Optional<Boolean> = enabled.getOptional("enabled")
+
+            /**
+             * EnvVars are plaintext env vars set for every command in the sandbox while this rule
+             * is enabled. Use them for tools that refuse to run unless a credential env var is
+             * present (e.g. gh needs GH_TOKEN) even though this rule injects the real credential on
+             * the wire — set a dummy value here so the command starts. Explicit per-sandbox
+             * env_vars win over these, and provider-managed (AWS/GCP) vars win over both.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun envVars(): Optional<EnvVars> = envVars.getOptional("env_vars")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -13718,6 +13884,13 @@ private constructor(
              * Unlike [enabled], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("enabled") @ExcludeMissing fun _enabled(): JsonField<Boolean> = enabled
+
+            /**
+             * Returns the raw JSON value of [envVars].
+             *
+             * Unlike [envVars], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("env_vars") @ExcludeMissing fun _envVars(): JsonField<EnvVars> = envVars
 
             /**
              * Returns the raw JSON value of [gcp].
@@ -13793,6 +13966,7 @@ private constructor(
                 private var name: JsonField<String>? = null
                 private var aws: JsonField<Aws> = JsonMissing.of()
                 private var enabled: JsonField<Boolean> = JsonMissing.of()
+                private var envVars: JsonField<EnvVars> = JsonMissing.of()
                 private var gcp: JsonField<Gcp> = JsonMissing.of()
                 private var headers: JsonField<MutableList<Header>>? = null
                 private var matchHosts: JsonField<MutableList<String>>? = null
@@ -13805,6 +13979,7 @@ private constructor(
                     name = rule.name
                     aws = rule.aws
                     enabled = rule.enabled
+                    envVars = rule.envVars
                     gcp = rule.gcp
                     headers = rule.headers.map { it.toMutableList() }
                     matchHosts = rule.matchHosts.map { it.toMutableList() }
@@ -13845,6 +14020,25 @@ private constructor(
                  * yet supported value.
                  */
                 fun enabled(enabled: JsonField<Boolean>) = apply { this.enabled = enabled }
+
+                /**
+                 * EnvVars are plaintext env vars set for every command in the sandbox while this
+                 * rule is enabled. Use them for tools that refuse to run unless a credential env
+                 * var is present (e.g. gh needs GH_TOKEN) even though this rule injects the real
+                 * credential on the wire — set a dummy value here so the command starts. Explicit
+                 * per-sandbox env_vars win over these, and provider-managed (AWS/GCP) vars win over
+                 * both.
+                 */
+                fun envVars(envVars: EnvVars) = envVars(JsonField.of(envVars))
+
+                /**
+                 * Sets [Builder.envVars] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.envVars] with a well-typed [EnvVars] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun envVars(envVars: JsonField<EnvVars>) = apply { this.envVars = envVars }
 
                 fun gcp(gcp: Gcp) = gcp(JsonField.of(gcp))
 
@@ -13986,6 +14180,7 @@ private constructor(
                         checkRequired("name", name),
                         aws,
                         enabled,
+                        envVars,
                         gcp,
                         (headers ?: JsonMissing.of()).map { it.toImmutable() },
                         (matchHosts ?: JsonMissing.of()).map { it.toImmutable() },
@@ -14015,6 +14210,7 @@ private constructor(
                 name()
                 aws().ifPresent { it.validate() }
                 enabled()
+                envVars().ifPresent { it.validate() }
                 gcp().ifPresent { it.validate() }
                 headers().ifPresent { it.forEach { it.validate() } }
                 matchHosts()
@@ -14042,6 +14238,7 @@ private constructor(
                 (if (name.asKnown().isPresent) 1 else 0) +
                     (aws.asKnown().getOrNull()?.validity() ?: 0) +
                     (if (enabled.asKnown().isPresent) 1 else 0) +
+                    (envVars.asKnown().getOrNull()?.validity() ?: 0) +
                     (gcp.asKnown().getOrNull()?.validity() ?: 0) +
                     (headers.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                     (matchHosts.asKnown().getOrNull()?.size ?: 0) +
@@ -15072,6 +15269,127 @@ private constructor(
 
                 override fun toString() =
                     "Aws{accessKeyId=$accessKeyId, secretAccessKey=$secretAccessKey, additionalProperties=$additionalProperties}"
+            }
+
+            /**
+             * EnvVars are plaintext env vars set for every command in the sandbox while this rule
+             * is enabled. Use them for tools that refuse to run unless a credential env var is
+             * present (e.g. gh needs GH_TOKEN) even though this rule injects the real credential on
+             * the wire — set a dummy value here so the command starts. Explicit per-sandbox
+             * env_vars win over these, and provider-managed (AWS/GCP) vars win over both.
+             */
+            class EnvVars
+            @JsonCreator
+            private constructor(
+                @com.fasterxml.jackson.annotation.JsonValue
+                private val additionalProperties: Map<String, JsonValue>
+            ) {
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [EnvVars]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [EnvVars]. */
+                class Builder internal constructor() {
+
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(envVars: EnvVars) = apply {
+                        additionalProperties = envVars.additionalProperties.toMutableMap()
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [EnvVars].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): EnvVars = EnvVars(additionalProperties.toImmutable())
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): EnvVars = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    additionalProperties.count { (_, value) ->
+                        !value.isNull() && !value.isMissing()
+                    }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is EnvVars && additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() = "EnvVars{additionalProperties=$additionalProperties}"
             }
 
             class Gcp
@@ -16154,6 +16472,7 @@ private constructor(
                     name == other.name &&
                     aws == other.aws &&
                     enabled == other.enabled &&
+                    envVars == other.envVars &&
                     gcp == other.gcp &&
                     headers == other.headers &&
                     matchHosts == other.matchHosts &&
@@ -16167,6 +16486,7 @@ private constructor(
                     name,
                     aws,
                     enabled,
+                    envVars,
                     gcp,
                     headers,
                     matchHosts,
@@ -16179,7 +16499,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Rule{name=$name, aws=$aws, enabled=$enabled, gcp=$gcp, headers=$headers, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
+                "Rule{name=$name, aws=$aws, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {
@@ -16219,6 +16539,7 @@ private constructor(
             deleteAfterStopSeconds == other.deleteAfterStopSeconds &&
             fsCapacityBytes == other.fsCapacityBytes &&
             idleTtlSeconds == other.idleTtlSeconds &&
+            labels == other.labels &&
             memBytes == other.memBytes &&
             mountConfig == other.mountConfig &&
             name == other.name &&
@@ -16245,6 +16566,7 @@ private constructor(
             deleteAfterStopSeconds,
             fsCapacityBytes,
             idleTtlSeconds,
+            labels,
             memBytes,
             mountConfig,
             name,
@@ -16265,5 +16587,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+        "SandboxResponse{id=$id, cpuMillicores=$cpuMillicores, createdAt=$createdAt, createdBy=$createdBy, dataplaneUrl=$dataplaneUrl, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, sizeClass=$sizeClass, snapshotId=$snapshotId, status=$status, statusMessage=$statusMessage, stoppedAt=$stoppedAt, updatedAt=$updatedAt, updatedBy=$updatedBy, vcpus=$vcpus, additionalProperties=$additionalProperties}"
 }

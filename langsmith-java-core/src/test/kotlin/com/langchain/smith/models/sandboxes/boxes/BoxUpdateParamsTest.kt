@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.boxes
 
+import com.langchain.smith.core.JsonValue
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -77,6 +78,11 @@ internal class BoxUpdateParamsTest {
                                     .build()
                             )
                             .enabled(true)
+                            .envVars(
+                                BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
                             .gcp(
                                 BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")
@@ -196,6 +202,11 @@ internal class BoxUpdateParamsTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .envVars(
+                                    BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                                        .build()
+                                )
                                 .gcp(
                                     BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
                                         .addScope("string")
@@ -303,6 +314,11 @@ internal class BoxUpdateParamsTest {
                                     .build()
                             )
                             .enabled(true)
+                            .envVars(
+                                BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
                             .gcp(
                                 BoxUpdateParams.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")

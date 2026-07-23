@@ -3,7 +3,7 @@
 <!-- x-release-please-start-version -->
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.langchain.smith/langsmith-java)](https://central.sonatype.com/artifact/com.langchain.smith/langsmith-java/0.1.0-beta.18)
-[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith-java/0.1.0-beta.18/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-beta.7)
+[![javadoc](https://javadoc.io/badge2/com.langchain.smith/langsmith-java/0.1.0-beta.18/javadoc.svg)](https://javadoc.io/doc/com.langchain.smith/langsmith-java/0.1.0-beta.18)
 
 <!-- x-release-please-end -->
 

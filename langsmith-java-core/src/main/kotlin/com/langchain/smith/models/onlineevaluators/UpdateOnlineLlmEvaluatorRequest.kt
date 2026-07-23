@@ -20,6 +20,7 @@ class UpdateOnlineLlmEvaluatorRequest
 private constructor(
     private val commitHashOrTag: JsonField<String>,
     private val numFewShotExamples: JsonField<Long>,
+    private val playgroundSettingsId: JsonField<String>,
     private val promptRepoHandle: JsonField<String>,
     private val useCorrectionsDataset: JsonField<Boolean>,
     private val variableMapping: JsonValue,
@@ -34,6 +35,9 @@ private constructor(
         @JsonProperty("num_few_shot_examples")
         @ExcludeMissing
         numFewShotExamples: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("playground_settings_id")
+        @ExcludeMissing
+        playgroundSettingsId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("prompt_repo_handle")
         @ExcludeMissing
         promptRepoHandle: JsonField<String> = JsonMissing.of(),
@@ -46,6 +50,7 @@ private constructor(
     ) : this(
         commitHashOrTag,
         numFewShotExamples,
+        playgroundSettingsId,
         promptRepoHandle,
         useCorrectionsDataset,
         variableMapping,
@@ -64,6 +69,15 @@ private constructor(
      */
     fun numFewShotExamples(): Optional<Long> =
         numFewShotExamples.getOptional("num_few_shot_examples")
+
+    /**
+     * Model Configuration ID
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun playgroundSettingsId(): Optional<String> =
+        playgroundSettingsId.getOptional("playground_settings_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -106,6 +120,16 @@ private constructor(
     @JsonProperty("num_few_shot_examples")
     @ExcludeMissing
     fun _numFewShotExamples(): JsonField<Long> = numFewShotExamples
+
+    /**
+     * Returns the raw JSON value of [playgroundSettingsId].
+     *
+     * Unlike [playgroundSettingsId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("playground_settings_id")
+    @ExcludeMissing
+    fun _playgroundSettingsId(): JsonField<String> = playgroundSettingsId
 
     /**
      * Returns the raw JSON value of [promptRepoHandle].
@@ -153,6 +177,7 @@ private constructor(
 
         private var commitHashOrTag: JsonField<String> = JsonMissing.of()
         private var numFewShotExamples: JsonField<Long> = JsonMissing.of()
+        private var playgroundSettingsId: JsonField<String> = JsonMissing.of()
         private var promptRepoHandle: JsonField<String> = JsonMissing.of()
         private var useCorrectionsDataset: JsonField<Boolean> = JsonMissing.of()
         private var variableMapping: JsonValue = JsonMissing.of()
@@ -163,6 +188,7 @@ private constructor(
             apply {
                 commitHashOrTag = updateOnlineLlmEvaluatorRequest.commitHashOrTag
                 numFewShotExamples = updateOnlineLlmEvaluatorRequest.numFewShotExamples
+                playgroundSettingsId = updateOnlineLlmEvaluatorRequest.playgroundSettingsId
                 promptRepoHandle = updateOnlineLlmEvaluatorRequest.promptRepoHandle
                 useCorrectionsDataset = updateOnlineLlmEvaluatorRequest.useCorrectionsDataset
                 variableMapping = updateOnlineLlmEvaluatorRequest.variableMapping
@@ -196,6 +222,21 @@ private constructor(
          */
         fun numFewShotExamples(numFewShotExamples: JsonField<Long>) = apply {
             this.numFewShotExamples = numFewShotExamples
+        }
+
+        /** Model Configuration ID */
+        fun playgroundSettingsId(playgroundSettingsId: String) =
+            playgroundSettingsId(JsonField.of(playgroundSettingsId))
+
+        /**
+         * Sets [Builder.playgroundSettingsId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.playgroundSettingsId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun playgroundSettingsId(playgroundSettingsId: JsonField<String>) = apply {
+            this.playgroundSettingsId = playgroundSettingsId
         }
 
         fun promptRepoHandle(promptRepoHandle: String) =
@@ -258,6 +299,7 @@ private constructor(
             UpdateOnlineLlmEvaluatorRequest(
                 commitHashOrTag,
                 numFewShotExamples,
+                playgroundSettingsId,
                 promptRepoHandle,
                 useCorrectionsDataset,
                 variableMapping,
@@ -282,6 +324,7 @@ private constructor(
 
         commitHashOrTag()
         numFewShotExamples()
+        playgroundSettingsId()
         promptRepoHandle()
         useCorrectionsDataset()
         validated = true
@@ -304,6 +347,7 @@ private constructor(
     internal fun validity(): Int =
         (if (commitHashOrTag.asKnown().isPresent) 1 else 0) +
             (if (numFewShotExamples.asKnown().isPresent) 1 else 0) +
+            (if (playgroundSettingsId.asKnown().isPresent) 1 else 0) +
             (if (promptRepoHandle.asKnown().isPresent) 1 else 0) +
             (if (useCorrectionsDataset.asKnown().isPresent) 1 else 0)
 
@@ -315,6 +359,7 @@ private constructor(
         return other is UpdateOnlineLlmEvaluatorRequest &&
             commitHashOrTag == other.commitHashOrTag &&
             numFewShotExamples == other.numFewShotExamples &&
+            playgroundSettingsId == other.playgroundSettingsId &&
             promptRepoHandle == other.promptRepoHandle &&
             useCorrectionsDataset == other.useCorrectionsDataset &&
             variableMapping == other.variableMapping &&
@@ -325,6 +370,7 @@ private constructor(
         Objects.hash(
             commitHashOrTag,
             numFewShotExamples,
+            playgroundSettingsId,
             promptRepoHandle,
             useCorrectionsDataset,
             variableMapping,
@@ -335,5 +381,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "UpdateOnlineLlmEvaluatorRequest{commitHashOrTag=$commitHashOrTag, numFewShotExamples=$numFewShotExamples, promptRepoHandle=$promptRepoHandle, useCorrectionsDataset=$useCorrectionsDataset, variableMapping=$variableMapping, additionalProperties=$additionalProperties}"
+        "UpdateOnlineLlmEvaluatorRequest{commitHashOrTag=$commitHashOrTag, numFewShotExamples=$numFewShotExamples, playgroundSettingsId=$playgroundSettingsId, promptRepoHandle=$promptRepoHandle, useCorrectionsDataset=$useCorrectionsDataset, variableMapping=$variableMapping, additionalProperties=$additionalProperties}"
 }

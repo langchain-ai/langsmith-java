@@ -77,6 +77,11 @@ internal class CustomChartsSectionTest {
                                         )
                                         .build()
                                 )
+                                .metadata(
+                                    CustomChartsSection.Chart.Series.Metadata.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
                                 .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
                                 .metricDefinition(
                                     CustomChartsSection.Chart.Series.MetricDefinition
@@ -117,6 +122,52 @@ internal class CustomChartsSectionTest {
                 .title("title")
                 .description("description")
                 .index(0L)
+                .layout(
+                    CustomChartsSection.Layout.builder()
+                        .breakpoints(
+                            CustomChartsSection.Layout.Breakpoints.builder()
+                                .md(
+                                    CustomChartsSection.Layout.Breakpoints.Md.builder()
+                                        .addRow(
+                                            CustomChartsSection.Layout.Breakpoints.Md.Row.builder()
+                                                .heightUnits(0L)
+                                                .addItem(
+                                                    CustomChartsSection.Layout.Breakpoints.Md.Row
+                                                        .Item
+                                                        .builder()
+                                                        .chartId(
+                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                                                        )
+                                                        .widthUnits(20L)
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .sm(
+                                    CustomChartsSection.Layout.Breakpoints.Sm.builder()
+                                        .addRow(
+                                            CustomChartsSection.Layout.Breakpoints.Sm.Row.builder()
+                                                .heightUnits(0L)
+                                                .addItem(
+                                                    CustomChartsSection.Layout.Breakpoints.Sm.Row
+                                                        .Item
+                                                        .builder()
+                                                        .chartId(
+                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                                                        )
+                                                        .widthUnits(20L)
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .build()
+                )
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addSubSection(
                     CustomChartsSection.SubSection.builder()
@@ -192,6 +243,12 @@ internal class CustomChartsSectionTest {
                                                         .Attribute
                                                         .NAME
                                                 )
+                                                .build()
+                                        )
+                                        .metadata(
+                                            CustomChartsSection.SubSection.Chart.Series.Metadata
+                                                .builder()
+                                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )
                                         .metric(
@@ -305,6 +362,11 @@ internal class CustomChartsSectionTest {
                                     )
                                     .build()
                             )
+                            .metadata(
+                                CustomChartsSection.Chart.Series.Metadata.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
                             .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
                             .metricDefinition(
                                 CustomChartsSection.Chart.Series.MetricDefinition
@@ -345,6 +407,47 @@ internal class CustomChartsSectionTest {
         assertThat(customChartsSection.title()).isEqualTo("title")
         assertThat(customChartsSection.description()).contains("description")
         assertThat(customChartsSection.index()).contains(0L)
+        assertThat(customChartsSection.layout())
+            .contains(
+                CustomChartsSection.Layout.builder()
+                    .breakpoints(
+                        CustomChartsSection.Layout.Breakpoints.builder()
+                            .md(
+                                CustomChartsSection.Layout.Breakpoints.Md.builder()
+                                    .addRow(
+                                        CustomChartsSection.Layout.Breakpoints.Md.Row.builder()
+                                            .heightUnits(0L)
+                                            .addItem(
+                                                CustomChartsSection.Layout.Breakpoints.Md.Row.Item
+                                                    .builder()
+                                                    .chartId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                                    .widthUnits(20L)
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .sm(
+                                CustomChartsSection.Layout.Breakpoints.Sm.builder()
+                                    .addRow(
+                                        CustomChartsSection.Layout.Breakpoints.Sm.Row.builder()
+                                            .heightUnits(0L)
+                                            .addItem(
+                                                CustomChartsSection.Layout.Breakpoints.Sm.Row.Item
+                                                    .builder()
+                                                    .chartId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                                    .widthUnits(20L)
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
         assertThat(customChartsSection.sessionId()).contains("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(customChartsSection.subSections().getOrNull())
             .containsExactly(
@@ -416,6 +519,12 @@ internal class CustomChartsSectionTest {
                                                     .Attribute
                                                     .NAME
                                             )
+                                            .build()
+                                    )
+                                    .metadata(
+                                        CustomChartsSection.SubSection.Chart.Series.Metadata
+                                            .builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("bar"))
                                             .build()
                                     )
                                     .metric(
@@ -532,6 +641,11 @@ internal class CustomChartsSectionTest {
                                         )
                                         .build()
                                 )
+                                .metadata(
+                                    CustomChartsSection.Chart.Series.Metadata.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
                                 .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
                                 .metricDefinition(
                                     CustomChartsSection.Chart.Series.MetricDefinition
@@ -572,6 +686,52 @@ internal class CustomChartsSectionTest {
                 .title("title")
                 .description("description")
                 .index(0L)
+                .layout(
+                    CustomChartsSection.Layout.builder()
+                        .breakpoints(
+                            CustomChartsSection.Layout.Breakpoints.builder()
+                                .md(
+                                    CustomChartsSection.Layout.Breakpoints.Md.builder()
+                                        .addRow(
+                                            CustomChartsSection.Layout.Breakpoints.Md.Row.builder()
+                                                .heightUnits(0L)
+                                                .addItem(
+                                                    CustomChartsSection.Layout.Breakpoints.Md.Row
+                                                        .Item
+                                                        .builder()
+                                                        .chartId(
+                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                                                        )
+                                                        .widthUnits(20L)
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .sm(
+                                    CustomChartsSection.Layout.Breakpoints.Sm.builder()
+                                        .addRow(
+                                            CustomChartsSection.Layout.Breakpoints.Sm.Row.builder()
+                                                .heightUnits(0L)
+                                                .addItem(
+                                                    CustomChartsSection.Layout.Breakpoints.Sm.Row
+                                                        .Item
+                                                        .builder()
+                                                        .chartId(
+                                                            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"
+                                                        )
+                                                        .widthUnits(20L)
+                                                        .build()
+                                                )
+                                                .build()
+                                        )
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .build()
+                )
                 .sessionId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addSubSection(
                     CustomChartsSection.SubSection.builder()
@@ -647,6 +807,12 @@ internal class CustomChartsSectionTest {
                                                         .Attribute
                                                         .NAME
                                                 )
+                                                .build()
+                                        )
+                                        .metadata(
+                                            CustomChartsSection.SubSection.Chart.Series.Metadata
+                                                .builder()
+                                                .putAdditionalProperty("foo", JsonValue.from("bar"))
                                                 .build()
                                         )
                                         .metric(

@@ -21,6 +21,11 @@ internal class BoxCreateParamsTest {
             )
             .fsCapacityBytes(0L)
             .idleTtlSeconds(0L)
+            .labels(
+                BoxCreateParams.Labels.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
             .memBytes(0L)
             .mountConfig(
                 BoxCreateParams.MountConfig.builder()
@@ -202,6 +207,11 @@ internal class BoxCreateParamsTest {
                                     .build()
                             )
                             .enabled(true)
+                            .envVars(
+                                BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
                             .gcp(
                                 BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")
@@ -256,6 +266,11 @@ internal class BoxCreateParamsTest {
                 )
                 .fsCapacityBytes(0L)
                 .idleTtlSeconds(0L)
+                .labels(
+                    BoxCreateParams.Labels.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .memBytes(0L)
                 .mountConfig(
                     BoxCreateParams.MountConfig.builder()
@@ -445,6 +460,11 @@ internal class BoxCreateParamsTest {
                                         .build()
                                 )
                                 .enabled(true)
+                                .envVars(
+                                    BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                                        .build()
+                                )
                                 .gcp(
                                     BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
                                         .addScope("string")
@@ -499,6 +519,12 @@ internal class BoxCreateParamsTest {
             )
         assertThat(body.fsCapacityBytes()).contains(0L)
         assertThat(body.idleTtlSeconds()).contains(0L)
+        assertThat(body.labels())
+            .contains(
+                BoxCreateParams.Labels.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
         assertThat(body.memBytes()).contains(0L)
         assertThat(body.mountConfig())
             .contains(
@@ -682,6 +708,11 @@ internal class BoxCreateParamsTest {
                                     .build()
                             )
                             .enabled(true)
+                            .envVars(
+                                BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
                             .gcp(
                                 BoxCreateParams.ProxyConfig.Rule.Gcp.builder()
                                     .addScope("string")

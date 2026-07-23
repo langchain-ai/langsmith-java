@@ -3,6 +3,7 @@
 package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -24,6 +25,11 @@ internal class SnapshotListResponseTest {
                         .fsCapacityBytes(0L)
                         .fsUsedBytes(0L)
                         .imageDigest("image_digest")
+                        .labels(
+                            SnapshotResponse.Labels.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
                         .memorySnapshotSizeBytes(0L)
                         .name("name")
                         .registryId("registry_id")
@@ -46,6 +52,11 @@ internal class SnapshotListResponseTest {
                     .fsCapacityBytes(0L)
                     .fsUsedBytes(0L)
                     .imageDigest("image_digest")
+                    .labels(
+                        SnapshotResponse.Labels.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .memorySnapshotSizeBytes(0L)
                     .name("name")
                     .registryId("registry_id")
@@ -72,6 +83,11 @@ internal class SnapshotListResponseTest {
                         .fsCapacityBytes(0L)
                         .fsUsedBytes(0L)
                         .imageDigest("image_digest")
+                        .labels(
+                            SnapshotResponse.Labels.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
                         .memorySnapshotSizeBytes(0L)
                         .name("name")
                         .registryId("registry_id")

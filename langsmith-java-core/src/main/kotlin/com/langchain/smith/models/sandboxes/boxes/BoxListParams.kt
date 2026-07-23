@@ -5,6 +5,7 @@ package com.langchain.smith.models.sandboxes.boxes
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.core.toImmutable
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -15,6 +16,7 @@ import kotlin.jvm.optionals.getOrNull
 class BoxListParams
 private constructor(
     private val createdBy: String?,
+    private val label: List<String>?,
     private val limit: Long?,
     private val nameContains: String?,
     private val offset: Long?,
@@ -27,6 +29,12 @@ private constructor(
 
     /** Filter by creator identity. Only 'me' is supported. */
     fun createdBy(): Optional<String> = Optional.ofNullable(createdBy)
+
+    /**
+     * Filter by label. Repeatable; all must match. Use 'key' to match on key presence or
+     * 'key=value' for equality.
+     */
+    fun label(): Optional<List<String>> = Optional.ofNullable(label)
 
     /** Maximum number of results */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
@@ -66,6 +74,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var createdBy: String? = null
+        private var label: MutableList<String>? = null
         private var limit: Long? = null
         private var nameContains: String? = null
         private var offset: Long? = null
@@ -78,6 +87,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(boxListParams: BoxListParams) = apply {
             createdBy = boxListParams.createdBy
+            label = boxListParams.label?.toMutableList()
             limit = boxListParams.limit
             nameContains = boxListParams.nameContains
             offset = boxListParams.offset
@@ -93,6 +103,24 @@ private constructor(
 
         /** Alias for calling [Builder.createdBy] with `createdBy.orElse(null)`. */
         fun createdBy(createdBy: Optional<String>) = createdBy(createdBy.getOrNull())
+
+        /**
+         * Filter by label. Repeatable; all must match. Use 'key' to match on key presence or
+         * 'key=value' for equality.
+         */
+        fun label(label: List<String>?) = apply { this.label = label?.toMutableList() }
+
+        /** Alias for calling [Builder.label] with `label.orElse(null)`. */
+        fun label(label: Optional<List<String>>) = label(label.getOrNull())
+
+        /**
+         * Adds a single [String] to [Builder.label].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addLabel(label: String) = apply {
+            this.label = (this.label ?: mutableListOf()).apply { add(label) }
+        }
 
         /** Maximum number of results */
         fun limit(limit: Long?) = apply { this.limit = limit }
@@ -251,6 +279,7 @@ private constructor(
         fun build(): BoxListParams =
             BoxListParams(
                 createdBy,
+                label?.toImmutable(),
                 limit,
                 nameContains,
                 offset,
@@ -268,6 +297,7 @@ private constructor(
         QueryParams.builder()
             .apply {
                 createdBy?.let { put("created_by", it) }
+                label?.forEach { put("label", it) }
                 limit?.let { put("limit", it.toString()) }
                 nameContains?.let { put("name_contains", it) }
                 offset?.let { put("offset", it.toString()) }
@@ -285,6 +315,7 @@ private constructor(
 
         return other is BoxListParams &&
             createdBy == other.createdBy &&
+            label == other.label &&
             limit == other.limit &&
             nameContains == other.nameContains &&
             offset == other.offset &&
@@ -298,6 +329,7 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             createdBy,
+            label,
             limit,
             nameContains,
             offset,
@@ -309,5 +341,5 @@ private constructor(
         )
 
     override fun toString() =
-        "BoxListParams{createdBy=$createdBy, limit=$limit, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortDirection=$sortDirection, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "BoxListParams{createdBy=$createdBy, label=$label, limit=$limit, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortDirection=$sortDirection, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

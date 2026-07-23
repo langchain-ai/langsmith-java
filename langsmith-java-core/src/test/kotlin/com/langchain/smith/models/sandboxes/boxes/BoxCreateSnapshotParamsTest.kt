@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.boxes
 
+import com.langchain.smith.core.JsonValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -16,6 +17,11 @@ internal class BoxCreateSnapshotParamsTest {
             .dockerImage("docker_image")
             .fsCapacityBytes(0L)
             .includeMemory(true)
+            .labels(
+                BoxCreateSnapshotParams.Labels.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
             .build()
     }
 
@@ -38,6 +44,11 @@ internal class BoxCreateSnapshotParamsTest {
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
                 .includeMemory(true)
+                .labels(
+                    BoxCreateSnapshotParams.Labels.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                        .build()
+                )
                 .build()
 
         val body = params._body()
@@ -47,6 +58,12 @@ internal class BoxCreateSnapshotParamsTest {
         assertThat(body.dockerImage()).contains("docker_image")
         assertThat(body.fsCapacityBytes()).contains(0L)
         assertThat(body.includeMemory()).contains(true)
+        assertThat(body.labels())
+            .contains(
+                BoxCreateSnapshotParams.Labels.builder()
+                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
     }
 
     @Test

@@ -430,6 +430,8 @@ private constructor(
 
             @JvmField val IS_IN_DATASET = of("IS_IN_DATASET")
 
+            @JvmField val LAST_QUEUED_AT = of("LAST_QUEUED_AT")
+
             @JvmField val SHARE_URL = of("SHARE_URL")
 
             @JvmField val FEEDBACK_STATS = of("FEEDBACK_STATS")
@@ -481,6 +483,7 @@ private constructor(
             ATTACHMENTS,
             THREAD_EVALUATION_TIME,
             IS_IN_DATASET,
+            LAST_QUEUED_AT,
             SHARE_URL,
             FEEDBACK_STATS,
         }
@@ -537,6 +540,7 @@ private constructor(
             ATTACHMENTS,
             THREAD_EVALUATION_TIME,
             IS_IN_DATASET,
+            LAST_QUEUED_AT,
             SHARE_URL,
             FEEDBACK_STATS,
             /** An enum member indicating that [Select] was instantiated with an unknown value. */
@@ -594,6 +598,7 @@ private constructor(
                 ATTACHMENTS -> Value.ATTACHMENTS
                 THREAD_EVALUATION_TIME -> Value.THREAD_EVALUATION_TIME
                 IS_IN_DATASET -> Value.IS_IN_DATASET
+                LAST_QUEUED_AT -> Value.LAST_QUEUED_AT
                 SHARE_URL -> Value.SHARE_URL
                 FEEDBACK_STATS -> Value.FEEDBACK_STATS
                 else -> Value._UNKNOWN
@@ -652,6 +657,7 @@ private constructor(
                 ATTACHMENTS -> Known.ATTACHMENTS
                 THREAD_EVALUATION_TIME -> Known.THREAD_EVALUATION_TIME
                 IS_IN_DATASET -> Known.IS_IN_DATASET
+                LAST_QUEUED_AT -> Known.LAST_QUEUED_AT
                 SHARE_URL -> Known.SHARE_URL
                 FEEDBACK_STATS -> Known.FEEDBACK_STATS
                 else -> throw LangChainInvalidDataException("Unknown Select: $value")

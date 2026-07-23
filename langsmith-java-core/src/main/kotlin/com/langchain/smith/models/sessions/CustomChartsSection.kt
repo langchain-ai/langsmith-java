@@ -40,6 +40,7 @@ private constructor(
     private val title: JsonField<String>,
     private val description: JsonField<String>,
     private val index: JsonField<Long>,
+    private val layout: JsonField<Layout>,
     private val sessionId: JsonField<String>,
     private val subSections: JsonField<List<SubSection>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -54,11 +55,12 @@ private constructor(
         @ExcludeMissing
         description: JsonField<String> = JsonMissing.of(),
         @JsonProperty("index") @ExcludeMissing index: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("layout") @ExcludeMissing layout: JsonField<Layout> = JsonMissing.of(),
         @JsonProperty("session_id") @ExcludeMissing sessionId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("sub_sections")
         @ExcludeMissing
         subSections: JsonField<List<SubSection>> = JsonMissing.of(),
-    ) : this(id, charts, title, description, index, sessionId, subSections, mutableMapOf())
+    ) : this(id, charts, title, description, index, layout, sessionId, subSections, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -89,6 +91,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun index(): Optional<Long> = index.getOptional("index")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun layout(): Optional<Layout> = layout.getOptional("layout")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -136,6 +144,13 @@ private constructor(
      * Unlike [index], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("index") @ExcludeMissing fun _index(): JsonField<Long> = index
+
+    /**
+     * Returns the raw JSON value of [layout].
+     *
+     * Unlike [layout], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("layout") @ExcludeMissing fun _layout(): JsonField<Layout> = layout
 
     /**
      * Returns the raw JSON value of [sessionId].
@@ -188,6 +203,7 @@ private constructor(
         private var title: JsonField<String>? = null
         private var description: JsonField<String> = JsonMissing.of()
         private var index: JsonField<Long> = JsonMissing.of()
+        private var layout: JsonField<Layout> = JsonMissing.of()
         private var sessionId: JsonField<String> = JsonMissing.of()
         private var subSections: JsonField<MutableList<SubSection>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -199,6 +215,7 @@ private constructor(
             title = customChartsSection.title
             description = customChartsSection.description
             index = customChartsSection.index
+            layout = customChartsSection.layout
             sessionId = customChartsSection.sessionId
             subSections = customChartsSection.subSections.map { it.toMutableList() }
             additionalProperties = customChartsSection.additionalProperties.toMutableMap()
@@ -282,6 +299,19 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun index(index: JsonField<Long>) = apply { this.index = index }
+
+        fun layout(layout: Layout?) = layout(JsonField.ofNullable(layout))
+
+        /** Alias for calling [Builder.layout] with `layout.orElse(null)`. */
+        fun layout(layout: Optional<Layout>) = layout(layout.getOrNull())
+
+        /**
+         * Sets [Builder.layout] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.layout] with a well-typed [Layout] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun layout(layout: JsonField<Layout>) = apply { this.layout = layout }
 
         fun sessionId(sessionId: String?) = sessionId(JsonField.ofNullable(sessionId))
 
@@ -367,6 +397,7 @@ private constructor(
                 checkRequired("title", title),
                 description,
                 index,
+                layout,
                 sessionId,
                 (subSections ?: JsonMissing.of()).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
@@ -393,6 +424,7 @@ private constructor(
         title()
         description()
         index()
+        layout().ifPresent { it.validate() }
         sessionId()
         subSections().ifPresent { it.forEach { it.validate() } }
         validated = true
@@ -418,6 +450,7 @@ private constructor(
             (if (title.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
             (if (index.asKnown().isPresent) 1 else 0) +
+            (layout.asKnown().getOrNull()?.validity() ?: 0) +
             (if (sessionId.asKnown().isPresent) 1 else 0) +
             (subSections.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
@@ -1713,6 +1746,7 @@ private constructor(
             private val filters: JsonField<Filters>,
             private val groupBy: JsonField<GroupBy>,
             private val groupByDefinitions: JsonField<List<GroupByDefinition>>,
+            private val metadata: JsonField<Metadata>,
             private val metric: JsonField<Metric>,
             private val metricDefinition: JsonField<MetricDefinition>,
             private val projectMetric: JsonField<ProjectMetric>,
@@ -1739,6 +1773,9 @@ private constructor(
                 @JsonProperty("group_by_definitions")
                 @ExcludeMissing
                 groupByDefinitions: JsonField<List<GroupByDefinition>> = JsonMissing.of(),
+                @JsonProperty("metadata")
+                @ExcludeMissing
+                metadata: JsonField<Metadata> = JsonMissing.of(),
                 @JsonProperty("metric")
                 @ExcludeMissing
                 metric: JsonField<Metric> = JsonMissing.of(),
@@ -1759,6 +1796,7 @@ private constructor(
                 filters,
                 groupBy,
                 groupByDefinitions,
+                metadata,
                 metric,
                 metricDefinition,
                 projectMetric,
@@ -1813,6 +1851,12 @@ private constructor(
              */
             fun groupByDefinitions(): Optional<List<GroupByDefinition>> =
                 groupByDefinitions.getOptional("group_by_definitions")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
             /**
              * Metrics you can chart. Feedback metrics are not available for organization-scoped
@@ -1904,6 +1948,16 @@ private constructor(
             fun _groupByDefinitions(): JsonField<List<GroupByDefinition>> = groupByDefinitions
 
             /**
+             * Returns the raw JSON value of [metadata].
+             *
+             * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("metadata")
+            @ExcludeMissing
+            fun _metadata(): JsonField<Metadata> = metadata
+
+            /**
              * Returns the raw JSON value of [metric].
              *
              * Unlike [metric], this method doesn't throw if the JSON field has an unexpected type.
@@ -1976,6 +2030,7 @@ private constructor(
                 private var filters: JsonField<Filters> = JsonMissing.of()
                 private var groupBy: JsonField<GroupBy> = JsonMissing.of()
                 private var groupByDefinitions: JsonField<MutableList<GroupByDefinition>>? = null
+                private var metadata: JsonField<Metadata> = JsonMissing.of()
                 private var metric: JsonField<Metric> = JsonMissing.of()
                 private var metricDefinition: JsonField<MetricDefinition> = JsonMissing.of()
                 private var projectMetric: JsonField<ProjectMetric> = JsonMissing.of()
@@ -1991,6 +2046,7 @@ private constructor(
                     filters = series.filters
                     groupBy = series.groupBy
                     groupByDefinitions = series.groupByDefinitions.map { it.toMutableList() }
+                    metadata = series.metadata
                     metric = series.metric
                     metricDefinition = series.metricDefinition
                     projectMetric = series.projectMetric
@@ -2168,6 +2224,20 @@ private constructor(
                     addGroupByDefinition(
                         GroupByDefinition.ofCustomChartGroupByComplex(customChartGroupByComplex)
                     )
+
+                fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+                /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+                fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+                /**
+                 * Sets [Builder.metadata] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.metadata] with a well-typed [Metadata] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
                 /**
                  * Metrics you can chart. Feedback metrics are not available for organization-scoped
@@ -2349,6 +2419,7 @@ private constructor(
                         filters,
                         groupBy,
                         (groupByDefinitions ?: JsonMissing.of()).map { it.toImmutable() },
+                        metadata,
                         metric,
                         metricDefinition,
                         projectMetric,
@@ -2381,6 +2452,7 @@ private constructor(
                 filters().ifPresent { it.validate() }
                 groupBy().ifPresent { it.validate() }
                 groupByDefinitions().ifPresent { it.forEach { it.validate() } }
+                metadata().ifPresent { it.validate() }
                 metric().ifPresent { it.validate() }
                 metricDefinition().ifPresent { it.validate() }
                 projectMetric().ifPresent { it.validate() }
@@ -2412,6 +2484,7 @@ private constructor(
                     (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
                     (groupByDefinitions.asKnown().getOrNull()?.sumOf { it.validity().toInt() }
                         ?: 0) +
+                    (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                     (metric.asKnown().getOrNull()?.validity() ?: 0) +
                     (metricDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                     (projectMetric.asKnown().getOrNull()?.validity() ?: 0) +
@@ -5215,6 +5288,120 @@ private constructor(
                     override fun toString() =
                         "CustomChartGroupByComplex{attribute=$attribute, path=$path, additionalProperties=$additionalProperties}"
                 }
+            }
+
+            class Metadata
+            @JsonCreator
+            private constructor(
+                @com.fasterxml.jackson.annotation.JsonValue
+                private val additionalProperties: Map<String, JsonValue>
+            ) {
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /** Returns a mutable builder for constructing an instance of [Metadata]. */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Metadata]. */
+                class Builder internal constructor() {
+
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(metadata: Metadata) = apply {
+                        additionalProperties = metadata.additionalProperties.toMutableMap()
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Metadata].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     */
+                    fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Metadata = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    additionalProperties.count { (_, value) ->
+                        !value.isNull() && !value.isMissing()
+                    }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Metadata && additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
             }
 
             /**
@@ -14069,6 +14256,8 @@ private constructor(
 
                     @JvmField val P95_LATENCY = of("p95_latency")
 
+                    @JvmField val RUN_QUEUE_WAIT_TIME = of("run_queue_wait_time")
+
                     @JvmStatic fun of(value: String) = ProjectMetric(JsonField.of(value))
                 }
 
@@ -14084,6 +14273,7 @@ private constructor(
                     RESPONSES_PER_SECOND,
                     ERROR_RESPONSES_PER_SECOND,
                     P95_LATENCY,
+                    RUN_QUEUE_WAIT_TIME,
                 }
 
                 /**
@@ -14107,6 +14297,7 @@ private constructor(
                     RESPONSES_PER_SECOND,
                     ERROR_RESPONSES_PER_SECOND,
                     P95_LATENCY,
+                    RUN_QUEUE_WAIT_TIME,
                     /**
                      * An enum member indicating that [ProjectMetric] was instantiated with an
                      * unknown value.
@@ -14133,6 +14324,7 @@ private constructor(
                         RESPONSES_PER_SECOND -> Value.RESPONSES_PER_SECOND
                         ERROR_RESPONSES_PER_SECOND -> Value.ERROR_RESPONSES_PER_SECOND
                         P95_LATENCY -> Value.P95_LATENCY
+                        RUN_QUEUE_WAIT_TIME -> Value.RUN_QUEUE_WAIT_TIME
                         else -> Value._UNKNOWN
                     }
 
@@ -14157,6 +14349,7 @@ private constructor(
                         RESPONSES_PER_SECOND -> Known.RESPONSES_PER_SECOND
                         ERROR_RESPONSES_PER_SECOND -> Known.ERROR_RESPONSES_PER_SECOND
                         P95_LATENCY -> Known.P95_LATENCY
+                        RUN_QUEUE_WAIT_TIME -> Known.RUN_QUEUE_WAIT_TIME
                         else -> throw LangChainInvalidDataException("Unknown ProjectMetric: $value")
                     }
 
@@ -14237,6 +14430,7 @@ private constructor(
                     filters == other.filters &&
                     groupBy == other.groupBy &&
                     groupByDefinitions == other.groupByDefinitions &&
+                    metadata == other.metadata &&
                     metric == other.metric &&
                     metricDefinition == other.metricDefinition &&
                     projectMetric == other.projectMetric &&
@@ -14253,6 +14447,7 @@ private constructor(
                     filters,
                     groupBy,
                     groupByDefinitions,
+                    metadata,
                     metric,
                     metricDefinition,
                     projectMetric,
@@ -14264,7 +14459,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
+                "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metadata=$metadata, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
         }
 
         class CommonFilters
@@ -14719,6 +14914,1727 @@ private constructor(
 
         override fun toString() =
             "Chart{id=$id, chartType=$chartType, data=$data, index=$index, series=$series, title=$title, commonFilters=$commonFilters, description=$description, metadata=$metadata, additionalProperties=$additionalProperties}"
+    }
+
+    class Layout
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val breakpoints: JsonField<Breakpoints>,
+        private val version: JsonValue,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("breakpoints")
+            @ExcludeMissing
+            breakpoints: JsonField<Breakpoints> = JsonMissing.of(),
+            @JsonProperty("version") @ExcludeMissing version: JsonValue = JsonMissing.of(),
+        ) : this(breakpoints, version, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         */
+        fun breakpoints(): Breakpoints = breakpoints.getRequired("breakpoints")
+
+        /**
+         * Expected to always return the following:
+         * ```java
+         * JsonValue.from(1)
+         * ```
+         *
+         * However, this method can be useful for debugging and logging (e.g. if the server
+         * responded with an unexpected value).
+         */
+        @JsonProperty("version") @ExcludeMissing fun _version(): JsonValue = version
+
+        /**
+         * Returns the raw JSON value of [breakpoints].
+         *
+         * Unlike [breakpoints], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("breakpoints")
+        @ExcludeMissing
+        fun _breakpoints(): JsonField<Breakpoints> = breakpoints
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /**
+             * Returns a mutable builder for constructing an instance of [Layout].
+             *
+             * The following fields are required:
+             * ```java
+             * .breakpoints()
+             * ```
+             */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Layout]. */
+        class Builder internal constructor() {
+
+            private var breakpoints: JsonField<Breakpoints>? = null
+            private var version: JsonValue = JsonValue.from(1)
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(layout: Layout) = apply {
+                breakpoints = layout.breakpoints
+                version = layout.version
+                additionalProperties = layout.additionalProperties.toMutableMap()
+            }
+
+            fun breakpoints(breakpoints: Breakpoints) = breakpoints(JsonField.of(breakpoints))
+
+            /**
+             * Sets [Builder.breakpoints] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.breakpoints] with a well-typed [Breakpoints] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun breakpoints(breakpoints: JsonField<Breakpoints>) = apply {
+                this.breakpoints = breakpoints
+            }
+
+            /**
+             * Sets the field to an arbitrary JSON value.
+             *
+             * It is usually unnecessary to call this method because the field defaults to the
+             * following:
+             * ```java
+             * JsonValue.from(1)
+             * ```
+             *
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun version(version: JsonValue) = apply { this.version = version }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Layout].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             *
+             * The following fields are required:
+             * ```java
+             * .breakpoints()
+             * ```
+             *
+             * @throws IllegalStateException if any required field is unset.
+             */
+            fun build(): Layout =
+                Layout(
+                    checkRequired("breakpoints", breakpoints),
+                    version,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Layout = apply {
+            if (validated) {
+                return@apply
+            }
+
+            breakpoints().validate()
+            _version().let {
+                if (it != JsonValue.from(1)) {
+                    throw LangChainInvalidDataException("'version' is invalid, received $it")
+                }
+            }
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (breakpoints.asKnown().getOrNull()?.validity() ?: 0) +
+                version.let { if (it == JsonValue.from(1)) 1 else 0 }
+
+        class Breakpoints
+        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+        private constructor(
+            private val md: JsonField<Md>,
+            private val sm: JsonField<Sm>,
+            private val additionalProperties: MutableMap<String, JsonValue>,
+        ) {
+
+            @JsonCreator
+            private constructor(
+                @JsonProperty("md") @ExcludeMissing md: JsonField<Md> = JsonMissing.of(),
+                @JsonProperty("sm") @ExcludeMissing sm: JsonField<Sm> = JsonMissing.of(),
+            ) : this(md, sm, mutableMapOf())
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun md(): Md = md.getRequired("md")
+
+            /**
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
+             *   value).
+             */
+            fun sm(): Sm = sm.getRequired("sm")
+
+            /**
+             * Returns the raw JSON value of [md].
+             *
+             * Unlike [md], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("md") @ExcludeMissing fun _md(): JsonField<Md> = md
+
+            /**
+             * Returns the raw JSON value of [sm].
+             *
+             * Unlike [sm], this method doesn't throw if the JSON field has an unexpected type.
+             */
+            @JsonProperty("sm") @ExcludeMissing fun _sm(): JsonField<Sm> = sm
+
+            @JsonAnySetter
+            private fun putAdditionalProperty(key: String, value: JsonValue) {
+                additionalProperties.put(key, value)
+            }
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> =
+                Collections.unmodifiableMap(additionalProperties)
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /**
+                 * Returns a mutable builder for constructing an instance of [Breakpoints].
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .md()
+                 * .sm()
+                 * ```
+                 */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [Breakpoints]. */
+            class Builder internal constructor() {
+
+                private var md: JsonField<Md>? = null
+                private var sm: JsonField<Sm>? = null
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(breakpoints: Breakpoints) = apply {
+                    md = breakpoints.md
+                    sm = breakpoints.sm
+                    additionalProperties = breakpoints.additionalProperties.toMutableMap()
+                }
+
+                fun md(md: Md) = md(JsonField.of(md))
+
+                /**
+                 * Sets [Builder.md] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.md] with a well-typed [Md] value instead. This
+                 * method is primarily for setting the field to an undocumented or not yet supported
+                 * value.
+                 */
+                fun md(md: JsonField<Md>) = apply { this.md = md }
+
+                fun sm(sm: Sm) = sm(JsonField.of(sm))
+
+                /**
+                 * Sets [Builder.sm] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.sm] with a well-typed [Sm] value instead. This
+                 * method is primarily for setting the field to an undocumented or not yet supported
+                 * value.
+                 */
+                fun sm(sm: JsonField<Sm>) = apply { this.sm = sm }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [Breakpoints].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 *
+                 * The following fields are required:
+                 * ```java
+                 * .md()
+                 * .sm()
+                 * ```
+                 *
+                 * @throws IllegalStateException if any required field is unset.
+                 */
+                fun build(): Breakpoints =
+                    Breakpoints(
+                        checkRequired("md", md),
+                        checkRequired("sm", sm),
+                        additionalProperties.toMutableMap(),
+                    )
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): Breakpoints = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                md().validate()
+                sm().validate()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                (md.asKnown().getOrNull()?.validity() ?: 0) +
+                    (sm.asKnown().getOrNull()?.validity() ?: 0)
+
+            class Md
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val rows: JsonField<List<Row>>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("rows")
+                    @ExcludeMissing
+                    rows: JsonField<List<Row>> = JsonMissing.of()
+                ) : this(rows, mutableMapOf())
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun rows(): List<Row> = rows.getRequired("rows")
+
+                /**
+                 * Returns the raw JSON value of [rows].
+                 *
+                 * Unlike [rows], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("rows") @ExcludeMissing fun _rows(): JsonField<List<Row>> = rows
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /**
+                     * Returns a mutable builder for constructing an instance of [Md].
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .rows()
+                     * ```
+                     */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Md]. */
+                class Builder internal constructor() {
+
+                    private var rows: JsonField<MutableList<Row>>? = null
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(md: Md) = apply {
+                        rows = md.rows.map { it.toMutableList() }
+                        additionalProperties = md.additionalProperties.toMutableMap()
+                    }
+
+                    fun rows(rows: List<Row>) = rows(JsonField.of(rows))
+
+                    /**
+                     * Sets [Builder.rows] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.rows] with a well-typed `List<Row>` value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun rows(rows: JsonField<List<Row>>) = apply {
+                        this.rows = rows.map { it.toMutableList() }
+                    }
+
+                    /**
+                     * Adds a single [Row] to [rows].
+                     *
+                     * @throws IllegalStateException if the field was previously set to a non-list.
+                     */
+                    fun addRow(row: Row) = apply {
+                        rows =
+                            (rows ?: JsonField.of(mutableListOf())).also {
+                                checkKnown("rows", it).add(row)
+                            }
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Md].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .rows()
+                     * ```
+                     *
+                     * @throws IllegalStateException if any required field is unset.
+                     */
+                    fun build(): Md =
+                        Md(
+                            checkRequired("rows", rows).map { it.toImmutable() },
+                            additionalProperties.toMutableMap(),
+                        )
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Md = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    rows().forEach { it.validate() }
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (rows.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+                class Row
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val heightUnits: JsonField<Long>,
+                    private val items: JsonField<List<Item>>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("height_units")
+                        @ExcludeMissing
+                        heightUnits: JsonField<Long> = JsonMissing.of(),
+                        @JsonProperty("items")
+                        @ExcludeMissing
+                        items: JsonField<List<Item>> = JsonMissing.of(),
+                    ) : this(heightUnits, items, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun heightUnits(): Long = heightUnits.getRequired("height_units")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun items(): List<Item> = items.getRequired("items")
+
+                    /**
+                     * Returns the raw JSON value of [heightUnits].
+                     *
+                     * Unlike [heightUnits], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("height_units")
+                    @ExcludeMissing
+                    fun _heightUnits(): JsonField<Long> = heightUnits
+
+                    /**
+                     * Returns the raw JSON value of [items].
+                     *
+                     * Unlike [items], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("items")
+                    @ExcludeMissing
+                    fun _items(): JsonField<List<Item>> = items
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Row].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .heightUnits()
+                         * .items()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Row]. */
+                    class Builder internal constructor() {
+
+                        private var heightUnits: JsonField<Long>? = null
+                        private var items: JsonField<MutableList<Item>>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(row: Row) = apply {
+                            heightUnits = row.heightUnits
+                            items = row.items.map { it.toMutableList() }
+                            additionalProperties = row.additionalProperties.toMutableMap()
+                        }
+
+                        fun heightUnits(heightUnits: Long) = heightUnits(JsonField.of(heightUnits))
+
+                        /**
+                         * Sets [Builder.heightUnits] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.heightUnits] with a well-typed [Long]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun heightUnits(heightUnits: JsonField<Long>) = apply {
+                            this.heightUnits = heightUnits
+                        }
+
+                        fun items(items: List<Item>) = items(JsonField.of(items))
+
+                        /**
+                         * Sets [Builder.items] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.items] with a well-typed `List<Item>`
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun items(items: JsonField<List<Item>>) = apply {
+                            this.items = items.map { it.toMutableList() }
+                        }
+
+                        /**
+                         * Adds a single [Item] to [items].
+                         *
+                         * @throws IllegalStateException if the field was previously set to a
+                         *   non-list.
+                         */
+                        fun addItem(item: Item) = apply {
+                            items =
+                                (items ?: JsonField.of(mutableListOf())).also {
+                                    checkKnown("items", it).add(item)
+                                }
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Row].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .heightUnits()
+                         * .items()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Row =
+                            Row(
+                                checkRequired("heightUnits", heightUnits),
+                                checkRequired("items", items).map { it.toImmutable() },
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Row = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        heightUnits()
+                        items().forEach { it.validate() }
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (heightUnits.asKnown().isPresent) 1 else 0) +
+                            (items.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+                    class Item
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val chartId: JsonField<String>,
+                        private val widthUnits: JsonField<Long>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("chart_id")
+                            @ExcludeMissing
+                            chartId: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("width_units")
+                            @ExcludeMissing
+                            widthUnits: JsonField<Long> = JsonMissing.of(),
+                        ) : this(chartId, widthUnits, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun chartId(): String = chartId.getRequired("chart_id")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun widthUnits(): Long = widthUnits.getRequired("width_units")
+
+                        /**
+                         * Returns the raw JSON value of [chartId].
+                         *
+                         * Unlike [chartId], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("chart_id")
+                        @ExcludeMissing
+                        fun _chartId(): JsonField<String> = chartId
+
+                        /**
+                         * Returns the raw JSON value of [widthUnits].
+                         *
+                         * Unlike [widthUnits], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("width_units")
+                        @ExcludeMissing
+                        fun _widthUnits(): JsonField<Long> = widthUnits
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of [Item].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .chartId()
+                             * .widthUnits()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [Item]. */
+                        class Builder internal constructor() {
+
+                            private var chartId: JsonField<String>? = null
+                            private var widthUnits: JsonField<Long>? = null
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(item: Item) = apply {
+                                chartId = item.chartId
+                                widthUnits = item.widthUnits
+                                additionalProperties = item.additionalProperties.toMutableMap()
+                            }
+
+                            fun chartId(chartId: String) = chartId(JsonField.of(chartId))
+
+                            /**
+                             * Sets [Builder.chartId] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.chartId] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun chartId(chartId: JsonField<String>) = apply {
+                                this.chartId = chartId
+                            }
+
+                            fun widthUnits(widthUnits: Long) = widthUnits(JsonField.of(widthUnits))
+
+                            /**
+                             * Sets [Builder.widthUnits] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.widthUnits] with a well-typed [Long]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun widthUnits(widthUnits: JsonField<Long>) = apply {
+                                this.widthUnits = widthUnits
+                            }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [Item].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .chartId()
+                             * .widthUnits()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): Item =
+                                Item(
+                                    checkRequired("chartId", chartId),
+                                    checkRequired("widthUnits", widthUnits),
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Item = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            chartId()
+                            widthUnits()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (if (chartId.asKnown().isPresent) 1 else 0) +
+                                (if (widthUnits.asKnown().isPresent) 1 else 0)
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Item &&
+                                chartId == other.chartId &&
+                                widthUnits == other.widthUnits &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(chartId, widthUnits, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "Item{chartId=$chartId, widthUnits=$widthUnits, additionalProperties=$additionalProperties}"
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Row &&
+                            heightUnits == other.heightUnits &&
+                            items == other.items &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(heightUnits, items, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Row{heightUnits=$heightUnits, items=$items, additionalProperties=$additionalProperties}"
+                }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Md &&
+                        rows == other.rows &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy { Objects.hash(rows, additionalProperties) }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "Md{rows=$rows, additionalProperties=$additionalProperties}"
+            }
+
+            class Sm
+            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+            private constructor(
+                private val rows: JsonField<List<Row>>,
+                private val additionalProperties: MutableMap<String, JsonValue>,
+            ) {
+
+                @JsonCreator
+                private constructor(
+                    @JsonProperty("rows")
+                    @ExcludeMissing
+                    rows: JsonField<List<Row>> = JsonMissing.of()
+                ) : this(rows, mutableMapOf())
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type or
+                 *   is unexpectedly missing or null (e.g. if the server responded with an
+                 *   unexpected value).
+                 */
+                fun rows(): List<Row> = rows.getRequired("rows")
+
+                /**
+                 * Returns the raw JSON value of [rows].
+                 *
+                 * Unlike [rows], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("rows") @ExcludeMissing fun _rows(): JsonField<List<Row>> = rows
+
+                @JsonAnySetter
+                private fun putAdditionalProperty(key: String, value: JsonValue) {
+                    additionalProperties.put(key, value)
+                }
+
+                @JsonAnyGetter
+                @ExcludeMissing
+                fun _additionalProperties(): Map<String, JsonValue> =
+                    Collections.unmodifiableMap(additionalProperties)
+
+                fun toBuilder() = Builder().from(this)
+
+                companion object {
+
+                    /**
+                     * Returns a mutable builder for constructing an instance of [Sm].
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .rows()
+                     * ```
+                     */
+                    @JvmStatic fun builder() = Builder()
+                }
+
+                /** A builder for [Sm]. */
+                class Builder internal constructor() {
+
+                    private var rows: JsonField<MutableList<Row>>? = null
+                    private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                    @JvmSynthetic
+                    internal fun from(sm: Sm) = apply {
+                        rows = sm.rows.map { it.toMutableList() }
+                        additionalProperties = sm.additionalProperties.toMutableMap()
+                    }
+
+                    fun rows(rows: List<Row>) = rows(JsonField.of(rows))
+
+                    /**
+                     * Sets [Builder.rows] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.rows] with a well-typed `List<Row>` value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun rows(rows: JsonField<List<Row>>) = apply {
+                        this.rows = rows.map { it.toMutableList() }
+                    }
+
+                    /**
+                     * Adds a single [Row] to [rows].
+                     *
+                     * @throws IllegalStateException if the field was previously set to a non-list.
+                     */
+                    fun addRow(row: Row) = apply {
+                        rows =
+                            (rows ?: JsonField.of(mutableListOf())).also {
+                                checkKnown("rows", it).add(row)
+                            }
+                    }
+
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
+
+                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                        additionalProperties.put(key, value)
+                    }
+
+                    fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.putAll(additionalProperties)
+                        }
+
+                    fun removeAdditionalProperty(key: String) = apply {
+                        additionalProperties.remove(key)
+                    }
+
+                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
+
+                    /**
+                     * Returns an immutable instance of [Sm].
+                     *
+                     * Further updates to this [Builder] will not mutate the returned instance.
+                     *
+                     * The following fields are required:
+                     * ```java
+                     * .rows()
+                     * ```
+                     *
+                     * @throws IllegalStateException if any required field is unset.
+                     */
+                    fun build(): Sm =
+                        Sm(
+                            checkRequired("rows", rows).map { it.toImmutable() },
+                            additionalProperties.toMutableMap(),
+                        )
+                }
+
+                private var validated: Boolean = false
+
+                /**
+                 * Validates that the types of all values in this object match their expected types
+                 * recursively.
+                 *
+                 * This method is _not_ forwards compatible with new types from the API for existing
+                 * fields.
+                 *
+                 * @throws LangChainInvalidDataException if any value type in this object doesn't
+                 *   match its expected type.
+                 */
+                fun validate(): Sm = apply {
+                    if (validated) {
+                        return@apply
+                    }
+
+                    rows().forEach { it.validate() }
+                    validated = true
+                }
+
+                fun isValid(): Boolean =
+                    try {
+                        validate()
+                        true
+                    } catch (e: LangChainInvalidDataException) {
+                        false
+                    }
+
+                /**
+                 * Returns a score indicating how many valid values are contained in this object
+                 * recursively.
+                 *
+                 * Used for best match union deserialization.
+                 */
+                @JvmSynthetic
+                internal fun validity(): Int =
+                    (rows.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+                class Row
+                @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                private constructor(
+                    private val heightUnits: JsonField<Long>,
+                    private val items: JsonField<List<Item>>,
+                    private val additionalProperties: MutableMap<String, JsonValue>,
+                ) {
+
+                    @JsonCreator
+                    private constructor(
+                        @JsonProperty("height_units")
+                        @ExcludeMissing
+                        heightUnits: JsonField<Long> = JsonMissing.of(),
+                        @JsonProperty("items")
+                        @ExcludeMissing
+                        items: JsonField<List<Item>> = JsonMissing.of(),
+                    ) : this(heightUnits, items, mutableMapOf())
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun heightUnits(): Long = heightUnits.getRequired("height_units")
+
+                    /**
+                     * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                     *   type or is unexpectedly missing or null (e.g. if the server responded with
+                     *   an unexpected value).
+                     */
+                    fun items(): List<Item> = items.getRequired("items")
+
+                    /**
+                     * Returns the raw JSON value of [heightUnits].
+                     *
+                     * Unlike [heightUnits], this method doesn't throw if the JSON field has an
+                     * unexpected type.
+                     */
+                    @JsonProperty("height_units")
+                    @ExcludeMissing
+                    fun _heightUnits(): JsonField<Long> = heightUnits
+
+                    /**
+                     * Returns the raw JSON value of [items].
+                     *
+                     * Unlike [items], this method doesn't throw if the JSON field has an unexpected
+                     * type.
+                     */
+                    @JsonProperty("items")
+                    @ExcludeMissing
+                    fun _items(): JsonField<List<Item>> = items
+
+                    @JsonAnySetter
+                    private fun putAdditionalProperty(key: String, value: JsonValue) {
+                        additionalProperties.put(key, value)
+                    }
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> =
+                        Collections.unmodifiableMap(additionalProperties)
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /**
+                         * Returns a mutable builder for constructing an instance of [Row].
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .heightUnits()
+                         * .items()
+                         * ```
+                         */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Row]. */
+                    class Builder internal constructor() {
+
+                        private var heightUnits: JsonField<Long>? = null
+                        private var items: JsonField<MutableList<Item>>? = null
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(row: Row) = apply {
+                            heightUnits = row.heightUnits
+                            items = row.items.map { it.toMutableList() }
+                            additionalProperties = row.additionalProperties.toMutableMap()
+                        }
+
+                        fun heightUnits(heightUnits: Long) = heightUnits(JsonField.of(heightUnits))
+
+                        /**
+                         * Sets [Builder.heightUnits] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.heightUnits] with a well-typed [Long]
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun heightUnits(heightUnits: JsonField<Long>) = apply {
+                            this.heightUnits = heightUnits
+                        }
+
+                        fun items(items: List<Item>) = items(JsonField.of(items))
+
+                        /**
+                         * Sets [Builder.items] to an arbitrary JSON value.
+                         *
+                         * You should usually call [Builder.items] with a well-typed `List<Item>`
+                         * value instead. This method is primarily for setting the field to an
+                         * undocumented or not yet supported value.
+                         */
+                        fun items(items: JsonField<List<Item>>) = apply {
+                            this.items = items.map { it.toMutableList() }
+                        }
+
+                        /**
+                         * Adds a single [Item] to [items].
+                         *
+                         * @throws IllegalStateException if the field was previously set to a
+                         *   non-list.
+                         */
+                        fun addItem(item: Item) = apply {
+                            items =
+                                (items ?: JsonField.of(mutableListOf())).also {
+                                    checkKnown("items", it).add(item)
+                                }
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Row].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         *
+                         * The following fields are required:
+                         * ```java
+                         * .heightUnits()
+                         * .items()
+                         * ```
+                         *
+                         * @throws IllegalStateException if any required field is unset.
+                         */
+                        fun build(): Row =
+                            Row(
+                                checkRequired("heightUnits", heightUnits),
+                                checkRequired("items", items).map { it.toImmutable() },
+                                additionalProperties.toMutableMap(),
+                            )
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Row = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        heightUnits()
+                        items().forEach { it.validate() }
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        (if (heightUnits.asKnown().isPresent) 1 else 0) +
+                            (items.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
+
+                    class Item
+                    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+                    private constructor(
+                        private val chartId: JsonField<String>,
+                        private val widthUnits: JsonField<Long>,
+                        private val additionalProperties: MutableMap<String, JsonValue>,
+                    ) {
+
+                        @JsonCreator
+                        private constructor(
+                            @JsonProperty("chart_id")
+                            @ExcludeMissing
+                            chartId: JsonField<String> = JsonMissing.of(),
+                            @JsonProperty("width_units")
+                            @ExcludeMissing
+                            widthUnits: JsonField<Long> = JsonMissing.of(),
+                        ) : this(chartId, widthUnits, mutableMapOf())
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun chartId(): String = chartId.getRequired("chart_id")
+
+                        /**
+                         * @throws LangChainInvalidDataException if the JSON field has an unexpected
+                         *   type or is unexpectedly missing or null (e.g. if the server responded
+                         *   with an unexpected value).
+                         */
+                        fun widthUnits(): Long = widthUnits.getRequired("width_units")
+
+                        /**
+                         * Returns the raw JSON value of [chartId].
+                         *
+                         * Unlike [chartId], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("chart_id")
+                        @ExcludeMissing
+                        fun _chartId(): JsonField<String> = chartId
+
+                        /**
+                         * Returns the raw JSON value of [widthUnits].
+                         *
+                         * Unlike [widthUnits], this method doesn't throw if the JSON field has an
+                         * unexpected type.
+                         */
+                        @JsonProperty("width_units")
+                        @ExcludeMissing
+                        fun _widthUnits(): JsonField<Long> = widthUnits
+
+                        @JsonAnySetter
+                        private fun putAdditionalProperty(key: String, value: JsonValue) {
+                            additionalProperties.put(key, value)
+                        }
+
+                        @JsonAnyGetter
+                        @ExcludeMissing
+                        fun _additionalProperties(): Map<String, JsonValue> =
+                            Collections.unmodifiableMap(additionalProperties)
+
+                        fun toBuilder() = Builder().from(this)
+
+                        companion object {
+
+                            /**
+                             * Returns a mutable builder for constructing an instance of [Item].
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .chartId()
+                             * .widthUnits()
+                             * ```
+                             */
+                            @JvmStatic fun builder() = Builder()
+                        }
+
+                        /** A builder for [Item]. */
+                        class Builder internal constructor() {
+
+                            private var chartId: JsonField<String>? = null
+                            private var widthUnits: JsonField<Long>? = null
+                            private var additionalProperties: MutableMap<String, JsonValue> =
+                                mutableMapOf()
+
+                            @JvmSynthetic
+                            internal fun from(item: Item) = apply {
+                                chartId = item.chartId
+                                widthUnits = item.widthUnits
+                                additionalProperties = item.additionalProperties.toMutableMap()
+                            }
+
+                            fun chartId(chartId: String) = chartId(JsonField.of(chartId))
+
+                            /**
+                             * Sets [Builder.chartId] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.chartId] with a well-typed [String]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun chartId(chartId: JsonField<String>) = apply {
+                                this.chartId = chartId
+                            }
+
+                            fun widthUnits(widthUnits: Long) = widthUnits(JsonField.of(widthUnits))
+
+                            /**
+                             * Sets [Builder.widthUnits] to an arbitrary JSON value.
+                             *
+                             * You should usually call [Builder.widthUnits] with a well-typed [Long]
+                             * value instead. This method is primarily for setting the field to an
+                             * undocumented or not yet supported value.
+                             */
+                            fun widthUnits(widthUnits: JsonField<Long>) = apply {
+                                this.widthUnits = widthUnits
+                            }
+
+                            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                                apply {
+                                    this.additionalProperties.clear()
+                                    putAllAdditionalProperties(additionalProperties)
+                                }
+
+                            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                                additionalProperties.put(key, value)
+                            }
+
+                            fun putAllAdditionalProperties(
+                                additionalProperties: Map<String, JsonValue>
+                            ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                            fun removeAdditionalProperty(key: String) = apply {
+                                additionalProperties.remove(key)
+                            }
+
+                            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                                keys.forEach(::removeAdditionalProperty)
+                            }
+
+                            /**
+                             * Returns an immutable instance of [Item].
+                             *
+                             * Further updates to this [Builder] will not mutate the returned
+                             * instance.
+                             *
+                             * The following fields are required:
+                             * ```java
+                             * .chartId()
+                             * .widthUnits()
+                             * ```
+                             *
+                             * @throws IllegalStateException if any required field is unset.
+                             */
+                            fun build(): Item =
+                                Item(
+                                    checkRequired("chartId", chartId),
+                                    checkRequired("widthUnits", widthUnits),
+                                    additionalProperties.toMutableMap(),
+                                )
+                        }
+
+                        private var validated: Boolean = false
+
+                        /**
+                         * Validates that the types of all values in this object match their
+                         * expected types recursively.
+                         *
+                         * This method is _not_ forwards compatible with new types from the API for
+                         * existing fields.
+                         *
+                         * @throws LangChainInvalidDataException if any value type in this object
+                         *   doesn't match its expected type.
+                         */
+                        fun validate(): Item = apply {
+                            if (validated) {
+                                return@apply
+                            }
+
+                            chartId()
+                            widthUnits()
+                            validated = true
+                        }
+
+                        fun isValid(): Boolean =
+                            try {
+                                validate()
+                                true
+                            } catch (e: LangChainInvalidDataException) {
+                                false
+                            }
+
+                        /**
+                         * Returns a score indicating how many valid values are contained in this
+                         * object recursively.
+                         *
+                         * Used for best match union deserialization.
+                         */
+                        @JvmSynthetic
+                        internal fun validity(): Int =
+                            (if (chartId.asKnown().isPresent) 1 else 0) +
+                                (if (widthUnits.asKnown().isPresent) 1 else 0)
+
+                        override fun equals(other: Any?): Boolean {
+                            if (this === other) {
+                                return true
+                            }
+
+                            return other is Item &&
+                                chartId == other.chartId &&
+                                widthUnits == other.widthUnits &&
+                                additionalProperties == other.additionalProperties
+                        }
+
+                        private val hashCode: Int by lazy {
+                            Objects.hash(chartId, widthUnits, additionalProperties)
+                        }
+
+                        override fun hashCode(): Int = hashCode
+
+                        override fun toString() =
+                            "Item{chartId=$chartId, widthUnits=$widthUnits, additionalProperties=$additionalProperties}"
+                    }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Row &&
+                            heightUnits == other.heightUnits &&
+                            items == other.items &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy {
+                        Objects.hash(heightUnits, items, additionalProperties)
+                    }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() =
+                        "Row{heightUnits=$heightUnits, items=$items, additionalProperties=$additionalProperties}"
+                }
+
+                override fun equals(other: Any?): Boolean {
+                    if (this === other) {
+                        return true
+                    }
+
+                    return other is Sm &&
+                        rows == other.rows &&
+                        additionalProperties == other.additionalProperties
+                }
+
+                private val hashCode: Int by lazy { Objects.hash(rows, additionalProperties) }
+
+                override fun hashCode(): Int = hashCode
+
+                override fun toString() =
+                    "Sm{rows=$rows, additionalProperties=$additionalProperties}"
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is Breakpoints &&
+                    md == other.md &&
+                    sm == other.sm &&
+                    additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(md, sm, additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() =
+                "Breakpoints{md=$md, sm=$sm, additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Layout &&
+                breakpoints == other.breakpoints &&
+                version == other.version &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(breakpoints, version, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Layout{breakpoints=$breakpoints, version=$version, additionalProperties=$additionalProperties}"
     }
 
     class SubSection
@@ -16354,6 +18270,7 @@ private constructor(
                 private val filters: JsonField<Filters>,
                 private val groupBy: JsonField<GroupBy>,
                 private val groupByDefinitions: JsonField<List<GroupByDefinition>>,
+                private val metadata: JsonField<Metadata>,
                 private val metric: JsonField<Metric>,
                 private val metricDefinition: JsonField<MetricDefinition>,
                 private val projectMetric: JsonField<ProjectMetric>,
@@ -16382,6 +18299,9 @@ private constructor(
                     @JsonProperty("group_by_definitions")
                     @ExcludeMissing
                     groupByDefinitions: JsonField<List<GroupByDefinition>> = JsonMissing.of(),
+                    @JsonProperty("metadata")
+                    @ExcludeMissing
+                    metadata: JsonField<Metadata> = JsonMissing.of(),
                     @JsonProperty("metric")
                     @ExcludeMissing
                     metric: JsonField<Metric> = JsonMissing.of(),
@@ -16402,6 +18322,7 @@ private constructor(
                     filters,
                     groupBy,
                     groupByDefinitions,
+                    metadata,
                     metric,
                     metricDefinition,
                     projectMetric,
@@ -16456,6 +18377,12 @@ private constructor(
                  */
                 fun groupByDefinitions(): Optional<List<GroupByDefinition>> =
                     groupByDefinitions.getOptional("group_by_definitions")
+
+                /**
+                 * @throws LangChainInvalidDataException if the JSON field has an unexpected type
+                 *   (e.g. if the server responded with an unexpected value).
+                 */
+                fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
 
                 /**
                  * Metrics you can chart. Feedback metrics are not available for organization-scoped
@@ -16554,6 +18481,16 @@ private constructor(
                 fun _groupByDefinitions(): JsonField<List<GroupByDefinition>> = groupByDefinitions
 
                 /**
+                 * Returns the raw JSON value of [metadata].
+                 *
+                 * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected
+                 * type.
+                 */
+                @JsonProperty("metadata")
+                @ExcludeMissing
+                fun _metadata(): JsonField<Metadata> = metadata
+
+                /**
                  * Returns the raw JSON value of [metric].
                  *
                  * Unlike [metric], this method doesn't throw if the JSON field has an unexpected
@@ -16628,6 +18565,7 @@ private constructor(
                     private var groupBy: JsonField<GroupBy> = JsonMissing.of()
                     private var groupByDefinitions: JsonField<MutableList<GroupByDefinition>>? =
                         null
+                    private var metadata: JsonField<Metadata> = JsonMissing.of()
                     private var metric: JsonField<Metric> = JsonMissing.of()
                     private var metricDefinition: JsonField<MetricDefinition> = JsonMissing.of()
                     private var projectMetric: JsonField<ProjectMetric> = JsonMissing.of()
@@ -16643,6 +18581,7 @@ private constructor(
                         filters = series.filters
                         groupBy = series.groupBy
                         groupByDefinitions = series.groupByDefinitions.map { it.toMutableList() }
+                        metadata = series.metadata
                         metric = series.metric
                         metricDefinition = series.metricDefinition
                         projectMetric = series.projectMetric
@@ -16822,6 +18761,20 @@ private constructor(
                         addGroupByDefinition(
                             GroupByDefinition.ofCustomChartGroupByComplex(customChartGroupByComplex)
                         )
+
+                    fun metadata(metadata: Metadata?) = metadata(JsonField.ofNullable(metadata))
+
+                    /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+                    fun metadata(metadata: Optional<Metadata>) = metadata(metadata.getOrNull())
+
+                    /**
+                     * Sets [Builder.metadata] to an arbitrary JSON value.
+                     *
+                     * You should usually call [Builder.metadata] with a well-typed [Metadata] value
+                     * instead. This method is primarily for setting the field to an undocumented or
+                     * not yet supported value.
+                     */
+                    fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
                     /**
                      * Metrics you can chart. Feedback metrics are not available for
@@ -17007,6 +18960,7 @@ private constructor(
                             filters,
                             groupBy,
                             (groupByDefinitions ?: JsonMissing.of()).map { it.toImmutable() },
+                            metadata,
                             metric,
                             metricDefinition,
                             projectMetric,
@@ -17039,6 +18993,7 @@ private constructor(
                     filters().ifPresent { it.validate() }
                     groupBy().ifPresent { it.validate() }
                     groupByDefinitions().ifPresent { it.forEach { it.validate() } }
+                    metadata().ifPresent { it.validate() }
                     metric().ifPresent { it.validate() }
                     metricDefinition().ifPresent { it.validate() }
                     projectMetric().ifPresent { it.validate() }
@@ -17070,6 +19025,7 @@ private constructor(
                         (groupBy.asKnown().getOrNull()?.validity() ?: 0) +
                         (groupByDefinitions.asKnown().getOrNull()?.sumOf { it.validity().toInt() }
                             ?: 0) +
+                        (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                         (metric.asKnown().getOrNull()?.validity() ?: 0) +
                         (metricDefinition.asKnown().getOrNull()?.validity() ?: 0) +
                         (projectMetric.asKnown().getOrNull()?.validity() ?: 0) +
@@ -19923,6 +21879,122 @@ private constructor(
                         override fun toString() =
                             "CustomChartGroupByComplex{attribute=$attribute, path=$path, additionalProperties=$additionalProperties}"
                     }
+                }
+
+                class Metadata
+                @JsonCreator
+                private constructor(
+                    @com.fasterxml.jackson.annotation.JsonValue
+                    private val additionalProperties: Map<String, JsonValue>
+                ) {
+
+                    @JsonAnyGetter
+                    @ExcludeMissing
+                    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+                    fun toBuilder() = Builder().from(this)
+
+                    companion object {
+
+                        /** Returns a mutable builder for constructing an instance of [Metadata]. */
+                        @JvmStatic fun builder() = Builder()
+                    }
+
+                    /** A builder for [Metadata]. */
+                    class Builder internal constructor() {
+
+                        private var additionalProperties: MutableMap<String, JsonValue> =
+                            mutableMapOf()
+
+                        @JvmSynthetic
+                        internal fun from(metadata: Metadata) = apply {
+                            additionalProperties = metadata.additionalProperties.toMutableMap()
+                        }
+
+                        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                            apply {
+                                this.additionalProperties.clear()
+                                putAllAdditionalProperties(additionalProperties)
+                            }
+
+                        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                            additionalProperties.put(key, value)
+                        }
+
+                        fun putAllAdditionalProperties(
+                            additionalProperties: Map<String, JsonValue>
+                        ) = apply { this.additionalProperties.putAll(additionalProperties) }
+
+                        fun removeAdditionalProperty(key: String) = apply {
+                            additionalProperties.remove(key)
+                        }
+
+                        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
+
+                        /**
+                         * Returns an immutable instance of [Metadata].
+                         *
+                         * Further updates to this [Builder] will not mutate the returned instance.
+                         */
+                        fun build(): Metadata = Metadata(additionalProperties.toImmutable())
+                    }
+
+                    private var validated: Boolean = false
+
+                    /**
+                     * Validates that the types of all values in this object match their expected
+                     * types recursively.
+                     *
+                     * This method is _not_ forwards compatible with new types from the API for
+                     * existing fields.
+                     *
+                     * @throws LangChainInvalidDataException if any value type in this object
+                     *   doesn't match its expected type.
+                     */
+                    fun validate(): Metadata = apply {
+                        if (validated) {
+                            return@apply
+                        }
+
+                        validated = true
+                    }
+
+                    fun isValid(): Boolean =
+                        try {
+                            validate()
+                            true
+                        } catch (e: LangChainInvalidDataException) {
+                            false
+                        }
+
+                    /**
+                     * Returns a score indicating how many valid values are contained in this object
+                     * recursively.
+                     *
+                     * Used for best match union deserialization.
+                     */
+                    @JvmSynthetic
+                    internal fun validity(): Int =
+                        additionalProperties.count { (_, value) ->
+                            !value.isNull() && !value.isMissing()
+                        }
+
+                    override fun equals(other: Any?): Boolean {
+                        if (this === other) {
+                            return true
+                        }
+
+                        return other is Metadata &&
+                            additionalProperties == other.additionalProperties
+                    }
+
+                    private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+                    override fun hashCode(): Int = hashCode
+
+                    override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
                 }
 
                 /**
@@ -29005,6 +31077,8 @@ private constructor(
 
                         @JvmField val P95_LATENCY = of("p95_latency")
 
+                        @JvmField val RUN_QUEUE_WAIT_TIME = of("run_queue_wait_time")
+
                         @JvmStatic fun of(value: String) = ProjectMetric(JsonField.of(value))
                     }
 
@@ -29020,6 +31094,7 @@ private constructor(
                         RESPONSES_PER_SECOND,
                         ERROR_RESPONSES_PER_SECOND,
                         P95_LATENCY,
+                        RUN_QUEUE_WAIT_TIME,
                     }
 
                     /**
@@ -29044,6 +31119,7 @@ private constructor(
                         RESPONSES_PER_SECOND,
                         ERROR_RESPONSES_PER_SECOND,
                         P95_LATENCY,
+                        RUN_QUEUE_WAIT_TIME,
                         /**
                          * An enum member indicating that [ProjectMetric] was instantiated with an
                          * unknown value.
@@ -29070,6 +31146,7 @@ private constructor(
                             RESPONSES_PER_SECOND -> Value.RESPONSES_PER_SECOND
                             ERROR_RESPONSES_PER_SECOND -> Value.ERROR_RESPONSES_PER_SECOND
                             P95_LATENCY -> Value.P95_LATENCY
+                            RUN_QUEUE_WAIT_TIME -> Value.RUN_QUEUE_WAIT_TIME
                             else -> Value._UNKNOWN
                         }
 
@@ -29094,6 +31171,7 @@ private constructor(
                             RESPONSES_PER_SECOND -> Known.RESPONSES_PER_SECOND
                             ERROR_RESPONSES_PER_SECOND -> Known.ERROR_RESPONSES_PER_SECOND
                             P95_LATENCY -> Known.P95_LATENCY
+                            RUN_QUEUE_WAIT_TIME -> Known.RUN_QUEUE_WAIT_TIME
                             else ->
                                 throw LangChainInvalidDataException("Unknown ProjectMetric: $value")
                         }
@@ -29176,6 +31254,7 @@ private constructor(
                         filters == other.filters &&
                         groupBy == other.groupBy &&
                         groupByDefinitions == other.groupByDefinitions &&
+                        metadata == other.metadata &&
                         metric == other.metric &&
                         metricDefinition == other.metricDefinition &&
                         projectMetric == other.projectMetric &&
@@ -29192,6 +31271,7 @@ private constructor(
                         filters,
                         groupBy,
                         groupByDefinitions,
+                        metadata,
                         metric,
                         metricDefinition,
                         projectMetric,
@@ -29203,7 +31283,7 @@ private constructor(
                 override fun hashCode(): Int = hashCode
 
                 override fun toString() =
-                    "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
+                    "Series{id=$id, name=$name, feedbackKey=$feedbackKey, filterDefinition=$filterDefinition, filters=$filters, groupBy=$groupBy, groupByDefinitions=$groupByDefinitions, metadata=$metadata, metric=$metric, metricDefinition=$metricDefinition, projectMetric=$projectMetric, workspaceId=$workspaceId, additionalProperties=$additionalProperties}"
             }
 
             class CommonFilters
@@ -29703,6 +31783,7 @@ private constructor(
             title == other.title &&
             description == other.description &&
             index == other.index &&
+            layout == other.layout &&
             sessionId == other.sessionId &&
             subSections == other.subSections &&
             additionalProperties == other.additionalProperties
@@ -29715,6 +31796,7 @@ private constructor(
             title,
             description,
             index,
+            layout,
             sessionId,
             subSections,
             additionalProperties,
@@ -29724,5 +31806,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CustomChartsSection{id=$id, charts=$charts, title=$title, description=$description, index=$index, sessionId=$sessionId, subSections=$subSections, additionalProperties=$additionalProperties}"
+        "CustomChartsSection{id=$id, charts=$charts, title=$title, description=$description, index=$index, layout=$layout, sessionId=$sessionId, subSections=$subSections, additionalProperties=$additionalProperties}"
 }

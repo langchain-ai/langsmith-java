@@ -3,6 +3,7 @@
 package com.langchain.smith.models.sandboxes
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -25,6 +26,11 @@ internal class SandboxListResponseTest {
                         .deleteAfterStopSeconds(0L)
                         .fsCapacityBytes(0L)
                         .idleTtlSeconds(0L)
+                        .labels(
+                            SandboxResponse.Labels.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
                         .memBytes(0L)
                         .mountConfig(
                             SandboxResponse.MountConfig.builder()
@@ -230,6 +236,14 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .enabled(true)
+                                        .envVars(
+                                            SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                                .putAdditionalProperty(
+                                                    "foo",
+                                                    JsonValue.from("string"),
+                                                )
+                                                .build()
+                                        )
                                         .gcp(
                                             SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                                 .addScope("string")
@@ -291,6 +305,11 @@ internal class SandboxListResponseTest {
                     .deleteAfterStopSeconds(0L)
                     .fsCapacityBytes(0L)
                     .idleTtlSeconds(0L)
+                    .labels(
+                        SandboxResponse.Labels.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .memBytes(0L)
                     .mountConfig(
                         SandboxResponse.MountConfig.builder()
@@ -492,6 +511,11 @@ internal class SandboxListResponseTest {
                                             .build()
                                     )
                                     .enabled(true)
+                                    .envVars(
+                                        SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                                            .build()
+                                    )
                                     .gcp(
                                         SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                             .addScope("string")
@@ -557,6 +581,11 @@ internal class SandboxListResponseTest {
                         .deleteAfterStopSeconds(0L)
                         .fsCapacityBytes(0L)
                         .idleTtlSeconds(0L)
+                        .labels(
+                            SandboxResponse.Labels.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
                         .memBytes(0L)
                         .mountConfig(
                             SandboxResponse.MountConfig.builder()
@@ -762,6 +791,14 @@ internal class SandboxListResponseTest {
                                                 .build()
                                         )
                                         .enabled(true)
+                                        .envVars(
+                                            SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
+                                                .putAdditionalProperty(
+                                                    "foo",
+                                                    JsonValue.from("string"),
+                                                )
+                                                .build()
+                                        )
                                         .gcp(
                                             SandboxResponse.ProxyConfig.Rule.Gcp.builder()
                                                 .addScope("string")

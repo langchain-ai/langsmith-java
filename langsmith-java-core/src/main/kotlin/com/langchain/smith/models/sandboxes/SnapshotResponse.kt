@@ -10,10 +10,12 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 class SnapshotResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -25,6 +27,7 @@ private constructor(
     private val fsCapacityBytes: JsonField<Long>,
     private val fsUsedBytes: JsonField<Long>,
     private val imageDigest: JsonField<String>,
+    private val labels: JsonField<Labels>,
     private val memorySnapshotSizeBytes: JsonField<Long>,
     private val name: JsonField<String>,
     private val registryId: JsonField<String>,
@@ -52,6 +55,7 @@ private constructor(
         @JsonProperty("image_digest")
         @ExcludeMissing
         imageDigest: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
         @JsonProperty("memory_snapshot_size_bytes")
         @ExcludeMissing
         memorySnapshotSizeBytes: JsonField<Long> = JsonMissing.of(),
@@ -75,6 +79,7 @@ private constructor(
         fsCapacityBytes,
         fsUsedBytes,
         imageDigest,
+        labels,
         memorySnapshotSizeBytes,
         name,
         registryId,
@@ -126,6 +131,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun imageDigest(): Optional<String> = imageDigest.getOptional("image_digest")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun labels(): Optional<Labels> = labels.getOptional("labels")
 
     /**
      * MemorySnapshotSizeBytes is non-nil iff the snapshot was captured with VM memory state. A
@@ -230,6 +241,13 @@ private constructor(
     fun _imageDigest(): JsonField<String> = imageDigest
 
     /**
+     * Returns the raw JSON value of [labels].
+     *
+     * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("labels") @ExcludeMissing fun _labels(): JsonField<Labels> = labels
+
+    /**
      * Returns the raw JSON value of [memorySnapshotSizeBytes].
      *
      * Unlike [memorySnapshotSizeBytes], this method doesn't throw if the JSON field has an
@@ -313,6 +331,7 @@ private constructor(
         private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
         private var fsUsedBytes: JsonField<Long> = JsonMissing.of()
         private var imageDigest: JsonField<String> = JsonMissing.of()
+        private var labels: JsonField<Labels> = JsonMissing.of()
         private var memorySnapshotSizeBytes: JsonField<Long> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var registryId: JsonField<String> = JsonMissing.of()
@@ -331,6 +350,7 @@ private constructor(
             fsCapacityBytes = snapshotResponse.fsCapacityBytes
             fsUsedBytes = snapshotResponse.fsUsedBytes
             imageDigest = snapshotResponse.imageDigest
+            labels = snapshotResponse.labels
             memorySnapshotSizeBytes = snapshotResponse.memorySnapshotSizeBytes
             name = snapshotResponse.name
             registryId = snapshotResponse.registryId
@@ -418,6 +438,16 @@ private constructor(
          * value.
          */
         fun imageDigest(imageDigest: JsonField<String>) = apply { this.imageDigest = imageDigest }
+
+        fun labels(labels: Labels) = labels(JsonField.of(labels))
+
+        /**
+         * Sets [Builder.labels] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.labels] with a well-typed [Labels] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun labels(labels: JsonField<Labels>) = apply { this.labels = labels }
 
         /**
          * MemorySnapshotSizeBytes is non-nil iff the snapshot was captured with VM memory state. A
@@ -540,6 +570,7 @@ private constructor(
                 fsCapacityBytes,
                 fsUsedBytes,
                 imageDigest,
+                labels,
                 memorySnapshotSizeBytes,
                 name,
                 registryId,
@@ -573,6 +604,7 @@ private constructor(
         fsCapacityBytes()
         fsUsedBytes()
         imageDigest()
+        labels().ifPresent { it.validate() }
         memorySnapshotSizeBytes()
         name()
         registryId()
@@ -605,6 +637,7 @@ private constructor(
             (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
             (if (fsUsedBytes.asKnown().isPresent) 1 else 0) +
             (if (imageDigest.asKnown().isPresent) 1 else 0) +
+            (labels.asKnown().getOrNull()?.validity() ?: 0) +
             (if (memorySnapshotSizeBytes.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (if (registryId.asKnown().isPresent) 1 else 0) +
@@ -612,6 +645,114 @@ private constructor(
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (statusMessage.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
+
+    class Labels
+    @JsonCreator
+    private constructor(
+        @com.fasterxml.jackson.annotation.JsonValue
+        private val additionalProperties: Map<String, JsonValue>
+    ) {
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Labels]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Labels]. */
+        class Builder internal constructor() {
+
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(labels: Labels) = apply {
+                additionalProperties = labels.additionalProperties.toMutableMap()
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Labels].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Labels = Labels(additionalProperties.toImmutable())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Labels = apply {
+            if (validated) {
+                return@apply
+            }
+
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Labels && additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() = "Labels{additionalProperties=$additionalProperties}"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -626,6 +767,7 @@ private constructor(
             fsCapacityBytes == other.fsCapacityBytes &&
             fsUsedBytes == other.fsUsedBytes &&
             imageDigest == other.imageDigest &&
+            labels == other.labels &&
             memorySnapshotSizeBytes == other.memorySnapshotSizeBytes &&
             name == other.name &&
             registryId == other.registryId &&
@@ -645,6 +787,7 @@ private constructor(
             fsCapacityBytes,
             fsUsedBytes,
             imageDigest,
+            labels,
             memorySnapshotSizeBytes,
             name,
             registryId,
@@ -659,5 +802,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, labels=$labels, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

@@ -3,6 +3,7 @@
 package com.langchain.smith.services.blocking.sandboxes
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
 import org.junit.jupiter.api.Disabled
@@ -23,6 +24,11 @@ internal class SnapshotServiceTest {
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
                     .name("name")
+                    .labels(
+                        SnapshotCreateParams.Labels.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
                     .registryId("registry_id")
                     .build()
             )
@@ -53,6 +59,7 @@ internal class SnapshotServiceTest {
             snapshotService.list(
                 SnapshotListParams.builder()
                     .createdBy("created_by")
+                    .addLabel("string")
                     .limit(0L)
                     .nameContains("name_contains")
                     .offset(0L)
