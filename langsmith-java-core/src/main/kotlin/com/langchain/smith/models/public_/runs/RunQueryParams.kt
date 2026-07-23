@@ -534,6 +534,8 @@ private constructor(
 
             @JvmField val THREAD_EVALUATION_TIME = of("THREAD_EVALUATION_TIME")
 
+            @JvmField val FEEDBACK_STATS = of("FEEDBACK_STATS")
+
             @JvmStatic fun of(value: String) = Select(JsonField.of(value))
         }
 
@@ -574,6 +576,7 @@ private constructor(
             PRICE_MODEL_ID,
             TAGS,
             THREAD_EVALUATION_TIME,
+            FEEDBACK_STATS,
         }
 
         /**
@@ -621,6 +624,7 @@ private constructor(
             PRICE_MODEL_ID,
             TAGS,
             THREAD_EVALUATION_TIME,
+            FEEDBACK_STATS,
             /** An enum member indicating that [Select] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -669,6 +673,7 @@ private constructor(
                 PRICE_MODEL_ID -> Value.PRICE_MODEL_ID
                 TAGS -> Value.TAGS
                 THREAD_EVALUATION_TIME -> Value.THREAD_EVALUATION_TIME
+                FEEDBACK_STATS -> Value.FEEDBACK_STATS
                 else -> Value._UNKNOWN
             }
 
@@ -718,6 +723,7 @@ private constructor(
                 PRICE_MODEL_ID -> Known.PRICE_MODEL_ID
                 TAGS -> Known.TAGS
                 THREAD_EVALUATION_TIME -> Known.THREAD_EVALUATION_TIME
+                FEEDBACK_STATS -> Known.FEEDBACK_STATS
                 else -> throw LangChainInvalidDataException("Unknown Select: $value")
             }
 
