@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.1.0-beta.19](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.18...v0.1.0-beta.19) (2026-07-23)
+
+
+### Features
+
+* **backend:** Allow storing grid layout to custom dashboards ([8aded40](https://github.com/langchain-ai/langsmith-java/commit/8aded40800f6096880f43d2ef51a07963dec65e5))
+* **backend:** update CRUD endpoint to allow retrieving / storing chart series metadata ([aa4be05](https://github.com/langchain-ai/langsmith-java/commit/aa4be05c111d702aa801cba4acbda69e0a5da7a6))
+* **host:** p50/p99 run queue wait-time chart in project monitoring [LSD-1547] ([f660828](https://github.com/langchain-ai/langsmith-java/commit/f6608288d483e0041c6e0fe643f6881f3c1a3a68))
+* **sandboxes:** free-form labels on sandboxes and snapshots ([6165434](https://github.com/langchain-ai/langsmith-java/commit/6165434d21025dfaeef22b4a63e31a0f0e4977a1))
+* **sandboxes:** let proxy rules contribute sandbox env vars ([eace8c3](https://github.com/langchain-ai/langsmith-java/commit/eace8c3f9903e180fc7e9cfbaf0a13a7a91a5635))
+
+
+### Bug Fixes
+
+* **evaluators:** persist and wire through playground_settings_id for llm-as-judge oauth models [part of ENT-1402] ([b072b2e](https://github.com/langchain-ai/langsmith-java/commit/b072b2e2fcf6dafd32cb0213e02127a82ab0659a))
+* **runs:** require session in POST /runs/stats ([056dbd3](https://github.com/langchain-ai/langsmith-java/commit/056dbd3673294fcd1fbc564d4332ba38c151ec6b))
+* support last_queued_at in v2 runs query ([e7fe407](https://github.com/langchain-ai/langsmith-java/commit/e7fe407f74819ac775fcc092289d9dcfaafc036d))
+
+
+### Reverts
+
+* **runs:** require session in POST /runs/stats ([95da1e9](https://github.com/langchain-ai/langsmith-java/commit/95da1e9b944058f30b5274c882f4669933b8bbfd))
+
+
+### Refactors
+
+* **runs:** remove SmithDB v2 endpoint flag [LSO-3391] ([aece72d](https://github.com/langchain-ai/langsmith-java/commit/aece72d035ca24eb8ee94236d301f7610b18eefc))
+
 ## [0.1.0-beta.18](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.17...v0.1.0-beta.18) (2026-07-20)
 
 

@@ -19,7 +19,7 @@ repositories {
 
 allprojects {
     group = "com.langchain.smith"
-    version = "0.1.0-beta.18" // x-release-please-version
+    version = "0.1.0-beta.19" // x-release-please-version
 
     configurations.matching { it.name.startsWith("dokka") }.configureEach {
         // Keep Dokka worker classpaths on the same patched version as the buildscript classpath.
