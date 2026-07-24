@@ -5,7 +5,6 @@ package com.langchain.smith.models.info
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
-import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -15,7 +14,6 @@ internal class InfoListResponseTest {
     fun create() {
         val infoListResponse =
             InfoListResponse.builder()
-                .version("version")
                 .batchIngestConfig(
                     InfoListResponse.BatchIngestConfig.builder()
                         .scaleDownNemptyTrigger(0L)
@@ -38,10 +36,18 @@ internal class InfoListResponseTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
-                .licenseExpirationTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .licenseExpirationTime("license_expiration_time")
+                .sdkVersions(
+                    InfoListResponse.SdkVersions.builder()
+                        .maxGoSdkVersion("max_go_sdk_version")
+                        .maxJavaSdkVersion("max_java_sdk_version")
+                        .maxJsSdkVersion("max_js_sdk_version")
+                        .maxPythonSdkVersion("max_python_sdk_version")
+                        .build()
+                )
+                .version("version")
                 .build()
 
-        assertThat(infoListResponse.version()).isEqualTo("version")
         assertThat(infoListResponse.batchIngestConfig())
             .contains(
                 InfoListResponse.BatchIngestConfig.builder()
@@ -67,8 +73,17 @@ internal class InfoListResponseTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
-        assertThat(infoListResponse.licenseExpirationTime())
-            .contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+        assertThat(infoListResponse.licenseExpirationTime()).contains("license_expiration_time")
+        assertThat(infoListResponse.sdkVersions())
+            .contains(
+                InfoListResponse.SdkVersions.builder()
+                    .maxGoSdkVersion("max_go_sdk_version")
+                    .maxJavaSdkVersion("max_java_sdk_version")
+                    .maxJsSdkVersion("max_js_sdk_version")
+                    .maxPythonSdkVersion("max_python_sdk_version")
+                    .build()
+            )
+        assertThat(infoListResponse.version()).contains("version")
     }
 
     @Test
@@ -76,7 +91,6 @@ internal class InfoListResponseTest {
         val jsonMapper = jsonMapper()
         val infoListResponse =
             InfoListResponse.builder()
-                .version("version")
                 .batchIngestConfig(
                     InfoListResponse.BatchIngestConfig.builder()
                         .scaleDownNemptyTrigger(0L)
@@ -99,7 +113,16 @@ internal class InfoListResponseTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
-                .licenseExpirationTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                .licenseExpirationTime("license_expiration_time")
+                .sdkVersions(
+                    InfoListResponse.SdkVersions.builder()
+                        .maxGoSdkVersion("max_go_sdk_version")
+                        .maxJavaSdkVersion("max_java_sdk_version")
+                        .maxJsSdkVersion("max_js_sdk_version")
+                        .maxPythonSdkVersion("max_python_sdk_version")
+                        .build()
+                )
+                .version("version")
                 .build()
 
         val roundtrippedInfoListResponse =

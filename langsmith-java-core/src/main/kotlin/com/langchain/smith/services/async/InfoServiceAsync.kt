@@ -24,7 +24,11 @@ interface InfoServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): InfoServiceAsync
 
-    /** Get information about the current deployment of LangSmith. */
+    /**
+     * Returns information about the current LangSmith deployment: version, instance feature flags,
+     * batch-ingest limits, and max SDK versions. Unauthenticated by default; set
+     * FF_INFO_ENDPOINT_AUTH_REQUIRED=true to require auth.
+     */
     fun list(): CompletableFuture<InfoListResponse> = list(InfoListParams.none())
 
     /** @see list */
