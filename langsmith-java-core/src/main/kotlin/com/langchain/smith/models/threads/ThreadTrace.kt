@@ -343,7 +343,8 @@ private constructor(
     fun totalTokens(): Optional<Long> = totalTokens.getOptional("total_tokens")
 
     /**
-     * `trace_id` is the UUID of this trace (the root run). Always present.
+     * `trace_id` is the UUID of this trace (the root run). Returned when `TRACE_ID` is in
+     * `selects`, or when `selects` is omitted entirely (sole fallback field).
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -950,7 +951,10 @@ private constructor(
          */
         fun totalTokens(totalTokens: JsonField<Long>) = apply { this.totalTokens = totalTokens }
 
-        /** `trace_id` is the UUID of this trace (the root run). Always present. */
+        /**
+         * `trace_id` is the UUID of this trace (the root run). Returned when `TRACE_ID` is in
+         * `selects`, or when `selects` is omitted entirely (sole fallback field).
+         */
         fun traceId(traceId: String) = traceId(JsonField.of(traceId))
 
         /**
