@@ -22,9 +22,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Partially update membership fields (added_at, last_reviewed_time) for a single annotation queue
- * item by membership id. Works for RUN and THREAD rows. Omit a field (or pass JSON null) to leave
- * it unchanged.
+ * Partially update mutable timestamps (added_at, last_reviewed_time) for a RUN or THREAD annotation
+ * queue item. Omit a field, or pass JSON null, to leave it unchanged.
  */
 class ItemUpdateParams
 private constructor(

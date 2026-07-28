@@ -17,9 +17,9 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * List RUN and THREAD items in a single annotation queue for one review status section, with opaque
  * cursor pagination. Optional item_type=RUN|THREAD filters the page. direction=backward returns
- * items before the supplied cursor. Response is membership metadata only (no nested run/thread
- * store payloads). status=archived returns items in annotation_queue_runs_archive (queue completion
- * rule met), not merely items the caller personally marked completed.
+ * items before the supplied cursor. The response contains item metadata only, not expanded run or
+ * thread payloads. status=archived returns items whose queue review requirements have been
+ * satisfied, not merely items the caller personally marked completed.
  */
 class ItemListParams
 private constructor(

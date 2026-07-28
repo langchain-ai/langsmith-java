@@ -37,9 +37,8 @@ interface ItemServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ItemServiceAsync
 
     /**
-     * Add RUN or THREAD items to a single annotation queue. THREAD items require thread_id and
-     * session_id; RUN items require run_id, or source_proposed_example_id with lookup coordinates
-     * when applicable.
+     * Add RUN or THREAD items to a single annotation queue. RUN items require run_id unless they
+     * are created from a suggested example. THREAD items require thread_id and session_id.
      */
     fun create(queueId: String): CompletableFuture<ItemCreateResponse> =
         create(queueId, ItemCreateParams.none())
@@ -76,9 +75,8 @@ interface ItemServiceAsync {
         create(queueId, ItemCreateParams.none(), requestOptions)
 
     /**
-     * Partially update membership fields (added_at, last_reviewed_time) for a single annotation
-     * queue item by membership id. Works for RUN and THREAD rows. Omit a field (or pass JSON null)
-     * to leave it unchanged.
+     * Partially update mutable timestamps (added_at, last_reviewed_time) for a RUN or THREAD
+     * annotation queue item. Omit a field, or pass JSON null, to leave it unchanged.
      */
     fun update(itemId: String, params: ItemUpdateParams): CompletableFuture<ItemUpdateResponse> =
         update(itemId, params, RequestOptions.none())
@@ -104,9 +102,9 @@ interface ItemServiceAsync {
     /**
      * List RUN and THREAD items in a single annotation queue for one review status section, with
      * opaque cursor pagination. Optional item_type=RUN|THREAD filters the page. direction=backward
-     * returns items before the supplied cursor. Response is membership metadata only (no nested
-     * run/thread store payloads). status=archived returns items in annotation_queue_runs_archive
-     * (queue completion rule met), not merely items the caller personally marked completed.
+     * returns items before the supplied cursor. The response contains item metadata only, not
+     * expanded run or thread payloads. status=archived returns items whose queue review
+     * requirements have been satisfied, not merely items the caller personally marked completed.
      */
     fun list(queueId: String, params: ItemListParams): CompletableFuture<ItemListPageAsync> =
         list(queueId, params, RequestOptions.none())
@@ -168,7 +166,7 @@ interface ItemServiceAsync {
     ): CompletableFuture<ItemCreateStatusResponse> =
         createStatus(queueItemId, ItemCreateStatusParams.none(), requestOptions)
 
-    /** Remove RUN or THREAD items from a single annotation queue by membership ID. */
+    /** Remove RUN or THREAD items from a single annotation queue by item ID. */
     fun deleteAll(queueId: String): CompletableFuture<ItemDeleteAllResponse> =
         deleteAll(queueId, ItemDeleteAllParams.none())
 

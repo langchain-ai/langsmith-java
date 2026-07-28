@@ -24,9 +24,8 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Add RUN or THREAD items to a single annotation queue. THREAD items require thread_id and
- * session_id; RUN items require run_id, or source_proposed_example_id with lookup coordinates when
- * applicable.
+ * Add RUN or THREAD items to a single annotation queue. RUN items require run_id unless they are
+ * created from a suggested example. THREAD items require thread_id and session_id.
  */
 class ItemCreateParams
 private constructor(
@@ -514,9 +513,7 @@ private constructor(
         fun runId(): Optional<String> = runId.getOptional("run_id")
 
         /**
-         * Shared optional SmithDB lookup coords. StartTime uses FlexTime because smith-backend and
-         * ClickHouse emit naive UTC timestamps (no timezone suffix) that strict *time.Time JSON
-         * unmarshaling rejects.
+         * SessionID is the ID of the tracing project that contains the run or thread.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -524,9 +521,8 @@ private constructor(
         fun sessionId(): Optional<String> = sessionId.getOptional("session_id")
 
         /**
-         * SourceProposedExampleID is usually unset. When Issues Board / Engine suggested examples
-         * are added to a queue, the UI sets this to the tracer_session_issue_proposed_examples row
-         * so the queue item can point back at that suggestion.
+         * SourceProposedExampleID links the queue item to the suggested example it was created
+         * from, when applicable.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -535,13 +531,15 @@ private constructor(
             sourceProposedExampleId.getOptional("source_proposed_example_id")
 
         /**
+         * StartTime is the start time of the run being added, used to identify it.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
 
         /**
-         * THREAD fields (thread_id + session_id required)
+         * ThreadID is the ID of the thread being added.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -658,11 +656,7 @@ private constructor(
              */
             fun runId(runId: JsonField<String>) = apply { this.runId = runId }
 
-            /**
-             * Shared optional SmithDB lookup coords. StartTime uses FlexTime because smith-backend
-             * and ClickHouse emit naive UTC timestamps (no timezone suffix) that strict *time.Time
-             * JSON unmarshaling rejects.
-             */
+            /** SessionID is the ID of the tracing project that contains the run or thread. */
             fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
 
             /**
@@ -675,10 +669,8 @@ private constructor(
             fun sessionId(sessionId: JsonField<String>) = apply { this.sessionId = sessionId }
 
             /**
-             * SourceProposedExampleID is usually unset. When Issues Board / Engine suggested
-             * examples are added to a queue, the UI sets this to the
-             * tracer_session_issue_proposed_examples row so the queue item can point back at that
-             * suggestion.
+             * SourceProposedExampleID links the queue item to the suggested example it was created
+             * from, when applicable.
              */
             fun sourceProposedExampleId(sourceProposedExampleId: String) =
                 sourceProposedExampleId(JsonField.of(sourceProposedExampleId))
@@ -694,6 +686,7 @@ private constructor(
                 this.sourceProposedExampleId = sourceProposedExampleId
             }
 
+            /** StartTime is the start time of the run being added, used to identify it. */
             fun startTime(startTime: OffsetDateTime) = startTime(JsonField.of(startTime))
 
             /**
@@ -707,7 +700,7 @@ private constructor(
                 this.startTime = startTime
             }
 
-            /** THREAD fields (thread_id + session_id required) */
+            /** ThreadID is the ID of the thread being added. */
             fun threadId(threadId: String) = threadId(JsonField.of(threadId))
 
             /**

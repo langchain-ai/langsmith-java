@@ -21,7 +21,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Remove RUN or THREAD items from a single annotation queue by membership ID. */
+/** Remove RUN or THREAD items from a single annotation queue by item ID. */
 class ItemDeleteAllParams
 private constructor(
     private val queueId: String?,
