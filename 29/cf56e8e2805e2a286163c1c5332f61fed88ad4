@@ -1,0 +1,37 @@
+langsmith-java-core/src/test/kotlin/com/langchain/smith/evaluation/EvaluateSupportTest.kt
+  s_2bb512ce21789a::t_894a75cfdb0b8f 1-25,34-49,54-61,64-72,75-79
+  s_2bb512ce21789a::t_391976709b6f2e 26-33,62-63
+  s_2bb512ce21789a::t_347393b37494c4 73-74
+  s_2bb512ce21789a::t_1e1a5e9deba6b0 50-53
+langsmith-java-core/src/main/kotlin/com/langchain/smith/evaluation/EvaluateSupport.kt
+  s_2bb512ce21789a::t_55310fc8e54f25 189
+  s_2bb512ce21789a::t_4ba77707c25c55 191-193,197-199,205,212
+  s_2bb512ce21789a::t_cab6e4d1bee6da 194-196
+  s_2bb512ce21789a::t_f954566115ff3c 220
+  s_2bb512ce21789a::t_349189aec2619a 15,18
+  s_003e11e11eaf80::t_aa63edadf476f9 19,219,221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "29cf56e8e2805e2a286163c1c5332f61fed88ad4",
+  "prompts": {},
+  "sessions": {
+    "s_003e11e11eaf80": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "385a155f-adfd-48d9-bffb-6c999372b74e",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Emil Filipov <emil@langchain.dev>"
+    },
+    "s_2bb512ce21789a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bdc79c60-d411-42ab-8413-8afd8333177c",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Emil Filipov <emil@langchain.dev>"
+    }
+  }
+}
