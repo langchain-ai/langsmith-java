@@ -25,7 +25,7 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Add RUN or THREAD items to a single annotation queue. RUN items require run_id unless they are
- * created from a suggested example. THREAD items require thread_id and session_id.
+ * created from a suggested example. THREAD items require thread_id and project_id.
  */
 class ItemCreateParams
 private constructor(
@@ -462,6 +462,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val itemType: JsonField<ItemType>,
+        private val projectId: JsonField<String>,
         private val runId: JsonField<String>,
         private val sessionId: JsonField<String>,
         private val sourceProposedExampleId: JsonField<String>,
@@ -475,6 +476,9 @@ private constructor(
             @JsonProperty("item_type")
             @ExcludeMissing
             itemType: JsonField<ItemType> = JsonMissing.of(),
+            @JsonProperty("project_id")
+            @ExcludeMissing
+            projectId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("run_id") @ExcludeMissing runId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("session_id")
             @ExcludeMissing
@@ -490,6 +494,7 @@ private constructor(
             threadId: JsonField<String> = JsonMissing.of(),
         ) : this(
             itemType,
+            projectId,
             runId,
             sessionId,
             sourceProposedExampleId,
@@ -505,6 +510,12 @@ private constructor(
         fun itemType(): Optional<ItemType> = itemType.getOptional("item_type")
 
         /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun projectId(): Optional<String> = projectId.getOptional("project_id")
+
+        /**
          * RUN fields
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -513,7 +524,7 @@ private constructor(
         fun runId(): Optional<String> = runId.getOptional("run_id")
 
         /**
-         * SessionID is the ID of the tracing project that contains the run or thread.
+         * SessionID is an alias for project_id.
          *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -531,16 +542,12 @@ private constructor(
             sourceProposedExampleId.getOptional("source_proposed_example_id")
 
         /**
-         * StartTime is the start time of the run being added, used to identify it.
-         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun startTime(): Optional<OffsetDateTime> = startTime.getOptional("start_time")
 
         /**
-         * ThreadID is the ID of the thread being added.
-         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -552,6 +559,13 @@ private constructor(
          * Unlike [itemType], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("item_type") @ExcludeMissing fun _itemType(): JsonField<ItemType> = itemType
+
+        /**
+         * Returns the raw JSON value of [projectId].
+         *
+         * Unlike [projectId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("project_id") @ExcludeMissing fun _projectId(): JsonField<String> = projectId
 
         /**
          * Returns the raw JSON value of [runId].
@@ -615,6 +629,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var itemType: JsonField<ItemType> = JsonMissing.of()
+            private var projectId: JsonField<String> = JsonMissing.of()
             private var runId: JsonField<String> = JsonMissing.of()
             private var sessionId: JsonField<String> = JsonMissing.of()
             private var sourceProposedExampleId: JsonField<String> = JsonMissing.of()
@@ -625,6 +640,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(item: Item) = apply {
                 itemType = item.itemType
+                projectId = item.projectId
                 runId = item.runId
                 sessionId = item.sessionId
                 sourceProposedExampleId = item.sourceProposedExampleId
@@ -644,6 +660,17 @@ private constructor(
              */
             fun itemType(itemType: JsonField<ItemType>) = apply { this.itemType = itemType }
 
+            fun projectId(projectId: String) = projectId(JsonField.of(projectId))
+
+            /**
+             * Sets [Builder.projectId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.projectId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun projectId(projectId: JsonField<String>) = apply { this.projectId = projectId }
+
             /** RUN fields */
             fun runId(runId: String) = runId(JsonField.of(runId))
 
@@ -656,7 +683,7 @@ private constructor(
              */
             fun runId(runId: JsonField<String>) = apply { this.runId = runId }
 
-            /** SessionID is the ID of the tracing project that contains the run or thread. */
+            /** SessionID is an alias for project_id. */
             fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
 
             /**
@@ -686,7 +713,6 @@ private constructor(
                 this.sourceProposedExampleId = sourceProposedExampleId
             }
 
-            /** StartTime is the start time of the run being added, used to identify it. */
             fun startTime(startTime: OffsetDateTime) = startTime(JsonField.of(startTime))
 
             /**
@@ -700,7 +726,6 @@ private constructor(
                 this.startTime = startTime
             }
 
-            /** ThreadID is the ID of the thread being added. */
             fun threadId(threadId: String) = threadId(JsonField.of(threadId))
 
             /**
@@ -739,6 +764,7 @@ private constructor(
             fun build(): Item =
                 Item(
                     itemType,
+                    projectId,
                     runId,
                     sessionId,
                     sourceProposedExampleId,
@@ -765,6 +791,7 @@ private constructor(
             }
 
             itemType().ifPresent { it.validate() }
+            projectId()
             runId()
             sessionId()
             sourceProposedExampleId()
@@ -790,6 +817,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (itemType.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (projectId.asKnown().isPresent) 1 else 0) +
                 (if (runId.asKnown().isPresent) 1 else 0) +
                 (if (sessionId.asKnown().isPresent) 1 else 0) +
                 (if (sourceProposedExampleId.asKnown().isPresent) 1 else 0) +
@@ -943,6 +971,7 @@ private constructor(
 
             return other is Item &&
                 itemType == other.itemType &&
+                projectId == other.projectId &&
                 runId == other.runId &&
                 sessionId == other.sessionId &&
                 sourceProposedExampleId == other.sourceProposedExampleId &&
@@ -954,6 +983,7 @@ private constructor(
         private val hashCode: Int by lazy {
             Objects.hash(
                 itemType,
+                projectId,
                 runId,
                 sessionId,
                 sourceProposedExampleId,
@@ -966,7 +996,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Item{itemType=$itemType, runId=$runId, sessionId=$sessionId, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, threadId=$threadId, additionalProperties=$additionalProperties}"
+            "Item{itemType=$itemType, projectId=$projectId, runId=$runId, sessionId=$sessionId, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, threadId=$threadId, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

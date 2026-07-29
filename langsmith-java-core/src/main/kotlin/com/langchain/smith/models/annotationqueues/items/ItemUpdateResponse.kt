@@ -24,9 +24,9 @@ private constructor(
     private val addedAt: JsonField<String>,
     private val itemType: JsonField<ItemType>,
     private val lastReviewedTime: JsonField<String>,
+    private val projectId: JsonField<String>,
     private val queueId: JsonField<String>,
     private val runId: JsonField<String>,
-    private val sessionId: JsonField<String>,
     private val sourceProposedExampleId: JsonField<String>,
     private val startTime: JsonField<String>,
     private val threadId: JsonField<String>,
@@ -41,9 +41,9 @@ private constructor(
         @JsonProperty("last_reviewed_time")
         @ExcludeMissing
         lastReviewedTime: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("project_id") @ExcludeMissing projectId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("queue_id") @ExcludeMissing queueId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("run_id") @ExcludeMissing runId: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("session_id") @ExcludeMissing sessionId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("source_proposed_example_id")
         @ExcludeMissing
         sourceProposedExampleId: JsonField<String> = JsonMissing.of(),
@@ -54,9 +54,9 @@ private constructor(
         addedAt,
         itemType,
         lastReviewedTime,
+        projectId,
         queueId,
         runId,
-        sessionId,
         sourceProposedExampleId,
         startTime,
         threadId,
@@ -93,6 +93,12 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun projectId(): Optional<String> = projectId.getOptional("project_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun queueId(): Optional<String> = queueId.getOptional("queue_id")
 
     /**
@@ -100,12 +106,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun runId(): Optional<String> = runId.getOptional("run_id")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun sessionId(): Optional<String> = sessionId.getOptional("session_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -158,6 +158,13 @@ private constructor(
     fun _lastReviewedTime(): JsonField<String> = lastReviewedTime
 
     /**
+     * Returns the raw JSON value of [projectId].
+     *
+     * Unlike [projectId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("project_id") @ExcludeMissing fun _projectId(): JsonField<String> = projectId
+
+    /**
      * Returns the raw JSON value of [queueId].
      *
      * Unlike [queueId], this method doesn't throw if the JSON field has an unexpected type.
@@ -170,13 +177,6 @@ private constructor(
      * Unlike [runId], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("run_id") @ExcludeMissing fun _runId(): JsonField<String> = runId
-
-    /**
-     * Returns the raw JSON value of [sessionId].
-     *
-     * Unlike [sessionId], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("session_id") @ExcludeMissing fun _sessionId(): JsonField<String> = sessionId
 
     /**
      * Returns the raw JSON value of [sourceProposedExampleId].
@@ -227,9 +227,9 @@ private constructor(
         private var addedAt: JsonField<String> = JsonMissing.of()
         private var itemType: JsonField<ItemType> = JsonMissing.of()
         private var lastReviewedTime: JsonField<String> = JsonMissing.of()
+        private var projectId: JsonField<String> = JsonMissing.of()
         private var queueId: JsonField<String> = JsonMissing.of()
         private var runId: JsonField<String> = JsonMissing.of()
-        private var sessionId: JsonField<String> = JsonMissing.of()
         private var sourceProposedExampleId: JsonField<String> = JsonMissing.of()
         private var startTime: JsonField<String> = JsonMissing.of()
         private var threadId: JsonField<String> = JsonMissing.of()
@@ -241,9 +241,9 @@ private constructor(
             addedAt = itemUpdateResponse.addedAt
             itemType = itemUpdateResponse.itemType
             lastReviewedTime = itemUpdateResponse.lastReviewedTime
+            projectId = itemUpdateResponse.projectId
             queueId = itemUpdateResponse.queueId
             runId = itemUpdateResponse.runId
-            sessionId = itemUpdateResponse.sessionId
             sourceProposedExampleId = itemUpdateResponse.sourceProposedExampleId
             startTime = itemUpdateResponse.startTime
             threadId = itemUpdateResponse.threadId
@@ -296,6 +296,17 @@ private constructor(
             this.lastReviewedTime = lastReviewedTime
         }
 
+        fun projectId(projectId: String) = projectId(JsonField.of(projectId))
+
+        /**
+         * Sets [Builder.projectId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.projectId] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun projectId(projectId: JsonField<String>) = apply { this.projectId = projectId }
+
         fun queueId(queueId: String) = queueId(JsonField.of(queueId))
 
         /**
@@ -315,17 +326,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun runId(runId: JsonField<String>) = apply { this.runId = runId }
-
-        fun sessionId(sessionId: String) = sessionId(JsonField.of(sessionId))
-
-        /**
-         * Sets [Builder.sessionId] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.sessionId] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun sessionId(sessionId: JsonField<String>) = apply { this.sessionId = sessionId }
 
         fun sourceProposedExampleId(sourceProposedExampleId: String) =
             sourceProposedExampleId(JsonField.of(sourceProposedExampleId))
@@ -392,9 +392,9 @@ private constructor(
                 addedAt,
                 itemType,
                 lastReviewedTime,
+                projectId,
                 queueId,
                 runId,
-                sessionId,
                 sourceProposedExampleId,
                 startTime,
                 threadId,
@@ -421,9 +421,9 @@ private constructor(
         addedAt()
         itemType().ifPresent { it.validate() }
         lastReviewedTime()
+        projectId()
         queueId()
         runId()
-        sessionId()
         sourceProposedExampleId()
         startTime()
         threadId()
@@ -449,9 +449,9 @@ private constructor(
             (if (addedAt.asKnown().isPresent) 1 else 0) +
             (itemType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (lastReviewedTime.asKnown().isPresent) 1 else 0) +
+            (if (projectId.asKnown().isPresent) 1 else 0) +
             (if (queueId.asKnown().isPresent) 1 else 0) +
             (if (runId.asKnown().isPresent) 1 else 0) +
-            (if (sessionId.asKnown().isPresent) 1 else 0) +
             (if (sourceProposedExampleId.asKnown().isPresent) 1 else 0) +
             (if (startTime.asKnown().isPresent) 1 else 0) +
             (if (threadId.asKnown().isPresent) 1 else 0)
@@ -602,9 +602,9 @@ private constructor(
             addedAt == other.addedAt &&
             itemType == other.itemType &&
             lastReviewedTime == other.lastReviewedTime &&
+            projectId == other.projectId &&
             queueId == other.queueId &&
             runId == other.runId &&
-            sessionId == other.sessionId &&
             sourceProposedExampleId == other.sourceProposedExampleId &&
             startTime == other.startTime &&
             threadId == other.threadId &&
@@ -617,9 +617,9 @@ private constructor(
             addedAt,
             itemType,
             lastReviewedTime,
+            projectId,
             queueId,
             runId,
-            sessionId,
             sourceProposedExampleId,
             startTime,
             threadId,
@@ -630,5 +630,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ItemUpdateResponse{id=$id, addedAt=$addedAt, itemType=$itemType, lastReviewedTime=$lastReviewedTime, queueId=$queueId, runId=$runId, sessionId=$sessionId, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, threadId=$threadId, additionalProperties=$additionalProperties}"
+        "ItemUpdateResponse{id=$id, addedAt=$addedAt, itemType=$itemType, lastReviewedTime=$lastReviewedTime, projectId=$projectId, queueId=$queueId, runId=$runId, sourceProposedExampleId=$sourceProposedExampleId, startTime=$startTime, threadId=$threadId, additionalProperties=$additionalProperties}"
 }

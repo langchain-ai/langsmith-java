@@ -31,6 +31,7 @@ internal class ItemServiceTest {
                     .addItem(
                         ItemCreateParams.Item.builder()
                             .itemType(ItemCreateParams.Item.ItemType.RUN)
+                            .projectId("project_id")
                             .runId("run_id")
                             .sessionId("session_id")
                             .sourceProposedExampleId("source_proposed_example_id")

@@ -18,6 +18,7 @@ internal class ItemCreateParamsTest {
             .addItem(
                 ItemCreateParams.Item.builder()
                     .itemType(ItemCreateParams.Item.ItemType.RUN)
+                    .projectId("project_id")
                     .runId("run_id")
                     .sessionId("session_id")
                     .sourceProposedExampleId("source_proposed_example_id")
@@ -46,6 +47,7 @@ internal class ItemCreateParamsTest {
                 .addItem(
                     ItemCreateParams.Item.builder()
                         .itemType(ItemCreateParams.Item.ItemType.RUN)
+                        .projectId("project_id")
                         .runId("run_id")
                         .sessionId("session_id")
                         .sourceProposedExampleId("source_proposed_example_id")
@@ -79,6 +81,7 @@ internal class ItemCreateParamsTest {
                 .addItem(
                     ItemCreateParams.Item.builder()
                         .itemType(ItemCreateParams.Item.ItemType.RUN)
+                        .projectId("project_id")
                         .runId("run_id")
                         .sessionId("session_id")
                         .sourceProposedExampleId("source_proposed_example_id")
@@ -94,6 +97,7 @@ internal class ItemCreateParamsTest {
             .containsExactly(
                 ItemCreateParams.Item.builder()
                     .itemType(ItemCreateParams.Item.ItemType.RUN)
+                    .projectId("project_id")
                     .runId("run_id")
                     .sessionId("session_id")
                     .sourceProposedExampleId("source_proposed_example_id")

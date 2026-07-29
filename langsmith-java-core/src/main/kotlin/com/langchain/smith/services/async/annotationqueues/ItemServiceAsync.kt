@@ -38,7 +38,7 @@ interface ItemServiceAsync {
 
     /**
      * Add RUN or THREAD items to a single annotation queue. RUN items require run_id unless they
-     * are created from a suggested example. THREAD items require thread_id and session_id.
+     * are created from a suggested example. THREAD items require thread_id and project_id.
      */
     fun create(queueId: String): CompletableFuture<ItemCreateResponse> =
         create(queueId, ItemCreateParams.none())
