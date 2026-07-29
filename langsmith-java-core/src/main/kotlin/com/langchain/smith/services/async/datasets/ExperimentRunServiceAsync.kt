@@ -79,8 +79,8 @@ interface ExperimentRunServiceAsync {
         ): ExperimentRunServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/datasets/{dataset_id}/experiment-runs`, but is
-         * otherwise the same as [ExperimentRunServiceAsync.query].
+         * Returns a raw HTTP response for `post /api/v2/datasets/{dataset_id}/experiment-runs`, but
+         * is otherwise the same as [ExperimentRunServiceAsync.query].
          */
         fun query(
             datasetId: String

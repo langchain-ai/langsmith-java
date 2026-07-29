@@ -109,8 +109,8 @@ interface ThreadService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v2/threads/{thread_id}/traces`, but is otherwise
-         * the same as [ThreadService.listTraces].
+         * Returns a raw HTTP response for `get /api/v2/threads/{thread_id}/traces`, but is
+         * otherwise the same as [ThreadService.listTraces].
          */
         @MustBeClosed
         fun listTraces(
@@ -141,8 +141,8 @@ interface ThreadService {
         ): HttpResponseFor<ThreadListTracesPage>
 
         /**
-         * Returns a raw HTTP response for `post /v2/threads/query`, but is otherwise the same as
-         * [ThreadService.query].
+         * Returns a raw HTTP response for `post /api/v2/threads/query`, but is otherwise the same
+         * as [ThreadService.query].
          */
         @MustBeClosed
         fun query(): HttpResponseFor<ThreadQueryPage> = query(ThreadQueryParams.none())
@@ -166,8 +166,8 @@ interface ThreadService {
             query(ThreadQueryParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/threads/{thread_id}/stats`, but is otherwise the
-         * same as [ThreadService.stats].
+         * Returns a raw HTTP response for `get /api/v2/threads/{thread_id}/stats`, but is otherwise
+         * the same as [ThreadService.stats].
          */
         @MustBeClosed
         fun stats(threadId: String, params: ThreadStatsParams): HttpResponseFor<ThreadStats> =

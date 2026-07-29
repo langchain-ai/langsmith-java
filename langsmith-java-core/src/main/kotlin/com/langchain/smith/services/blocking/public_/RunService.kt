@@ -93,7 +93,7 @@ interface RunService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v2/public/{share_token}/run/{run_id}`, but is
+         * Returns a raw HTTP response for `get /api/v2/public/{share_token}/run/{run_id}`, but is
          * otherwise the same as [RunService.retrieve].
          */
         @MustBeClosed
@@ -121,7 +121,7 @@ interface RunService {
         ): HttpResponseFor<Run>
 
         /**
-         * Returns a raw HTTP response for `post /v2/public/{share_token}/runs/v2/query`, but is
+         * Returns a raw HTTP response for `post /api/v2/public/{share_token}/runs/v2/query`, but is
          * otherwise the same as [RunService.query].
          */
         @MustBeClosed

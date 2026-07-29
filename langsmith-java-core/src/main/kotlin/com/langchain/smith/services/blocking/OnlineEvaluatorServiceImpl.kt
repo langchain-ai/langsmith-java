@@ -50,32 +50,32 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
         params: OnlineEvaluatorCreateParams,
         requestOptions: RequestOptions,
     ): CreateOnlineEvaluatorResponse =
-        // post /v1/platform/evaluators
+        // post /api/v1/platform/evaluators
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: OnlineEvaluatorRetrieveParams,
         requestOptions: RequestOptions,
     ): OnlineEvaluator =
-        // get /v1/platform/evaluators/{evaluator_id}
+        // get /api/v1/platform/evaluators/{evaluator_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(
         params: OnlineEvaluatorUpdateParams,
         requestOptions: RequestOptions,
     ): UpdateOnlineEvaluatorResponse =
-        // patch /v1/platform/evaluators/{evaluator_id}
+        // patch /api/v1/platform/evaluators/{evaluator_id}
         withRawResponse().update(params, requestOptions).parse()
 
     override fun list(
         params: OnlineEvaluatorListParams,
         requestOptions: RequestOptions,
     ): OnlineEvaluatorListPage =
-        // get /v1/platform/evaluators
+        // get /api/v1/platform/evaluators
         withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(params: OnlineEvaluatorDeleteParams, requestOptions: RequestOptions) {
-        // delete /v1/platform/evaluators/{evaluator_id}
+        // delete /api/v1/platform/evaluators/{evaluator_id}
         withRawResponse().delete(params, requestOptions)
     }
 
@@ -83,14 +83,14 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
         params: OnlineEvaluatorBulkDeleteParams,
         requestOptions: RequestOptions,
     ): BulkDeleteEvaluatorsResponse =
-        // delete /v1/platform/evaluators
+        // delete /api/v1/platform/evaluators
         withRawResponse().bulkDelete(params, requestOptions).parse()
 
     override fun spend(
         params: OnlineEvaluatorSpendParams,
         requestOptions: RequestOptions,
     ): GetOnlineEvaluatorSpendResponse =
-        // get /v1/platform/evaluators/spend
+        // get /api/v1/platform/evaluators/spend
         withRawResponse().spend(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -117,7 +117,7 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "evaluators")
+                    .addPathSegments("api", "v1", "platform", "evaluators")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -148,7 +148,7 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "evaluators", params._pathParam(0))
+                    .addPathSegments("api", "v1", "platform", "evaluators", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -178,7 +178,7 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "evaluators", params._pathParam(0))
+                    .addPathSegments("api", "v1", "platform", "evaluators", params._pathParam(0))
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -206,7 +206,7 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "evaluators")
+                    .addPathSegments("api", "v1", "platform", "evaluators")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -242,7 +242,7 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "evaluators", params._pathParam(0))
+                    .addPathSegments("api", "v1", "platform", "evaluators", params._pathParam(0))
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepare(clientOptions, params)
@@ -264,7 +264,7 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "evaluators")
+                    .addPathSegments("api", "v1", "platform", "evaluators")
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepare(clientOptions, params)
@@ -292,7 +292,7 @@ class OnlineEvaluatorServiceImpl internal constructor(private val clientOptions:
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "evaluators", "spend")
+                    .addPathSegments("api", "v1", "platform", "evaluators", "spend")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

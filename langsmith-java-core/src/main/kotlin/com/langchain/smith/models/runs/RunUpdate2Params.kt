@@ -4,26 +4,30 @@ package com.langchain.smith.models.runs
 
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.Params
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
-import com.langchain.smith.core.toImmutable
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update a run. */
+/**
+ * Updates a run identified by its ID. The body should contain only the fields to be changed;
+ * unknown fields are ignored.
+ */
 class RunUpdate2Params
 private constructor(
     private val runId: String?,
+    private val runIngest: RunIngest,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
     fun runId(): Optional<String> = Optional.ofNullable(runId)
 
-    /** Additional body properties to send with the request. */
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
+    fun runIngest(): RunIngest = runIngest
+
+    fun _additionalBodyProperties(): Map<String, JsonValue> = runIngest._additionalProperties()
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -35,9 +39,14 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): RunUpdate2Params = builder().build()
-
-        /** Returns a mutable builder for constructing an instance of [RunUpdate2Params]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [RunUpdate2Params].
+         *
+         * The following fields are required:
+         * ```java
+         * .runIngest()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -45,22 +54,24 @@ private constructor(
     class Builder internal constructor() {
 
         private var runId: String? = null
+        private var runIngest: RunIngest? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(runUpdate2Params: RunUpdate2Params) = apply {
             runId = runUpdate2Params.runId
+            runIngest = runUpdate2Params.runIngest
             additionalHeaders = runUpdate2Params.additionalHeaders.toBuilder()
             additionalQueryParams = runUpdate2Params.additionalQueryParams.toBuilder()
-            additionalBodyProperties = runUpdate2Params.additionalBodyProperties.toMutableMap()
         }
 
         fun runId(runId: String?) = apply { this.runId = runId }
 
         /** Alias for calling [Builder.runId] with `runId.orElse(null)`. */
         fun runId(runId: Optional<String>) = runId(runId.getOrNull())
+
+        fun runIngest(runIngest: RunIngest) = apply { this.runIngest = runIngest }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -160,44 +171,28 @@ private constructor(
             additionalQueryParams.removeAll(keys)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            putAllAdditionalBodyProperties(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply {
-            additionalBodyProperties.remove(key)
-        }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            keys.forEach(::removeAdditionalBodyProperty)
-        }
-
         /**
          * Returns an immutable instance of [RunUpdate2Params].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .runIngest()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): RunUpdate2Params =
             RunUpdate2Params(
                 runId,
+                checkRequired("runIngest", runIngest),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
-                additionalBodyProperties.toImmutable(),
             )
     }
 
-    fun _body(): Optional<Map<String, JsonValue>> =
-        Optional.ofNullable(additionalBodyProperties.ifEmpty { null })
+    fun _body(): RunIngest = runIngest
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -216,14 +211,14 @@ private constructor(
 
         return other is RunUpdate2Params &&
             runId == other.runId &&
+            runIngest == other.runIngest &&
             additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams &&
-            additionalBodyProperties == other.additionalBodyProperties
+            additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(runId, additionalHeaders, additionalQueryParams, additionalBodyProperties)
+        Objects.hash(runId, runIngest, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "RunUpdate2Params{runId=$runId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "RunUpdate2Params{runId=$runId, runIngest=$runIngest, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

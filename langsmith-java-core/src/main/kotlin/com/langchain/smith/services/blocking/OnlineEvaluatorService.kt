@@ -215,8 +215,8 @@ interface OnlineEvaluatorService {
         ): OnlineEvaluatorService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v1/platform/evaluators`, but is otherwise the same
-         * as [OnlineEvaluatorService.create].
+         * Returns a raw HTTP response for `post /api/v1/platform/evaluators`, but is otherwise the
+         * same as [OnlineEvaluatorService.create].
          */
         @MustBeClosed
         fun create(
@@ -251,7 +251,7 @@ interface OnlineEvaluatorService {
             create(createOnlineEvaluatorRequest, RequestOptions.none())
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/evaluators/{evaluator_id}`, but is
+         * Returns a raw HTTP response for `get /api/v1/platform/evaluators/{evaluator_id}`, but is
          * otherwise the same as [OnlineEvaluatorService.retrieve].
          */
         @MustBeClosed
@@ -295,8 +295,8 @@ interface OnlineEvaluatorService {
             retrieve(evaluatorId, OnlineEvaluatorRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `patch /v1/platform/evaluators/{evaluator_id}`, but is
-         * otherwise the same as [OnlineEvaluatorService.update].
+         * Returns a raw HTTP response for `patch /api/v1/platform/evaluators/{evaluator_id}`, but
+         * is otherwise the same as [OnlineEvaluatorService.update].
          */
         @MustBeClosed
         fun update(
@@ -328,8 +328,8 @@ interface OnlineEvaluatorService {
         ): HttpResponseFor<UpdateOnlineEvaluatorResponse>
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/evaluators`, but is otherwise the same
-         * as [OnlineEvaluatorService.list].
+         * Returns a raw HTTP response for `get /api/v1/platform/evaluators`, but is otherwise the
+         * same as [OnlineEvaluatorService.list].
          */
         @MustBeClosed
         fun list(): HttpResponseFor<OnlineEvaluatorListPage> =
@@ -354,8 +354,8 @@ interface OnlineEvaluatorService {
             list(OnlineEvaluatorListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v1/platform/evaluators/{evaluator_id}`, but is
-         * otherwise the same as [OnlineEvaluatorService.delete].
+         * Returns a raw HTTP response for `delete /api/v1/platform/evaluators/{evaluator_id}`, but
+         * is otherwise the same as [OnlineEvaluatorService.delete].
          */
         @MustBeClosed
         fun delete(evaluatorId: String): HttpResponse =
@@ -395,8 +395,8 @@ interface OnlineEvaluatorService {
             delete(evaluatorId, OnlineEvaluatorDeleteParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v1/platform/evaluators`, but is otherwise the
-         * same as [OnlineEvaluatorService.bulkDelete].
+         * Returns a raw HTTP response for `delete /api/v1/platform/evaluators`, but is otherwise
+         * the same as [OnlineEvaluatorService.bulkDelete].
          */
         @MustBeClosed
         fun bulkDelete(
@@ -411,8 +411,8 @@ interface OnlineEvaluatorService {
         ): HttpResponseFor<BulkDeleteEvaluatorsResponse>
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/evaluators/spend`, but is otherwise the
-         * same as [OnlineEvaluatorService.spend].
+         * Returns a raw HTTP response for `get /api/v1/platform/evaluators/spend`, but is otherwise
+         * the same as [OnlineEvaluatorService.spend].
          */
         @MustBeClosed
         fun spend(

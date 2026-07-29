@@ -41,14 +41,14 @@ class TraceServiceAsyncImpl internal constructor(private val clientOptions: Clie
         params: TraceListRunsParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<TraceListRunsResponse> =
-        // get /v2/traces/{trace_id}/runs
+        // get /api/v2/traces/{trace_id}/runs
         withRawResponse().listRuns(params, requestOptions).thenApply { it.parse() }
 
     override fun query(
         params: TraceQueryParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<TraceQueryPageAsync> =
-        // post /v2/traces/query
+        // post /api/v2/traces/query
         withRawResponse().query(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -78,7 +78,7 @@ class TraceServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "traces", params._pathParam(0), "runs")
+                    .addPathSegments("api", "v2", "traces", params._pathParam(0), "runs")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -108,7 +108,7 @@ class TraceServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "traces", "query")
+                    .addPathSegments("api", "v2", "traces", "query")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)

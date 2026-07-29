@@ -308,29 +308,20 @@ interface RunServiceAsync {
     fun stats(runStatsQueryParams: RunStatsQueryParams): CompletableFuture<RunStatsResponse> =
         stats(runStatsQueryParams, RequestOptions.none())
 
-    /** Update a run. */
-    fun update2(runId: String): CompletableFuture<RunUpdate2Response> =
-        update2(runId, RunUpdate2Params.none())
+    /**
+     * Updates a run identified by its ID. The body should contain only the fields to be changed;
+     * unknown fields are ignored.
+     */
+    fun update2(runId: String, params: RunUpdate2Params): CompletableFuture<RunUpdate2Response> =
+        update2(runId, params, RequestOptions.none())
 
     /** @see update2 */
     fun update2(
         runId: String,
-        params: RunUpdate2Params = RunUpdate2Params.none(),
+        params: RunUpdate2Params,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<RunUpdate2Response> =
         update2(params.toBuilder().runId(runId).build(), requestOptions)
-
-    /** @see update2 */
-    fun update2(
-        runId: String,
-        params: RunUpdate2Params = RunUpdate2Params.none(),
-    ): CompletableFuture<RunUpdate2Response> = update2(runId, params, RequestOptions.none())
-
-    /** @see update2 */
-    fun update2(
-        params: RunUpdate2Params,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<RunUpdate2Response>
 
     /** @see update2 */
     fun update2(params: RunUpdate2Params): CompletableFuture<RunUpdate2Response> =
@@ -338,10 +329,9 @@ interface RunServiceAsync {
 
     /** @see update2 */
     fun update2(
-        runId: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<RunUpdate2Response> =
-        update2(runId, RunUpdate2Params.none(), requestOptions)
+        params: RunUpdate2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<RunUpdate2Response>
 
     /** Get a specific run. */
     fun retrieve(runId: String): CompletableFuture<RunSchema> =
@@ -406,7 +396,7 @@ interface RunServiceAsync {
         fun share(): ShareServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /runs`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /api/v1/runs`, but is otherwise the same as
          * [RunServiceAsync.create].
          */
         fun create(params: RunCreateParams): CompletableFuture<HttpResponseFor<RunCreateResponse>> =
@@ -430,8 +420,8 @@ interface RunServiceAsync {
             create(runIngest, RequestOptions.none())
 
         /**
-         * Returns a raw HTTP response for `patch /runs/{run_id}`, but is otherwise the same as
-         * [RunServiceAsync.update].
+         * Returns a raw HTTP response for `patch /api/v1/runs/{run_id}`, but is otherwise the same
+         * as [RunServiceAsync.update].
          */
         fun update(
             runId: String,
@@ -458,8 +448,8 @@ interface RunServiceAsync {
         ): CompletableFuture<HttpResponseFor<RunUpdateResponse>>
 
         /**
-         * Returns a raw HTTP response for `get /v2/runs/{run_id}/url`, but is otherwise the same as
-         * [RunServiceAsync.getUrl].
+         * Returns a raw HTTP response for `get /api/v2/runs/{run_id}/url`, but is otherwise the
+         * same as [RunServiceAsync.getUrl].
          */
         fun getUrl(
             runId: String,
@@ -486,7 +476,7 @@ interface RunServiceAsync {
         ): CompletableFuture<HttpResponseFor<RunGetUrlResponse>>
 
         /**
-         * Returns a raw HTTP response for `post /runs/batch`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /api/v1/runs/batch`, but is otherwise the same as
          * [RunServiceAsync.ingestBatch].
          */
         fun ingestBatch(): CompletableFuture<HttpResponseFor<RunIngestBatchResponse>> =
@@ -574,7 +564,7 @@ interface RunServiceAsync {
             queryV1(RunQueryV1Params.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/runs/query`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /api/v2/runs/query`, but is otherwise the same as
          * [RunServiceAsync.queryV2].
          */
         fun queryV2(): CompletableFuture<HttpResponseFor<RunQueryV2PageAsync>> =
@@ -638,7 +628,7 @@ interface RunServiceAsync {
             retrieveV1(runId, RunRetrieveV1Params.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/runs/{run_id}`, but is otherwise the same as
+         * Returns a raw HTTP response for `get /api/v2/runs/{run_id}`, but is otherwise the same as
          * [RunServiceAsync.retrieveV2].
          */
         fun retrieveV2(
@@ -698,29 +688,19 @@ interface RunServiceAsync {
          * Returns a raw HTTP response for `patch /api/v1/runs/{run_id}`, but is otherwise the same
          * as [RunServiceAsync.update2].
          */
-        fun update2(runId: String): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
-            update2(runId, RunUpdate2Params.none())
-
-        /** @see update2 */
         fun update2(
             runId: String,
-            params: RunUpdate2Params = RunUpdate2Params.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
-            update2(params.toBuilder().runId(runId).build(), requestOptions)
-
-        /** @see update2 */
-        fun update2(
-            runId: String,
-            params: RunUpdate2Params = RunUpdate2Params.none(),
+            params: RunUpdate2Params,
         ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
             update2(runId, params, RequestOptions.none())
 
         /** @see update2 */
         fun update2(
+            runId: String,
             params: RunUpdate2Params,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>>
+        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
+            update2(params.toBuilder().runId(runId).build(), requestOptions)
 
         /** @see update2 */
         fun update2(
@@ -730,10 +710,9 @@ interface RunServiceAsync {
 
         /** @see update2 */
         fun update2(
-            runId: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>> =
-            update2(runId, RunUpdate2Params.none(), requestOptions)
+            params: RunUpdate2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<RunUpdate2Response>>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as

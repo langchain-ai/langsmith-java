@@ -94,8 +94,8 @@ interface ShareService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): ShareService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/runs/{run_id}/share`, but is otherwise the same
-         * as [ShareService.create].
+         * Returns a raw HTTP response for `post /api/v2/runs/{run_id}/share`, but is otherwise the
+         * same as [ShareService.create].
          */
         @MustBeClosed
         fun create(runId: String): HttpResponseFor<ShareCreateResponse> =
@@ -138,8 +138,8 @@ interface ShareService {
             create(runId, ShareCreateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v2/runs/{trace_id}/share`, but is otherwise the
-         * same as [ShareService.delete].
+         * Returns a raw HTTP response for `delete /api/v2/runs/{trace_id}/share`, but is otherwise
+         * the same as [ShareService.delete].
          */
         @MustBeClosed
         fun delete(traceId: String): HttpResponse = delete(traceId, ShareDeleteParams.none())

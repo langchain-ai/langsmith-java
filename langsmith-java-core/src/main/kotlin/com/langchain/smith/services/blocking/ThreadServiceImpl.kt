@@ -43,15 +43,15 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         params: ThreadListTracesParams,
         requestOptions: RequestOptions,
     ): ThreadListTracesPage =
-        // get /v2/threads/{thread_id}/traces
+        // get /api/v2/threads/{thread_id}/traces
         withRawResponse().listTraces(params, requestOptions).parse()
 
     override fun query(params: ThreadQueryParams, requestOptions: RequestOptions): ThreadQueryPage =
-        // post /v2/threads/query
+        // post /api/v2/threads/query
         withRawResponse().query(params, requestOptions).parse()
 
     override fun stats(params: ThreadStatsParams, requestOptions: RequestOptions): ThreadStats =
-        // get /v2/threads/{thread_id}/stats
+        // get /api/v2/threads/{thread_id}/stats
         withRawResponse().stats(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -81,7 +81,7 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "threads", params._pathParam(0), "traces")
+                    .addPathSegments("api", "v2", "threads", params._pathParam(0), "traces")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -115,7 +115,7 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "threads", "query")
+                    .addPathSegments("api", "v2", "threads", "query")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -153,7 +153,7 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "threads", params._pathParam(0), "stats")
+                    .addPathSegments("api", "v2", "threads", params._pathParam(0), "stats")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

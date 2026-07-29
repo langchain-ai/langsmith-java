@@ -40,11 +40,11 @@ class TraceServiceImpl internal constructor(private val clientOptions: ClientOpt
         params: TraceListRunsParams,
         requestOptions: RequestOptions,
     ): TraceListRunsResponse =
-        // get /v2/traces/{trace_id}/runs
+        // get /api/v2/traces/{trace_id}/runs
         withRawResponse().listRuns(params, requestOptions).parse()
 
     override fun query(params: TraceQueryParams, requestOptions: RequestOptions): TraceQueryPage =
-        // post /v2/traces/query
+        // post /api/v2/traces/query
         withRawResponse().query(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -74,7 +74,7 @@ class TraceServiceImpl internal constructor(private val clientOptions: ClientOpt
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "traces", params._pathParam(0), "runs")
+                    .addPathSegments("api", "v2", "traces", params._pathParam(0), "runs")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -101,7 +101,7 @@ class TraceServiceImpl internal constructor(private val clientOptions: ClientOpt
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "traces", "query")
+                    .addPathSegments("api", "v2", "traces", "query")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)

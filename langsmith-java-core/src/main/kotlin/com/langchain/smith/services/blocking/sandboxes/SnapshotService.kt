@@ -126,8 +126,8 @@ interface SnapshotService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): SnapshotService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/snapshots`, but is otherwise the same
-         * as [SnapshotService.create].
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/snapshots`, but is otherwise the
+         * same as [SnapshotService.create].
          */
         @MustBeClosed
         fun create(params: SnapshotCreateParams): HttpResponseFor<SnapshotResponse> =
@@ -141,7 +141,7 @@ interface SnapshotService {
         ): HttpResponseFor<SnapshotResponse>
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/snapshots/{snapshot_id}`, but is
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/snapshots/{snapshot_id}`, but is
          * otherwise the same as [SnapshotService.retrieve].
          */
         @MustBeClosed
@@ -185,8 +185,8 @@ interface SnapshotService {
             retrieve(snapshotId, SnapshotRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/snapshots`, but is otherwise the same
-         * as [SnapshotService.list].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/snapshots`, but is otherwise the
+         * same as [SnapshotService.list].
          */
         @MustBeClosed
         fun list(): HttpResponseFor<SnapshotListResponse> = list(SnapshotListParams.none())
@@ -210,8 +210,8 @@ interface SnapshotService {
             list(SnapshotListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v2/sandboxes/snapshots/{snapshot_id}`, but is
-         * otherwise the same as [SnapshotService.delete].
+         * Returns a raw HTTP response for `delete /api/v2/sandboxes/snapshots/{snapshot_id}`, but
+         * is otherwise the same as [SnapshotService.delete].
          */
         @MustBeClosed
         fun delete(snapshotId: String): HttpResponse =

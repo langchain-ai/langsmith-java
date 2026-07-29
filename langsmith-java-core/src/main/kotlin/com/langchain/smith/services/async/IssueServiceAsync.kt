@@ -96,8 +96,8 @@ interface IssueServiceAsync {
         ): IssueServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/issues/{id}`, but is otherwise the same
-         * as [IssueServiceAsync.retrieve].
+         * Returns a raw HTTP response for `get /api/v1/platform/issues/{id}`, but is otherwise the
+         * same as [IssueServiceAsync.retrieve].
          */
         fun retrieve(id: String): CompletableFuture<HttpResponseFor<Issue>> =
             retrieve(id, IssueRetrieveParams.none())
@@ -134,8 +134,8 @@ interface IssueServiceAsync {
             retrieve(id, IssueRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/issues`, but is otherwise the same as
-         * [IssueServiceAsync.list].
+         * Returns a raw HTTP response for `get /api/v1/platform/issues`, but is otherwise the same
+         * as [IssueServiceAsync.list].
          */
         fun list(): CompletableFuture<HttpResponseFor<IssueListPageAsync>> =
             list(IssueListParams.none())

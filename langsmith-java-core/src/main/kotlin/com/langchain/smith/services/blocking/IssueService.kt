@@ -90,8 +90,8 @@ interface IssueService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): IssueService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/issues/{id}`, but is otherwise the same
-         * as [IssueService.retrieve].
+         * Returns a raw HTTP response for `get /api/v1/platform/issues/{id}`, but is otherwise the
+         * same as [IssueService.retrieve].
          */
         @MustBeClosed
         fun retrieve(id: String): HttpResponseFor<Issue> = retrieve(id, IssueRetrieveParams.none())
@@ -129,8 +129,8 @@ interface IssueService {
             retrieve(id, IssueRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/issues`, but is otherwise the same as
-         * [IssueService.list].
+         * Returns a raw HTTP response for `get /api/v1/platform/issues`, but is otherwise the same
+         * as [IssueService.list].
          */
         @MustBeClosed fun list(): HttpResponseFor<IssueListPage> = list(IssueListParams.none())
 

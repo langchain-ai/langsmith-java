@@ -119,8 +119,8 @@ interface ThreadServiceAsync {
         ): ThreadServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v2/threads/{thread_id}/traces`, but is otherwise
-         * the same as [ThreadServiceAsync.listTraces].
+         * Returns a raw HTTP response for `get /api/v2/threads/{thread_id}/traces`, but is
+         * otherwise the same as [ThreadServiceAsync.listTraces].
          */
         fun listTraces(
             threadId: String,
@@ -149,8 +149,8 @@ interface ThreadServiceAsync {
         ): CompletableFuture<HttpResponseFor<ThreadListTracesPageAsync>>
 
         /**
-         * Returns a raw HTTP response for `post /v2/threads/query`, but is otherwise the same as
-         * [ThreadServiceAsync.query].
+         * Returns a raw HTTP response for `post /api/v2/threads/query`, but is otherwise the same
+         * as [ThreadServiceAsync.query].
          */
         fun query(): CompletableFuture<HttpResponseFor<ThreadQueryPageAsync>> =
             query(ThreadQueryParams.none())
@@ -174,8 +174,8 @@ interface ThreadServiceAsync {
             query(ThreadQueryParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/threads/{thread_id}/stats`, but is otherwise the
-         * same as [ThreadServiceAsync.stats].
+         * Returns a raw HTTP response for `get /api/v2/threads/{thread_id}/stats`, but is otherwise
+         * the same as [ThreadServiceAsync.stats].
          */
         fun stats(
             threadId: String,

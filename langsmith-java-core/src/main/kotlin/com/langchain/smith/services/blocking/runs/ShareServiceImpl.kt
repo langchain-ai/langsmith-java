@@ -39,11 +39,11 @@ class ShareServiceImpl internal constructor(private val clientOptions: ClientOpt
         params: ShareCreateParams,
         requestOptions: RequestOptions,
     ): ShareCreateResponse =
-        // post /v2/runs/{run_id}/share
+        // post /api/v2/runs/{run_id}/share
         withRawResponse().create(params, requestOptions).parse()
 
     override fun delete(params: ShareDeleteParams, requestOptions: RequestOptions) {
-        // delete /v2/runs/{trace_id}/share
+        // delete /api/v2/runs/{trace_id}/share
         withRawResponse().delete(params, requestOptions)
     }
 
@@ -74,7 +74,7 @@ class ShareServiceImpl internal constructor(private val clientOptions: ClientOpt
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", params._pathParam(0), "share")
+                    .addPathSegments("api", "v2", "runs", params._pathParam(0), "share")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -104,7 +104,7 @@ class ShareServiceImpl internal constructor(private val clientOptions: ClientOpt
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", params._pathParam(0), "share")
+                    .addPathSegments("api", "v2", "runs", params._pathParam(0), "share")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)

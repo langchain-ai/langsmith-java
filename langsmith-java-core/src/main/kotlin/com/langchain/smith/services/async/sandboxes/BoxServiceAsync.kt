@@ -352,8 +352,8 @@ interface BoxServiceAsync {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): BoxServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes`, but is otherwise the same as
-         * [BoxServiceAsync.create].
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes`, but is otherwise the same
+         * as [BoxServiceAsync.create].
          */
         fun create(): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             create(BoxCreateParams.none())
@@ -377,8 +377,8 @@ interface BoxServiceAsync {
             create(BoxCreateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/boxes/{name}`, but is otherwise the
-         * same as [BoxServiceAsync.retrieve].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes/{name}`, but is otherwise
+         * the same as [BoxServiceAsync.retrieve].
          */
         fun retrieve(name: String): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             retrieve(name, BoxRetrieveParams.none())
@@ -418,8 +418,8 @@ interface BoxServiceAsync {
             retrieve(name, BoxRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `patch /v2/sandboxes/boxes/{name}`, but is otherwise the
-         * same as [BoxServiceAsync.update].
+         * Returns a raw HTTP response for `patch /api/v2/sandboxes/boxes/{name}`, but is otherwise
+         * the same as [BoxServiceAsync.update].
          */
         fun update(pathName: String): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             update(pathName, BoxUpdateParams.none())
@@ -457,8 +457,8 @@ interface BoxServiceAsync {
             update(pathName, BoxUpdateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/boxes`, but is otherwise the same as
-         * [BoxServiceAsync.list].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes`, but is otherwise the same
+         * as [BoxServiceAsync.list].
          */
         fun list(): CompletableFuture<HttpResponseFor<SandboxListResponse>> =
             list(BoxListParams.none())
@@ -482,8 +482,8 @@ interface BoxServiceAsync {
             list(BoxListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v2/sandboxes/boxes/{name}`, but is otherwise the
-         * same as [BoxServiceAsync.delete].
+         * Returns a raw HTTP response for `delete /api/v2/sandboxes/boxes/{name}`, but is otherwise
+         * the same as [BoxServiceAsync.delete].
          */
         fun delete(name: String): CompletableFuture<HttpResponse> =
             delete(name, BoxDeleteParams.none())
@@ -517,7 +517,7 @@ interface BoxServiceAsync {
             delete(name, BoxDeleteParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/snapshot`, but is
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/snapshot`, but is
          * otherwise the same as [BoxServiceAsync.createSnapshot].
          */
         fun createSnapshot(
@@ -547,7 +547,7 @@ interface BoxServiceAsync {
         ): CompletableFuture<HttpResponseFor<SnapshotResponse>>
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/service-url`, but is
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/service-url`, but is
          * otherwise the same as [BoxServiceAsync.generateServiceUrl].
          */
         fun generateServiceUrl(
@@ -590,8 +590,8 @@ interface BoxServiceAsync {
             generateServiceUrl(name, BoxGenerateServiceUrlParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/boxes/{name}/status`, but is otherwise
-         * the same as [BoxServiceAsync.getStatus].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes/{name}/status`, but is
+         * otherwise the same as [BoxServiceAsync.getStatus].
          */
         fun getStatus(name: String): CompletableFuture<HttpResponseFor<SandboxStatusResponse>> =
             getStatus(name, BoxGetStatusParams.none())
@@ -631,8 +631,8 @@ interface BoxServiceAsync {
             getStatus(name, BoxGetStatusParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/start`, but is otherwise
-         * the same as [BoxServiceAsync.start].
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/start`, but is
+         * otherwise the same as [BoxServiceAsync.start].
          */
         fun start(name: String): CompletableFuture<HttpResponseFor<SandboxResponse>> =
             start(name, BoxStartParams.none())
@@ -670,8 +670,8 @@ interface BoxServiceAsync {
             start(name, BoxStartParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/stop`, but is otherwise
-         * the same as [BoxServiceAsync.stop].
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/stop`, but is
+         * otherwise the same as [BoxServiceAsync.stop].
          */
         fun stop(name: String): CompletableFuture<HttpResponse> = stop(name, BoxStopParams.none())
 

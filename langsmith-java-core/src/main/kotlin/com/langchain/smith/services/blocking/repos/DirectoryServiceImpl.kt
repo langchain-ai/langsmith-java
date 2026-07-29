@@ -41,11 +41,11 @@ class DirectoryServiceImpl internal constructor(private val clientOptions: Clien
         params: DirectoryListParams,
         requestOptions: RequestOptions,
     ): DirectoryListResponse =
-        // get /v1/platform/hub/repos/{owner}/{repo}/directories
+        // get /api/v1/platform/hub/repos/{owner}/{repo}/directories
         withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(params: DirectoryDeleteParams, requestOptions: RequestOptions) {
-        // delete /v1/platform/hub/repos/{owner}/{repo}/directories
+        // delete /api/v1/platform/hub/repos/{owner}/{repo}/directories
         withRawResponse().delete(params, requestOptions)
     }
 
@@ -53,7 +53,7 @@ class DirectoryServiceImpl internal constructor(private val clientOptions: Clien
         params: DirectoryCommitParams,
         requestOptions: RequestOptions,
     ): DirectoryCommitResponse =
-        // post /v1/platform/hub/repos/{owner}/{repo}/directories/commits
+        // post /api/v1/platform/hub/repos/{owner}/{repo}/directories/commits
         withRawResponse().commit(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -84,6 +84,7 @@ class DirectoryServiceImpl internal constructor(private val clientOptions: Clien
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v1",
                         "platform",
                         "hub",
@@ -121,6 +122,7 @@ class DirectoryServiceImpl internal constructor(private val clientOptions: Clien
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v1",
                         "platform",
                         "hub",
@@ -154,6 +156,7 @@ class DirectoryServiceImpl internal constructor(private val clientOptions: Clien
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v1",
                         "platform",
                         "hub",

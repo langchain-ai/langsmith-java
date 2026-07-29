@@ -142,8 +142,8 @@ interface SnapshotServiceAsync {
         ): SnapshotServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/snapshots`, but is otherwise the same
-         * as [SnapshotServiceAsync.create].
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/snapshots`, but is otherwise the
+         * same as [SnapshotServiceAsync.create].
          */
         fun create(
             params: SnapshotCreateParams
@@ -157,7 +157,7 @@ interface SnapshotServiceAsync {
         ): CompletableFuture<HttpResponseFor<SnapshotResponse>>
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/snapshots/{snapshot_id}`, but is
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/snapshots/{snapshot_id}`, but is
          * otherwise the same as [SnapshotServiceAsync.retrieve].
          */
         fun retrieve(snapshotId: String): CompletableFuture<HttpResponseFor<SnapshotResponse>> =
@@ -198,8 +198,8 @@ interface SnapshotServiceAsync {
             retrieve(snapshotId, SnapshotRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/snapshots`, but is otherwise the same
-         * as [SnapshotServiceAsync.list].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/snapshots`, but is otherwise the
+         * same as [SnapshotServiceAsync.list].
          */
         fun list(): CompletableFuture<HttpResponseFor<SnapshotListResponse>> =
             list(SnapshotListParams.none())
@@ -223,8 +223,8 @@ interface SnapshotServiceAsync {
             list(SnapshotListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v2/sandboxes/snapshots/{snapshot_id}`, but is
-         * otherwise the same as [SnapshotServiceAsync.delete].
+         * Returns a raw HTTP response for `delete /api/v2/sandboxes/snapshots/{snapshot_id}`, but
+         * is otherwise the same as [SnapshotServiceAsync.delete].
          */
         fun delete(snapshotId: String): CompletableFuture<HttpResponse> =
             delete(snapshotId, SnapshotDeleteParams.none())

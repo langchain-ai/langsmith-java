@@ -43,32 +43,32 @@ class RegistryServiceImpl internal constructor(private val clientOptions: Client
         params: RegistryCreateParams,
         requestOptions: RequestOptions,
     ): RegistryResponse =
-        // post /v2/sandboxes/registries
+        // post /api/v2/sandboxes/registries
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: RegistryRetrieveParams,
         requestOptions: RequestOptions,
     ): RegistryResponse =
-        // get /v2/sandboxes/registries/{name}
+        // get /api/v2/sandboxes/registries/{name}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(
         params: RegistryUpdateParams,
         requestOptions: RequestOptions,
     ): RegistryResponse =
-        // patch /v2/sandboxes/registries/{name}
+        // patch /api/v2/sandboxes/registries/{name}
         withRawResponse().update(params, requestOptions).parse()
 
     override fun list(
         params: RegistryListParams,
         requestOptions: RequestOptions,
     ): RegistryListResponse =
-        // get /v2/sandboxes/registries
+        // get /api/v2/sandboxes/registries
         withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(params: RegistryDeleteParams, requestOptions: RequestOptions) {
-        // delete /v2/sandboxes/registries/{name}
+        // delete /api/v2/sandboxes/registries/{name}
         withRawResponse().delete(params, requestOptions)
     }
 
@@ -96,7 +96,7 @@ class RegistryServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries")
+                    .addPathSegments("api", "v2", "sandboxes", "registries")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -127,7 +127,7 @@ class RegistryServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "registries", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -157,7 +157,7 @@ class RegistryServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "registries", params._pathParam(0))
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -185,7 +185,7 @@ class RegistryServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries")
+                    .addPathSegments("api", "v2", "sandboxes", "registries")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -214,7 +214,7 @@ class RegistryServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "registries", params._pathParam(0))
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepare(clientOptions, params)

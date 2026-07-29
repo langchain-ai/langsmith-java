@@ -19,6 +19,7 @@ import com.langchain.smith.models.runs.RunRetrieveV1Params
 import com.langchain.smith.models.runs.RunRetrieveV2Params
 import com.langchain.smith.models.runs.RunStatsQueryParams
 import com.langchain.smith.models.runs.RunTypeEnum
+import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunsFilterDataSourceTypeEnum
 import com.langchain.smith.models.sessions.RunStatsGroupBy
@@ -49,7 +50,7 @@ internal class RunServiceAsyncTest {
 
         val request = capturedRequest.get()
         val body = request.body!!
-        assertThat(request.pathSegments).containsExactly("runs", "batch")
+        assertThat(request.pathSegments).containsExactly("api", "v1", "runs", "batch")
         assertThat(request.headers.values("Content-Encoding")).isEmpty()
         assertThat(body.contentType()).isEqualTo("application/json")
         assertThat(body.repeatable()).isTrue()
@@ -169,7 +170,8 @@ internal class RunServiceAsyncTest {
         runService.create(testRun("run-id")).get()
         runService.flush().get()
 
-        assertThat(requests).containsExactly(listOf("runs", "multipart"), listOf("runs", "batch"))
+        assertThat(requests)
+            .containsExactly(listOf("runs", "multipart"), listOf("api", "v1", "runs", "batch"))
     }
 
     @Disabled("Mock server tests are disabled")
@@ -606,7 +608,65 @@ internal class RunServiceAsyncTest {
                 .build()
         val runServiceAsync = client.runs()
 
-        val responseFuture = runServiceAsync.update2("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val responseFuture =
+            runServiceAsync.update2(
+                RunUpdate2Params.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .runIngest(
+                        RunIngest.builder()
+                            .id("id")
+                            .dottedOrder("dotted_order")
+                            .endTime("end_time")
+                            .error("error")
+                            .addEvent(
+                                RunIngest.Event.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .extra(
+                                RunIngest.Extra.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .inputAttachments(
+                                RunIngest.InputAttachments.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .inputs(
+                                RunIngest.Inputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .name("name")
+                            .outputAttachments(
+                                RunIngest.OutputAttachments.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .outputs(
+                                RunIngest.Outputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .parentRunId("parent_run_id")
+                            .referenceExampleId("reference_example_id")
+                            .runType(RunIngest.RunType.TOOL)
+                            .serialized(
+                                RunIngest.Serialized.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .sessionId("session_id")
+                            .sessionName("session_name")
+                            .startTime("start_time")
+                            .status("status")
+                            .addTag("string")
+                            .traceId("trace_id")
+                            .build()
+                    )
+                    .build()
+            )
 
         val response = responseFuture.get()
         response.validate()

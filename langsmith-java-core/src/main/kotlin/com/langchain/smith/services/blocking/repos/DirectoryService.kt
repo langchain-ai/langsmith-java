@@ -107,8 +107,9 @@ interface DirectoryService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): DirectoryService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/hub/repos/{owner}/{repo}/directories`,
-         * but is otherwise the same as [DirectoryService.list].
+         * Returns a raw HTTP response for `get
+         * /api/v1/platform/hub/repos/{owner}/{repo}/directories`, but is otherwise the same as
+         * [DirectoryService.list].
          */
         @MustBeClosed
         fun list(
@@ -139,7 +140,7 @@ interface DirectoryService {
 
         /**
          * Returns a raw HTTP response for `delete
-         * /v1/platform/hub/repos/{owner}/{repo}/directories`, but is otherwise the same as
+         * /api/v1/platform/hub/repos/{owner}/{repo}/directories`, but is otherwise the same as
          * [DirectoryService.delete].
          */
         @MustBeClosed
@@ -168,8 +169,8 @@ interface DirectoryService {
 
         /**
          * Returns a raw HTTP response for `post
-         * /v1/platform/hub/repos/{owner}/{repo}/directories/commits`, but is otherwise the same as
-         * [DirectoryService.commit].
+         * /api/v1/platform/hub/repos/{owner}/{repo}/directories/commits`, but is otherwise the same
+         * as [DirectoryService.commit].
          */
         @MustBeClosed
         fun commit(

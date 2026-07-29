@@ -117,8 +117,8 @@ interface CommitService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): CommitService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /commits/{owner}/{repo}`, but is otherwise the same
-         * as [CommitService.create].
+         * Returns a raw HTTP response for `post /api/v1/commits/{owner}/{repo}`, but is otherwise
+         * the same as [CommitService.create].
          */
         @MustBeClosed
         fun create(
@@ -148,8 +148,8 @@ interface CommitService {
         ): HttpResponseFor<CommitCreateResponse>
 
         /**
-         * Returns a raw HTTP response for `get /commits/{owner}/{repo}/{commit}`, but is otherwise
-         * the same as [CommitService.retrieve].
+         * Returns a raw HTTP response for `get /api/v1/commits/{owner}/{repo}/{commit}`, but is
+         * otherwise the same as [CommitService.retrieve].
          */
         @MustBeClosed
         fun retrieve(
@@ -179,8 +179,8 @@ interface CommitService {
         ): HttpResponseFor<CommitRetrieveResponse>
 
         /**
-         * Returns a raw HTTP response for `get /commits/{owner}/{repo}`, but is otherwise the same
-         * as [CommitService.list].
+         * Returns a raw HTTP response for `get /api/v1/commits/{owner}/{repo}`, but is otherwise
+         * the same as [CommitService.list].
          */
         @MustBeClosed
         fun list(repo: String, params: CommitListParams): HttpResponseFor<CommitListPage> =

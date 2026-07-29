@@ -47,26 +47,26 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
         BoxServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun create(params: BoxCreateParams, requestOptions: RequestOptions): SandboxResponse =
-        // post /v2/sandboxes/boxes
+        // post /api/v2/sandboxes/boxes
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: BoxRetrieveParams,
         requestOptions: RequestOptions,
     ): SandboxResponse =
-        // get /v2/sandboxes/boxes/{name}
+        // get /api/v2/sandboxes/boxes/{name}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun update(params: BoxUpdateParams, requestOptions: RequestOptions): SandboxResponse =
-        // patch /v2/sandboxes/boxes/{name}
+        // patch /api/v2/sandboxes/boxes/{name}
         withRawResponse().update(params, requestOptions).parse()
 
     override fun list(params: BoxListParams, requestOptions: RequestOptions): SandboxListResponse =
-        // get /v2/sandboxes/boxes
+        // get /api/v2/sandboxes/boxes
         withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(params: BoxDeleteParams, requestOptions: RequestOptions) {
-        // delete /v2/sandboxes/boxes/{name}
+        // delete /api/v2/sandboxes/boxes/{name}
         withRawResponse().delete(params, requestOptions)
     }
 
@@ -74,29 +74,29 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions,
     ): SnapshotResponse =
-        // post /v2/sandboxes/boxes/{name}/snapshot
+        // post /api/v2/sandboxes/boxes/{name}/snapshot
         withRawResponse().createSnapshot(params, requestOptions).parse()
 
     override fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams,
         requestOptions: RequestOptions,
     ): ServiceUrlResponse =
-        // post /v2/sandboxes/boxes/{name}/service-url
+        // post /api/v2/sandboxes/boxes/{name}/service-url
         withRawResponse().generateServiceUrl(params, requestOptions).parse()
 
     override fun getStatus(
         params: BoxGetStatusParams,
         requestOptions: RequestOptions,
     ): SandboxStatusResponse =
-        // get /v2/sandboxes/boxes/{name}/status
+        // get /api/v2/sandboxes/boxes/{name}/status
         withRawResponse().getStatus(params, requestOptions).parse()
 
     override fun start(params: BoxStartParams, requestOptions: RequestOptions): SandboxResponse =
-        // post /v2/sandboxes/boxes/{name}/start
+        // post /api/v2/sandboxes/boxes/{name}/start
         withRawResponse().start(params, requestOptions).parse()
 
     override fun stop(params: BoxStopParams, requestOptions: RequestOptions) {
-        // post /v2/sandboxes/boxes/{name}/stop
+        // post /api/v2/sandboxes/boxes/{name}/stop
         withRawResponse().stop(params, requestOptions)
     }
 
@@ -124,7 +124,7 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes")
+                    .addPathSegments("api", "v2", "sandboxes", "boxes")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -155,7 +155,7 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "boxes", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -185,7 +185,7 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "boxes", params._pathParam(0))
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -213,7 +213,7 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes")
+                    .addPathSegments("api", "v2", "sandboxes", "boxes")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -239,7 +239,7 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "boxes", params._pathParam(0))
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepare(clientOptions, params)
@@ -264,7 +264,14 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "snapshot")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "snapshot",
+                    )
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -296,6 +303,7 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v2",
                         "sandboxes",
                         "boxes",
@@ -332,7 +340,14 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "status")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "status",
+                    )
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -362,7 +377,14 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "start")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "start",
+                    )
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepare(clientOptions, params)
@@ -389,7 +411,14 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "stop")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "stop",
+                    )
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepare(clientOptions, params)

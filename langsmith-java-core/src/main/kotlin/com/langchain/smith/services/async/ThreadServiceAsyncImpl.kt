@@ -44,21 +44,21 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
         params: ThreadListTracesParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ThreadListTracesPageAsync> =
-        // get /v2/threads/{thread_id}/traces
+        // get /api/v2/threads/{thread_id}/traces
         withRawResponse().listTraces(params, requestOptions).thenApply { it.parse() }
 
     override fun query(
         params: ThreadQueryParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ThreadQueryPageAsync> =
-        // post /v2/threads/query
+        // post /api/v2/threads/query
         withRawResponse().query(params, requestOptions).thenApply { it.parse() }
 
     override fun stats(
         params: ThreadStatsParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ThreadStats> =
-        // get /v2/threads/{thread_id}/stats
+        // get /api/v2/threads/{thread_id}/stats
         withRawResponse().stats(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -88,7 +88,7 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "threads", params._pathParam(0), "traces")
+                    .addPathSegments("api", "v2", "threads", params._pathParam(0), "traces")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -126,7 +126,7 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "threads", "query")
+                    .addPathSegments("api", "v2", "threads", "query")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -168,7 +168,7 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "threads", params._pathParam(0), "stats")
+                    .addPathSegments("api", "v2", "threads", params._pathParam(0), "stats")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

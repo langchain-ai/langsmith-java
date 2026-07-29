@@ -39,14 +39,14 @@ class IssueServiceAsyncImpl internal constructor(private val clientOptions: Clie
         params: IssueRetrieveParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Issue> =
-        // get /v1/platform/issues/{id}
+        // get /api/v1/platform/issues/{id}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: IssueListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<IssueListPageAsync> =
-        // get /v1/platform/issues
+        // get /api/v1/platform/issues
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -75,7 +75,7 @@ class IssueServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "issues", params._pathParam(0))
+                    .addPathSegments("api", "v1", "platform", "issues", params._pathParam(0))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -105,7 +105,7 @@ class IssueServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "issues")
+                    .addPathSegments("api", "v1", "platform", "issues")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

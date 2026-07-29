@@ -96,8 +96,8 @@ interface TraceServiceAsync {
         ): TraceServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v2/traces/{trace_id}/runs`, but is otherwise the
-         * same as [TraceServiceAsync.listRuns].
+         * Returns a raw HTTP response for `get /api/v2/traces/{trace_id}/runs`, but is otherwise
+         * the same as [TraceServiceAsync.listRuns].
          */
         fun listRuns(
             traceId: String,
@@ -126,7 +126,7 @@ interface TraceServiceAsync {
         ): CompletableFuture<HttpResponseFor<TraceListRunsResponse>>
 
         /**
-         * Returns a raw HTTP response for `post /v2/traces/query`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /api/v2/traces/query`, but is otherwise the same as
          * [TraceServiceAsync.query].
          */
         fun query(): CompletableFuture<HttpResponseFor<TraceQueryPageAsync>> =

@@ -173,7 +173,7 @@ interface RegistryServiceAsync {
         ): RegistryServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/registries`, but is otherwise the
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/registries`, but is otherwise the
          * same as [RegistryServiceAsync.create].
          */
         fun create(
@@ -188,8 +188,8 @@ interface RegistryServiceAsync {
         ): CompletableFuture<HttpResponseFor<RegistryResponse>>
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/registries/{name}`, but is otherwise
-         * the same as [RegistryServiceAsync.retrieve].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/registries/{name}`, but is
+         * otherwise the same as [RegistryServiceAsync.retrieve].
          */
         fun retrieve(name: String): CompletableFuture<HttpResponseFor<RegistryResponse>> =
             retrieve(name, RegistryRetrieveParams.none())
@@ -229,8 +229,8 @@ interface RegistryServiceAsync {
             retrieve(name, RegistryRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `patch /v2/sandboxes/registries/{name}`, but is otherwise
-         * the same as [RegistryServiceAsync.update].
+         * Returns a raw HTTP response for `patch /api/v2/sandboxes/registries/{name}`, but is
+         * otherwise the same as [RegistryServiceAsync.update].
          */
         fun update(pathName: String): CompletableFuture<HttpResponseFor<RegistryResponse>> =
             update(pathName, RegistryUpdateParams.none())
@@ -270,8 +270,8 @@ interface RegistryServiceAsync {
             update(pathName, RegistryUpdateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/registries`, but is otherwise the same
-         * as [RegistryServiceAsync.list].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/registries`, but is otherwise the
+         * same as [RegistryServiceAsync.list].
          */
         fun list(): CompletableFuture<HttpResponseFor<RegistryListResponse>> =
             list(RegistryListParams.none())
@@ -295,7 +295,7 @@ interface RegistryServiceAsync {
             list(RegistryListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v2/sandboxes/registries/{name}`, but is
+         * Returns a raw HTTP response for `delete /api/v2/sandboxes/registries/{name}`, but is
          * otherwise the same as [RegistryServiceAsync.delete].
          */
         fun delete(name: String): CompletableFuture<HttpResponse> =

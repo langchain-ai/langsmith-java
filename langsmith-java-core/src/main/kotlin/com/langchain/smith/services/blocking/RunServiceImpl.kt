@@ -194,14 +194,14 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         params: RunGetUrlParams,
         requestOptions: RequestOptions,
     ): RunGetUrlResponse =
-        // get /v2/runs/{run_id}/url
+        // get /api/v2/runs/{run_id}/url
         withRawResponse().getUrl(params, requestOptions).parse()
 
     override fun ingestBatch(
         params: RunIngestBatchParams,
         requestOptions: RequestOptions,
     ): RunIngestBatchResponse =
-        // post /runs/batch
+        // post /api/v1/runs/batch
         withRawResponse().ingestBatch(params, requestOptions).parse()
 
     override fun multipartIngest(
@@ -215,7 +215,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         withRawResponse().queryV1(params, requestOptions).parse()
 
     override fun queryV2(params: RunQueryV2Params, requestOptions: RequestOptions): RunQueryV2Page =
-        // post /v2/runs/query
+        // post /api/v2/runs/query
         withRawResponse().queryV2(params, requestOptions).parse()
 
     override fun retrieveV1(
@@ -226,7 +226,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         withRawResponse().retrieveV1(params, requestOptions).parse()
 
     override fun retrieveV2(params: RunRetrieveV2Params, requestOptions: RequestOptions): Run =
-        // get /v2/runs/{run_id}
+        // get /api/v2/runs/{run_id}
         withRawResponse().retrieveV2(params, requestOptions).parse()
 
     override fun stats(params: RunStatsParams, requestOptions: RequestOptions): RunStatsResponse =
@@ -297,7 +297,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs")
+                    .addPathSegments("api", "v1", "runs")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -328,7 +328,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs", params._pathParam(0))
+                    .addPathSegments("api", "v1", "runs", params._pathParam(0))
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -359,7 +359,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", params._pathParam(0), "url")
+                    .addPathSegments("api", "v2", "runs", params._pathParam(0), "url")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -386,7 +386,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs", "batch")
+                    .addPathSegments("api", "v1", "runs", "batch")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -504,7 +504,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", "query")
+                    .addPathSegments("api", "v2", "runs", "query")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -571,7 +571,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", params._pathParam(0))
+                    .addPathSegments("api", "v2", "runs", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -630,7 +630,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("api", "v1", "runs", params._pathParam(0))
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

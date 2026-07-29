@@ -40,14 +40,14 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: RunRetrieveParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Run> =
-        // get /v2/public/{share_token}/run/{run_id}
+        // get /api/v2/public/{share_token}/run/{run_id}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun query(
         params: RunQueryParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<RunQueryResponse> =
-        // post /v2/public/{share_token}/runs/v2/query
+        // post /api/v2/public/{share_token}/runs/v2/query
         withRawResponse().query(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -77,6 +77,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v2",
                         "public",
                         params._pathParam(0),
@@ -115,7 +116,15 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "public", params._pathParam(0), "runs", "v2", "query")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "public",
+                        params._pathParam(0),
+                        "runs",
+                        "v2",
+                        "query",
+                    )
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
