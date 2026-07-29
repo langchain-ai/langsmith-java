@@ -12,7 +12,10 @@ import com.langchain.smith.models.runs.RunQueryParams
 import com.langchain.smith.models.runs.RunSchema
 import com.langchain.smith.models.sessions.TracerSession
 import java.util.UUID
+import java.util.logging.Logger
 import kotlin.jvm.optionals.getOrNull
+
+private val logger = Logger.getLogger("com.langchain.smith.evaluation.EvaluateSupport")
 
 internal fun expandExamples(examples: List<Example>, numRepetitions: Int): List<Example> =
     if (numRepetitions <= 1) {
@@ -183,25 +186,38 @@ internal fun logComparativeEvaluationFeedback(
         }
     val runsById = runs.associateBy { it.id().getOrNull().orEmpty() }
     for ((runId, score) in result.scores) {
+        // Score-map keys come from the evaluator; a run outside the comparison has no session.
         val run = runsById[runId]
+        val sessionId = run?.sessionId()?.getOrNull()
+        if (run == null || sessionId == null) {
+            logger.warning(
+                "Skipping comparative feedback '${forLog(result.key)}' for run " +
+                    "${forLog(runId)}: it is not one of the ${runsById.size} runs being " +
+                    "compared, so its session is unknown."
+            )
+            continue
+        }
         val builder =
             FeedbackCreateSchema.builder()
                 .key(result.key)
                 .runId(runId)
                 .score(score.toDouble())
+                .sessionId(sessionId)
                 .comparativeExperimentId(comparativeExperimentId)
                 .feedbackGroupId(feedbackGroupId)
                 .feedbackSource(
                     ModelFeedbackSource.builder().type(ModelFeedbackSource.Type.MODEL).build()
                 )
         comments[runId]?.let { builder.comment(it) }
-        run?.sessionId()?.getOrNull()?.let { builder.sessionId(it) }
-        run?.startTime()?.getOrNull()?.let { startTime ->
+        run.startTime().getOrNull()?.let { startTime ->
             runStartTime(startTime)?.let { builder.startTime(it) }
         }
         client.feedback().create(builder.build())
     }
 }
+
+/** Strips control characters and caps length so log records cannot be forged. */
+private fun forLog(value: String): String = value.filterNot { it.isISOControl() }.take(100)
 
 private fun buildProjectFeedbackCreateSchema(
     result: EvaluationResult,
