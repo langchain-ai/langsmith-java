@@ -12,6 +12,7 @@ import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import com.langchain.smith.models.sessions.RunStatsGroupBy
@@ -25,6 +26,7 @@ import kotlin.jvm.optionals.getOrNull
 class RunStatsQueryParams
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val session: JsonField<List<String>>,
     private val id: JsonField<List<String>>,
     private val dataSourceType: JsonField<RunsFilterDataSourceTypeEnum>,
     private val endTime: JsonField<OffsetDateTime>,
@@ -42,7 +44,6 @@ private constructor(
     private val runType: JsonField<RunTypeEnum>,
     private val searchFilter: JsonField<String>,
     private val select: JsonField<List<Select>>,
-    private val session: JsonField<List<String>>,
     private val skipPagination: JsonField<Boolean>,
     private val startTime: JsonField<OffsetDateTime>,
     private val trace: JsonField<String>,
@@ -54,6 +55,9 @@ private constructor(
 
     @JsonCreator
     private constructor(
+        @JsonProperty("session")
+        @ExcludeMissing
+        session: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("id") @ExcludeMissing id: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("data_source_type")
         @ExcludeMissing
@@ -89,9 +93,6 @@ private constructor(
         @ExcludeMissing
         searchFilter: JsonField<String> = JsonMissing.of(),
         @JsonProperty("select") @ExcludeMissing select: JsonField<List<Select>> = JsonMissing.of(),
-        @JsonProperty("session")
-        @ExcludeMissing
-        session: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("skip_pagination")
         @ExcludeMissing
         skipPagination: JsonField<Boolean> = JsonMissing.of(),
@@ -109,6 +110,7 @@ private constructor(
         @ExcludeMissing
         useExperimentalSearch: JsonField<Boolean> = JsonMissing.of(),
     ) : this(
+        session,
         id,
         dataSourceType,
         endTime,
@@ -126,7 +128,6 @@ private constructor(
         runType,
         searchFilter,
         select,
-        session,
         skipPagination,
         startTime,
         trace,
@@ -135,6 +136,12 @@ private constructor(
         useExperimentalSearch,
         mutableMapOf(),
     )
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun session(): List<String> = session.getRequired("session")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -251,12 +258,6 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun session(): Optional<List<String>> = session.getOptional("session")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
     fun skipPagination(): Optional<Boolean> = skipPagination.getOptional("skip_pagination")
 
     /**
@@ -292,6 +293,13 @@ private constructor(
      */
     fun useExperimentalSearch(): Optional<Boolean> =
         useExperimentalSearch.getOptional("use_experimental_search")
+
+    /**
+     * Returns the raw JSON value of [session].
+     *
+     * Unlike [session], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("session") @ExcludeMissing fun _session(): JsonField<List<String>> = session
 
     /**
      * Returns the raw JSON value of [id].
@@ -427,13 +435,6 @@ private constructor(
     @JsonProperty("select") @ExcludeMissing fun _select(): JsonField<List<Select>> = select
 
     /**
-     * Returns the raw JSON value of [session].
-     *
-     * Unlike [session], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("session") @ExcludeMissing fun _session(): JsonField<List<String>> = session
-
-    /**
      * Returns the raw JSON value of [skipPagination].
      *
      * Unlike [skipPagination], this method doesn't throw if the JSON field has an unexpected type.
@@ -498,13 +499,21 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [RunStatsQueryParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [RunStatsQueryParams].
+         *
+         * The following fields are required:
+         * ```java
+         * .session()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [RunStatsQueryParams]. */
     class Builder internal constructor() {
 
+        private var session: JsonField<MutableList<String>>? = null
         private var id: JsonField<MutableList<String>>? = null
         private var dataSourceType: JsonField<RunsFilterDataSourceTypeEnum> = JsonMissing.of()
         private var endTime: JsonField<OffsetDateTime> = JsonMissing.of()
@@ -522,7 +531,6 @@ private constructor(
         private var runType: JsonField<RunTypeEnum> = JsonMissing.of()
         private var searchFilter: JsonField<String> = JsonMissing.of()
         private var select: JsonField<MutableList<Select>>? = null
-        private var session: JsonField<MutableList<String>>? = null
         private var skipPagination: JsonField<Boolean> = JsonMissing.of()
         private var startTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var trace: JsonField<String> = JsonMissing.of()
@@ -533,6 +541,7 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(runStatsQueryParams: RunStatsQueryParams) = apply {
+            session = runStatsQueryParams.session.map { it.toMutableList() }
             id = runStatsQueryParams.id.map { it.toMutableList() }
             dataSourceType = runStatsQueryParams.dataSourceType
             endTime = runStatsQueryParams.endTime
@@ -550,7 +559,6 @@ private constructor(
             runType = runStatsQueryParams.runType
             searchFilter = runStatsQueryParams.searchFilter
             select = runStatsQueryParams.select.map { it.toMutableList() }
-            session = runStatsQueryParams.session.map { it.toMutableList() }
             skipPagination = runStatsQueryParams.skipPagination
             startTime = runStatsQueryParams.startTime
             trace = runStatsQueryParams.trace
@@ -558,6 +566,31 @@ private constructor(
             treeFilter = runStatsQueryParams.treeFilter
             useExperimentalSearch = runStatsQueryParams.useExperimentalSearch
             additionalProperties = runStatsQueryParams.additionalProperties.toMutableMap()
+        }
+
+        fun session(session: List<String>) = session(JsonField.of(session))
+
+        /**
+         * Sets [Builder.session] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.session] with a well-typed `List<String>` value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun session(session: JsonField<List<String>>) = apply {
+            this.session = session.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [Builder.session].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addSession(session: String) = apply {
+            this.session =
+                (this.session ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("session", it).add(session)
+                }
         }
 
         fun id(id: List<String>?) = id(JsonField.ofNullable(id))
@@ -886,34 +919,6 @@ private constructor(
                 }
         }
 
-        fun session(session: List<String>?) = session(JsonField.ofNullable(session))
-
-        /** Alias for calling [Builder.session] with `session.orElse(null)`. */
-        fun session(session: Optional<List<String>>) = session(session.getOrNull())
-
-        /**
-         * Sets [Builder.session] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.session] with a well-typed `List<String>` value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun session(session: JsonField<List<String>>) = apply {
-            this.session = session.map { it.toMutableList() }
-        }
-
-        /**
-         * Adds a single [String] to [Builder.session].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addSession(session: String) = apply {
-            this.session =
-                (this.session ?: JsonField.of(mutableListOf())).also {
-                    checkKnown("session", it).add(session)
-                }
-        }
-
         fun skipPagination(skipPagination: Boolean?) =
             skipPagination(JsonField.ofNullable(skipPagination))
 
@@ -1035,9 +1040,17 @@ private constructor(
          * Returns an immutable instance of [RunStatsQueryParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .session()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): RunStatsQueryParams =
             RunStatsQueryParams(
+                checkRequired("session", session).map { it.toImmutable() },
                 (id ?: JsonMissing.of()).map { it.toImmutable() },
                 dataSourceType,
                 endTime,
@@ -1055,7 +1068,6 @@ private constructor(
                 runType,
                 searchFilter,
                 (select ?: JsonMissing.of()).map { it.toImmutable() },
-                (session ?: JsonMissing.of()).map { it.toImmutable() },
                 skipPagination,
                 startTime,
                 trace,
@@ -1081,6 +1093,7 @@ private constructor(
             return@apply
         }
 
+        session()
         id()
         dataSourceType().ifPresent { it.validate() }
         endTime()
@@ -1098,7 +1111,6 @@ private constructor(
         runType().ifPresent { it.validate() }
         searchFilter()
         select().ifPresent { it.forEach { it.validate() } }
-        session()
         skipPagination()
         startTime()
         trace()
@@ -1123,7 +1135,8 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (id.asKnown().getOrNull()?.size ?: 0) +
+        (session.asKnown().getOrNull()?.size ?: 0) +
+            (id.asKnown().getOrNull()?.size ?: 0) +
             (dataSourceType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (endTime.asKnown().isPresent) 1 else 0) +
             (if (error.asKnown().isPresent) 1 else 0) +
@@ -1140,7 +1153,6 @@ private constructor(
             (runType.asKnown().getOrNull()?.validity() ?: 0) +
             (if (searchFilter.asKnown().isPresent) 1 else 0) +
             (select.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
-            (session.asKnown().getOrNull()?.size ?: 0) +
             (if (skipPagination.asKnown().isPresent) 1 else 0) +
             (if (startTime.asKnown().isPresent) 1 else 0) +
             (if (trace.asKnown().isPresent) 1 else 0) +
@@ -1483,6 +1495,7 @@ private constructor(
         }
 
         return other is RunStatsQueryParams &&
+            session == other.session &&
             id == other.id &&
             dataSourceType == other.dataSourceType &&
             endTime == other.endTime &&
@@ -1500,7 +1513,6 @@ private constructor(
             runType == other.runType &&
             searchFilter == other.searchFilter &&
             select == other.select &&
-            session == other.session &&
             skipPagination == other.skipPagination &&
             startTime == other.startTime &&
             trace == other.trace &&
@@ -1512,6 +1524,7 @@ private constructor(
 
     private val hashCode: Int by lazy {
         Objects.hash(
+            session,
             id,
             dataSourceType,
             endTime,
@@ -1529,7 +1542,6 @@ private constructor(
             runType,
             searchFilter,
             select,
-            session,
             skipPagination,
             startTime,
             trace,
@@ -1543,5 +1555,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RunStatsQueryParams{id=$id, dataSourceType=$dataSourceType, endTime=$endTime, error=$error, executionOrder=$executionOrder, filter=$filter, groupBy=$groupBy, groups=$groups, includeDetails=$includeDetails, isRoot=$isRoot, parentRun=$parentRun, query=$query, referenceDatasetId=$referenceDatasetId, referenceExample=$referenceExample, runType=$runType, searchFilter=$searchFilter, select=$select, session=$session, skipPagination=$skipPagination, startTime=$startTime, trace=$trace, traceFilter=$traceFilter, treeFilter=$treeFilter, useExperimentalSearch=$useExperimentalSearch, additionalProperties=$additionalProperties}"
+        "RunStatsQueryParams{session=$session, id=$id, dataSourceType=$dataSourceType, endTime=$endTime, error=$error, executionOrder=$executionOrder, filter=$filter, groupBy=$groupBy, groups=$groups, includeDetails=$includeDetails, isRoot=$isRoot, parentRun=$parentRun, query=$query, referenceDatasetId=$referenceDatasetId, referenceExample=$referenceExample, runType=$runType, searchFilter=$searchFilter, select=$select, skipPagination=$skipPagination, startTime=$startTime, trace=$trace, traceFilter=$traceFilter, treeFilter=$treeFilter, useExperimentalSearch=$useExperimentalSearch, additionalProperties=$additionalProperties}"
 }
