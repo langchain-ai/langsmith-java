@@ -217,6 +217,8 @@ private constructor(
     fun score(): Optional<Score> = score.getOptional("score")
 
     /**
+     * Required. The ID of the tracing project (session) the feedback belongs to.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -721,6 +723,7 @@ private constructor(
         /** Alias for calling [score] with `Score.ofBool(bool)`. */
         fun score(bool: Boolean) = score(Score.ofBool(bool))
 
+        /** Required. The ID of the tracing project (session) the feedback belongs to. */
         fun sessionId(sessionId: String?) = sessionId(JsonField.ofNullable(sessionId))
 
         /** Alias for calling [Builder.sessionId] with `sessionId.orElse(null)`. */
