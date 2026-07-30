@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.1.0-beta.20](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.19...v0.1.0-beta.20) (2026-07-30)
+
+
+### Features
+
+* **annotation-queues:** rename items wire field session_id to project_id ([02f1aeb](https://github.com/langchain-ai/langsmith-java/commit/02f1aeb12c4ff72c3d234c79f8a7392266f4c627))
+* **backend:** allow storing markdown / text blocks as charts in /v1/charts/{...} endpoints ([06cdab2](https://github.com/langchain-ai/langsmith-java/commit/06cdab251930846bfa9d23cd9cc852ab5e5798eb))
+* expose annotation queue item APIs publicly [LSE-2550] ([2fdc70b](https://github.com/langchain-ai/langsmith-java/commit/2fdc70b11abf451eb0ac62772e99ef1deeb59cfb))
+* **smith-go:** declare v2 endpoints under /api/v2 in the OpenAPI spec ([5535473](https://github.com/langchain-ai/langsmith-java/commit/553547325fd5b245fe9aa1ca8ba72cb75e063904))
+
+
+### Bug Fixes
+
+* **annotation-queues:** document item endpoints at their served path ([02b1bda](https://github.com/langchain-ai/langsmith-java/commit/02b1bda78f9c719720103f0f408db37bcca947f8))
+* **evaluators:** show an evaluator's current name wherever it's attached [LSE-2687] ([3d2ec89](https://github.com/langchain-ai/langsmith-java/commit/3d2ec89e0436ba6bf48612ef239ca1d579a3adc4))
+* remove internal annotation queue API docs ([2c5d0dc](https://github.com/langchain-ai/langsmith-java/commit/2c5d0dcd28c4210c81879b5776f73d7610520648))
+* **runs:** restore optional session on public dataset stats endpoint ([b922c8e](https://github.com/langchain-ai/langsmith-java/commit/b922c8e220899972978256016e97e9245c6d0c9f))
+* strip a trailing /api or /api/v1 from the configured base URL ([#51](https://github.com/langchain-ai/langsmith-java/issues/51)) ([383fbdb](https://github.com/langchain-ai/langsmith-java/commit/383fbdb431a6360c5b94774c4a270e98f491e92d))
+* **threads:** make trace_id in list_traces respect the selects contract ([fd6269b](https://github.com/langchain-ai/langsmith-java/commit/fd6269b8655d49c24dbd6bc1fe6e9c460a8debd6))
+
+
+### Chores
+
+* **info:** remove legacy Python /info endpoint, serve from smith-go ([3d6f9eb](https://github.com/langchain-ai/langsmith-java/commit/3d6f9eb532da5526be9e9d12d0f619ca74fd9b32))
+
 ## [0.1.0-beta.19](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.18...v0.1.0-beta.19) (2026-07-23)
 
 
