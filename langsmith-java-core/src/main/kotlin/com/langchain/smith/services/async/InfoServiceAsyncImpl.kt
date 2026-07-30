@@ -61,7 +61,7 @@ class InfoServiceAsyncImpl internal constructor(private val clientOptions: Clien
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
+                    .baseUrl(clientOptions.configuredBaseUrl())
                     .addPathSegment("info")
                     .build()
                     .prepareAsync(clientOptions, params)

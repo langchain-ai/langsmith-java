@@ -18,11 +18,13 @@ internal class CustomChartsSectionTest {
             CustomChartsSection.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addChart(
-                    CustomChartsSection.Chart.builder()
+                    CustomChartsSection.Chart.SingleCustomChartResponse.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .chartType(CustomChartsSection.Chart.ChartType.LINE)
+                        .chartType(
+                            CustomChartsSection.Chart.SingleCustomChartResponse.ChartType.LINE
+                        )
                         .addData(
-                            CustomChartsSection.Chart.Data.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Data.builder()
                                 .seriesId("series_id")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .value(0.0)
@@ -31,12 +33,13 @@ internal class CustomChartsSectionTest {
                         )
                         .index(0L)
                         .addSeries(
-                            CustomChartsSection.Chart.Series.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Series.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .name("name")
                                 .feedbackKey("feedback_key")
                                 .filterDefinition(
-                                    CustomChartsSection.Chart.Series.FilterDefinition
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .FilterDefinition
                                         .CustomChartFilterByTracingProject
                                         .builder()
                                         .addProjectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -46,7 +49,9 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .filters(
-                                    CustomChartsSection.Chart.Series.Filters.builder()
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Filters
+                                        .builder()
                                         .filter("filter")
                                         .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .traceFilter("trace_filter")
@@ -54,23 +59,36 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .groupBy(
-                                    CustomChartsSection.Chart.Series.GroupBy.builder()
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .GroupBy
+                                        .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.Series.GroupBy.Attribute.NAME
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupBy
+                                                .Attribute
+                                                .NAME
                                         )
                                         .maxGroups(0L)
                                         .path("path")
                                         .setBy(
-                                            CustomChartsSection.Chart.Series.GroupBy.SetBy.SECTION
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupBy
+                                                .SetBy
+                                                .SECTION
                                         )
                                         .build()
                                 )
                                 .addGroupByDefinition(
-                                    CustomChartsSection.Chart.Series.GroupByDefinition
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .GroupByDefinition
                                         .CustomChartGroupByPlain
                                         .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.Series.GroupByDefinition
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupByDefinition
                                                 .CustomChartGroupByPlain
                                                 .Attribute
                                                 .NAME
@@ -78,18 +96,27 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .metadata(
-                                    CustomChartsSection.Chart.Series.Metadata.builder()
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Metadata
+                                        .builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
-                                .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
+                                .metric(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Metric
+                                        .RUN_COUNT
+                                )
                                 .metricDefinition(
-                                    CustomChartsSection.Chart.Series.MetricDefinition
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .MetricDefinition
                                         .CustomChartMetricCount
                                         .builder()
                                         .filter("filter")
                                         .type(
-                                            CustomChartsSection.Chart.Series.MetricDefinition
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .MetricDefinition
                                                 .CustomChartMetricCount
                                                 .Type
                                                 .COUNT
@@ -97,14 +124,17 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .projectMetric(
-                                    CustomChartsSection.Chart.Series.ProjectMetric.MEMORY_USAGE
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .ProjectMetric
+                                        .MEMORY_USAGE
                                 )
                                 .workspaceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .build()
                         )
                         .title("title")
                         .commonFilters(
-                            CustomChartsSection.Chart.CommonFilters.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponse.CommonFilters
+                                .builder()
                                 .filter("filter")
                                 .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .traceFilter("trace_filter")
@@ -113,7 +143,7 @@ internal class CustomChartsSectionTest {
                         )
                         .description("description")
                         .metadata(
-                            CustomChartsSection.Chart.Metadata.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Metadata.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
@@ -305,104 +335,138 @@ internal class CustomChartsSectionTest {
         assertThat(customChartsSection.id()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(customChartsSection.charts())
             .containsExactly(
-                CustomChartsSection.Chart.builder()
-                    .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                    .chartType(CustomChartsSection.Chart.ChartType.LINE)
-                    .addData(
-                        CustomChartsSection.Chart.Data.builder()
-                            .seriesId("series_id")
-                            .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
-                            .value(0.0)
-                            .group("group")
-                            .build()
-                    )
-                    .index(0L)
-                    .addSeries(
-                        CustomChartsSection.Chart.Series.builder()
-                            .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .name("name")
-                            .feedbackKey("feedback_key")
-                            .filterDefinition(
-                                CustomChartsSection.Chart.Series.FilterDefinition
-                                    .CustomChartFilterByTracingProject
-                                    .builder()
-                                    .addProjectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                    .runFilter("run_filter")
-                                    .traceFilter("trace_filter")
-                                    .treeFilter("tree_filter")
-                                    .build()
-                            )
-                            .filters(
-                                CustomChartsSection.Chart.Series.Filters.builder()
-                                    .filter("filter")
-                                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                                    .traceFilter("trace_filter")
-                                    .treeFilter("tree_filter")
-                                    .build()
-                            )
-                            .groupBy(
-                                CustomChartsSection.Chart.Series.GroupBy.builder()
-                                    .attribute(
-                                        CustomChartsSection.Chart.Series.GroupBy.Attribute.NAME
-                                    )
-                                    .maxGroups(0L)
-                                    .path("path")
-                                    .setBy(CustomChartsSection.Chart.Series.GroupBy.SetBy.SECTION)
-                                    .build()
-                            )
-                            .addGroupByDefinition(
-                                CustomChartsSection.Chart.Series.GroupByDefinition
-                                    .CustomChartGroupByPlain
-                                    .builder()
-                                    .attribute(
-                                        CustomChartsSection.Chart.Series.GroupByDefinition
-                                            .CustomChartGroupByPlain
-                                            .Attribute
-                                            .NAME
-                                    )
-                                    .build()
-                            )
-                            .metadata(
-                                CustomChartsSection.Chart.Series.Metadata.builder()
-                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                                    .build()
-                            )
-                            .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
-                            .metricDefinition(
-                                CustomChartsSection.Chart.Series.MetricDefinition
-                                    .CustomChartMetricCount
-                                    .builder()
-                                    .filter("filter")
-                                    .type(
-                                        CustomChartsSection.Chart.Series.MetricDefinition
-                                            .CustomChartMetricCount
-                                            .Type
-                                            .COUNT
-                                    )
-                                    .build()
-                            )
-                            .projectMetric(
-                                CustomChartsSection.Chart.Series.ProjectMetric.MEMORY_USAGE
-                            )
-                            .workspaceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .build()
-                    )
-                    .title("title")
-                    .commonFilters(
-                        CustomChartsSection.Chart.CommonFilters.builder()
-                            .filter("filter")
-                            .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                            .traceFilter("trace_filter")
-                            .treeFilter("tree_filter")
-                            .build()
-                    )
-                    .description("description")
-                    .metadata(
-                        CustomChartsSection.Chart.Metadata.builder()
-                            .putAdditionalProperty("foo", JsonValue.from("bar"))
-                            .build()
-                    )
-                    .build()
+                CustomChartsSection.Chart.ofSingleCustomChartResponse(
+                    CustomChartsSection.Chart.SingleCustomChartResponse.builder()
+                        .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                        .chartType(
+                            CustomChartsSection.Chart.SingleCustomChartResponse.ChartType.LINE
+                        )
+                        .addData(
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Data.builder()
+                                .seriesId("series_id")
+                                .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                                .value(0.0)
+                                .group("group")
+                                .build()
+                        )
+                        .index(0L)
+                        .addSeries(
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Series.builder()
+                                .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .name("name")
+                                .feedbackKey("feedback_key")
+                                .filterDefinition(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .FilterDefinition
+                                        .CustomChartFilterByTracingProject
+                                        .builder()
+                                        .addProjectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .runFilter("run_filter")
+                                        .traceFilter("trace_filter")
+                                        .treeFilter("tree_filter")
+                                        .build()
+                                )
+                                .filters(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Filters
+                                        .builder()
+                                        .filter("filter")
+                                        .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                        .traceFilter("trace_filter")
+                                        .treeFilter("tree_filter")
+                                        .build()
+                                )
+                                .groupBy(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .GroupBy
+                                        .builder()
+                                        .attribute(
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupBy
+                                                .Attribute
+                                                .NAME
+                                        )
+                                        .maxGroups(0L)
+                                        .path("path")
+                                        .setBy(
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupBy
+                                                .SetBy
+                                                .SECTION
+                                        )
+                                        .build()
+                                )
+                                .addGroupByDefinition(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .GroupByDefinition
+                                        .CustomChartGroupByPlain
+                                        .builder()
+                                        .attribute(
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupByDefinition
+                                                .CustomChartGroupByPlain
+                                                .Attribute
+                                                .NAME
+                                        )
+                                        .build()
+                                )
+                                .metadata(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Metadata
+                                        .builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .metric(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Metric
+                                        .RUN_COUNT
+                                )
+                                .metricDefinition(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .MetricDefinition
+                                        .CustomChartMetricCount
+                                        .builder()
+                                        .filter("filter")
+                                        .type(
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .MetricDefinition
+                                                .CustomChartMetricCount
+                                                .Type
+                                                .COUNT
+                                        )
+                                        .build()
+                                )
+                                .projectMetric(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .ProjectMetric
+                                        .MEMORY_USAGE
+                                )
+                                .workspaceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .build()
+                        )
+                        .title("title")
+                        .commonFilters(
+                            CustomChartsSection.Chart.SingleCustomChartResponse.CommonFilters
+                                .builder()
+                                .filter("filter")
+                                .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                                .traceFilter("trace_filter")
+                                .treeFilter("tree_filter")
+                                .build()
+                        )
+                        .description("description")
+                        .metadata(
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Metadata.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .build()
+                )
             )
         assertThat(customChartsSection.title()).isEqualTo("title")
         assertThat(customChartsSection.description()).contains("description")
@@ -582,11 +646,13 @@ internal class CustomChartsSectionTest {
             CustomChartsSection.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addChart(
-                    CustomChartsSection.Chart.builder()
+                    CustomChartsSection.Chart.SingleCustomChartResponse.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
-                        .chartType(CustomChartsSection.Chart.ChartType.LINE)
+                        .chartType(
+                            CustomChartsSection.Chart.SingleCustomChartResponse.ChartType.LINE
+                        )
                         .addData(
-                            CustomChartsSection.Chart.Data.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Data.builder()
                                 .seriesId("series_id")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .value(0.0)
@@ -595,12 +661,13 @@ internal class CustomChartsSectionTest {
                         )
                         .index(0L)
                         .addSeries(
-                            CustomChartsSection.Chart.Series.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Series.builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .name("name")
                                 .feedbackKey("feedback_key")
                                 .filterDefinition(
-                                    CustomChartsSection.Chart.Series.FilterDefinition
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .FilterDefinition
                                         .CustomChartFilterByTracingProject
                                         .builder()
                                         .addProjectId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -610,7 +677,9 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .filters(
-                                    CustomChartsSection.Chart.Series.Filters.builder()
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Filters
+                                        .builder()
                                         .filter("filter")
                                         .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                         .traceFilter("trace_filter")
@@ -618,23 +687,36 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .groupBy(
-                                    CustomChartsSection.Chart.Series.GroupBy.builder()
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .GroupBy
+                                        .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.Series.GroupBy.Attribute.NAME
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupBy
+                                                .Attribute
+                                                .NAME
                                         )
                                         .maxGroups(0L)
                                         .path("path")
                                         .setBy(
-                                            CustomChartsSection.Chart.Series.GroupBy.SetBy.SECTION
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupBy
+                                                .SetBy
+                                                .SECTION
                                         )
                                         .build()
                                 )
                                 .addGroupByDefinition(
-                                    CustomChartsSection.Chart.Series.GroupByDefinition
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .GroupByDefinition
                                         .CustomChartGroupByPlain
                                         .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.Series.GroupByDefinition
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .GroupByDefinition
                                                 .CustomChartGroupByPlain
                                                 .Attribute
                                                 .NAME
@@ -642,18 +724,27 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .metadata(
-                                    CustomChartsSection.Chart.Series.Metadata.builder()
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Metadata
+                                        .builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
-                                .metric(CustomChartsSection.Chart.Series.Metric.RUN_COUNT)
+                                .metric(
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .Metric
+                                        .RUN_COUNT
+                                )
                                 .metricDefinition(
-                                    CustomChartsSection.Chart.Series.MetricDefinition
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .MetricDefinition
                                         .CustomChartMetricCount
                                         .builder()
                                         .filter("filter")
                                         .type(
-                                            CustomChartsSection.Chart.Series.MetricDefinition
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .MetricDefinition
                                                 .CustomChartMetricCount
                                                 .Type
                                                 .COUNT
@@ -661,14 +752,17 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .projectMetric(
-                                    CustomChartsSection.Chart.Series.ProjectMetric.MEMORY_USAGE
+                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                        .ProjectMetric
+                                        .MEMORY_USAGE
                                 )
                                 .workspaceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .build()
                         )
                         .title("title")
                         .commonFilters(
-                            CustomChartsSection.Chart.CommonFilters.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponse.CommonFilters
+                                .builder()
                                 .filter("filter")
                                 .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .traceFilter("trace_filter")
@@ -677,7 +771,7 @@ internal class CustomChartsSectionTest {
                         )
                         .description("description")
                         .metadata(
-                            CustomChartsSection.Chart.Metadata.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponse.Metadata.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )

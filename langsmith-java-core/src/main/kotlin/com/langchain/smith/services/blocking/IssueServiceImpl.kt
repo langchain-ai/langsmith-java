@@ -35,11 +35,11 @@ class IssueServiceImpl internal constructor(private val clientOptions: ClientOpt
         IssueServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun retrieve(params: IssueRetrieveParams, requestOptions: RequestOptions): Issue =
-        // get /v1/platform/issues/{id}
+        // get /api/v1/platform/issues/{id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun list(params: IssueListParams, requestOptions: RequestOptions): IssueListPage =
-        // get /v1/platform/issues
+        // get /api/v1/platform/issues
         withRawResponse().list(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -68,7 +68,7 @@ class IssueServiceImpl internal constructor(private val clientOptions: ClientOpt
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "issues", params._pathParam(0))
+                    .addPathSegments("api", "v1", "platform", "issues", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -95,7 +95,7 @@ class IssueServiceImpl internal constructor(private val clientOptions: ClientOpt
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v1", "platform", "issues")
+                    .addPathSegments("api", "v1", "platform", "issues")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

@@ -42,21 +42,21 @@ class DirectoryServiceAsyncImpl internal constructor(private val clientOptions: 
         params: DirectoryListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<DirectoryListResponse> =
-        // get /v1/platform/hub/repos/{owner}/{repo}/directories
+        // get /api/v1/platform/hub/repos/{owner}/{repo}/directories
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
         params: DirectoryDeleteParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> =
-        // delete /v1/platform/hub/repos/{owner}/{repo}/directories
+        // delete /api/v1/platform/hub/repos/{owner}/{repo}/directories
         withRawResponse().delete(params, requestOptions).thenAccept {}
 
     override fun commit(
         params: DirectoryCommitParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<DirectoryCommitResponse> =
-        // post /v1/platform/hub/repos/{owner}/{repo}/directories/commits
+        // post /api/v1/platform/hub/repos/{owner}/{repo}/directories/commits
         withRawResponse().commit(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -87,6 +87,7 @@ class DirectoryServiceAsyncImpl internal constructor(private val clientOptions: 
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v1",
                         "platform",
                         "hub",
@@ -127,6 +128,7 @@ class DirectoryServiceAsyncImpl internal constructor(private val clientOptions: 
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v1",
                         "platform",
                         "hub",
@@ -163,6 +165,7 @@ class DirectoryServiceAsyncImpl internal constructor(private val clientOptions: 
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v1",
                         "platform",
                         "hub",

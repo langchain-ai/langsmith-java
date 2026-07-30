@@ -109,8 +109,8 @@ interface ShareServiceAsync {
         ): ShareServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/runs/{run_id}/share`, but is otherwise the same
-         * as [ShareServiceAsync.create].
+         * Returns a raw HTTP response for `post /api/v2/runs/{run_id}/share`, but is otherwise the
+         * same as [ShareServiceAsync.create].
          */
         fun create(runId: String): CompletableFuture<HttpResponseFor<ShareCreateResponse>> =
             create(runId, ShareCreateParams.none())
@@ -150,8 +150,8 @@ interface ShareServiceAsync {
             create(runId, ShareCreateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v2/runs/{trace_id}/share`, but is otherwise the
-         * same as [ShareServiceAsync.delete].
+         * Returns a raw HTTP response for `delete /api/v2/runs/{trace_id}/share`, but is otherwise
+         * the same as [ShareServiceAsync.delete].
          */
         fun delete(traceId: String): CompletableFuture<HttpResponse> =
             delete(traceId, ShareDeleteParams.none())

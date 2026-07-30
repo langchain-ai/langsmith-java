@@ -319,8 +319,8 @@ interface BoxService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): BoxService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes`, but is otherwise the same as
-         * [BoxService.create].
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes`, but is otherwise the same
+         * as [BoxService.create].
          */
         @MustBeClosed
         fun create(): HttpResponseFor<SandboxResponse> = create(BoxCreateParams.none())
@@ -344,8 +344,8 @@ interface BoxService {
             create(BoxCreateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/boxes/{name}`, but is otherwise the
-         * same as [BoxService.retrieve].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes/{name}`, but is otherwise
+         * the same as [BoxService.retrieve].
          */
         @MustBeClosed
         fun retrieve(name: String): HttpResponseFor<SandboxResponse> =
@@ -388,8 +388,8 @@ interface BoxService {
             retrieve(name, BoxRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `patch /v2/sandboxes/boxes/{name}`, but is otherwise the
-         * same as [BoxService.update].
+         * Returns a raw HTTP response for `patch /api/v2/sandboxes/boxes/{name}`, but is otherwise
+         * the same as [BoxService.update].
          */
         @MustBeClosed
         fun update(pathName: String): HttpResponseFor<SandboxResponse> =
@@ -432,8 +432,8 @@ interface BoxService {
             update(pathName, BoxUpdateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/boxes`, but is otherwise the same as
-         * [BoxService.list].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes`, but is otherwise the same
+         * as [BoxService.list].
          */
         @MustBeClosed fun list(): HttpResponseFor<SandboxListResponse> = list(BoxListParams.none())
 
@@ -456,8 +456,8 @@ interface BoxService {
             list(BoxListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v2/sandboxes/boxes/{name}`, but is otherwise the
-         * same as [BoxService.delete].
+         * Returns a raw HTTP response for `delete /api/v2/sandboxes/boxes/{name}`, but is otherwise
+         * the same as [BoxService.delete].
          */
         @MustBeClosed fun delete(name: String): HttpResponse = delete(name, BoxDeleteParams.none())
 
@@ -491,7 +491,7 @@ interface BoxService {
             delete(name, BoxDeleteParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/snapshot`, but is
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/snapshot`, but is
          * otherwise the same as [BoxService.createSnapshot].
          */
         @MustBeClosed
@@ -523,7 +523,7 @@ interface BoxService {
         ): HttpResponseFor<SnapshotResponse>
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/service-url`, but is
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/service-url`, but is
          * otherwise the same as [BoxService.generateServiceUrl].
          */
         @MustBeClosed
@@ -569,8 +569,8 @@ interface BoxService {
             generateServiceUrl(name, BoxGenerateServiceUrlParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/boxes/{name}/status`, but is otherwise
-         * the same as [BoxService.getStatus].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes/{name}/status`, but is
+         * otherwise the same as [BoxService.getStatus].
          */
         @MustBeClosed
         fun getStatus(name: String): HttpResponseFor<SandboxStatusResponse> =
@@ -613,8 +613,8 @@ interface BoxService {
             getStatus(name, BoxGetStatusParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/start`, but is otherwise
-         * the same as [BoxService.start].
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/start`, but is
+         * otherwise the same as [BoxService.start].
          */
         @MustBeClosed
         fun start(name: String): HttpResponseFor<SandboxResponse> =
@@ -654,8 +654,8 @@ interface BoxService {
             start(name, BoxStartParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/boxes/{name}/stop`, but is otherwise
-         * the same as [BoxService.stop].
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/stop`, but is
+         * otherwise the same as [BoxService.stop].
          */
         @MustBeClosed fun stop(name: String): HttpResponse = stop(name, BoxStopParams.none())
 

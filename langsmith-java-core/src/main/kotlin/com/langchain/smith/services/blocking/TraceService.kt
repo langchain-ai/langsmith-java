@@ -90,8 +90,8 @@ interface TraceService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): TraceService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v2/traces/{trace_id}/runs`, but is otherwise the
-         * same as [TraceService.listRuns].
+         * Returns a raw HTTP response for `get /api/v2/traces/{trace_id}/runs`, but is otherwise
+         * the same as [TraceService.listRuns].
          */
         @MustBeClosed
         fun listRuns(
@@ -121,7 +121,7 @@ interface TraceService {
         ): HttpResponseFor<TraceListRunsResponse>
 
         /**
-         * Returns a raw HTTP response for `post /v2/traces/query`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /api/v2/traces/query`, but is otherwise the same as
          * [TraceService.query].
          */
         @MustBeClosed fun query(): HttpResponseFor<TraceQueryPage> = query(TraceQueryParams.none())

@@ -100,7 +100,7 @@ interface RunServiceAsync {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v2/public/{share_token}/run/{run_id}`, but is
+         * Returns a raw HTTP response for `get /api/v2/public/{share_token}/run/{run_id}`, but is
          * otherwise the same as [RunServiceAsync.retrieve].
          */
         fun retrieve(
@@ -127,7 +127,7 @@ interface RunServiceAsync {
         ): CompletableFuture<HttpResponseFor<Run>>
 
         /**
-         * Returns a raw HTTP response for `post /v2/public/{share_token}/runs/v2/query`, but is
+         * Returns a raw HTTP response for `post /api/v2/public/{share_token}/runs/v2/query`, but is
          * otherwise the same as [RunServiceAsync.query].
          */
         fun query(shareToken: String): CompletableFuture<HttpResponseFor<RunQueryResponse>> =

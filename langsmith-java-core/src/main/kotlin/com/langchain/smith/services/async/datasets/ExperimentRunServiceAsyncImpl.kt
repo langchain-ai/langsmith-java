@@ -39,7 +39,7 @@ class ExperimentRunServiceAsyncImpl internal constructor(private val clientOptio
         params: ExperimentRunQueryParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ExperimentRunQueryPageAsync> =
-        // post /v2/datasets/{dataset_id}/experiment-runs
+        // post /api/v2/datasets/{dataset_id}/experiment-runs
         withRawResponse().query(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -69,7 +69,13 @@ class ExperimentRunServiceAsyncImpl internal constructor(private val clientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "datasets", params._pathParam(0), "experiment-runs")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "datasets",
+                        params._pathParam(0),
+                        "experiment-runs",
+                    )
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)

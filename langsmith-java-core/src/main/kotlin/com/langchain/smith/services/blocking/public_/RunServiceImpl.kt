@@ -35,11 +35,11 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         RunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun retrieve(params: RunRetrieveParams, requestOptions: RequestOptions): Run =
-        // get /v2/public/{share_token}/run/{run_id}
+        // get /api/v2/public/{share_token}/run/{run_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun query(params: RunQueryParams, requestOptions: RequestOptions): RunQueryResponse =
-        // post /v2/public/{share_token}/runs/v2/query
+        // post /api/v2/public/{share_token}/runs/v2/query
         withRawResponse().query(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -69,6 +69,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v2",
                         "public",
                         params._pathParam(0),
@@ -104,7 +105,15 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "public", params._pathParam(0), "runs", "v2", "query")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "public",
+                        params._pathParam(0),
+                        "runs",
+                        "v2",
+                        "query",
+                    )
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)

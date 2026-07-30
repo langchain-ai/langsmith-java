@@ -33,6 +33,7 @@ import com.langchain.smith.models.runs.RunRetrieveV1Params
 import com.langchain.smith.models.runs.RunRetrieveV2Params
 import com.langchain.smith.models.runs.RunStatsQueryParams
 import com.langchain.smith.models.runs.RunTypeEnum
+import com.langchain.smith.models.runs.RunUpdate2Params
 import com.langchain.smith.models.runs.RunUpdateParams
 import com.langchain.smith.models.runs.RunsFilterDataSourceTypeEnum
 import com.langchain.smith.models.sessions.RunStatsGroupBy
@@ -104,7 +105,7 @@ internal class RunServiceTest {
                     )
                 )
         )
-        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(okJson("{}")))
+        stubFor(post(urlPathEqualTo("/api/v1/runs/batch")).willReturn(okJson("{}")))
         val client =
             LangsmithOkHttpClient.builder()
                 .apiKey("My API Key")
@@ -119,7 +120,7 @@ internal class RunServiceTest {
             runService.flush()
 
             verify(1, getRequestedFor(urlPathEqualTo("/info")))
-            verify(2, postRequestedFor(urlPathEqualTo("/runs/batch")))
+            verify(2, postRequestedFor(urlPathEqualTo("/api/v1/runs/batch")))
             verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
         } finally {
             client.close()
@@ -155,7 +156,7 @@ internal class RunServiceTest {
 
             verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(1, postRequestedFor(urlPathEqualTo("/runs/multipart")))
-            verify(0, postRequestedFor(urlPathEqualTo("/runs/batch")))
+            verify(0, postRequestedFor(urlPathEqualTo("/api/v1/runs/batch")))
         } finally {
             client.close()
         }
@@ -245,7 +246,7 @@ internal class RunServiceTest {
                     .withRequestBody(containing("name=\"post.r1.error\""))
                     .withRequestBody(containing("name=\"post.r1.serialized\"")),
             )
-            verify(0, postRequestedFor(urlPathEqualTo("/runs/batch")))
+            verify(0, postRequestedFor(urlPathEqualTo("/api/v1/runs/batch")))
         } finally {
             client.close()
         }
@@ -301,7 +302,7 @@ internal class RunServiceTest {
                     .withRequestBody(containing("name=\"patch.r1\""))
                     .withRequestBody(containing("name=\"patch.r1.outputs\"")),
             )
-            verify(0, postRequestedFor(urlPathEqualTo("/runs/batch")))
+            verify(0, postRequestedFor(urlPathEqualTo("/api/v1/runs/batch")))
         } finally {
             client.close()
         }
@@ -322,7 +323,7 @@ internal class RunServiceTest {
                     )
                 )
         )
-        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(okJson("{}")))
+        stubFor(post(urlPathEqualTo("/api/v1/runs/batch")).willReturn(okJson("{}")))
         val client =
             LangsmithOkHttpClient.builder()
                 .apiKey("My API Key")
@@ -338,7 +339,7 @@ internal class RunServiceTest {
 
             verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
-            verify(1, postRequestedFor(urlPathEqualTo("/runs/batch")))
+            verify(1, postRequestedFor(urlPathEqualTo("/api/v1/runs/batch")))
         } finally {
             client.close()
         }
@@ -359,7 +360,7 @@ internal class RunServiceTest {
                     )
                 )
         )
-        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(aResponse().withStatus(404)))
+        stubFor(post(urlPathEqualTo("/api/v1/runs/batch")).willReturn(aResponse().withStatus(404)))
         val client =
             LangsmithOkHttpClient.builder()
                 .apiKey("My API Key")
@@ -375,7 +376,7 @@ internal class RunServiceTest {
 
             verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(0, postRequestedFor(urlPathEqualTo("/runs/multipart")))
-            verify(1, postRequestedFor(urlPathEqualTo("/runs/batch")))
+            verify(1, postRequestedFor(urlPathEqualTo("/api/v1/runs/batch")))
         } finally {
             client.close()
         }
@@ -397,7 +398,7 @@ internal class RunServiceTest {
                 )
         )
         stubFor(post(urlPathEqualTo("/runs/multipart")).willReturn(aResponse().withStatus(404)))
-        stubFor(post(urlPathEqualTo("/runs/batch")).willReturn(okJson("{}")))
+        stubFor(post(urlPathEqualTo("/api/v1/runs/batch")).willReturn(okJson("{}")))
         val client =
             LangsmithOkHttpClient.builder()
                 .apiKey("My API Key")
@@ -413,7 +414,7 @@ internal class RunServiceTest {
 
             verify(1, getRequestedFor(urlPathEqualTo("/info")))
             verify(1, postRequestedFor(urlPathEqualTo("/runs/multipart")))
-            verify(2, postRequestedFor(urlPathEqualTo("/runs/batch")))
+            verify(2, postRequestedFor(urlPathEqualTo("/api/v1/runs/batch")))
         } finally {
             client.close()
         }
@@ -431,7 +432,7 @@ internal class RunServiceTest {
 
         val request = capturedRequest.get()
         val body = request.body!!
-        assertThat(request.pathSegments).containsExactly("runs", "batch")
+        assertThat(request.pathSegments).containsExactly("api", "v1", "runs", "batch")
         assertThat(request.headers.values("Content-Encoding")).isEmpty()
         assertThat(body.contentType()).isEqualTo("application/json")
         assertThat(body.repeatable()).isTrue()
@@ -825,6 +826,7 @@ internal class RunServiceTest {
         val response =
             runService.stats(
                 RunStatsQueryParams.builder()
+                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .addId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .dataSourceType(RunsFilterDataSourceTypeEnum.CURRENT)
                     .endTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
@@ -848,7 +850,6 @@ internal class RunServiceTest {
                     .runType(RunTypeEnum.TOOL)
                     .searchFilter("search_filter")
                     .addSelect(RunStatsQueryParams.Select.RUN_COUNT)
-                    .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .skipPagination(true)
                     .startTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .trace("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -868,7 +869,65 @@ internal class RunServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val runService = client.runs()
 
-        val response = runService.update2("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+        val response =
+            runService.update2(
+                RunUpdate2Params.builder()
+                    .runId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .runIngest(
+                        RunIngest.builder()
+                            .id("id")
+                            .dottedOrder("dotted_order")
+                            .endTime("end_time")
+                            .error("error")
+                            .addEvent(
+                                RunIngest.Event.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .extra(
+                                RunIngest.Extra.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .inputAttachments(
+                                RunIngest.InputAttachments.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .inputs(
+                                RunIngest.Inputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .name("name")
+                            .outputAttachments(
+                                RunIngest.OutputAttachments.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .outputs(
+                                RunIngest.Outputs.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .parentRunId("parent_run_id")
+                            .referenceExampleId("reference_example_id")
+                            .runType(RunIngest.RunType.TOOL)
+                            .serialized(
+                                RunIngest.Serialized.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .sessionId("session_id")
+                            .sessionName("session_name")
+                            .startTime("start_time")
+                            .status("status")
+                            .addTag("string")
+                            .traceId("trace_id")
+                            .build()
+                    )
+                    .build()
+            )
 
         response.validate()
     }

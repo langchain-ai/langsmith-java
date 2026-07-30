@@ -3,6 +3,7 @@
 package com.langchain.smith.models.runs
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -11,13 +12,19 @@ internal class RunUpdate2ResponseTest {
 
     @Test
     fun create() {
-        val runUpdate2Response = RunUpdate2Response.builder().build()
+        val runUpdate2Response =
+            RunUpdate2Response.builder()
+                .putAdditionalProperty("foo", JsonValue.from(mapOf("message" to "message")))
+                .build()
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val runUpdate2Response = RunUpdate2Response.builder().build()
+        val runUpdate2Response =
+            RunUpdate2Response.builder()
+                .putAdditionalProperty("foo", JsonValue.from(mapOf("message" to "message")))
+                .build()
 
         val roundtrippedRunUpdate2Response =
             jsonMapper.readValue(

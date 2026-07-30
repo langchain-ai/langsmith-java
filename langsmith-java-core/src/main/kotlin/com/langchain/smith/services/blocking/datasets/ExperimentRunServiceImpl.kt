@@ -38,7 +38,7 @@ class ExperimentRunServiceImpl internal constructor(private val clientOptions: C
         params: ExperimentRunQueryParams,
         requestOptions: RequestOptions,
     ): ExperimentRunQueryPage =
-        // post /v2/datasets/{dataset_id}/experiment-runs
+        // post /api/v2/datasets/{dataset_id}/experiment-runs
         withRawResponse().query(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -68,7 +68,13 @@ class ExperimentRunServiceImpl internal constructor(private val clientOptions: C
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "datasets", params._pathParam(0), "experiment-runs")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "datasets",
+                        params._pathParam(0),
+                        "experiment-runs",
+                    )
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)

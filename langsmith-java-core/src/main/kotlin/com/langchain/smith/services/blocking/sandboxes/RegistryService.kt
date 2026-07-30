@@ -152,7 +152,7 @@ interface RegistryService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RegistryService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/sandboxes/registries`, but is otherwise the
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/registries`, but is otherwise the
          * same as [RegistryService.create].
          */
         @MustBeClosed
@@ -167,8 +167,8 @@ interface RegistryService {
         ): HttpResponseFor<RegistryResponse>
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/registries/{name}`, but is otherwise
-         * the same as [RegistryService.retrieve].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/registries/{name}`, but is
+         * otherwise the same as [RegistryService.retrieve].
          */
         @MustBeClosed
         fun retrieve(name: String): HttpResponseFor<RegistryResponse> =
@@ -211,8 +211,8 @@ interface RegistryService {
             retrieve(name, RegistryRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `patch /v2/sandboxes/registries/{name}`, but is otherwise
-         * the same as [RegistryService.update].
+         * Returns a raw HTTP response for `patch /api/v2/sandboxes/registries/{name}`, but is
+         * otherwise the same as [RegistryService.update].
          */
         @MustBeClosed
         fun update(pathName: String): HttpResponseFor<RegistryResponse> =
@@ -255,8 +255,8 @@ interface RegistryService {
             update(pathName, RegistryUpdateParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/sandboxes/registries`, but is otherwise the same
-         * as [RegistryService.list].
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/registries`, but is otherwise the
+         * same as [RegistryService.list].
          */
         @MustBeClosed
         fun list(): HttpResponseFor<RegistryListResponse> = list(RegistryListParams.none())
@@ -280,7 +280,7 @@ interface RegistryService {
             list(RegistryListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v2/sandboxes/registries/{name}`, but is
+         * Returns a raw HTTP response for `delete /api/v2/sandboxes/registries/{name}`, but is
          * otherwise the same as [RegistryService.delete].
          */
         @MustBeClosed

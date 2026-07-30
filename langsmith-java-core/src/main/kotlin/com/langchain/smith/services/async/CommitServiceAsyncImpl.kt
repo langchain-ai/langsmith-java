@@ -43,21 +43,21 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
         params: CommitCreateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<CommitCreateResponse> =
-        // post /commits/{owner}/{repo}
+        // post /api/v1/commits/{owner}/{repo}
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
         params: CommitRetrieveParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<CommitRetrieveResponse> =
-        // get /commits/{owner}/{repo}/{commit}
+        // get /api/v1/commits/{owner}/{repo}/{commit}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: CommitListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<CommitListPageAsync> =
-        // get /commits/{owner}/{repo}
+        // get /api/v1/commits/{owner}/{repo}
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -87,7 +87,13 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("commits", params._pathParam(0), params._pathParam(1))
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "commits",
+                        params._pathParam(0),
+                        params._pathParam(1),
+                    )
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -122,6 +128,8 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
+                        "v1",
                         "commits",
                         params._pathParam(0),
                         params._pathParam(1),
@@ -159,7 +167,13 @@ class CommitServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("commits", params._pathParam(0), params._pathParam(1))
+                    .addPathSegments(
+                        "api",
+                        "v1",
+                        "commits",
+                        params._pathParam(0),
+                        params._pathParam(1),
+                    )
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

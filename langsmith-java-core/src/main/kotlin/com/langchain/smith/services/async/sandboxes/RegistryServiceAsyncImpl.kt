@@ -44,35 +44,35 @@ class RegistryServiceAsyncImpl internal constructor(private val clientOptions: C
         params: RegistryCreateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<RegistryResponse> =
-        // post /v2/sandboxes/registries
+        // post /api/v2/sandboxes/registries
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
         params: RegistryRetrieveParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<RegistryResponse> =
-        // get /v2/sandboxes/registries/{name}
+        // get /api/v2/sandboxes/registries/{name}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: RegistryUpdateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<RegistryResponse> =
-        // patch /v2/sandboxes/registries/{name}
+        // patch /api/v2/sandboxes/registries/{name}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: RegistryListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<RegistryListResponse> =
-        // get /v2/sandboxes/registries
+        // get /api/v2/sandboxes/registries
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
         params: RegistryDeleteParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> =
-        // delete /v2/sandboxes/registries/{name}
+        // delete /api/v2/sandboxes/registries/{name}
         withRawResponse().delete(params, requestOptions).thenAccept {}
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -99,7 +99,7 @@ class RegistryServiceAsyncImpl internal constructor(private val clientOptions: C
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries")
+                    .addPathSegments("api", "v2", "sandboxes", "registries")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -133,7 +133,7 @@ class RegistryServiceAsyncImpl internal constructor(private val clientOptions: C
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "registries", params._pathParam(0))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -166,7 +166,7 @@ class RegistryServiceAsyncImpl internal constructor(private val clientOptions: C
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "registries", params._pathParam(0))
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -197,7 +197,7 @@ class RegistryServiceAsyncImpl internal constructor(private val clientOptions: C
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries")
+                    .addPathSegments("api", "v2", "sandboxes", "registries")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -229,7 +229,7 @@ class RegistryServiceAsyncImpl internal constructor(private val clientOptions: C
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "registries", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "registries", params._pathParam(0))
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepareAsync(clientOptions, params)

@@ -7,7 +7,11 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import java.util.Objects
 
-/** Get information about the current deployment of LangSmith. */
+/**
+ * Returns information about the current LangSmith deployment: version, instance feature flags,
+ * batch-ingest limits, and max SDK versions. Unauthenticated by default; set
+ * FF_INFO_ENDPOINT_AUTH_REQUIRED=true to require auth.
+ */
 class InfoListParams
 private constructor(
     private val additionalHeaders: Headers,

@@ -293,35 +293,29 @@ interface RunService {
     fun stats(runStatsQueryParams: RunStatsQueryParams): RunStatsResponse =
         stats(runStatsQueryParams, RequestOptions.none())
 
-    /** Update a run. */
-    fun update2(runId: String): RunUpdate2Response = update2(runId, RunUpdate2Params.none())
+    /**
+     * Updates a run identified by its ID. The body should contain only the fields to be changed;
+     * unknown fields are ignored.
+     */
+    fun update2(runId: String, params: RunUpdate2Params): RunUpdate2Response =
+        update2(runId, params, RequestOptions.none())
 
     /** @see update2 */
     fun update2(
         runId: String,
-        params: RunUpdate2Params = RunUpdate2Params.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): RunUpdate2Response = update2(params.toBuilder().runId(runId).build(), requestOptions)
-
-    /** @see update2 */
-    fun update2(
-        runId: String,
-        params: RunUpdate2Params = RunUpdate2Params.none(),
-    ): RunUpdate2Response = update2(runId, params, RequestOptions.none())
-
-    /** @see update2 */
-    fun update2(
         params: RunUpdate2Params,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): RunUpdate2Response
+    ): RunUpdate2Response = update2(params.toBuilder().runId(runId).build(), requestOptions)
 
     /** @see update2 */
     fun update2(params: RunUpdate2Params): RunUpdate2Response =
         update2(params, RequestOptions.none())
 
     /** @see update2 */
-    fun update2(runId: String, requestOptions: RequestOptions): RunUpdate2Response =
-        update2(runId, RunUpdate2Params.none(), requestOptions)
+    fun update2(
+        params: RunUpdate2Params,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): RunUpdate2Response
 
     /** Get a specific run. */
     fun retrieve(runId: String): RunSchema = retrieve(runId, RunRetrieveParams.none())
@@ -385,7 +379,7 @@ interface RunService {
         fun flush() {}
 
         /**
-         * Returns a raw HTTP response for `post /runs`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /api/v1/runs`, but is otherwise the same as
          * [RunService.create].
          */
         @MustBeClosed
@@ -413,8 +407,8 @@ interface RunService {
             create(runIngest, RequestOptions.none())
 
         /**
-         * Returns a raw HTTP response for `patch /runs/{run_id}`, but is otherwise the same as
-         * [RunService.update].
+         * Returns a raw HTTP response for `patch /api/v1/runs/{run_id}`, but is otherwise the same
+         * as [RunService.update].
          */
         @MustBeClosed
         fun update(runId: String, params: RunUpdateParams): HttpResponseFor<RunUpdateResponse> =
@@ -442,8 +436,8 @@ interface RunService {
         ): HttpResponseFor<RunUpdateResponse>
 
         /**
-         * Returns a raw HTTP response for `get /v2/runs/{run_id}/url`, but is otherwise the same as
-         * [RunService.getUrl].
+         * Returns a raw HTTP response for `get /api/v2/runs/{run_id}/url`, but is otherwise the
+         * same as [RunService.getUrl].
          */
         @MustBeClosed
         fun getUrl(runId: String, params: RunGetUrlParams): HttpResponseFor<RunGetUrlResponse> =
@@ -471,7 +465,7 @@ interface RunService {
         ): HttpResponseFor<RunGetUrlResponse>
 
         /**
-         * Returns a raw HTTP response for `post /runs/batch`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /api/v1/runs/batch`, but is otherwise the same as
          * [RunService.ingestBatch].
          */
         @MustBeClosed
@@ -561,7 +555,7 @@ interface RunService {
             queryV1(RunQueryV1Params.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /v2/runs/query`, but is otherwise the same as
+         * Returns a raw HTTP response for `post /api/v2/runs/query`, but is otherwise the same as
          * [RunService.queryV2].
          */
         @MustBeClosed
@@ -627,7 +621,7 @@ interface RunService {
             retrieveV1(runId, RunRetrieveV1Params.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /v2/runs/{run_id}`, but is otherwise the same as
+         * Returns a raw HTTP response for `get /api/v2/runs/{run_id}`, but is otherwise the same as
          * [RunService.retrieveV2].
          */
         @MustBeClosed
@@ -691,31 +685,17 @@ interface RunService {
          * as [RunService.update2].
          */
         @MustBeClosed
-        fun update2(runId: String): HttpResponseFor<RunUpdate2Response> =
-            update2(runId, RunUpdate2Params.none())
+        fun update2(runId: String, params: RunUpdate2Params): HttpResponseFor<RunUpdate2Response> =
+            update2(runId, params, RequestOptions.none())
 
         /** @see update2 */
         @MustBeClosed
         fun update2(
             runId: String,
-            params: RunUpdate2Params = RunUpdate2Params.none(),
+            params: RunUpdate2Params,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<RunUpdate2Response> =
             update2(params.toBuilder().runId(runId).build(), requestOptions)
-
-        /** @see update2 */
-        @MustBeClosed
-        fun update2(
-            runId: String,
-            params: RunUpdate2Params = RunUpdate2Params.none(),
-        ): HttpResponseFor<RunUpdate2Response> = update2(runId, params, RequestOptions.none())
-
-        /** @see update2 */
-        @MustBeClosed
-        fun update2(
-            params: RunUpdate2Params,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RunUpdate2Response>
 
         /** @see update2 */
         @MustBeClosed
@@ -725,10 +705,9 @@ interface RunService {
         /** @see update2 */
         @MustBeClosed
         fun update2(
-            runId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<RunUpdate2Response> =
-            update2(runId, RunUpdate2Params.none(), requestOptions)
+            params: RunUpdate2Params,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<RunUpdate2Response>
 
         /**
          * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as

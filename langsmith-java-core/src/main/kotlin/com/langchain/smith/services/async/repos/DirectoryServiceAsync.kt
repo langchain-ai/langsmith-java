@@ -116,8 +116,9 @@ interface DirectoryServiceAsync {
         ): DirectoryServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/hub/repos/{owner}/{repo}/directories`,
-         * but is otherwise the same as [DirectoryServiceAsync.list].
+         * Returns a raw HTTP response for `get
+         * /api/v1/platform/hub/repos/{owner}/{repo}/directories`, but is otherwise the same as
+         * [DirectoryServiceAsync.list].
          */
         fun list(
             repo: String,
@@ -147,7 +148,7 @@ interface DirectoryServiceAsync {
 
         /**
          * Returns a raw HTTP response for `delete
-         * /v1/platform/hub/repos/{owner}/{repo}/directories`, but is otherwise the same as
+         * /api/v1/platform/hub/repos/{owner}/{repo}/directories`, but is otherwise the same as
          * [DirectoryServiceAsync.delete].
          */
         fun delete(repo: String, params: DirectoryDeleteParams): CompletableFuture<HttpResponse> =
@@ -173,8 +174,8 @@ interface DirectoryServiceAsync {
 
         /**
          * Returns a raw HTTP response for `post
-         * /v1/platform/hub/repos/{owner}/{repo}/directories/commits`, but is otherwise the same as
-         * [DirectoryServiceAsync.commit].
+         * /api/v1/platform/hub/repos/{owner}/{repo}/directories/commits`, but is otherwise the same
+         * as [DirectoryServiceAsync.commit].
          */
         fun commit(
             repo: String,

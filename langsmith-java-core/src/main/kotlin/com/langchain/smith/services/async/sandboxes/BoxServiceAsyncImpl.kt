@@ -52,70 +52,70 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: BoxCreateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<SandboxResponse> =
-        // post /v2/sandboxes/boxes
+        // post /api/v2/sandboxes/boxes
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieve(
         params: BoxRetrieveParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<SandboxResponse> =
-        // get /v2/sandboxes/boxes/{name}
+        // get /api/v2/sandboxes/boxes/{name}
         withRawResponse().retrieve(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: BoxUpdateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<SandboxResponse> =
-        // patch /v2/sandboxes/boxes/{name}
+        // patch /api/v2/sandboxes/boxes/{name}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: BoxListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<SandboxListResponse> =
-        // get /v2/sandboxes/boxes
+        // get /api/v2/sandboxes/boxes
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
         params: BoxDeleteParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> =
-        // delete /v2/sandboxes/boxes/{name}
+        // delete /api/v2/sandboxes/boxes/{name}
         withRawResponse().delete(params, requestOptions).thenAccept {}
 
     override fun createSnapshot(
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<SnapshotResponse> =
-        // post /v2/sandboxes/boxes/{name}/snapshot
+        // post /api/v2/sandboxes/boxes/{name}/snapshot
         withRawResponse().createSnapshot(params, requestOptions).thenApply { it.parse() }
 
     override fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ServiceUrlResponse> =
-        // post /v2/sandboxes/boxes/{name}/service-url
+        // post /api/v2/sandboxes/boxes/{name}/service-url
         withRawResponse().generateServiceUrl(params, requestOptions).thenApply { it.parse() }
 
     override fun getStatus(
         params: BoxGetStatusParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<SandboxStatusResponse> =
-        // get /v2/sandboxes/boxes/{name}/status
+        // get /api/v2/sandboxes/boxes/{name}/status
         withRawResponse().getStatus(params, requestOptions).thenApply { it.parse() }
 
     override fun start(
         params: BoxStartParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<SandboxResponse> =
-        // post /v2/sandboxes/boxes/{name}/start
+        // post /api/v2/sandboxes/boxes/{name}/start
         withRawResponse().start(params, requestOptions).thenApply { it.parse() }
 
     override fun stop(
         params: BoxStopParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> =
-        // post /v2/sandboxes/boxes/{name}/stop
+        // post /api/v2/sandboxes/boxes/{name}/stop
         withRawResponse().stop(params, requestOptions).thenAccept {}
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -142,7 +142,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes")
+                    .addPathSegments("api", "v2", "sandboxes", "boxes")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -176,7 +176,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "boxes", params._pathParam(0))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -209,7 +209,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "boxes", params._pathParam(0))
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -240,7 +240,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes")
+                    .addPathSegments("api", "v2", "sandboxes", "boxes")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -272,7 +272,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "boxes", params._pathParam(0))
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -300,7 +300,14 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "snapshot")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "snapshot",
+                    )
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -335,6 +342,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments(
+                        "api",
                         "v2",
                         "sandboxes",
                         "boxes",
@@ -374,7 +382,14 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "status")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "status",
+                    )
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -407,7 +422,14 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "start")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "start",
+                    )
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -440,7 +462,14 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "boxes", params._pathParam(0), "stop")
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "stop",
+                    )
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepareAsync(clientOptions, params)

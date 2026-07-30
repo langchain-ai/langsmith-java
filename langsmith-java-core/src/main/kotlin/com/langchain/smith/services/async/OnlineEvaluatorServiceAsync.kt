@@ -228,8 +228,8 @@ interface OnlineEvaluatorServiceAsync {
         ): OnlineEvaluatorServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v1/platform/evaluators`, but is otherwise the same
-         * as [OnlineEvaluatorServiceAsync.create].
+         * Returns a raw HTTP response for `post /api/v1/platform/evaluators`, but is otherwise the
+         * same as [OnlineEvaluatorServiceAsync.create].
          */
         fun create(
             params: OnlineEvaluatorCreateParams
@@ -261,7 +261,7 @@ interface OnlineEvaluatorServiceAsync {
             create(createOnlineEvaluatorRequest, RequestOptions.none())
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/evaluators/{evaluator_id}`, but is
+         * Returns a raw HTTP response for `get /api/v1/platform/evaluators/{evaluator_id}`, but is
          * otherwise the same as [OnlineEvaluatorServiceAsync.retrieve].
          */
         fun retrieve(evaluatorId: String): CompletableFuture<HttpResponseFor<OnlineEvaluator>> =
@@ -302,8 +302,8 @@ interface OnlineEvaluatorServiceAsync {
             retrieve(evaluatorId, OnlineEvaluatorRetrieveParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `patch /v1/platform/evaluators/{evaluator_id}`, but is
-         * otherwise the same as [OnlineEvaluatorServiceAsync.update].
+         * Returns a raw HTTP response for `patch /api/v1/platform/evaluators/{evaluator_id}`, but
+         * is otherwise the same as [OnlineEvaluatorServiceAsync.update].
          */
         fun update(
             evaluatorId: String,
@@ -332,8 +332,8 @@ interface OnlineEvaluatorServiceAsync {
         ): CompletableFuture<HttpResponseFor<UpdateOnlineEvaluatorResponse>>
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/evaluators`, but is otherwise the same
-         * as [OnlineEvaluatorServiceAsync.list].
+         * Returns a raw HTTP response for `get /api/v1/platform/evaluators`, but is otherwise the
+         * same as [OnlineEvaluatorServiceAsync.list].
          */
         fun list(): CompletableFuture<HttpResponseFor<OnlineEvaluatorListPageAsync>> =
             list(OnlineEvaluatorListParams.none())
@@ -357,8 +357,8 @@ interface OnlineEvaluatorServiceAsync {
             list(OnlineEvaluatorListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v1/platform/evaluators/{evaluator_id}`, but is
-         * otherwise the same as [OnlineEvaluatorServiceAsync.delete].
+         * Returns a raw HTTP response for `delete /api/v1/platform/evaluators/{evaluator_id}`, but
+         * is otherwise the same as [OnlineEvaluatorServiceAsync.delete].
          */
         fun delete(evaluatorId: String): CompletableFuture<HttpResponse> =
             delete(evaluatorId, OnlineEvaluatorDeleteParams.none())
@@ -395,8 +395,8 @@ interface OnlineEvaluatorServiceAsync {
             delete(evaluatorId, OnlineEvaluatorDeleteParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /v1/platform/evaluators`, but is otherwise the
-         * same as [OnlineEvaluatorServiceAsync.bulkDelete].
+         * Returns a raw HTTP response for `delete /api/v1/platform/evaluators`, but is otherwise
+         * the same as [OnlineEvaluatorServiceAsync.bulkDelete].
          */
         fun bulkDelete(
             params: OnlineEvaluatorBulkDeleteParams
@@ -410,8 +410,8 @@ interface OnlineEvaluatorServiceAsync {
         ): CompletableFuture<HttpResponseFor<BulkDeleteEvaluatorsResponse>>
 
         /**
-         * Returns a raw HTTP response for `get /v1/platform/evaluators/spend`, but is otherwise the
-         * same as [OnlineEvaluatorServiceAsync.spend].
+         * Returns a raw HTTP response for `get /api/v1/platform/evaluators/spend`, but is otherwise
+         * the same as [OnlineEvaluatorServiceAsync.spend].
          */
         fun spend(
             params: OnlineEvaluatorSpendParams

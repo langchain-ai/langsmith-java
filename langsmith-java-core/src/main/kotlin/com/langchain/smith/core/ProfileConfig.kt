@@ -135,8 +135,7 @@ private fun refreshProfileOAuthToken(
         .getOrNull()
 }
 
-private fun normalizeConfigUrl(baseUrl: String): String =
-    baseUrl.trimEnd('/').removeSuffix("/api/v1")
+private fun normalizeConfigUrl(baseUrl: String): String = normalizeBaseUrl(baseUrl).trimEnd('/')
 
 private fun formEncode(values: Map<String, String>): String =
     values.entries.joinToString("&") { (key, value) -> "${urlEncode(key)}=${urlEncode(value)}" }

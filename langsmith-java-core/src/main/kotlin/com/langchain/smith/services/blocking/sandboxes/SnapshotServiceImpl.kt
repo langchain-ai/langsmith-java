@@ -42,25 +42,25 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
         params: SnapshotCreateParams,
         requestOptions: RequestOptions,
     ): SnapshotResponse =
-        // post /v2/sandboxes/snapshots
+        // post /api/v2/sandboxes/snapshots
         withRawResponse().create(params, requestOptions).parse()
 
     override fun retrieve(
         params: SnapshotRetrieveParams,
         requestOptions: RequestOptions,
     ): SnapshotResponse =
-        // get /v2/sandboxes/snapshots/{snapshot_id}
+        // get /api/v2/sandboxes/snapshots/{snapshot_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override fun list(
         params: SnapshotListParams,
         requestOptions: RequestOptions,
     ): SnapshotListResponse =
-        // get /v2/sandboxes/snapshots
+        // get /api/v2/sandboxes/snapshots
         withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(params: SnapshotDeleteParams, requestOptions: RequestOptions) {
-        // delete /v2/sandboxes/snapshots/{snapshot_id}
+        // delete /api/v2/sandboxes/snapshots/{snapshot_id}
         withRawResponse().delete(params, requestOptions)
     }
 
@@ -88,7 +88,7 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "snapshots")
+                    .addPathSegments("api", "v2", "sandboxes", "snapshots")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -119,7 +119,7 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "snapshots", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "snapshots", params._pathParam(0))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -146,7 +146,7 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "snapshots")
+                    .addPathSegments("api", "v2", "sandboxes", "snapshots")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -175,7 +175,7 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "sandboxes", "snapshots", params._pathParam(0))
+                    .addPathSegments("api", "v2", "sandboxes", "snapshots", params._pathParam(0))
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
                     .build()
                     .prepare(clientOptions, params)

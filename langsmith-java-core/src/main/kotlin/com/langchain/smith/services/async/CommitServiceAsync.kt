@@ -127,8 +127,8 @@ interface CommitServiceAsync {
         ): CommitServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /commits/{owner}/{repo}`, but is otherwise the same
-         * as [CommitServiceAsync.create].
+         * Returns a raw HTTP response for `post /api/v1/commits/{owner}/{repo}`, but is otherwise
+         * the same as [CommitServiceAsync.create].
          */
         fun create(
             repo: String,
@@ -157,8 +157,8 @@ interface CommitServiceAsync {
         ): CompletableFuture<HttpResponseFor<CommitCreateResponse>>
 
         /**
-         * Returns a raw HTTP response for `get /commits/{owner}/{repo}/{commit}`, but is otherwise
-         * the same as [CommitServiceAsync.retrieve].
+         * Returns a raw HTTP response for `get /api/v1/commits/{owner}/{repo}/{commit}`, but is
+         * otherwise the same as [CommitServiceAsync.retrieve].
          */
         fun retrieve(
             commit: String,
@@ -187,8 +187,8 @@ interface CommitServiceAsync {
         ): CompletableFuture<HttpResponseFor<CommitRetrieveResponse>>
 
         /**
-         * Returns a raw HTTP response for `get /commits/{owner}/{repo}`, but is otherwise the same
-         * as [CommitServiceAsync.list].
+         * Returns a raw HTTP response for `get /api/v1/commits/{owner}/{repo}`, but is otherwise
+         * the same as [CommitServiceAsync.list].
          */
         fun list(
             repo: String,

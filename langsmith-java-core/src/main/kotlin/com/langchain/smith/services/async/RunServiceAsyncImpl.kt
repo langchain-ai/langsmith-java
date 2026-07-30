@@ -216,14 +216,14 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: RunGetUrlParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<RunGetUrlResponse> =
-        // get /v2/runs/{run_id}/url
+        // get /api/v2/runs/{run_id}/url
         withRawResponse().getUrl(params, requestOptions).thenApply { it.parse() }
 
     override fun ingestBatch(
         params: RunIngestBatchParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<RunIngestBatchResponse> =
-        // post /runs/batch
+        // post /api/v1/runs/batch
         withRawResponse().ingestBatch(params, requestOptions).thenApply { it.parse() }
 
     override fun multipartIngest(
@@ -244,7 +244,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: RunQueryV2Params,
         requestOptions: RequestOptions,
     ): CompletableFuture<RunQueryV2PageAsync> =
-        // post /v2/runs/query
+        // post /api/v2/runs/query
         withRawResponse().queryV2(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieveV1(
@@ -258,7 +258,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: RunRetrieveV2Params,
         requestOptions: RequestOptions,
     ): CompletableFuture<Run> =
-        // get /v2/runs/{run_id}
+        // get /api/v2/runs/{run_id}
         withRawResponse().retrieveV2(params, requestOptions).thenApply { it.parse() }
 
     override fun stats(
@@ -374,7 +374,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs")
+                    .addPathSegments("api", "v1", "runs")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -408,7 +408,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs", params._pathParam(0))
+                    .addPathSegments("api", "v1", "runs", params._pathParam(0))
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -442,7 +442,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", params._pathParam(0), "url")
+                    .addPathSegments("api", "v2", "runs", params._pathParam(0), "url")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -472,7 +472,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("runs", "batch")
+                    .addPathSegments("api", "v1", "runs", "batch")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -544,7 +544,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 val requestBuilder =
                     HttpRequest.builder()
                         .method(HttpMethod.POST)
-                        .baseUrl(clientOptions.baseUrl())
+                        .baseUrl(clientOptions.configuredBaseUrl())
                         .addPathSegments("runs", "multipart")
                 if (zstdCompressionEnabled) {
                     requestBuilder.putHeader("Content-Encoding", "zstd").body(zstd(body))
@@ -608,7 +608,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", "query")
+                    .addPathSegments("api", "v2", "runs", "query")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -682,7 +682,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", params._pathParam(0))
+                    .addPathSegments("api", "v2", "runs", params._pathParam(0))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -747,7 +747,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                     .method(HttpMethod.PATCH)
                     .baseUrl(clientOptions.baseUrl())
                     .addPathSegments("api", "v1", "runs", params._pathParam(0))
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))

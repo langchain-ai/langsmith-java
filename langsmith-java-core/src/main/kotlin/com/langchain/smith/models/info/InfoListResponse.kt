@@ -10,31 +10,28 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
-import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** The LangSmith server info. */
 class InfoListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val version: JsonField<String>,
     private val batchIngestConfig: JsonField<BatchIngestConfig>,
     private val customerInfo: JsonField<CustomerInfo>,
     private val gitSha: JsonField<String>,
     private val instanceFlags: JsonField<InstanceFlags>,
-    private val licenseExpirationTime: JsonField<OffsetDateTime>,
+    private val licenseExpirationTime: JsonField<String>,
+    private val sdkVersions: JsonField<SdkVersions>,
+    private val version: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("version") @ExcludeMissing version: JsonField<String> = JsonMissing.of(),
         @JsonProperty("batch_ingest_config")
         @ExcludeMissing
         batchIngestConfig: JsonField<BatchIngestConfig> = JsonMissing.of(),
@@ -47,26 +44,23 @@ private constructor(
         instanceFlags: JsonField<InstanceFlags> = JsonMissing.of(),
         @JsonProperty("license_expiration_time")
         @ExcludeMissing
-        licenseExpirationTime: JsonField<OffsetDateTime> = JsonMissing.of(),
+        licenseExpirationTime: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("sdk_versions")
+        @ExcludeMissing
+        sdkVersions: JsonField<SdkVersions> = JsonMissing.of(),
+        @JsonProperty("version") @ExcludeMissing version: JsonField<String> = JsonMissing.of(),
     ) : this(
-        version,
         batchIngestConfig,
         customerInfo,
         gitSha,
         instanceFlags,
         licenseExpirationTime,
+        sdkVersions,
+        version,
         mutableMapOf(),
     )
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun version(): String = version.getRequired("version")
-
-    /**
-     * Batch ingest config.
-     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -74,8 +68,6 @@ private constructor(
         batchIngestConfig.getOptional("batch_ingest_config")
 
     /**
-     * Customer info.
-     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -97,15 +89,20 @@ private constructor(
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun licenseExpirationTime(): Optional<OffsetDateTime> =
+    fun licenseExpirationTime(): Optional<String> =
         licenseExpirationTime.getOptional("license_expiration_time")
 
     /**
-     * Returns the raw JSON value of [version].
-     *
-     * Unlike [version], this method doesn't throw if the JSON field has an unexpected type.
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
      */
-    @JsonProperty("version") @ExcludeMissing fun _version(): JsonField<String> = version
+    fun sdkVersions(): Optional<SdkVersions> = sdkVersions.getOptional("sdk_versions")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun version(): Optional<String> = version.getOptional("version")
 
     /**
      * Returns the raw JSON value of [batchIngestConfig].
@@ -150,7 +147,23 @@ private constructor(
      */
     @JsonProperty("license_expiration_time")
     @ExcludeMissing
-    fun _licenseExpirationTime(): JsonField<OffsetDateTime> = licenseExpirationTime
+    fun _licenseExpirationTime(): JsonField<String> = licenseExpirationTime
+
+    /**
+     * Returns the raw JSON value of [sdkVersions].
+     *
+     * Unlike [sdkVersions], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("sdk_versions")
+    @ExcludeMissing
+    fun _sdkVersions(): JsonField<SdkVersions> = sdkVersions
+
+    /**
+     * Returns the raw JSON value of [version].
+     *
+     * Unlike [version], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("version") @ExcludeMissing fun _version(): JsonField<String> = version
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -166,50 +179,34 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [InfoListResponse].
-         *
-         * The following fields are required:
-         * ```java
-         * .version()
-         * ```
-         */
+        /** Returns a mutable builder for constructing an instance of [InfoListResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [InfoListResponse]. */
     class Builder internal constructor() {
 
-        private var version: JsonField<String>? = null
         private var batchIngestConfig: JsonField<BatchIngestConfig> = JsonMissing.of()
         private var customerInfo: JsonField<CustomerInfo> = JsonMissing.of()
         private var gitSha: JsonField<String> = JsonMissing.of()
         private var instanceFlags: JsonField<InstanceFlags> = JsonMissing.of()
-        private var licenseExpirationTime: JsonField<OffsetDateTime> = JsonMissing.of()
+        private var licenseExpirationTime: JsonField<String> = JsonMissing.of()
+        private var sdkVersions: JsonField<SdkVersions> = JsonMissing.of()
+        private var version: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(infoListResponse: InfoListResponse) = apply {
-            version = infoListResponse.version
             batchIngestConfig = infoListResponse.batchIngestConfig
             customerInfo = infoListResponse.customerInfo
             gitSha = infoListResponse.gitSha
             instanceFlags = infoListResponse.instanceFlags
             licenseExpirationTime = infoListResponse.licenseExpirationTime
+            sdkVersions = infoListResponse.sdkVersions
+            version = infoListResponse.version
             additionalProperties = infoListResponse.additionalProperties.toMutableMap()
         }
 
-        fun version(version: String) = version(JsonField.of(version))
-
-        /**
-         * Sets [Builder.version] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.version] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun version(version: JsonField<String>) = apply { this.version = version }
-
-        /** Batch ingest config. */
         fun batchIngestConfig(batchIngestConfig: BatchIngestConfig) =
             batchIngestConfig(JsonField.of(batchIngestConfig))
 
@@ -224,13 +221,7 @@ private constructor(
             this.batchIngestConfig = batchIngestConfig
         }
 
-        /** Customer info. */
-        fun customerInfo(customerInfo: CustomerInfo?) =
-            customerInfo(JsonField.ofNullable(customerInfo))
-
-        /** Alias for calling [Builder.customerInfo] with `customerInfo.orElse(null)`. */
-        fun customerInfo(customerInfo: Optional<CustomerInfo>) =
-            customerInfo(customerInfo.getOrNull())
+        fun customerInfo(customerInfo: CustomerInfo) = customerInfo(JsonField.of(customerInfo))
 
         /**
          * Sets [Builder.customerInfo] to an arbitrary JSON value.
@@ -243,10 +234,7 @@ private constructor(
             this.customerInfo = customerInfo
         }
 
-        fun gitSha(gitSha: String?) = gitSha(JsonField.ofNullable(gitSha))
-
-        /** Alias for calling [Builder.gitSha] with `gitSha.orElse(null)`. */
-        fun gitSha(gitSha: Optional<String>) = gitSha(gitSha.getOrNull())
+        fun gitSha(gitSha: String) = gitSha(JsonField.of(gitSha))
 
         /**
          * Sets [Builder.gitSha] to an arbitrary JSON value.
@@ -269,26 +257,42 @@ private constructor(
             this.instanceFlags = instanceFlags
         }
 
-        fun licenseExpirationTime(licenseExpirationTime: OffsetDateTime?) =
-            licenseExpirationTime(JsonField.ofNullable(licenseExpirationTime))
-
-        /**
-         * Alias for calling [Builder.licenseExpirationTime] with
-         * `licenseExpirationTime.orElse(null)`.
-         */
-        fun licenseExpirationTime(licenseExpirationTime: Optional<OffsetDateTime>) =
-            licenseExpirationTime(licenseExpirationTime.getOrNull())
+        fun licenseExpirationTime(licenseExpirationTime: String) =
+            licenseExpirationTime(JsonField.of(licenseExpirationTime))
 
         /**
          * Sets [Builder.licenseExpirationTime] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.licenseExpirationTime] with a well-typed
-         * [OffsetDateTime] value instead. This method is primarily for setting the field to an
-         * undocumented or not yet supported value.
+         * You should usually call [Builder.licenseExpirationTime] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun licenseExpirationTime(licenseExpirationTime: JsonField<OffsetDateTime>) = apply {
+        fun licenseExpirationTime(licenseExpirationTime: JsonField<String>) = apply {
             this.licenseExpirationTime = licenseExpirationTime
         }
+
+        fun sdkVersions(sdkVersions: SdkVersions) = sdkVersions(JsonField.of(sdkVersions))
+
+        /**
+         * Sets [Builder.sdkVersions] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sdkVersions] with a well-typed [SdkVersions] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun sdkVersions(sdkVersions: JsonField<SdkVersions>) = apply {
+            this.sdkVersions = sdkVersions
+        }
+
+        fun version(version: String) = version(JsonField.of(version))
+
+        /**
+         * Sets [Builder.version] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.version] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun version(version: JsonField<String>) = apply { this.version = version }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -313,22 +317,16 @@ private constructor(
          * Returns an immutable instance of [InfoListResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .version()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): InfoListResponse =
             InfoListResponse(
-                checkRequired("version", version),
                 batchIngestConfig,
                 customerInfo,
                 gitSha,
                 instanceFlags,
                 licenseExpirationTime,
+                sdkVersions,
+                version,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -348,12 +346,13 @@ private constructor(
             return@apply
         }
 
-        version()
         batchIngestConfig().ifPresent { it.validate() }
         customerInfo().ifPresent { it.validate() }
         gitSha()
         instanceFlags().ifPresent { it.validate() }
         licenseExpirationTime()
+        sdkVersions().ifPresent { it.validate() }
+        version()
         validated = true
     }
 
@@ -372,14 +371,14 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (version.asKnown().isPresent) 1 else 0) +
-            (batchIngestConfig.asKnown().getOrNull()?.validity() ?: 0) +
+        (batchIngestConfig.asKnown().getOrNull()?.validity() ?: 0) +
             (customerInfo.asKnown().getOrNull()?.validity() ?: 0) +
             (if (gitSha.asKnown().isPresent) 1 else 0) +
             (instanceFlags.asKnown().getOrNull()?.validity() ?: 0) +
-            (if (licenseExpirationTime.asKnown().isPresent) 1 else 0)
+            (if (licenseExpirationTime.asKnown().isPresent) 1 else 0) +
+            (sdkVersions.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (version.asKnown().isPresent) 1 else 0)
 
-    /** Batch ingest config. */
     class BatchIngestConfig
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -756,7 +755,6 @@ private constructor(
             "BatchIngestConfig{scaleDownNemptyTrigger=$scaleDownNemptyTrigger, scaleUpNthreadsLimit=$scaleUpNthreadsLimit, scaleUpQsizeTrigger=$scaleUpQsizeTrigger, sizeLimit=$sizeLimit, sizeLimitBytes=$sizeLimitBytes, useMultipartEndpoint=$useMultipartEndpoint, additionalProperties=$additionalProperties}"
     }
 
-    /** Customer info. */
     class CustomerInfo
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -776,16 +774,16 @@ private constructor(
         ) : this(customerId, customerName, mutableMapOf())
 
         /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun customerId(): String = customerId.getRequired("customer_id")
+        fun customerId(): Optional<String> = customerId.getOptional("customer_id")
 
         /**
-         * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun customerName(): String = customerName.getRequired("customer_name")
+        fun customerName(): Optional<String> = customerName.getOptional("customer_name")
 
         /**
          * Returns the raw JSON value of [customerId].
@@ -820,23 +818,15 @@ private constructor(
 
         companion object {
 
-            /**
-             * Returns a mutable builder for constructing an instance of [CustomerInfo].
-             *
-             * The following fields are required:
-             * ```java
-             * .customerId()
-             * .customerName()
-             * ```
-             */
+            /** Returns a mutable builder for constructing an instance of [CustomerInfo]. */
             @JvmStatic fun builder() = Builder()
         }
 
         /** A builder for [CustomerInfo]. */
         class Builder internal constructor() {
 
-            private var customerId: JsonField<String>? = null
-            private var customerName: JsonField<String>? = null
+            private var customerId: JsonField<String> = JsonMissing.of()
+            private var customerName: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -893,21 +883,9 @@ private constructor(
              * Returns an immutable instance of [CustomerInfo].
              *
              * Further updates to this [Builder] will not mutate the returned instance.
-             *
-             * The following fields are required:
-             * ```java
-             * .customerId()
-             * .customerName()
-             * ```
-             *
-             * @throws IllegalStateException if any required field is unset.
              */
             fun build(): CustomerInfo =
-                CustomerInfo(
-                    checkRequired("customerId", customerId),
-                    checkRequired("customerName", customerName),
-                    additionalProperties.toMutableMap(),
-                )
+                CustomerInfo(customerId, customerName, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -1079,29 +1057,328 @@ private constructor(
         override fun toString() = "InstanceFlags{additionalProperties=$additionalProperties}"
     }
 
+    class SdkVersions
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val maxGoSdkVersion: JsonField<String>,
+        private val maxJavaSdkVersion: JsonField<String>,
+        private val maxJsSdkVersion: JsonField<String>,
+        private val maxPythonSdkVersion: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("max_go_sdk_version")
+            @ExcludeMissing
+            maxGoSdkVersion: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("max_java_sdk_version")
+            @ExcludeMissing
+            maxJavaSdkVersion: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("max_js_sdk_version")
+            @ExcludeMissing
+            maxJsSdkVersion: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("max_python_sdk_version")
+            @ExcludeMissing
+            maxPythonSdkVersion: JsonField<String> = JsonMissing.of(),
+        ) : this(
+            maxGoSdkVersion,
+            maxJavaSdkVersion,
+            maxJsSdkVersion,
+            maxPythonSdkVersion,
+            mutableMapOf(),
+        )
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun maxGoSdkVersion(): Optional<String> = maxGoSdkVersion.getOptional("max_go_sdk_version")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun maxJavaSdkVersion(): Optional<String> =
+            maxJavaSdkVersion.getOptional("max_java_sdk_version")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun maxJsSdkVersion(): Optional<String> = maxJsSdkVersion.getOptional("max_js_sdk_version")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun maxPythonSdkVersion(): Optional<String> =
+            maxPythonSdkVersion.getOptional("max_python_sdk_version")
+
+        /**
+         * Returns the raw JSON value of [maxGoSdkVersion].
+         *
+         * Unlike [maxGoSdkVersion], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("max_go_sdk_version")
+        @ExcludeMissing
+        fun _maxGoSdkVersion(): JsonField<String> = maxGoSdkVersion
+
+        /**
+         * Returns the raw JSON value of [maxJavaSdkVersion].
+         *
+         * Unlike [maxJavaSdkVersion], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("max_java_sdk_version")
+        @ExcludeMissing
+        fun _maxJavaSdkVersion(): JsonField<String> = maxJavaSdkVersion
+
+        /**
+         * Returns the raw JSON value of [maxJsSdkVersion].
+         *
+         * Unlike [maxJsSdkVersion], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("max_js_sdk_version")
+        @ExcludeMissing
+        fun _maxJsSdkVersion(): JsonField<String> = maxJsSdkVersion
+
+        /**
+         * Returns the raw JSON value of [maxPythonSdkVersion].
+         *
+         * Unlike [maxPythonSdkVersion], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("max_python_sdk_version")
+        @ExcludeMissing
+        fun _maxPythonSdkVersion(): JsonField<String> = maxPythonSdkVersion
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [SdkVersions]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [SdkVersions]. */
+        class Builder internal constructor() {
+
+            private var maxGoSdkVersion: JsonField<String> = JsonMissing.of()
+            private var maxJavaSdkVersion: JsonField<String> = JsonMissing.of()
+            private var maxJsSdkVersion: JsonField<String> = JsonMissing.of()
+            private var maxPythonSdkVersion: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(sdkVersions: SdkVersions) = apply {
+                maxGoSdkVersion = sdkVersions.maxGoSdkVersion
+                maxJavaSdkVersion = sdkVersions.maxJavaSdkVersion
+                maxJsSdkVersion = sdkVersions.maxJsSdkVersion
+                maxPythonSdkVersion = sdkVersions.maxPythonSdkVersion
+                additionalProperties = sdkVersions.additionalProperties.toMutableMap()
+            }
+
+            fun maxGoSdkVersion(maxGoSdkVersion: String) =
+                maxGoSdkVersion(JsonField.of(maxGoSdkVersion))
+
+            /**
+             * Sets [Builder.maxGoSdkVersion] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.maxGoSdkVersion] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun maxGoSdkVersion(maxGoSdkVersion: JsonField<String>) = apply {
+                this.maxGoSdkVersion = maxGoSdkVersion
+            }
+
+            fun maxJavaSdkVersion(maxJavaSdkVersion: String) =
+                maxJavaSdkVersion(JsonField.of(maxJavaSdkVersion))
+
+            /**
+             * Sets [Builder.maxJavaSdkVersion] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.maxJavaSdkVersion] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun maxJavaSdkVersion(maxJavaSdkVersion: JsonField<String>) = apply {
+                this.maxJavaSdkVersion = maxJavaSdkVersion
+            }
+
+            fun maxJsSdkVersion(maxJsSdkVersion: String) =
+                maxJsSdkVersion(JsonField.of(maxJsSdkVersion))
+
+            /**
+             * Sets [Builder.maxJsSdkVersion] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.maxJsSdkVersion] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun maxJsSdkVersion(maxJsSdkVersion: JsonField<String>) = apply {
+                this.maxJsSdkVersion = maxJsSdkVersion
+            }
+
+            fun maxPythonSdkVersion(maxPythonSdkVersion: String) =
+                maxPythonSdkVersion(JsonField.of(maxPythonSdkVersion))
+
+            /**
+             * Sets [Builder.maxPythonSdkVersion] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.maxPythonSdkVersion] with a well-typed [String]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun maxPythonSdkVersion(maxPythonSdkVersion: JsonField<String>) = apply {
+                this.maxPythonSdkVersion = maxPythonSdkVersion
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [SdkVersions].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): SdkVersions =
+                SdkVersions(
+                    maxGoSdkVersion,
+                    maxJavaSdkVersion,
+                    maxJsSdkVersion,
+                    maxPythonSdkVersion,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): SdkVersions = apply {
+            if (validated) {
+                return@apply
+            }
+
+            maxGoSdkVersion()
+            maxJavaSdkVersion()
+            maxJsSdkVersion()
+            maxPythonSdkVersion()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (maxGoSdkVersion.asKnown().isPresent) 1 else 0) +
+                (if (maxJavaSdkVersion.asKnown().isPresent) 1 else 0) +
+                (if (maxJsSdkVersion.asKnown().isPresent) 1 else 0) +
+                (if (maxPythonSdkVersion.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is SdkVersions &&
+                maxGoSdkVersion == other.maxGoSdkVersion &&
+                maxJavaSdkVersion == other.maxJavaSdkVersion &&
+                maxJsSdkVersion == other.maxJsSdkVersion &&
+                maxPythonSdkVersion == other.maxPythonSdkVersion &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(
+                maxGoSdkVersion,
+                maxJavaSdkVersion,
+                maxJsSdkVersion,
+                maxPythonSdkVersion,
+                additionalProperties,
+            )
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "SdkVersions{maxGoSdkVersion=$maxGoSdkVersion, maxJavaSdkVersion=$maxJavaSdkVersion, maxJsSdkVersion=$maxJsSdkVersion, maxPythonSdkVersion=$maxPythonSdkVersion, additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
 
         return other is InfoListResponse &&
-            version == other.version &&
             batchIngestConfig == other.batchIngestConfig &&
             customerInfo == other.customerInfo &&
             gitSha == other.gitSha &&
             instanceFlags == other.instanceFlags &&
             licenseExpirationTime == other.licenseExpirationTime &&
+            sdkVersions == other.sdkVersions &&
+            version == other.version &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
         Objects.hash(
-            version,
             batchIngestConfig,
             customerInfo,
             gitSha,
             instanceFlags,
             licenseExpirationTime,
+            sdkVersions,
+            version,
             additionalProperties,
         )
     }
@@ -1109,5 +1386,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InfoListResponse{version=$version, batchIngestConfig=$batchIngestConfig, customerInfo=$customerInfo, gitSha=$gitSha, instanceFlags=$instanceFlags, licenseExpirationTime=$licenseExpirationTime, additionalProperties=$additionalProperties}"
+        "InfoListResponse{batchIngestConfig=$batchIngestConfig, customerInfo=$customerInfo, gitSha=$gitSha, instanceFlags=$instanceFlags, licenseExpirationTime=$licenseExpirationTime, sdkVersions=$sdkVersions, version=$version, additionalProperties=$additionalProperties}"
 }

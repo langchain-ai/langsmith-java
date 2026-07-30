@@ -40,14 +40,14 @@ class ShareServiceAsyncImpl internal constructor(private val clientOptions: Clie
         params: ShareCreateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ShareCreateResponse> =
-        // post /v2/runs/{run_id}/share
+        // post /api/v2/runs/{run_id}/share
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
         params: ShareDeleteParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Void?> =
-        // delete /v2/runs/{trace_id}/share
+        // delete /api/v2/runs/{trace_id}/share
         withRawResponse().delete(params, requestOptions).thenAccept {}
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -77,7 +77,7 @@ class ShareServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", params._pathParam(0), "share")
+                    .addPathSegments("api", "v2", "runs", params._pathParam(0), "share")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -110,7 +110,7 @@ class ShareServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("v2", "runs", params._pathParam(0), "share")
+                    .addPathSegments("api", "v2", "runs", params._pathParam(0), "share")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)

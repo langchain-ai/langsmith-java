@@ -74,8 +74,8 @@ interface ExperimentRunService {
         ): ExperimentRunService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /v2/datasets/{dataset_id}/experiment-runs`, but is
-         * otherwise the same as [ExperimentRunService.query].
+         * Returns a raw HTTP response for `post /api/v2/datasets/{dataset_id}/experiment-runs`, but
+         * is otherwise the same as [ExperimentRunService.query].
          */
         @MustBeClosed
         fun query(datasetId: String): HttpResponseFor<ExperimentRunQueryPage> =
