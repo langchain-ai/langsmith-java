@@ -137,8 +137,21 @@ private constructor(
      * The base URL to use for every request.
      *
      * Defaults to the production environment: `https://api.smith.langchain.com/`.
+     *
+     * A trailing `/api` or `/api/v1` is stripped, because the generated request paths spell their
+     * own prefix out (`api/v1/runs/query`). Handwritten requests whose paths are root-relative need
+     * the URL as configured instead; see [configuredBaseUrl].
      */
-    fun baseUrl(): String = baseUrl ?: PRODUCTION_URL
+    fun baseUrl(): String = normalizeBaseUrl(configuredBaseUrl())
+
+    /**
+     * The base URL exactly as configured, with no prefix stripped.
+     *
+     * `GET /info` and `POST /runs/multipart` are handwritten and root-relative, so the prefix they
+     * sit behind comes from the configured endpoint — `/api` on self-hosted, nothing on SaaS — and
+     * cannot be reconstructed from the normalized root that [baseUrl] returns.
+     */
+    fun configuredBaseUrl(): String = baseUrl ?: PRODUCTION_URL
 
     fun apiKey(): Optional<String> = Optional.ofNullable(apiKey)
 

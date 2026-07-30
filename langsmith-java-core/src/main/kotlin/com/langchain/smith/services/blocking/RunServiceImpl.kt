@@ -444,7 +444,7 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
             val requestBuilder =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
+                    .baseUrl(clientOptions.configuredBaseUrl())
                     .addPathSegments("runs", "multipart")
             if (zstdCompressionEnabled) {
                 requestBuilder.putHeader("Content-Encoding", "zstd").body(zstd(body))

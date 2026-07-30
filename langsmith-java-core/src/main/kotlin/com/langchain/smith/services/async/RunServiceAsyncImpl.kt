@@ -544,7 +544,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 val requestBuilder =
                     HttpRequest.builder()
                         .method(HttpMethod.POST)
-                        .baseUrl(clientOptions.baseUrl())
+                        .baseUrl(clientOptions.configuredBaseUrl())
                         .addPathSegments("runs", "multipart")
                 if (zstdCompressionEnabled) {
                     requestBuilder.putHeader("Content-Encoding", "zstd").body(zstd(body))
