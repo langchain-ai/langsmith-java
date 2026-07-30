@@ -250,8 +250,9 @@ interface ItemService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): ItemService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/items`, but is
-         * otherwise the same as [ItemService.create].
+         * Returns a raw HTTP response for `post
+         * /api/v1/platform/annotation-queues/{queue_id}/items`, but is otherwise the same as
+         * [ItemService.create].
          */
         @MustBeClosed
         fun create(queueId: String): HttpResponseFor<ItemCreateResponse> =
@@ -295,8 +296,8 @@ interface ItemService {
 
         /**
          * Returns a raw HTTP response for `patch
-         * /api/v1/annotation-queues/{queue_id}/items/{item_id}`, but is otherwise the same as
-         * [ItemService.update].
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}`, but is otherwise the same
+         * as [ItemService.update].
          */
         @MustBeClosed
         fun update(itemId: String, params: ItemUpdateParams): HttpResponseFor<ItemUpdateResponse> =
@@ -324,8 +325,9 @@ interface ItemService {
         ): HttpResponseFor<ItemUpdateResponse>
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}/items`, but is
-         * otherwise the same as [ItemService.list].
+         * Returns a raw HTTP response for `get
+         * /api/v1/platform/annotation-queues/{queue_id}/items`, but is otherwise the same as
+         * [ItemService.list].
          */
         @MustBeClosed
         fun list(queueId: String, params: ItemListParams): HttpResponseFor<ItemListPage> =
@@ -354,8 +356,8 @@ interface ItemService {
 
         /**
          * Returns a raw HTTP response for `post
-         * /api/v1/annotation-queues/items/{queue_item_id}/status`, but is otherwise the same as
-         * [ItemService.createStatus].
+         * /api/v1/platform/annotation-queues/items/{queue_item_id}/status`, but is otherwise the
+         * same as [ItemService.createStatus].
          */
         @MustBeClosed
         fun createStatus(queueItemId: String): HttpResponseFor<ItemCreateStatusResponse> =
@@ -400,8 +402,9 @@ interface ItemService {
             createStatus(queueItemId, ItemCreateStatusParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/items/delete`,
-         * but is otherwise the same as [ItemService.deleteAll].
+         * Returns a raw HTTP response for `post
+         * /api/v1/platform/annotation-queues/{queue_id}/items/delete`, but is otherwise the same as
+         * [ItemService.deleteAll].
          */
         @MustBeClosed
         fun deleteAll(queueId: String): HttpResponseFor<ItemDeleteAllResponse> =
@@ -445,8 +448,9 @@ interface ItemService {
             deleteAll(queueId, ItemDeleteAllParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}/items/count`,
-         * but is otherwise the same as [ItemService.retrieveCount].
+         * Returns a raw HTTP response for `get
+         * /api/v1/platform/annotation-queues/{queue_id}/items/count`, but is otherwise the same as
+         * [ItemService.retrieveCount].
          */
         @MustBeClosed
         fun retrieveCount(
@@ -479,8 +483,8 @@ interface ItemService {
 
         /**
          * Returns a raw HTTP response for `get
-         * /api/v1/annotation-queues/{queue_id}/items/{item_id}/placement`, but is otherwise the
-         * same as [ItemService.retrievePlacement].
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement`, but is
+         * otherwise the same as [ItemService.retrievePlacement].
          */
         @MustBeClosed
         fun retrievePlacement(

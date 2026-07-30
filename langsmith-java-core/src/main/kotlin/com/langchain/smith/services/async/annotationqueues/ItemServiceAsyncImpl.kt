@@ -51,49 +51,49 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
         params: ItemCreateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ItemCreateResponse> =
-        // post /api/v1/annotation-queues/{queue_id}/items
+        // post /api/v1/platform/annotation-queues/{queue_id}/items
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: ItemUpdateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ItemUpdateResponse> =
-        // patch /api/v1/annotation-queues/{queue_id}/items/{item_id}
+        // patch /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: ItemListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ItemListPageAsync> =
-        // get /api/v1/annotation-queues/{queue_id}/items
+        // get /api/v1/platform/annotation-queues/{queue_id}/items
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun createStatus(
         params: ItemCreateStatusParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ItemCreateStatusResponse> =
-        // post /api/v1/annotation-queues/items/{queue_item_id}/status
+        // post /api/v1/platform/annotation-queues/items/{queue_item_id}/status
         withRawResponse().createStatus(params, requestOptions).thenApply { it.parse() }
 
     override fun deleteAll(
         params: ItemDeleteAllParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ItemDeleteAllResponse> =
-        // post /api/v1/annotation-queues/{queue_id}/items/delete
+        // post /api/v1/platform/annotation-queues/{queue_id}/items/delete
         withRawResponse().deleteAll(params, requestOptions).thenApply { it.parse() }
 
     override fun retrieveCount(
         params: ItemRetrieveCountParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ItemRetrieveCountResponse> =
-        // get /api/v1/annotation-queues/{queue_id}/items/count
+        // get /api/v1/platform/annotation-queues/{queue_id}/items/count
         withRawResponse().retrieveCount(params, requestOptions).thenApply { it.parse() }
 
     override fun retrievePlacement(
         params: ItemRetrievePlacementParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<ItemRetrievePlacementResponse> =
-        // get /api/v1/annotation-queues/{queue_id}/items/{item_id}/placement
+        // get /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement
         withRawResponse().retrievePlacement(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -126,6 +126,7 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -166,6 +167,7 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -207,6 +209,7 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -254,6 +257,7 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         "items",
                         params._pathParam(0),
@@ -295,6 +299,7 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -336,6 +341,7 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -376,6 +382,7 @@ class ItemServiceAsyncImpl internal constructor(private val clientOptions: Clien
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",

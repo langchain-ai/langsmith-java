@@ -49,46 +49,46 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
         params: ItemCreateParams,
         requestOptions: RequestOptions,
     ): ItemCreateResponse =
-        // post /api/v1/annotation-queues/{queue_id}/items
+        // post /api/v1/platform/annotation-queues/{queue_id}/items
         withRawResponse().create(params, requestOptions).parse()
 
     override fun update(
         params: ItemUpdateParams,
         requestOptions: RequestOptions,
     ): ItemUpdateResponse =
-        // patch /api/v1/annotation-queues/{queue_id}/items/{item_id}
+        // patch /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}
         withRawResponse().update(params, requestOptions).parse()
 
     override fun list(params: ItemListParams, requestOptions: RequestOptions): ItemListPage =
-        // get /api/v1/annotation-queues/{queue_id}/items
+        // get /api/v1/platform/annotation-queues/{queue_id}/items
         withRawResponse().list(params, requestOptions).parse()
 
     override fun createStatus(
         params: ItemCreateStatusParams,
         requestOptions: RequestOptions,
     ): ItemCreateStatusResponse =
-        // post /api/v1/annotation-queues/items/{queue_item_id}/status
+        // post /api/v1/platform/annotation-queues/items/{queue_item_id}/status
         withRawResponse().createStatus(params, requestOptions).parse()
 
     override fun deleteAll(
         params: ItemDeleteAllParams,
         requestOptions: RequestOptions,
     ): ItemDeleteAllResponse =
-        // post /api/v1/annotation-queues/{queue_id}/items/delete
+        // post /api/v1/platform/annotation-queues/{queue_id}/items/delete
         withRawResponse().deleteAll(params, requestOptions).parse()
 
     override fun retrieveCount(
         params: ItemRetrieveCountParams,
         requestOptions: RequestOptions,
     ): ItemRetrieveCountResponse =
-        // get /api/v1/annotation-queues/{queue_id}/items/count
+        // get /api/v1/platform/annotation-queues/{queue_id}/items/count
         withRawResponse().retrieveCount(params, requestOptions).parse()
 
     override fun retrievePlacement(
         params: ItemRetrievePlacementParams,
         requestOptions: RequestOptions,
     ): ItemRetrievePlacementResponse =
-        // get /api/v1/annotation-queues/{queue_id}/items/{item_id}/placement
+        // get /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement
         withRawResponse().retrievePlacement(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -121,6 +121,7 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -158,6 +159,7 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -196,6 +198,7 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -239,6 +242,7 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         "items",
                         params._pathParam(0),
@@ -277,6 +281,7 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -315,6 +320,7 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",
@@ -352,6 +358,7 @@ class ItemServiceImpl internal constructor(private val clientOptions: ClientOpti
                     .addPathSegments(
                         "api",
                         "v1",
+                        "platform",
                         "annotation-queues",
                         params._pathParam(0),
                         "items",

@@ -271,8 +271,9 @@ interface ItemServiceAsync {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): ItemServiceAsync.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/items`, but is
-         * otherwise the same as [ItemServiceAsync.create].
+         * Returns a raw HTTP response for `post
+         * /api/v1/platform/annotation-queues/{queue_id}/items`, but is otherwise the same as
+         * [ItemServiceAsync.create].
          */
         fun create(queueId: String): CompletableFuture<HttpResponseFor<ItemCreateResponse>> =
             create(queueId, ItemCreateParams.none())
@@ -313,8 +314,8 @@ interface ItemServiceAsync {
 
         /**
          * Returns a raw HTTP response for `patch
-         * /api/v1/annotation-queues/{queue_id}/items/{item_id}`, but is otherwise the same as
-         * [ItemServiceAsync.update].
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}`, but is otherwise the same
+         * as [ItemServiceAsync.update].
          */
         fun update(
             itemId: String,
@@ -343,8 +344,9 @@ interface ItemServiceAsync {
         ): CompletableFuture<HttpResponseFor<ItemUpdateResponse>>
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}/items`, but is
-         * otherwise the same as [ItemServiceAsync.list].
+         * Returns a raw HTTP response for `get
+         * /api/v1/platform/annotation-queues/{queue_id}/items`, but is otherwise the same as
+         * [ItemServiceAsync.list].
          */
         fun list(
             queueId: String,
@@ -372,8 +374,8 @@ interface ItemServiceAsync {
 
         /**
          * Returns a raw HTTP response for `post
-         * /api/v1/annotation-queues/items/{queue_item_id}/status`, but is otherwise the same as
-         * [ItemServiceAsync.createStatus].
+         * /api/v1/platform/annotation-queues/items/{queue_item_id}/status`, but is otherwise the
+         * same as [ItemServiceAsync.createStatus].
          */
         fun createStatus(
             queueItemId: String
@@ -415,8 +417,9 @@ interface ItemServiceAsync {
             createStatus(queueItemId, ItemCreateStatusParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/items/delete`,
-         * but is otherwise the same as [ItemServiceAsync.deleteAll].
+         * Returns a raw HTTP response for `post
+         * /api/v1/platform/annotation-queues/{queue_id}/items/delete`, but is otherwise the same as
+         * [ItemServiceAsync.deleteAll].
          */
         fun deleteAll(queueId: String): CompletableFuture<HttpResponseFor<ItemDeleteAllResponse>> =
             deleteAll(queueId, ItemDeleteAllParams.none())
@@ -456,8 +459,9 @@ interface ItemServiceAsync {
             deleteAll(queueId, ItemDeleteAllParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}/items/count`,
-         * but is otherwise the same as [ItemServiceAsync.retrieveCount].
+         * Returns a raw HTTP response for `get
+         * /api/v1/platform/annotation-queues/{queue_id}/items/count`, but is otherwise the same as
+         * [ItemServiceAsync.retrieveCount].
          */
         fun retrieveCount(
             queueId: String,
@@ -487,8 +491,8 @@ interface ItemServiceAsync {
 
         /**
          * Returns a raw HTTP response for `get
-         * /api/v1/annotation-queues/{queue_id}/items/{item_id}/placement`, but is otherwise the
-         * same as [ItemServiceAsync.retrievePlacement].
+         * /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement`, but is
+         * otherwise the same as [ItemServiceAsync.retrievePlacement].
          */
         fun retrievePlacement(
             itemId: String,
