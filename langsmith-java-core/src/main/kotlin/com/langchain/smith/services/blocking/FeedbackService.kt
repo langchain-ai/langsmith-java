@@ -37,7 +37,11 @@ interface FeedbackService {
 
     fun configs(): ConfigService
 
-    /** Create a new feedback. */
+    /**
+     * Create a new feedback.
+     *
+     * `session_id` is required: it identifies the tracing project the feedback belongs to.
+     */
     fun create(params: FeedbackCreateParams): FeedbackSchema = create(params, RequestOptions.none())
 
     /** @see create */

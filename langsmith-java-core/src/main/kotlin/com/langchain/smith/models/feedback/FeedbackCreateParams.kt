@@ -9,7 +9,11 @@ import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
 import java.util.Objects
 
-/** Create a new feedback. */
+/**
+ * Create a new feedback.
+ *
+ * `session_id` is required: it identifies the tracing project the feedback belongs to.
+ */
 class FeedbackCreateParams
 private constructor(
     private val feedbackCreateSchema: FeedbackCreateSchema,
