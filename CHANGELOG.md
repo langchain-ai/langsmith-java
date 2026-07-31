@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0-beta.22](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.21...v0.1.0-beta.22) (2026-07-31)
+
+
+### Chores
+
+* note light-review expectation on generated SDK release PRs ([#53](https://github.com/langchain-ai/langsmith-java/issues/53)) ([c9f5168](https://github.com/langchain-ai/langsmith-java/commit/c9f51683ce4f58d647eaf91dd3b70dbd70d12ce8))
+
 ## [0.1.0-beta.21](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.20...v0.1.0-beta.21) (2026-07-30)
 
 
