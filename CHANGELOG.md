@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.0-beta.21](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.20...v0.1.0-beta.21) (2026-07-30)
+
+
+### Bug Fixes
+
+* **evaluation:** don't post comparative feedback without a session_id ([#52](https://github.com/langchain-ai/langsmith-java/issues/52)) ([714a32c](https://github.com/langchain-ai/langsmith-java/commit/714a32cc62b2528be49070d1477e50769aba9ab8))
+
+
+### Documentation
+
+* **feedback:** document session_id as required on feedback creation ([8abc50a](https://github.com/langchain-ai/langsmith-java/commit/8abc50af55b11c8f856ef3bdb89687f3c2a1821d))
+
 ## [0.1.0-beta.20](https://github.com/langchain-ai/langsmith-java/compare/v0.1.0-beta.19...v0.1.0-beta.20) (2026-07-30)
 
 
