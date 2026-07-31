@@ -24,6 +24,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Query Runs */
+@Deprecated(
+    "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+)
 class RunQueryV1Params
 private constructor(
     private val body: Body,

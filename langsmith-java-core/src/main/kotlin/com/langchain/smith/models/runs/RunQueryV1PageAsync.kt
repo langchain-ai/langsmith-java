@@ -13,6 +13,9 @@ import java.util.concurrent.Executor
 import kotlin.jvm.optionals.getOrNull
 
 /** @see RunServiceAsync.queryV1 */
+@Deprecated(
+    "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+)
 class RunQueryV1PageAsync
 private constructor(
     private val service: RunServiceAsync,

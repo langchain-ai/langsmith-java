@@ -174,12 +174,18 @@ interface AnnotationQueueServiceAsync {
     ): CompletableFuture<AnnotationQueueSchema>
 
     /** Create Identity Annotation Queue Run Status */
+    @Deprecated(
+        "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+    )
     fun createRunStatus(
         annotationQueueRunId: String
     ): CompletableFuture<AnnotationQueueCreateRunStatusResponse> =
         createRunStatus(annotationQueueRunId, AnnotationQueueCreateRunStatusParams.none())
 
     /** @see createRunStatus */
+    @Deprecated(
+        "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+    )
     fun createRunStatus(
         annotationQueueRunId: String,
         params: AnnotationQueueCreateRunStatusParams = AnnotationQueueCreateRunStatusParams.none(),
@@ -191,6 +197,9 @@ interface AnnotationQueueServiceAsync {
         )
 
     /** @see createRunStatus */
+    @Deprecated(
+        "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+    )
     fun createRunStatus(
         annotationQueueRunId: String,
         params: AnnotationQueueCreateRunStatusParams = AnnotationQueueCreateRunStatusParams.none(),
@@ -198,18 +207,27 @@ interface AnnotationQueueServiceAsync {
         createRunStatus(annotationQueueRunId, params, RequestOptions.none())
 
     /** @see createRunStatus */
+    @Deprecated(
+        "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+    )
     fun createRunStatus(
         params: AnnotationQueueCreateRunStatusParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<AnnotationQueueCreateRunStatusResponse>
 
     /** @see createRunStatus */
+    @Deprecated(
+        "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+    )
     fun createRunStatus(
         params: AnnotationQueueCreateRunStatusParams
     ): CompletableFuture<AnnotationQueueCreateRunStatusResponse> =
         createRunStatus(params, RequestOptions.none())
 
     /** @see createRunStatus */
+    @Deprecated(
+        "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+    )
     fun createRunStatus(
         annotationQueueRunId: String,
         requestOptions: RequestOptions,
@@ -335,6 +353,9 @@ interface AnnotationQueueServiceAsync {
         retrieveQueues(runId, AnnotationQueueRetrieveQueuesParams.none(), requestOptions)
 
     /** Get a run from an annotation queue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+    )
     fun retrieveRun(
         index: Long,
         params: AnnotationQueueRetrieveRunParams,
@@ -342,6 +363,9 @@ interface AnnotationQueueServiceAsync {
         retrieveRun(index, params, RequestOptions.none())
 
     /** @see retrieveRun */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+    )
     fun retrieveRun(
         index: Long,
         params: AnnotationQueueRetrieveRunParams,
@@ -350,22 +374,34 @@ interface AnnotationQueueServiceAsync {
         retrieveRun(params.toBuilder().index(index).build(), requestOptions)
 
     /** @see retrieveRun */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+    )
     fun retrieveRun(
         params: AnnotationQueueRetrieveRunParams
     ): CompletableFuture<RunSchemaWithAnnotationQueueInfo> =
         retrieveRun(params, RequestOptions.none())
 
     /** @see retrieveRun */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+    )
     fun retrieveRun(
         params: AnnotationQueueRetrieveRunParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<RunSchemaWithAnnotationQueueInfo>
 
     /** Get Size From Annotation Queue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveSize(queueId: String): CompletableFuture<AnnotationQueueSizeSchema> =
         retrieveSize(queueId, AnnotationQueueRetrieveSizeParams.none())
 
     /** @see retrieveSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveSize(
         queueId: String,
         params: AnnotationQueueRetrieveSizeParams = AnnotationQueueRetrieveSizeParams.none(),
@@ -374,6 +410,9 @@ interface AnnotationQueueServiceAsync {
         retrieveSize(params.toBuilder().queueId(queueId).build(), requestOptions)
 
     /** @see retrieveSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveSize(
         queueId: String,
         params: AnnotationQueueRetrieveSizeParams = AnnotationQueueRetrieveSizeParams.none(),
@@ -381,17 +420,26 @@ interface AnnotationQueueServiceAsync {
         retrieveSize(queueId, params, RequestOptions.none())
 
     /** @see retrieveSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveSize(
         params: AnnotationQueueRetrieveSizeParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<AnnotationQueueSizeSchema>
 
     /** @see retrieveSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveSize(
         params: AnnotationQueueRetrieveSizeParams
     ): CompletableFuture<AnnotationQueueSizeSchema> = retrieveSize(params, RequestOptions.none())
 
     /** @see retrieveSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveSize(
         queueId: String,
         requestOptions: RequestOptions,
@@ -399,10 +447,16 @@ interface AnnotationQueueServiceAsync {
         retrieveSize(queueId, AnnotationQueueRetrieveSizeParams.none(), requestOptions)
 
     /** Get Total Archived From Annotation Queue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalArchived(queueId: String): CompletableFuture<AnnotationQueueSizeSchema> =
         retrieveTotalArchived(queueId, AnnotationQueueRetrieveTotalArchivedParams.none())
 
     /** @see retrieveTotalArchived */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalArchived(
         queueId: String,
         params: AnnotationQueueRetrieveTotalArchivedParams =
@@ -412,6 +466,9 @@ interface AnnotationQueueServiceAsync {
         retrieveTotalArchived(params.toBuilder().queueId(queueId).build(), requestOptions)
 
     /** @see retrieveTotalArchived */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalArchived(
         queueId: String,
         params: AnnotationQueueRetrieveTotalArchivedParams =
@@ -420,18 +477,27 @@ interface AnnotationQueueServiceAsync {
         retrieveTotalArchived(queueId, params, RequestOptions.none())
 
     /** @see retrieveTotalArchived */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalArchived(
         params: AnnotationQueueRetrieveTotalArchivedParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<AnnotationQueueSizeSchema>
 
     /** @see retrieveTotalArchived */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalArchived(
         params: AnnotationQueueRetrieveTotalArchivedParams
     ): CompletableFuture<AnnotationQueueSizeSchema> =
         retrieveTotalArchived(params, RequestOptions.none())
 
     /** @see retrieveTotalArchived */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalArchived(
         queueId: String,
         requestOptions: RequestOptions,
@@ -443,10 +509,16 @@ interface AnnotationQueueServiceAsync {
         )
 
     /** Get Total Size From Annotation Queue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalSize(queueId: String): CompletableFuture<AnnotationQueueSizeSchema> =
         retrieveTotalSize(queueId, AnnotationQueueRetrieveTotalSizeParams.none())
 
     /** @see retrieveTotalSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalSize(
         queueId: String,
         params: AnnotationQueueRetrieveTotalSizeParams =
@@ -456,6 +528,9 @@ interface AnnotationQueueServiceAsync {
         retrieveTotalSize(params.toBuilder().queueId(queueId).build(), requestOptions)
 
     /** @see retrieveTotalSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalSize(
         queueId: String,
         params: AnnotationQueueRetrieveTotalSizeParams =
@@ -464,18 +539,27 @@ interface AnnotationQueueServiceAsync {
         retrieveTotalSize(queueId, params, RequestOptions.none())
 
     /** @see retrieveTotalSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalSize(
         params: AnnotationQueueRetrieveTotalSizeParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<AnnotationQueueSizeSchema>
 
     /** @see retrieveTotalSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalSize(
         params: AnnotationQueueRetrieveTotalSizeParams
     ): CompletableFuture<AnnotationQueueSizeSchema> =
         retrieveTotalSize(params, RequestOptions.none())
 
     /** @see retrieveTotalSize */
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+    )
     fun retrieveTotalSize(
         queueId: String,
         requestOptions: RequestOptions,
@@ -650,12 +734,18 @@ interface AnnotationQueueServiceAsync {
          * /api/v1/annotation-queues/status/{annotation_queue_run_id}`, but is otherwise the same as
          * [AnnotationQueueServiceAsync.createRunStatus].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+        )
         fun createRunStatus(
             annotationQueueRunId: String
         ): CompletableFuture<HttpResponseFor<AnnotationQueueCreateRunStatusResponse>> =
             createRunStatus(annotationQueueRunId, AnnotationQueueCreateRunStatusParams.none())
 
         /** @see createRunStatus */
+        @Deprecated(
+            "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+        )
         fun createRunStatus(
             annotationQueueRunId: String,
             params: AnnotationQueueCreateRunStatusParams =
@@ -668,6 +758,9 @@ interface AnnotationQueueServiceAsync {
             )
 
         /** @see createRunStatus */
+        @Deprecated(
+            "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+        )
         fun createRunStatus(
             annotationQueueRunId: String,
             params: AnnotationQueueCreateRunStatusParams =
@@ -676,18 +769,27 @@ interface AnnotationQueueServiceAsync {
             createRunStatus(annotationQueueRunId, params, RequestOptions.none())
 
         /** @see createRunStatus */
+        @Deprecated(
+            "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+        )
         fun createRunStatus(
             params: AnnotationQueueCreateRunStatusParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<AnnotationQueueCreateRunStatusResponse>>
 
         /** @see createRunStatus */
+        @Deprecated(
+            "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+        )
         fun createRunStatus(
             params: AnnotationQueueCreateRunStatusParams
         ): CompletableFuture<HttpResponseFor<AnnotationQueueCreateRunStatusResponse>> =
             createRunStatus(params, RequestOptions.none())
 
         /** @see createRunStatus */
+        @Deprecated(
+            "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+        )
         fun createRunStatus(
             annotationQueueRunId: String,
             requestOptions: RequestOptions,
@@ -835,6 +937,9 @@ interface AnnotationQueueServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}/run/{index}`,
          * but is otherwise the same as [AnnotationQueueServiceAsync.retrieveRun].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+        )
         fun retrieveRun(
             index: Long,
             params: AnnotationQueueRetrieveRunParams,
@@ -842,6 +947,9 @@ interface AnnotationQueueServiceAsync {
             retrieveRun(index, params, RequestOptions.none())
 
         /** @see retrieveRun */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+        )
         fun retrieveRun(
             index: Long,
             params: AnnotationQueueRetrieveRunParams,
@@ -850,12 +958,18 @@ interface AnnotationQueueServiceAsync {
             retrieveRun(params.toBuilder().index(index).build(), requestOptions)
 
         /** @see retrieveRun */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+        )
         fun retrieveRun(
             params: AnnotationQueueRetrieveRunParams
         ): CompletableFuture<HttpResponseFor<RunSchemaWithAnnotationQueueInfo>> =
             retrieveRun(params, RequestOptions.none())
 
         /** @see retrieveRun */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+        )
         fun retrieveRun(
             params: AnnotationQueueRetrieveRunParams,
             requestOptions: RequestOptions = RequestOptions.none(),
@@ -865,12 +979,18 @@ interface AnnotationQueueServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}/size`, but is
          * otherwise the same as [AnnotationQueueServiceAsync.retrieveSize].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveSize(
             queueId: String
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>> =
             retrieveSize(queueId, AnnotationQueueRetrieveSizeParams.none())
 
         /** @see retrieveSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveSize(
             queueId: String,
             params: AnnotationQueueRetrieveSizeParams = AnnotationQueueRetrieveSizeParams.none(),
@@ -879,6 +999,9 @@ interface AnnotationQueueServiceAsync {
             retrieveSize(params.toBuilder().queueId(queueId).build(), requestOptions)
 
         /** @see retrieveSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveSize(
             queueId: String,
             params: AnnotationQueueRetrieveSizeParams = AnnotationQueueRetrieveSizeParams.none(),
@@ -886,18 +1009,27 @@ interface AnnotationQueueServiceAsync {
             retrieveSize(queueId, params, RequestOptions.none())
 
         /** @see retrieveSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveSize(
             params: AnnotationQueueRetrieveSizeParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>>
 
         /** @see retrieveSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveSize(
             params: AnnotationQueueRetrieveSizeParams
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>> =
             retrieveSize(params, RequestOptions.none())
 
         /** @see retrieveSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveSize(
             queueId: String,
             requestOptions: RequestOptions,
@@ -909,12 +1041,18 @@ interface AnnotationQueueServiceAsync {
          * /api/v1/annotation-queues/{queue_id}/total_archived`, but is otherwise the same as
          * [AnnotationQueueServiceAsync.retrieveTotalArchived].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalArchived(
             queueId: String
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>> =
             retrieveTotalArchived(queueId, AnnotationQueueRetrieveTotalArchivedParams.none())
 
         /** @see retrieveTotalArchived */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalArchived(
             queueId: String,
             params: AnnotationQueueRetrieveTotalArchivedParams =
@@ -924,6 +1062,9 @@ interface AnnotationQueueServiceAsync {
             retrieveTotalArchived(params.toBuilder().queueId(queueId).build(), requestOptions)
 
         /** @see retrieveTotalArchived */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalArchived(
             queueId: String,
             params: AnnotationQueueRetrieveTotalArchivedParams =
@@ -932,18 +1073,27 @@ interface AnnotationQueueServiceAsync {
             retrieveTotalArchived(queueId, params, RequestOptions.none())
 
         /** @see retrieveTotalArchived */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalArchived(
             params: AnnotationQueueRetrieveTotalArchivedParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>>
 
         /** @see retrieveTotalArchived */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalArchived(
             params: AnnotationQueueRetrieveTotalArchivedParams
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>> =
             retrieveTotalArchived(params, RequestOptions.none())
 
         /** @see retrieveTotalArchived */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalArchived(
             queueId: String,
             requestOptions: RequestOptions,
@@ -958,12 +1108,18 @@ interface AnnotationQueueServiceAsync {
          * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}/total_size`,
          * but is otherwise the same as [AnnotationQueueServiceAsync.retrieveTotalSize].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalSize(
             queueId: String
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>> =
             retrieveTotalSize(queueId, AnnotationQueueRetrieveTotalSizeParams.none())
 
         /** @see retrieveTotalSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalSize(
             queueId: String,
             params: AnnotationQueueRetrieveTotalSizeParams =
@@ -973,6 +1129,9 @@ interface AnnotationQueueServiceAsync {
             retrieveTotalSize(params.toBuilder().queueId(queueId).build(), requestOptions)
 
         /** @see retrieveTotalSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalSize(
             queueId: String,
             params: AnnotationQueueRetrieveTotalSizeParams =
@@ -981,18 +1140,27 @@ interface AnnotationQueueServiceAsync {
             retrieveTotalSize(queueId, params, RequestOptions.none())
 
         /** @see retrieveTotalSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalSize(
             params: AnnotationQueueRetrieveTotalSizeParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>>
 
         /** @see retrieveTotalSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalSize(
             params: AnnotationQueueRetrieveTotalSizeParams
         ): CompletableFuture<HttpResponseFor<AnnotationQueueSizeSchema>> =
             retrieveTotalSize(params, RequestOptions.none())
 
         /** @see retrieveTotalSize */
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+        )
         fun retrieveTotalSize(
             queueId: String,
             requestOptions: RequestOptions,

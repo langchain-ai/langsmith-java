@@ -618,6 +618,10 @@ private constructor(
 
             @JvmField val OPEN = of("open")
 
+            @JvmField val FIXING = of("fixing")
+
+            @JvmField val WATCHING = of("watching")
+
             @JvmField val COMPLETED = of("completed")
 
             @JvmField val IGNORED = of("ignored")
@@ -628,6 +632,8 @@ private constructor(
         /** An enum containing [Status]'s known values. */
         enum class Known {
             OPEN,
+            FIXING,
+            WATCHING,
             COMPLETED,
             IGNORED,
         }
@@ -643,6 +649,8 @@ private constructor(
          */
         enum class Value {
             OPEN,
+            FIXING,
+            WATCHING,
             COMPLETED,
             IGNORED,
             /** An enum member indicating that [Status] was instantiated with an unknown value. */
@@ -659,6 +667,8 @@ private constructor(
         fun value(): Value =
             when (this) {
                 OPEN -> Value.OPEN
+                FIXING -> Value.FIXING
+                WATCHING -> Value.WATCHING
                 COMPLETED -> Value.COMPLETED
                 IGNORED -> Value.IGNORED
                 else -> Value._UNKNOWN
@@ -676,6 +686,8 @@ private constructor(
         fun known(): Known =
             when (this) {
                 OPEN -> Known.OPEN
+                FIXING -> Known.FIXING
+                WATCHING -> Known.WATCHING
                 COMPLETED -> Known.COMPLETED
                 IGNORED -> Known.IGNORED
                 else -> throw LangChainInvalidDataException("Unknown Status: $value")

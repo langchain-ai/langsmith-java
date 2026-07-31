@@ -101,6 +101,8 @@ interface RunService {
     /**
      * Returns the URL to view a specific run in the LangSmith UI. The caller must supply the run's
      * project_id and trace_id as query parameters; start_time is optional.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun getUrl(runId: String, params: RunGetUrlParams): RunGetUrlResponse =
         getUrl(runId, params, RequestOptions.none())
@@ -180,26 +182,39 @@ interface RunService {
         )
 
     /** Query Runs */
+    @Deprecated(
+        "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun queryV1(): RunQueryV1Page = queryV1(RunQueryV1Params.none())
 
     /** @see queryV1 */
+    @Deprecated(
+        "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun queryV1(
         params: RunQueryV1Params = RunQueryV1Params.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
     ): RunQueryV1Page
 
     /** @see queryV1 */
+    @Deprecated(
+        "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun queryV1(params: RunQueryV1Params = RunQueryV1Params.none()): RunQueryV1Page =
         queryV1(params, RequestOptions.none())
 
     /** @see queryV1 */
+    @Deprecated(
+        "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun queryV1(requestOptions: RequestOptions): RunQueryV1Page =
         queryV1(RunQueryV1Params.none(), requestOptions)
 
     /**
-     * **Alpha:** The request and response contract may change; Returns a paginated list of runs for
-     * the given projects within min/max start_time. Supports filters, cursor pagination, and
-     * `selects` to select fields to return.
+     * Returns a paginated list of runs for the given projects within min/max start_time. Supports
+     * filters, cursor pagination, and `selects` to select fields to return.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun queryV2(): RunQueryV2Page = queryV2(RunQueryV2Params.none())
 
@@ -218,9 +233,15 @@ interface RunService {
         queryV2(RunQueryV2Params.none(), requestOptions)
 
     /** Get a specific run. */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun retrieveV1(runId: String): RunSchema = retrieveV1(runId, RunRetrieveV1Params.none())
 
     /** @see retrieveV1 */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun retrieveV1(
         runId: String,
         params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
@@ -228,28 +249,42 @@ interface RunService {
     ): RunSchema = retrieveV1(params.toBuilder().runId(runId).build(), requestOptions)
 
     /** @see retrieveV1 */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun retrieveV1(
         runId: String,
         params: RunRetrieveV1Params = RunRetrieveV1Params.none(),
     ): RunSchema = retrieveV1(runId, params, RequestOptions.none())
 
     /** @see retrieveV1 */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun retrieveV1(
         params: RunRetrieveV1Params,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): RunSchema
 
     /** @see retrieveV1 */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun retrieveV1(params: RunRetrieveV1Params): RunSchema =
         retrieveV1(params, RequestOptions.none())
 
     /** @see retrieveV1 */
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun retrieveV1(runId: String, requestOptions: RequestOptions): RunSchema =
         retrieveV1(runId, RunRetrieveV1Params.none(), requestOptions)
 
     /**
-     * **Alpha:** The request and response contract may change; Returns one run by ID for the given
-     * session. Use the `selects` query parameter (repeatable) to select fields to return.
+     * Returns one run by ID for the given session. Use the `selects` query parameter (repeatable)
+     * to select fields to return.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun retrieveV2(runId: String, params: RunRetrieveV2Params): Run =
         retrieveV2(runId, params, RequestOptions.none())
@@ -533,10 +568,16 @@ interface RunService {
          * Returns a raw HTTP response for `post /api/v1/runs/query`, but is otherwise the same as
          * [RunService.queryV1].
          */
+        @Deprecated(
+            "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun queryV1(): HttpResponseFor<RunQueryV1Page> = queryV1(RunQueryV1Params.none())
 
         /** @see queryV1 */
+        @Deprecated(
+            "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun queryV1(
             params: RunQueryV1Params = RunQueryV1Params.none(),
@@ -544,12 +585,18 @@ interface RunService {
         ): HttpResponseFor<RunQueryV1Page>
 
         /** @see queryV1 */
+        @Deprecated(
+            "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun queryV1(
             params: RunQueryV1Params = RunQueryV1Params.none()
         ): HttpResponseFor<RunQueryV1Page> = queryV1(params, RequestOptions.none())
 
         /** @see queryV1 */
+        @Deprecated(
+            "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun queryV1(requestOptions: RequestOptions): HttpResponseFor<RunQueryV1Page> =
             queryV1(RunQueryV1Params.none(), requestOptions)
@@ -583,11 +630,17 @@ interface RunService {
          * Returns a raw HTTP response for `get /api/v1/runs/{run_id}`, but is otherwise the same as
          * [RunService.retrieveV1].
          */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun retrieveV1(runId: String): HttpResponseFor<RunSchema> =
             retrieveV1(runId, RunRetrieveV1Params.none())
 
         /** @see retrieveV1 */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun retrieveV1(
             runId: String,
@@ -597,6 +650,9 @@ interface RunService {
             retrieveV1(params.toBuilder().runId(runId).build(), requestOptions)
 
         /** @see retrieveV1 */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun retrieveV1(
             runId: String,
@@ -604,6 +660,9 @@ interface RunService {
         ): HttpResponseFor<RunSchema> = retrieveV1(runId, params, RequestOptions.none())
 
         /** @see retrieveV1 */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun retrieveV1(
             params: RunRetrieveV1Params,
@@ -611,11 +670,17 @@ interface RunService {
         ): HttpResponseFor<RunSchema>
 
         /** @see retrieveV1 */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun retrieveV1(params: RunRetrieveV1Params): HttpResponseFor<RunSchema> =
             retrieveV1(params, RequestOptions.none())
 
         /** @see retrieveV1 */
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun retrieveV1(runId: String, requestOptions: RequestOptions): HttpResponseFor<RunSchema> =
             retrieveV1(runId, RunRetrieveV1Params.none(), requestOptions)

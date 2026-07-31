@@ -13,6 +13,8 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Returns the URL to view a specific run in the LangSmith UI. The caller must supply the run's
  * project_id and trace_id as query parameters; start_time is optional.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class RunGetUrlParams
 private constructor(

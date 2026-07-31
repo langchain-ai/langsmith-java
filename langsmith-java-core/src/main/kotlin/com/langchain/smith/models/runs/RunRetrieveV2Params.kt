@@ -18,8 +18,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * **Alpha:** The request and response contract may change; Returns one run by ID for the given
- * session. Use the `selects` query parameter (repeatable) to select fields to return.
+ * Returns one run by ID for the given session. Use the `selects` query parameter (repeatable) to
+ * select fields to return.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class RunRetrieveV2Params
 private constructor(

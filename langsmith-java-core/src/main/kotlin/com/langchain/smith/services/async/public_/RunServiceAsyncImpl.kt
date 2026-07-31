@@ -47,7 +47,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         params: RunQueryParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<RunQueryResponse> =
-        // post /api/v2/public/{share_token}/runs/v2/query
+        // post /api/v2/public/{share_token}/runs/query
         withRawResponse().query(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -116,15 +116,7 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments(
-                        "api",
-                        "v2",
-                        "public",
-                        params._pathParam(0),
-                        "runs",
-                        "v2",
-                        "query",
-                    )
+                    .addPathSegments("api", "v2", "public", params._pathParam(0), "runs", "query")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)

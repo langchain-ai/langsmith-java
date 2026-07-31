@@ -27,8 +27,10 @@ interface TraceServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): TraceServiceAsync
 
     /**
-     * **Alpha:** The request and response contract may change; Returns runs for a trace ID within
-     * min/max start time. Optional `filter`; repeatable `selects` to select fields to return.
+     * Returns runs for a trace ID within min/max start time. Optional `filter`; repeatable
+     * `selects` to select fields to return.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun listRuns(
         traceId: String,
@@ -65,6 +67,8 @@ interface TraceServiceAsync {
      *
      * Supports filters (`trace_filter`, `tree_filter`), cursor pagination (`cursor`), and field
      * projection (`selects`).
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun query(): CompletableFuture<TraceQueryPageAsync> = query(TraceQueryParams.none())
 

@@ -14,9 +14,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * **Alpha:** The request and response contract may change; Returns one run within the trace
- * identified by the share token. The request supplies only the run ID and that run's exact
- * start_time coordinate.
+ * Returns one run within the trace identified by the share token. The request supplies only the run
+ * ID and that run's exact start_time coordinate.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class RunRetrieveParams
 private constructor(

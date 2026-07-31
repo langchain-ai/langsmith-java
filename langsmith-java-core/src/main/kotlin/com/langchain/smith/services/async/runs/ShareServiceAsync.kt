@@ -26,7 +26,11 @@ interface ShareServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ShareServiceAsync
 
-    /** Creates or returns a share token for a run. Child runs share their trace root. */
+    /**
+     * Creates or returns a share token for a run. Child runs share their trace root.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
+     */
     fun create(runId: String): CompletableFuture<ShareCreateResponse> =
         create(runId, ShareCreateParams.none())
 
@@ -64,6 +68,8 @@ interface ShareServiceAsync {
     /**
      * Deletes the share token for the trace identified by trace_id and session_id. Idempotent:
      * returns 204 whether or not a share token existed.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun delete(traceId: String): CompletableFuture<Void?> =
         delete(traceId, ShareDeleteParams.none())

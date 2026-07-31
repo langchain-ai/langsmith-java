@@ -22,6 +22,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Update Run In Annotation Queue */
+@Deprecated(
+    "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+)
 class RunUpdateParams
 private constructor(
     private val queueId: String,

@@ -21,6 +21,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Create Identity Annotation Queue Run Status */
+@Deprecated(
+    "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+)
 class AnnotationQueueCreateRunStatusParams
 private constructor(
     private val annotationQueueRunId: String?,

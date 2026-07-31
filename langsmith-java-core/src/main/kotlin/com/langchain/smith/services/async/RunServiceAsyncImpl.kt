@@ -233,6 +233,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     ): CompletableFuture<Void?> =
         withRawResponse().multipartIngest(create, update, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     override fun queryV1(
         params: RunQueryV1Params,
         requestOptions: RequestOptions,
@@ -247,6 +250,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         // post /api/v2/runs/query
         withRawResponse().queryV2(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+    )
     override fun retrieveV1(
         params: RunRetrieveV1Params,
         requestOptions: RequestOptions,
@@ -561,6 +567,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val queryV1Handler: Handler<RunQueryV1PageResponse> =
             jsonHandler<RunQueryV1PageResponse>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use queryV2 instead, which calls /api/v2/runs/query. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         override fun queryV1(
             params: RunQueryV1Params,
             requestOptions: RequestOptions,
@@ -639,6 +648,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val retrieveV1Handler: Handler<RunSchema> =
             jsonHandler<RunSchema>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+        )
         override fun retrieveV1(
             params: RunRetrieveV1Params,
             requestOptions: RequestOptions,

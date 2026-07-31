@@ -25,6 +25,8 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Returns a paginated page of dataset examples with runs from the requested experiments. Response
  * uses the canonical `{items, next_cursor}` envelope.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class ExperimentRunQueryParams
 private constructor(

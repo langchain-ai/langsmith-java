@@ -35,6 +35,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Add Runs To Annotation Queue */
+@Deprecated(
+    "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+)
 class RunCreateParams
 private constructor(
     private val queueId: String?,
