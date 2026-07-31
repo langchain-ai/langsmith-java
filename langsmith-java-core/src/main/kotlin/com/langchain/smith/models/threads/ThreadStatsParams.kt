@@ -16,9 +16,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * **Alpha:** The request and response contract may change; Compute aggregate stats for a single
- * thread (turn count, latency percentiles, token/cost sums, and detail breakdowns) within a
- * project.
+ * Compute aggregate stats for a single thread (turn count, latency percentiles, token/cost sums,
+ * and detail breakdowns) within a project.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class ThreadStatsParams
 private constructor(

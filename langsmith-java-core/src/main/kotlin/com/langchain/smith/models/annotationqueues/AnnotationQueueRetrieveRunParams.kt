@@ -11,6 +11,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Get a run from an annotation queue */
+@Deprecated(
+    "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+)
 class AnnotationQueueRetrieveRunParams
 private constructor(
     private val queueId: String,

@@ -44,6 +44,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync =
         RunServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     override fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions,
@@ -51,6 +54,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         // post /api/v1/annotation-queues/{queue_id}/runs
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+    )
     override fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions,
@@ -58,6 +64,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         // patch /api/v1/annotation-queues/{queue_id}/runs/{queue_run_id}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+    )
     override fun list(
         params: RunListParams,
         requestOptions: RequestOptions,
@@ -65,6 +74,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         // get /api/v1/annotation-queues/{queue_id}/runs
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     override fun createByKey(
         params: RunCreateByKeyParams,
         requestOptions: RequestOptions,
@@ -72,6 +84,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         // post /api/v1/annotation-queues/{queue_id}/runs/by-key
         withRawResponse().createByKey(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+    )
     override fun deleteAll(
         params: RunDeleteAllParams,
         requestOptions: RequestOptions,
@@ -79,6 +94,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         // post /api/v1/annotation-queues/{queue_id}/runs/delete
         withRawResponse().deleteAll(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+    )
     override fun deleteQueue(
         params: RunDeleteQueueParams,
         requestOptions: RequestOptions,
@@ -102,6 +120,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val createHandler: Handler<List<RunCreateResponse>> =
             jsonHandler<List<RunCreateResponse>>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         override fun create(
             params: RunCreateParams,
             requestOptions: RequestOptions,
@@ -136,6 +157,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val updateHandler: Handler<RunUpdateResponse> =
             jsonHandler<RunUpdateResponse>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+        )
         override fun update(
             params: RunUpdateParams,
             requestOptions: RequestOptions,
@@ -177,6 +201,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val listHandler: Handler<List<RunSchemaWithAnnotationQueueInfo>> =
             jsonHandler<List<RunSchemaWithAnnotationQueueInfo>>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+        )
         override fun list(
             params: RunListParams,
             requestOptions: RequestOptions,
@@ -210,6 +237,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val createByKeyHandler: Handler<List<RunCreateByKeyResponse>> =
             jsonHandler<List<RunCreateByKeyResponse>>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         override fun createByKey(
             params: RunCreateByKeyParams,
             requestOptions: RequestOptions,
@@ -251,6 +281,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val deleteAllHandler: Handler<RunDeleteAllResponse> =
             jsonHandler<RunDeleteAllResponse>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+        )
         override fun deleteAll(
             params: RunDeleteAllParams,
             requestOptions: RequestOptions,
@@ -292,6 +325,9 @@ class RunServiceAsyncImpl internal constructor(private val clientOptions: Client
         private val deleteQueueHandler: Handler<RunDeleteQueueResponse> =
             jsonHandler<RunDeleteQueueResponse>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+        )
         override fun deleteQueue(
             params: RunDeleteQueueParams,
             requestOptions: RequestOptions,

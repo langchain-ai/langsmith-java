@@ -23,9 +23,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * **Alpha:** The request and response contract may change; Returns a paginated list of runs for the
- * given projects within min/max start_time. Supports filters, cursor pagination, and `selects` to
- * select fields to return.
+ * Returns a paginated list of runs for the given projects within min/max start_time. Supports
+ * filters, cursor pagination, and `selects` to select fields to return.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class RunQueryV2Params
 private constructor(

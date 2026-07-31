@@ -12,6 +12,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Get Total Archived From Annotation Queue */
+@Deprecated(
+    "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+)
 class AnnotationQueueRetrieveTotalArchivedParams
 private constructor(
     private val queueId: String?,

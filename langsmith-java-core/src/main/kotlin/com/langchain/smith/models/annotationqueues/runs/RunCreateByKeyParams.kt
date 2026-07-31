@@ -22,7 +22,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Add Runs To Annotation Queue By Key */
+/** Self-hosted deployments require LangSmith `v0.16` or later. */
+@Deprecated(
+    "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+)
 class RunCreateByKeyParams
 private constructor(
     private val queueId: String?,

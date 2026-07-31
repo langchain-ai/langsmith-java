@@ -12,6 +12,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Get a specific run. */
+@Deprecated(
+    "Deprecated: use retrieveV2 instead, which calls /api/v2/runs/{run_id}. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#runs-retrieve for the migration guide. Will be removed after Jan 31, 2027."
+)
 class RunRetrieveV1Params
 private constructor(
     private val runId: String?,

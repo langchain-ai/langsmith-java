@@ -18,8 +18,10 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * **Alpha:** The request and response contract may change; Returns runs for a trace ID within
- * min/max start time. Optional `filter`; repeatable `selects` to select fields to return.
+ * Returns runs for a trace ID within min/max start time. Optional `filter`; repeatable `selects` to
+ * select fields to return.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class TraceListRunsParams
 private constructor(

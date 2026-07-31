@@ -34,6 +34,8 @@ import kotlin.jvm.optionals.getOrNull
  *
  * Supports filters (`trace_filter`, `tree_filter`), cursor pagination (`cursor`), and field
  * projection (`selects`).
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class TraceQueryParams
 private constructor(

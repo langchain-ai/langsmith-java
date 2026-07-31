@@ -19,7 +19,11 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Creates or returns a share token for a run. Child runs share their trace root. */
+/**
+ * Creates or returns a share token for a run. Child runs share their trace root.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
+ */
 class ShareCreateParams
 private constructor(
     private val runId: String?,

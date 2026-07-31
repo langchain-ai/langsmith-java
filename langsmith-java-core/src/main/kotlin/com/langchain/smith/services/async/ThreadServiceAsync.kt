@@ -29,8 +29,9 @@ interface ThreadServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadServiceAsync
 
     /**
-     * **Alpha:** The request and response contract may change; Retrieve all traces belonging to a
-     * specific thread within a project.
+     * Retrieve all traces belonging to a specific thread within a project.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun listTraces(
         threadId: String,
@@ -57,9 +58,10 @@ interface ThreadServiceAsync {
     ): CompletableFuture<ThreadListTracesPageAsync>
 
     /**
-     * **Alpha:** The request and response contract may change; Query threads within a project
-     * (session), with cursor-based pagination. Returns threads matching the given time range and
-     * optional filter.
+     * Query threads within a project (session), with cursor-based pagination. Returns threads
+     * matching the given time range and optional filter.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun query(): CompletableFuture<ThreadQueryPageAsync> = query(ThreadQueryParams.none())
 
@@ -79,9 +81,10 @@ interface ThreadServiceAsync {
         query(ThreadQueryParams.none(), requestOptions)
 
     /**
-     * **Alpha:** The request and response contract may change; Compute aggregate stats for a single
-     * thread (turn count, latency percentiles, token/cost sums, and detail breakdowns) within a
-     * project.
+     * Compute aggregate stats for a single thread (turn count, latency percentiles, token/cost
+     * sums, and detail breakdowns) within a project.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun stats(threadId: String, params: ThreadStatsParams): CompletableFuture<ThreadStats> =
         stats(threadId, params, RequestOptions.none())

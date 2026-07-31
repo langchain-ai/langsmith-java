@@ -20,9 +20,10 @@ import java.util.Objects
 import java.util.Optional
 
 /**
- * **Alpha:** The request and response contract may change; Query threads within a project
- * (session), with cursor-based pagination. Returns threads matching the given time range and
- * optional filter.
+ * Query threads within a project (session), with cursor-based pagination. Returns threads matching
+ * the given time range and optional filter.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class ThreadQueryParams
 private constructor(

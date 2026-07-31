@@ -29,10 +29,16 @@ interface RunService {
      * Fetch examples for a dataset, and fetch the runs for each example if they are associated with
      * the given session_ids.
      */
+    @Deprecated(
+        "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun query(datasetId: String, params: RunQueryParams): Optional<List<ExampleWithRunsCh>> =
         query(datasetId, params, RequestOptions.none())
 
     /** @see query */
+    @Deprecated(
+        "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun query(
         datasetId: String,
         params: RunQueryParams,
@@ -41,10 +47,16 @@ interface RunService {
         query(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
     /** @see query */
+    @Deprecated(
+        "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun query(params: RunQueryParams): Optional<List<ExampleWithRunsCh>> =
         query(params, RequestOptions.none())
 
     /** @see query */
+    @Deprecated(
+        "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     fun query(
         params: RunQueryParams,
         requestOptions: RequestOptions = RequestOptions.none(),
@@ -64,6 +76,9 @@ interface RunService {
          * Returns a raw HTTP response for `post /api/v1/datasets/{dataset_id}/runs`, but is
          * otherwise the same as [RunService.query].
          */
+        @Deprecated(
+            "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun query(
             datasetId: String,
@@ -72,6 +87,9 @@ interface RunService {
             query(datasetId, params, RequestOptions.none())
 
         /** @see query */
+        @Deprecated(
+            "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun query(
             datasetId: String,
@@ -81,11 +99,17 @@ interface RunService {
             query(params.toBuilder().datasetId(datasetId).build(), requestOptions)
 
         /** @see query */
+        @Deprecated(
+            "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun query(params: RunQueryParams): HttpResponseFor<Optional<List<ExampleWithRunsCh>>> =
             query(params, RequestOptions.none())
 
         /** @see query */
+        @Deprecated(
+            "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun query(
             params: RunQueryParams,

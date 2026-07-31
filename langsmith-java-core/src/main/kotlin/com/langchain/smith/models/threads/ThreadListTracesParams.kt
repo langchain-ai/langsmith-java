@@ -16,8 +16,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * **Alpha:** The request and response contract may change; Retrieve all traces belonging to a
- * specific thread within a project.
+ * Retrieve all traces belonging to a specific thread within a project.
+ *
+ * Self-hosted deployments require LangSmith `v0.16` or later.
  */
 class ThreadListTracesParams
 private constructor(

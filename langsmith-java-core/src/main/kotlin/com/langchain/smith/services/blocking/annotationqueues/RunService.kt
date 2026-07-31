@@ -35,10 +35,16 @@ interface RunService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService
 
     /** Add Runs To Annotation Queue */
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     fun create(queueId: String, params: RunCreateParams): List<RunCreateResponse> =
         create(queueId, params, RequestOptions.none())
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     fun create(
         queueId: String,
         params: RunCreateParams,
@@ -46,20 +52,32 @@ interface RunService {
     ): List<RunCreateResponse> = create(params.toBuilder().queueId(queueId).build(), requestOptions)
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     fun create(params: RunCreateParams): List<RunCreateResponse> =
         create(params, RequestOptions.none())
 
     /** @see create */
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     fun create(
         params: RunCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<RunCreateResponse>
 
     /** Update Run In Annotation Queue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+    )
     fun update(queueRunId: String, params: RunUpdateParams): RunUpdateResponse =
         update(queueRunId, params, RequestOptions.none())
 
     /** @see update */
+    @Deprecated(
+        "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+    )
     fun update(
         queueRunId: String,
         params: RunUpdateParams,
@@ -67,19 +85,31 @@ interface RunService {
     ): RunUpdateResponse = update(params.toBuilder().queueRunId(queueRunId).build(), requestOptions)
 
     /** @see update */
+    @Deprecated(
+        "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+    )
     fun update(params: RunUpdateParams): RunUpdateResponse = update(params, RequestOptions.none())
 
     /** @see update */
+    @Deprecated(
+        "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+    )
     fun update(
         params: RunUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): RunUpdateResponse
 
     /** Get Runs From Annotation Queue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+    )
     fun list(queueId: String): List<RunSchemaWithAnnotationQueueInfo> =
         list(queueId, RunListParams.none())
 
     /** @see list */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+    )
     fun list(
         queueId: String,
         params: RunListParams = RunListParams.none(),
@@ -88,32 +118,50 @@ interface RunService {
         list(params.toBuilder().queueId(queueId).build(), requestOptions)
 
     /** @see list */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+    )
     fun list(
         queueId: String,
         params: RunListParams = RunListParams.none(),
     ): List<RunSchemaWithAnnotationQueueInfo> = list(queueId, params, RequestOptions.none())
 
     /** @see list */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+    )
     fun list(
         params: RunListParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<RunSchemaWithAnnotationQueueInfo>
 
     /** @see list */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+    )
     fun list(params: RunListParams): List<RunSchemaWithAnnotationQueueInfo> =
         list(params, RequestOptions.none())
 
     /** @see list */
+    @Deprecated(
+        "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+    )
     fun list(
         queueId: String,
         requestOptions: RequestOptions,
     ): List<RunSchemaWithAnnotationQueueInfo> = list(queueId, RunListParams.none(), requestOptions)
 
-    /** Add Runs To Annotation Queue By Key */
+    /** Self-hosted deployments require LangSmith `v0.16` or later. */
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     fun createByKey(queueId: String, params: RunCreateByKeyParams): List<RunCreateByKeyResponse> =
         createByKey(queueId, params, RequestOptions.none())
 
     /** @see createByKey */
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     fun createByKey(
         queueId: String,
         params: RunCreateByKeyParams,
@@ -122,20 +170,32 @@ interface RunService {
         createByKey(params.toBuilder().queueId(queueId).build(), requestOptions)
 
     /** @see createByKey */
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     fun createByKey(params: RunCreateByKeyParams): List<RunCreateByKeyResponse> =
         createByKey(params, RequestOptions.none())
 
     /** @see createByKey */
+    @Deprecated(
+        "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+    )
     fun createByKey(
         params: RunCreateByKeyParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): List<RunCreateByKeyResponse>
 
     /** Delete Runs From Annotation Queue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteAll(queueId: String): RunDeleteAllResponse =
         deleteAll(queueId, RunDeleteAllParams.none())
 
     /** @see deleteAll */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteAll(
         queueId: String,
         params: RunDeleteAllParams = RunDeleteAllParams.none(),
@@ -143,30 +203,48 @@ interface RunService {
     ): RunDeleteAllResponse = deleteAll(params.toBuilder().queueId(queueId).build(), requestOptions)
 
     /** @see deleteAll */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteAll(
         queueId: String,
         params: RunDeleteAllParams = RunDeleteAllParams.none(),
     ): RunDeleteAllResponse = deleteAll(queueId, params, RequestOptions.none())
 
     /** @see deleteAll */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteAll(
         params: RunDeleteAllParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): RunDeleteAllResponse
 
     /** @see deleteAll */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteAll(params: RunDeleteAllParams): RunDeleteAllResponse =
         deleteAll(params, RequestOptions.none())
 
     /** @see deleteAll */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteAll(queueId: String, requestOptions: RequestOptions): RunDeleteAllResponse =
         deleteAll(queueId, RunDeleteAllParams.none(), requestOptions)
 
     /** Delete Run From Annotation Queue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteQueue(queueRunId: String, params: RunDeleteQueueParams): RunDeleteQueueResponse =
         deleteQueue(queueRunId, params, RequestOptions.none())
 
     /** @see deleteQueue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteQueue(
         queueRunId: String,
         params: RunDeleteQueueParams,
@@ -175,10 +253,16 @@ interface RunService {
         deleteQueue(params.toBuilder().queueRunId(queueRunId).build(), requestOptions)
 
     /** @see deleteQueue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteQueue(params: RunDeleteQueueParams): RunDeleteQueueResponse =
         deleteQueue(params, RequestOptions.none())
 
     /** @see deleteQueue */
+    @Deprecated(
+        "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+    )
     fun deleteQueue(
         params: RunDeleteQueueParams,
         requestOptions: RequestOptions = RequestOptions.none(),
@@ -198,6 +282,9 @@ interface RunService {
          * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/runs`, but is
          * otherwise the same as [RunService.create].
          */
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun create(
             queueId: String,
@@ -205,6 +292,9 @@ interface RunService {
         ): HttpResponseFor<List<RunCreateResponse>> = create(queueId, params, RequestOptions.none())
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun create(
             queueId: String,
@@ -214,11 +304,17 @@ interface RunService {
             create(params.toBuilder().queueId(queueId).build(), requestOptions)
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun create(params: RunCreateParams): HttpResponseFor<List<RunCreateResponse>> =
             create(params, RequestOptions.none())
 
         /** @see create */
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun create(
             params: RunCreateParams,
@@ -230,6 +326,9 @@ interface RunService {
          * /api/v1/annotation-queues/{queue_id}/runs/{queue_run_id}`, but is otherwise the same as
          * [RunService.update].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun update(
             queueRunId: String,
@@ -237,6 +336,9 @@ interface RunService {
         ): HttpResponseFor<RunUpdateResponse> = update(queueRunId, params, RequestOptions.none())
 
         /** @see update */
+        @Deprecated(
+            "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun update(
             queueRunId: String,
@@ -246,11 +348,17 @@ interface RunService {
             update(params.toBuilder().queueRunId(queueRunId).build(), requestOptions)
 
         /** @see update */
+        @Deprecated(
+            "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun update(params: RunUpdateParams): HttpResponseFor<RunUpdateResponse> =
             update(params, RequestOptions.none())
 
         /** @see update */
+        @Deprecated(
+            "Deprecated: use the annotation queue items update method (PATCH /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun update(
             params: RunUpdateParams,
@@ -261,11 +369,17 @@ interface RunService {
          * Returns a raw HTTP response for `get /api/v1/annotation-queues/{queue_id}/runs`, but is
          * otherwise the same as [RunService.list].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun list(queueId: String): HttpResponseFor<List<RunSchemaWithAnnotationQueueInfo>> =
             list(queueId, RunListParams.none())
 
         /** @see list */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun list(
             queueId: String,
@@ -275,6 +389,9 @@ interface RunService {
             list(params.toBuilder().queueId(queueId).build(), requestOptions)
 
         /** @see list */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun list(
             queueId: String,
@@ -283,6 +400,9 @@ interface RunService {
             list(queueId, params, RequestOptions.none())
 
         /** @see list */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun list(
             params: RunListParams,
@@ -290,11 +410,17 @@ interface RunService {
         ): HttpResponseFor<List<RunSchemaWithAnnotationQueueInfo>>
 
         /** @see list */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun list(params: RunListParams): HttpResponseFor<List<RunSchemaWithAnnotationQueueInfo>> =
             list(params, RequestOptions.none())
 
         /** @see list */
+        @Deprecated(
+            "Deprecated: use the annotation queue items list method (GET /api/v1/platform/annotation-queues/{queue_id}/items) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun list(
             queueId: String,
@@ -306,6 +432,9 @@ interface RunService {
          * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/runs/by-key`,
          * but is otherwise the same as [RunService.createByKey].
          */
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun createByKey(
             queueId: String,
@@ -314,6 +443,9 @@ interface RunService {
             createByKey(queueId, params, RequestOptions.none())
 
         /** @see createByKey */
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun createByKey(
             queueId: String,
@@ -323,6 +455,9 @@ interface RunService {
             createByKey(params.toBuilder().queueId(queueId).build(), requestOptions)
 
         /** @see createByKey */
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun createByKey(
             params: RunCreateByKeyParams
@@ -330,6 +465,9 @@ interface RunService {
             createByKey(params, RequestOptions.none())
 
         /** @see createByKey */
+        @Deprecated(
+            "Deprecated: use annotationQueues().items().create() instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun createByKey(
             params: RunCreateByKeyParams,
@@ -340,11 +478,17 @@ interface RunService {
          * Returns a raw HTTP response for `post /api/v1/annotation-queues/{queue_id}/runs/delete`,
          * but is otherwise the same as [RunService.deleteAll].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteAll(queueId: String): HttpResponseFor<RunDeleteAllResponse> =
             deleteAll(queueId, RunDeleteAllParams.none())
 
         /** @see deleteAll */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteAll(
             queueId: String,
@@ -354,6 +498,9 @@ interface RunService {
             deleteAll(params.toBuilder().queueId(queueId).build(), requestOptions)
 
         /** @see deleteAll */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteAll(
             queueId: String,
@@ -361,6 +508,9 @@ interface RunService {
         ): HttpResponseFor<RunDeleteAllResponse> = deleteAll(queueId, params, RequestOptions.none())
 
         /** @see deleteAll */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteAll(
             params: RunDeleteAllParams,
@@ -368,11 +518,17 @@ interface RunService {
         ): HttpResponseFor<RunDeleteAllResponse>
 
         /** @see deleteAll */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteAll(params: RunDeleteAllParams): HttpResponseFor<RunDeleteAllResponse> =
             deleteAll(params, RequestOptions.none())
 
         /** @see deleteAll */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteAll(
             queueId: String,
@@ -385,6 +541,9 @@ interface RunService {
          * /api/v1/annotation-queues/{queue_id}/runs/{queue_run_id}`, but is otherwise the same as
          * [RunService.deleteQueue].
          */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteQueue(
             queueRunId: String,
@@ -393,6 +552,9 @@ interface RunService {
             deleteQueue(queueRunId, params, RequestOptions.none())
 
         /** @see deleteQueue */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteQueue(
             queueRunId: String,
@@ -402,11 +564,17 @@ interface RunService {
             deleteQueue(params.toBuilder().queueRunId(queueRunId).build(), requestOptions)
 
         /** @see deleteQueue */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteQueue(params: RunDeleteQueueParams): HttpResponseFor<RunDeleteQueueResponse> =
             deleteQueue(params, RequestOptions.none())
 
         /** @see deleteQueue */
+        @Deprecated(
+            "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+        )
         @MustBeClosed
         fun deleteQueue(
             params: RunDeleteQueueParams,

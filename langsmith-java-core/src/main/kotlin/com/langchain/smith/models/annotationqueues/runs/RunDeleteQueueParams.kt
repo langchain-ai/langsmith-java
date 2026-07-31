@@ -13,6 +13,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /** Delete Run From Annotation Queue */
+@Deprecated(
+    "Deprecated: use the annotation queue items delete_all method (POST /api/v1/platform/annotation-queues/{queue_id}/items/delete) with the item ID instead. Will be removed after Jan 31, 2027."
+)
 class RunDeleteQueueParams
 private constructor(
     private val queueId: String,

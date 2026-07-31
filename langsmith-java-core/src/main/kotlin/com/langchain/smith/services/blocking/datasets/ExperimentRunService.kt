@@ -27,6 +27,8 @@ interface ExperimentRunService {
     /**
      * Returns a paginated page of dataset examples with runs from the requested experiments.
      * Response uses the canonical `{items, next_cursor}` envelope.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun query(datasetId: String): ExperimentRunQueryPage =
         query(datasetId, ExperimentRunQueryParams.none())

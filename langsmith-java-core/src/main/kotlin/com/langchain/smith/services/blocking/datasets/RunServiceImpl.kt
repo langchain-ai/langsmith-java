@@ -33,6 +33,9 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunService =
         RunServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    @Deprecated(
+        "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    )
     override fun query(
         params: RunQueryParams,
         requestOptions: RequestOptions,
@@ -56,6 +59,9 @@ class RunServiceImpl internal constructor(private val clientOptions: ClientOptio
         private val queryHandler: Handler<Optional<List<ExampleWithRunsCh>>> =
             jsonHandler<Optional<List<ExampleWithRunsCh>>>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+        )
         override fun query(
             params: RunQueryParams,
             requestOptions: RequestOptions,

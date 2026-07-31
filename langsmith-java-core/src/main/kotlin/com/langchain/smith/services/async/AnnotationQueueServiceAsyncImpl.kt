@@ -98,6 +98,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         // post /api/v1/annotation-queues
         withRawResponse().annotationQueues(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+    )
     override fun createRunStatus(
         params: AnnotationQueueCreateRunStatusParams,
         requestOptions: RequestOptions,
@@ -133,6 +136,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         // get /api/v1/annotation-queues/{run_id}/queues
         withRawResponse().retrieveQueues(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+    )
     override fun retrieveRun(
         params: AnnotationQueueRetrieveRunParams,
         requestOptions: RequestOptions,
@@ -140,6 +146,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         // get /api/v1/annotation-queues/{queue_id}/run/{index}
         withRawResponse().retrieveRun(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+    )
     override fun retrieveSize(
         params: AnnotationQueueRetrieveSizeParams,
         requestOptions: RequestOptions,
@@ -147,6 +156,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         // get /api/v1/annotation-queues/{queue_id}/size
         withRawResponse().retrieveSize(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+    )
     override fun retrieveTotalArchived(
         params: AnnotationQueueRetrieveTotalArchivedParams,
         requestOptions: RequestOptions,
@@ -154,6 +166,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         // get /api/v1/annotation-queues/{queue_id}/total_archived
         withRawResponse().retrieveTotalArchived(params, requestOptions).thenApply { it.parse() }
 
+    @Deprecated(
+        "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+    )
     override fun retrieveTotalSize(
         params: AnnotationQueueRetrieveTotalSizeParams,
         requestOptions: RequestOptions,
@@ -321,6 +336,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         private val createRunStatusHandler: Handler<AnnotationQueueCreateRunStatusResponse> =
             jsonHandler<AnnotationQueueCreateRunStatusResponse>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items create_status method (POST /api/v1/platform/annotation-queues/items/{queue_item_id}/status) instead. Will be removed after Jan 31, 2027."
+        )
         override fun createRunStatus(
             params: AnnotationQueueCreateRunStatusParams,
             requestOptions: RequestOptions,
@@ -512,6 +530,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         private val retrieveRunHandler: Handler<RunSchemaWithAnnotationQueueInfo> =
             jsonHandler<RunSchemaWithAnnotationQueueInfo>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items list and retrieve_placement methods instead, which call GET /api/v1/platform/annotation-queues/{queue_id}/items and GET /api/v1/platform/annotation-queues/{queue_id}/items/{item_id}/placement. Will be removed after Jan 31, 2027."
+        )
         override fun retrieveRun(
             params: AnnotationQueueRetrieveRunParams,
             requestOptions: RequestOptions,
@@ -552,6 +573,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         private val retrieveSizeHandler: Handler<AnnotationQueueSizeSchema> =
             jsonHandler<AnnotationQueueSizeSchema>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count) with the desired status instead. Will be removed after Jan 31, 2027."
+        )
         override fun retrieveSize(
             params: AnnotationQueueRetrieveSizeParams,
             requestOptions: RequestOptions,
@@ -585,6 +609,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         private val retrieveTotalArchivedHandler: Handler<AnnotationQueueSizeSchema> =
             jsonHandler<AnnotationQueueSizeSchema>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=archived) instead. Will be removed after Jan 31, 2027."
+        )
         override fun retrieveTotalArchived(
             params: AnnotationQueueRetrieveTotalArchivedParams,
             requestOptions: RequestOptions,
@@ -624,6 +651,9 @@ internal constructor(private val clientOptions: ClientOptions) : AnnotationQueue
         private val retrieveTotalSizeHandler: Handler<AnnotationQueueSizeSchema> =
             jsonHandler<AnnotationQueueSizeSchema>(clientOptions.jsonMapper)
 
+        @Deprecated(
+            "Deprecated: use the annotation queue items retrieve_count method (GET /api/v1/platform/annotation-queues/{queue_id}/items/count?status=all) instead. Will be removed after Jan 31, 2027."
+        )
         override fun retrieveTotalSize(
             params: AnnotationQueueRetrieveTotalSizeParams,
             requestOptions: RequestOptions,

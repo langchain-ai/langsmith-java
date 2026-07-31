@@ -27,9 +27,10 @@ interface RunServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RunServiceAsync
 
     /**
-     * **Alpha:** The request and response contract may change; Returns one run within the trace
-     * identified by the share token. The request supplies only the run ID and that run's exact
-     * start_time coordinate.
+     * Returns one run within the trace identified by the share token. The request supplies only the
+     * run ID and that run's exact start_time coordinate.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun retrieve(runId: String, params: RunRetrieveParams): CompletableFuture<Run> =
         retrieve(runId, params, RequestOptions.none())
@@ -52,8 +53,10 @@ interface RunServiceAsync {
     ): CompletableFuture<Run>
 
     /**
-     * **Alpha:** The request and response contract may change; Returns all runs within the trace
-     * identified by the share token. The share token supplies the tenant, project, and trace scope.
+     * Returns all runs within the trace identified by the share token. The share token supplies the
+     * tenant, project, and trace scope.
+     *
+     * Self-hosted deployments require LangSmith `v0.16` or later.
      */
     fun query(shareToken: String): CompletableFuture<RunQueryResponse> =
         query(shareToken, RunQueryParams.none())
@@ -127,7 +130,7 @@ interface RunServiceAsync {
         ): CompletableFuture<HttpResponseFor<Run>>
 
         /**
-         * Returns a raw HTTP response for `post /api/v2/public/{share_token}/runs/v2/query`, but is
+         * Returns a raw HTTP response for `post /api/v2/public/{share_token}/runs/query`, but is
          * otherwise the same as [RunServiceAsync.query].
          */
         fun query(shareToken: String): CompletableFuture<HttpResponseFor<RunQueryResponse>> =
