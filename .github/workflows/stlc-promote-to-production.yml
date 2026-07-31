@@ -66,6 +66,10 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
+          COMMITS=$(git log --reverse --format="%s%n" production/main..origin/main)
+          REVIEW_NOTE=$'> [!NOTE]\n> These changes are either auto-generated or already reviewed, so only a very light review is required: guard against a potential catastrophic generation failure by checking the diff stat for an unexpectedly large number of deleted files, and confirm any deletion traces back to a legitimate commit (e.g. an endpoint removal).\n> See [Releasing the SDKs](https://github.com/langchain-ai/langchainplus/tree/main/smith-sdks#releasing-the-sdks) for the full instructions.'
+          BODY="$(printf '%s\n\n%s\n' "${COMMITS}" "${REVIEW_NOTE}")"
+
           EXISTING_PR=$(gh pr list \
             --repo "${PRODUCTION_REPO}" \
             --head stainless/release \
@@ -78,10 +82,10 @@ jobs:
               --base main \
               --head stainless/release \
               --title "Release SDK updates" \
-              --body "$(git log --reverse --format="%s%n" production/main..origin/main)"
+              --body "${BODY}"
           else
             gh pr edit "${EXISTING_PR}" \
               --repo "${PRODUCTION_REPO}" \
-              --body "$(git log --reverse --format="%s%n" production/main..origin/main)"
+              --body "${BODY}"
             echo "Release PR #${EXISTING_PR} already exists. Updated its description."
           fi
