@@ -110,14 +110,24 @@ internal class CustomChartsSectionTest {
                                 .metricDefinition(
                                     CustomChartsSection.Chart.SingleCustomChartResponse.Series
                                         .MetricDefinition
-                                        .CustomChartMetricCount
+                                        .CustomChartFeedbackCountMetric
                                         .builder()
+                                        .params(
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .MetricDefinition
+                                                .CustomChartFeedbackCountMetric
+                                                .Params
+                                                .builder()
+                                                .feedbackKey("feedback_key")
+                                                .build()
+                                        )
                                         .filter("filter")
                                         .type(
                                             CustomChartsSection.Chart.SingleCustomChartResponse
                                                 .Series
                                                 .MetricDefinition
-                                                .CustomChartMetricCount
+                                                .CustomChartFeedbackCountMetric
                                                 .Type
                                                 .COUNT
                                         )
@@ -288,13 +298,22 @@ internal class CustomChartsSectionTest {
                                         .metricDefinition(
                                             CustomChartsSection.SubSection.Chart.Series
                                                 .MetricDefinition
-                                                .CustomChartMetricCount
+                                                .CustomChartFeedbackCountMetric
                                                 .builder()
+                                                .params(
+                                                    CustomChartsSection.SubSection.Chart.Series
+                                                        .MetricDefinition
+                                                        .CustomChartFeedbackCountMetric
+                                                        .Params
+                                                        .builder()
+                                                        .feedbackKey("feedback_key")
+                                                        .build()
+                                                )
                                                 .filter("filter")
                                                 .type(
                                                     CustomChartsSection.SubSection.Chart.Series
                                                         .MetricDefinition
-                                                        .CustomChartMetricCount
+                                                        .CustomChartFeedbackCountMetric
                                                         .Type
                                                         .COUNT
                                                 )
@@ -428,14 +447,24 @@ internal class CustomChartsSectionTest {
                                 .metricDefinition(
                                     CustomChartsSection.Chart.SingleCustomChartResponse.Series
                                         .MetricDefinition
-                                        .CustomChartMetricCount
+                                        .CustomChartFeedbackCountMetric
                                         .builder()
+                                        .params(
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .MetricDefinition
+                                                .CustomChartFeedbackCountMetric
+                                                .Params
+                                                .builder()
+                                                .feedbackKey("feedback_key")
+                                                .build()
+                                        )
                                         .filter("filter")
                                         .type(
                                             CustomChartsSection.Chart.SingleCustomChartResponse
                                                 .Series
                                                 .MetricDefinition
-                                                .CustomChartMetricCount
+                                                .CustomChartFeedbackCountMetric
                                                 .Type
                                                 .COUNT
                                         )
@@ -596,13 +625,22 @@ internal class CustomChartsSectionTest {
                                     )
                                     .metricDefinition(
                                         CustomChartsSection.SubSection.Chart.Series.MetricDefinition
-                                            .CustomChartMetricCount
+                                            .CustomChartFeedbackCountMetric
                                             .builder()
+                                            .params(
+                                                CustomChartsSection.SubSection.Chart.Series
+                                                    .MetricDefinition
+                                                    .CustomChartFeedbackCountMetric
+                                                    .Params
+                                                    .builder()
+                                                    .feedbackKey("feedback_key")
+                                                    .build()
+                                            )
                                             .filter("filter")
                                             .type(
                                                 CustomChartsSection.SubSection.Chart.Series
                                                     .MetricDefinition
-                                                    .CustomChartMetricCount
+                                                    .CustomChartFeedbackCountMetric
                                                     .Type
                                                     .COUNT
                                             )
@@ -738,14 +776,24 @@ internal class CustomChartsSectionTest {
                                 .metricDefinition(
                                     CustomChartsSection.Chart.SingleCustomChartResponse.Series
                                         .MetricDefinition
-                                        .CustomChartMetricCount
+                                        .CustomChartFeedbackCountMetric
                                         .builder()
+                                        .params(
+                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                                .Series
+                                                .MetricDefinition
+                                                .CustomChartFeedbackCountMetric
+                                                .Params
+                                                .builder()
+                                                .feedbackKey("feedback_key")
+                                                .build()
+                                        )
                                         .filter("filter")
                                         .type(
                                             CustomChartsSection.Chart.SingleCustomChartResponse
                                                 .Series
                                                 .MetricDefinition
-                                                .CustomChartMetricCount
+                                                .CustomChartFeedbackCountMetric
                                                 .Type
                                                 .COUNT
                                         )
@@ -916,13 +964,22 @@ internal class CustomChartsSectionTest {
                                         .metricDefinition(
                                             CustomChartsSection.SubSection.Chart.Series
                                                 .MetricDefinition
-                                                .CustomChartMetricCount
+                                                .CustomChartFeedbackCountMetric
                                                 .builder()
+                                                .params(
+                                                    CustomChartsSection.SubSection.Chart.Series
+                                                        .MetricDefinition
+                                                        .CustomChartFeedbackCountMetric
+                                                        .Params
+                                                        .builder()
+                                                        .feedbackKey("feedback_key")
+                                                        .build()
+                                                )
                                                 .filter("filter")
                                                 .type(
                                                     CustomChartsSection.SubSection.Chart.Series
                                                         .MetricDefinition
-                                                        .CustomChartMetricCount
+                                                        .CustomChartFeedbackCountMetric
                                                         .Type
                                                         .COUNT
                                                 )
