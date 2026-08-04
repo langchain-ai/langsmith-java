@@ -18,13 +18,15 @@ internal class CustomChartsSectionTest {
             CustomChartsSection.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addChart(
-                    CustomChartsSection.Chart.SingleCustomChartResponse.builder()
+                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .chartType(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.ChartType.LINE
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.ChartType
+                                .LINE
                         )
                         .addData(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Data.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Data
+                                .builder()
                                 .seriesId("series_id")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .value(0.0)
@@ -33,12 +35,14 @@ internal class CustomChartsSectionTest {
                         )
                         .index(0L)
                         .addSeries(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Series.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Series
+                                .builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .name("name")
                                 .feedbackKey("feedback_key")
                                 .filterDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .FilterDefinition
                                         .CustomChartFilterByTracingProject
                                         .builder()
@@ -49,7 +53,8 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .filters(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Filters
                                         .builder()
                                         .filter("filter")
@@ -59,11 +64,13 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .groupBy(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .GroupBy
                                         .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupBy
                                                 .Attribute
@@ -72,7 +79,8 @@ internal class CustomChartsSectionTest {
                                         .maxGroups(0L)
                                         .path("path")
                                         .setBy(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupBy
                                                 .SetBy
@@ -81,12 +89,14 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .addGroupByDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .GroupByDefinition
                                         .CustomChartGroupByPlain
                                         .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupByDefinition
                                                 .CustomChartGroupByPlain
@@ -96,24 +106,28 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .metadata(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Metadata
                                         .builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .metric(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Metric
                                         .RUN_COUNT
                                 )
                                 .metricDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .MetricDefinition
                                         .CustomChartFeedbackCountMetric
                                         .builder()
                                         .params(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .MetricDefinition
                                                 .CustomChartFeedbackCountMetric
@@ -124,7 +138,8 @@ internal class CustomChartsSectionTest {
                                         )
                                         .filter("filter")
                                         .type(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .MetricDefinition
                                                 .CustomChartFeedbackCountMetric
@@ -134,7 +149,8 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .projectMetric(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .ProjectMetric
                                         .MEMORY_USAGE
                                 )
@@ -143,7 +159,8 @@ internal class CustomChartsSectionTest {
                         )
                         .title("title")
                         .commonFilters(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.CommonFilters
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                .CommonFilters
                                 .builder()
                                 .filter("filter")
                                 .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -153,7 +170,8 @@ internal class CustomChartsSectionTest {
                         )
                         .description("description")
                         .metadata(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Metadata.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Metadata
+                                .builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
@@ -354,14 +372,16 @@ internal class CustomChartsSectionTest {
         assertThat(customChartsSection.id()).isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(customChartsSection.charts())
             .containsExactly(
-                CustomChartsSection.Chart.ofSingleCustomChartResponse(
-                    CustomChartsSection.Chart.SingleCustomChartResponse.builder()
+                CustomChartsSection.Chart.ofSingleCustomChartResponseSerialized(
+                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .chartType(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.ChartType.LINE
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.ChartType
+                                .LINE
                         )
                         .addData(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Data.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Data
+                                .builder()
                                 .seriesId("series_id")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .value(0.0)
@@ -370,12 +390,14 @@ internal class CustomChartsSectionTest {
                         )
                         .index(0L)
                         .addSeries(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Series.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Series
+                                .builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .name("name")
                                 .feedbackKey("feedback_key")
                                 .filterDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .FilterDefinition
                                         .CustomChartFilterByTracingProject
                                         .builder()
@@ -386,7 +408,8 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .filters(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Filters
                                         .builder()
                                         .filter("filter")
@@ -396,11 +419,13 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .groupBy(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .GroupBy
                                         .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupBy
                                                 .Attribute
@@ -409,7 +434,8 @@ internal class CustomChartsSectionTest {
                                         .maxGroups(0L)
                                         .path("path")
                                         .setBy(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupBy
                                                 .SetBy
@@ -418,12 +444,14 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .addGroupByDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .GroupByDefinition
                                         .CustomChartGroupByPlain
                                         .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupByDefinition
                                                 .CustomChartGroupByPlain
@@ -433,24 +461,28 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .metadata(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Metadata
                                         .builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .metric(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Metric
                                         .RUN_COUNT
                                 )
                                 .metricDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .MetricDefinition
                                         .CustomChartFeedbackCountMetric
                                         .builder()
                                         .params(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .MetricDefinition
                                                 .CustomChartFeedbackCountMetric
@@ -461,7 +493,8 @@ internal class CustomChartsSectionTest {
                                         )
                                         .filter("filter")
                                         .type(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .MetricDefinition
                                                 .CustomChartFeedbackCountMetric
@@ -471,7 +504,8 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .projectMetric(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .ProjectMetric
                                         .MEMORY_USAGE
                                 )
@@ -480,7 +514,8 @@ internal class CustomChartsSectionTest {
                         )
                         .title("title")
                         .commonFilters(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.CommonFilters
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                .CommonFilters
                                 .builder()
                                 .filter("filter")
                                 .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -490,7 +525,8 @@ internal class CustomChartsSectionTest {
                         )
                         .description("description")
                         .metadata(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Metadata.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Metadata
+                                .builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )
@@ -684,13 +720,15 @@ internal class CustomChartsSectionTest {
             CustomChartsSection.builder()
                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .addChart(
-                    CustomChartsSection.Chart.SingleCustomChartResponse.builder()
+                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized.builder()
                         .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                         .chartType(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.ChartType.LINE
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.ChartType
+                                .LINE
                         )
                         .addData(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Data.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Data
+                                .builder()
                                 .seriesId("series_id")
                                 .timestamp(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                                 .value(0.0)
@@ -699,12 +737,14 @@ internal class CustomChartsSectionTest {
                         )
                         .index(0L)
                         .addSeries(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Series.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Series
+                                .builder()
                                 .id("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                                 .name("name")
                                 .feedbackKey("feedback_key")
                                 .filterDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .FilterDefinition
                                         .CustomChartFilterByTracingProject
                                         .builder()
@@ -715,7 +755,8 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .filters(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Filters
                                         .builder()
                                         .filter("filter")
@@ -725,11 +766,13 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .groupBy(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .GroupBy
                                         .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupBy
                                                 .Attribute
@@ -738,7 +781,8 @@ internal class CustomChartsSectionTest {
                                         .maxGroups(0L)
                                         .path("path")
                                         .setBy(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupBy
                                                 .SetBy
@@ -747,12 +791,14 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .addGroupByDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .GroupByDefinition
                                         .CustomChartGroupByPlain
                                         .builder()
                                         .attribute(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .GroupByDefinition
                                                 .CustomChartGroupByPlain
@@ -762,24 +808,28 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .metadata(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Metadata
                                         .builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                                         .build()
                                 )
                                 .metric(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .Metric
                                         .RUN_COUNT
                                 )
                                 .metricDefinition(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .MetricDefinition
                                         .CustomChartFeedbackCountMetric
                                         .builder()
                                         .params(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .MetricDefinition
                                                 .CustomChartFeedbackCountMetric
@@ -790,7 +840,8 @@ internal class CustomChartsSectionTest {
                                         )
                                         .filter("filter")
                                         .type(
-                                            CustomChartsSection.Chart.SingleCustomChartResponse
+                                            CustomChartsSection.Chart
+                                                .SingleCustomChartResponseSerialized
                                                 .Series
                                                 .MetricDefinition
                                                 .CustomChartFeedbackCountMetric
@@ -800,7 +851,8 @@ internal class CustomChartsSectionTest {
                                         .build()
                                 )
                                 .projectMetric(
-                                    CustomChartsSection.Chart.SingleCustomChartResponse.Series
+                                    CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                        .Series
                                         .ProjectMetric
                                         .MEMORY_USAGE
                                 )
@@ -809,7 +861,8 @@ internal class CustomChartsSectionTest {
                         )
                         .title("title")
                         .commonFilters(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.CommonFilters
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized
+                                .CommonFilters
                                 .builder()
                                 .filter("filter")
                                 .addSession("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
@@ -819,7 +872,8 @@ internal class CustomChartsSectionTest {
                         )
                         .description("description")
                         .metadata(
-                            CustomChartsSection.Chart.SingleCustomChartResponse.Metadata.builder()
+                            CustomChartsSection.Chart.SingleCustomChartResponseSerialized.Metadata
+                                .builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
                                 .build()
                         )

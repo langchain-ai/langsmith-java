@@ -258,10 +258,14 @@ private constructor(
 
         /**
          * Alias for calling [addChart] with
-         * `Chart.ofSingleCustomChartResponse(singleCustomChartResponse)`.
+         * `Chart.ofSingleCustomChartResponseSerialized(singleCustomChartResponseSerialized)`.
          */
-        fun addChart(singleCustomChartResponse: Chart.SingleCustomChartResponse) =
-            addChart(Chart.ofSingleCustomChartResponse(singleCustomChartResponse))
+        fun addChart(
+            singleCustomChartResponseSerialized: Chart.SingleCustomChartResponseSerialized
+        ) =
+            addChart(
+                Chart.ofSingleCustomChartResponseSerialized(singleCustomChartResponseSerialized)
+            )
 
         /** Alias for calling [addChart] with `Chart.ofText(text)`. */
         fun addChart(text: Chart.Text) = addChart(Chart.ofText(text))
@@ -468,22 +472,24 @@ private constructor(
     @JsonSerialize(using = Chart.Serializer::class)
     class Chart
     private constructor(
-        private val singleCustomChartResponse: SingleCustomChartResponse? = null,
+        private val singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized? =
+            null,
         private val text: Text? = null,
         private val _json: JsonValue? = null,
     ) {
 
-        fun singleCustomChartResponse(): Optional<SingleCustomChartResponse> =
-            Optional.ofNullable(singleCustomChartResponse)
+        fun singleCustomChartResponseSerialized(): Optional<SingleCustomChartResponseSerialized> =
+            Optional.ofNullable(singleCustomChartResponseSerialized)
 
         fun text(): Optional<Text> = Optional.ofNullable(text)
 
-        fun isSingleCustomChartResponse(): Boolean = singleCustomChartResponse != null
+        fun isSingleCustomChartResponseSerialized(): Boolean =
+            singleCustomChartResponseSerialized != null
 
         fun isText(): Boolean = text != null
 
-        fun asSingleCustomChartResponse(): SingleCustomChartResponse =
-            singleCustomChartResponse.getOrThrow("singleCustomChartResponse")
+        fun asSingleCustomChartResponseSerialized(): SingleCustomChartResponseSerialized =
+            singleCustomChartResponseSerialized.getOrThrow("singleCustomChartResponseSerialized")
 
         fun asText(): Text = text.getOrThrow("text")
 
@@ -501,8 +507,8 @@ private constructor(
          *
          * Optional<String> result = chart.accept(new Chart.Visitor<Optional<String>>() {
          *     @Override
-         *     public Optional<String> visitSingleCustomChartResponse(SingleCustomChartResponse singleCustomChartResponse) {
-         *         return Optional.of(singleCustomChartResponse.toString());
+         *     public Optional<String> visitSingleCustomChartResponseSerialized(SingleCustomChartResponseSerialized singleCustomChartResponseSerialized) {
+         *         return Optional.of(singleCustomChartResponseSerialized.toString());
          *     }
          *
          *     // ...
@@ -520,8 +526,10 @@ private constructor(
          */
         fun <T> accept(visitor: Visitor<T>): T =
             when {
-                singleCustomChartResponse != null ->
-                    visitor.visitSingleCustomChartResponse(singleCustomChartResponse)
+                singleCustomChartResponseSerialized != null ->
+                    visitor.visitSingleCustomChartResponseSerialized(
+                        singleCustomChartResponseSerialized
+                    )
                 text != null -> visitor.visitText(text)
                 else -> visitor.unknown(_json)
             }
@@ -544,10 +552,10 @@ private constructor(
 
             accept(
                 object : Visitor<Unit> {
-                    override fun visitSingleCustomChartResponse(
-                        singleCustomChartResponse: SingleCustomChartResponse
+                    override fun visitSingleCustomChartResponseSerialized(
+                        singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
                     ) {
-                        singleCustomChartResponse.validate()
+                        singleCustomChartResponseSerialized.validate()
                     }
 
                     override fun visitText(text: Text) {
@@ -576,9 +584,9 @@ private constructor(
         internal fun validity(): Int =
             accept(
                 object : Visitor<Int> {
-                    override fun visitSingleCustomChartResponse(
-                        singleCustomChartResponse: SingleCustomChartResponse
-                    ) = singleCustomChartResponse.validity()
+                    override fun visitSingleCustomChartResponseSerialized(
+                        singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
+                    ) = singleCustomChartResponseSerialized.validity()
 
                     override fun visitText(text: Text) = text.validity()
 
@@ -592,16 +600,16 @@ private constructor(
             }
 
             return other is Chart &&
-                singleCustomChartResponse == other.singleCustomChartResponse &&
+                singleCustomChartResponseSerialized == other.singleCustomChartResponseSerialized &&
                 text == other.text
         }
 
-        override fun hashCode(): Int = Objects.hash(singleCustomChartResponse, text)
+        override fun hashCode(): Int = Objects.hash(singleCustomChartResponseSerialized, text)
 
         override fun toString(): String =
             when {
-                singleCustomChartResponse != null ->
-                    "Chart{singleCustomChartResponse=$singleCustomChartResponse}"
+                singleCustomChartResponseSerialized != null ->
+                    "Chart{singleCustomChartResponseSerialized=$singleCustomChartResponseSerialized}"
                 text != null -> "Chart{text=$text}"
                 _json != null -> "Chart{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid Chart")
@@ -610,8 +618,9 @@ private constructor(
         companion object {
 
             @JvmStatic
-            fun ofSingleCustomChartResponse(singleCustomChartResponse: SingleCustomChartResponse) =
-                Chart(singleCustomChartResponse = singleCustomChartResponse)
+            fun ofSingleCustomChartResponseSerialized(
+                singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
+            ) = Chart(singleCustomChartResponseSerialized = singleCustomChartResponseSerialized)
 
             @JvmStatic fun ofText(text: Text) = Chart(text = text)
         }
@@ -619,8 +628,8 @@ private constructor(
         /** An interface that defines how to map each variant of [Chart] to a value of type [T]. */
         interface Visitor<out T> {
 
-            fun visitSingleCustomChartResponse(
-                singleCustomChartResponse: SingleCustomChartResponse
+            fun visitSingleCustomChartResponseSerialized(
+                singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
             ): T
 
             fun visitText(text: Text): T
@@ -653,9 +662,9 @@ private constructor(
                     } ?: Chart(_json = json)
                 }
 
-                return tryDeserialize(node, jacksonTypeRef<SingleCustomChartResponse>())?.let {
-                    Chart(singleCustomChartResponse = it, _json = json)
-                } ?: Chart(_json = json)
+                return tryDeserialize(node, jacksonTypeRef<SingleCustomChartResponseSerialized>())
+                    ?.let { Chart(singleCustomChartResponseSerialized = it, _json = json) }
+                    ?: Chart(_json = json)
             }
         }
 
@@ -667,8 +676,8 @@ private constructor(
                 provider: SerializerProvider,
             ) {
                 when {
-                    value.singleCustomChartResponse != null ->
-                        generator.writeObject(value.singleCustomChartResponse)
+                    value.singleCustomChartResponseSerialized != null ->
+                        generator.writeObject(value.singleCustomChartResponseSerialized)
                     value.text != null -> generator.writeObject(value.text)
                     value._json != null -> generator.writeObject(value._json)
                     else -> throw IllegalStateException("Invalid Chart")
@@ -676,7 +685,7 @@ private constructor(
             }
         }
 
-        class SingleCustomChartResponse
+        class SingleCustomChartResponseSerialized
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
             private val id: JsonField<String>,
@@ -879,7 +888,7 @@ private constructor(
 
                 /**
                  * Returns a mutable builder for constructing an instance of
-                 * [SingleCustomChartResponse].
+                 * [SingleCustomChartResponseSerialized].
                  *
                  * The following fields are required:
                  * ```java
@@ -894,7 +903,7 @@ private constructor(
                 @JvmStatic fun builder() = Builder()
             }
 
-            /** A builder for [SingleCustomChartResponse]. */
+            /** A builder for [SingleCustomChartResponseSerialized]. */
             class Builder internal constructor() {
 
                 private var id: JsonField<String>? = null
@@ -909,18 +918,20 @@ private constructor(
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                 @JvmSynthetic
-                internal fun from(singleCustomChartResponse: SingleCustomChartResponse) = apply {
-                    id = singleCustomChartResponse.id
-                    chartType = singleCustomChartResponse.chartType
-                    data = singleCustomChartResponse.data.map { it.toMutableList() }
-                    index = singleCustomChartResponse.index
-                    series = singleCustomChartResponse.series.map { it.toMutableList() }
-                    title = singleCustomChartResponse.title
-                    commonFilters = singleCustomChartResponse.commonFilters
-                    description = singleCustomChartResponse.description
-                    metadata = singleCustomChartResponse.metadata
+                internal fun from(
+                    singleCustomChartResponseSerialized: SingleCustomChartResponseSerialized
+                ) = apply {
+                    id = singleCustomChartResponseSerialized.id
+                    chartType = singleCustomChartResponseSerialized.chartType
+                    data = singleCustomChartResponseSerialized.data.map { it.toMutableList() }
+                    index = singleCustomChartResponseSerialized.index
+                    series = singleCustomChartResponseSerialized.series.map { it.toMutableList() }
+                    title = singleCustomChartResponseSerialized.title
+                    commonFilters = singleCustomChartResponseSerialized.commonFilters
+                    description = singleCustomChartResponseSerialized.description
+                    metadata = singleCustomChartResponseSerialized.metadata
                     additionalProperties =
-                        singleCustomChartResponse.additionalProperties.toMutableMap()
+                        singleCustomChartResponseSerialized.additionalProperties.toMutableMap()
                 }
 
                 fun id(id: String) = id(JsonField.of(id))
@@ -1092,7 +1103,7 @@ private constructor(
                 }
 
                 /**
-                 * Returns an immutable instance of [SingleCustomChartResponse].
+                 * Returns an immutable instance of [SingleCustomChartResponseSerialized].
                  *
                  * Further updates to this [Builder] will not mutate the returned instance.
                  *
@@ -1108,8 +1119,8 @@ private constructor(
                  *
                  * @throws IllegalStateException if any required field is unset.
                  */
-                fun build(): SingleCustomChartResponse =
-                    SingleCustomChartResponse(
+                fun build(): SingleCustomChartResponseSerialized =
+                    SingleCustomChartResponseSerialized(
                         checkRequired("id", id),
                         checkRequired("chartType", chartType),
                         checkRequired("data", data).map { it.toImmutable() },
@@ -1135,7 +1146,7 @@ private constructor(
              * @throws LangChainInvalidDataException if any value type in this object doesn't match
              *   its expected type.
              */
-            fun validate(): SingleCustomChartResponse = apply {
+            fun validate(): SingleCustomChartResponseSerialized = apply {
                 if (validated) {
                     return@apply
                 }
@@ -19571,7 +19582,7 @@ private constructor(
                     return true
                 }
 
-                return other is SingleCustomChartResponse &&
+                return other is SingleCustomChartResponseSerialized &&
                     id == other.id &&
                     chartType == other.chartType &&
                     data == other.data &&
@@ -19602,7 +19613,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "SingleCustomChartResponse{id=$id, chartType=$chartType, data=$data, index=$index, series=$series, title=$title, commonFilters=$commonFilters, description=$description, metadata=$metadata, additionalProperties=$additionalProperties}"
+                "SingleCustomChartResponseSerialized{id=$id, chartType=$chartType, data=$data, index=$index, series=$series, title=$title, commonFilters=$commonFilters, description=$description, metadata=$metadata, additionalProperties=$additionalProperties}"
         }
 
         class Text
