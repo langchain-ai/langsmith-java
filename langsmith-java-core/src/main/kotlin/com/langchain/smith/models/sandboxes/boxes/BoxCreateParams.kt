@@ -88,6 +88,11 @@ private constructor(
     fun labels(): Optional<Labels> = body.labels()
 
     /**
+     * Memory for the sandbox, in bytes. Memory is tied to CPU at 4 GiB per vCPU: omit it and it
+     * follows that ratio; set it and it must stay within 50% of the ratio for the requested CPU, so
+     * a 1 vCPU sandbox accepts 2-6 GiB. Setting memory without CPU derives the CPU from the same
+     * ratio. Maximum 64 GiB.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -403,6 +408,12 @@ private constructor(
          */
         fun labels(labels: JsonField<Labels>) = apply { body.labels(labels) }
 
+        /**
+         * Memory for the sandbox, in bytes. Memory is tied to CPU at 4 GiB per vCPU: omit it and it
+         * follows that ratio; set it and it must stay within 50% of the ratio for the requested
+         * CPU, so a 1 vCPU sandbox accepts 2-6 GiB. Setting memory without CPU derives the CPU from
+         * the same ratio. Maximum 64 GiB.
+         */
         fun memBytes(memBytes: Long) = apply { body.memBytes(memBytes) }
 
         /**
@@ -808,6 +819,11 @@ private constructor(
         fun labels(): Optional<Labels> = labels.getOptional("labels")
 
         /**
+         * Memory for the sandbox, in bytes. Memory is tied to CPU at 4 GiB per vCPU: omit it and it
+         * follows that ratio; set it and it must stay within 50% of the ratio for the requested
+         * CPU, so a 1 vCPU sandbox accepts 2-6 GiB. Setting memory without CPU derives the CPU from
+         * the same ratio. Maximum 64 GiB.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -1168,6 +1184,12 @@ private constructor(
              */
             fun labels(labels: JsonField<Labels>) = apply { this.labels = labels }
 
+            /**
+             * Memory for the sandbox, in bytes. Memory is tied to CPU at 4 GiB per vCPU: omit it
+             * and it follows that ratio; set it and it must stay within 50% of the ratio for the
+             * requested CPU, so a 1 vCPU sandbox accepts 2-6 GiB. Setting memory without CPU
+             * derives the CPU from the same ratio. Maximum 64 GiB.
+             */
             fun memBytes(memBytes: Long) = memBytes(JsonField.of(memBytes))
 
             /**

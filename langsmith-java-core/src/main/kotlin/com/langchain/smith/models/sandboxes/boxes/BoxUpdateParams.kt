@@ -59,6 +59,9 @@ private constructor(
     fun idleTtlSeconds(): Optional<Long> = body.idleTtlSeconds()
 
     /**
+     * New memory for the sandbox, in bytes. The 4 GiB per vCPU ratio applies when the sandbox is
+     * created; a resize enforces only the maximum of 64 GiB.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -259,6 +262,10 @@ private constructor(
             body.idleTtlSeconds(idleTtlSeconds)
         }
 
+        /**
+         * New memory for the sandbox, in bytes. The 4 GiB per vCPU ratio applies when the sandbox
+         * is created; a resize enforces only the maximum of 64 GiB.
+         */
         fun memBytes(memBytes: Long) = apply { body.memBytes(memBytes) }
 
         /**
@@ -542,6 +549,9 @@ private constructor(
         fun idleTtlSeconds(): Optional<Long> = idleTtlSeconds.getOptional("idle_ttl_seconds")
 
         /**
+         * New memory for the sandbox, in bytes. The 4 GiB per vCPU ratio applies when the sandbox
+         * is created; a resize enforces only the maximum of 64 GiB.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -750,6 +760,10 @@ private constructor(
                 this.idleTtlSeconds = idleTtlSeconds
             }
 
+            /**
+             * New memory for the sandbox, in bytes. The 4 GiB per vCPU ratio applies when the
+             * sandbox is created; a resize enforces only the maximum of 64 GiB.
+             */
             fun memBytes(memBytes: Long) = memBytes(JsonField.of(memBytes))
 
             /**
