@@ -164,6 +164,7 @@ internal class OnlineEvaluatorServiceTest {
                     .groupBy("group_by")
                     .addResourceId("string")
                     .sessionId("session_id")
+                    .addTagValueId("string")
                     .type("type")
                     .build()
             )

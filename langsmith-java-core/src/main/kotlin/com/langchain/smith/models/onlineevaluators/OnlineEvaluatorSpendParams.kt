@@ -14,8 +14,8 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Returns per-day LLM evaluator spend for the requested 7-day period, grouped by evaluator,
  * resource, or run rule. Exactly one of group_by, evaluator_id, session_id, or dataset_id is
- * required. resource_id, type, and feedback_key may be supplied with group_by to narrow listing
- * aggregations.
+ * required. resource_id, type, feedback_key, and tag_value_id may be supplied with group_by to
+ * narrow listing aggregations.
  */
 class OnlineEvaluatorSpendParams
 private constructor(
@@ -26,6 +26,7 @@ private constructor(
     private val groupBy: String?,
     private val resourceId: List<String>?,
     private val sessionId: String?,
+    private val tagValueId: List<String>?,
     private val type: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -57,6 +58,12 @@ private constructor(
 
     /** Filter to a specific project (UUID). Mutually exclusive with group_by. */
     fun sessionId(): Optional<String> = Optional.ofNullable(sessionId)
+
+    /**
+     * Filter grouped results to evaluators, projects, or datasets tagged with all supplied tag
+     * value IDs. Only valid with group_by.
+     */
+    fun tagValueId(): Optional<List<String>> = Optional.ofNullable(tagValueId)
 
     /** Filter grouped results by evaluator type: 'llm' or 'code'. Only valid with group_by. */
     fun type(): Optional<String> = Optional.ofNullable(type)
@@ -92,6 +99,7 @@ private constructor(
         private var groupBy: String? = null
         private var resourceId: MutableList<String>? = null
         private var sessionId: String? = null
+        private var tagValueId: MutableList<String>? = null
         private var type: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -105,6 +113,7 @@ private constructor(
             groupBy = onlineEvaluatorSpendParams.groupBy
             resourceId = onlineEvaluatorSpendParams.resourceId?.toMutableList()
             sessionId = onlineEvaluatorSpendParams.sessionId
+            tagValueId = onlineEvaluatorSpendParams.tagValueId?.toMutableList()
             type = onlineEvaluatorSpendParams.type
             additionalHeaders = onlineEvaluatorSpendParams.additionalHeaders.toBuilder()
             additionalQueryParams = onlineEvaluatorSpendParams.additionalQueryParams.toBuilder()
@@ -165,6 +174,26 @@ private constructor(
 
         /** Alias for calling [Builder.sessionId] with `sessionId.orElse(null)`. */
         fun sessionId(sessionId: Optional<String>) = sessionId(sessionId.getOrNull())
+
+        /**
+         * Filter grouped results to evaluators, projects, or datasets tagged with all supplied tag
+         * value IDs. Only valid with group_by.
+         */
+        fun tagValueId(tagValueId: List<String>?) = apply {
+            this.tagValueId = tagValueId?.toMutableList()
+        }
+
+        /** Alias for calling [Builder.tagValueId] with `tagValueId.orElse(null)`. */
+        fun tagValueId(tagValueId: Optional<List<String>>) = tagValueId(tagValueId.getOrNull())
+
+        /**
+         * Adds a single [String] to [Builder.tagValueId].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTagValueId(tagValueId: String) = apply {
+            this.tagValueId = (this.tagValueId ?: mutableListOf()).apply { add(tagValueId) }
+        }
 
         /** Filter grouped results by evaluator type: 'llm' or 'code'. Only valid with group_by. */
         fun type(type: String?) = apply { this.type = type }
@@ -291,6 +320,7 @@ private constructor(
                 groupBy,
                 resourceId?.toImmutable(),
                 sessionId,
+                tagValueId?.toImmutable(),
                 type,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -309,6 +339,7 @@ private constructor(
                 groupBy?.let { put("group_by", it) }
                 resourceId?.forEach { put("resource_id", it) }
                 sessionId?.let { put("session_id", it) }
+                tagValueId?.forEach { put("tag_value_id", it) }
                 type?.let { put("type", it) }
                 putAll(additionalQueryParams)
             }
@@ -327,6 +358,7 @@ private constructor(
             groupBy == other.groupBy &&
             resourceId == other.resourceId &&
             sessionId == other.sessionId &&
+            tagValueId == other.tagValueId &&
             type == other.type &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -341,11 +373,12 @@ private constructor(
             groupBy,
             resourceId,
             sessionId,
+            tagValueId,
             type,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "OnlineEvaluatorSpendParams{periodStart=$periodStart, datasetId=$datasetId, evaluatorId=$evaluatorId, feedbackKey=$feedbackKey, groupBy=$groupBy, resourceId=$resourceId, sessionId=$sessionId, type=$type, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "OnlineEvaluatorSpendParams{periodStart=$periodStart, datasetId=$datasetId, evaluatorId=$evaluatorId, feedbackKey=$feedbackKey, groupBy=$groupBy, resourceId=$resourceId, sessionId=$sessionId, tagValueId=$tagValueId, type=$type, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
