@@ -59,7 +59,7 @@ interface ThreadServiceAsync {
 
     /**
      * Query threads within a project (session), with cursor-based pagination. Returns threads
-     * matching the given time range and optional filter.
+     * matching the given time range and optional filters.
      *
      * Self-hosted deployments require LangSmith `v0.16` or later.
      */

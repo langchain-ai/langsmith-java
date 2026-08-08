@@ -21,7 +21,7 @@ import java.util.Optional
 
 /**
  * Query threads within a project (session), with cursor-based pagination. Returns threads matching
- * the given time range and optional filter.
+ * the given time range and optional filters.
  *
  * Self-hosted deployments require LangSmith `v0.16` or later.
  */
@@ -88,6 +88,40 @@ private constructor(
     fun projectId(): Optional<String> = body.projectId()
 
     /**
+     * `thread_filter` narrows results using a LangSmith filter expression evaluated against each
+     * complete thread summary. Self-hosted deployments require LangSmith v0.17 or later;
+     * unsupported deployments return 501. See
+     * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun threadFilter(): Optional<String> = body.threadFilter()
+
+    /**
+     * `trace_filter` narrows results to threads containing at least one trace whose root run
+     * matches this LangSmith filter expression. Trace-level aggregate fields are evaluated using
+     * the complete trace summary. Self-hosted deployments require LangSmith v0.17 or later;
+     * unsupported deployments return 501. See
+     * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun traceFilter(): Optional<String> = body.traceFilter()
+
+    /**
+     * `tree_filter` narrows results to threads containing at least one trace with a matching run
+     * anywhere in its run tree. Self-hosted deployments require LangSmith v0.17 or later;
+     * unsupported deployments return 501. See
+     * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun treeFilter(): Optional<String> = body.treeFilter()
+
+    /**
      * Returns the raw JSON value of [cursor].
      *
      * Unlike [cursor], this method doesn't throw if the JSON field has an unexpected type.
@@ -128,6 +162,27 @@ private constructor(
      * Unlike [projectId], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _projectId(): JsonField<String> = body._projectId()
+
+    /**
+     * Returns the raw JSON value of [threadFilter].
+     *
+     * Unlike [threadFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _threadFilter(): JsonField<String> = body._threadFilter()
+
+    /**
+     * Returns the raw JSON value of [traceFilter].
+     *
+     * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _traceFilter(): JsonField<String> = body._traceFilter()
+
+    /**
+     * Returns the raw JSON value of [treeFilter].
+     *
+     * Unlike [treeFilter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _treeFilter(): JsonField<String> = body._treeFilter()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -265,6 +320,60 @@ private constructor(
          * value.
          */
         fun projectId(projectId: JsonField<String>) = apply { body.projectId(projectId) }
+
+        /**
+         * `thread_filter` narrows results using a LangSmith filter expression evaluated against
+         * each complete thread summary. Self-hosted deployments require LangSmith v0.17 or later;
+         * unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         */
+        fun threadFilter(threadFilter: String) = apply { body.threadFilter(threadFilter) }
+
+        /**
+         * Sets [Builder.threadFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.threadFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun threadFilter(threadFilter: JsonField<String>) = apply {
+            body.threadFilter(threadFilter)
+        }
+
+        /**
+         * `trace_filter` narrows results to threads containing at least one trace whose root run
+         * matches this LangSmith filter expression. Trace-level aggregate fields are evaluated
+         * using the complete trace summary. Self-hosted deployments require LangSmith v0.17 or
+         * later; unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         */
+        fun traceFilter(traceFilter: String) = apply { body.traceFilter(traceFilter) }
+
+        /**
+         * Sets [Builder.traceFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.traceFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun traceFilter(traceFilter: JsonField<String>) = apply { body.traceFilter(traceFilter) }
+
+        /**
+         * `tree_filter` narrows results to threads containing at least one trace with a matching
+         * run anywhere in its run tree. Self-hosted deployments require LangSmith v0.17 or later;
+         * unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         */
+        fun treeFilter(treeFilter: String) = apply { body.treeFilter(treeFilter) }
+
+        /**
+         * Sets [Builder.treeFilter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.treeFilter] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun treeFilter(treeFilter: JsonField<String>) = apply { body.treeFilter(treeFilter) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -411,6 +520,9 @@ private constructor(
         private val minStartTime: JsonField<OffsetDateTime>,
         private val pageSize: JsonField<Long>,
         private val projectId: JsonField<String>,
+        private val threadFilter: JsonField<String>,
+        private val traceFilter: JsonField<String>,
+        private val treeFilter: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -428,7 +540,27 @@ private constructor(
             @JsonProperty("project_id")
             @ExcludeMissing
             projectId: JsonField<String> = JsonMissing.of(),
-        ) : this(cursor, filter, maxStartTime, minStartTime, pageSize, projectId, mutableMapOf())
+            @JsonProperty("thread_filter")
+            @ExcludeMissing
+            threadFilter: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("trace_filter")
+            @ExcludeMissing
+            traceFilter: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("tree_filter")
+            @ExcludeMissing
+            treeFilter: JsonField<String> = JsonMissing.of(),
+        ) : this(
+            cursor,
+            filter,
+            maxStartTime,
+            minStartTime,
+            pageSize,
+            projectId,
+            threadFilter,
+            traceFilter,
+            treeFilter,
+            mutableMapOf(),
+        )
 
         /**
          * `cursor` is the opaque string from a previous response's `next_cursor`. Omit on the first
@@ -487,6 +619,40 @@ private constructor(
         fun projectId(): Optional<String> = projectId.getOptional("project_id")
 
         /**
+         * `thread_filter` narrows results using a LangSmith filter expression evaluated against
+         * each complete thread summary. Self-hosted deployments require LangSmith v0.17 or later;
+         * unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun threadFilter(): Optional<String> = threadFilter.getOptional("thread_filter")
+
+        /**
+         * `trace_filter` narrows results to threads containing at least one trace whose root run
+         * matches this LangSmith filter expression. Trace-level aggregate fields are evaluated
+         * using the complete trace summary. Self-hosted deployments require LangSmith v0.17 or
+         * later; unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun traceFilter(): Optional<String> = traceFilter.getOptional("trace_filter")
+
+        /**
+         * `tree_filter` narrows results to threads containing at least one trace with a matching
+         * run anywhere in its run tree. Self-hosted deployments require LangSmith v0.17 or later;
+         * unsupported deployments return 501. See
+         * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for syntax.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun treeFilter(): Optional<String> = treeFilter.getOptional("tree_filter")
+
+        /**
          * Returns the raw JSON value of [cursor].
          *
          * Unlike [cursor], this method doesn't throw if the JSON field has an unexpected type.
@@ -534,6 +700,34 @@ private constructor(
          */
         @JsonProperty("project_id") @ExcludeMissing fun _projectId(): JsonField<String> = projectId
 
+        /**
+         * Returns the raw JSON value of [threadFilter].
+         *
+         * Unlike [threadFilter], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("thread_filter")
+        @ExcludeMissing
+        fun _threadFilter(): JsonField<String> = threadFilter
+
+        /**
+         * Returns the raw JSON value of [traceFilter].
+         *
+         * Unlike [traceFilter], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("trace_filter")
+        @ExcludeMissing
+        fun _traceFilter(): JsonField<String> = traceFilter
+
+        /**
+         * Returns the raw JSON value of [treeFilter].
+         *
+         * Unlike [treeFilter], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tree_filter")
+        @ExcludeMissing
+        fun _treeFilter(): JsonField<String> = treeFilter
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -561,6 +755,9 @@ private constructor(
             private var minStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var pageSize: JsonField<Long> = JsonMissing.of()
             private var projectId: JsonField<String> = JsonMissing.of()
+            private var threadFilter: JsonField<String> = JsonMissing.of()
+            private var traceFilter: JsonField<String> = JsonMissing.of()
+            private var treeFilter: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -571,6 +768,9 @@ private constructor(
                 minStartTime = body.minStartTime
                 pageSize = body.pageSize
                 projectId = body.projectId
+                threadFilter = body.threadFilter
+                traceFilter = body.traceFilter
+                treeFilter = body.treeFilter
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -671,6 +871,65 @@ private constructor(
              */
             fun projectId(projectId: JsonField<String>) = apply { this.projectId = projectId }
 
+            /**
+             * `thread_filter` narrows results using a LangSmith filter expression evaluated against
+             * each complete thread summary. Self-hosted deployments require LangSmith v0.17 or
+             * later; unsupported deployments return 501. See
+             * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for
+             * syntax.
+             */
+            fun threadFilter(threadFilter: String) = threadFilter(JsonField.of(threadFilter))
+
+            /**
+             * Sets [Builder.threadFilter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.threadFilter] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun threadFilter(threadFilter: JsonField<String>) = apply {
+                this.threadFilter = threadFilter
+            }
+
+            /**
+             * `trace_filter` narrows results to threads containing at least one trace whose root
+             * run matches this LangSmith filter expression. Trace-level aggregate fields are
+             * evaluated using the complete trace summary. Self-hosted deployments require LangSmith
+             * v0.17 or later; unsupported deployments return 501. See
+             * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for
+             * syntax.
+             */
+            fun traceFilter(traceFilter: String) = traceFilter(JsonField.of(traceFilter))
+
+            /**
+             * Sets [Builder.traceFilter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.traceFilter] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun traceFilter(traceFilter: JsonField<String>) = apply {
+                this.traceFilter = traceFilter
+            }
+
+            /**
+             * `tree_filter` narrows results to threads containing at least one trace with a
+             * matching run anywhere in its run tree. Self-hosted deployments require LangSmith
+             * v0.17 or later; unsupported deployments return 501. See
+             * https://docs.langchain.com/langsmith/trace-query-syntax#filter-query-language for
+             * syntax.
+             */
+            fun treeFilter(treeFilter: String) = treeFilter(JsonField.of(treeFilter))
+
+            /**
+             * Sets [Builder.treeFilter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.treeFilter] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun treeFilter(treeFilter: JsonField<String>) = apply { this.treeFilter = treeFilter }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -703,6 +962,9 @@ private constructor(
                     minStartTime,
                     pageSize,
                     projectId,
+                    threadFilter,
+                    traceFilter,
+                    treeFilter,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -729,6 +991,9 @@ private constructor(
             minStartTime()
             pageSize()
             projectId()
+            threadFilter()
+            traceFilter()
+            treeFilter()
             validated = true
         }
 
@@ -753,7 +1018,10 @@ private constructor(
                 (if (maxStartTime.asKnown().isPresent) 1 else 0) +
                 (if (minStartTime.asKnown().isPresent) 1 else 0) +
                 (if (pageSize.asKnown().isPresent) 1 else 0) +
-                (if (projectId.asKnown().isPresent) 1 else 0)
+                (if (projectId.asKnown().isPresent) 1 else 0) +
+                (if (threadFilter.asKnown().isPresent) 1 else 0) +
+                (if (traceFilter.asKnown().isPresent) 1 else 0) +
+                (if (treeFilter.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -767,6 +1035,9 @@ private constructor(
                 minStartTime == other.minStartTime &&
                 pageSize == other.pageSize &&
                 projectId == other.projectId &&
+                threadFilter == other.threadFilter &&
+                traceFilter == other.traceFilter &&
+                treeFilter == other.treeFilter &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -778,6 +1049,9 @@ private constructor(
                 minStartTime,
                 pageSize,
                 projectId,
+                threadFilter,
+                traceFilter,
+                treeFilter,
                 additionalProperties,
             )
         }
@@ -785,7 +1059,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{cursor=$cursor, filter=$filter, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectId=$projectId, additionalProperties=$additionalProperties}"
+            "Body{cursor=$cursor, filter=$filter, maxStartTime=$maxStartTime, minStartTime=$minStartTime, pageSize=$pageSize, projectId=$projectId, threadFilter=$threadFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
