@@ -10,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath("com.guardsquare:proguard-gradle:7.8.0")
+        classpath("org.jetbrains.kotlin:kotlin-metadata-jvm:2.4.10")
         classpath("com.android.tools:r8:9.1.31")
     }
 }
