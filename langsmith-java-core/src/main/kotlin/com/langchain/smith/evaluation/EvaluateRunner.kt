@@ -209,7 +209,8 @@ internal class EvaluateRunner(
     ): RunIngest? {
         var runTree: RunTree? = null
         val wrappedTarget: (Map<String, Any?>) -> Any? = { exampleInputs ->
-            target(exampleInputs).also { runTree = getCurrentRunTree() }
+            runTree = getCurrentRunTree()
+            target(exampleInputs)
         }
 
         val traced =

@@ -89,6 +89,42 @@ internal class EvaluateRunnerTest {
     }
 
     @Test
+    fun evaluate_logsTargetErrorsAndIncludesTheirRuns() {
+        val runService = mock<RunService>()
+        val sessionService = mock<SessionService>()
+        val feedbackService = mock<FeedbackService>()
+
+        whenever(sessionService.create(any<SessionCreateParams>())).doReturn(sampleSession())
+        whenever(feedbackService.create(any<FeedbackCreateSchema>())).doReturn(sampleFeedback())
+        whenever(runService.create(any<RunIngest>())).doReturn(RunCreateResponse.builder().build())
+        whenever(runService.update(any<RunUpdateParams>())).doAnswer {}
+
+        val client =
+            mock<LangsmithClient> {
+                on { runs() } doReturn runService
+                on { sessions() } doReturn sessionService
+                on { feedback() } doReturn feedbackService
+            }
+
+        val params =
+            EvaluateParams.builder()
+                .data(listOf(sampleExample()))
+                .addEvaluator(
+                    runEvaluator { _: RunIngest, _: Example? ->
+                        EvaluationResult(key = "match", score = 0)
+                    }
+                )
+                .experimentName("target-error-test")
+                .build()
+
+        val results = evaluate(client, { _ -> throw IllegalStateException("target failed") }, params)
+
+        val run = results.rows.single().run
+        assertThat(run.referenceExampleId()).contains(exampleId)
+        assertThat(run.error()).contains("target failed")
+    }
+
+    @Test
     fun evaluate_runsExamplesInParallelWhenMaxConcurrencyIsSet() {
         val runService = mock<RunService>()
         val sessionService = mock<SessionService>()
