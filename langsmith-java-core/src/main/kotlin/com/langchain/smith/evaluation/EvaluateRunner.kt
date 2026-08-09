@@ -219,9 +219,7 @@ internal class EvaluateRunner(
                     name = "Target",
                     client = client,
                     projectName = experimentName,
-                    referenceExampleId =
-                        if (params.errorHandling == EvaluateErrorHandling.LOG) example.id()
-                        else null,
+                    referenceExampleId = example.id(),
                     sessionId = sessionId,
                     metadata = runMetadata,
                     tracingEnabled = true,
