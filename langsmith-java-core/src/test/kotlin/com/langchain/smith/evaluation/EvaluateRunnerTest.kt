@@ -64,6 +64,7 @@ internal class EvaluateRunnerTest {
                     }
                 )
                 .experimentName("test-experiment")
+                .errorHandling(EvaluateErrorHandling.IGNORE)
                 .build()
 
         val results = evaluate(client, { mapOf("answer" to "Paris") }, params)
