@@ -35,6 +35,7 @@ private constructor(
     private val sourceRunId: JsonField<String>,
     private val sourceRunStartTime: JsonField<OffsetDateTime>,
     private val sourceSessionId: JsonField<String>,
+    private val sourceThreadId: JsonField<String>,
     private val sourceTraceId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -65,6 +66,9 @@ private constructor(
         @JsonProperty("source_session_id")
         @ExcludeMissing
         sourceSessionId: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("source_thread_id")
+        @ExcludeMissing
+        sourceThreadId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("source_trace_id")
         @ExcludeMissing
         sourceTraceId: JsonField<String> = JsonMissing.of(),
@@ -81,6 +85,7 @@ private constructor(
         sourceRunId,
         sourceRunStartTime,
         sourceSessionId,
+        sourceThreadId,
         sourceTraceId,
         mutableMapOf(),
     )
@@ -157,6 +162,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun sourceSessionId(): Optional<String> = sourceSessionId.getOptional("source_session_id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun sourceThreadId(): Optional<String> = sourceThreadId.getOptional("source_thread_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -262,6 +273,15 @@ private constructor(
     fun _sourceSessionId(): JsonField<String> = sourceSessionId
 
     /**
+     * Returns the raw JSON value of [sourceThreadId].
+     *
+     * Unlike [sourceThreadId], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("source_thread_id")
+    @ExcludeMissing
+    fun _sourceThreadId(): JsonField<String> = sourceThreadId
+
+    /**
      * Returns the raw JSON value of [sourceTraceId].
      *
      * Unlike [sourceTraceId], this method doesn't throw if the JSON field has an unexpected type.
@@ -313,6 +333,7 @@ private constructor(
         private var sourceRunId: JsonField<String> = JsonMissing.of()
         private var sourceRunStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
         private var sourceSessionId: JsonField<String> = JsonMissing.of()
+        private var sourceThreadId: JsonField<String> = JsonMissing.of()
         private var sourceTraceId: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -330,6 +351,7 @@ private constructor(
             sourceRunId = example.sourceRunId
             sourceRunStartTime = example.sourceRunStartTime
             sourceSessionId = example.sourceSessionId
+            sourceThreadId = example.sourceThreadId
             sourceTraceId = example.sourceTraceId
             additionalProperties = example.additionalProperties.toMutableMap()
         }
@@ -499,6 +521,24 @@ private constructor(
             this.sourceSessionId = sourceSessionId
         }
 
+        fun sourceThreadId(sourceThreadId: String?) =
+            sourceThreadId(JsonField.ofNullable(sourceThreadId))
+
+        /** Alias for calling [Builder.sourceThreadId] with `sourceThreadId.orElse(null)`. */
+        fun sourceThreadId(sourceThreadId: Optional<String>) =
+            sourceThreadId(sourceThreadId.getOrNull())
+
+        /**
+         * Sets [Builder.sourceThreadId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.sourceThreadId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun sourceThreadId(sourceThreadId: JsonField<String>) = apply {
+            this.sourceThreadId = sourceThreadId
+        }
+
         fun sourceTraceId(sourceTraceId: String?) =
             sourceTraceId(JsonField.ofNullable(sourceTraceId))
 
@@ -565,6 +605,7 @@ private constructor(
                 sourceRunId,
                 sourceRunStartTime,
                 sourceSessionId,
+                sourceThreadId,
                 sourceTraceId,
                 additionalProperties.toMutableMap(),
             )
@@ -597,6 +638,7 @@ private constructor(
         sourceRunId()
         sourceRunStartTime()
         sourceSessionId()
+        sourceThreadId()
         sourceTraceId()
         validated = true
     }
@@ -628,6 +670,7 @@ private constructor(
             (if (sourceRunId.asKnown().isPresent) 1 else 0) +
             (if (sourceRunStartTime.asKnown().isPresent) 1 else 0) +
             (if (sourceSessionId.asKnown().isPresent) 1 else 0) +
+            (if (sourceThreadId.asKnown().isPresent) 1 else 0) +
             (if (sourceTraceId.asKnown().isPresent) 1 else 0)
 
     class Inputs
@@ -1080,6 +1123,7 @@ private constructor(
             sourceRunId == other.sourceRunId &&
             sourceRunStartTime == other.sourceRunStartTime &&
             sourceSessionId == other.sourceSessionId &&
+            sourceThreadId == other.sourceThreadId &&
             sourceTraceId == other.sourceTraceId &&
             additionalProperties == other.additionalProperties
     }
@@ -1098,6 +1142,7 @@ private constructor(
             sourceRunId,
             sourceRunStartTime,
             sourceSessionId,
+            sourceThreadId,
             sourceTraceId,
             additionalProperties,
         )
@@ -1106,5 +1151,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Example{id=$id, datasetId=$datasetId, inputs=$inputs, name=$name, attachmentUrls=$attachmentUrls, createdAt=$createdAt, metadata=$metadata, modifiedAt=$modifiedAt, outputs=$outputs, sourceRunId=$sourceRunId, sourceRunStartTime=$sourceRunStartTime, sourceSessionId=$sourceSessionId, sourceTraceId=$sourceTraceId, additionalProperties=$additionalProperties}"
+        "Example{id=$id, datasetId=$datasetId, inputs=$inputs, name=$name, attachmentUrls=$attachmentUrls, createdAt=$createdAt, metadata=$metadata, modifiedAt=$modifiedAt, outputs=$outputs, sourceRunId=$sourceRunId, sourceRunStartTime=$sourceRunStartTime, sourceSessionId=$sourceSessionId, sourceThreadId=$sourceThreadId, sourceTraceId=$sourceTraceId, additionalProperties=$additionalProperties}"
 }
