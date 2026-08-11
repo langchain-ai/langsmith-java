@@ -85,6 +85,14 @@ private constructor(
     fun labels(): Optional<Labels> = body.labels()
 
     /**
+     * mutable Docker-style tag; defaults to "latest"
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun tag(): Optional<String> = body.tag()
+
+    /**
      * Returns the raw JSON value of [bodyName].
      *
      * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
@@ -125,6 +133,13 @@ private constructor(
      * Unlike [labels], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _labels(): JsonField<Labels> = body._labels()
+
+    /**
+     * Returns the raw JSON value of [tag].
+     *
+     * Unlike [tag], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _tag(): JsonField<String> = body._tag()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -261,6 +276,17 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun labels(labels: JsonField<Labels>) = apply { body.labels(labels) }
+
+        /** mutable Docker-style tag; defaults to "latest" */
+        fun tag(tag: String) = apply { body.tag(tag) }
+
+        /**
+         * Sets [Builder.tag] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tag] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun tag(tag: JsonField<String>) = apply { body.tag(tag) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -421,6 +447,7 @@ private constructor(
         private val fsCapacityBytes: JsonField<Long>,
         private val includeMemory: JsonField<Boolean>,
         private val labels: JsonField<Labels>,
+        private val tag: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -440,6 +467,7 @@ private constructor(
             @ExcludeMissing
             includeMemory: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
+            @JsonProperty("tag") @ExcludeMissing tag: JsonField<String> = JsonMissing.of(),
         ) : this(
             bodyName,
             checkpoint,
@@ -447,6 +475,7 @@ private constructor(
             fsCapacityBytes,
             includeMemory,
             labels,
+            tag,
             mutableMapOf(),
         )
 
@@ -500,6 +529,14 @@ private constructor(
         fun labels(): Optional<Labels> = labels.getOptional("labels")
 
         /**
+         * mutable Docker-style tag; defaults to "latest"
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tag(): Optional<String> = tag.getOptional("tag")
+
+        /**
          * Returns the raw JSON value of [bodyName].
          *
          * Unlike [bodyName], this method doesn't throw if the JSON field has an unexpected type.
@@ -551,6 +588,13 @@ private constructor(
          */
         @JsonProperty("labels") @ExcludeMissing fun _labels(): JsonField<Labels> = labels
 
+        /**
+         * Returns the raw JSON value of [tag].
+         *
+         * Unlike [tag], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tag") @ExcludeMissing fun _tag(): JsonField<String> = tag
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -585,6 +629,7 @@ private constructor(
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
             private var includeMemory: JsonField<Boolean> = JsonMissing.of()
             private var labels: JsonField<Labels> = JsonMissing.of()
+            private var tag: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -595,6 +640,7 @@ private constructor(
                 fsCapacityBytes = body.fsCapacityBytes
                 includeMemory = body.includeMemory
                 labels = body.labels
+                tag = body.tag
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -681,6 +727,18 @@ private constructor(
              */
             fun labels(labels: JsonField<Labels>) = apply { this.labels = labels }
 
+            /** mutable Docker-style tag; defaults to "latest" */
+            fun tag(tag: String) = tag(JsonField.of(tag))
+
+            /**
+             * Sets [Builder.tag] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.tag] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun tag(tag: JsonField<String>) = apply { this.tag = tag }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -720,6 +778,7 @@ private constructor(
                     fsCapacityBytes,
                     includeMemory,
                     labels,
+                    tag,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -746,6 +805,7 @@ private constructor(
             fsCapacityBytes()
             includeMemory()
             labels().ifPresent { it.validate() }
+            tag()
             validated = true
         }
 
@@ -770,7 +830,8 @@ private constructor(
                 (if (dockerImage.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (includeMemory.asKnown().isPresent) 1 else 0) +
-                (labels.asKnown().getOrNull()?.validity() ?: 0)
+                (labels.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (tag.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -784,6 +845,7 @@ private constructor(
                 fsCapacityBytes == other.fsCapacityBytes &&
                 includeMemory == other.includeMemory &&
                 labels == other.labels &&
+                tag == other.tag &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -795,6 +857,7 @@ private constructor(
                 fsCapacityBytes,
                 includeMemory,
                 labels,
+                tag,
                 additionalProperties,
             )
         }
@@ -802,7 +865,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{bodyName=$bodyName, checkpoint=$checkpoint, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, includeMemory=$includeMemory, labels=$labels, additionalProperties=$additionalProperties}"
+            "Body{bodyName=$bodyName, checkpoint=$checkpoint, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, includeMemory=$includeMemory, labels=$labels, tag=$tag, additionalProperties=$additionalProperties}"
     }
 
     /** Labels seed the captured snapshot's labels. */

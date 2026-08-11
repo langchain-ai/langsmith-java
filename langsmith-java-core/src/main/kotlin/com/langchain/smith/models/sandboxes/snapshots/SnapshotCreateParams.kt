@@ -63,6 +63,14 @@ private constructor(
     fun registryId(): Optional<String> = body.registryId()
 
     /**
+     * mutable Docker-style tag; defaults to "latest"
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun tag(): Optional<String> = body.tag()
+
+    /**
      * Returns the raw JSON value of [dockerImage].
      *
      * Unlike [dockerImage], this method doesn't throw if the JSON field has an unexpected type.
@@ -96,6 +104,13 @@ private constructor(
      * Unlike [registryId], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _registryId(): JsonField<String> = body._registryId()
+
+    /**
+     * Returns the raw JSON value of [tag].
+     *
+     * Unlike [tag], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _tag(): JsonField<String> = body._tag()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -208,6 +223,17 @@ private constructor(
          * value.
          */
         fun registryId(registryId: JsonField<String>) = apply { body.registryId(registryId) }
+
+        /** mutable Docker-style tag; defaults to "latest" */
+        fun tag(tag: String) = apply { body.tag(tag) }
+
+        /**
+         * Sets [Builder.tag] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tag] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun tag(tag: JsonField<String>) = apply { body.tag(tag) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -362,6 +388,7 @@ private constructor(
         private val name: JsonField<String>,
         private val labels: JsonField<Labels>,
         private val registryId: JsonField<String>,
+        private val tag: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -378,7 +405,8 @@ private constructor(
             @JsonProperty("registry_id")
             @ExcludeMissing
             registryId: JsonField<String> = JsonMissing.of(),
-        ) : this(dockerImage, fsCapacityBytes, name, labels, registryId, mutableMapOf())
+            @JsonProperty("tag") @ExcludeMissing tag: JsonField<String> = JsonMissing.of(),
+        ) : this(dockerImage, fsCapacityBytes, name, labels, registryId, tag, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -412,6 +440,14 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun registryId(): Optional<String> = registryId.getOptional("registry_id")
+
+        /**
+         * mutable Docker-style tag; defaults to "latest"
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun tag(): Optional<String> = tag.getOptional("tag")
 
         /**
          * Returns the raw JSON value of [dockerImage].
@@ -455,6 +491,13 @@ private constructor(
         @ExcludeMissing
         fun _registryId(): JsonField<String> = registryId
 
+        /**
+         * Returns the raw JSON value of [tag].
+         *
+         * Unlike [tag], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("tag") @ExcludeMissing fun _tag(): JsonField<String> = tag
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -490,6 +533,7 @@ private constructor(
             private var name: JsonField<String>? = null
             private var labels: JsonField<Labels> = JsonMissing.of()
             private var registryId: JsonField<String> = JsonMissing.of()
+            private var tag: JsonField<String> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -499,6 +543,7 @@ private constructor(
                 name = body.name
                 labels = body.labels
                 registryId = body.registryId
+                tag = body.tag
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -566,6 +611,18 @@ private constructor(
              */
             fun registryId(registryId: JsonField<String>) = apply { this.registryId = registryId }
 
+            /** mutable Docker-style tag; defaults to "latest" */
+            fun tag(tag: String) = tag(JsonField.of(tag))
+
+            /**
+             * Sets [Builder.tag] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.tag] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun tag(tag: JsonField<String>) = apply { this.tag = tag }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -606,6 +663,7 @@ private constructor(
                     checkRequired("name", name),
                     labels,
                     registryId,
+                    tag,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -631,6 +689,7 @@ private constructor(
             name()
             labels().ifPresent { it.validate() }
             registryId()
+            tag()
             validated = true
         }
 
@@ -654,7 +713,8 @@ private constructor(
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
                 (labels.asKnown().getOrNull()?.validity() ?: 0) +
-                (if (registryId.asKnown().isPresent) 1 else 0)
+                (if (registryId.asKnown().isPresent) 1 else 0) +
+                (if (tag.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -667,6 +727,7 @@ private constructor(
                 name == other.name &&
                 labels == other.labels &&
                 registryId == other.registryId &&
+                tag == other.tag &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -677,6 +738,7 @@ private constructor(
                 name,
                 labels,
                 registryId,
+                tag,
                 additionalProperties,
             )
         }
@@ -684,7 +746,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, name=$name, labels=$labels, registryId=$registryId, additionalProperties=$additionalProperties}"
+            "Body{dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, name=$name, labels=$labels, registryId=$registryId, tag=$tag, additionalProperties=$additionalProperties}"
     }
 
     /**

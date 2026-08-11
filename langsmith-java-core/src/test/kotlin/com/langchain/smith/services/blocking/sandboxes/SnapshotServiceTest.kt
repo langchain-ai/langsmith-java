@@ -30,6 +30,7 @@ internal class SnapshotServiceTest {
                             .build()
                     )
                     .registryId("registry_id")
+                    .tag("tag")
                     .build()
             )
 
@@ -80,5 +81,17 @@ internal class SnapshotServiceTest {
         val snapshotService = client.sandboxes().snapshots()
 
         snapshotService.delete("snapshot_id")
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveByName() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val snapshotService = client.sandboxes().snapshots()
+
+        val response = snapshotService.retrieveByName("name")
+
+        response.validate()
     }
 }

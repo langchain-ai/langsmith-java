@@ -282,6 +282,7 @@ internal class BoxServiceTest {
                             .build()
                     )
                     .restoreMemory(true)
+                    .snapshot("snapshot")
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
                     .addTagValueId("string")
@@ -489,6 +490,7 @@ internal class BoxServiceTest {
                             .putAdditionalProperty("foo", JsonValue.from("string"))
                             .build()
                     )
+                    .tag("tag")
                     .build()
             )
 

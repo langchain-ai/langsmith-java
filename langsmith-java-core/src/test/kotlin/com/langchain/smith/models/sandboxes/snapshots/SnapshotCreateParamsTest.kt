@@ -20,6 +20,7 @@ internal class SnapshotCreateParamsTest {
                     .build()
             )
             .registryId("registry_id")
+            .tag("tag")
             .build()
     }
 
@@ -36,6 +37,7 @@ internal class SnapshotCreateParamsTest {
                         .build()
                 )
                 .registryId("registry_id")
+                .tag("tag")
                 .build()
 
         val body = params._body()
@@ -50,6 +52,7 @@ internal class SnapshotCreateParamsTest {
                     .build()
             )
         assertThat(body.registryId()).contains("registry_id")
+        assertThat(body.tag()).contains("tag")
     }
 
     @Test

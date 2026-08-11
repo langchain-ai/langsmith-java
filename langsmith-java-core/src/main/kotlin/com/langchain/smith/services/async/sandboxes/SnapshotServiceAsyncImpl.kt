@@ -22,6 +22,8 @@ import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveParams
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -66,6 +68,13 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
     ): CompletableFuture<Void?> =
         // delete /api/v2/sandboxes/snapshots/{snapshot_id}
         withRawResponse().delete(params, requestOptions).thenAccept {}
+
+    override fun retrieveByName(
+        params: SnapshotRetrieveByNameParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<SnapshotRetrieveByNameResponse> =
+        // get /api/v2/sandboxes/snapshots-by-name/{name}
+        withRawResponse().retrieveByName(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         SnapshotServiceAsync.WithRawResponse {
@@ -197,6 +206,45 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
                 .thenApply { response ->
                     errorHandler.handle(response).parseable {
                         response.use { deleteHandler.handle(it) }
+                    }
+                }
+        }
+
+        private val retrieveByNameHandler: Handler<SnapshotRetrieveByNameResponse> =
+            jsonHandler<SnapshotRetrieveByNameResponse>(clientOptions.jsonMapper)
+
+        override fun retrieveByName(
+            params: SnapshotRetrieveByNameParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<SnapshotRetrieveByNameResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "snapshots-by-name",
+                        params._pathParam(0),
+                    )
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveByNameHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
                     }
                 }
         }

@@ -10,18 +10,17 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Get a sandbox snapshot by ID or by a Docker-style reference. A bare name means name:latest,
- * falling back to the newest ready untagged snapshot of that name. To list the tags under a name,
- * use /api/v2/sandboxes/snapshots-by-name/{name}.
+ * Get a snapshot name and every tag under it, with the snapshot each tag resolves to. To fetch one
+ * snapshot, use /api/v2/sandboxes/snapshots/{snapshot_id}.
  */
-class SnapshotRetrieveParams
+class SnapshotRetrieveByNameParams
 private constructor(
-    private val snapshotId: String?,
+    private val name: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
 
-    fun snapshotId(): Optional<String> = Optional.ofNullable(snapshotId)
+    fun name(): Optional<String> = Optional.ofNullable(name)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -33,30 +32,32 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): SnapshotRetrieveParams = builder().build()
+        @JvmStatic fun none(): SnapshotRetrieveByNameParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [SnapshotRetrieveParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [SnapshotRetrieveByNameParams].
+         */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [SnapshotRetrieveParams]. */
+    /** A builder for [SnapshotRetrieveByNameParams]. */
     class Builder internal constructor() {
 
-        private var snapshotId: String? = null
+        private var name: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(snapshotRetrieveParams: SnapshotRetrieveParams) = apply {
-            snapshotId = snapshotRetrieveParams.snapshotId
-            additionalHeaders = snapshotRetrieveParams.additionalHeaders.toBuilder()
-            additionalQueryParams = snapshotRetrieveParams.additionalQueryParams.toBuilder()
+        internal fun from(snapshotRetrieveByNameParams: SnapshotRetrieveByNameParams) = apply {
+            name = snapshotRetrieveByNameParams.name
+            additionalHeaders = snapshotRetrieveByNameParams.additionalHeaders.toBuilder()
+            additionalQueryParams = snapshotRetrieveByNameParams.additionalQueryParams.toBuilder()
         }
 
-        fun snapshotId(snapshotId: String?) = apply { this.snapshotId = snapshotId }
+        fun name(name: String?) = apply { this.name = name }
 
-        /** Alias for calling [Builder.snapshotId] with `snapshotId.orElse(null)`. */
-        fun snapshotId(snapshotId: Optional<String>) = snapshotId(snapshotId.getOrNull())
+        /** Alias for calling [Builder.name] with `name.orElse(null)`. */
+        fun name(name: Optional<String>) = name(name.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -157,13 +158,13 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [SnapshotRetrieveParams].
+         * Returns an immutable instance of [SnapshotRetrieveByNameParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): SnapshotRetrieveParams =
-            SnapshotRetrieveParams(
-                snapshotId,
+        fun build(): SnapshotRetrieveByNameParams =
+            SnapshotRetrieveByNameParams(
+                name,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -171,7 +172,7 @@ private constructor(
 
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> snapshotId ?: ""
+            0 -> name ?: ""
             else -> ""
         }
 
@@ -184,15 +185,14 @@ private constructor(
             return true
         }
 
-        return other is SnapshotRetrieveParams &&
-            snapshotId == other.snapshotId &&
+        return other is SnapshotRetrieveByNameParams &&
+            name == other.name &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(snapshotId, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int = Objects.hash(name, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "SnapshotRetrieveParams{snapshotId=$snapshotId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "SnapshotRetrieveByNameParams{name=$name, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -22,6 +22,7 @@ internal class BoxCreateSnapshotParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("string"))
                     .build()
             )
+            .tag("tag")
             .build()
     }
 
@@ -49,6 +50,7 @@ internal class BoxCreateSnapshotParamsTest {
                         .putAdditionalProperty("foo", JsonValue.from("string"))
                         .build()
                 )
+                .tag("tag")
                 .build()
 
         val body = params._body()
@@ -64,6 +66,7 @@ internal class BoxCreateSnapshotParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("string"))
                     .build()
             )
+        assertThat(body.tag()).contains("tag")
     }
 
     @Test

@@ -36,7 +36,8 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Create a new sandbox from a snapshot. Provide at most one of `snapshot_id` or `snapshot_name`; if
- * neither is provided, the server uses the default snapshot.
+ * neither is provided, the server uses the default snapshot. `snapshot_name` accepts a Docker-style
+ * `name` or `name:tag` reference (a bare name resolves to `name:latest`).
  */
 class BoxCreateParams
 private constructor(
@@ -142,12 +143,24 @@ private constructor(
     fun restoreMemory(): Optional<Boolean> = body.restoreMemory()
 
     /**
+     * Snapshot is a Docker-style name or name:tag reference to boot from. A bare name resolves to
+     * name:latest.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun snapshot(): Optional<String> = body.snapshot()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun snapshotId(): Optional<String> = body.snapshotId()
 
     /**
+     * SnapshotName is a synonym for Snapshot, accepted for compatibility with clients that predate
+     * it. Set one or the other.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -250,6 +263,13 @@ private constructor(
      * Unlike [restoreMemory], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _restoreMemory(): JsonField<Boolean> = body._restoreMemory()
+
+    /**
+     * Returns the raw JSON value of [snapshot].
+     *
+     * Unlike [snapshot], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _snapshot(): JsonField<String> = body._snapshot()
 
     /**
      * Returns the raw JSON value of [snapshotId].
@@ -504,6 +524,20 @@ private constructor(
             body.restoreMemory(restoreMemory)
         }
 
+        /**
+         * Snapshot is a Docker-style name or name:tag reference to boot from. A bare name resolves
+         * to name:latest.
+         */
+        fun snapshot(snapshot: String) = apply { body.snapshot(snapshot) }
+
+        /**
+         * Sets [Builder.snapshot] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.snapshot] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun snapshot(snapshot: JsonField<String>) = apply { body.snapshot(snapshot) }
+
         fun snapshotId(snapshotId: String) = apply { body.snapshotId(snapshotId) }
 
         /**
@@ -515,6 +549,10 @@ private constructor(
          */
         fun snapshotId(snapshotId: JsonField<String>) = apply { body.snapshotId(snapshotId) }
 
+        /**
+         * SnapshotName is a synonym for Snapshot, accepted for compatibility with clients that
+         * predate it. Set one or the other.
+         */
         fun snapshotName(snapshotName: String) = apply { body.snapshotName(snapshotName) }
 
         /**
@@ -705,6 +743,7 @@ private constructor(
         private val preserveMemoryOnStop: JsonField<Boolean>,
         private val proxyConfig: JsonField<ProxyConfig>,
         private val restoreMemory: JsonField<Boolean>,
+        private val snapshot: JsonField<String>,
         private val snapshotId: JsonField<String>,
         private val snapshotName: JsonField<String>,
         private val tagValueIds: JsonField<List<String>>,
@@ -744,6 +783,9 @@ private constructor(
             @JsonProperty("restore_memory")
             @ExcludeMissing
             restoreMemory: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("snapshot")
+            @ExcludeMissing
+            snapshot: JsonField<String> = JsonMissing.of(),
             @JsonProperty("snapshot_id")
             @ExcludeMissing
             snapshotId: JsonField<String> = JsonMissing.of(),
@@ -767,6 +809,7 @@ private constructor(
             preserveMemoryOnStop,
             proxyConfig,
             restoreMemory,
+            snapshot,
             snapshotId,
             snapshotName,
             tagValueIds,
@@ -875,12 +918,24 @@ private constructor(
         fun restoreMemory(): Optional<Boolean> = restoreMemory.getOptional("restore_memory")
 
         /**
+         * Snapshot is a Docker-style name or name:tag reference to boot from. A bare name resolves
+         * to name:latest.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun snapshot(): Optional<String> = snapshot.getOptional("snapshot")
+
+        /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun snapshotId(): Optional<String> = snapshotId.getOptional("snapshot_id")
 
         /**
+         * SnapshotName is a synonym for Snapshot, accepted for compatibility with clients that
+         * predate it. Set one or the other.
+         *
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -1005,6 +1060,13 @@ private constructor(
         fun _restoreMemory(): JsonField<Boolean> = restoreMemory
 
         /**
+         * Returns the raw JSON value of [snapshot].
+         *
+         * Unlike [snapshot], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("snapshot") @ExcludeMissing fun _snapshot(): JsonField<String> = snapshot
+
+        /**
          * Returns the raw JSON value of [snapshotId].
          *
          * Unlike [snapshotId], this method doesn't throw if the JSON field has an unexpected type.
@@ -1072,6 +1134,7 @@ private constructor(
             private var preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of()
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
             private var restoreMemory: JsonField<Boolean> = JsonMissing.of()
+            private var snapshot: JsonField<String> = JsonMissing.of()
             private var snapshotId: JsonField<String> = JsonMissing.of()
             private var snapshotName: JsonField<String> = JsonMissing.of()
             private var tagValueIds: JsonField<MutableList<String>>? = null
@@ -1092,6 +1155,7 @@ private constructor(
                 preserveMemoryOnStop = body.preserveMemoryOnStop
                 proxyConfig = body.proxyConfig
                 restoreMemory = body.restoreMemory
+                snapshot = body.snapshot
                 snapshotId = body.snapshotId
                 snapshotName = body.snapshotName
                 tagValueIds = body.tagValueIds.map { it.toMutableList() }
@@ -1281,6 +1345,21 @@ private constructor(
                 this.restoreMemory = restoreMemory
             }
 
+            /**
+             * Snapshot is a Docker-style name or name:tag reference to boot from. A bare name
+             * resolves to name:latest.
+             */
+            fun snapshot(snapshot: String) = snapshot(JsonField.of(snapshot))
+
+            /**
+             * Sets [Builder.snapshot] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.snapshot] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun snapshot(snapshot: JsonField<String>) = apply { this.snapshot = snapshot }
+
             fun snapshotId(snapshotId: String) = snapshotId(JsonField.of(snapshotId))
 
             /**
@@ -1292,6 +1371,10 @@ private constructor(
              */
             fun snapshotId(snapshotId: JsonField<String>) = apply { this.snapshotId = snapshotId }
 
+            /**
+             * SnapshotName is a synonym for Snapshot, accepted for compatibility with clients that
+             * predate it. Set one or the other.
+             */
             fun snapshotName(snapshotName: String) = snapshotName(JsonField.of(snapshotName))
 
             /**
@@ -1379,6 +1462,7 @@ private constructor(
                     preserveMemoryOnStop,
                     proxyConfig,
                     restoreMemory,
+                    snapshot,
                     snapshotId,
                     snapshotName,
                     (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
@@ -1415,6 +1499,7 @@ private constructor(
             preserveMemoryOnStop()
             proxyConfig().ifPresent { it.validate() }
             restoreMemory()
+            snapshot()
             snapshotId()
             snapshotName()
             tagValueIds()
@@ -1450,6 +1535,7 @@ private constructor(
                 (if (preserveMemoryOnStop.asKnown().isPresent) 1 else 0) +
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (restoreMemory.asKnown().isPresent) 1 else 0) +
+                (if (snapshot.asKnown().isPresent) 1 else 0) +
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
                 (if (snapshotName.asKnown().isPresent) 1 else 0) +
                 (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
@@ -1473,6 +1559,7 @@ private constructor(
                 preserveMemoryOnStop == other.preserveMemoryOnStop &&
                 proxyConfig == other.proxyConfig &&
                 restoreMemory == other.restoreMemory &&
+                snapshot == other.snapshot &&
                 snapshotId == other.snapshotId &&
                 snapshotName == other.snapshotName &&
                 tagValueIds == other.tagValueIds &&
@@ -1494,6 +1581,7 @@ private constructor(
                 preserveMemoryOnStop,
                 proxyConfig,
                 restoreMemory,
+                snapshot,
                 snapshotId,
                 snapshotName,
                 tagValueIds,
@@ -1505,7 +1593,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshot=$snapshot, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class EnvVars

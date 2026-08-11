@@ -285,6 +285,7 @@ internal class BoxServiceAsyncTest {
                             .build()
                     )
                     .restoreMemory(true)
+                    .snapshot("snapshot")
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
                     .addTagValueId("string")
@@ -513,6 +514,7 @@ internal class BoxServiceAsyncTest {
                             .putAdditionalProperty("foo", JsonValue.from("string"))
                             .build()
                     )
+                    .tag("tag")
                     .build()
             )
 

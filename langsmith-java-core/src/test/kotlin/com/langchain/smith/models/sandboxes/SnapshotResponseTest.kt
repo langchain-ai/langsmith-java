@@ -5,6 +5,7 @@ package com.langchain.smith.models.sandboxes
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -32,6 +33,7 @@ internal class SnapshotResponseTest {
                 .sourceSandboxId("source_sandbox_id")
                 .status("status")
                 .statusMessage("status_message")
+                .addTag("string")
                 .updatedAt("updated_at")
                 .build()
 
@@ -54,6 +56,7 @@ internal class SnapshotResponseTest {
         assertThat(snapshotResponse.sourceSandboxId()).contains("source_sandbox_id")
         assertThat(snapshotResponse.status()).contains("status")
         assertThat(snapshotResponse.statusMessage()).contains("status_message")
+        assertThat(snapshotResponse.tags().getOrNull()).containsExactly("string")
         assertThat(snapshotResponse.updatedAt()).contains("updated_at")
     }
 
@@ -80,6 +83,7 @@ internal class SnapshotResponseTest {
                 .sourceSandboxId("source_sandbox_id")
                 .status("status")
                 .statusMessage("status_message")
+                .addTag("string")
                 .updatedAt("updated_at")
                 .build()
 
