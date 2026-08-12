@@ -24,6 +24,8 @@ class Issue
 private constructor(
     private val id: JsonField<String>,
     private val actions: JsonValue,
+    private val autoResolutionEvidence: JsonValue,
+    private val autoResolutionState: JsonField<String>,
     private val createdAt: JsonField<String>,
     private val description: JsonField<String>,
     private val firstSeenAt: JsonField<String>,
@@ -54,6 +56,12 @@ private constructor(
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("actions") @ExcludeMissing actions: JsonValue = JsonMissing.of(),
+        @JsonProperty("auto_resolution_evidence")
+        @ExcludeMissing
+        autoResolutionEvidence: JsonValue = JsonMissing.of(),
+        @JsonProperty("auto_resolution_state")
+        @ExcludeMissing
+        autoResolutionState: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_at") @ExcludeMissing createdAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("description")
         @ExcludeMissing
@@ -104,6 +112,8 @@ private constructor(
     ) : this(
         id,
         actions,
+        autoResolutionEvidence,
+        autoResolutionState,
         createdAt,
         description,
         firstSeenAt,
@@ -143,6 +153,25 @@ private constructor(
      * ```
      */
     @JsonProperty("actions") @ExcludeMissing fun _actions(): JsonValue = actions
+
+    /**
+     * This arbitrary value can be deserialized into a custom type using the `convert` method:
+     * ```java
+     * MyClass myObject = issue.autoResolutionEvidence().convert(MyClass.class);
+     * ```
+     */
+    @JsonProperty("auto_resolution_evidence")
+    @ExcludeMissing
+    fun _autoResolutionEvidence(): JsonValue = autoResolutionEvidence
+
+    /**
+     * Nil unless eligible: "auto_close" or "prompt". Evidence carries the deciding gate.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun autoResolutionState(): Optional<String> =
+        autoResolutionState.getOptional("auto_resolution_state")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -301,6 +330,16 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [autoResolutionState].
+     *
+     * Unlike [autoResolutionState], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("auto_resolution_state")
+    @ExcludeMissing
+    fun _autoResolutionState(): JsonField<String> = autoResolutionState
 
     /**
      * Returns the raw JSON value of [createdAt].
@@ -492,6 +531,8 @@ private constructor(
 
         private var id: JsonField<String> = JsonMissing.of()
         private var actions: JsonValue = JsonMissing.of()
+        private var autoResolutionEvidence: JsonValue = JsonMissing.of()
+        private var autoResolutionState: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var description: JsonField<String> = JsonMissing.of()
         private var firstSeenAt: JsonField<String> = JsonMissing.of()
@@ -521,6 +562,8 @@ private constructor(
         internal fun from(issue: Issue) = apply {
             id = issue.id
             actions = issue.actions
+            autoResolutionEvidence = issue.autoResolutionEvidence
+            autoResolutionState = issue.autoResolutionState
             createdAt = issue.createdAt
             description = issue.description
             firstSeenAt = issue.firstSeenAt
@@ -558,6 +601,25 @@ private constructor(
         fun id(id: JsonField<String>) = apply { this.id = id }
 
         fun actions(actions: JsonValue) = apply { this.actions = actions }
+
+        fun autoResolutionEvidence(autoResolutionEvidence: JsonValue) = apply {
+            this.autoResolutionEvidence = autoResolutionEvidence
+        }
+
+        /** Nil unless eligible: "auto_close" or "prompt". Evidence carries the deciding gate. */
+        fun autoResolutionState(autoResolutionState: String) =
+            autoResolutionState(JsonField.of(autoResolutionState))
+
+        /**
+         * Sets [Builder.autoResolutionState] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.autoResolutionState] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun autoResolutionState(autoResolutionState: JsonField<String>) = apply {
+            this.autoResolutionState = autoResolutionState
+        }
 
         fun createdAt(createdAt: String) = createdAt(JsonField.of(createdAt))
 
@@ -889,6 +951,8 @@ private constructor(
             Issue(
                 id,
                 actions,
+                autoResolutionEvidence,
+                autoResolutionState,
                 createdAt,
                 description,
                 firstSeenAt,
@@ -932,6 +996,7 @@ private constructor(
         }
 
         id()
+        autoResolutionState()
         createdAt()
         description()
         firstSeenAt()
@@ -972,6 +1037,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
+            (if (autoResolutionState.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (description.asKnown().isPresent) 1 else 0) +
             (if (firstSeenAt.asKnown().isPresent) 1 else 0) +
@@ -1301,6 +1367,8 @@ private constructor(
         return other is Issue &&
             id == other.id &&
             actions == other.actions &&
+            autoResolutionEvidence == other.autoResolutionEvidence &&
+            autoResolutionState == other.autoResolutionState &&
             createdAt == other.createdAt &&
             description == other.description &&
             firstSeenAt == other.firstSeenAt &&
@@ -1331,6 +1399,8 @@ private constructor(
         Objects.hash(
             id,
             actions,
+            autoResolutionEvidence,
+            autoResolutionState,
             createdAt,
             description,
             firstSeenAt,
@@ -1361,5 +1431,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Issue{id=$id, actions=$actions, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
+        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
 }
