@@ -43,7 +43,11 @@ internal class DirectoryServiceAsyncTest {
 
         val future =
             directoryServiceAsync.delete(
-                DirectoryDeleteParams.builder().owner("owner").repo("repo").build()
+                DirectoryDeleteParams.builder()
+                    .owner("owner")
+                    .repo("repo")
+                    .repoType(DirectoryDeleteParams.RepoType.AGENT)
+                    .build()
             )
 
         val response = future.get()

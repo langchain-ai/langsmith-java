@@ -34,7 +34,13 @@ internal class DirectoryServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val directoryService = client.repos().directories()
 
-        directoryService.delete(DirectoryDeleteParams.builder().owner("owner").repo("repo").build())
+        directoryService.delete(
+            DirectoryDeleteParams.builder()
+                .owner("owner")
+                .repo("repo")
+                .repoType(DirectoryDeleteParams.RepoType.AGENT)
+                .build()
+        )
     }
 
     @Disabled("Mock server tests are disabled")
