@@ -17,7 +17,7 @@ import kotlin.jvm.optionals.getOrNull
  * **Beta:** This endpoint is in active development and may change without notice.
  *
  * Returns issues for the authenticated tenant, optionally filtered by session, status, severity,
- * tag, or last modified time.
+ * tag, linked trace, or last modified time.
  */
 class IssueListParams
 private constructor(
@@ -29,6 +29,7 @@ private constructor(
     private val sortBy: SortBy?,
     private val status: Status?,
     private val tag: String?,
+    private val traceId: String?,
     private val updatedAt: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -57,6 +58,9 @@ private constructor(
 
     /** Filter by tag (exact match) */
     fun tag(): Optional<String> = Optional.ofNullable(tag)
+
+    /** Return only issues with a linked run in this trace */
+    fun traceId(): Optional<String> = Optional.ofNullable(traceId)
 
     /** Return only issues updated at or after this RFC3339 timestamp */
     fun updatedAt(): Optional<String> = Optional.ofNullable(updatedAt)
@@ -88,6 +92,7 @@ private constructor(
         private var sortBy: SortBy? = null
         private var status: Status? = null
         private var tag: String? = null
+        private var traceId: String? = null
         private var updatedAt: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -102,6 +107,7 @@ private constructor(
             sortBy = issueListParams.sortBy
             status = issueListParams.status
             tag = issueListParams.tag
+            traceId = issueListParams.traceId
             updatedAt = issueListParams.updatedAt
             additionalHeaders = issueListParams.additionalHeaders.toBuilder()
             additionalQueryParams = issueListParams.additionalQueryParams.toBuilder()
@@ -168,6 +174,12 @@ private constructor(
 
         /** Alias for calling [Builder.tag] with `tag.orElse(null)`. */
         fun tag(tag: Optional<String>) = tag(tag.getOrNull())
+
+        /** Return only issues with a linked run in this trace */
+        fun traceId(traceId: String?) = apply { this.traceId = traceId }
+
+        /** Alias for calling [Builder.traceId] with `traceId.orElse(null)`. */
+        fun traceId(traceId: Optional<String>) = traceId(traceId.getOrNull())
 
         /** Return only issues updated at or after this RFC3339 timestamp */
         fun updatedAt(updatedAt: String?) = apply { this.updatedAt = updatedAt }
@@ -288,6 +300,7 @@ private constructor(
                 sortBy,
                 status,
                 tag,
+                traceId,
                 updatedAt,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -307,6 +320,7 @@ private constructor(
                 sortBy?.let { put("sort_by", it.toString()) }
                 status?.let { put("status", it.toString()) }
                 tag?.let { put("tag", it) }
+                traceId?.let { put("trace_id", it) }
                 updatedAt?.let { put("updated_at", it) }
                 putAll(additionalQueryParams)
             }
@@ -770,6 +784,7 @@ private constructor(
             sortBy == other.sortBy &&
             status == other.status &&
             tag == other.tag &&
+            traceId == other.traceId &&
             updatedAt == other.updatedAt &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -785,11 +800,12 @@ private constructor(
             sortBy,
             status,
             tag,
+            traceId,
             updatedAt,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "IssueListParams{limit=$limit, offset=$offset, sessionId=$sessionId, sessionName=$sessionName, severity=$severity, sortBy=$sortBy, status=$status, tag=$tag, updatedAt=$updatedAt, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "IssueListParams{limit=$limit, offset=$offset, sessionId=$sessionId, sessionName=$sessionName, severity=$severity, sortBy=$sortBy, status=$status, tag=$tag, traceId=$traceId, updatedAt=$updatedAt, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

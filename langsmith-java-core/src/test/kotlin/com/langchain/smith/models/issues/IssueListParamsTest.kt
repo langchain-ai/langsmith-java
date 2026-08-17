@@ -19,6 +19,7 @@ internal class IssueListParamsTest {
             .sortBy(IssueListParams.SortBy.CREATED_AT)
             .status(IssueListParams.Status.OPEN)
             .tag("tag")
+            .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
             .updatedAt("updated_at")
             .build()
     }
@@ -35,6 +36,7 @@ internal class IssueListParamsTest {
                 .sortBy(IssueListParams.SortBy.CREATED_AT)
                 .status(IssueListParams.Status.OPEN)
                 .tag("tag")
+                .traceId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .updatedAt("updated_at")
                 .build()
 
@@ -51,6 +53,7 @@ internal class IssueListParamsTest {
                     .put("sort_by", "created_at")
                     .put("status", "open")
                     .put("tag", "tag")
+                    .put("trace_id", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                     .put("updated_at", "updated_at")
                     .build()
             )
