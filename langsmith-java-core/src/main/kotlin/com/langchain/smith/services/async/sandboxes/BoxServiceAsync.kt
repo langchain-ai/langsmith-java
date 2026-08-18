@@ -6,6 +6,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
+import com.langchain.smith.models.sandboxes.DownloadUrlResponse
 import com.langchain.smith.models.sandboxes.SandboxListResponse
 import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.SandboxStatusResponse
@@ -14,6 +15,7 @@ import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
+import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
@@ -205,6 +207,39 @@ interface BoxServiceAsync {
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<SnapshotResponse>
+
+    /**
+     * Generate a tokenized link that downloads a single file from a sandbox with no further
+     * authentication. This mints a token rather than creating an addressable resource, so it
+     * returns 200 with no Location header. The token pins the sandbox, the file path, and the
+     * response content type and disposition, so a link cannot be repointed at another file. Links
+     * never expire unless expires_in_seconds is set. The link is served from the sandbox service
+     * domain, not the API host.
+     */
+    fun generateDownloadUrl(
+        name: String,
+        params: BoxGenerateDownloadUrlParams,
+    ): CompletableFuture<DownloadUrlResponse> =
+        generateDownloadUrl(name, params, RequestOptions.none())
+
+    /** @see generateDownloadUrl */
+    fun generateDownloadUrl(
+        name: String,
+        params: BoxGenerateDownloadUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<DownloadUrlResponse> =
+        generateDownloadUrl(params.toBuilder().name(name).build(), requestOptions)
+
+    /** @see generateDownloadUrl */
+    fun generateDownloadUrl(
+        params: BoxGenerateDownloadUrlParams
+    ): CompletableFuture<DownloadUrlResponse> = generateDownloadUrl(params, RequestOptions.none())
+
+    /** @see generateDownloadUrl */
+    fun generateDownloadUrl(
+        params: BoxGenerateDownloadUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<DownloadUrlResponse>
 
     /**
      * Create a short-lived JWT for accessing an HTTP service running on a specific port inside a
@@ -547,6 +582,36 @@ interface BoxServiceAsync {
             params: BoxCreateSnapshotParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<SnapshotResponse>>
+
+        /**
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/download-url`, but
+         * is otherwise the same as [BoxServiceAsync.generateDownloadUrl].
+         */
+        fun generateDownloadUrl(
+            name: String,
+            params: BoxGenerateDownloadUrlParams,
+        ): CompletableFuture<HttpResponseFor<DownloadUrlResponse>> =
+            generateDownloadUrl(name, params, RequestOptions.none())
+
+        /** @see generateDownloadUrl */
+        fun generateDownloadUrl(
+            name: String,
+            params: BoxGenerateDownloadUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<DownloadUrlResponse>> =
+            generateDownloadUrl(params.toBuilder().name(name).build(), requestOptions)
+
+        /** @see generateDownloadUrl */
+        fun generateDownloadUrl(
+            params: BoxGenerateDownloadUrlParams
+        ): CompletableFuture<HttpResponseFor<DownloadUrlResponse>> =
+            generateDownloadUrl(params, RequestOptions.none())
+
+        /** @see generateDownloadUrl */
+        fun generateDownloadUrl(
+            params: BoxGenerateDownloadUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<DownloadUrlResponse>>
 
         /**
          * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/service-url`, but is

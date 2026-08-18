@@ -17,6 +17,7 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.sandboxes.DownloadUrlResponse
 import com.langchain.smith.models.sandboxes.SandboxListResponse
 import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.SandboxStatusResponse
@@ -25,6 +26,7 @@ import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
+import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
@@ -76,6 +78,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
     ): SnapshotResponse =
         // post /api/v2/sandboxes/boxes/{name}/snapshot
         withRawResponse().createSnapshot(params, requestOptions).parse()
+
+    override fun generateDownloadUrl(
+        params: BoxGenerateDownloadUrlParams,
+        requestOptions: RequestOptions,
+    ): DownloadUrlResponse =
+        // post /api/v2/sandboxes/boxes/{name}/download-url
+        withRawResponse().generateDownloadUrl(params, requestOptions).parse()
 
     override fun generateServiceUrl(
         params: BoxGenerateServiceUrlParams,
@@ -280,6 +289,44 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
             return errorHandler.handle(response).parseable {
                 response
                     .use { createSnapshotHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val generateDownloadUrlHandler: Handler<DownloadUrlResponse> =
+            jsonHandler<DownloadUrlResponse>(clientOptions.jsonMapper)
+
+        override fun generateDownloadUrl(
+            params: BoxGenerateDownloadUrlParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<DownloadUrlResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("name", params.name().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "api",
+                        "v2",
+                        "sandboxes",
+                        "boxes",
+                        params._pathParam(0),
+                        "download-url",
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { generateDownloadUrlHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

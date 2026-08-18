@@ -6,6 +6,7 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
+import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
@@ -520,6 +521,31 @@ internal class BoxServiceAsyncTest {
 
         val snapshotResponse = snapshotResponseFuture.get()
         snapshotResponse.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun generateDownloadUrl() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val boxServiceAsync = client.sandboxes().boxes()
+
+        val downloadUrlResponseFuture =
+            boxServiceAsync.generateDownloadUrl(
+                BoxGenerateDownloadUrlParams.builder()
+                    .name("name")
+                    .path("path")
+                    .contentDisposition("content_disposition")
+                    .contentType("content_type")
+                    .expiresInSeconds(0L)
+                    .build()
+            )
+
+        val downloadUrlResponse = downloadUrlResponseFuture.get()
+        downloadUrlResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")
