@@ -14,6 +14,7 @@ configurations.configureEach {
     resolutionStrategy.force(
         "ch.qos.logback:logback-classic:1.5.35",
         "ch.qos.logback:logback-core:1.5.35",
+        "org.apache.logging.log4j:log4j-api:2.25.5",
     )
 }
 

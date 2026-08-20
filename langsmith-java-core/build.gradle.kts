@@ -50,8 +50,8 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
     implementation("com.github.luben:zstd-jni:1.5.7-7")
-    implementation("org.apache.httpcomponents.core5:httpcore5:5.2.4")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.3.1")
+    implementation("org.apache.httpcomponents.core5:httpcore5:5.4.3")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.6.4")
 
     // OpenTelemetry dependencies
     api("io.opentelemetry:opentelemetry-api:1.62.0")
@@ -86,7 +86,8 @@ dependencies {
         testImplementation("org.bouncycastle:bcpg-jdk18on:1.84")
         testImplementation("org.bouncycastle:bcpkix-jdk18on:1.84")
         testImplementation("org.bouncycastle:bcprov-jdk18on:1.84")
-        testImplementation("org.apache.logging.log4j:log4j-core:2.25.4")
+        testImplementation("org.apache.logging.log4j:log4j-api:2.25.5")
+        testImplementation("org.apache.logging.log4j:log4j-core:2.25.5")
         testImplementation("org.apache.opennlp:opennlp-tools") { version { require("2.5.9") } }
         testImplementation("com.github.jknack:handlebars") { version { require("4.5.2") } }
         testImplementation("org.codehaus.plexus:plexus-utils:4.0.3")
