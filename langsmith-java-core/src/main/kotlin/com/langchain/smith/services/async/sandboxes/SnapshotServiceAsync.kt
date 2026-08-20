@@ -6,10 +6,10 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.sandboxes.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotListPageAsync
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameResponse
@@ -82,23 +82,25 @@ interface SnapshotServiceAsync {
 
     /**
      * List sandbox snapshots for the authenticated tenant, with optional filtering, sorting, and
-     * pagination.
+     * pagination. Page with page_size and cursor: replay the response's next_cursor until it comes
+     * back null, which is the only signal that no pages remain. Cursors are opaque and only valid
+     * on this endpoint; do not parse or construct one.
      */
-    fun list(): CompletableFuture<SnapshotListResponse> = list(SnapshotListParams.none())
+    fun list(): CompletableFuture<SnapshotListPageAsync> = list(SnapshotListParams.none())
 
     /** @see list */
     fun list(
         params: SnapshotListParams = SnapshotListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SnapshotListResponse>
+    ): CompletableFuture<SnapshotListPageAsync>
 
     /** @see list */
     fun list(
         params: SnapshotListParams = SnapshotListParams.none()
-    ): CompletableFuture<SnapshotListResponse> = list(params, RequestOptions.none())
+    ): CompletableFuture<SnapshotListPageAsync> = list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<SnapshotListResponse> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<SnapshotListPageAsync> =
         list(SnapshotListParams.none(), requestOptions)
 
     /**
@@ -251,25 +253,25 @@ interface SnapshotServiceAsync {
          * Returns a raw HTTP response for `get /api/v2/sandboxes/snapshots`, but is otherwise the
          * same as [SnapshotServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<SnapshotListResponse>> =
+        fun list(): CompletableFuture<HttpResponseFor<SnapshotListPageAsync>> =
             list(SnapshotListParams.none())
 
         /** @see list */
         fun list(
             params: SnapshotListParams = SnapshotListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SnapshotListResponse>>
+        ): CompletableFuture<HttpResponseFor<SnapshotListPageAsync>>
 
         /** @see list */
         fun list(
             params: SnapshotListParams = SnapshotListParams.none()
-        ): CompletableFuture<HttpResponseFor<SnapshotListResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<SnapshotListResponse>> =
+        ): CompletableFuture<HttpResponseFor<SnapshotListPageAsync>> =
             list(SnapshotListParams.none(), requestOptions)
 
         /**

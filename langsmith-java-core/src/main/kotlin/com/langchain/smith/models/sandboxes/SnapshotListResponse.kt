@@ -21,6 +21,8 @@ import kotlin.jvm.optionals.getOrNull
 class SnapshotListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val items: JsonField<List<SnapshotResponse>>,
+    private val nextCursor: JsonField<String>,
     private val offset: JsonField<Long>,
     private val snapshots: JsonField<List<SnapshotResponse>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -28,23 +30,64 @@ private constructor(
 
     @JsonCreator
     private constructor(
+        @JsonProperty("items")
+        @ExcludeMissing
+        items: JsonField<List<SnapshotResponse>> = JsonMissing.of(),
+        @JsonProperty("next_cursor")
+        @ExcludeMissing
+        nextCursor: JsonField<String> = JsonMissing.of(),
         @JsonProperty("offset") @ExcludeMissing offset: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("snapshots")
         @ExcludeMissing
         snapshots: JsonField<List<SnapshotResponse>> = JsonMissing.of(),
-    ) : this(offset, snapshots, mutableMapOf())
+    ) : this(items, nextCursor, offset, snapshots, mutableMapOf())
 
     /**
+     * This page of snapshots.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun items(): Optional<List<SnapshotResponse>> = items.getOptional("items")
+
+    /**
+     * Cursor for the next page, or null on the last page. A non-null value is the only signal that
+     * more pages exist. Treat it as opaque.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun nextCursor(): Optional<String> = nextCursor.getOptional("next_cursor")
+
+    /**
+     * Deprecated: use next_cursor. Offset to request for the next page, or 0 when no pages remain.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun offset(): Optional<Long> = offset.getOptional("offset")
 
     /**
+     * Deprecated: use items. Duplicates items.
+     *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun snapshots(): Optional<List<SnapshotResponse>> = snapshots.getOptional("snapshots")
+
+    /**
+     * Returns the raw JSON value of [items].
+     *
+     * Unlike [items], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("items") @ExcludeMissing fun _items(): JsonField<List<SnapshotResponse>> = items
+
+    /**
+     * Returns the raw JSON value of [nextCursor].
+     *
+     * Unlike [nextCursor], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("next_cursor") @ExcludeMissing fun _nextCursor(): JsonField<String> = nextCursor
 
     /**
      * Returns the raw JSON value of [offset].
@@ -83,17 +126,64 @@ private constructor(
     /** A builder for [SnapshotListResponse]. */
     class Builder internal constructor() {
 
+        private var items: JsonField<MutableList<SnapshotResponse>>? = null
+        private var nextCursor: JsonField<String> = JsonMissing.of()
         private var offset: JsonField<Long> = JsonMissing.of()
         private var snapshots: JsonField<MutableList<SnapshotResponse>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(snapshotListResponse: SnapshotListResponse) = apply {
+            items = snapshotListResponse.items.map { it.toMutableList() }
+            nextCursor = snapshotListResponse.nextCursor
             offset = snapshotListResponse.offset
             snapshots = snapshotListResponse.snapshots.map { it.toMutableList() }
             additionalProperties = snapshotListResponse.additionalProperties.toMutableMap()
         }
 
+        /** This page of snapshots. */
+        fun items(items: List<SnapshotResponse>) = items(JsonField.of(items))
+
+        /**
+         * Sets [Builder.items] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.items] with a well-typed `List<SnapshotResponse>` value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun items(items: JsonField<List<SnapshotResponse>>) = apply {
+            this.items = items.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [SnapshotResponse] to [items].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addItem(item: SnapshotResponse) = apply {
+            items =
+                (items ?: JsonField.of(mutableListOf())).also { checkKnown("items", it).add(item) }
+        }
+
+        /**
+         * Cursor for the next page, or null on the last page. A non-null value is the only signal
+         * that more pages exist. Treat it as opaque.
+         */
+        fun nextCursor(nextCursor: String) = nextCursor(JsonField.of(nextCursor))
+
+        /**
+         * Sets [Builder.nextCursor] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.nextCursor] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun nextCursor(nextCursor: JsonField<String>) = apply { this.nextCursor = nextCursor }
+
+        /**
+         * Deprecated: use next_cursor. Offset to request for the next page, or 0 when no pages
+         * remain.
+         */
         fun offset(offset: Long) = offset(JsonField.of(offset))
 
         /**
@@ -104,6 +194,7 @@ private constructor(
          */
         fun offset(offset: JsonField<Long>) = apply { this.offset = offset }
 
+        /** Deprecated: use items. Duplicates items. */
         fun snapshots(snapshots: List<SnapshotResponse>) = snapshots(JsonField.of(snapshots))
 
         /**
@@ -155,6 +246,8 @@ private constructor(
          */
         fun build(): SnapshotListResponse =
             SnapshotListResponse(
+                (items ?: JsonMissing.of()).map { it.toImmutable() },
+                nextCursor,
                 offset,
                 (snapshots ?: JsonMissing.of()).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
@@ -176,6 +269,8 @@ private constructor(
             return@apply
         }
 
+        items().ifPresent { it.forEach { it.validate() } }
+        nextCursor()
         offset()
         snapshots().ifPresent { it.forEach { it.validate() } }
         validated = true
@@ -196,7 +291,9 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (offset.asKnown().isPresent) 1 else 0) +
+        (items.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+            (if (nextCursor.asKnown().isPresent) 1 else 0) +
+            (if (offset.asKnown().isPresent) 1 else 0) +
             (snapshots.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
     override fun equals(other: Any?): Boolean {
@@ -205,15 +302,19 @@ private constructor(
         }
 
         return other is SnapshotListResponse &&
+            items == other.items &&
+            nextCursor == other.nextCursor &&
             offset == other.offset &&
             snapshots == other.snapshots &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(offset, snapshots, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(items, nextCursor, offset, snapshots, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SnapshotListResponse{offset=$offset, snapshots=$snapshots, additionalProperties=$additionalProperties}"
+        "SnapshotListResponse{items=$items, nextCursor=$nextCursor, offset=$offset, snapshots=$snapshots, additionalProperties=$additionalProperties}"
 }

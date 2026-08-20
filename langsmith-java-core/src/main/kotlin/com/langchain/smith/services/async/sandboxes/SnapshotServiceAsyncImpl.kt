@@ -21,6 +21,7 @@ import com.langchain.smith.models.sandboxes.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotListPageAsync
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameResponse
@@ -58,7 +59,7 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun list(
         params: SnapshotListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SnapshotListResponse> =
+    ): CompletableFuture<SnapshotListPageAsync> =
         // get /api/v2/sandboxes/snapshots
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -159,7 +160,7 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
         override fun list(
             params: SnapshotListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SnapshotListResponse>> {
+        ): CompletableFuture<HttpResponseFor<SnapshotListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -178,6 +179,14 @@ class SnapshotServiceAsyncImpl internal constructor(private val clientOptions: C
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                SnapshotListPageAsync.builder()
+                                    .service(SnapshotServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

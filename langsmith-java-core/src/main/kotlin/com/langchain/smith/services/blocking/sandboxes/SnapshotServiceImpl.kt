@@ -21,6 +21,7 @@ import com.langchain.smith.models.sandboxes.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotListPage
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameResponse
@@ -57,7 +58,7 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
     override fun list(
         params: SnapshotListParams,
         requestOptions: RequestOptions,
-    ): SnapshotListResponse =
+    ): SnapshotListPage =
         // get /api/v2/sandboxes/snapshots
         withRawResponse().list(params, requestOptions).parse()
 
@@ -150,7 +151,7 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
         override fun list(
             params: SnapshotListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<SnapshotListResponse> {
+        ): HttpResponseFor<SnapshotListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -167,6 +168,13 @@ class SnapshotServiceImpl internal constructor(private val clientOptions: Client
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        SnapshotListPage.builder()
+                            .service(SnapshotServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

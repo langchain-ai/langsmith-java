@@ -7,10 +7,10 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.sandboxes.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotListPage
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameResponse
@@ -79,22 +79,24 @@ interface SnapshotService {
 
     /**
      * List sandbox snapshots for the authenticated tenant, with optional filtering, sorting, and
-     * pagination.
+     * pagination. Page with page_size and cursor: replay the response's next_cursor until it comes
+     * back null, which is the only signal that no pages remain. Cursors are opaque and only valid
+     * on this endpoint; do not parse or construct one.
      */
-    fun list(): SnapshotListResponse = list(SnapshotListParams.none())
+    fun list(): SnapshotListPage = list(SnapshotListParams.none())
 
     /** @see list */
     fun list(
         params: SnapshotListParams = SnapshotListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): SnapshotListResponse
+    ): SnapshotListPage
 
     /** @see list */
-    fun list(params: SnapshotListParams = SnapshotListParams.none()): SnapshotListResponse =
+    fun list(params: SnapshotListParams = SnapshotListParams.none()): SnapshotListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): SnapshotListResponse =
+    fun list(requestOptions: RequestOptions): SnapshotListPage =
         list(SnapshotListParams.none(), requestOptions)
 
     /**
@@ -236,24 +238,24 @@ interface SnapshotService {
          * same as [SnapshotService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<SnapshotListResponse> = list(SnapshotListParams.none())
+        fun list(): HttpResponseFor<SnapshotListPage> = list(SnapshotListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: SnapshotListParams = SnapshotListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SnapshotListResponse>
+        ): HttpResponseFor<SnapshotListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: SnapshotListParams = SnapshotListParams.none()
-        ): HttpResponseFor<SnapshotListResponse> = list(params, RequestOptions.none())
+        ): HttpResponseFor<SnapshotListPage> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<SnapshotListResponse> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<SnapshotListPage> =
             list(SnapshotListParams.none(), requestOptions)
 
         /**
