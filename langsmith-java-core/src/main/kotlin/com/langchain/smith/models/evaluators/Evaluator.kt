@@ -2009,15 +2009,8 @@ private constructor(
          */
         fun traceFilter(traceFilter: JsonField<String>) = apply { this.traceFilter = traceFilter }
 
-        fun trajectoryEvaluators(trajectoryEvaluators: List<EvaluatorTopLevel>?) =
-            trajectoryEvaluators(JsonField.ofNullable(trajectoryEvaluators))
-
-        /**
-         * Alias for calling [Builder.trajectoryEvaluators] with
-         * `trajectoryEvaluators.orElse(null)`.
-         */
-        fun trajectoryEvaluators(trajectoryEvaluators: Optional<List<EvaluatorTopLevel>>) =
-            trajectoryEvaluators(trajectoryEvaluators.getOrNull())
+        fun trajectoryEvaluators(trajectoryEvaluators: List<EvaluatorTopLevel>) =
+            trajectoryEvaluators(JsonField.of(trajectoryEvaluators))
 
         /**
          * Sets [Builder.trajectoryEvaluators] to an arbitrary JSON value.
