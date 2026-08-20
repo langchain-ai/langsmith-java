@@ -22,8 +22,11 @@ allprojects {
     version = "0.1.0-beta.18" // x-release-please-version
 
     configurations.matching { it.name.startsWith("dokka") }.configureEach {
-        // Keep Dokka worker classpaths on the same patched version as the buildscript classpath.
-        resolutionStrategy.force("com.fasterxml.jackson.core:jackson-databind:2.18.9")
+        // Keep Dokka worker classpaths on patched transitive dependency versions.
+        resolutionStrategy.force(
+            "com.fasterxml.jackson.core:jackson-databind:2.18.9",
+            "org.jsoup:jsoup:1.23.1",
+        )
     }
 
     configurations.matching { it.name == "kotlinBouncyCastleConfiguration" }.configureEach {
