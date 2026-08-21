@@ -8,7 +8,6 @@ import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
-import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -443,21 +442,9 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val sandboxListResponse =
-            boxService.list(
-                BoxListParams.builder()
-                    .createdBy("created_by")
-                    .addLabel("string")
-                    .limit(0L)
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .sortBy("sort_by")
-                    .sortDirection("sort_direction")
-                    .status("status")
-                    .build()
-            )
+        val page = boxService.list()
 
-        sandboxListResponse.validate()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")

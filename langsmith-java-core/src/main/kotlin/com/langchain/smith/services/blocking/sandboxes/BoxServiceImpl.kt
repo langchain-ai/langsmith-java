@@ -29,6 +29,7 @@ import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListPage
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
@@ -63,7 +64,7 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
         // patch /api/v2/sandboxes/boxes/{name}
         withRawResponse().update(params, requestOptions).parse()
 
-    override fun list(params: BoxListParams, requestOptions: RequestOptions): SandboxListResponse =
+    override fun list(params: BoxListParams, requestOptions: RequestOptions): BoxListPage =
         // get /api/v2/sandboxes/boxes
         withRawResponse().list(params, requestOptions).parse()
 
@@ -217,7 +218,7 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
         override fun list(
             params: BoxListParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<SandboxListResponse> {
+        ): HttpResponseFor<BoxListPage> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -234,6 +235,13 @@ class BoxServiceImpl internal constructor(private val clientOptions: ClientOptio
                         if (requestOptions.responseValidation!!) {
                             it.validate()
                         }
+                    }
+                    .let {
+                        BoxListPage.builder()
+                            .service(BoxServiceImpl(clientOptions))
+                            .params(params)
+                            .response(it)
+                            .build()
                     }
             }
         }

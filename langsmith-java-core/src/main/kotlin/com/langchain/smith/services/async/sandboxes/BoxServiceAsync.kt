@@ -7,7 +7,6 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.sandboxes.DownloadUrlResponse
-import com.langchain.smith.models.sandboxes.SandboxListResponse
 import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.SandboxStatusResponse
 import com.langchain.smith.models.sandboxes.ServiceUrlResponse
@@ -18,6 +17,7 @@ import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListPageAsync
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
@@ -135,22 +135,24 @@ interface BoxServiceAsync {
 
     /**
      * List sandboxes for the authenticated tenant, with optional filtering, sorting, and
-     * pagination.
+     * pagination. Page with page_size and cursor: replay the response's next_cursor until it comes
+     * back null, which is the only signal that no pages remain. Cursors are opaque and only valid
+     * on this endpoint; do not parse or construct one.
      */
-    fun list(): CompletableFuture<SandboxListResponse> = list(BoxListParams.none())
+    fun list(): CompletableFuture<BoxListPageAsync> = list(BoxListParams.none())
 
     /** @see list */
     fun list(
         params: BoxListParams = BoxListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<SandboxListResponse>
+    ): CompletableFuture<BoxListPageAsync>
 
     /** @see list */
-    fun list(params: BoxListParams = BoxListParams.none()): CompletableFuture<SandboxListResponse> =
+    fun list(params: BoxListParams = BoxListParams.none()): CompletableFuture<BoxListPageAsync> =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): CompletableFuture<SandboxListResponse> =
+    fun list(requestOptions: RequestOptions): CompletableFuture<BoxListPageAsync> =
         list(BoxListParams.none(), requestOptions)
 
     /**
@@ -501,25 +503,25 @@ interface BoxServiceAsync {
          * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes`, but is otherwise the same
          * as [BoxServiceAsync.list].
          */
-        fun list(): CompletableFuture<HttpResponseFor<SandboxListResponse>> =
+        fun list(): CompletableFuture<HttpResponseFor<BoxListPageAsync>> =
             list(BoxListParams.none())
 
         /** @see list */
         fun list(
             params: BoxListParams = BoxListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<SandboxListResponse>>
+        ): CompletableFuture<HttpResponseFor<BoxListPageAsync>>
 
         /** @see list */
         fun list(
             params: BoxListParams = BoxListParams.none()
-        ): CompletableFuture<HttpResponseFor<SandboxListResponse>> =
+        ): CompletableFuture<HttpResponseFor<BoxListPageAsync>> =
             list(params, RequestOptions.none())
 
         /** @see list */
         fun list(
             requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<SandboxListResponse>> =
+        ): CompletableFuture<HttpResponseFor<BoxListPageAsync>> =
             list(BoxListParams.none(), requestOptions)
 
         /**

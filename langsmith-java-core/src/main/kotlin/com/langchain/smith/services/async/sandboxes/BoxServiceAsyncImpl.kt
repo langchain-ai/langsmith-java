@@ -29,6 +29,7 @@ import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListPageAsync
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
@@ -74,7 +75,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
     override fun list(
         params: BoxListParams,
         requestOptions: RequestOptions,
-    ): CompletableFuture<SandboxListResponse> =
+    ): CompletableFuture<BoxListPageAsync> =
         // get /api/v2/sandboxes/boxes
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
@@ -244,7 +245,7 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
         override fun list(
             params: BoxListParams,
             requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<SandboxListResponse>> {
+        ): CompletableFuture<HttpResponseFor<BoxListPageAsync>> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
@@ -263,6 +264,14 @@ class BoxServiceAsyncImpl internal constructor(private val clientOptions: Client
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()
                                 }
+                            }
+                            .let {
+                                BoxListPageAsync.builder()
+                                    .service(BoxServiceAsyncImpl(clientOptions))
+                                    .streamHandlerExecutor(clientOptions.streamHandlerExecutor)
+                                    .params(params)
+                                    .response(it)
+                                    .build()
                             }
                     }
                 }

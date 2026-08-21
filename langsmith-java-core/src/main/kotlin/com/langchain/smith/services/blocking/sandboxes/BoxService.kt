@@ -8,7 +8,6 @@ import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.models.sandboxes.DownloadUrlResponse
-import com.langchain.smith.models.sandboxes.SandboxListResponse
 import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.SandboxStatusResponse
 import com.langchain.smith.models.sandboxes.ServiceUrlResponse
@@ -19,6 +18,7 @@ import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListPage
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
@@ -127,22 +127,24 @@ interface BoxService {
 
     /**
      * List sandboxes for the authenticated tenant, with optional filtering, sorting, and
-     * pagination.
+     * pagination. Page with page_size and cursor: replay the response's next_cursor until it comes
+     * back null, which is the only signal that no pages remain. Cursors are opaque and only valid
+     * on this endpoint; do not parse or construct one.
      */
-    fun list(): SandboxListResponse = list(BoxListParams.none())
+    fun list(): BoxListPage = list(BoxListParams.none())
 
     /** @see list */
     fun list(
         params: BoxListParams = BoxListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): SandboxListResponse
+    ): BoxListPage
 
     /** @see list */
-    fun list(params: BoxListParams = BoxListParams.none()): SandboxListResponse =
+    fun list(params: BoxListParams = BoxListParams.none()): BoxListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): SandboxListResponse =
+    fun list(requestOptions: RequestOptions): BoxListPage =
         list(BoxListParams.none(), requestOptions)
 
     /**
@@ -474,24 +476,23 @@ interface BoxService {
          * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes`, but is otherwise the same
          * as [BoxService.list].
          */
-        @MustBeClosed fun list(): HttpResponseFor<SandboxListResponse> = list(BoxListParams.none())
+        @MustBeClosed fun list(): HttpResponseFor<BoxListPage> = list(BoxListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: BoxListParams = BoxListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SandboxListResponse>
+        ): HttpResponseFor<BoxListPage>
 
         /** @see list */
         @MustBeClosed
-        fun list(
-            params: BoxListParams = BoxListParams.none()
-        ): HttpResponseFor<SandboxListResponse> = list(params, RequestOptions.none())
+        fun list(params: BoxListParams = BoxListParams.none()): HttpResponseFor<BoxListPage> =
+            list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<SandboxListResponse> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<BoxListPage> =
             list(BoxListParams.none(), requestOptions)
 
         /**
