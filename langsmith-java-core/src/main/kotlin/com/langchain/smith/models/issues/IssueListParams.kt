@@ -38,7 +38,7 @@ private constructor(
     /** Page size (positive integer; defaults to 50, capped at 500) */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
-    /** Page offset (non-negative integer) */
+    /** Page offset (non-negative integer; at most 100000) */
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
     /** Filter by session ID (UUID) */
@@ -126,7 +126,7 @@ private constructor(
         /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
         fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
 
-        /** Page offset (non-negative integer) */
+        /** Page offset (non-negative integer; at most 100000) */
         fun offset(offset: Long?) = apply { this.offset = offset }
 
         /**
