@@ -8,6 +8,7 @@ import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.Params
 import com.langchain.smith.core.http.Headers
 import com.langchain.smith.core.http.QueryParams
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Objects
 import java.util.Optional
@@ -21,19 +22,25 @@ import kotlin.jvm.optionals.getOrNull
  */
 class IssueListParams
 private constructor(
+    private val activity: List<Activity>?,
     private val limit: Long?,
     private val offset: Long?,
     private val sessionId: String?,
     private val sessionName: String?,
     private val severity: Severity?,
+    private val severityExact: List<SeverityExact>?,
     private val sortBy: SortBy?,
     private val status: Status?,
+    private val statusFirst: Boolean?,
     private val tag: String?,
     private val traceId: String?,
     private val updatedAt: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    /** Filter by Engine activity (repeatable; OR semantics) */
+    fun activity(): Optional<List<Activity>> = Optional.ofNullable(activity)
 
     /** Page size (positive integer; defaults to 50, capped at 500) */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
@@ -50,11 +57,17 @@ private constructor(
     /** Filter by severity */
     fun severity(): Optional<Severity> = Optional.ofNullable(severity)
 
+    /** Filter by exact severity (repeatable; OR semantics) */
+    fun severityExact(): Optional<List<SeverityExact>> = Optional.ofNullable(severityExact)
+
     /** Sort field */
     fun sortBy(): Optional<SortBy> = Optional.ofNullable(sortBy)
 
     /** Filter by status */
     fun status(): Optional<Status> = Optional.ofNullable(status)
+
+    /** Group results by issue lifecycle status before applying sort_by */
+    fun statusFirst(): Optional<Boolean> = Optional.ofNullable(statusFirst)
 
     /** Filter by tag (exact match) */
     fun tag(): Optional<String> = Optional.ofNullable(tag)
@@ -84,13 +97,16 @@ private constructor(
     /** A builder for [IssueListParams]. */
     class Builder internal constructor() {
 
+        private var activity: MutableList<Activity>? = null
         private var limit: Long? = null
         private var offset: Long? = null
         private var sessionId: String? = null
         private var sessionName: String? = null
         private var severity: Severity? = null
+        private var severityExact: MutableList<SeverityExact>? = null
         private var sortBy: SortBy? = null
         private var status: Status? = null
+        private var statusFirst: Boolean? = null
         private var tag: String? = null
         private var traceId: String? = null
         private var updatedAt: String? = null
@@ -99,18 +115,38 @@ private constructor(
 
         @JvmSynthetic
         internal fun from(issueListParams: IssueListParams) = apply {
+            activity = issueListParams.activity?.toMutableList()
             limit = issueListParams.limit
             offset = issueListParams.offset
             sessionId = issueListParams.sessionId
             sessionName = issueListParams.sessionName
             severity = issueListParams.severity
+            severityExact = issueListParams.severityExact?.toMutableList()
             sortBy = issueListParams.sortBy
             status = issueListParams.status
+            statusFirst = issueListParams.statusFirst
             tag = issueListParams.tag
             traceId = issueListParams.traceId
             updatedAt = issueListParams.updatedAt
             additionalHeaders = issueListParams.additionalHeaders.toBuilder()
             additionalQueryParams = issueListParams.additionalQueryParams.toBuilder()
+        }
+
+        /** Filter by Engine activity (repeatable; OR semantics) */
+        fun activity(activity: List<Activity>?) = apply {
+            this.activity = activity?.toMutableList()
+        }
+
+        /** Alias for calling [Builder.activity] with `activity.orElse(null)`. */
+        fun activity(activity: Optional<List<Activity>>) = activity(activity.getOrNull())
+
+        /**
+         * Adds a single [Activity] to [Builder.activity].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addActivity(activity: Activity) = apply {
+            this.activity = (this.activity ?: mutableListOf()).apply { add(activity) }
         }
 
         /** Page size (positive integer; defaults to 50, capped at 500) */
@@ -157,6 +193,25 @@ private constructor(
         /** Alias for calling [Builder.severity] with `severity.orElse(null)`. */
         fun severity(severity: Optional<Severity>) = severity(severity.getOrNull())
 
+        /** Filter by exact severity (repeatable; OR semantics) */
+        fun severityExact(severityExact: List<SeverityExact>?) = apply {
+            this.severityExact = severityExact?.toMutableList()
+        }
+
+        /** Alias for calling [Builder.severityExact] with `severityExact.orElse(null)`. */
+        fun severityExact(severityExact: Optional<List<SeverityExact>>) =
+            severityExact(severityExact.getOrNull())
+
+        /**
+         * Adds a single [SeverityExact] to [Builder.severityExact].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addSeverityExact(severityExact: SeverityExact) = apply {
+            this.severityExact =
+                (this.severityExact ?: mutableListOf()).apply { add(severityExact) }
+        }
+
         /** Sort field */
         fun sortBy(sortBy: SortBy?) = apply { this.sortBy = sortBy }
 
@@ -168,6 +223,19 @@ private constructor(
 
         /** Alias for calling [Builder.status] with `status.orElse(null)`. */
         fun status(status: Optional<Status>) = status(status.getOrNull())
+
+        /** Group results by issue lifecycle status before applying sort_by */
+        fun statusFirst(statusFirst: Boolean?) = apply { this.statusFirst = statusFirst }
+
+        /**
+         * Alias for [Builder.statusFirst].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun statusFirst(statusFirst: Boolean) = statusFirst(statusFirst as Boolean?)
+
+        /** Alias for calling [Builder.statusFirst] with `statusFirst.orElse(null)`. */
+        fun statusFirst(statusFirst: Optional<Boolean>) = statusFirst(statusFirst.getOrNull())
 
         /** Filter by tag (exact match) */
         fun tag(tag: String?) = apply { this.tag = tag }
@@ -292,13 +360,16 @@ private constructor(
          */
         fun build(): IssueListParams =
             IssueListParams(
+                activity?.toImmutable(),
                 limit,
                 offset,
                 sessionId,
                 sessionName,
                 severity,
+                severityExact?.toImmutable(),
                 sortBy,
                 status,
+                statusFirst,
                 tag,
                 traceId,
                 updatedAt,
@@ -312,19 +383,164 @@ private constructor(
     override fun _queryParams(): QueryParams =
         QueryParams.builder()
             .apply {
+                activity?.forEach { put("activity", it.toString()) }
                 limit?.let { put("limit", it.toString()) }
                 offset?.let { put("offset", it.toString()) }
                 sessionId?.let { put("session_id", it) }
                 sessionName?.let { put("session_name", it) }
                 severity?.let { put("severity", it.toString()) }
+                severityExact?.forEach { put("severity_exact", it.toString()) }
                 sortBy?.let { put("sort_by", it.toString()) }
                 status?.let { put("status", it.toString()) }
+                statusFirst?.let { put("status_first", it.toString()) }
                 tag?.let { put("tag", it) }
                 traceId?.let { put("trace_id", it) }
                 updatedAt?.let { put("updated_at", it) }
                 putAll(additionalQueryParams)
             }
             .build()
+
+    class Activity @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val FIXING = of("fixing")
+
+            @JvmField val WATCHING = of("watching")
+
+            @JvmField val RECURRED = of("recurred")
+
+            @JvmStatic fun of(value: String) = Activity(JsonField.of(value))
+        }
+
+        /** An enum containing [Activity]'s known values. */
+        enum class Known {
+            FIXING,
+            WATCHING,
+            RECURRED,
+        }
+
+        /**
+         * An enum containing [Activity]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Activity] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            FIXING,
+            WATCHING,
+            RECURRED,
+            /** An enum member indicating that [Activity] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                FIXING -> Value.FIXING
+                WATCHING -> Value.WATCHING
+                RECURRED -> Value.RECURRED
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                FIXING -> Known.FIXING
+                WATCHING -> Known.WATCHING
+                RECURRED -> Known.RECURRED
+                else -> throw LangChainInvalidDataException("Unknown Activity: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Activity = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Activity && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     /** Filter by severity */
     class Severity @JsonCreator private constructor(private val value: JsonField<Long>) : Enum {
@@ -472,6 +688,155 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    class SeverityExact @JsonCreator private constructor(private val value: JsonField<Long>) :
+        Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<Long> = value
+
+        companion object {
+
+            @JvmField val _0 = of(0L)
+
+            @JvmField val _1 = of(1L)
+
+            @JvmField val _2 = of(2L)
+
+            @JvmField val _3 = of(3L)
+
+            @JvmStatic fun of(value: Long) = SeverityExact(JsonField.of(value))
+        }
+
+        /** An enum containing [SeverityExact]'s known values. */
+        enum class Known {
+            _0,
+            _1,
+            _2,
+            _3,
+        }
+
+        /**
+         * An enum containing [SeverityExact]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [SeverityExact] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            _0,
+            _1,
+            _2,
+            _3,
+            /**
+             * An enum member indicating that [SeverityExact] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                _0 -> Value._0
+                _1 -> Value._1
+                _2 -> Value._2
+                _3 -> Value._3
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                _0 -> Known._0
+                _1 -> Known._1
+                _2 -> Known._2
+                _3 -> Known._3
+                else -> throw LangChainInvalidDataException("Unknown SeverityExact: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asLong(): Long =
+            _value().asNumber().getOrNull()?.let {
+                if (it.toDouble() % 1 == 0.0) it.toLong() else null
+            } ?: throw LangChainInvalidDataException("Value is not a Long")
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): SeverityExact = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is SeverityExact && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     /** Sort field */
     class SortBy @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -487,9 +852,17 @@ private constructor(
 
         companion object {
 
+            @JvmField val DEFAULT = of("default")
+
             @JvmField val CREATED_AT = of("created_at")
 
             @JvmField val UPDATED_AT = of("updated_at")
+
+            @JvmField val LAST_SEEN = of("last_seen")
+
+            @JvmField val LAST_UPDATED = of("last_updated")
+
+            @JvmField val TRACE_COUNT = of("trace_count")
 
             @JvmField val SEVERITY = of("severity")
 
@@ -498,8 +871,12 @@ private constructor(
 
         /** An enum containing [SortBy]'s known values. */
         enum class Known {
+            DEFAULT,
             CREATED_AT,
             UPDATED_AT,
+            LAST_SEEN,
+            LAST_UPDATED,
+            TRACE_COUNT,
             SEVERITY,
         }
 
@@ -513,8 +890,12 @@ private constructor(
          * - It was constructed with an arbitrary value using the [of] method.
          */
         enum class Value {
+            DEFAULT,
             CREATED_AT,
             UPDATED_AT,
+            LAST_SEEN,
+            LAST_UPDATED,
+            TRACE_COUNT,
             SEVERITY,
             /** An enum member indicating that [SortBy] was instantiated with an unknown value. */
             _UNKNOWN,
@@ -529,8 +910,12 @@ private constructor(
          */
         fun value(): Value =
             when (this) {
+                DEFAULT -> Value.DEFAULT
                 CREATED_AT -> Value.CREATED_AT
                 UPDATED_AT -> Value.UPDATED_AT
+                LAST_SEEN -> Value.LAST_SEEN
+                LAST_UPDATED -> Value.LAST_UPDATED
+                TRACE_COUNT -> Value.TRACE_COUNT
                 SEVERITY -> Value.SEVERITY
                 else -> Value._UNKNOWN
             }
@@ -546,8 +931,12 @@ private constructor(
          */
         fun known(): Known =
             when (this) {
+                DEFAULT -> Known.DEFAULT
                 CREATED_AT -> Known.CREATED_AT
                 UPDATED_AT -> Known.UPDATED_AT
+                LAST_SEEN -> Known.LAST_SEEN
+                LAST_UPDATED -> Known.LAST_UPDATED
+                TRACE_COUNT -> Known.TRACE_COUNT
                 SEVERITY -> Known.SEVERITY
                 else -> throw LangChainInvalidDataException("Unknown SortBy: $value")
             }
@@ -776,13 +1165,16 @@ private constructor(
         }
 
         return other is IssueListParams &&
+            activity == other.activity &&
             limit == other.limit &&
             offset == other.offset &&
             sessionId == other.sessionId &&
             sessionName == other.sessionName &&
             severity == other.severity &&
+            severityExact == other.severityExact &&
             sortBy == other.sortBy &&
             status == other.status &&
+            statusFirst == other.statusFirst &&
             tag == other.tag &&
             traceId == other.traceId &&
             updatedAt == other.updatedAt &&
@@ -792,13 +1184,16 @@ private constructor(
 
     override fun hashCode(): Int =
         Objects.hash(
+            activity,
             limit,
             offset,
             sessionId,
             sessionName,
             severity,
+            severityExact,
             sortBy,
             status,
+            statusFirst,
             tag,
             traceId,
             updatedAt,
@@ -807,5 +1202,5 @@ private constructor(
         )
 
     override fun toString() =
-        "IssueListParams{limit=$limit, offset=$offset, sessionId=$sessionId, sessionName=$sessionName, severity=$severity, sortBy=$sortBy, status=$status, tag=$tag, traceId=$traceId, updatedAt=$updatedAt, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "IssueListParams{activity=$activity, limit=$limit, offset=$offset, sessionId=$sessionId, sessionName=$sessionName, severity=$severity, severityExact=$severityExact, sortBy=$sortBy, status=$status, statusFirst=$statusFirst, tag=$tag, traceId=$traceId, updatedAt=$updatedAt, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
