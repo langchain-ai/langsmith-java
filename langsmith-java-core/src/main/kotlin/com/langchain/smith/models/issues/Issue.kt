@@ -14,6 +14,7 @@ import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
+import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -35,6 +36,7 @@ private constructor(
     private val fixPrompt: JsonField<String>,
     private val fixVerification: JsonValue,
     private val lastSeenAt: JsonField<String>,
+    private val linearSync: JsonField<LinearSync>,
     private val name: JsonField<String>,
     private val proposedContextFixes: JsonField<List<JsonValue>>,
     private val proposedExamples: JsonField<List<JsonValue>>,
@@ -83,6 +85,9 @@ private constructor(
         @JsonProperty("last_seen_at")
         @ExcludeMissing
         lastSeenAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("linear_sync")
+        @ExcludeMissing
+        linearSync: JsonField<LinearSync> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
         @JsonProperty("proposed_context_fixes")
         @ExcludeMissing
@@ -123,6 +128,7 @@ private constructor(
         fixPrompt,
         fixVerification,
         lastSeenAt,
+        linearSync,
         name,
         proposedContextFixes,
         proposedExamples,
@@ -230,6 +236,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun lastSeenAt(): Optional<String> = lastSeenAt.getOptional("last_seen_at")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun linearSync(): Optional<LinearSync> = linearSync.getOptional("linear_sync")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -402,6 +414,15 @@ private constructor(
     @JsonProperty("last_seen_at") @ExcludeMissing fun _lastSeenAt(): JsonField<String> = lastSeenAt
 
     /**
+     * Returns the raw JSON value of [linearSync].
+     *
+     * Unlike [linearSync], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("linear_sync")
+    @ExcludeMissing
+    fun _linearSync(): JsonField<LinearSync> = linearSync
+
+    /**
      * Returns the raw JSON value of [name].
      *
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
@@ -542,6 +563,7 @@ private constructor(
         private var fixPrompt: JsonField<String> = JsonMissing.of()
         private var fixVerification: JsonValue = JsonMissing.of()
         private var lastSeenAt: JsonField<String> = JsonMissing.of()
+        private var linearSync: JsonField<LinearSync> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var proposedContextFixes: JsonField<MutableList<JsonValue>>? = null
         private var proposedExamples: JsonField<MutableList<JsonValue>>? = null
@@ -573,6 +595,7 @@ private constructor(
             fixPrompt = issue.fixPrompt
             fixVerification = issue.fixVerification
             lastSeenAt = issue.lastSeenAt
+            linearSync = issue.linearSync
             name = issue.name
             proposedContextFixes = issue.proposedContextFixes.map { it.toMutableList() }
             proposedExamples = issue.proposedExamples.map { it.toMutableList() }
@@ -715,6 +738,17 @@ private constructor(
          * value.
          */
         fun lastSeenAt(lastSeenAt: JsonField<String>) = apply { this.lastSeenAt = lastSeenAt }
+
+        fun linearSync(linearSync: LinearSync) = linearSync(JsonField.of(linearSync))
+
+        /**
+         * Sets [Builder.linearSync] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.linearSync] with a well-typed [LinearSync] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun linearSync(linearSync: JsonField<LinearSync>) = apply { this.linearSync = linearSync }
 
         fun name(name: String) = name(JsonField.of(name))
 
@@ -962,6 +996,7 @@ private constructor(
                 fixPrompt,
                 fixVerification,
                 lastSeenAt,
+                linearSync,
                 name,
                 (proposedContextFixes ?: JsonMissing.of()).map { it.toImmutable() },
                 (proposedExamples ?: JsonMissing.of()).map { it.toImmutable() },
@@ -1005,6 +1040,7 @@ private constructor(
         fixPrNumber()
         fixPrompt()
         lastSeenAt()
+        linearSync().ifPresent { it.validate() }
         name()
         proposedContextFixes()
         proposedExamples()
@@ -1046,6 +1082,7 @@ private constructor(
             (if (fixPrNumber.asKnown().isPresent) 1 else 0) +
             (if (fixPrompt.asKnown().isPresent) 1 else 0) +
             (if (lastSeenAt.asKnown().isPresent) 1 else 0) +
+            (linearSync.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (proposedContextFixes.asKnown().getOrNull()?.size ?: 0) +
             (proposedExamples.asKnown().getOrNull()?.size ?: 0) +
@@ -1059,6 +1096,592 @@ private constructor(
             (if (tenantId.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (watchingSince.asKnown().isPresent) 1 else 0)
+
+    class LinearSync
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val identifier: JsonField<String>,
+        private val issueId: JsonField<String>,
+        private val lastAttemptedAt: JsonField<OffsetDateTime>,
+        private val lastError: JsonField<String>,
+        private val lastSyncedAt: JsonField<OffsetDateTime>,
+        private val linearIssueId: JsonField<String>,
+        private val state: JsonField<State>,
+        private val url: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("identifier")
+            @ExcludeMissing
+            identifier: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("issue_id") @ExcludeMissing issueId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("last_attempted_at")
+            @ExcludeMissing
+            lastAttemptedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("last_error")
+            @ExcludeMissing
+            lastError: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("last_synced_at")
+            @ExcludeMissing
+            lastSyncedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+            @JsonProperty("linear_issue_id")
+            @ExcludeMissing
+            linearIssueId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("state") @ExcludeMissing state: JsonField<State> = JsonMissing.of(),
+            @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
+        ) : this(
+            identifier,
+            issueId,
+            lastAttemptedAt,
+            lastError,
+            lastSyncedAt,
+            linearIssueId,
+            state,
+            url,
+            mutableMapOf(),
+        )
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun identifier(): Optional<String> = identifier.getOptional("identifier")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun issueId(): Optional<String> = issueId.getOptional("issue_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun lastAttemptedAt(): Optional<OffsetDateTime> =
+            lastAttemptedAt.getOptional("last_attempted_at")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun lastError(): Optional<String> = lastError.getOptional("last_error")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun lastSyncedAt(): Optional<OffsetDateTime> = lastSyncedAt.getOptional("last_synced_at")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun linearIssueId(): Optional<String> = linearIssueId.getOptional("linear_issue_id")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun state(): Optional<State> = state.getOptional("state")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun url(): Optional<String> = url.getOptional("url")
+
+        /**
+         * Returns the raw JSON value of [identifier].
+         *
+         * Unlike [identifier], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("identifier")
+        @ExcludeMissing
+        fun _identifier(): JsonField<String> = identifier
+
+        /**
+         * Returns the raw JSON value of [issueId].
+         *
+         * Unlike [issueId], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("issue_id") @ExcludeMissing fun _issueId(): JsonField<String> = issueId
+
+        /**
+         * Returns the raw JSON value of [lastAttemptedAt].
+         *
+         * Unlike [lastAttemptedAt], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("last_attempted_at")
+        @ExcludeMissing
+        fun _lastAttemptedAt(): JsonField<OffsetDateTime> = lastAttemptedAt
+
+        /**
+         * Returns the raw JSON value of [lastError].
+         *
+         * Unlike [lastError], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("last_error") @ExcludeMissing fun _lastError(): JsonField<String> = lastError
+
+        /**
+         * Returns the raw JSON value of [lastSyncedAt].
+         *
+         * Unlike [lastSyncedAt], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("last_synced_at")
+        @ExcludeMissing
+        fun _lastSyncedAt(): JsonField<OffsetDateTime> = lastSyncedAt
+
+        /**
+         * Returns the raw JSON value of [linearIssueId].
+         *
+         * Unlike [linearIssueId], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("linear_issue_id")
+        @ExcludeMissing
+        fun _linearIssueId(): JsonField<String> = linearIssueId
+
+        /**
+         * Returns the raw JSON value of [state].
+         *
+         * Unlike [state], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("state") @ExcludeMissing fun _state(): JsonField<State> = state
+
+        /**
+         * Returns the raw JSON value of [url].
+         *
+         * Unlike [url], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("url") @ExcludeMissing fun _url(): JsonField<String> = url
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [LinearSync]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [LinearSync]. */
+        class Builder internal constructor() {
+
+            private var identifier: JsonField<String> = JsonMissing.of()
+            private var issueId: JsonField<String> = JsonMissing.of()
+            private var lastAttemptedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var lastError: JsonField<String> = JsonMissing.of()
+            private var lastSyncedAt: JsonField<OffsetDateTime> = JsonMissing.of()
+            private var linearIssueId: JsonField<String> = JsonMissing.of()
+            private var state: JsonField<State> = JsonMissing.of()
+            private var url: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(linearSync: LinearSync) = apply {
+                identifier = linearSync.identifier
+                issueId = linearSync.issueId
+                lastAttemptedAt = linearSync.lastAttemptedAt
+                lastError = linearSync.lastError
+                lastSyncedAt = linearSync.lastSyncedAt
+                linearIssueId = linearSync.linearIssueId
+                state = linearSync.state
+                url = linearSync.url
+                additionalProperties = linearSync.additionalProperties.toMutableMap()
+            }
+
+            fun identifier(identifier: String) = identifier(JsonField.of(identifier))
+
+            /**
+             * Sets [Builder.identifier] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.identifier] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun identifier(identifier: JsonField<String>) = apply { this.identifier = identifier }
+
+            fun issueId(issueId: String) = issueId(JsonField.of(issueId))
+
+            /**
+             * Sets [Builder.issueId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.issueId] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun issueId(issueId: JsonField<String>) = apply { this.issueId = issueId }
+
+            fun lastAttemptedAt(lastAttemptedAt: OffsetDateTime) =
+                lastAttemptedAt(JsonField.of(lastAttemptedAt))
+
+            /**
+             * Sets [Builder.lastAttemptedAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.lastAttemptedAt] with a well-typed [OffsetDateTime]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun lastAttemptedAt(lastAttemptedAt: JsonField<OffsetDateTime>) = apply {
+                this.lastAttemptedAt = lastAttemptedAt
+            }
+
+            fun lastError(lastError: String) = lastError(JsonField.of(lastError))
+
+            /**
+             * Sets [Builder.lastError] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.lastError] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun lastError(lastError: JsonField<String>) = apply { this.lastError = lastError }
+
+            fun lastSyncedAt(lastSyncedAt: OffsetDateTime) =
+                lastSyncedAt(JsonField.of(lastSyncedAt))
+
+            /**
+             * Sets [Builder.lastSyncedAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.lastSyncedAt] with a well-typed [OffsetDateTime]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun lastSyncedAt(lastSyncedAt: JsonField<OffsetDateTime>) = apply {
+                this.lastSyncedAt = lastSyncedAt
+            }
+
+            fun linearIssueId(linearIssueId: String) = linearIssueId(JsonField.of(linearIssueId))
+
+            /**
+             * Sets [Builder.linearIssueId] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.linearIssueId] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun linearIssueId(linearIssueId: JsonField<String>) = apply {
+                this.linearIssueId = linearIssueId
+            }
+
+            fun state(state: State) = state(JsonField.of(state))
+
+            /**
+             * Sets [Builder.state] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.state] with a well-typed [State] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun state(state: JsonField<State>) = apply { this.state = state }
+
+            fun url(url: String) = url(JsonField.of(url))
+
+            /**
+             * Sets [Builder.url] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.url] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun url(url: JsonField<String>) = apply { this.url = url }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [LinearSync].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): LinearSync =
+                LinearSync(
+                    identifier,
+                    issueId,
+                    lastAttemptedAt,
+                    lastError,
+                    lastSyncedAt,
+                    linearIssueId,
+                    state,
+                    url,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): LinearSync = apply {
+            if (validated) {
+                return@apply
+            }
+
+            identifier()
+            issueId()
+            lastAttemptedAt()
+            lastError()
+            lastSyncedAt()
+            linearIssueId()
+            state().ifPresent { it.validate() }
+            url()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (if (identifier.asKnown().isPresent) 1 else 0) +
+                (if (issueId.asKnown().isPresent) 1 else 0) +
+                (if (lastAttemptedAt.asKnown().isPresent) 1 else 0) +
+                (if (lastError.asKnown().isPresent) 1 else 0) +
+                (if (lastSyncedAt.asKnown().isPresent) 1 else 0) +
+                (if (linearIssueId.asKnown().isPresent) 1 else 0) +
+                (state.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (url.asKnown().isPresent) 1 else 0)
+
+        class State @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+            /**
+             * Returns this class instance's raw value.
+             *
+             * This is usually only useful if this instance was deserialized from data that doesn't
+             * match any known member, and you want to know that value. For example, if the SDK is
+             * on an older version than the API, then the API may respond with new members that the
+             * SDK is unaware of.
+             */
+            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+            companion object {
+
+                @JvmField val PENDING = of("pending")
+
+                @JvmField val SYNCED = of("synced")
+
+                @JvmField val FAILED = of("failed")
+
+                @JvmField val AUTH_REQUIRED = of("auth_required")
+
+                @JvmField val PAUSED = of("paused")
+
+                @JvmStatic fun of(value: String) = State(JsonField.of(value))
+            }
+
+            /** An enum containing [State]'s known values. */
+            enum class Known {
+                PENDING,
+                SYNCED,
+                FAILED,
+                AUTH_REQUIRED,
+                PAUSED,
+            }
+
+            /**
+             * An enum containing [State]'s known values, as well as an [_UNKNOWN] member.
+             *
+             * An instance of [State] can contain an unknown value in a couple of cases:
+             * - It was deserialized from data that doesn't match any known member. For example, if
+             *   the SDK is on an older version than the API, then the API may respond with new
+             *   members that the SDK is unaware of.
+             * - It was constructed with an arbitrary value using the [of] method.
+             */
+            enum class Value {
+                PENDING,
+                SYNCED,
+                FAILED,
+                AUTH_REQUIRED,
+                PAUSED,
+                /**
+                 * An enum member indicating that [State] was instantiated with an unknown value.
+                 */
+                _UNKNOWN,
+            }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value, or
+             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+             *
+             * Use the [known] method instead if you're certain the value is always known or if you
+             * want to throw for the unknown case.
+             */
+            fun value(): Value =
+                when (this) {
+                    PENDING -> Value.PENDING
+                    SYNCED -> Value.SYNCED
+                    FAILED -> Value.FAILED
+                    AUTH_REQUIRED -> Value.AUTH_REQUIRED
+                    PAUSED -> Value.PAUSED
+                    else -> Value._UNKNOWN
+                }
+
+            /**
+             * Returns an enum member corresponding to this class instance's value.
+             *
+             * Use the [value] method instead if you're uncertain the value is always known and
+             * don't want to throw for the unknown case.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value is a not a known
+             *   member.
+             */
+            fun known(): Known =
+                when (this) {
+                    PENDING -> Known.PENDING
+                    SYNCED -> Known.SYNCED
+                    FAILED -> Known.FAILED
+                    AUTH_REQUIRED -> Known.AUTH_REQUIRED
+                    PAUSED -> Known.PAUSED
+                    else -> throw LangChainInvalidDataException("Unknown State: $value")
+                }
+
+            /**
+             * Returns this class instance's primitive wire representation.
+             *
+             * This differs from the [toString] method because that method is primarily for
+             * debugging and generally doesn't throw.
+             *
+             * @throws LangChainInvalidDataException if this class instance's value does not have
+             *   the expected primitive type.
+             */
+            fun asString(): String =
+                _value().asString().orElseThrow {
+                    LangChainInvalidDataException("Value is not a String")
+                }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): State = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                known()
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is State && value == other.value
+            }
+
+            override fun hashCode() = value.hashCode()
+
+            override fun toString() = value.toString()
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is LinearSync &&
+                identifier == other.identifier &&
+                issueId == other.issueId &&
+                lastAttemptedAt == other.lastAttemptedAt &&
+                lastError == other.lastError &&
+                lastSyncedAt == other.lastSyncedAt &&
+                linearIssueId == other.linearIssueId &&
+                state == other.state &&
+                url == other.url &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(
+                identifier,
+                issueId,
+                lastAttemptedAt,
+                lastError,
+                lastSyncedAt,
+                linearIssueId,
+                state,
+                url,
+                additionalProperties,
+            )
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "LinearSync{identifier=$identifier, issueId=$issueId, lastAttemptedAt=$lastAttemptedAt, lastError=$lastError, lastSyncedAt=$lastSyncedAt, linearIssueId=$linearIssueId, state=$state, url=$url, additionalProperties=$additionalProperties}"
+    }
 
     class Severity @JsonCreator private constructor(private val value: JsonField<Long>) : Enum {
 
@@ -1378,6 +2001,7 @@ private constructor(
             fixPrompt == other.fixPrompt &&
             fixVerification == other.fixVerification &&
             lastSeenAt == other.lastSeenAt &&
+            linearSync == other.linearSync &&
             name == other.name &&
             proposedContextFixes == other.proposedContextFixes &&
             proposedExamples == other.proposedExamples &&
@@ -1410,6 +2034,7 @@ private constructor(
             fixPrompt,
             fixVerification,
             lastSeenAt,
+            linearSync,
             name,
             proposedContextFixes,
             proposedExamples,
@@ -1431,5 +2056,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
+        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
 }

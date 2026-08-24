@@ -5,6 +5,7 @@ package com.langchain.smith.models.issues
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.core.jsonMapper
+import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -28,6 +29,18 @@ internal class IssueTest {
                 .fixPrompt("fix_prompt")
                 .fixVerification(JsonValue.from(mapOf<String, Any>()))
                 .lastSeenAt("last_seen_at")
+                .linearSync(
+                    Issue.LinearSync.builder()
+                        .identifier("identifier")
+                        .issueId("issue_id")
+                        .lastAttemptedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .lastError("last_error")
+                        .lastSyncedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .linearIssueId("linear_issue_id")
+                        .state(Issue.LinearSync.State.PENDING)
+                        .url("url")
+                        .build()
+                )
                 .name("name")
                 .addProposedContextFix(JsonValue.from(mapOf<String, Any>()))
                 .addProposedExample(JsonValue.from(mapOf<String, Any>()))
@@ -57,6 +70,19 @@ internal class IssueTest {
         assertThat(issue.fixPrompt()).contains("fix_prompt")
         assertThat(issue._fixVerification()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(issue.lastSeenAt()).contains("last_seen_at")
+        assertThat(issue.linearSync())
+            .contains(
+                Issue.LinearSync.builder()
+                    .identifier("identifier")
+                    .issueId("issue_id")
+                    .lastAttemptedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .lastError("last_error")
+                    .lastSyncedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                    .linearIssueId("linear_issue_id")
+                    .state(Issue.LinearSync.State.PENDING)
+                    .url("url")
+                    .build()
+            )
         assertThat(issue.name()).contains("name")
         assertThat(issue.proposedContextFixes().getOrNull())
             .containsExactly(JsonValue.from(mapOf<String, Any>()))
@@ -94,6 +120,18 @@ internal class IssueTest {
                 .fixPrompt("fix_prompt")
                 .fixVerification(JsonValue.from(mapOf<String, Any>()))
                 .lastSeenAt("last_seen_at")
+                .linearSync(
+                    Issue.LinearSync.builder()
+                        .identifier("identifier")
+                        .issueId("issue_id")
+                        .lastAttemptedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .lastError("last_error")
+                        .lastSyncedAt(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
+                        .linearIssueId("linear_issue_id")
+                        .state(Issue.LinearSync.State.PENDING)
+                        .url("url")
+                        .build()
+                )
                 .name("name")
                 .addProposedContextFix(JsonValue.from(mapOf<String, Any>()))
                 .addProposedExample(JsonValue.from(mapOf<String, Any>()))
