@@ -24,6 +24,7 @@ private constructor(
     private val id: JsonField<String>,
     private val createdAt: JsonField<String>,
     private val createdBy: JsonField<String>,
+    private val description: JsonField<String>,
     private val dockerImage: JsonField<String>,
     private val fsCapacityBytes: JsonField<Long>,
     private val fsUsedBytes: JsonField<Long>,
@@ -45,6 +46,9 @@ private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_at") @ExcludeMissing createdAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("description")
+        @ExcludeMissing
+        description: JsonField<String> = JsonMissing.of(),
         @JsonProperty("docker_image")
         @ExcludeMissing
         dockerImage: JsonField<String> = JsonMissing.of(),
@@ -78,6 +82,7 @@ private constructor(
         id,
         createdAt,
         createdBy,
+        description,
         dockerImage,
         fsCapacityBytes,
         fsUsedBytes,
@@ -111,6 +116,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun createdBy(): Optional<String> = createdBy.getOptional("created_by")
+
+    /**
+     * Description says what this snapshot's image can do, so a caller can hand it to an agent as a
+     * capability summary.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = description.getOptional("description")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -218,6 +232,13 @@ private constructor(
      * Unlike [createdBy], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("created_by") @ExcludeMissing fun _createdBy(): JsonField<String> = createdBy
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
 
     /**
      * Returns the raw JSON value of [dockerImage].
@@ -347,6 +368,7 @@ private constructor(
         private var id: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var createdBy: JsonField<String> = JsonMissing.of()
+        private var description: JsonField<String> = JsonMissing.of()
         private var dockerImage: JsonField<String> = JsonMissing.of()
         private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
         private var fsUsedBytes: JsonField<Long> = JsonMissing.of()
@@ -367,6 +389,7 @@ private constructor(
             id = snapshotResponse.id
             createdAt = snapshotResponse.createdAt
             createdBy = snapshotResponse.createdBy
+            description = snapshotResponse.description
             dockerImage = snapshotResponse.dockerImage
             fsCapacityBytes = snapshotResponse.fsCapacityBytes
             fsUsedBytes = snapshotResponse.fsUsedBytes
@@ -414,6 +437,21 @@ private constructor(
          * value.
          */
         fun createdBy(createdBy: JsonField<String>) = apply { this.createdBy = createdBy }
+
+        /**
+         * Description says what this snapshot's image can do, so a caller can hand it to an agent
+         * as a capability summary.
+         */
+        fun description(description: String) = description(JsonField.of(description))
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { this.description = description }
 
         fun dockerImage(dockerImage: String) = dockerImage(JsonField.of(dockerImage))
 
@@ -614,6 +652,7 @@ private constructor(
                 id,
                 createdAt,
                 createdBy,
+                description,
                 dockerImage,
                 fsCapacityBytes,
                 fsUsedBytes,
@@ -649,6 +688,7 @@ private constructor(
         id()
         createdAt()
         createdBy()
+        description()
         dockerImage()
         fsCapacityBytes()
         fsUsedBytes()
@@ -683,6 +723,7 @@ private constructor(
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (createdBy.asKnown().isPresent) 1 else 0) +
+            (if (description.asKnown().isPresent) 1 else 0) +
             (if (dockerImage.asKnown().isPresent) 1 else 0) +
             (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
             (if (fsUsedBytes.asKnown().isPresent) 1 else 0) +
@@ -814,6 +855,7 @@ private constructor(
             id == other.id &&
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
+            description == other.description &&
             dockerImage == other.dockerImage &&
             fsCapacityBytes == other.fsCapacityBytes &&
             fsUsedBytes == other.fsUsedBytes &&
@@ -835,6 +877,7 @@ private constructor(
             id,
             createdAt,
             createdBy,
+            description,
             dockerImage,
             fsCapacityBytes,
             fsUsedBytes,
@@ -855,5 +898,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, labels=$labels, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, tags=$tags, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, labels=$labels, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, tags=$tags, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

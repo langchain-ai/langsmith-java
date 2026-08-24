@@ -976,6 +976,7 @@ private constructor(
     private constructor(
         private val accessControl: JsonField<AccessControl>,
         private val callbacks: JsonField<List<Callback>>,
+        private val description: JsonField<String>,
         private val noProxy: JsonField<List<String>>,
         private val rules: JsonField<List<Rule>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -989,11 +990,14 @@ private constructor(
             @JsonProperty("callbacks")
             @ExcludeMissing
             callbacks: JsonField<List<Callback>> = JsonMissing.of(),
+            @JsonProperty("description")
+            @ExcludeMissing
+            description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("no_proxy")
             @ExcludeMissing
             noProxy: JsonField<List<String>> = JsonMissing.of(),
             @JsonProperty("rules") @ExcludeMissing rules: JsonField<List<Rule>> = JsonMissing.of(),
-        ) : this(accessControl, callbacks, noProxy, rules, mutableMapOf())
+        ) : this(accessControl, callbacks, description, noProxy, rules, mutableMapOf())
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1006,6 +1010,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun callbacks(): Optional<List<Callback>> = callbacks.getOptional("callbacks")
+
+        /**
+         * Description says what this configuration as a whole lets the sandbox reach, complementing
+         * the per-rule descriptions. At most 1024 characters.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun description(): Optional<String> = description.getOptional("description")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1037,6 +1050,15 @@ private constructor(
         @JsonProperty("callbacks")
         @ExcludeMissing
         fun _callbacks(): JsonField<List<Callback>> = callbacks
+
+        /**
+         * Returns the raw JSON value of [description].
+         *
+         * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("description")
+        @ExcludeMissing
+        fun _description(): JsonField<String> = description
 
         /**
          * Returns the raw JSON value of [noProxy].
@@ -1075,6 +1097,7 @@ private constructor(
 
             private var accessControl: JsonField<AccessControl> = JsonMissing.of()
             private var callbacks: JsonField<MutableList<Callback>>? = null
+            private var description: JsonField<String> = JsonMissing.of()
             private var noProxy: JsonField<MutableList<String>>? = null
             private var rules: JsonField<MutableList<Rule>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -1083,6 +1106,7 @@ private constructor(
             internal fun from(proxyConfig: ProxyConfig) = apply {
                 accessControl = proxyConfig.accessControl
                 callbacks = proxyConfig.callbacks.map { it.toMutableList() }
+                description = proxyConfig.description
                 noProxy = proxyConfig.noProxy.map { it.toMutableList() }
                 rules = proxyConfig.rules.map { it.toMutableList() }
                 additionalProperties = proxyConfig.additionalProperties.toMutableMap()
@@ -1125,6 +1149,23 @@ private constructor(
                     (callbacks ?: JsonField.of(mutableListOf())).also {
                         checkKnown("callbacks", it).add(callback)
                     }
+            }
+
+            /**
+             * Description says what this configuration as a whole lets the sandbox reach,
+             * complementing the per-rule descriptions. At most 1024 characters.
+             */
+            fun description(description: String) = description(JsonField.of(description))
+
+            /**
+             * Sets [Builder.description] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.description] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun description(description: JsonField<String>) = apply {
+                this.description = description
             }
 
             fun noProxy(noProxy: List<String>) = noProxy(JsonField.of(noProxy))
@@ -1205,6 +1246,7 @@ private constructor(
                 ProxyConfig(
                     accessControl,
                     (callbacks ?: JsonMissing.of()).map { it.toImmutable() },
+                    description,
                     (noProxy ?: JsonMissing.of()).map { it.toImmutable() },
                     (rules ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
@@ -1229,6 +1271,7 @@ private constructor(
 
             accessControl().ifPresent { it.validate() }
             callbacks().ifPresent { it.forEach { it.validate() } }
+            description()
             noProxy()
             rules().ifPresent { it.forEach { it.validate() } }
             validated = true
@@ -1252,6 +1295,7 @@ private constructor(
         internal fun validity(): Int =
             (accessControl.asKnown().getOrNull()?.validity() ?: 0) +
                 (callbacks.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (if (description.asKnown().isPresent) 1 else 0) +
                 (noProxy.asKnown().getOrNull()?.size ?: 0) +
                 (rules.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
@@ -2288,6 +2332,7 @@ private constructor(
         private constructor(
             private val bodyName: JsonField<String>,
             private val aws: JsonField<Aws>,
+            private val description: JsonField<String>,
             private val enabled: JsonField<Boolean>,
             private val envVars: JsonField<EnvVars>,
             private val gcp: JsonField<Gcp>,
@@ -2304,6 +2349,9 @@ private constructor(
                 @ExcludeMissing
                 bodyName: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("aws") @ExcludeMissing aws: JsonField<Aws> = JsonMissing.of(),
+                @JsonProperty("description")
+                @ExcludeMissing
+                description: JsonField<String> = JsonMissing.of(),
                 @JsonProperty("enabled")
                 @ExcludeMissing
                 enabled: JsonField<Boolean> = JsonMissing.of(),
@@ -2324,6 +2372,7 @@ private constructor(
             ) : this(
                 bodyName,
                 aws,
+                description,
                 enabled,
                 envVars,
                 gcp,
@@ -2346,6 +2395,15 @@ private constructor(
              *   if the server responded with an unexpected value).
              */
             fun aws(): Optional<Aws> = aws.getOptional("aws")
+
+            /**
+             * Description says what this rule lets the sandbox reach, so an agent driving the
+             * sandbox can be told its capabilities. At most 1024 characters.
+             *
+             * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun description(): Optional<String> = description.getOptional("description")
 
             /**
              * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -2412,6 +2470,16 @@ private constructor(
              * Unlike [aws], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("aws") @ExcludeMissing fun _aws(): JsonField<Aws> = aws
+
+            /**
+             * Returns the raw JSON value of [description].
+             *
+             * Unlike [description], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("description")
+            @ExcludeMissing
+            fun _description(): JsonField<String> = description
 
             /**
              * Returns the raw JSON value of [enabled].
@@ -2500,6 +2568,7 @@ private constructor(
 
                 private var bodyName: JsonField<String>? = null
                 private var aws: JsonField<Aws> = JsonMissing.of()
+                private var description: JsonField<String> = JsonMissing.of()
                 private var enabled: JsonField<Boolean> = JsonMissing.of()
                 private var envVars: JsonField<EnvVars> = JsonMissing.of()
                 private var gcp: JsonField<Gcp> = JsonMissing.of()
@@ -2513,6 +2582,7 @@ private constructor(
                 internal fun from(rule: Rule) = apply {
                     bodyName = rule.bodyName
                     aws = rule.aws
+                    description = rule.description
                     enabled = rule.enabled
                     envVars = rule.envVars
                     gcp = rule.gcp
@@ -2544,6 +2614,23 @@ private constructor(
                  * value.
                  */
                 fun aws(aws: JsonField<Aws>) = apply { this.aws = aws }
+
+                /**
+                 * Description says what this rule lets the sandbox reach, so an agent driving the
+                 * sandbox can be told its capabilities. At most 1024 characters.
+                 */
+                fun description(description: String) = description(JsonField.of(description))
+
+                /**
+                 * Sets [Builder.description] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.description] with a well-typed [String] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun description(description: JsonField<String>) = apply {
+                    this.description = description
+                }
 
                 fun enabled(enabled: Boolean) = enabled(JsonField.of(enabled))
 
@@ -2714,6 +2801,7 @@ private constructor(
                     Rule(
                         checkRequired("bodyName", bodyName),
                         aws,
+                        description,
                         enabled,
                         envVars,
                         gcp,
@@ -2744,6 +2832,7 @@ private constructor(
 
                 bodyName()
                 aws().ifPresent { it.validate() }
+                description()
                 enabled()
                 envVars().ifPresent { it.validate() }
                 gcp().ifPresent { it.validate() }
@@ -2772,6 +2861,7 @@ private constructor(
             internal fun validity(): Int =
                 (if (bodyName.asKnown().isPresent) 1 else 0) +
                     (aws.asKnown().getOrNull()?.validity() ?: 0) +
+                    (if (description.asKnown().isPresent) 1 else 0) +
                     (if (enabled.asKnown().isPresent) 1 else 0) +
                     (envVars.asKnown().getOrNull()?.validity() ?: 0) +
                     (gcp.asKnown().getOrNull()?.validity() ?: 0) +
@@ -5006,6 +5096,7 @@ private constructor(
                 return other is Rule &&
                     bodyName == other.bodyName &&
                     aws == other.aws &&
+                    description == other.description &&
                     enabled == other.enabled &&
                     envVars == other.envVars &&
                     gcp == other.gcp &&
@@ -5020,6 +5111,7 @@ private constructor(
                 Objects.hash(
                     bodyName,
                     aws,
+                    description,
                     enabled,
                     envVars,
                     gcp,
@@ -5034,7 +5126,7 @@ private constructor(
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "Rule{bodyName=$bodyName, aws=$aws, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
+                "Rule{bodyName=$bodyName, aws=$aws, description=$description, enabled=$enabled, envVars=$envVars, gcp=$gcp, headers=$headers, matchHosts=$matchHosts, matchPaths=$matchPaths, type=$type, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {
@@ -5045,19 +5137,27 @@ private constructor(
             return other is ProxyConfig &&
                 accessControl == other.accessControl &&
                 callbacks == other.callbacks &&
+                description == other.description &&
                 noProxy == other.noProxy &&
                 rules == other.rules &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(accessControl, callbacks, noProxy, rules, additionalProperties)
+            Objects.hash(
+                accessControl,
+                callbacks,
+                description,
+                noProxy,
+                rules,
+                additionalProperties,
+            )
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "ProxyConfig{accessControl=$accessControl, callbacks=$callbacks, noProxy=$noProxy, rules=$rules, additionalProperties=$additionalProperties}"
+            "ProxyConfig{accessControl=$accessControl, callbacks=$callbacks, description=$description, noProxy=$noProxy, rules=$rules, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

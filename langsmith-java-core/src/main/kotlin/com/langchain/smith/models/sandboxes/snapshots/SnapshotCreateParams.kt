@@ -48,6 +48,15 @@ private constructor(
     fun name(): String = body.name()
 
     /**
+     * Description says what this snapshot's image can do, so a caller can hand it to an agent as a
+     * capability summary. At most 1024 characters.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = body.description()
+
+    /**
      * Labels seed the snapshot's labels, overriding any label of the same key derived from the
      * Docker image.
      *
@@ -90,6 +99,13 @@ private constructor(
      * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _name(): JsonField<String> = body._name()
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _description(): JsonField<String> = body._description()
 
     /**
      * Returns the raw JSON value of [labels].
@@ -159,8 +175,8 @@ private constructor(
          * - [dockerImage]
          * - [fsCapacityBytes]
          * - [name]
+         * - [description]
          * - [labels]
-         * - [registryId]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -198,6 +214,21 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
+
+        /**
+         * Description says what this snapshot's image can do, so a caller can hand it to an agent
+         * as a capability summary. At most 1024 characters.
+         */
+        fun description(description: String) = apply { body.description(description) }
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { body.description(description) }
 
         /**
          * Labels seed the snapshot's labels, overriding any label of the same key derived from the
@@ -386,6 +417,7 @@ private constructor(
         private val dockerImage: JsonField<String>,
         private val fsCapacityBytes: JsonField<Long>,
         private val name: JsonField<String>,
+        private val description: JsonField<String>,
         private val labels: JsonField<Labels>,
         private val registryId: JsonField<String>,
         private val tag: JsonField<String>,
@@ -401,12 +433,24 @@ private constructor(
             @ExcludeMissing
             fsCapacityBytes: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("description")
+            @ExcludeMissing
+            description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("labels") @ExcludeMissing labels: JsonField<Labels> = JsonMissing.of(),
             @JsonProperty("registry_id")
             @ExcludeMissing
             registryId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("tag") @ExcludeMissing tag: JsonField<String> = JsonMissing.of(),
-        ) : this(dockerImage, fsCapacityBytes, name, labels, registryId, tag, mutableMapOf())
+        ) : this(
+            dockerImage,
+            fsCapacityBytes,
+            name,
+            description,
+            labels,
+            registryId,
+            tag,
+            mutableMapOf(),
+        )
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
@@ -425,6 +469,15 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun name(): String = name.getRequired("name")
+
+        /**
+         * Description says what this snapshot's image can do, so a caller can hand it to an agent
+         * as a capability summary. At most 1024 characters.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun description(): Optional<String> = description.getOptional("description")
 
         /**
          * Labels seed the snapshot's labels, overriding any label of the same key derived from the
@@ -474,6 +527,15 @@ private constructor(
          * Unlike [name], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("name") @ExcludeMissing fun _name(): JsonField<String> = name
+
+        /**
+         * Returns the raw JSON value of [description].
+         *
+         * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("description")
+        @ExcludeMissing
+        fun _description(): JsonField<String> = description
 
         /**
          * Returns the raw JSON value of [labels].
@@ -531,6 +593,7 @@ private constructor(
             private var dockerImage: JsonField<String>? = null
             private var fsCapacityBytes: JsonField<Long>? = null
             private var name: JsonField<String>? = null
+            private var description: JsonField<String> = JsonMissing.of()
             private var labels: JsonField<Labels> = JsonMissing.of()
             private var registryId: JsonField<String> = JsonMissing.of()
             private var tag: JsonField<String> = JsonMissing.of()
@@ -541,6 +604,7 @@ private constructor(
                 dockerImage = body.dockerImage
                 fsCapacityBytes = body.fsCapacityBytes
                 name = body.name
+                description = body.description
                 labels = body.labels
                 registryId = body.registryId
                 tag = body.tag
@@ -584,6 +648,23 @@ private constructor(
              * value.
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
+
+            /**
+             * Description says what this snapshot's image can do, so a caller can hand it to an
+             * agent as a capability summary. At most 1024 characters.
+             */
+            fun description(description: String) = description(JsonField.of(description))
+
+            /**
+             * Sets [Builder.description] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.description] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun description(description: JsonField<String>) = apply {
+                this.description = description
+            }
 
             /**
              * Labels seed the snapshot's labels, overriding any label of the same key derived from
@@ -661,6 +742,7 @@ private constructor(
                     checkRequired("dockerImage", dockerImage),
                     checkRequired("fsCapacityBytes", fsCapacityBytes),
                     checkRequired("name", name),
+                    description,
                     labels,
                     registryId,
                     tag,
@@ -687,6 +769,7 @@ private constructor(
             dockerImage()
             fsCapacityBytes()
             name()
+            description()
             labels().ifPresent { it.validate() }
             registryId()
             tag()
@@ -712,6 +795,7 @@ private constructor(
             (if (dockerImage.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (name.asKnown().isPresent) 1 else 0) +
+                (if (description.asKnown().isPresent) 1 else 0) +
                 (labels.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (registryId.asKnown().isPresent) 1 else 0) +
                 (if (tag.asKnown().isPresent) 1 else 0)
@@ -725,6 +809,7 @@ private constructor(
                 dockerImage == other.dockerImage &&
                 fsCapacityBytes == other.fsCapacityBytes &&
                 name == other.name &&
+                description == other.description &&
                 labels == other.labels &&
                 registryId == other.registryId &&
                 tag == other.tag &&
@@ -736,6 +821,7 @@ private constructor(
                 dockerImage,
                 fsCapacityBytes,
                 name,
+                description,
                 labels,
                 registryId,
                 tag,
@@ -746,7 +832,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, name=$name, labels=$labels, registryId=$registryId, tag=$tag, additionalProperties=$additionalProperties}"
+            "Body{dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, name=$name, description=$description, labels=$labels, registryId=$registryId, tag=$tag, additionalProperties=$additionalProperties}"
     }
 
     /**

@@ -182,6 +182,7 @@ internal class SandboxResponseTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             SandboxResponse.ProxyConfig.Rule.builder()
@@ -215,6 +216,7 @@ internal class SandboxResponseTest {
                                         )
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
@@ -431,6 +433,7 @@ internal class SandboxResponseTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         SandboxResponse.ProxyConfig.Rule.builder()
@@ -462,6 +465,7 @@ internal class SandboxResponseTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 SandboxResponse.ProxyConfig.Rule.EnvVars.builder()
@@ -684,6 +688,7 @@ internal class SandboxResponseTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             SandboxResponse.ProxyConfig.Rule.builder()
@@ -717,6 +722,7 @@ internal class SandboxResponseTest {
                                         )
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     SandboxResponse.ProxyConfig.Rule.EnvVars.builder()

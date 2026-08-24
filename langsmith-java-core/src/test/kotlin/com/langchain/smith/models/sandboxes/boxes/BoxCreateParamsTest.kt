@@ -175,6 +175,7 @@ internal class BoxCreateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxCreateParams.ProxyConfig.Rule.builder()
@@ -206,6 +207,7 @@ internal class BoxCreateParamsTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -427,6 +429,7 @@ internal class BoxCreateParamsTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             BoxCreateParams.ProxyConfig.Rule.builder()
@@ -460,6 +463,7 @@ internal class BoxCreateParamsTest {
                                         )
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -678,6 +682,7 @@ internal class BoxCreateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxCreateParams.ProxyConfig.Rule.builder()
@@ -709,6 +714,7 @@ internal class BoxCreateParamsTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()

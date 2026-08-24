@@ -50,6 +50,15 @@ private constructor(
     fun checkpoint(): Optional<String> = body.checkpoint()
 
     /**
+     * Description says what this snapshot's image can do, so a caller can hand it to an agent as a
+     * capability summary. At most 1024 characters.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = body.description()
+
+    /**
      * sandbox-local Docker image to export
      *
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -105,6 +114,13 @@ private constructor(
      * Unlike [checkpoint], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _checkpoint(): JsonField<String> = body._checkpoint()
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _description(): JsonField<String> = body._description()
 
     /**
      * Returns the raw JSON value of [dockerImage].
@@ -192,9 +208,9 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [bodyName]
          * - [checkpoint]
+         * - [description]
          * - [dockerImage]
          * - [fsCapacityBytes]
-         * - [includeMemory]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -220,6 +236,21 @@ private constructor(
          * value.
          */
         fun checkpoint(checkpoint: JsonField<String>) = apply { body.checkpoint(checkpoint) }
+
+        /**
+         * Description says what this snapshot's image can do, so a caller can hand it to an agent
+         * as a capability summary. At most 1024 characters.
+         */
+        fun description(description: String) = apply { body.description(description) }
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { body.description(description) }
 
         /** sandbox-local Docker image to export */
         fun dockerImage(dockerImage: String) = apply { body.dockerImage(dockerImage) }
@@ -443,6 +474,7 @@ private constructor(
     private constructor(
         private val bodyName: JsonField<String>,
         private val checkpoint: JsonField<String>,
+        private val description: JsonField<String>,
         private val dockerImage: JsonField<String>,
         private val fsCapacityBytes: JsonField<Long>,
         private val includeMemory: JsonField<Boolean>,
@@ -457,6 +489,9 @@ private constructor(
             @JsonProperty("checkpoint")
             @ExcludeMissing
             checkpoint: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("description")
+            @ExcludeMissing
+            description: JsonField<String> = JsonMissing.of(),
             @JsonProperty("docker_image")
             @ExcludeMissing
             dockerImage: JsonField<String> = JsonMissing.of(),
@@ -471,6 +506,7 @@ private constructor(
         ) : this(
             bodyName,
             checkpoint,
+            description,
             dockerImage,
             fsCapacityBytes,
             includeMemory,
@@ -492,6 +528,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun checkpoint(): Optional<String> = checkpoint.getOptional("checkpoint")
+
+        /**
+         * Description says what this snapshot's image can do, so a caller can hand it to an agent
+         * as a capability summary. At most 1024 characters.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun description(): Optional<String> = description.getOptional("description")
 
         /**
          * sandbox-local Docker image to export
@@ -551,6 +596,15 @@ private constructor(
         @JsonProperty("checkpoint")
         @ExcludeMissing
         fun _checkpoint(): JsonField<String> = checkpoint
+
+        /**
+         * Returns the raw JSON value of [description].
+         *
+         * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("description")
+        @ExcludeMissing
+        fun _description(): JsonField<String> = description
 
         /**
          * Returns the raw JSON value of [dockerImage].
@@ -625,6 +679,7 @@ private constructor(
 
             private var bodyName: JsonField<String>? = null
             private var checkpoint: JsonField<String> = JsonMissing.of()
+            private var description: JsonField<String> = JsonMissing.of()
             private var dockerImage: JsonField<String> = JsonMissing.of()
             private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
             private var includeMemory: JsonField<Boolean> = JsonMissing.of()
@@ -636,6 +691,7 @@ private constructor(
             internal fun from(body: Body) = apply {
                 bodyName = body.bodyName
                 checkpoint = body.checkpoint
+                description = body.description
                 dockerImage = body.dockerImage
                 fsCapacityBytes = body.fsCapacityBytes
                 includeMemory = body.includeMemory
@@ -666,6 +722,23 @@ private constructor(
              * supported value.
              */
             fun checkpoint(checkpoint: JsonField<String>) = apply { this.checkpoint = checkpoint }
+
+            /**
+             * Description says what this snapshot's image can do, so a caller can hand it to an
+             * agent as a capability summary. At most 1024 characters.
+             */
+            fun description(description: String) = description(JsonField.of(description))
+
+            /**
+             * Sets [Builder.description] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.description] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun description(description: JsonField<String>) = apply {
+                this.description = description
+            }
 
             /** sandbox-local Docker image to export */
             fun dockerImage(dockerImage: String) = dockerImage(JsonField.of(dockerImage))
@@ -774,6 +847,7 @@ private constructor(
                 Body(
                     checkRequired("bodyName", bodyName),
                     checkpoint,
+                    description,
                     dockerImage,
                     fsCapacityBytes,
                     includeMemory,
@@ -801,6 +875,7 @@ private constructor(
 
             bodyName()
             checkpoint()
+            description()
             dockerImage()
             fsCapacityBytes()
             includeMemory()
@@ -827,6 +902,7 @@ private constructor(
         internal fun validity(): Int =
             (if (bodyName.asKnown().isPresent) 1 else 0) +
                 (if (checkpoint.asKnown().isPresent) 1 else 0) +
+                (if (description.asKnown().isPresent) 1 else 0) +
                 (if (dockerImage.asKnown().isPresent) 1 else 0) +
                 (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
                 (if (includeMemory.asKnown().isPresent) 1 else 0) +
@@ -841,6 +917,7 @@ private constructor(
             return other is Body &&
                 bodyName == other.bodyName &&
                 checkpoint == other.checkpoint &&
+                description == other.description &&
                 dockerImage == other.dockerImage &&
                 fsCapacityBytes == other.fsCapacityBytes &&
                 includeMemory == other.includeMemory &&
@@ -853,6 +930,7 @@ private constructor(
             Objects.hash(
                 bodyName,
                 checkpoint,
+                description,
                 dockerImage,
                 fsCapacityBytes,
                 includeMemory,
@@ -865,7 +943,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{bodyName=$bodyName, checkpoint=$checkpoint, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, includeMemory=$includeMemory, labels=$labels, tag=$tag, additionalProperties=$additionalProperties}"
+            "Body{bodyName=$bodyName, checkpoint=$checkpoint, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, includeMemory=$includeMemory, labels=$labels, tag=$tag, additionalProperties=$additionalProperties}"
     }
 
     /** Labels seed the captured snapshot's labels. */

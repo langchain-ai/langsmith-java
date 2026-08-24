@@ -207,6 +207,7 @@ internal class BoxServiceAsyncTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .addNoProxy("string")
                             .addRule(
                                 BoxCreateParams.ProxyConfig.Rule.builder()
@@ -241,6 +242,7 @@ internal class BoxServiceAsyncTest {
                                             )
                                             .build()
                                     )
+                                    .description("description")
                                     .enabled(true)
                                     .envVars(
                                         BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -361,6 +363,7 @@ internal class BoxServiceAsyncTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .addNoProxy("string")
                             .addRule(
                                 BoxUpdateParams.ProxyConfig.Rule.builder()
@@ -395,6 +398,7 @@ internal class BoxServiceAsyncTest {
                                             )
                                             .build()
                                     )
+                                    .description("description")
                                     .enabled(true)
                                     .envVars(
                                         BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -494,6 +498,7 @@ internal class BoxServiceAsyncTest {
                     .pathName("name")
                     .bodyName("name")
                     .checkpoint("checkpoint")
+                    .description("description")
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
                     .includeMemory(true)

@@ -23,6 +23,7 @@ internal class SnapshotServiceTest {
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
                     .name("name")
+                    .description("description")
                     .labels(
                         SnapshotCreateParams.Labels.builder()
                             .putAdditionalProperty("foo", JsonValue.from("string"))

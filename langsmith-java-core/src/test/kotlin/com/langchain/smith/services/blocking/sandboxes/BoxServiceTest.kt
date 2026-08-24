@@ -204,6 +204,7 @@ internal class BoxServiceTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .addNoProxy("string")
                             .addRule(
                                 BoxCreateParams.ProxyConfig.Rule.builder()
@@ -238,6 +239,7 @@ internal class BoxServiceTest {
                                             )
                                             .build()
                                     )
+                                    .description("description")
                                     .enabled(true)
                                     .envVars(
                                         BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -350,6 +352,7 @@ internal class BoxServiceTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .addNoProxy("string")
                             .addRule(
                                 BoxUpdateParams.ProxyConfig.Rule.builder()
@@ -384,6 +387,7 @@ internal class BoxServiceTest {
                                             )
                                             .build()
                                     )
+                                    .description("description")
                                     .enabled(true)
                                     .envVars(
                                         BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -470,6 +474,7 @@ internal class BoxServiceTest {
                     .pathName("name")
                     .bodyName("name")
                     .checkpoint("checkpoint")
+                    .description("description")
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
                     .includeMemory(true)

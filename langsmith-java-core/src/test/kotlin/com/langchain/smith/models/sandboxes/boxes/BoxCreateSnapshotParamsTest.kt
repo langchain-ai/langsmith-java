@@ -14,6 +14,7 @@ internal class BoxCreateSnapshotParamsTest {
             .pathName("name")
             .bodyName("name")
             .checkpoint("checkpoint")
+            .description("description")
             .dockerImage("docker_image")
             .fsCapacityBytes(0L)
             .includeMemory(true)
@@ -42,6 +43,7 @@ internal class BoxCreateSnapshotParamsTest {
                 .pathName("name")
                 .bodyName("name")
                 .checkpoint("checkpoint")
+                .description("description")
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
                 .includeMemory(true)
@@ -57,6 +59,7 @@ internal class BoxCreateSnapshotParamsTest {
 
         assertThat(body.bodyName()).isEqualTo("name")
         assertThat(body.checkpoint()).contains("checkpoint")
+        assertThat(body.description()).contains("description")
         assertThat(body.dockerImage()).contains("docker_image")
         assertThat(body.fsCapacityBytes()).contains(0L)
         assertThat(body.includeMemory()).contains(true)

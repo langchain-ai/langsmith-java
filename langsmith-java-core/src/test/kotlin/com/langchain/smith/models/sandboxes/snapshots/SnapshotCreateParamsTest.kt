@@ -14,6 +14,7 @@ internal class SnapshotCreateParamsTest {
             .dockerImage("docker_image")
             .fsCapacityBytes(0L)
             .name("name")
+            .description("description")
             .labels(
                 SnapshotCreateParams.Labels.builder()
                     .putAdditionalProperty("foo", JsonValue.from("string"))
@@ -31,6 +32,7 @@ internal class SnapshotCreateParamsTest {
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
                 .name("name")
+                .description("description")
                 .labels(
                     SnapshotCreateParams.Labels.builder()
                         .putAdditionalProperty("foo", JsonValue.from("string"))
@@ -45,6 +47,7 @@ internal class SnapshotCreateParamsTest {
         assertThat(body.dockerImage()).isEqualTo("docker_image")
         assertThat(body.fsCapacityBytes()).isEqualTo(0L)
         assertThat(body.name()).isEqualTo("name")
+        assertThat(body.description()).contains("description")
         assertThat(body.labels())
             .contains(
                 SnapshotCreateParams.Labels.builder()
