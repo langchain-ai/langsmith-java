@@ -36,6 +36,7 @@ private constructor(
     private val fixPrompt: JsonField<String>,
     private val fixVerification: JsonValue,
     private val lastSeenAt: JsonField<String>,
+    private val linearContext: JsonField<LinearContext>,
     private val linearSync: JsonField<LinearSync>,
     private val name: JsonField<String>,
     private val proposedContextFixes: JsonField<List<JsonValue>>,
@@ -85,6 +86,9 @@ private constructor(
         @JsonProperty("last_seen_at")
         @ExcludeMissing
         lastSeenAt: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("linear_context")
+        @ExcludeMissing
+        linearContext: JsonField<LinearContext> = JsonMissing.of(),
         @JsonProperty("linear_sync")
         @ExcludeMissing
         linearSync: JsonField<LinearSync> = JsonMissing.of(),
@@ -128,6 +132,7 @@ private constructor(
         fixPrompt,
         fixVerification,
         lastSeenAt,
+        linearContext,
         linearSync,
         name,
         proposedContextFixes,
@@ -236,6 +241,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun lastSeenAt(): Optional<String> = lastSeenAt.getOptional("last_seen_at")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun linearContext(): Optional<LinearContext> = linearContext.getOptional("linear_context")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -414,6 +425,15 @@ private constructor(
     @JsonProperty("last_seen_at") @ExcludeMissing fun _lastSeenAt(): JsonField<String> = lastSeenAt
 
     /**
+     * Returns the raw JSON value of [linearContext].
+     *
+     * Unlike [linearContext], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("linear_context")
+    @ExcludeMissing
+    fun _linearContext(): JsonField<LinearContext> = linearContext
+
+    /**
      * Returns the raw JSON value of [linearSync].
      *
      * Unlike [linearSync], this method doesn't throw if the JSON field has an unexpected type.
@@ -563,6 +583,7 @@ private constructor(
         private var fixPrompt: JsonField<String> = JsonMissing.of()
         private var fixVerification: JsonValue = JsonMissing.of()
         private var lastSeenAt: JsonField<String> = JsonMissing.of()
+        private var linearContext: JsonField<LinearContext> = JsonMissing.of()
         private var linearSync: JsonField<LinearSync> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
         private var proposedContextFixes: JsonField<MutableList<JsonValue>>? = null
@@ -595,6 +616,7 @@ private constructor(
             fixPrompt = issue.fixPrompt
             fixVerification = issue.fixVerification
             lastSeenAt = issue.lastSeenAt
+            linearContext = issue.linearContext
             linearSync = issue.linearSync
             name = issue.name
             proposedContextFixes = issue.proposedContextFixes.map { it.toMutableList() }
@@ -738,6 +760,19 @@ private constructor(
          * value.
          */
         fun lastSeenAt(lastSeenAt: JsonField<String>) = apply { this.lastSeenAt = lastSeenAt }
+
+        fun linearContext(linearContext: LinearContext) = linearContext(JsonField.of(linearContext))
+
+        /**
+         * Sets [Builder.linearContext] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.linearContext] with a well-typed [LinearContext] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun linearContext(linearContext: JsonField<LinearContext>) = apply {
+            this.linearContext = linearContext
+        }
 
         fun linearSync(linearSync: LinearSync) = linearSync(JsonField.of(linearSync))
 
@@ -996,6 +1031,7 @@ private constructor(
                 fixPrompt,
                 fixVerification,
                 lastSeenAt,
+                linearContext,
                 linearSync,
                 name,
                 (proposedContextFixes ?: JsonMissing.of()).map { it.toImmutable() },
@@ -1040,6 +1076,7 @@ private constructor(
         fixPrNumber()
         fixPrompt()
         lastSeenAt()
+        linearContext().ifPresent { it.validate() }
         linearSync().ifPresent { it.validate() }
         name()
         proposedContextFixes()
@@ -1082,6 +1119,7 @@ private constructor(
             (if (fixPrNumber.asKnown().isPresent) 1 else 0) +
             (if (fixPrompt.asKnown().isPresent) 1 else 0) +
             (if (lastSeenAt.asKnown().isPresent) 1 else 0) +
+            (linearContext.asKnown().getOrNull()?.validity() ?: 0) +
             (linearSync.asKnown().getOrNull()?.validity() ?: 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
             (proposedContextFixes.asKnown().getOrNull()?.size ?: 0) +
@@ -1096,6 +1134,219 @@ private constructor(
             (if (tenantId.asKnown().isPresent) 1 else 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (watchingSince.asKnown().isPresent) 1 else 0)
+
+    class LinearContext
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val githubPrUrls: JsonField<List<String>>,
+        private val workflowState: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("github_pr_urls")
+            @ExcludeMissing
+            githubPrUrls: JsonField<List<String>> = JsonMissing.of(),
+            @JsonProperty("workflow_state")
+            @ExcludeMissing
+            workflowState: JsonField<String> = JsonMissing.of(),
+        ) : this(githubPrUrls, workflowState, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun githubPrUrls(): Optional<List<String>> = githubPrUrls.getOptional("github_pr_urls")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun workflowState(): Optional<String> = workflowState.getOptional("workflow_state")
+
+        /**
+         * Returns the raw JSON value of [githubPrUrls].
+         *
+         * Unlike [githubPrUrls], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("github_pr_urls")
+        @ExcludeMissing
+        fun _githubPrUrls(): JsonField<List<String>> = githubPrUrls
+
+        /**
+         * Returns the raw JSON value of [workflowState].
+         *
+         * Unlike [workflowState], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("workflow_state")
+        @ExcludeMissing
+        fun _workflowState(): JsonField<String> = workflowState
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [LinearContext]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [LinearContext]. */
+        class Builder internal constructor() {
+
+            private var githubPrUrls: JsonField<MutableList<String>>? = null
+            private var workflowState: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(linearContext: LinearContext) = apply {
+                githubPrUrls = linearContext.githubPrUrls.map { it.toMutableList() }
+                workflowState = linearContext.workflowState
+                additionalProperties = linearContext.additionalProperties.toMutableMap()
+            }
+
+            fun githubPrUrls(githubPrUrls: List<String>) = githubPrUrls(JsonField.of(githubPrUrls))
+
+            /**
+             * Sets [Builder.githubPrUrls] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.githubPrUrls] with a well-typed `List<String>` value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun githubPrUrls(githubPrUrls: JsonField<List<String>>) = apply {
+                this.githubPrUrls = githubPrUrls.map { it.toMutableList() }
+            }
+
+            /**
+             * Adds a single [String] to [githubPrUrls].
+             *
+             * @throws IllegalStateException if the field was previously set to a non-list.
+             */
+            fun addGitHubPrUrl(githubPrUrl: String) = apply {
+                githubPrUrls =
+                    (githubPrUrls ?: JsonField.of(mutableListOf())).also {
+                        checkKnown("githubPrUrls", it).add(githubPrUrl)
+                    }
+            }
+
+            fun workflowState(workflowState: String) = workflowState(JsonField.of(workflowState))
+
+            /**
+             * Sets [Builder.workflowState] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.workflowState] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun workflowState(workflowState: JsonField<String>) = apply {
+                this.workflowState = workflowState
+            }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [LinearContext].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): LinearContext =
+                LinearContext(
+                    (githubPrUrls ?: JsonMissing.of()).map { it.toImmutable() },
+                    workflowState,
+                    additionalProperties.toMutableMap(),
+                )
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): LinearContext = apply {
+            if (validated) {
+                return@apply
+            }
+
+            githubPrUrls()
+            workflowState()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (githubPrUrls.asKnown().getOrNull()?.size ?: 0) +
+                (if (workflowState.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is LinearContext &&
+                githubPrUrls == other.githubPrUrls &&
+                workflowState == other.workflowState &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(githubPrUrls, workflowState, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "LinearContext{githubPrUrls=$githubPrUrls, workflowState=$workflowState, additionalProperties=$additionalProperties}"
+    }
 
     class LinearSync
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -2001,6 +2252,7 @@ private constructor(
             fixPrompt == other.fixPrompt &&
             fixVerification == other.fixVerification &&
             lastSeenAt == other.lastSeenAt &&
+            linearContext == other.linearContext &&
             linearSync == other.linearSync &&
             name == other.name &&
             proposedContextFixes == other.proposedContextFixes &&
@@ -2034,6 +2286,7 @@ private constructor(
             fixPrompt,
             fixVerification,
             lastSeenAt,
+            linearContext,
             linearSync,
             name,
             proposedContextFixes,
@@ -2056,5 +2309,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
+        "Issue{id=$id, actions=$actions, autoResolutionEvidence=$autoResolutionEvidence, autoResolutionState=$autoResolutionState, createdAt=$createdAt, description=$description, firstSeenAt=$firstSeenAt, fixBranch=$fixBranch, fixDispatchedAt=$fixDispatchedAt, fixPrNumber=$fixPrNumber, fixPrompt=$fixPrompt, fixVerification=$fixVerification, lastSeenAt=$lastSeenAt, linearContext=$linearContext, linearSync=$linearSync, name=$name, proposedContextFixes=$proposedContextFixes, proposedExamples=$proposedExamples, proposedFix=$proposedFix, proposedPromptFixes=$proposedPromptFixes, recurrencesSinceWatching=$recurrencesSinceWatching, sessionId=$sessionId, severity=$severity, status=$status, tags=$tags, tenantId=$tenantId, traces=$traces, updatedAt=$updatedAt, watchingSince=$watchingSince, additionalProperties=$additionalProperties}"
 }

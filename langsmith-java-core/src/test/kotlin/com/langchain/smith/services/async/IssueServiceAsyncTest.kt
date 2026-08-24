@@ -3,6 +3,7 @@
 package com.langchain.smith.services.async
 
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
+import com.langchain.smith.models.issues.IssueRetrieveParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -18,7 +19,10 @@ internal class IssueServiceAsyncTest {
                 .build()
         val issueServiceAsync = client.issues()
 
-        val issueFuture = issueServiceAsync.retrieve("id")
+        val issueFuture =
+            issueServiceAsync.retrieve(
+                IssueRetrieveParams.builder().id("id").includeLinearContext(true).build()
+            )
 
         val issue = issueFuture.get()
         issue.validate()

@@ -29,6 +29,12 @@ internal class IssueTest {
                 .fixPrompt("fix_prompt")
                 .fixVerification(JsonValue.from(mapOf<String, Any>()))
                 .lastSeenAt("last_seen_at")
+                .linearContext(
+                    Issue.LinearContext.builder()
+                        .addGitHubPrUrl("string")
+                        .workflowState("workflow_state")
+                        .build()
+                )
                 .linearSync(
                     Issue.LinearSync.builder()
                         .identifier("identifier")
@@ -70,6 +76,13 @@ internal class IssueTest {
         assertThat(issue.fixPrompt()).contains("fix_prompt")
         assertThat(issue._fixVerification()).isEqualTo(JsonValue.from(mapOf<String, Any>()))
         assertThat(issue.lastSeenAt()).contains("last_seen_at")
+        assertThat(issue.linearContext())
+            .contains(
+                Issue.LinearContext.builder()
+                    .addGitHubPrUrl("string")
+                    .workflowState("workflow_state")
+                    .build()
+            )
         assertThat(issue.linearSync())
             .contains(
                 Issue.LinearSync.builder()
@@ -120,6 +133,12 @@ internal class IssueTest {
                 .fixPrompt("fix_prompt")
                 .fixVerification(JsonValue.from(mapOf<String, Any>()))
                 .lastSeenAt("last_seen_at")
+                .linearContext(
+                    Issue.LinearContext.builder()
+                        .addGitHubPrUrl("string")
+                        .workflowState("workflow_state")
+                        .build()
+                )
                 .linearSync(
                     Issue.LinearSync.builder()
                         .identifier("identifier")
