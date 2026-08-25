@@ -28,7 +28,7 @@ import kotlin.jvm.optionals.getOrNull
  * given session_ids.
  */
 @Deprecated(
-    "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
+    "Deprecated: use datasets.experimentRuns.query() instead, which calls POST /api/v2/datasets/{dataset_id}/experiment-runs. See https://docs.langchain.com/langsmith/smithdb-sdk-migration-experiments#dataset-experiment-runs-query for the migration guide. Will be removed after Jan 31, 2027."
 )
 class RunQueryParams
 private constructor(
