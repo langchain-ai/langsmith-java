@@ -36,7 +36,8 @@ internal class EvaluateExistingRunner(
 
         val rows = scoreRuns(runs, examplesById)
         val summaryResults = applySummaryEvaluators(rows, experimentId)
-        val url = buildExperimentUrl(session, datasetId)
+        val tenantId = extractTenantId(client)
+        val url = buildExperimentUrl(session, datasetId, tenantId)
 
         return ExperimentResults(
             experimentName = experimentName,
