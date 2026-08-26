@@ -110,6 +110,33 @@ fun evaluateExistingAsync(
     )
 
 /**
+ * Runs pairwise evaluators asynchronously. Equivalent to calling [evaluateComparative] on a
+ * background thread — use [CompletableFuture.join] or [CompletableFuture.get] when the results are
+ * needed.
+ */
+fun evaluateComparativeAsync(
+    client: LangsmithClient,
+    experiments: Pair<String, String>,
+    params: EvaluateComparativeParams,
+): CompletableFuture<ComparativeExperimentResults> =
+    CompletableFuture.supplyAsync(
+        { EvaluateComparativeRunner(client, experiments, params).run() },
+        evaluateExecutor,
+    )
+
+/** Async overload accepting experiment ids as a list. */
+fun evaluateComparativeAsync(
+    client: LangsmithClient,
+    experiments: List<String>,
+    params: EvaluateComparativeParams,
+): CompletableFuture<ComparativeExperimentResults> {
+    require(experiments.size == 2) {
+        "Comparative evaluation requires exactly 2 experiments, got ${experiments.size}"
+    }
+    return evaluateComparativeAsync(client, experiments[0] to experiments[1], params)
+}
+
+/**
  * Compares two existing experiments with pairwise evaluators. Mirrors Python `evaluate_comparative`
  * and `evaluate((experiment_a, experiment_b), ...)`.
  */
