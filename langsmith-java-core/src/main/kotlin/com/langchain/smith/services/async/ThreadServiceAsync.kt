@@ -11,6 +11,7 @@ import com.langchain.smith.models.threads.ThreadQueryPageAsync
 import com.langchain.smith.models.threads.ThreadQueryParams
 import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
+import com.langchain.smith.services.async.threads.ShareServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -27,6 +28,8 @@ interface ThreadServiceAsync {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadServiceAsync
+
+    fun share(): ShareServiceAsync
 
     /**
      * Retrieve all traces belonging to a specific thread within a project.
@@ -120,6 +123,8 @@ interface ThreadServiceAsync {
         fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): ThreadServiceAsync.WithRawResponse
+
+        fun share(): ShareServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v2/threads/{thread_id}/traces`, but is

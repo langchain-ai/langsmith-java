@@ -24,6 +24,8 @@ import com.langchain.smith.models.threads.ThreadQueryPageResponse
 import com.langchain.smith.models.threads.ThreadQueryParams
 import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
+import com.langchain.smith.services.blocking.threads.ShareService
+import com.langchain.smith.services.blocking.threads.ShareServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -34,10 +36,14 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         WithRawResponseImpl(clientOptions)
     }
 
+    private val share: ShareService by lazy { ShareServiceImpl(clientOptions) }
+
     override fun withRawResponse(): ThreadService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService =
         ThreadServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun share(): ShareService = share
 
     override fun listTraces(
         params: ThreadListTracesParams,
@@ -60,12 +66,18 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val share: ShareService.WithRawResponse by lazy {
+            ShareServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): ThreadService.WithRawResponse =
             ThreadServiceImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun share(): ShareService.WithRawResponse = share
 
         private val listTracesHandler: Handler<ThreadListTracesPageResponse> =
             jsonHandler<ThreadListTracesPageResponse>(clientOptions.jsonMapper)

@@ -12,6 +12,7 @@ import com.langchain.smith.models.threads.ThreadQueryPage
 import com.langchain.smith.models.threads.ThreadQueryParams
 import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
+import com.langchain.smith.services.blocking.threads.ShareService
 import java.util.function.Consumer
 
 interface ThreadService {
@@ -27,6 +28,8 @@ interface ThreadService {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService
+
+    fun share(): ShareService
 
     /**
      * Retrieve all traces belonging to a specific thread within a project.
@@ -110,6 +113,8 @@ interface ThreadService {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadService.WithRawResponse
+
+        fun share(): ShareService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `get /api/v2/threads/{thread_id}/traces`, but is

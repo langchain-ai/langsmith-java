@@ -24,6 +24,8 @@ import com.langchain.smith.models.threads.ThreadQueryPageResponse
 import com.langchain.smith.models.threads.ThreadQueryParams
 import com.langchain.smith.models.threads.ThreadStats
 import com.langchain.smith.models.threads.ThreadStatsParams
+import com.langchain.smith.services.async.threads.ShareServiceAsync
+import com.langchain.smith.services.async.threads.ShareServiceAsyncImpl
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
@@ -35,10 +37,14 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
         WithRawResponseImpl(clientOptions)
     }
 
+    private val share: ShareServiceAsync by lazy { ShareServiceAsyncImpl(clientOptions) }
+
     override fun withRawResponse(): ThreadServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): ThreadServiceAsync =
         ThreadServiceAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
+
+    override fun share(): ShareServiceAsync = share
 
     override fun listTraces(
         params: ThreadListTracesParams,
@@ -67,12 +73,18 @@ class ThreadServiceAsyncImpl internal constructor(private val clientOptions: Cli
         private val errorHandler: Handler<HttpResponse> =
             errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
+        private val share: ShareServiceAsync.WithRawResponse by lazy {
+            ShareServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): ThreadServiceAsync.WithRawResponse =
             ThreadServiceAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun share(): ShareServiceAsync.WithRawResponse = share
 
         private val listTracesHandler: Handler<ThreadListTracesPageResponse> =
             jsonHandler<ThreadListTracesPageResponse>(clientOptions.jsonMapper)
