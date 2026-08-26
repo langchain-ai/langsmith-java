@@ -16,7 +16,9 @@ internal class OnlineEvaluatorCreateParamsTest {
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
+                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(
@@ -43,7 +45,9 @@ internal class OnlineEvaluatorCreateParamsTest {
                         .codeEvaluator(
                             CreateOnlineCodeEvaluatorRequest.builder()
                                 .code("code")
+                                .dependencies("dependencies")
                                 .language("language")
+                                .addWorkspaceSecretsKey("string")
                                 .build()
                         )
                         .llmEvaluator(
@@ -68,7 +72,9 @@ internal class OnlineEvaluatorCreateParamsTest {
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
+                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(

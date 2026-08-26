@@ -36,7 +36,9 @@ internal class OnlineEvaluatorServiceAsyncTest {
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
+                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(

@@ -21,8 +21,14 @@ internal class OnlineEvaluatorListPageResponseTest {
                         .codeEvaluator(
                             OnlineCodeEvaluator.builder()
                                 .code("code")
+                                .dependencies("dependencies")
+                                .evaluatorBuildError("evaluator_build_error")
+                                .evaluatorBuildStatus(
+                                    OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED
+                                )
                                 .evaluatorId("evaluator_id")
                                 .language("language")
+                                .addWorkspaceSecretsKey("string")
                                 .build()
                         )
                         .createdAt("created_at")
@@ -80,8 +86,12 @@ internal class OnlineEvaluatorListPageResponseTest {
                     .codeEvaluator(
                         OnlineCodeEvaluator.builder()
                             .code("code")
+                            .dependencies("dependencies")
+                            .evaluatorBuildError("evaluator_build_error")
+                            .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                             .evaluatorId("evaluator_id")
                             .language("language")
+                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .createdAt("created_at")
@@ -143,8 +153,14 @@ internal class OnlineEvaluatorListPageResponseTest {
                         .codeEvaluator(
                             OnlineCodeEvaluator.builder()
                                 .code("code")
+                                .dependencies("dependencies")
+                                .evaluatorBuildError("evaluator_build_error")
+                                .evaluatorBuildStatus(
+                                    OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED
+                                )
                                 .evaluatorId("evaluator_id")
                                 .language("language")
+                                .addWorkspaceSecretsKey("string")
                                 .build()
                         )
                         .createdAt("created_at")
