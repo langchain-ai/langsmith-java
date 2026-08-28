@@ -8085,6 +8085,8 @@ private constructor(
 
                             companion object {
 
+                                @JvmField val SUM = of("sum")
+
                                 @JvmField val MAX = of("max")
 
                                 @JvmField val MIN = of("min")
@@ -8096,6 +8098,7 @@ private constructor(
 
                             /** An enum containing [Type]'s known values. */
                             enum class Known {
+                                SUM,
                                 MAX,
                                 MIN,
                                 AVG,
@@ -8113,6 +8116,7 @@ private constructor(
                              * - It was constructed with an arbitrary value using the [of] method.
                              */
                             enum class Value {
+                                SUM,
                                 MAX,
                                 MIN,
                                 AVG,
@@ -8133,6 +8137,7 @@ private constructor(
                              */
                             fun value(): Value =
                                 when (this) {
+                                    SUM -> Value.SUM
                                     MAX -> Value.MAX
                                     MIN -> Value.MIN
                                     AVG -> Value.AVG
@@ -8150,6 +8155,7 @@ private constructor(
                              */
                             fun known(): Known =
                                 when (this) {
+                                    SUM -> Known.SUM
                                     MAX -> Known.MAX
                                     MIN -> Known.MIN
                                     AVG -> Known.AVG
@@ -12573,6 +12579,8 @@ private constructor(
 
                                     companion object {
 
+                                        @JvmField val SUM = of("sum")
+
                                         @JvmField val MAX = of("max")
 
                                         @JvmField val MIN = of("min")
@@ -12584,6 +12592,7 @@ private constructor(
 
                                     /** An enum containing [Type]'s known values. */
                                     enum class Known {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -12603,6 +12612,7 @@ private constructor(
                                      *   method.
                                      */
                                     enum class Value {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -12623,6 +12633,7 @@ private constructor(
                                      */
                                     fun value(): Value =
                                         when (this) {
+                                            SUM -> Value.SUM
                                             MAX -> Value.MAX
                                             MIN -> Value.MIN
                                             AVG -> Value.AVG
@@ -12641,6 +12652,7 @@ private constructor(
                                      */
                                     fun known(): Known =
                                         when (this) {
+                                            SUM -> Known.SUM
                                             MAX -> Known.MAX
                                             MIN -> Known.MIN
                                             AVG -> Known.AVG
@@ -16779,6 +16791,8 @@ private constructor(
 
                                     companion object {
 
+                                        @JvmField val SUM = of("sum")
+
                                         @JvmField val MAX = of("max")
 
                                         @JvmField val MIN = of("min")
@@ -16790,6 +16804,7 @@ private constructor(
 
                                     /** An enum containing [Type]'s known values. */
                                     enum class Known {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -16809,6 +16824,7 @@ private constructor(
                                      *   method.
                                      */
                                     enum class Value {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -16829,6 +16845,7 @@ private constructor(
                                      */
                                     fun value(): Value =
                                         when (this) {
+                                            SUM -> Value.SUM
                                             MAX -> Value.MAX
                                             MIN -> Value.MIN
                                             AVG -> Value.AVG
@@ -16847,6 +16864,7 @@ private constructor(
                                      */
                                     fun known(): Known =
                                         when (this) {
+                                            SUM -> Known.SUM
                                             MAX -> Known.MAX
                                             MIN -> Known.MIN
                                             AVG -> Known.AVG
@@ -29476,6 +29494,8 @@ private constructor(
 
                             companion object {
 
+                                @JvmField val SUM = of("sum")
+
                                 @JvmField val MAX = of("max")
 
                                 @JvmField val MIN = of("min")
@@ -29487,6 +29507,7 @@ private constructor(
 
                             /** An enum containing [Type]'s known values. */
                             enum class Known {
+                                SUM,
                                 MAX,
                                 MIN,
                                 AVG,
@@ -29504,6 +29525,7 @@ private constructor(
                              * - It was constructed with an arbitrary value using the [of] method.
                              */
                             enum class Value {
+                                SUM,
                                 MAX,
                                 MIN,
                                 AVG,
@@ -29524,6 +29546,7 @@ private constructor(
                              */
                             fun value(): Value =
                                 when (this) {
+                                    SUM -> Value.SUM
                                     MAX -> Value.MAX
                                     MIN -> Value.MIN
                                     AVG -> Value.AVG
@@ -29541,6 +29564,7 @@ private constructor(
                              */
                             fun known(): Known =
                                 when (this) {
+                                    SUM -> Known.SUM
                                     MAX -> Known.MAX
                                     MIN -> Known.MIN
                                     AVG -> Known.AVG
@@ -33964,6 +33988,8 @@ private constructor(
 
                                     companion object {
 
+                                        @JvmField val SUM = of("sum")
+
                                         @JvmField val MAX = of("max")
 
                                         @JvmField val MIN = of("min")
@@ -33975,6 +34001,7 @@ private constructor(
 
                                     /** An enum containing [Type]'s known values. */
                                     enum class Known {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -33994,6 +34021,7 @@ private constructor(
                                      *   method.
                                      */
                                     enum class Value {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -34014,6 +34042,7 @@ private constructor(
                                      */
                                     fun value(): Value =
                                         when (this) {
+                                            SUM -> Value.SUM
                                             MAX -> Value.MAX
                                             MIN -> Value.MIN
                                             AVG -> Value.AVG
@@ -34032,6 +34061,7 @@ private constructor(
                                      */
                                     fun known(): Known =
                                         when (this) {
+                                            SUM -> Known.SUM
                                             MAX -> Known.MAX
                                             MIN -> Known.MIN
                                             AVG -> Known.AVG
@@ -38170,6 +38200,8 @@ private constructor(
 
                                     companion object {
 
+                                        @JvmField val SUM = of("sum")
+
                                         @JvmField val MAX = of("max")
 
                                         @JvmField val MIN = of("min")
@@ -38181,6 +38213,7 @@ private constructor(
 
                                     /** An enum containing [Type]'s known values. */
                                     enum class Known {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -38200,6 +38233,7 @@ private constructor(
                                      *   method.
                                      */
                                     enum class Value {
+                                        SUM,
                                         MAX,
                                         MIN,
                                         AVG,
@@ -38220,6 +38254,7 @@ private constructor(
                                      */
                                     fun value(): Value =
                                         when (this) {
+                                            SUM -> Value.SUM
                                             MAX -> Value.MAX
                                             MIN -> Value.MIN
                                             AVG -> Value.AVG
@@ -38238,6 +38273,7 @@ private constructor(
                                      */
                                     fun known(): Known =
                                         when (this) {
+                                            SUM -> Known.SUM
                                             MAX -> Known.MAX
                                             MIN -> Known.MIN
                                             AVG -> Known.AVG
