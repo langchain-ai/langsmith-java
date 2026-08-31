@@ -82,7 +82,9 @@ internal class OnlineEvaluatorServiceTest {
                             .codeEvaluator(
                                 UpdateOnlineCodeEvaluatorRequest.builder()
                                     .code("code")
+                                    .dependencies("dependencies")
                                     .language("language")
+                                    .addWorkspaceSecretsKey("string")
                                     .build()
                             )
                             .llmEvaluator(
