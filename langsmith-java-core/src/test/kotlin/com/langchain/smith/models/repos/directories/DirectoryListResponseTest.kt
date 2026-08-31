@@ -15,20 +15,27 @@ internal class DirectoryListResponseTest {
         val directoryListResponse =
             DirectoryListResponse.builder()
                 .commitHash("commit_hash")
-                .commitId("commit_id")
+                .commitId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .files(
                     DirectoryListResponse.Files.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .putAdditionalProperty(
+                            "foo",
+                            JsonValue.from(mapOf("content" to "content", "type" to "file")),
+                        )
                         .build()
                 )
                 .build()
 
-        assertThat(directoryListResponse.commitHash()).contains("commit_hash")
-        assertThat(directoryListResponse.commitId()).contains("commit_id")
+        assertThat(directoryListResponse.commitHash()).isEqualTo("commit_hash")
+        assertThat(directoryListResponse.commitId())
+            .isEqualTo("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
         assertThat(directoryListResponse.files())
-            .contains(
+            .isEqualTo(
                 DirectoryListResponse.Files.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                    .putAdditionalProperty(
+                        "foo",
+                        JsonValue.from(mapOf("content" to "content", "type" to "file")),
+                    )
                     .build()
             )
     }
@@ -39,10 +46,13 @@ internal class DirectoryListResponseTest {
         val directoryListResponse =
             DirectoryListResponse.builder()
                 .commitHash("commit_hash")
-                .commitId("commit_id")
+                .commitId("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
                 .files(
                     DirectoryListResponse.Files.builder()
-                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .putAdditionalProperty(
+                            "foo",
+                            JsonValue.from(mapOf("content" to "content", "type" to "file")),
+                        )
                         .build()
                 )
                 .build()

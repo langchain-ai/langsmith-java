@@ -10,11 +10,11 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkRequired
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
-import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class DirectoryListResponse
@@ -36,22 +36,22 @@ private constructor(
     ) : this(commitHash, commitId, files, mutableMapOf())
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun commitHash(): Optional<String> = commitHash.getOptional("commit_hash")
+    fun commitHash(): String = commitHash.getRequired("commit_hash")
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun commitId(): Optional<String> = commitId.getOptional("commit_id")
+    fun commitId(): String = commitId.getRequired("commit_id")
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun files(): Optional<Files> = files.getOptional("files")
+    fun files(): Files = files.getRequired("files")
 
     /**
      * Returns the raw JSON value of [commitHash].
@@ -88,16 +88,25 @@ private constructor(
 
     companion object {
 
-        /** Returns a mutable builder for constructing an instance of [DirectoryListResponse]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [DirectoryListResponse].
+         *
+         * The following fields are required:
+         * ```java
+         * .commitHash()
+         * .commitId()
+         * .files()
+         * ```
+         */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [DirectoryListResponse]. */
     class Builder internal constructor() {
 
-        private var commitHash: JsonField<String> = JsonMissing.of()
-        private var commitId: JsonField<String> = JsonMissing.of()
-        private var files: JsonField<Files> = JsonMissing.of()
+        private var commitHash: JsonField<String>? = null
+        private var commitId: JsonField<String>? = null
+        private var files: JsonField<Files>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -162,9 +171,23 @@ private constructor(
          * Returns an immutable instance of [DirectoryListResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
+         *
+         * The following fields are required:
+         * ```java
+         * .commitHash()
+         * .commitId()
+         * .files()
+         * ```
+         *
+         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): DirectoryListResponse =
-            DirectoryListResponse(commitHash, commitId, files, additionalProperties.toMutableMap())
+            DirectoryListResponse(
+                checkRequired("commitHash", commitHash),
+                checkRequired("commitId", commitId),
+                checkRequired("files", files),
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -184,7 +207,7 @@ private constructor(
 
         commitHash()
         commitId()
-        files().ifPresent { it.validate() }
+        files().validate()
         validated = true
     }
 

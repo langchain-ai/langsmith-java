@@ -70,7 +70,33 @@ internal class DirectoryServiceAsyncTest {
                     .repo("repo")
                     .files(
                         DirectoryCommitParams.Files.builder()
-                            .putAdditionalProperty("foo", JsonValue.from("bar"))
+                            .putAdditionalProperty(
+                                "agents/pinned",
+                                JsonValue.from(
+                                    mapOf(
+                                        "repo_handle" to "review-agent",
+                                        "type" to "agent",
+                                        "commit_id" to "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+                                        "selector" to
+                                            mapOf(
+                                                "commit_id" to
+                                                    "0198f3ab-7c2d-7def-8a91-23456789abcd",
+                                                "type" to "COMMIT",
+                                            ),
+                                    )
+                                ),
+                            )
+                            .putAdditionalProperty(
+                                "skills/current",
+                                JsonValue.from(
+                                    mapOf(
+                                        "repo_handle" to "shared-skill",
+                                        "type" to "skill",
+                                        "commit_id" to "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+                                        "selector" to mapOf("type" to "LATEST"),
+                                    )
+                                ),
+                            )
                             .build()
                     )
                     .parentCommit("parent_commit")
