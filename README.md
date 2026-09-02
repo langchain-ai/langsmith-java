@@ -720,11 +720,11 @@ To forcibly omit a required parameter or property, pass [`JsonMissing`](langsmit
 
 ```java
 import com.langchain.smith.core.JsonMissing;
+import com.langchain.smith.models.fleet.threads.ThreadActivateSandboxParams;
 import com.langchain.smith.models.runs.RunQueryV2Params;
-import com.langchain.smith.models.sessions.SessionRetrieveParams;
 
-RunQueryV2Params params = SessionRetrieveParams.builder()
-    .sessionId(JsonMissing.of())
+RunQueryV2Params params = ThreadActivateSandboxParams.builder()
+    .threadId(JsonMissing.of())
     .build();
 ```
 
@@ -736,7 +736,7 @@ To access undocumented response properties, call the `_additionalProperties()` m
 import com.langchain.smith.core.JsonValue;
 import java.util.Map;
 
-Map<String, JsonValue> additionalProperties = client.sessions().create(params)._additionalProperties();
+Map<String, JsonValue> additionalProperties = client.fleet().threads().activateSandbox(params)._additionalProperties();
 JsonValue secretPropertyValue = additionalProperties.get("secretProperty");
 
 String result = secretPropertyValue.accept(new JsonValue.Visitor<>() {
@@ -766,19 +766,19 @@ To access a property's raw JSON value, which may be undocumented, call its `_` p
 import com.langchain.smith.core.JsonField;
 import java.util.Optional;
 
-JsonField<String> id = client.sessions().create(params)._id();
+JsonField<Object> field = client.fleet().threads().activateSandbox(params)._field();
 
-if (id.isMissing()) {
+if (field.isMissing()) {
   // The property is absent from the JSON response
-} else if (id.isNull()) {
+} else if (field.isNull()) {
   // The property was set to literal null
 } else {
   // Check if value was provided as a string
   // Other methods include `asNumber()`, `asBoolean()`, etc.
-  Optional<String> jsonString = id.asString();
+  Optional<String> jsonString = field.asString();
 
   // Try to deserialize into a custom type
-  MyClass myObject = id.asUnknown().orElseThrow().convert(MyClass.class);
+  MyClass myObject = field.asUnknown().orElseThrow().convert(MyClass.class);
 }
 ```
 
@@ -793,9 +793,9 @@ Validating the response is _not_ forwards compatible with new types from the API
 If you would still prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```java
-import com.langchain.smith.models.sessions.TracerSessionWithoutVirtualFields;
+import com.langchain.smith.models.fleet.threads.ThreadActivateSandboxResponse;
 
-TracerSessionWithoutVirtualFields tracerSessionWithoutVirtualFields = client.sessions().create(params).validate();
+ThreadActivateSandboxResponse response = client.fleet().threads().activateSandbox(params).validate();
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:

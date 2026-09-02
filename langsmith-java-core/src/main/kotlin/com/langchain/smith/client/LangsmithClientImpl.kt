@@ -16,6 +16,8 @@ import com.langchain.smith.services.blocking.ExampleService
 import com.langchain.smith.services.blocking.ExampleServiceImpl
 import com.langchain.smith.services.blocking.FeedbackService
 import com.langchain.smith.services.blocking.FeedbackServiceImpl
+import com.langchain.smith.services.blocking.FleetService
+import com.langchain.smith.services.blocking.FleetServiceImpl
 import com.langchain.smith.services.blocking.InfoService
 import com.langchain.smith.services.blocking.InfoServiceImpl
 import com.langchain.smith.services.blocking.IssueService
@@ -58,6 +60,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     private val withRawResponse: LangsmithClient.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
     }
+
+    private val fleet: FleetService by lazy { FleetServiceImpl(clientOptionsWithUserAgent) }
 
     private val sessions: SessionService by lazy { SessionServiceImpl(clientOptionsWithUserAgent) }
 
@@ -112,6 +116,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient =
         LangsmithClientImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun fleet(): FleetService = fleet
+
     override fun sessions(): SessionService = sessions
 
     override fun examples(): ExampleService = examples
@@ -157,6 +163,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClient.WithRawResponse {
+
+        private val fleet: FleetService.WithRawResponse by lazy {
+            FleetServiceImpl.WithRawResponseImpl(clientOptions)
+        }
 
         private val sessions: SessionService.WithRawResponse by lazy {
             SessionServiceImpl.WithRawResponseImpl(clientOptions)
@@ -236,6 +246,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             LangsmithClientImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun fleet(): FleetService.WithRawResponse = fleet
 
         override fun sessions(): SessionService.WithRawResponse = sessions
 
