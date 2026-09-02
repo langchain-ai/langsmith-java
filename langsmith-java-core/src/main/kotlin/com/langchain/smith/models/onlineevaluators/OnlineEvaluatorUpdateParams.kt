@@ -11,7 +11,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Update an existing evaluator's name, LLM configuration, or code configuration. */
+/**
+ * Update an existing evaluator's name, LLM configuration, or code configuration. Returns 409 when a
+ * code evaluator build is ENQUEUED or BUILDING.
+ */
 class OnlineEvaluatorUpdateParams
 private constructor(
     private val evaluatorId: String?,
