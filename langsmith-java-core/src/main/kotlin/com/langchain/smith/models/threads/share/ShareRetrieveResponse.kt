@@ -10,10 +10,10 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.core.checkRequired
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
+import java.util.Optional
 
 class ShareRetrieveResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -30,10 +30,10 @@ private constructor(
     ) : this(shareToken, mutableMapOf())
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
      */
-    fun shareToken(): String = shareToken.getRequired("share_token")
+    fun shareToken(): Optional<String> = shareToken.getOptional("share_token")
 
     /**
      * Returns the raw JSON value of [shareToken].
@@ -56,21 +56,14 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [ShareRetrieveResponse].
-         *
-         * The following fields are required:
-         * ```java
-         * .shareToken()
-         * ```
-         */
+        /** Returns a mutable builder for constructing an instance of [ShareRetrieveResponse]. */
         @JvmStatic fun builder() = Builder()
     }
 
     /** A builder for [ShareRetrieveResponse]. */
     class Builder internal constructor() {
 
-        private var shareToken: JsonField<String>? = null
+        private var shareToken: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -113,19 +106,9 @@ private constructor(
          * Returns an immutable instance of [ShareRetrieveResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .shareToken()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
         fun build(): ShareRetrieveResponse =
-            ShareRetrieveResponse(
-                checkRequired("shareToken", shareToken),
-                additionalProperties.toMutableMap(),
-            )
+            ShareRetrieveResponse(shareToken, additionalProperties.toMutableMap())
     }
 
     private var validated: Boolean = false

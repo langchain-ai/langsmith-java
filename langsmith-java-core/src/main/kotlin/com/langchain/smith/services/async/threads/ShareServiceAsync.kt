@@ -56,8 +56,8 @@ interface ShareServiceAsync {
     ): CompletableFuture<ShareCreateResponse>
 
     /**
-     * Returns the share token for a thread, or 404 when it is not shared. Gated on runs:share so
-     * the control's state matches the control's permission.
+     * Returns the share token for a thread. The token is omitted when the thread is not shared.
+     * Gated on runs:share so the control's state matches the control's permission.
      */
     fun retrieve(
         threadId: String,

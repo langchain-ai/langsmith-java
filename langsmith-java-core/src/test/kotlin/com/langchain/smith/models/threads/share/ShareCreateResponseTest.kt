@@ -15,7 +15,7 @@ internal class ShareCreateResponseTest {
             ShareCreateResponse.builder().shareToken("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327").build()
 
         assertThat(shareCreateResponse.shareToken())
-            .isEqualTo("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+            .contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
     }
 
     @Test

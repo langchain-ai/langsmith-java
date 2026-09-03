@@ -17,7 +17,7 @@ internal class ShareRetrieveResponseTest {
                 .build()
 
         assertThat(shareRetrieveResponse.shareToken())
-            .isEqualTo("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
+            .contains("018e4c7e-a9fb-7ef0-a5b6-6ea3a82e9327")
     }
 
     @Test
