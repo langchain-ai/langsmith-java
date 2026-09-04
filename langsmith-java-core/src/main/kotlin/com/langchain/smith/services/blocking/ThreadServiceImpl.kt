@@ -16,6 +16,8 @@ import com.langchain.smith.core.http.HttpResponseFor
 import com.langchain.smith.core.http.json
 import com.langchain.smith.core.http.parseable
 import com.langchain.smith.core.prepare
+import com.langchain.smith.models.threads.ThreadAggregateStatsParams
+import com.langchain.smith.models.threads.ThreadAggregateStatsResponse
 import com.langchain.smith.models.threads.ThreadListTracesPage
 import com.langchain.smith.models.threads.ThreadListTracesPageResponse
 import com.langchain.smith.models.threads.ThreadListTracesParams
@@ -44,6 +46,13 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
         ThreadServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun share(): ShareService = share
+
+    override fun aggregateStats(
+        params: ThreadAggregateStatsParams,
+        requestOptions: RequestOptions,
+    ): ThreadAggregateStatsResponse =
+        // post /api/v2/threads/stats
+        withRawResponse().aggregateStats(params, requestOptions).parse()
 
     override fun listTraces(
         params: ThreadListTracesParams,
@@ -78,6 +87,34 @@ class ThreadServiceImpl internal constructor(private val clientOptions: ClientOp
             )
 
         override fun share(): ShareService.WithRawResponse = share
+
+        private val aggregateStatsHandler: Handler<ThreadAggregateStatsResponse> =
+            jsonHandler<ThreadAggregateStatsResponse>(clientOptions.jsonMapper)
+
+        override fun aggregateStats(
+            params: ThreadAggregateStatsParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ThreadAggregateStatsResponse> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("api", "v2", "threads", "stats")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { aggregateStatsHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
 
         private val listTracesHandler: Handler<ThreadListTracesPageResponse> =
             jsonHandler<ThreadListTracesPageResponse>(clientOptions.jsonMapper)
