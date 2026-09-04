@@ -34,6 +34,7 @@ internal class ThreadServiceAsyncTest {
                             ThreadAggregateStatsParams.Select.TOTAL_COST,
                         )
                     )
+                    .filter("eq(status, \"error\")")
                     .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                     .threadFilter("gte(turn_count, 3)")

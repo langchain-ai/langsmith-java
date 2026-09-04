@@ -56,6 +56,17 @@ private constructor(
     fun select(): List<Select> = body.select()
 
     /**
+     * `filter` is a deprecated, unscoped LangSmith filter expression evaluated against trace root
+     * runs. Kept for compatibility with deployments that serve this endpoint via the legacy
+     * ClickHouse backend (no SmithDB query service configured); prefer `trace_filter`,
+     * `tree_filter`, or `thread_filter` otherwise, since those require SmithDB.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun filter(): Optional<String> = body.filter()
+
+    /**
      * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
      * Defaults to now (UTC) when omitted.
      *
@@ -113,6 +124,13 @@ private constructor(
      * Unlike [select], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _select(): JsonField<List<Select>> = body._select()
+
+    /**
+     * Returns the raw JSON value of [filter].
+     *
+     * Unlike [filter], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _filter(): JsonField<String> = body._filter()
 
     /**
      * Returns the raw JSON value of [maxStartTime].
@@ -194,9 +212,9 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [projectId]
          * - [select]
+         * - [filter]
          * - [maxStartTime]
          * - [minStartTime]
-         * - [threadFilter]
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
@@ -234,6 +252,22 @@ private constructor(
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
         fun addSelect(select: Select) = apply { body.addSelect(select) }
+
+        /**
+         * `filter` is a deprecated, unscoped LangSmith filter expression evaluated against trace
+         * root runs. Kept for compatibility with deployments that serve this endpoint via the
+         * legacy ClickHouse backend (no SmithDB query service configured); prefer `trace_filter`,
+         * `tree_filter`, or `thread_filter` otherwise, since those require SmithDB.
+         */
+        fun filter(filter: String) = apply { body.filter(filter) }
+
+        /**
+         * Sets [Builder.filter] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.filter] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun filter(filter: JsonField<String>) = apply { body.filter(filter) }
 
         /**
          * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
@@ -465,6 +499,7 @@ private constructor(
     private constructor(
         private val projectId: JsonField<String>,
         private val select: JsonField<List<Select>>,
+        private val filter: JsonField<String>,
         private val maxStartTime: JsonField<OffsetDateTime>,
         private val minStartTime: JsonField<OffsetDateTime>,
         private val threadFilter: JsonField<String>,
@@ -481,6 +516,7 @@ private constructor(
             @JsonProperty("select")
             @ExcludeMissing
             select: JsonField<List<Select>> = JsonMissing.of(),
+            @JsonProperty("filter") @ExcludeMissing filter: JsonField<String> = JsonMissing.of(),
             @JsonProperty("max_start_time")
             @ExcludeMissing
             maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of(),
@@ -499,6 +535,7 @@ private constructor(
         ) : this(
             projectId,
             select,
+            filter,
             maxStartTime,
             minStartTime,
             threadFilter,
@@ -523,6 +560,17 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun select(): List<Select> = select.getRequired("select")
+
+        /**
+         * `filter` is a deprecated, unscoped LangSmith filter expression evaluated against trace
+         * root runs. Kept for compatibility with deployments that serve this endpoint via the
+         * legacy ClickHouse backend (no SmithDB query service configured); prefer `trace_filter`,
+         * `tree_filter`, or `thread_filter` otherwise, since those require SmithDB.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun filter(): Optional<String> = filter.getOptional("filter")
 
         /**
          * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
@@ -582,6 +630,13 @@ private constructor(
          * Unlike [select], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("select") @ExcludeMissing fun _select(): JsonField<List<Select>> = select
+
+        /**
+         * Returns the raw JSON value of [filter].
+         *
+         * Unlike [filter], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("filter") @ExcludeMissing fun _filter(): JsonField<String> = filter
 
         /**
          * Returns the raw JSON value of [maxStartTime].
@@ -662,6 +717,7 @@ private constructor(
 
             private var projectId: JsonField<String>? = null
             private var select: JsonField<MutableList<Select>>? = null
+            private var filter: JsonField<String> = JsonMissing.of()
             private var maxStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var minStartTime: JsonField<OffsetDateTime> = JsonMissing.of()
             private var threadFilter: JsonField<String> = JsonMissing.of()
@@ -673,6 +729,7 @@ private constructor(
             internal fun from(body: Body) = apply {
                 projectId = body.projectId
                 select = body.select.map { it.toMutableList() }
+                filter = body.filter
                 maxStartTime = body.maxStartTime
                 minStartTime = body.minStartTime
                 threadFilter = body.threadFilter
@@ -721,6 +778,24 @@ private constructor(
                         checkKnown("select", it).add(select)
                     }
             }
+
+            /**
+             * `filter` is a deprecated, unscoped LangSmith filter expression evaluated against
+             * trace root runs. Kept for compatibility with deployments that serve this endpoint via
+             * the legacy ClickHouse backend (no SmithDB query service configured); prefer
+             * `trace_filter`, `tree_filter`, or `thread_filter` otherwise, since those require
+             * SmithDB.
+             */
+            fun filter(filter: String) = filter(JsonField.of(filter))
+
+            /**
+             * Sets [Builder.filter] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.filter] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun filter(filter: JsonField<String>) = apply { this.filter = filter }
 
             /**
              * `max_start_time` is the exclusive upper bound on thread activity (RFC3339 date-time).
@@ -843,6 +918,7 @@ private constructor(
                 Body(
                     checkRequired("projectId", projectId),
                     checkRequired("select", select).map { it.toImmutable() },
+                    filter,
                     maxStartTime,
                     minStartTime,
                     threadFilter,
@@ -870,6 +946,7 @@ private constructor(
 
             projectId()
             select().forEach { it.validate() }
+            filter()
             maxStartTime()
             minStartTime()
             threadFilter()
@@ -896,6 +973,7 @@ private constructor(
         internal fun validity(): Int =
             (if (projectId.asKnown().isPresent) 1 else 0) +
                 (select.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (if (filter.asKnown().isPresent) 1 else 0) +
                 (if (maxStartTime.asKnown().isPresent) 1 else 0) +
                 (if (minStartTime.asKnown().isPresent) 1 else 0) +
                 (if (threadFilter.asKnown().isPresent) 1 else 0) +
@@ -910,6 +988,7 @@ private constructor(
             return other is Body &&
                 projectId == other.projectId &&
                 select == other.select &&
+                filter == other.filter &&
                 maxStartTime == other.maxStartTime &&
                 minStartTime == other.minStartTime &&
                 threadFilter == other.threadFilter &&
@@ -922,6 +1001,7 @@ private constructor(
             Objects.hash(
                 projectId,
                 select,
+                filter,
                 maxStartTime,
                 minStartTime,
                 threadFilter,
@@ -934,7 +1014,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{projectId=$projectId, select=$select, maxStartTime=$maxStartTime, minStartTime=$minStartTime, threadFilter=$threadFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
+            "Body{projectId=$projectId, select=$select, filter=$filter, maxStartTime=$maxStartTime, minStartTime=$minStartTime, threadFilter=$threadFilter, traceFilter=$traceFilter, treeFilter=$treeFilter, additionalProperties=$additionalProperties}"
     }
 
     class Select @JsonCreator private constructor(private val value: JsonField<String>) : Enum {

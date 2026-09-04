@@ -20,6 +20,7 @@ internal class ThreadAggregateStatsParamsTest {
                     ThreadAggregateStatsParams.Select.TOTAL_COST,
                 )
             )
+            .filter("eq(status, \"error\")")
             .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
             .threadFilter("gte(turn_count, 3)")
@@ -41,6 +42,7 @@ internal class ThreadAggregateStatsParamsTest {
                         ThreadAggregateStatsParams.Select.TOTAL_COST,
                     )
                 )
+                .filter("eq(status, \"error\")")
                 .maxStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .minStartTime(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
                 .threadFilter("gte(turn_count, 3)")
@@ -58,6 +60,7 @@ internal class ThreadAggregateStatsParamsTest {
                 ThreadAggregateStatsParams.Select.TOTAL_TOKENS,
                 ThreadAggregateStatsParams.Select.TOTAL_COST,
             )
+        assertThat(body.filter()).contains("eq(status, \"error\")")
         assertThat(body.maxStartTime()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(body.minStartTime()).contains(OffsetDateTime.parse("2019-12-27T18:11:19.117Z"))
         assertThat(body.threadFilter()).contains("gte(turn_count, 3)")
