@@ -18,6 +18,8 @@ internal class RegistryListResponseTest {
                 .addRegistry(
                     RegistryResponse.builder()
                         .id("id")
+                        .authType(RegistryResponse.AuthType.DOCKER_CONFIG)
+                        .awsRoleArn("aws_role_arn")
                         .createdAt("created_at")
                         .createdBy("created_by")
                         .name("name")
@@ -35,6 +37,8 @@ internal class RegistryListResponseTest {
             .containsExactly(
                 RegistryResponse.builder()
                     .id("id")
+                    .authType(RegistryResponse.AuthType.DOCKER_CONFIG)
+                    .awsRoleArn("aws_role_arn")
                     .createdAt("created_at")
                     .createdBy("created_by")
                     .name("name")
@@ -56,6 +60,8 @@ internal class RegistryListResponseTest {
                 .addRegistry(
                     RegistryResponse.builder()
                         .id("id")
+                        .authType(RegistryResponse.AuthType.DOCKER_CONFIG)
+                        .awsRoleArn("aws_role_arn")
                         .createdAt("created_at")
                         .createdBy("created_by")
                         .name("name")

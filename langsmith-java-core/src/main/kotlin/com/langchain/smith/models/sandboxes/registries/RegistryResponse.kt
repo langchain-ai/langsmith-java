@@ -21,6 +21,8 @@ class RegistryResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val id: JsonField<String>,
+    private val authType: JsonField<AuthType>,
+    private val awsRoleArn: JsonField<String>,
     private val createdAt: JsonField<String>,
     private val createdBy: JsonField<String>,
     private val name: JsonField<String>,
@@ -35,6 +37,10 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("auth_type") @ExcludeMissing authType: JsonField<AuthType> = JsonMissing.of(),
+        @JsonProperty("aws_role_arn")
+        @ExcludeMissing
+        awsRoleArn: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_at") @ExcludeMissing createdAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
         @JsonProperty("name") @ExcludeMissing name: JsonField<String> = JsonMissing.of(),
@@ -47,6 +53,8 @@ private constructor(
         @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
     ) : this(
         id,
+        authType,
+        awsRoleArn,
         createdAt,
         createdBy,
         name,
@@ -63,6 +71,18 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun id(): Optional<String> = id.getOptional("id")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun authType(): Optional<AuthType> = authType.getOptional("auth_type")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun awsRoleArn(): Optional<String> = awsRoleArn.getOptional("aws_role_arn")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -119,6 +139,20 @@ private constructor(
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+
+    /**
+     * Returns the raw JSON value of [authType].
+     *
+     * Unlike [authType], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("auth_type") @ExcludeMissing fun _authType(): JsonField<AuthType> = authType
+
+    /**
+     * Returns the raw JSON value of [awsRoleArn].
+     *
+     * Unlike [awsRoleArn], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("aws_role_arn") @ExcludeMissing fun _awsRoleArn(): JsonField<String> = awsRoleArn
 
     /**
      * Returns the raw JSON value of [createdAt].
@@ -201,6 +235,8 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: JsonField<String> = JsonMissing.of()
+        private var authType: JsonField<AuthType> = JsonMissing.of()
+        private var awsRoleArn: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var createdBy: JsonField<String> = JsonMissing.of()
         private var name: JsonField<String> = JsonMissing.of()
@@ -214,6 +250,8 @@ private constructor(
         @JvmSynthetic
         internal fun from(registryResponse: RegistryResponse) = apply {
             id = registryResponse.id
+            authType = registryResponse.authType
+            awsRoleArn = registryResponse.awsRoleArn
             createdAt = registryResponse.createdAt
             createdBy = registryResponse.createdBy
             name = registryResponse.name
@@ -234,6 +272,28 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun id(id: JsonField<String>) = apply { this.id = id }
+
+        fun authType(authType: AuthType) = authType(JsonField.of(authType))
+
+        /**
+         * Sets [Builder.authType] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.authType] with a well-typed [AuthType] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun authType(authType: JsonField<AuthType>) = apply { this.authType = authType }
+
+        fun awsRoleArn(awsRoleArn: String) = awsRoleArn(JsonField.of(awsRoleArn))
+
+        /**
+         * Sets [Builder.awsRoleArn] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.awsRoleArn] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun awsRoleArn(awsRoleArn: JsonField<String>) = apply { this.awsRoleArn = awsRoleArn }
 
         fun createdAt(createdAt: String) = createdAt(JsonField.of(createdAt))
 
@@ -351,6 +411,8 @@ private constructor(
         fun build(): RegistryResponse =
             RegistryResponse(
                 id,
+                authType,
+                awsRoleArn,
                 createdAt,
                 createdBy,
                 name,
@@ -379,6 +441,8 @@ private constructor(
         }
 
         id()
+        authType().ifPresent { it.validate() }
+        awsRoleArn()
         createdAt()
         createdBy()
         name()
@@ -406,6 +470,8 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (id.asKnown().isPresent) 1 else 0) +
+            (authType.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (awsRoleArn.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (createdBy.asKnown().isPresent) 1 else 0) +
             (if (name.asKnown().isPresent) 1 else 0) +
@@ -414,6 +480,142 @@ private constructor(
             (if (updatedAt.asKnown().isPresent) 1 else 0) +
             (if (updatedBy.asKnown().isPresent) 1 else 0) +
             (if (url.asKnown().isPresent) 1 else 0)
+
+    class AuthType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val DOCKER_CONFIG = of("DOCKER_CONFIG")
+
+            @JvmField val AWS_ROLE = of("AWS_ROLE")
+
+            @JvmStatic fun of(value: String) = AuthType(JsonField.of(value))
+        }
+
+        /** An enum containing [AuthType]'s known values. */
+        enum class Known {
+            DOCKER_CONFIG,
+            AWS_ROLE,
+        }
+
+        /**
+         * An enum containing [AuthType]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [AuthType] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            DOCKER_CONFIG,
+            AWS_ROLE,
+            /** An enum member indicating that [AuthType] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                DOCKER_CONFIG -> Value.DOCKER_CONFIG
+                AWS_ROLE -> Value.AWS_ROLE
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                DOCKER_CONFIG -> Known.DOCKER_CONFIG
+                AWS_ROLE -> Known.AWS_ROLE
+                else -> throw LangChainInvalidDataException("Unknown AuthType: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws LangChainInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                LangChainInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): AuthType = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AuthType && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     class Provider @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -730,6 +932,8 @@ private constructor(
 
         return other is RegistryResponse &&
             id == other.id &&
+            authType == other.authType &&
+            awsRoleArn == other.awsRoleArn &&
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
             name == other.name &&
@@ -744,6 +948,8 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             id,
+            authType,
+            awsRoleArn,
             createdAt,
             createdBy,
             name,
@@ -759,5 +965,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "RegistryResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, name=$name, provider=$provider, repositorySearchMode=$repositorySearchMode, updatedAt=$updatedAt, updatedBy=$updatedBy, url=$url, additionalProperties=$additionalProperties}"
+        "RegistryResponse{id=$id, authType=$authType, awsRoleArn=$awsRoleArn, createdAt=$createdAt, createdBy=$createdBy, name=$name, provider=$provider, repositorySearchMode=$repositorySearchMode, updatedAt=$updatedAt, updatedBy=$updatedBy, url=$url, additionalProperties=$additionalProperties}"
 }

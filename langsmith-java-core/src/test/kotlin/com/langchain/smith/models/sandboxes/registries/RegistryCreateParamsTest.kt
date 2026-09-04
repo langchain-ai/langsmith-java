@@ -11,8 +11,10 @@ internal class RegistryCreateParamsTest {
     fun create() {
         RegistryCreateParams.builder()
             .name("name")
-            .password("password")
             .url("url")
+            .authType(RegistryCreateParams.AuthType.DOCKER_CONFIG)
+            .awsRoleArn("aws_role_arn")
+            .password("password")
             .username("username")
             .build()
     }
@@ -22,16 +24,30 @@ internal class RegistryCreateParamsTest {
         val params =
             RegistryCreateParams.builder()
                 .name("name")
-                .password("password")
                 .url("url")
+                .authType(RegistryCreateParams.AuthType.DOCKER_CONFIG)
+                .awsRoleArn("aws_role_arn")
+                .password("password")
                 .username("username")
                 .build()
 
         val body = params._body()
 
         assertThat(body.name()).isEqualTo("name")
-        assertThat(body.password()).isEqualTo("password")
         assertThat(body.url()).isEqualTo("url")
-        assertThat(body.username()).isEqualTo("username")
+        assertThat(body.authType()).contains(RegistryCreateParams.AuthType.DOCKER_CONFIG)
+        assertThat(body.awsRoleArn()).contains("aws_role_arn")
+        assertThat(body.password()).contains("password")
+        assertThat(body.username()).contains("username")
+    }
+
+    @Test
+    fun bodyWithoutOptionalFields() {
+        val params = RegistryCreateParams.builder().name("name").url("url").build()
+
+        val body = params._body()
+
+        assertThat(body.name()).isEqualTo("name")
+        assertThat(body.url()).isEqualTo("url")
     }
 }

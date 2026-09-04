@@ -14,6 +14,8 @@ internal class RegistryResponseTest {
         val registryResponse =
             RegistryResponse.builder()
                 .id("id")
+                .authType(RegistryResponse.AuthType.DOCKER_CONFIG)
+                .awsRoleArn("aws_role_arn")
                 .createdAt("created_at")
                 .createdBy("created_by")
                 .name("name")
@@ -25,6 +27,8 @@ internal class RegistryResponseTest {
                 .build()
 
         assertThat(registryResponse.id()).contains("id")
+        assertThat(registryResponse.authType()).contains(RegistryResponse.AuthType.DOCKER_CONFIG)
+        assertThat(registryResponse.awsRoleArn()).contains("aws_role_arn")
         assertThat(registryResponse.createdAt()).contains("created_at")
         assertThat(registryResponse.createdBy()).contains("created_by")
         assertThat(registryResponse.name()).contains("name")
@@ -42,6 +46,8 @@ internal class RegistryResponseTest {
         val registryResponse =
             RegistryResponse.builder()
                 .id("id")
+                .authType(RegistryResponse.AuthType.DOCKER_CONFIG)
+                .awsRoleArn("aws_role_arn")
                 .createdAt("created_at")
                 .createdBy("created_by")
                 .name("name")
