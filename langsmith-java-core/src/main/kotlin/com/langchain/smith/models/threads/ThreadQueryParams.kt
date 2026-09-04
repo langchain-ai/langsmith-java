@@ -18,6 +18,7 @@ import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Query threads within a project (session), with cursor-based pagination. Returns threads matching
@@ -27,10 +28,13 @@ import java.util.Optional
  */
 class ThreadQueryParams
 private constructor(
+    private val accept: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
+
+    fun accept(): Optional<String> = Optional.ofNullable(accept)
 
     /**
      * `cursor` is the opaque string from a previous response's `next_cursor`. Omit on the first
@@ -205,16 +209,23 @@ private constructor(
     /** A builder for [ThreadQueryParams]. */
     class Builder internal constructor() {
 
+        private var accept: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
         internal fun from(threadQueryParams: ThreadQueryParams) = apply {
+            accept = threadQueryParams.accept
             body = threadQueryParams.body.toBuilder()
             additionalHeaders = threadQueryParams.additionalHeaders.toBuilder()
             additionalQueryParams = threadQueryParams.additionalQueryParams.toBuilder()
         }
+
+        fun accept(accept: String?) = apply { this.accept = accept }
+
+        /** Alias for calling [Builder.accept] with `accept.orElse(null)`. */
+        fun accept(accept: Optional<String>) = accept(accept.getOrNull())
 
         /**
          * Sets the entire request body.
@@ -499,6 +510,7 @@ private constructor(
          */
         fun build(): ThreadQueryParams =
             ThreadQueryParams(
+                accept,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -507,7 +519,13 @@ private constructor(
 
     fun _body(): Body = body
 
-    override fun _headers(): Headers = additionalHeaders
+    override fun _headers(): Headers =
+        Headers.builder()
+            .apply {
+                accept?.let { put("Accept", it) }
+                putAll(additionalHeaders)
+            }
+            .build()
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
@@ -1068,13 +1086,15 @@ private constructor(
         }
 
         return other is ThreadQueryParams &&
+            accept == other.accept &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int = Objects.hash(body, additionalHeaders, additionalQueryParams)
+    override fun hashCode(): Int =
+        Objects.hash(accept, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ThreadQueryParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "ThreadQueryParams{accept=$accept, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
