@@ -2318,12 +2318,15 @@ private constructor(
 
             @JvmField val THREAD_ID = of("thread_id")
 
+            @JvmField val TRAJECTORY_ID = of("trajectory_id")
+
             @JvmStatic fun of(value: String) = GroupBy(JsonField.of(value))
         }
 
         /** An enum containing [GroupBy]'s known values. */
         enum class Known {
-            THREAD_ID
+            THREAD_ID,
+            TRAJECTORY_ID,
         }
 
         /**
@@ -2337,6 +2340,7 @@ private constructor(
          */
         enum class Value {
             THREAD_ID,
+            TRAJECTORY_ID,
             /** An enum member indicating that [GroupBy] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -2351,6 +2355,7 @@ private constructor(
         fun value(): Value =
             when (this) {
                 THREAD_ID -> Value.THREAD_ID
+                TRAJECTORY_ID -> Value.TRAJECTORY_ID
                 else -> Value._UNKNOWN
             }
 
@@ -2366,6 +2371,7 @@ private constructor(
         fun known(): Known =
             when (this) {
                 THREAD_ID -> Known.THREAD_ID
+                TRAJECTORY_ID -> Known.TRAJECTORY_ID
                 else -> throw LangChainInvalidDataException("Unknown GroupBy: $value")
             }
 
