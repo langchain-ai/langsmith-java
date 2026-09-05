@@ -175,6 +175,7 @@ internal class BoxCreateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxCreateParams.ProxyConfig.Rule.builder()
@@ -206,6 +207,7 @@ internal class BoxCreateParamsTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -246,6 +248,7 @@ internal class BoxCreateParamsTest {
                     .build()
             )
             .restoreMemory(true)
+            .snapshot("snapshot")
             .snapshotId("snapshot_id")
             .snapshotName("snapshot_name")
             .addTagValueId("string")
@@ -426,6 +429,7 @@ internal class BoxCreateParamsTest {
                                 )
                                 .build()
                         )
+                        .description("description")
                         .addNoProxy("string")
                         .addRule(
                             BoxCreateParams.ProxyConfig.Rule.builder()
@@ -459,6 +463,7 @@ internal class BoxCreateParamsTest {
                                         )
                                         .build()
                                 )
+                                .description("description")
                                 .enabled(true)
                                 .envVars(
                                     BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -501,6 +506,7 @@ internal class BoxCreateParamsTest {
                         .build()
                 )
                 .restoreMemory(true)
+                .snapshot("snapshot")
                 .snapshotId("snapshot_id")
                 .snapshotName("snapshot_name")
                 .addTagValueId("string")
@@ -676,6 +682,7 @@ internal class BoxCreateParamsTest {
                             )
                             .build()
                     )
+                    .description("description")
                     .addNoProxy("string")
                     .addRule(
                         BoxCreateParams.ProxyConfig.Rule.builder()
@@ -707,6 +714,7 @@ internal class BoxCreateParamsTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .enabled(true)
                             .envVars(
                                 BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -747,6 +755,7 @@ internal class BoxCreateParamsTest {
                     .build()
             )
         assertThat(body.restoreMemory()).contains(true)
+        assertThat(body.snapshot()).contains("snapshot")
         assertThat(body.snapshotId()).contains("snapshot_id")
         assertThat(body.snapshotName()).contains("snapshot_name")
         assertThat(body.tagValueIds().getOrNull()).containsExactly("string")

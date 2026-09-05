@@ -33,7 +33,9 @@ internal class OnlineEvaluatorServiceTest {
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
                             .code("code")
+                            .dependencies("dependencies")
                             .language("language")
+                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(
@@ -80,7 +82,9 @@ internal class OnlineEvaluatorServiceTest {
                             .codeEvaluator(
                                 UpdateOnlineCodeEvaluatorRequest.builder()
                                     .code("code")
+                                    .dependencies("dependencies")
                                     .language("language")
+                                    .addWorkspaceSecretsKey("string")
                                     .build()
                             )
                             .llmEvaluator(
@@ -164,6 +168,7 @@ internal class OnlineEvaluatorServiceTest {
                     .groupBy("group_by")
                     .addResourceId("string")
                     .sessionId("session_id")
+                    .addTagValueId("string")
                     .type("type")
                     .build()
             )

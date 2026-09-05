@@ -7,11 +7,13 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.sandboxes.SnapshotListResponse
 import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotDeleteParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotListPage
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameParams
+import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveByNameResponse
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotRetrieveParams
 import java.util.function.Consumer
 
@@ -39,7 +41,11 @@ interface SnapshotService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): SnapshotResponse
 
-    /** Get a sandbox snapshot by ID. */
+    /**
+     * Get a sandbox snapshot by ID or by a Docker-style reference. A bare name means name:latest,
+     * falling back to the newest ready untagged snapshot of that name. To list the tags under a
+     * name, use /api/v2/sandboxes/snapshots-by-name/{name}.
+     */
     fun retrieve(snapshotId: String): SnapshotResponse =
         retrieve(snapshotId, SnapshotRetrieveParams.none())
 
@@ -73,25 +79,30 @@ interface SnapshotService {
 
     /**
      * List sandbox snapshots for the authenticated tenant, with optional filtering, sorting, and
-     * pagination.
+     * pagination. Page with page_size and cursor: replay the response's next_cursor until it comes
+     * back null, which is the only signal that no pages remain. Cursors are opaque and only valid
+     * on this endpoint; do not parse or construct one.
      */
-    fun list(): SnapshotListResponse = list(SnapshotListParams.none())
+    fun list(): SnapshotListPage = list(SnapshotListParams.none())
 
     /** @see list */
     fun list(
         params: SnapshotListParams = SnapshotListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): SnapshotListResponse
+    ): SnapshotListPage
 
     /** @see list */
-    fun list(params: SnapshotListParams = SnapshotListParams.none()): SnapshotListResponse =
+    fun list(params: SnapshotListParams = SnapshotListParams.none()): SnapshotListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): SnapshotListResponse =
+    fun list(requestOptions: RequestOptions): SnapshotListPage =
         list(SnapshotListParams.none(), requestOptions)
 
-    /** Delete a snapshot by ID. The underlying storage is reclaimed asynchronously. */
+    /**
+     * Delete a snapshot by ID or by a Docker-style name[:tag] reference. The underlying storage is
+     * reclaimed asynchronously.
+     */
     fun delete(snapshotId: String) = delete(snapshotId, SnapshotDeleteParams.none())
 
     /** @see delete */
@@ -114,6 +125,44 @@ interface SnapshotService {
     /** @see delete */
     fun delete(snapshotId: String, requestOptions: RequestOptions) =
         delete(snapshotId, SnapshotDeleteParams.none(), requestOptions)
+
+    /**
+     * Get a snapshot name and every tag under it, with the snapshot each tag resolves to. To fetch
+     * one snapshot, use /api/v2/sandboxes/snapshots/{snapshot_id}.
+     */
+    fun retrieveByName(name: String): SnapshotRetrieveByNameResponse =
+        retrieveByName(name, SnapshotRetrieveByNameParams.none())
+
+    /** @see retrieveByName */
+    fun retrieveByName(
+        name: String,
+        params: SnapshotRetrieveByNameParams = SnapshotRetrieveByNameParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): SnapshotRetrieveByNameResponse =
+        retrieveByName(params.toBuilder().name(name).build(), requestOptions)
+
+    /** @see retrieveByName */
+    fun retrieveByName(
+        name: String,
+        params: SnapshotRetrieveByNameParams = SnapshotRetrieveByNameParams.none(),
+    ): SnapshotRetrieveByNameResponse = retrieveByName(name, params, RequestOptions.none())
+
+    /** @see retrieveByName */
+    fun retrieveByName(
+        params: SnapshotRetrieveByNameParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): SnapshotRetrieveByNameResponse
+
+    /** @see retrieveByName */
+    fun retrieveByName(params: SnapshotRetrieveByNameParams): SnapshotRetrieveByNameResponse =
+        retrieveByName(params, RequestOptions.none())
+
+    /** @see retrieveByName */
+    fun retrieveByName(
+        name: String,
+        requestOptions: RequestOptions,
+    ): SnapshotRetrieveByNameResponse =
+        retrieveByName(name, SnapshotRetrieveByNameParams.none(), requestOptions)
 
     /** A view of [SnapshotService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -189,24 +238,24 @@ interface SnapshotService {
          * same as [SnapshotService.list].
          */
         @MustBeClosed
-        fun list(): HttpResponseFor<SnapshotListResponse> = list(SnapshotListParams.none())
+        fun list(): HttpResponseFor<SnapshotListPage> = list(SnapshotListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: SnapshotListParams = SnapshotListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SnapshotListResponse>
+        ): HttpResponseFor<SnapshotListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: SnapshotListParams = SnapshotListParams.none()
-        ): HttpResponseFor<SnapshotListResponse> = list(params, RequestOptions.none())
+        ): HttpResponseFor<SnapshotListPage> = list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<SnapshotListResponse> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<SnapshotListPage> =
             list(SnapshotListParams.none(), requestOptions)
 
         /**
@@ -248,5 +297,52 @@ interface SnapshotService {
         @MustBeClosed
         fun delete(snapshotId: String, requestOptions: RequestOptions): HttpResponse =
             delete(snapshotId, SnapshotDeleteParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /api/v2/sandboxes/snapshots-by-name/{name}`, but is
+         * otherwise the same as [SnapshotService.retrieveByName].
+         */
+        @MustBeClosed
+        fun retrieveByName(name: String): HttpResponseFor<SnapshotRetrieveByNameResponse> =
+            retrieveByName(name, SnapshotRetrieveByNameParams.none())
+
+        /** @see retrieveByName */
+        @MustBeClosed
+        fun retrieveByName(
+            name: String,
+            params: SnapshotRetrieveByNameParams = SnapshotRetrieveByNameParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<SnapshotRetrieveByNameResponse> =
+            retrieveByName(params.toBuilder().name(name).build(), requestOptions)
+
+        /** @see retrieveByName */
+        @MustBeClosed
+        fun retrieveByName(
+            name: String,
+            params: SnapshotRetrieveByNameParams = SnapshotRetrieveByNameParams.none(),
+        ): HttpResponseFor<SnapshotRetrieveByNameResponse> =
+            retrieveByName(name, params, RequestOptions.none())
+
+        /** @see retrieveByName */
+        @MustBeClosed
+        fun retrieveByName(
+            params: SnapshotRetrieveByNameParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<SnapshotRetrieveByNameResponse>
+
+        /** @see retrieveByName */
+        @MustBeClosed
+        fun retrieveByName(
+            params: SnapshotRetrieveByNameParams
+        ): HttpResponseFor<SnapshotRetrieveByNameResponse> =
+            retrieveByName(params, RequestOptions.none())
+
+        /** @see retrieveByName */
+        @MustBeClosed
+        fun retrieveByName(
+            name: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<SnapshotRetrieveByNameResponse> =
+            retrieveByName(name, SnapshotRetrieveByNameParams.none(), requestOptions)
     }
 }

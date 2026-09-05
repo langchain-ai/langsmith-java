@@ -96,7 +96,9 @@ internal class DatasetServiceAsyncTest {
 
         val tracerSessionsFuture =
             datasetServiceAsync.retrieveSessionsBulk(
-                DatasetRetrieveSessionsBulkParams.builder().addShareToken("string").build()
+                DatasetRetrieveSessionsBulkParams.builder()
+                    .addShareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
             )
 
         val tracerSessions = tracerSessionsFuture.get()

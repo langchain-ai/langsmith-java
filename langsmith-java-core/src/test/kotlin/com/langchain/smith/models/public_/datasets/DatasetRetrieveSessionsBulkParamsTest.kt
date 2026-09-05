@@ -10,16 +10,25 @@ internal class DatasetRetrieveSessionsBulkParamsTest {
 
     @Test
     fun create() {
-        DatasetRetrieveSessionsBulkParams.builder().addShareToken("string").build()
+        DatasetRetrieveSessionsBulkParams.builder()
+            .addShareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+            .build()
     }
 
     @Test
     fun queryParams() {
-        val params = DatasetRetrieveSessionsBulkParams.builder().addShareToken("string").build()
+        val params =
+            DatasetRetrieveSessionsBulkParams.builder()
+                .addShareToken("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                .build()
 
         val queryParams = params._queryParams()
 
         assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("share_tokens", "string").build())
+            .isEqualTo(
+                QueryParams.builder()
+                    .put("share_tokens", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e")
+                    .build()
+            )
     }
 }

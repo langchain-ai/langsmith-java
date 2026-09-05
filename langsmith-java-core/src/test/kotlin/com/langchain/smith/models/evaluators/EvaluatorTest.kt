@@ -119,6 +119,38 @@ internal class EvaluatorTest {
                 .spendUsd(0.0)
                 .traceCount(0L)
                 .traceFilter("trace_filter")
+                .addTrajectoryEvaluator(
+                    EvaluatorTopLevel.builder()
+                        .structured(
+                            EvaluatorTopLevel.Structured.builder()
+                                .hubRef("hub_ref")
+                                .model(
+                                    EvaluatorTopLevel.Structured.Model.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .playgroundSettingsId("playground_settings_id")
+                                .addPrompt(
+                                    listOf(
+                                        JsonValue.from(mapOf<String, Any>()),
+                                        JsonValue.from(mapOf<String, Any>()),
+                                    )
+                                )
+                                .schema(
+                                    EvaluatorTopLevel.Structured.Schema.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .templateFormat("template_format")
+                                .variableMapping(
+                                    EvaluatorTopLevel.Structured.VariableMapping.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .build()
+                )
                 .isTransient(true)
                 .treeFilter("tree_filter")
                 .useCorrectionsDataset(true)
@@ -239,6 +271,39 @@ internal class EvaluatorTest {
         assertThat(evaluator.spendUsd()).contains(0.0)
         assertThat(evaluator.traceCount()).contains(0L)
         assertThat(evaluator.traceFilter()).contains("trace_filter")
+        assertThat(evaluator.trajectoryEvaluators().getOrNull())
+            .containsExactly(
+                EvaluatorTopLevel.builder()
+                    .structured(
+                        EvaluatorTopLevel.Structured.builder()
+                            .hubRef("hub_ref")
+                            .model(
+                                EvaluatorTopLevel.Structured.Model.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .playgroundSettingsId("playground_settings_id")
+                            .addPrompt(
+                                listOf(
+                                    JsonValue.from(mapOf<String, Any>()),
+                                    JsonValue.from(mapOf<String, Any>()),
+                                )
+                            )
+                            .schema(
+                                EvaluatorTopLevel.Structured.Schema.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .templateFormat("template_format")
+                            .variableMapping(
+                                EvaluatorTopLevel.Structured.VariableMapping.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
         assertThat(evaluator.isTransient()).contains(true)
         assertThat(evaluator.treeFilter()).contains("tree_filter")
         assertThat(evaluator.useCorrectionsDataset()).contains(true)
@@ -352,6 +417,38 @@ internal class EvaluatorTest {
                 .spendUsd(0.0)
                 .traceCount(0L)
                 .traceFilter("trace_filter")
+                .addTrajectoryEvaluator(
+                    EvaluatorTopLevel.builder()
+                        .structured(
+                            EvaluatorTopLevel.Structured.builder()
+                                .hubRef("hub_ref")
+                                .model(
+                                    EvaluatorTopLevel.Structured.Model.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .playgroundSettingsId("playground_settings_id")
+                                .addPrompt(
+                                    listOf(
+                                        JsonValue.from(mapOf<String, Any>()),
+                                        JsonValue.from(mapOf<String, Any>()),
+                                    )
+                                )
+                                .schema(
+                                    EvaluatorTopLevel.Structured.Schema.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                        .build()
+                                )
+                                .templateFormat("template_format")
+                                .variableMapping(
+                                    EvaluatorTopLevel.Structured.VariableMapping.builder()
+                                        .putAdditionalProperty("foo", JsonValue.from("string"))
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .build()
+                )
                 .isTransient(true)
                 .treeFilter("tree_filter")
                 .useCorrectionsDataset(true)

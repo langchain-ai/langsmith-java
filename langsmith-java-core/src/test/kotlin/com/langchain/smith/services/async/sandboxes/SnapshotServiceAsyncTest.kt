@@ -5,7 +5,6 @@ package com.langchain.smith.services.async.sandboxes
 import com.langchain.smith.client.okhttp.LangsmithOkHttpClientAsync
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.snapshots.SnapshotCreateParams
-import com.langchain.smith.models.sandboxes.snapshots.SnapshotListParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -27,12 +26,14 @@ internal class SnapshotServiceAsyncTest {
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
                     .name("name")
+                    .description("description")
                     .labels(
                         SnapshotCreateParams.Labels.builder()
                             .putAdditionalProperty("foo", JsonValue.from("string"))
                             .build()
                     )
                     .registryId("registry_id")
+                    .tag("tag")
                     .build()
             )
 
@@ -66,22 +67,10 @@ internal class SnapshotServiceAsyncTest {
                 .build()
         val snapshotServiceAsync = client.sandboxes().snapshots()
 
-        val snapshotListResponseFuture =
-            snapshotServiceAsync.list(
-                SnapshotListParams.builder()
-                    .createdBy("created_by")
-                    .addLabel("string")
-                    .limit(0L)
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .sortBy("sort_by")
-                    .sortDirection("sort_direction")
-                    .status("status")
-                    .build()
-            )
+        val pageFuture = snapshotServiceAsync.list()
 
-        val snapshotListResponse = snapshotListResponseFuture.get()
-        snapshotListResponse.validate()
+        val page = pageFuture.get()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -97,5 +86,21 @@ internal class SnapshotServiceAsyncTest {
         val future = snapshotServiceAsync.delete("snapshot_id")
 
         val response = future.get()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveByName() {
+        val client =
+            LangsmithOkHttpClientAsync.builder()
+                .apiKey("My API Key")
+                .tenantId("My Tenant ID")
+                .build()
+        val snapshotServiceAsync = client.sandboxes().snapshots()
+
+        val responseFuture = snapshotServiceAsync.retrieveByName("name")
+
+        val response = responseFuture.get()
+        response.validate()
     }
 }

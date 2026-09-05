@@ -14,12 +14,14 @@ internal class SnapshotCreateParamsTest {
             .dockerImage("docker_image")
             .fsCapacityBytes(0L)
             .name("name")
+            .description("description")
             .labels(
                 SnapshotCreateParams.Labels.builder()
                     .putAdditionalProperty("foo", JsonValue.from("string"))
                     .build()
             )
             .registryId("registry_id")
+            .tag("tag")
             .build()
     }
 
@@ -30,12 +32,14 @@ internal class SnapshotCreateParamsTest {
                 .dockerImage("docker_image")
                 .fsCapacityBytes(0L)
                 .name("name")
+                .description("description")
                 .labels(
                     SnapshotCreateParams.Labels.builder()
                         .putAdditionalProperty("foo", JsonValue.from("string"))
                         .build()
                 )
                 .registryId("registry_id")
+                .tag("tag")
                 .build()
 
         val body = params._body()
@@ -43,6 +47,7 @@ internal class SnapshotCreateParamsTest {
         assertThat(body.dockerImage()).isEqualTo("docker_image")
         assertThat(body.fsCapacityBytes()).isEqualTo(0L)
         assertThat(body.name()).isEqualTo("name")
+        assertThat(body.description()).contains("description")
         assertThat(body.labels())
             .contains(
                 SnapshotCreateParams.Labels.builder()
@@ -50,6 +55,7 @@ internal class SnapshotCreateParamsTest {
                     .build()
             )
         assertThat(body.registryId()).contains("registry_id")
+        assertThat(body.tag()).contains("tag")
     }
 
     @Test

@@ -10,6 +10,7 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
 import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
@@ -23,6 +24,7 @@ private constructor(
     private val id: JsonField<String>,
     private val createdAt: JsonField<String>,
     private val createdBy: JsonField<String>,
+    private val description: JsonField<String>,
     private val dockerImage: JsonField<String>,
     private val fsCapacityBytes: JsonField<Long>,
     private val fsUsedBytes: JsonField<Long>,
@@ -34,6 +36,7 @@ private constructor(
     private val sourceSandboxId: JsonField<String>,
     private val status: JsonField<String>,
     private val statusMessage: JsonField<String>,
+    private val tags: JsonField<List<String>>,
     private val updatedAt: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -43,6 +46,9 @@ private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_at") @ExcludeMissing createdAt: JsonField<String> = JsonMissing.of(),
         @JsonProperty("created_by") @ExcludeMissing createdBy: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("description")
+        @ExcludeMissing
+        description: JsonField<String> = JsonMissing.of(),
         @JsonProperty("docker_image")
         @ExcludeMissing
         dockerImage: JsonField<String> = JsonMissing.of(),
@@ -70,11 +76,13 @@ private constructor(
         @JsonProperty("status_message")
         @ExcludeMissing
         statusMessage: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("tags") @ExcludeMissing tags: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("updated_at") @ExcludeMissing updatedAt: JsonField<String> = JsonMissing.of(),
     ) : this(
         id,
         createdAt,
         createdBy,
+        description,
         dockerImage,
         fsCapacityBytes,
         fsUsedBytes,
@@ -86,6 +94,7 @@ private constructor(
         sourceSandboxId,
         status,
         statusMessage,
+        tags,
         updatedAt,
         mutableMapOf(),
     )
@@ -107,6 +116,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun createdBy(): Optional<String> = createdBy.getOptional("created_by")
+
+    /**
+     * Description says what this snapshot's image can do, so a caller can hand it to an agent as a
+     * capability summary.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun description(): Optional<String> = description.getOptional("description")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -180,6 +198,15 @@ private constructor(
     fun statusMessage(): Optional<String> = statusMessage.getOptional("status_message")
 
     /**
+     * Tags currently resolving to this snapshot, under Name. A snapshot with no tags is dangling —
+     * addressable only by id.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun tags(): Optional<List<String>> = tags.getOptional("tags")
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -205,6 +232,13 @@ private constructor(
      * Unlike [createdBy], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("created_by") @ExcludeMissing fun _createdBy(): JsonField<String> = createdBy
+
+    /**
+     * Returns the raw JSON value of [description].
+     *
+     * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("description") @ExcludeMissing fun _description(): JsonField<String> = description
 
     /**
      * Returns the raw JSON value of [dockerImage].
@@ -297,6 +331,13 @@ private constructor(
     fun _statusMessage(): JsonField<String> = statusMessage
 
     /**
+     * Returns the raw JSON value of [tags].
+     *
+     * Unlike [tags], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("tags") @ExcludeMissing fun _tags(): JsonField<List<String>> = tags
+
+    /**
      * Returns the raw JSON value of [updatedAt].
      *
      * Unlike [updatedAt], this method doesn't throw if the JSON field has an unexpected type.
@@ -327,6 +368,7 @@ private constructor(
         private var id: JsonField<String> = JsonMissing.of()
         private var createdAt: JsonField<String> = JsonMissing.of()
         private var createdBy: JsonField<String> = JsonMissing.of()
+        private var description: JsonField<String> = JsonMissing.of()
         private var dockerImage: JsonField<String> = JsonMissing.of()
         private var fsCapacityBytes: JsonField<Long> = JsonMissing.of()
         private var fsUsedBytes: JsonField<Long> = JsonMissing.of()
@@ -338,6 +380,7 @@ private constructor(
         private var sourceSandboxId: JsonField<String> = JsonMissing.of()
         private var status: JsonField<String> = JsonMissing.of()
         private var statusMessage: JsonField<String> = JsonMissing.of()
+        private var tags: JsonField<MutableList<String>>? = null
         private var updatedAt: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -346,6 +389,7 @@ private constructor(
             id = snapshotResponse.id
             createdAt = snapshotResponse.createdAt
             createdBy = snapshotResponse.createdBy
+            description = snapshotResponse.description
             dockerImage = snapshotResponse.dockerImage
             fsCapacityBytes = snapshotResponse.fsCapacityBytes
             fsUsedBytes = snapshotResponse.fsUsedBytes
@@ -357,6 +401,7 @@ private constructor(
             sourceSandboxId = snapshotResponse.sourceSandboxId
             status = snapshotResponse.status
             statusMessage = snapshotResponse.statusMessage
+            tags = snapshotResponse.tags.map { it.toMutableList() }
             updatedAt = snapshotResponse.updatedAt
             additionalProperties = snapshotResponse.additionalProperties.toMutableMap()
         }
@@ -392,6 +437,21 @@ private constructor(
          * value.
          */
         fun createdBy(createdBy: JsonField<String>) = apply { this.createdBy = createdBy }
+
+        /**
+         * Description says what this snapshot's image can do, so a caller can hand it to an agent
+         * as a capability summary.
+         */
+        fun description(description: String) = description(JsonField.of(description))
+
+        /**
+         * Sets [Builder.description] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.description] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun description(description: JsonField<String>) = apply { this.description = description }
 
         fun dockerImage(dockerImage: String) = dockerImage(JsonField.of(dockerImage))
 
@@ -526,6 +586,32 @@ private constructor(
             this.statusMessage = statusMessage
         }
 
+        /**
+         * Tags currently resolving to this snapshot, under Name. A snapshot with no tags is
+         * dangling — addressable only by id.
+         */
+        fun tags(tags: List<String>) = tags(JsonField.of(tags))
+
+        /**
+         * Sets [Builder.tags] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.tags] with a well-typed `List<String>` value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun tags(tags: JsonField<List<String>>) = apply {
+            this.tags = tags.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [tags].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addTag(tag: String) = apply {
+            tags = (tags ?: JsonField.of(mutableListOf())).also { checkKnown("tags", it).add(tag) }
+        }
+
         fun updatedAt(updatedAt: String) = updatedAt(JsonField.of(updatedAt))
 
         /**
@@ -566,6 +652,7 @@ private constructor(
                 id,
                 createdAt,
                 createdBy,
+                description,
                 dockerImage,
                 fsCapacityBytes,
                 fsUsedBytes,
@@ -577,6 +664,7 @@ private constructor(
                 sourceSandboxId,
                 status,
                 statusMessage,
+                (tags ?: JsonMissing.of()).map { it.toImmutable() },
                 updatedAt,
                 additionalProperties.toMutableMap(),
             )
@@ -600,6 +688,7 @@ private constructor(
         id()
         createdAt()
         createdBy()
+        description()
         dockerImage()
         fsCapacityBytes()
         fsUsedBytes()
@@ -611,6 +700,7 @@ private constructor(
         sourceSandboxId()
         status()
         statusMessage()
+        tags()
         updatedAt()
         validated = true
     }
@@ -633,6 +723,7 @@ private constructor(
         (if (id.asKnown().isPresent) 1 else 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (createdBy.asKnown().isPresent) 1 else 0) +
+            (if (description.asKnown().isPresent) 1 else 0) +
             (if (dockerImage.asKnown().isPresent) 1 else 0) +
             (if (fsCapacityBytes.asKnown().isPresent) 1 else 0) +
             (if (fsUsedBytes.asKnown().isPresent) 1 else 0) +
@@ -644,6 +735,7 @@ private constructor(
             (if (sourceSandboxId.asKnown().isPresent) 1 else 0) +
             (if (status.asKnown().isPresent) 1 else 0) +
             (if (statusMessage.asKnown().isPresent) 1 else 0) +
+            (tags.asKnown().getOrNull()?.size ?: 0) +
             (if (updatedAt.asKnown().isPresent) 1 else 0)
 
     class Labels
@@ -763,6 +855,7 @@ private constructor(
             id == other.id &&
             createdAt == other.createdAt &&
             createdBy == other.createdBy &&
+            description == other.description &&
             dockerImage == other.dockerImage &&
             fsCapacityBytes == other.fsCapacityBytes &&
             fsUsedBytes == other.fsUsedBytes &&
@@ -774,6 +867,7 @@ private constructor(
             sourceSandboxId == other.sourceSandboxId &&
             status == other.status &&
             statusMessage == other.statusMessage &&
+            tags == other.tags &&
             updatedAt == other.updatedAt &&
             additionalProperties == other.additionalProperties
     }
@@ -783,6 +877,7 @@ private constructor(
             id,
             createdAt,
             createdBy,
+            description,
             dockerImage,
             fsCapacityBytes,
             fsUsedBytes,
@@ -794,6 +889,7 @@ private constructor(
             sourceSandboxId,
             status,
             statusMessage,
+            tags,
             updatedAt,
             additionalProperties,
         )
@@ -802,5 +898,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, labels=$labels, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
+        "SnapshotResponse{id=$id, createdAt=$createdAt, createdBy=$createdBy, description=$description, dockerImage=$dockerImage, fsCapacityBytes=$fsCapacityBytes, fsUsedBytes=$fsUsedBytes, imageDigest=$imageDigest, labels=$labels, memorySnapshotSizeBytes=$memorySnapshotSizeBytes, name=$name, registryId=$registryId, sourceSandboxId=$sourceSandboxId, status=$status, statusMessage=$statusMessage, tags=$tags, updatedAt=$updatedAt, additionalProperties=$additionalProperties}"
 }

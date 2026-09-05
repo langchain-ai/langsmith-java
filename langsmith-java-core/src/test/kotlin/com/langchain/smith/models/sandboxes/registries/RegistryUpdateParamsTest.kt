@@ -11,6 +11,8 @@ internal class RegistryUpdateParamsTest {
     fun create() {
         RegistryUpdateParams.builder()
             .pathName("name")
+            .authType(RegistryUpdateParams.AuthType.DOCKER_CONFIG)
+            .awsRoleArn("aws_role_arn")
             .bodyName("name")
             .password("password")
             .url("url")
@@ -32,6 +34,8 @@ internal class RegistryUpdateParamsTest {
         val params =
             RegistryUpdateParams.builder()
                 .pathName("name")
+                .authType(RegistryUpdateParams.AuthType.DOCKER_CONFIG)
+                .awsRoleArn("aws_role_arn")
                 .bodyName("name")
                 .password("password")
                 .url("url")
@@ -40,6 +44,8 @@ internal class RegistryUpdateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.authType()).contains(RegistryUpdateParams.AuthType.DOCKER_CONFIG)
+        assertThat(body.awsRoleArn()).contains("aws_role_arn")
         assertThat(body.bodyName()).contains("name")
         assertThat(body.password()).contains("password")
         assertThat(body.url()).contains("url")

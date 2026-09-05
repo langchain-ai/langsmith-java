@@ -21,6 +21,7 @@ class InfoListResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val batchIngestConfig: JsonField<BatchIngestConfig>,
+    private val billingInstallationId: JsonField<String>,
     private val customerInfo: JsonField<CustomerInfo>,
     private val gitSha: JsonField<String>,
     private val instanceFlags: JsonField<InstanceFlags>,
@@ -35,6 +36,9 @@ private constructor(
         @JsonProperty("batch_ingest_config")
         @ExcludeMissing
         batchIngestConfig: JsonField<BatchIngestConfig> = JsonMissing.of(),
+        @JsonProperty("billing_installation_id")
+        @ExcludeMissing
+        billingInstallationId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("customer_info")
         @ExcludeMissing
         customerInfo: JsonField<CustomerInfo> = JsonMissing.of(),
@@ -51,6 +55,7 @@ private constructor(
         @JsonProperty("version") @ExcludeMissing version: JsonField<String> = JsonMissing.of(),
     ) : this(
         batchIngestConfig,
+        billingInstallationId,
         customerInfo,
         gitSha,
         instanceFlags,
@@ -66,6 +71,16 @@ private constructor(
      */
     fun batchIngestConfig(): Optional<BatchIngestConfig> =
         batchIngestConfig.getOptional("batch_ingest_config")
+
+    /**
+     * BillingInstallationID is the persistent per-installation identity for self-hosted
+     * deployments.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun billingInstallationId(): Optional<String> =
+        billingInstallationId.getOptional("billing_installation_id")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -113,6 +128,16 @@ private constructor(
     @JsonProperty("batch_ingest_config")
     @ExcludeMissing
     fun _batchIngestConfig(): JsonField<BatchIngestConfig> = batchIngestConfig
+
+    /**
+     * Returns the raw JSON value of [billingInstallationId].
+     *
+     * Unlike [billingInstallationId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("billing_installation_id")
+    @ExcludeMissing
+    fun _billingInstallationId(): JsonField<String> = billingInstallationId
 
     /**
      * Returns the raw JSON value of [customerInfo].
@@ -187,6 +212,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var batchIngestConfig: JsonField<BatchIngestConfig> = JsonMissing.of()
+        private var billingInstallationId: JsonField<String> = JsonMissing.of()
         private var customerInfo: JsonField<CustomerInfo> = JsonMissing.of()
         private var gitSha: JsonField<String> = JsonMissing.of()
         private var instanceFlags: JsonField<InstanceFlags> = JsonMissing.of()
@@ -198,6 +224,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(infoListResponse: InfoListResponse) = apply {
             batchIngestConfig = infoListResponse.batchIngestConfig
+            billingInstallationId = infoListResponse.billingInstallationId
             customerInfo = infoListResponse.customerInfo
             gitSha = infoListResponse.gitSha
             instanceFlags = infoListResponse.instanceFlags
@@ -219,6 +246,24 @@ private constructor(
          */
         fun batchIngestConfig(batchIngestConfig: JsonField<BatchIngestConfig>) = apply {
             this.batchIngestConfig = batchIngestConfig
+        }
+
+        /**
+         * BillingInstallationID is the persistent per-installation identity for self-hosted
+         * deployments.
+         */
+        fun billingInstallationId(billingInstallationId: String) =
+            billingInstallationId(JsonField.of(billingInstallationId))
+
+        /**
+         * Sets [Builder.billingInstallationId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.billingInstallationId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun billingInstallationId(billingInstallationId: JsonField<String>) = apply {
+            this.billingInstallationId = billingInstallationId
         }
 
         fun customerInfo(customerInfo: CustomerInfo) = customerInfo(JsonField.of(customerInfo))
@@ -321,6 +366,7 @@ private constructor(
         fun build(): InfoListResponse =
             InfoListResponse(
                 batchIngestConfig,
+                billingInstallationId,
                 customerInfo,
                 gitSha,
                 instanceFlags,
@@ -347,6 +393,7 @@ private constructor(
         }
 
         batchIngestConfig().ifPresent { it.validate() }
+        billingInstallationId()
         customerInfo().ifPresent { it.validate() }
         gitSha()
         instanceFlags().ifPresent { it.validate() }
@@ -372,6 +419,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (batchIngestConfig.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (billingInstallationId.asKnown().isPresent) 1 else 0) +
             (customerInfo.asKnown().getOrNull()?.validity() ?: 0) +
             (if (gitSha.asKnown().isPresent) 1 else 0) +
             (instanceFlags.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1361,6 +1409,7 @@ private constructor(
 
         return other is InfoListResponse &&
             batchIngestConfig == other.batchIngestConfig &&
+            billingInstallationId == other.billingInstallationId &&
             customerInfo == other.customerInfo &&
             gitSha == other.gitSha &&
             instanceFlags == other.instanceFlags &&
@@ -1373,6 +1422,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             batchIngestConfig,
+            billingInstallationId,
             customerInfo,
             gitSha,
             instanceFlags,
@@ -1386,5 +1436,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "InfoListResponse{batchIngestConfig=$batchIngestConfig, customerInfo=$customerInfo, gitSha=$gitSha, instanceFlags=$instanceFlags, licenseExpirationTime=$licenseExpirationTime, sdkVersions=$sdkVersions, version=$version, additionalProperties=$additionalProperties}"
+        "InfoListResponse{batchIngestConfig=$batchIngestConfig, billingInstallationId=$billingInstallationId, customerInfo=$customerInfo, gitSha=$gitSha, instanceFlags=$instanceFlags, licenseExpirationTime=$licenseExpirationTime, sdkVersions=$sdkVersions, version=$version, additionalProperties=$additionalProperties}"
 }

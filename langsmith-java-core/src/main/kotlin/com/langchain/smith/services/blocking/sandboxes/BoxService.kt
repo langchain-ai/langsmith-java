@@ -7,7 +7,7 @@ import com.langchain.smith.core.ClientOptions
 import com.langchain.smith.core.RequestOptions
 import com.langchain.smith.core.http.HttpResponse
 import com.langchain.smith.core.http.HttpResponseFor
-import com.langchain.smith.models.sandboxes.SandboxListResponse
+import com.langchain.smith.models.sandboxes.DownloadUrlResponse
 import com.langchain.smith.models.sandboxes.SandboxResponse
 import com.langchain.smith.models.sandboxes.SandboxStatusResponse
 import com.langchain.smith.models.sandboxes.ServiceUrlResponse
@@ -15,8 +15,10 @@ import com.langchain.smith.models.sandboxes.SnapshotResponse
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
 import com.langchain.smith.models.sandboxes.boxes.BoxDeleteParams
+import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGetStatusParams
+import com.langchain.smith.models.sandboxes.boxes.BoxListPage
 import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxRetrieveParams
 import com.langchain.smith.models.sandboxes.boxes.BoxStartParams
@@ -41,6 +43,8 @@ interface BoxService {
     /**
      * Create a new sandbox from a snapshot. Provide at most one of `snapshot_id` or
      * `snapshot_name`; if neither is provided, the server uses the default snapshot.
+     * `snapshot_name` accepts a Docker-style `name` or `name:tag` reference (a bare name resolves
+     * to `name:latest`).
      */
     fun create(): SandboxResponse = create(BoxCreateParams.none())
 
@@ -88,7 +92,11 @@ interface BoxService {
     fun retrieve(name: String, requestOptions: RequestOptions): SandboxResponse =
         retrieve(name, BoxRetrieveParams.none(), requestOptions)
 
-    /** Update a sandbox's display name. The name must be unique within the tenant. */
+    /**
+     * Update a sandbox's display name, retention, resources, tags, or proxy configuration. The name
+     * must be unique within the tenant. Proxy configuration sent to a sandbox that is not running
+     * is stored and applied when it next starts.
+     */
     fun update(pathName: String): SandboxResponse = update(pathName, BoxUpdateParams.none())
 
     /** @see update */
@@ -119,22 +127,24 @@ interface BoxService {
 
     /**
      * List sandboxes for the authenticated tenant, with optional filtering, sorting, and
-     * pagination.
+     * pagination. Page with page_size and cursor: replay the response's next_cursor until it comes
+     * back null, which is the only signal that no pages remain. Cursors are opaque and only valid
+     * on this endpoint; do not parse or construct one.
      */
-    fun list(): SandboxListResponse = list(BoxListParams.none())
+    fun list(): BoxListPage = list(BoxListParams.none())
 
     /** @see list */
     fun list(
         params: BoxListParams = BoxListParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): SandboxListResponse
+    ): BoxListPage
 
     /** @see list */
-    fun list(params: BoxListParams = BoxListParams.none()): SandboxListResponse =
+    fun list(params: BoxListParams = BoxListParams.none()): BoxListPage =
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(requestOptions: RequestOptions): SandboxListResponse =
+    fun list(requestOptions: RequestOptions): BoxListPage =
         list(BoxListParams.none(), requestOptions)
 
     /**
@@ -187,6 +197,37 @@ interface BoxService {
         params: BoxCreateSnapshotParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): SnapshotResponse
+
+    /**
+     * Generate a tokenized link that downloads a single file from a sandbox with no further
+     * authentication. This mints a token rather than creating an addressable resource, so it
+     * returns 200 with no Location header. The token pins the sandbox, the file path, and the
+     * response content type and disposition, so a link cannot be repointed at another file. Links
+     * never expire unless expires_in_seconds is set. The link is served from the sandbox service
+     * domain, not the API host.
+     */
+    fun generateDownloadUrl(
+        name: String,
+        params: BoxGenerateDownloadUrlParams,
+    ): DownloadUrlResponse = generateDownloadUrl(name, params, RequestOptions.none())
+
+    /** @see generateDownloadUrl */
+    fun generateDownloadUrl(
+        name: String,
+        params: BoxGenerateDownloadUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): DownloadUrlResponse =
+        generateDownloadUrl(params.toBuilder().name(name).build(), requestOptions)
+
+    /** @see generateDownloadUrl */
+    fun generateDownloadUrl(params: BoxGenerateDownloadUrlParams): DownloadUrlResponse =
+        generateDownloadUrl(params, RequestOptions.none())
+
+    /** @see generateDownloadUrl */
+    fun generateDownloadUrl(
+        params: BoxGenerateDownloadUrlParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): DownloadUrlResponse
 
     /**
      * Create a short-lived JWT for accessing an HTTP service running on a specific port inside a
@@ -435,24 +476,23 @@ interface BoxService {
          * Returns a raw HTTP response for `get /api/v2/sandboxes/boxes`, but is otherwise the same
          * as [BoxService.list].
          */
-        @MustBeClosed fun list(): HttpResponseFor<SandboxListResponse> = list(BoxListParams.none())
+        @MustBeClosed fun list(): HttpResponseFor<BoxListPage> = list(BoxListParams.none())
 
         /** @see list */
         @MustBeClosed
         fun list(
             params: BoxListParams = BoxListParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<SandboxListResponse>
+        ): HttpResponseFor<BoxListPage>
 
         /** @see list */
         @MustBeClosed
-        fun list(
-            params: BoxListParams = BoxListParams.none()
-        ): HttpResponseFor<SandboxListResponse> = list(params, RequestOptions.none())
+        fun list(params: BoxListParams = BoxListParams.none()): HttpResponseFor<BoxListPage> =
+            list(params, RequestOptions.none())
 
         /** @see list */
         @MustBeClosed
-        fun list(requestOptions: RequestOptions): HttpResponseFor<SandboxListResponse> =
+        fun list(requestOptions: RequestOptions): HttpResponseFor<BoxListPage> =
             list(BoxListParams.none(), requestOptions)
 
         /**
@@ -521,6 +561,39 @@ interface BoxService {
             params: BoxCreateSnapshotParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<SnapshotResponse>
+
+        /**
+         * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/download-url`, but
+         * is otherwise the same as [BoxService.generateDownloadUrl].
+         */
+        @MustBeClosed
+        fun generateDownloadUrl(
+            name: String,
+            params: BoxGenerateDownloadUrlParams,
+        ): HttpResponseFor<DownloadUrlResponse> =
+            generateDownloadUrl(name, params, RequestOptions.none())
+
+        /** @see generateDownloadUrl */
+        @MustBeClosed
+        fun generateDownloadUrl(
+            name: String,
+            params: BoxGenerateDownloadUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<DownloadUrlResponse> =
+            generateDownloadUrl(params.toBuilder().name(name).build(), requestOptions)
+
+        /** @see generateDownloadUrl */
+        @MustBeClosed
+        fun generateDownloadUrl(
+            params: BoxGenerateDownloadUrlParams
+        ): HttpResponseFor<DownloadUrlResponse> = generateDownloadUrl(params, RequestOptions.none())
+
+        /** @see generateDownloadUrl */
+        @MustBeClosed
+        fun generateDownloadUrl(
+            params: BoxGenerateDownloadUrlParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<DownloadUrlResponse>
 
         /**
          * Returns a raw HTTP response for `post /api/v2/sandboxes/boxes/{name}/service-url`, but is

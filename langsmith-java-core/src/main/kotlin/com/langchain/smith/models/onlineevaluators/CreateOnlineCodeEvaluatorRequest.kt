@@ -10,30 +10,47 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
+import com.langchain.smith.core.checkKnown
+import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 class CreateOnlineCodeEvaluatorRequest
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val code: JsonField<String>,
+    private val dependencies: JsonField<String>,
     private val language: JsonField<String>,
+    private val workspaceSecretsKeys: JsonField<List<String>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
         @JsonProperty("code") @ExcludeMissing code: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("dependencies")
+        @ExcludeMissing
+        dependencies: JsonField<String> = JsonMissing.of(),
         @JsonProperty("language") @ExcludeMissing language: JsonField<String> = JsonMissing.of(),
-    ) : this(code, language, mutableMapOf())
+        @JsonProperty("workspace_secrets_keys")
+        @ExcludeMissing
+        workspaceSecretsKeys: JsonField<List<String>> = JsonMissing.of(),
+    ) : this(code, dependencies, language, workspaceSecretsKeys, mutableMapOf())
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun code(): Optional<String> = code.getOptional("code")
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun dependencies(): Optional<String> = dependencies.getOptional("dependencies")
 
     /**
      * Default: "python"
@@ -44,6 +61,13 @@ private constructor(
     fun language(): Optional<String> = language.getOptional("language")
 
     /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun workspaceSecretsKeys(): Optional<List<String>> =
+        workspaceSecretsKeys.getOptional("workspace_secrets_keys")
+
+    /**
      * Returns the raw JSON value of [code].
      *
      * Unlike [code], this method doesn't throw if the JSON field has an unexpected type.
@@ -51,11 +75,30 @@ private constructor(
     @JsonProperty("code") @ExcludeMissing fun _code(): JsonField<String> = code
 
     /**
+     * Returns the raw JSON value of [dependencies].
+     *
+     * Unlike [dependencies], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("dependencies")
+    @ExcludeMissing
+    fun _dependencies(): JsonField<String> = dependencies
+
+    /**
      * Returns the raw JSON value of [language].
      *
      * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<String> = language
+
+    /**
+     * Returns the raw JSON value of [workspaceSecretsKeys].
+     *
+     * Unlike [workspaceSecretsKeys], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("workspace_secrets_keys")
+    @ExcludeMissing
+    fun _workspaceSecretsKeys(): JsonField<List<String>> = workspaceSecretsKeys
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -82,14 +125,19 @@ private constructor(
     class Builder internal constructor() {
 
         private var code: JsonField<String> = JsonMissing.of()
+        private var dependencies: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
+        private var workspaceSecretsKeys: JsonField<MutableList<String>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(createOnlineCodeEvaluatorRequest: CreateOnlineCodeEvaluatorRequest) =
             apply {
                 code = createOnlineCodeEvaluatorRequest.code
+                dependencies = createOnlineCodeEvaluatorRequest.dependencies
                 language = createOnlineCodeEvaluatorRequest.language
+                workspaceSecretsKeys =
+                    createOnlineCodeEvaluatorRequest.workspaceSecretsKeys.map { it.toMutableList() }
                 additionalProperties =
                     createOnlineCodeEvaluatorRequest.additionalProperties.toMutableMap()
             }
@@ -104,6 +152,19 @@ private constructor(
          */
         fun code(code: JsonField<String>) = apply { this.code = code }
 
+        fun dependencies(dependencies: String) = dependencies(JsonField.of(dependencies))
+
+        /**
+         * Sets [Builder.dependencies] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.dependencies] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun dependencies(dependencies: JsonField<String>) = apply {
+            this.dependencies = dependencies
+        }
+
         /** Default: "python" */
         fun language(language: String) = language(JsonField.of(language))
 
@@ -114,6 +175,32 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun language(language: JsonField<String>) = apply { this.language = language }
+
+        fun workspaceSecretsKeys(workspaceSecretsKeys: List<String>) =
+            workspaceSecretsKeys(JsonField.of(workspaceSecretsKeys))
+
+        /**
+         * Sets [Builder.workspaceSecretsKeys] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.workspaceSecretsKeys] with a well-typed `List<String>`
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun workspaceSecretsKeys(workspaceSecretsKeys: JsonField<List<String>>) = apply {
+            this.workspaceSecretsKeys = workspaceSecretsKeys.map { it.toMutableList() }
+        }
+
+        /**
+         * Adds a single [String] to [workspaceSecretsKeys].
+         *
+         * @throws IllegalStateException if the field was previously set to a non-list.
+         */
+        fun addWorkspaceSecretsKey(workspaceSecretsKey: String) = apply {
+            workspaceSecretsKeys =
+                (workspaceSecretsKeys ?: JsonField.of(mutableListOf())).also {
+                    checkKnown("workspaceSecretsKeys", it).add(workspaceSecretsKey)
+                }
+        }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -140,7 +227,13 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): CreateOnlineCodeEvaluatorRequest =
-            CreateOnlineCodeEvaluatorRequest(code, language, additionalProperties.toMutableMap())
+            CreateOnlineCodeEvaluatorRequest(
+                code,
+                dependencies,
+                language,
+                (workspaceSecretsKeys ?: JsonMissing.of()).map { it.toImmutable() },
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false
@@ -159,7 +252,9 @@ private constructor(
         }
 
         code()
+        dependencies()
         language()
+        workspaceSecretsKeys()
         validated = true
     }
 
@@ -178,7 +273,10 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (code.asKnown().isPresent) 1 else 0) + (if (language.asKnown().isPresent) 1 else 0)
+        (if (code.asKnown().isPresent) 1 else 0) +
+            (if (dependencies.asKnown().isPresent) 1 else 0) +
+            (if (language.asKnown().isPresent) 1 else 0) +
+            (workspaceSecretsKeys.asKnown().getOrNull()?.size ?: 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -187,14 +285,18 @@ private constructor(
 
         return other is CreateOnlineCodeEvaluatorRequest &&
             code == other.code &&
+            dependencies == other.dependencies &&
             language == other.language &&
+            workspaceSecretsKeys == other.workspaceSecretsKeys &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(code, language, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(code, dependencies, language, workspaceSecretsKeys, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateOnlineCodeEvaluatorRequest{code=$code, language=$language, additionalProperties=$additionalProperties}"
+        "CreateOnlineCodeEvaluatorRequest{code=$code, dependencies=$dependencies, language=$language, workspaceSecretsKeys=$workspaceSecretsKeys, additionalProperties=$additionalProperties}"
 }

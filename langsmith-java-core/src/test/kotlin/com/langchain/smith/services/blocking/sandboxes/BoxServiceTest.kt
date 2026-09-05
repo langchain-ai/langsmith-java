@@ -6,8 +6,8 @@ import com.langchain.smith.client.okhttp.LangsmithOkHttpClient
 import com.langchain.smith.core.JsonValue
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateParams
 import com.langchain.smith.models.sandboxes.boxes.BoxCreateSnapshotParams
+import com.langchain.smith.models.sandboxes.boxes.BoxGenerateDownloadUrlParams
 import com.langchain.smith.models.sandboxes.boxes.BoxGenerateServiceUrlParams
-import com.langchain.smith.models.sandboxes.boxes.BoxListParams
 import com.langchain.smith.models.sandboxes.boxes.BoxUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -204,6 +204,7 @@ internal class BoxServiceTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .addNoProxy("string")
                             .addRule(
                                 BoxCreateParams.ProxyConfig.Rule.builder()
@@ -238,6 +239,7 @@ internal class BoxServiceTest {
                                             )
                                             .build()
                                     )
+                                    .description("description")
                                     .enabled(true)
                                     .envVars(
                                         BoxCreateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -282,6 +284,7 @@ internal class BoxServiceTest {
                             .build()
                     )
                     .restoreMemory(true)
+                    .snapshot("snapshot")
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
                     .addTagValueId("string")
@@ -349,6 +352,7 @@ internal class BoxServiceTest {
                                     )
                                     .build()
                             )
+                            .description("description")
                             .addNoProxy("string")
                             .addRule(
                                 BoxUpdateParams.ProxyConfig.Rule.builder()
@@ -383,6 +387,7 @@ internal class BoxServiceTest {
                                             )
                                             .build()
                                     )
+                                    .description("description")
                                     .enabled(true)
                                     .envVars(
                                         BoxUpdateParams.ProxyConfig.Rule.EnvVars.builder()
@@ -441,21 +446,9 @@ internal class BoxServiceTest {
             LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
         val boxService = client.sandboxes().boxes()
 
-        val sandboxListResponse =
-            boxService.list(
-                BoxListParams.builder()
-                    .createdBy("created_by")
-                    .addLabel("string")
-                    .limit(0L)
-                    .nameContains("name_contains")
-                    .offset(0L)
-                    .sortBy("sort_by")
-                    .sortDirection("sort_direction")
-                    .status("status")
-                    .build()
-            )
+        val page = boxService.list()
 
-        sandboxListResponse.validate()
+        page.response().validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -481,6 +474,7 @@ internal class BoxServiceTest {
                     .pathName("name")
                     .bodyName("name")
                     .checkpoint("checkpoint")
+                    .description("description")
                     .dockerImage("docker_image")
                     .fsCapacityBytes(0L)
                     .includeMemory(true)
@@ -489,10 +483,32 @@ internal class BoxServiceTest {
                             .putAdditionalProperty("foo", JsonValue.from("string"))
                             .build()
                     )
+                    .tag("tag")
                     .build()
             )
 
         snapshotResponse.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun generateDownloadUrl() {
+        val client =
+            LangsmithOkHttpClient.builder().apiKey("My API Key").tenantId("My Tenant ID").build()
+        val boxService = client.sandboxes().boxes()
+
+        val downloadUrlResponse =
+            boxService.generateDownloadUrl(
+                BoxGenerateDownloadUrlParams.builder()
+                    .name("name")
+                    .path("path")
+                    .contentDisposition("content_disposition")
+                    .contentType("content_type")
+                    .expiresInSeconds(0L)
+                    .build()
+            )
+
+        downloadUrlResponse.validate()
     }
 
     @Disabled("Mock server tests are disabled")

@@ -12,16 +12,22 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * List sandboxes for the authenticated tenant, with optional filtering, sorting, and pagination.
+ * Page with page_size and cursor: replay the response's next_cursor until it comes back null, which
+ * is the only signal that no pages remain. Cursors are opaque and only valid on this endpoint; do
+ * not parse or construct one.
  */
 class BoxListParams
 private constructor(
     private val createdBy: String?,
+    private val cursor: String?,
     private val label: List<String>?,
     private val limit: Long?,
     private val nameContains: String?,
     private val offset: Long?,
+    private val pageSize: Long?,
     private val sortBy: String?,
     private val sortDirection: String?,
+    private val sortOrder: String?,
     private val status: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -30,26 +36,38 @@ private constructor(
     /** Filter by creator identity. Only 'me' is supported. */
     fun createdBy(): Optional<String> = Optional.ofNullable(createdBy)
 
+    /** Opaque pagination cursor from a prior response's next_cursor */
+    fun cursor(): Optional<String> = Optional.ofNullable(cursor)
+
     /**
      * Filter by label. Repeatable; all must match. Use 'key' to match on key presence or
      * 'key=value' for equality.
      */
     fun label(): Optional<List<String>> = Optional.ofNullable(label)
 
-    /** Maximum number of results */
+    /** Deprecated: use page_size. Maximum number of results */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
 
     /** Filter by name substring */
     fun nameContains(): Optional<String> = Optional.ofNullable(nameContains)
 
-    /** Pagination offset */
+    /** Deprecated: use cursor. Pagination offset */
     fun offset(): Optional<Long> = Optional.ofNullable(offset)
 
-    /** Sort column (name, status, created_at) */
+    /** Number of results per page */
+    fun pageSize(): Optional<Long> = Optional.ofNullable(pageSize)
+
+    /**
+     * Sort column (name, status, created_at, stopped_at, idle_ttl_seconds,
+     * delete_after_stop_seconds)
+     */
     fun sortBy(): Optional<String> = Optional.ofNullable(sortBy)
 
-    /** Sort direction (asc, desc) */
+    /** Deprecated: use sort_order. Sort direction (asc, desc) */
     fun sortDirection(): Optional<String> = Optional.ofNullable(sortDirection)
+
+    /** Sort direction (asc, desc) */
+    fun sortOrder(): Optional<String> = Optional.ofNullable(sortOrder)
 
     /** Filter by status (provisioning, ready, failed, stopped, deleting) */
     fun status(): Optional<String> = Optional.ofNullable(status)
@@ -74,12 +92,15 @@ private constructor(
     class Builder internal constructor() {
 
         private var createdBy: String? = null
+        private var cursor: String? = null
         private var label: MutableList<String>? = null
         private var limit: Long? = null
         private var nameContains: String? = null
         private var offset: Long? = null
+        private var pageSize: Long? = null
         private var sortBy: String? = null
         private var sortDirection: String? = null
+        private var sortOrder: String? = null
         private var status: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -87,12 +108,15 @@ private constructor(
         @JvmSynthetic
         internal fun from(boxListParams: BoxListParams) = apply {
             createdBy = boxListParams.createdBy
+            cursor = boxListParams.cursor
             label = boxListParams.label?.toMutableList()
             limit = boxListParams.limit
             nameContains = boxListParams.nameContains
             offset = boxListParams.offset
+            pageSize = boxListParams.pageSize
             sortBy = boxListParams.sortBy
             sortDirection = boxListParams.sortDirection
+            sortOrder = boxListParams.sortOrder
             status = boxListParams.status
             additionalHeaders = boxListParams.additionalHeaders.toBuilder()
             additionalQueryParams = boxListParams.additionalQueryParams.toBuilder()
@@ -103,6 +127,12 @@ private constructor(
 
         /** Alias for calling [Builder.createdBy] with `createdBy.orElse(null)`. */
         fun createdBy(createdBy: Optional<String>) = createdBy(createdBy.getOrNull())
+
+        /** Opaque pagination cursor from a prior response's next_cursor */
+        fun cursor(cursor: String?) = apply { this.cursor = cursor }
+
+        /** Alias for calling [Builder.cursor] with `cursor.orElse(null)`. */
+        fun cursor(cursor: Optional<String>) = cursor(cursor.getOrNull())
 
         /**
          * Filter by label. Repeatable; all must match. Use 'key' to match on key presence or
@@ -122,7 +152,7 @@ private constructor(
             this.label = (this.label ?: mutableListOf()).apply { add(label) }
         }
 
-        /** Maximum number of results */
+        /** Deprecated: use page_size. Maximum number of results */
         fun limit(limit: Long?) = apply { this.limit = limit }
 
         /**
@@ -141,7 +171,7 @@ private constructor(
         /** Alias for calling [Builder.nameContains] with `nameContains.orElse(null)`. */
         fun nameContains(nameContains: Optional<String>) = nameContains(nameContains.getOrNull())
 
-        /** Pagination offset */
+        /** Deprecated: use cursor. Pagination offset */
         fun offset(offset: Long?) = apply { this.offset = offset }
 
         /**
@@ -154,18 +184,40 @@ private constructor(
         /** Alias for calling [Builder.offset] with `offset.orElse(null)`. */
         fun offset(offset: Optional<Long>) = offset(offset.getOrNull())
 
-        /** Sort column (name, status, created_at) */
+        /** Number of results per page */
+        fun pageSize(pageSize: Long?) = apply { this.pageSize = pageSize }
+
+        /**
+         * Alias for [Builder.pageSize].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun pageSize(pageSize: Long) = pageSize(pageSize as Long?)
+
+        /** Alias for calling [Builder.pageSize] with `pageSize.orElse(null)`. */
+        fun pageSize(pageSize: Optional<Long>) = pageSize(pageSize.getOrNull())
+
+        /**
+         * Sort column (name, status, created_at, stopped_at, idle_ttl_seconds,
+         * delete_after_stop_seconds)
+         */
         fun sortBy(sortBy: String?) = apply { this.sortBy = sortBy }
 
         /** Alias for calling [Builder.sortBy] with `sortBy.orElse(null)`. */
         fun sortBy(sortBy: Optional<String>) = sortBy(sortBy.getOrNull())
 
-        /** Sort direction (asc, desc) */
+        /** Deprecated: use sort_order. Sort direction (asc, desc) */
         fun sortDirection(sortDirection: String?) = apply { this.sortDirection = sortDirection }
 
         /** Alias for calling [Builder.sortDirection] with `sortDirection.orElse(null)`. */
         fun sortDirection(sortDirection: Optional<String>) =
             sortDirection(sortDirection.getOrNull())
+
+        /** Sort direction (asc, desc) */
+        fun sortOrder(sortOrder: String?) = apply { this.sortOrder = sortOrder }
+
+        /** Alias for calling [Builder.sortOrder] with `sortOrder.orElse(null)`. */
+        fun sortOrder(sortOrder: Optional<String>) = sortOrder(sortOrder.getOrNull())
 
         /** Filter by status (provisioning, ready, failed, stopped, deleting) */
         fun status(status: String?) = apply { this.status = status }
@@ -279,12 +331,15 @@ private constructor(
         fun build(): BoxListParams =
             BoxListParams(
                 createdBy,
+                cursor,
                 label?.toImmutable(),
                 limit,
                 nameContains,
                 offset,
+                pageSize,
                 sortBy,
                 sortDirection,
+                sortOrder,
                 status,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -297,12 +352,15 @@ private constructor(
         QueryParams.builder()
             .apply {
                 createdBy?.let { put("created_by", it) }
+                cursor?.let { put("cursor", it) }
                 label?.forEach { put("label", it) }
                 limit?.let { put("limit", it.toString()) }
                 nameContains?.let { put("name_contains", it) }
                 offset?.let { put("offset", it.toString()) }
+                pageSize?.let { put("page_size", it.toString()) }
                 sortBy?.let { put("sort_by", it) }
                 sortDirection?.let { put("sort_direction", it) }
+                sortOrder?.let { put("sort_order", it) }
                 status?.let { put("status", it) }
                 putAll(additionalQueryParams)
             }
@@ -315,12 +373,15 @@ private constructor(
 
         return other is BoxListParams &&
             createdBy == other.createdBy &&
+            cursor == other.cursor &&
             label == other.label &&
             limit == other.limit &&
             nameContains == other.nameContains &&
             offset == other.offset &&
+            pageSize == other.pageSize &&
             sortBy == other.sortBy &&
             sortDirection == other.sortDirection &&
+            sortOrder == other.sortOrder &&
             status == other.status &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
@@ -329,17 +390,20 @@ private constructor(
     override fun hashCode(): Int =
         Objects.hash(
             createdBy,
+            cursor,
             label,
             limit,
             nameContains,
             offset,
+            pageSize,
             sortBy,
             sortDirection,
+            sortOrder,
             status,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "BoxListParams{createdBy=$createdBy, label=$label, limit=$limit, nameContains=$nameContains, offset=$offset, sortBy=$sortBy, sortDirection=$sortDirection, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "BoxListParams{createdBy=$createdBy, cursor=$cursor, label=$label, limit=$limit, nameContains=$nameContains, offset=$offset, pageSize=$pageSize, sortBy=$sortBy, sortDirection=$sortDirection, sortOrder=$sortOrder, status=$status, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }
