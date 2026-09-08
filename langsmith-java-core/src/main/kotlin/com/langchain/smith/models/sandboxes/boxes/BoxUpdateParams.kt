@@ -84,6 +84,15 @@ private constructor(
     fun proxyConfig(): Optional<ProxyConfig> = body.proxyConfig()
 
     /**
+     * RunConfig changes what subsequent commands run with: user and work_dir replace the current
+     * values, env_vars merge over them. Commands already running are unaffected.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun runConfig(): Optional<RunConfig> = body.runConfig()
+
+    /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -144,6 +153,13 @@ private constructor(
      * Unlike [proxyConfig], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _proxyConfig(): JsonField<ProxyConfig> = body._proxyConfig()
+
+    /**
+     * Returns the raw JSON value of [runConfig].
+     *
+     * Unlike [runConfig], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _runConfig(): JsonField<RunConfig> = body._runConfig()
 
     /**
      * Returns the raw JSON value of [tagValueIds].
@@ -302,6 +318,21 @@ private constructor(
         fun proxyConfig(proxyConfig: JsonField<ProxyConfig>) = apply {
             body.proxyConfig(proxyConfig)
         }
+
+        /**
+         * RunConfig changes what subsequent commands run with: user and work_dir replace the
+         * current values, env_vars merge over them. Commands already running are unaffected.
+         */
+        fun runConfig(runConfig: RunConfig) = apply { body.runConfig(runConfig) }
+
+        /**
+         * Sets [Builder.runConfig] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.runConfig] with a well-typed [RunConfig] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun runConfig(runConfig: JsonField<RunConfig>) = apply { body.runConfig(runConfig) }
 
         fun tagValueIds(tagValueIds: List<String>) = apply { body.tagValueIds(tagValueIds) }
 
@@ -486,6 +517,7 @@ private constructor(
         private val memBytes: JsonField<Long>,
         private val bodyName: JsonField<String>,
         private val proxyConfig: JsonField<ProxyConfig>,
+        private val runConfig: JsonField<RunConfig>,
         private val tagValueIds: JsonField<List<String>>,
         private val vcpus: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -510,6 +542,9 @@ private constructor(
             @JsonProperty("proxy_config")
             @ExcludeMissing
             proxyConfig: JsonField<ProxyConfig> = JsonMissing.of(),
+            @JsonProperty("run_config")
+            @ExcludeMissing
+            runConfig: JsonField<RunConfig> = JsonMissing.of(),
             @JsonProperty("tag_value_ids")
             @ExcludeMissing
             tagValueIds: JsonField<List<String>> = JsonMissing.of(),
@@ -522,6 +557,7 @@ private constructor(
             memBytes,
             bodyName,
             proxyConfig,
+            runConfig,
             tagValueIds,
             vcpus,
             mutableMapOf(),
@@ -572,6 +608,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun proxyConfig(): Optional<ProxyConfig> = proxyConfig.getOptional("proxy_config")
+
+        /**
+         * RunConfig changes what subsequent commands run with: user and work_dir replace the
+         * current values, env_vars merge over them. Commands already running are unaffected.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun runConfig(): Optional<RunConfig> = runConfig.getOptional("run_config")
 
         /**
          * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -649,6 +694,15 @@ private constructor(
         fun _proxyConfig(): JsonField<ProxyConfig> = proxyConfig
 
         /**
+         * Returns the raw JSON value of [runConfig].
+         *
+         * Unlike [runConfig], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("run_config")
+        @ExcludeMissing
+        fun _runConfig(): JsonField<RunConfig> = runConfig
+
+        /**
          * Returns the raw JSON value of [tagValueIds].
          *
          * Unlike [tagValueIds], this method doesn't throw if the JSON field has an unexpected type.
@@ -692,6 +746,7 @@ private constructor(
             private var memBytes: JsonField<Long> = JsonMissing.of()
             private var bodyName: JsonField<String> = JsonMissing.of()
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
+            private var runConfig: JsonField<RunConfig> = JsonMissing.of()
             private var tagValueIds: JsonField<MutableList<String>>? = null
             private var vcpus: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -705,6 +760,7 @@ private constructor(
                 memBytes = body.memBytes
                 bodyName = body.bodyName
                 proxyConfig = body.proxyConfig
+                runConfig = body.runConfig
                 tagValueIds = body.tagValueIds.map { it.toMutableList() }
                 vcpus = body.vcpus
                 additionalProperties = body.additionalProperties.toMutableMap()
@@ -803,6 +859,21 @@ private constructor(
                 this.proxyConfig = proxyConfig
             }
 
+            /**
+             * RunConfig changes what subsequent commands run with: user and work_dir replace the
+             * current values, env_vars merge over them. Commands already running are unaffected.
+             */
+            fun runConfig(runConfig: RunConfig) = runConfig(JsonField.of(runConfig))
+
+            /**
+             * Sets [Builder.runConfig] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.runConfig] with a well-typed [RunConfig] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun runConfig(runConfig: JsonField<RunConfig>) = apply { this.runConfig = runConfig }
+
             fun tagValueIds(tagValueIds: List<String>) = tagValueIds(JsonField.of(tagValueIds))
 
             /**
@@ -872,6 +943,7 @@ private constructor(
                     memBytes,
                     bodyName,
                     proxyConfig,
+                    runConfig,
                     (tagValueIds ?: JsonMissing.of()).map { it.toImmutable() },
                     vcpus,
                     additionalProperties.toMutableMap(),
@@ -901,6 +973,7 @@ private constructor(
             memBytes()
             bodyName()
             proxyConfig().ifPresent { it.validate() }
+            runConfig().ifPresent { it.validate() }
             tagValueIds()
             vcpus()
             validated = true
@@ -929,6 +1002,7 @@ private constructor(
                 (if (memBytes.asKnown().isPresent) 1 else 0) +
                 (if (bodyName.asKnown().isPresent) 1 else 0) +
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
+                (runConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (tagValueIds.asKnown().getOrNull()?.size ?: 0) +
                 (if (vcpus.asKnown().isPresent) 1 else 0)
 
@@ -945,6 +1019,7 @@ private constructor(
                 memBytes == other.memBytes &&
                 bodyName == other.bodyName &&
                 proxyConfig == other.proxyConfig &&
+                runConfig == other.runConfig &&
                 tagValueIds == other.tagValueIds &&
                 vcpus == other.vcpus &&
                 additionalProperties == other.additionalProperties
@@ -959,6 +1034,7 @@ private constructor(
                 memBytes,
                 bodyName,
                 proxyConfig,
+                runConfig,
                 tagValueIds,
                 vcpus,
                 additionalProperties,
@@ -968,7 +1044,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, bodyName=$bodyName, proxyConfig=$proxyConfig, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, memBytes=$memBytes, bodyName=$bodyName, proxyConfig=$proxyConfig, runConfig=$runConfig, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class ProxyConfig
@@ -5158,6 +5234,338 @@ private constructor(
 
         override fun toString() =
             "ProxyConfig{accessControl=$accessControl, callbacks=$callbacks, description=$description, noProxy=$noProxy, rules=$rules, additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * RunConfig changes what subsequent commands run with: user and work_dir replace the current
+     * values, env_vars merge over them. Commands already running are unaffected.
+     */
+    class RunConfig
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val envVars: JsonField<EnvVars>,
+        private val user: JsonField<String>,
+        private val workDir: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("env_vars")
+            @ExcludeMissing
+            envVars: JsonField<EnvVars> = JsonMissing.of(),
+            @JsonProperty("user") @ExcludeMissing user: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("work_dir") @ExcludeMissing workDir: JsonField<String> = JsonMissing.of(),
+        ) : this(envVars, user, workDir, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun envVars(): Optional<EnvVars> = envVars.getOptional("env_vars")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun user(): Optional<String> = user.getOptional("user")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun workDir(): Optional<String> = workDir.getOptional("work_dir")
+
+        /**
+         * Returns the raw JSON value of [envVars].
+         *
+         * Unlike [envVars], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("env_vars") @ExcludeMissing fun _envVars(): JsonField<EnvVars> = envVars
+
+        /**
+         * Returns the raw JSON value of [user].
+         *
+         * Unlike [user], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("user") @ExcludeMissing fun _user(): JsonField<String> = user
+
+        /**
+         * Returns the raw JSON value of [workDir].
+         *
+         * Unlike [workDir], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("work_dir") @ExcludeMissing fun _workDir(): JsonField<String> = workDir
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [RunConfig]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [RunConfig]. */
+        class Builder internal constructor() {
+
+            private var envVars: JsonField<EnvVars> = JsonMissing.of()
+            private var user: JsonField<String> = JsonMissing.of()
+            private var workDir: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(runConfig: RunConfig) = apply {
+                envVars = runConfig.envVars
+                user = runConfig.user
+                workDir = runConfig.workDir
+                additionalProperties = runConfig.additionalProperties.toMutableMap()
+            }
+
+            fun envVars(envVars: EnvVars) = envVars(JsonField.of(envVars))
+
+            /**
+             * Sets [Builder.envVars] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.envVars] with a well-typed [EnvVars] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun envVars(envVars: JsonField<EnvVars>) = apply { this.envVars = envVars }
+
+            fun user(user: String) = user(JsonField.of(user))
+
+            /**
+             * Sets [Builder.user] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.user] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun user(user: JsonField<String>) = apply { this.user = user }
+
+            fun workDir(workDir: String) = workDir(JsonField.of(workDir))
+
+            /**
+             * Sets [Builder.workDir] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.workDir] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun workDir(workDir: JsonField<String>) = apply { this.workDir = workDir }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [RunConfig].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): RunConfig =
+                RunConfig(envVars, user, workDir, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): RunConfig = apply {
+            if (validated) {
+                return@apply
+            }
+
+            envVars().ifPresent { it.validate() }
+            user()
+            workDir()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (envVars.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (user.asKnown().isPresent) 1 else 0) +
+                (if (workDir.asKnown().isPresent) 1 else 0)
+
+        class EnvVars
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [EnvVars]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [EnvVars]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(envVars: EnvVars) = apply {
+                    additionalProperties = envVars.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [EnvVars].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): EnvVars = EnvVars(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): EnvVars = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is EnvVars && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "EnvVars{additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is RunConfig &&
+                envVars == other.envVars &&
+                user == other.user &&
+                workDir == other.workDir &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(envVars, user, workDir, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "RunConfig{envVars=$envVars, user=$user, workDir=$workDir, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -23,6 +23,17 @@ internal class BoxCreateSnapshotParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("string"))
                     .build()
             )
+            .runConfig(
+                BoxCreateSnapshotParams.RunConfig.builder()
+                    .envVars(
+                        BoxCreateSnapshotParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
             .tag("tag")
             .build()
     }
@@ -52,6 +63,17 @@ internal class BoxCreateSnapshotParamsTest {
                         .putAdditionalProperty("foo", JsonValue.from("string"))
                         .build()
                 )
+                .runConfig(
+                    BoxCreateSnapshotParams.RunConfig.builder()
+                        .envVars(
+                            BoxCreateSnapshotParams.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
+                        .build()
+                )
                 .tag("tag")
                 .build()
 
@@ -67,6 +89,18 @@ internal class BoxCreateSnapshotParamsTest {
             .contains(
                 BoxCreateSnapshotParams.Labels.builder()
                     .putAdditionalProperty("foo", JsonValue.from("string"))
+                    .build()
+            )
+        assertThat(body.runConfig())
+            .contains(
+                BoxCreateSnapshotParams.RunConfig.builder()
+                    .envVars(
+                        BoxCreateSnapshotParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
                     .build()
             )
         assertThat(body.tag()).contains("tag")

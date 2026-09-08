@@ -30,6 +30,17 @@ internal class SnapshotServiceTest {
                             .build()
                     )
                     .registryId("registry_id")
+                    .runConfig(
+                        SnapshotCreateParams.RunConfig.builder()
+                            .envVars(
+                                SnapshotCreateParams.RunConfig.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
+                            .user("user")
+                            .workDir("work_dir")
+                            .build()
+                    )
                     .tag("tag")
                     .build()
             )

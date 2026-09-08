@@ -21,6 +21,17 @@ internal class SnapshotCreateParamsTest {
                     .build()
             )
             .registryId("registry_id")
+            .runConfig(
+                SnapshotCreateParams.RunConfig.builder()
+                    .envVars(
+                        SnapshotCreateParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
             .tag("tag")
             .build()
     }
@@ -39,6 +50,17 @@ internal class SnapshotCreateParamsTest {
                         .build()
                 )
                 .registryId("registry_id")
+                .runConfig(
+                    SnapshotCreateParams.RunConfig.builder()
+                        .envVars(
+                            SnapshotCreateParams.RunConfig.EnvVars.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("string"))
+                                .build()
+                        )
+                        .user("user")
+                        .workDir("work_dir")
+                        .build()
+                )
                 .tag("tag")
                 .build()
 
@@ -55,6 +77,18 @@ internal class SnapshotCreateParamsTest {
                     .build()
             )
         assertThat(body.registryId()).contains("registry_id")
+        assertThat(body.runConfig())
+            .contains(
+                SnapshotCreateParams.RunConfig.builder()
+                    .envVars(
+                        SnapshotCreateParams.RunConfig.EnvVars.builder()
+                            .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .user("user")
+                    .workDir("work_dir")
+                    .build()
+            )
         assertThat(body.tag()).contains("tag")
     }
 

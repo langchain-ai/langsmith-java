@@ -143,6 +143,16 @@ private constructor(
     fun restoreMemory(): Optional<Boolean> = body.restoreMemory()
 
     /**
+     * RunConfig overrides the snapshot's run config for this sandbox: user and work_dir replace the
+     * snapshot's, env_vars merge over it. The result is what the sandbox boots with, and what a
+     * snapshot captured from it carries.
+     *
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun runConfig(): Optional<RunConfig> = body.runConfig()
+
+    /**
      * Snapshot is a Docker-style name or name:tag reference to boot from. A bare name resolves to
      * name:latest.
      *
@@ -263,6 +273,13 @@ private constructor(
      * Unlike [restoreMemory], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _restoreMemory(): JsonField<Boolean> = body._restoreMemory()
+
+    /**
+     * Returns the raw JSON value of [runConfig].
+     *
+     * Unlike [runConfig], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _runConfig(): JsonField<RunConfig> = body._runConfig()
 
     /**
      * Returns the raw JSON value of [snapshot].
@@ -525,6 +542,22 @@ private constructor(
         }
 
         /**
+         * RunConfig overrides the snapshot's run config for this sandbox: user and work_dir replace
+         * the snapshot's, env_vars merge over it. The result is what the sandbox boots with, and
+         * what a snapshot captured from it carries.
+         */
+        fun runConfig(runConfig: RunConfig) = apply { body.runConfig(runConfig) }
+
+        /**
+         * Sets [Builder.runConfig] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.runConfig] with a well-typed [RunConfig] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun runConfig(runConfig: JsonField<RunConfig>) = apply { body.runConfig(runConfig) }
+
+        /**
          * Snapshot is a Docker-style name or name:tag reference to boot from. A bare name resolves
          * to name:latest.
          */
@@ -743,6 +776,7 @@ private constructor(
         private val preserveMemoryOnStop: JsonField<Boolean>,
         private val proxyConfig: JsonField<ProxyConfig>,
         private val restoreMemory: JsonField<Boolean>,
+        private val runConfig: JsonField<RunConfig>,
         private val snapshot: JsonField<String>,
         private val snapshotId: JsonField<String>,
         private val snapshotName: JsonField<String>,
@@ -783,6 +817,9 @@ private constructor(
             @JsonProperty("restore_memory")
             @ExcludeMissing
             restoreMemory: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("run_config")
+            @ExcludeMissing
+            runConfig: JsonField<RunConfig> = JsonMissing.of(),
             @JsonProperty("snapshot")
             @ExcludeMissing
             snapshot: JsonField<String> = JsonMissing.of(),
@@ -809,6 +846,7 @@ private constructor(
             preserveMemoryOnStop,
             proxyConfig,
             restoreMemory,
+            runConfig,
             snapshot,
             snapshotId,
             snapshotName,
@@ -916,6 +954,16 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun restoreMemory(): Optional<Boolean> = restoreMemory.getOptional("restore_memory")
+
+        /**
+         * RunConfig overrides the snapshot's run config for this sandbox: user and work_dir replace
+         * the snapshot's, env_vars merge over it. The result is what the sandbox boots with, and
+         * what a snapshot captured from it carries.
+         *
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun runConfig(): Optional<RunConfig> = runConfig.getOptional("run_config")
 
         /**
          * Snapshot is a Docker-style name or name:tag reference to boot from. A bare name resolves
@@ -1060,6 +1108,15 @@ private constructor(
         fun _restoreMemory(): JsonField<Boolean> = restoreMemory
 
         /**
+         * Returns the raw JSON value of [runConfig].
+         *
+         * Unlike [runConfig], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("run_config")
+        @ExcludeMissing
+        fun _runConfig(): JsonField<RunConfig> = runConfig
+
+        /**
          * Returns the raw JSON value of [snapshot].
          *
          * Unlike [snapshot], this method doesn't throw if the JSON field has an unexpected type.
@@ -1134,6 +1191,7 @@ private constructor(
             private var preserveMemoryOnStop: JsonField<Boolean> = JsonMissing.of()
             private var proxyConfig: JsonField<ProxyConfig> = JsonMissing.of()
             private var restoreMemory: JsonField<Boolean> = JsonMissing.of()
+            private var runConfig: JsonField<RunConfig> = JsonMissing.of()
             private var snapshot: JsonField<String> = JsonMissing.of()
             private var snapshotId: JsonField<String> = JsonMissing.of()
             private var snapshotName: JsonField<String> = JsonMissing.of()
@@ -1155,6 +1213,7 @@ private constructor(
                 preserveMemoryOnStop = body.preserveMemoryOnStop
                 proxyConfig = body.proxyConfig
                 restoreMemory = body.restoreMemory
+                runConfig = body.runConfig
                 snapshot = body.snapshot
                 snapshotId = body.snapshotId
                 snapshotName = body.snapshotName
@@ -1346,6 +1405,22 @@ private constructor(
             }
 
             /**
+             * RunConfig overrides the snapshot's run config for this sandbox: user and work_dir
+             * replace the snapshot's, env_vars merge over it. The result is what the sandbox boots
+             * with, and what a snapshot captured from it carries.
+             */
+            fun runConfig(runConfig: RunConfig) = runConfig(JsonField.of(runConfig))
+
+            /**
+             * Sets [Builder.runConfig] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.runConfig] with a well-typed [RunConfig] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun runConfig(runConfig: JsonField<RunConfig>) = apply { this.runConfig = runConfig }
+
+            /**
              * Snapshot is a Docker-style name or name:tag reference to boot from. A bare name
              * resolves to name:latest.
              */
@@ -1462,6 +1537,7 @@ private constructor(
                     preserveMemoryOnStop,
                     proxyConfig,
                     restoreMemory,
+                    runConfig,
                     snapshot,
                     snapshotId,
                     snapshotName,
@@ -1499,6 +1575,7 @@ private constructor(
             preserveMemoryOnStop()
             proxyConfig().ifPresent { it.validate() }
             restoreMemory()
+            runConfig().ifPresent { it.validate() }
             snapshot()
             snapshotId()
             snapshotName()
@@ -1535,6 +1612,7 @@ private constructor(
                 (if (preserveMemoryOnStop.asKnown().isPresent) 1 else 0) +
                 (proxyConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (restoreMemory.asKnown().isPresent) 1 else 0) +
+                (runConfig.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (snapshot.asKnown().isPresent) 1 else 0) +
                 (if (snapshotId.asKnown().isPresent) 1 else 0) +
                 (if (snapshotName.asKnown().isPresent) 1 else 0) +
@@ -1559,6 +1637,7 @@ private constructor(
                 preserveMemoryOnStop == other.preserveMemoryOnStop &&
                 proxyConfig == other.proxyConfig &&
                 restoreMemory == other.restoreMemory &&
+                runConfig == other.runConfig &&
                 snapshot == other.snapshot &&
                 snapshotId == other.snapshotId &&
                 snapshotName == other.snapshotName &&
@@ -1581,6 +1660,7 @@ private constructor(
                 preserveMemoryOnStop,
                 proxyConfig,
                 restoreMemory,
+                runConfig,
                 snapshot,
                 snapshotId,
                 snapshotName,
@@ -1593,7 +1673,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, snapshot=$snapshot, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
+            "Body{cpuMillicores=$cpuMillicores, deleteAfterStopSeconds=$deleteAfterStopSeconds, envVars=$envVars, fsCapacityBytes=$fsCapacityBytes, idleTtlSeconds=$idleTtlSeconds, labels=$labels, memBytes=$memBytes, mountConfig=$mountConfig, name=$name, preserveMemoryOnStop=$preserveMemoryOnStop, proxyConfig=$proxyConfig, restoreMemory=$restoreMemory, runConfig=$runConfig, snapshot=$snapshot, snapshotId=$snapshotId, snapshotName=$snapshotName, tagValueIds=$tagValueIds, vcpus=$vcpus, additionalProperties=$additionalProperties}"
     }
 
     class EnvVars
@@ -17436,6 +17516,339 @@ private constructor(
 
         override fun toString() =
             "ProxyConfig{accessControl=$accessControl, callbacks=$callbacks, description=$description, noProxy=$noProxy, rules=$rules, additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * RunConfig overrides the snapshot's run config for this sandbox: user and work_dir replace the
+     * snapshot's, env_vars merge over it. The result is what the sandbox boots with, and what a
+     * snapshot captured from it carries.
+     */
+    class RunConfig
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val envVars: JsonField<EnvVars>,
+        private val user: JsonField<String>,
+        private val workDir: JsonField<String>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("env_vars")
+            @ExcludeMissing
+            envVars: JsonField<EnvVars> = JsonMissing.of(),
+            @JsonProperty("user") @ExcludeMissing user: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("work_dir") @ExcludeMissing workDir: JsonField<String> = JsonMissing.of(),
+        ) : this(envVars, user, workDir, mutableMapOf())
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun envVars(): Optional<EnvVars> = envVars.getOptional("env_vars")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun user(): Optional<String> = user.getOptional("user")
+
+        /**
+         * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun workDir(): Optional<String> = workDir.getOptional("work_dir")
+
+        /**
+         * Returns the raw JSON value of [envVars].
+         *
+         * Unlike [envVars], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("env_vars") @ExcludeMissing fun _envVars(): JsonField<EnvVars> = envVars
+
+        /**
+         * Returns the raw JSON value of [user].
+         *
+         * Unlike [user], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("user") @ExcludeMissing fun _user(): JsonField<String> = user
+
+        /**
+         * Returns the raw JSON value of [workDir].
+         *
+         * Unlike [workDir], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("work_dir") @ExcludeMissing fun _workDir(): JsonField<String> = workDir
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [RunConfig]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [RunConfig]. */
+        class Builder internal constructor() {
+
+            private var envVars: JsonField<EnvVars> = JsonMissing.of()
+            private var user: JsonField<String> = JsonMissing.of()
+            private var workDir: JsonField<String> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(runConfig: RunConfig) = apply {
+                envVars = runConfig.envVars
+                user = runConfig.user
+                workDir = runConfig.workDir
+                additionalProperties = runConfig.additionalProperties.toMutableMap()
+            }
+
+            fun envVars(envVars: EnvVars) = envVars(JsonField.of(envVars))
+
+            /**
+             * Sets [Builder.envVars] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.envVars] with a well-typed [EnvVars] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun envVars(envVars: JsonField<EnvVars>) = apply { this.envVars = envVars }
+
+            fun user(user: String) = user(JsonField.of(user))
+
+            /**
+             * Sets [Builder.user] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.user] with a well-typed [String] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun user(user: JsonField<String>) = apply { this.user = user }
+
+            fun workDir(workDir: String) = workDir(JsonField.of(workDir))
+
+            /**
+             * Sets [Builder.workDir] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.workDir] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun workDir(workDir: JsonField<String>) = apply { this.workDir = workDir }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [RunConfig].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): RunConfig =
+                RunConfig(envVars, user, workDir, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws LangChainInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): RunConfig = apply {
+            if (validated) {
+                return@apply
+            }
+
+            envVars().ifPresent { it.validate() }
+            user()
+            workDir()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: LangChainInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int =
+            (envVars.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (user.asKnown().isPresent) 1 else 0) +
+                (if (workDir.asKnown().isPresent) 1 else 0)
+
+        class EnvVars
+        @JsonCreator
+        private constructor(
+            @com.fasterxml.jackson.annotation.JsonValue
+            private val additionalProperties: Map<String, JsonValue>
+        ) {
+
+            @JsonAnyGetter
+            @ExcludeMissing
+            fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
+
+            fun toBuilder() = Builder().from(this)
+
+            companion object {
+
+                /** Returns a mutable builder for constructing an instance of [EnvVars]. */
+                @JvmStatic fun builder() = Builder()
+            }
+
+            /** A builder for [EnvVars]. */
+            class Builder internal constructor() {
+
+                private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+                @JvmSynthetic
+                internal fun from(envVars: EnvVars) = apply {
+                    additionalProperties = envVars.additionalProperties.toMutableMap()
+                }
+
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
+
+                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                    additionalProperties.put(key, value)
+                }
+
+                fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.putAll(additionalProperties)
+                    }
+
+                fun removeAdditionalProperty(key: String) = apply {
+                    additionalProperties.remove(key)
+                }
+
+                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
+
+                /**
+                 * Returns an immutable instance of [EnvVars].
+                 *
+                 * Further updates to this [Builder] will not mutate the returned instance.
+                 */
+                fun build(): EnvVars = EnvVars(additionalProperties.toImmutable())
+            }
+
+            private var validated: Boolean = false
+
+            /**
+             * Validates that the types of all values in this object match their expected types
+             * recursively.
+             *
+             * This method is _not_ forwards compatible with new types from the API for existing
+             * fields.
+             *
+             * @throws LangChainInvalidDataException if any value type in this object doesn't match
+             *   its expected type.
+             */
+            fun validate(): EnvVars = apply {
+                if (validated) {
+                    return@apply
+                }
+
+                validated = true
+            }
+
+            fun isValid(): Boolean =
+                try {
+                    validate()
+                    true
+                } catch (e: LangChainInvalidDataException) {
+                    false
+                }
+
+            /**
+             * Returns a score indicating how many valid values are contained in this object
+             * recursively.
+             *
+             * Used for best match union deserialization.
+             */
+            @JvmSynthetic
+            internal fun validity(): Int =
+                additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) {
+                    return true
+                }
+
+                return other is EnvVars && additionalProperties == other.additionalProperties
+            }
+
+            private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
+
+            override fun hashCode(): Int = hashCode
+
+            override fun toString() = "EnvVars{additionalProperties=$additionalProperties}"
+        }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is RunConfig &&
+                envVars == other.envVars &&
+                user == other.user &&
+                workDir == other.workDir &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy {
+            Objects.hash(envVars, user, workDir, additionalProperties)
+        }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "RunConfig{envVars=$envVars, user=$user, workDir=$workDir, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

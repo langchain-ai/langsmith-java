@@ -287,6 +287,17 @@ internal class BoxServiceAsyncTest {
                             .build()
                     )
                     .restoreMemory(true)
+                    .runConfig(
+                        BoxCreateParams.RunConfig.builder()
+                            .envVars(
+                                BoxCreateParams.RunConfig.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
+                            .user("user")
+                            .workDir("work_dir")
+                            .build()
+                    )
                     .snapshot("snapshot")
                     .snapshotId("snapshot_id")
                     .snapshotName("snapshot_name")
@@ -442,6 +453,17 @@ internal class BoxServiceAsyncTest {
                             )
                             .build()
                     )
+                    .runConfig(
+                        BoxUpdateParams.RunConfig.builder()
+                            .envVars(
+                                BoxUpdateParams.RunConfig.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
+                            .user("user")
+                            .workDir("work_dir")
+                            .build()
+                    )
                     .addTagValueId("string")
                     .vcpus(0L)
                     .build()
@@ -505,6 +527,17 @@ internal class BoxServiceAsyncTest {
                     .labels(
                         BoxCreateSnapshotParams.Labels.builder()
                             .putAdditionalProperty("foo", JsonValue.from("string"))
+                            .build()
+                    )
+                    .runConfig(
+                        BoxCreateSnapshotParams.RunConfig.builder()
+                            .envVars(
+                                BoxCreateSnapshotParams.RunConfig.EnvVars.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("string"))
+                                    .build()
+                            )
+                            .user("user")
+                            .workDir("work_dir")
                             .build()
                     )
                     .tag("tag")
