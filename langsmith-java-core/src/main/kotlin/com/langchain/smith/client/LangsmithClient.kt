@@ -13,6 +13,7 @@ import com.langchain.smith.services.blocking.FleetService
 import com.langchain.smith.services.blocking.InfoService
 import com.langchain.smith.services.blocking.IssueService
 import com.langchain.smith.services.blocking.OnlineEvaluatorService
+import com.langchain.smith.services.blocking.ProductFeedbackService
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.RepoService
 import com.langchain.smith.services.blocking.RunService
@@ -59,6 +60,8 @@ interface LangsmithClient {
      * The original service is not modified.
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient
+
+    fun productFeedback(): ProductFeedbackService
 
     fun fleet(): FleetService
 
@@ -120,6 +123,8 @@ interface LangsmithClient {
          * The original service is not modified.
          */
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient.WithRawResponse
+
+        fun productFeedback(): ProductFeedbackService.WithRawResponse
 
         fun fleet(): FleetService.WithRawResponse
 

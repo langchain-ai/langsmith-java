@@ -24,6 +24,8 @@ import com.langchain.smith.services.async.IssueServiceAsync
 import com.langchain.smith.services.async.IssueServiceAsyncImpl
 import com.langchain.smith.services.async.OnlineEvaluatorServiceAsync
 import com.langchain.smith.services.async.OnlineEvaluatorServiceAsyncImpl
+import com.langchain.smith.services.async.ProductFeedbackServiceAsync
+import com.langchain.smith.services.async.ProductFeedbackServiceAsyncImpl
 import com.langchain.smith.services.async.PublicServiceAsync
 import com.langchain.smith.services.async.PublicServiceAsyncImpl
 import com.langchain.smith.services.async.RepoServiceAsync
@@ -59,6 +61,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     private val withRawResponse: LangsmithClientAsync.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
+    }
+
+    private val productFeedback: ProductFeedbackServiceAsync by lazy {
+        ProductFeedbackServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
     private val fleet: FleetServiceAsync by lazy {
@@ -138,6 +144,8 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClientAsync =
         LangsmithClientAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun productFeedback(): ProductFeedbackServiceAsync = productFeedback
+
     override fun fleet(): FleetServiceAsync = fleet
 
     override fun sessions(): SessionServiceAsync = sessions
@@ -189,6 +197,10 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClientAsync.WithRawResponse {
+
+        private val productFeedback: ProductFeedbackServiceAsync.WithRawResponse by lazy {
+            ProductFeedbackServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
 
         private val fleet: FleetServiceAsync.WithRawResponse by lazy {
             FleetServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -272,6 +284,9 @@ class LangsmithClientAsyncImpl(private val clientOptions: ClientOptions) : Langs
             LangsmithClientAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun productFeedback(): ProductFeedbackServiceAsync.WithRawResponse =
+            productFeedback
 
         override fun fleet(): FleetServiceAsync.WithRawResponse = fleet
 

@@ -24,6 +24,8 @@ import com.langchain.smith.services.blocking.IssueService
 import com.langchain.smith.services.blocking.IssueServiceImpl
 import com.langchain.smith.services.blocking.OnlineEvaluatorService
 import com.langchain.smith.services.blocking.OnlineEvaluatorServiceImpl
+import com.langchain.smith.services.blocking.ProductFeedbackService
+import com.langchain.smith.services.blocking.ProductFeedbackServiceImpl
 import com.langchain.smith.services.blocking.PublicService
 import com.langchain.smith.services.blocking.PublicServiceImpl
 import com.langchain.smith.services.blocking.RepoService
@@ -59,6 +61,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     private val withRawResponse: LangsmithClient.WithRawResponse by lazy {
         WithRawResponseImpl(clientOptions)
+    }
+
+    private val productFeedback: ProductFeedbackService by lazy {
+        ProductFeedbackServiceImpl(clientOptionsWithUserAgent)
     }
 
     private val fleet: FleetService by lazy { FleetServiceImpl(clientOptionsWithUserAgent) }
@@ -116,6 +122,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): LangsmithClient =
         LangsmithClientImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun productFeedback(): ProductFeedbackService = productFeedback
+
     override fun fleet(): FleetService = fleet
 
     override fun sessions(): SessionService = sessions
@@ -163,6 +171,10 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         LangsmithClient.WithRawResponse {
+
+        private val productFeedback: ProductFeedbackService.WithRawResponse by lazy {
+            ProductFeedbackServiceImpl.WithRawResponseImpl(clientOptions)
+        }
 
         private val fleet: FleetService.WithRawResponse by lazy {
             FleetServiceImpl.WithRawResponseImpl(clientOptions)
@@ -246,6 +258,8 @@ class LangsmithClientImpl(private val clientOptions: ClientOptions) : LangsmithC
             LangsmithClientImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun productFeedback(): ProductFeedbackService.WithRawResponse = productFeedback
 
         override fun fleet(): FleetService.WithRawResponse = fleet
 
