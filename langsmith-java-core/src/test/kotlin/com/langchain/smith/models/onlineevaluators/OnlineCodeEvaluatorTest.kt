@@ -4,7 +4,6 @@ package com.langchain.smith.models.onlineevaluators
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.langchain.smith.core.jsonMapper
-import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,15 +13,16 @@ internal class OnlineCodeEvaluatorTest {
     fun create() {
         val onlineCodeEvaluator =
             OnlineCodeEvaluator.builder()
+                .advancedFeaturesEnabled(true)
                 .code("code")
                 .dependencies("dependencies")
                 .evaluatorBuildError("evaluator_build_error")
                 .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                 .evaluatorId("evaluator_id")
                 .language("language")
-                .addWorkspaceSecretsKey("string")
                 .build()
 
+        assertThat(onlineCodeEvaluator.advancedFeaturesEnabled()).contains(true)
         assertThat(onlineCodeEvaluator.code()).contains("code")
         assertThat(onlineCodeEvaluator.dependencies()).contains("dependencies")
         assertThat(onlineCodeEvaluator.evaluatorBuildError()).contains("evaluator_build_error")
@@ -30,7 +30,6 @@ internal class OnlineCodeEvaluatorTest {
             .contains(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
         assertThat(onlineCodeEvaluator.evaluatorId()).contains("evaluator_id")
         assertThat(onlineCodeEvaluator.language()).contains("language")
-        assertThat(onlineCodeEvaluator.workspaceSecretsKeys().getOrNull()).containsExactly("string")
     }
 
     @Test
@@ -38,13 +37,13 @@ internal class OnlineCodeEvaluatorTest {
         val jsonMapper = jsonMapper()
         val onlineCodeEvaluator =
             OnlineCodeEvaluator.builder()
+                .advancedFeaturesEnabled(true)
                 .code("code")
                 .dependencies("dependencies")
                 .evaluatorBuildError("evaluator_build_error")
                 .evaluatorBuildStatus(OnlineCodeEvaluator.EvaluatorBuildStatus.ENQUEUED)
                 .evaluatorId("evaluator_id")
                 .language("language")
-                .addWorkspaceSecretsKey("string")
                 .build()
 
         val roundtrippedOnlineCodeEvaluator =

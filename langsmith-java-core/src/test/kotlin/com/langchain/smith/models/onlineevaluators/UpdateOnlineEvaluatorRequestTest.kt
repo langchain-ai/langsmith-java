@@ -16,10 +16,10 @@ internal class UpdateOnlineEvaluatorRequestTest {
             UpdateOnlineEvaluatorRequest.builder()
                 .codeEvaluator(
                     UpdateOnlineCodeEvaluatorRequest.builder()
+                        .advancedFeaturesEnabled(true)
                         .code("code")
                         .dependencies("dependencies")
                         .language("language")
-                        .addWorkspaceSecretsKey("string")
                         .build()
                 )
                 .llmEvaluator(
@@ -38,10 +38,10 @@ internal class UpdateOnlineEvaluatorRequestTest {
         assertThat(updateOnlineEvaluatorRequest.codeEvaluator())
             .contains(
                 UpdateOnlineCodeEvaluatorRequest.builder()
+                    .advancedFeaturesEnabled(true)
                     .code("code")
                     .dependencies("dependencies")
                     .language("language")
-                    .addWorkspaceSecretsKey("string")
                     .build()
             )
         assertThat(updateOnlineEvaluatorRequest.llmEvaluator())
@@ -65,10 +65,10 @@ internal class UpdateOnlineEvaluatorRequestTest {
             UpdateOnlineEvaluatorRequest.builder()
                 .codeEvaluator(
                     UpdateOnlineCodeEvaluatorRequest.builder()
+                        .advancedFeaturesEnabled(true)
                         .code("code")
                         .dependencies("dependencies")
                         .language("language")
-                        .addWorkspaceSecretsKey("string")
                         .build()
                 )
                 .llmEvaluator(

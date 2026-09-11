@@ -35,10 +35,10 @@ internal class OnlineEvaluatorServiceAsyncTest {
                 CreateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         CreateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
                             .dependencies("dependencies")
                             .language("language")
-                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(
@@ -92,10 +92,10 @@ internal class OnlineEvaluatorServiceAsyncTest {
                         UpdateOnlineEvaluatorRequest.builder()
                             .codeEvaluator(
                                 UpdateOnlineCodeEvaluatorRequest.builder()
+                                    .advancedFeaturesEnabled(true)
                                     .code("code")
                                     .dependencies("dependencies")
                                     .language("language")
-                                    .addWorkspaceSecretsKey("string")
                                     .build()
                             )
                             .llmEvaluator(

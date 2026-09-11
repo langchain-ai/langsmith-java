@@ -16,10 +16,10 @@ internal class OnlineEvaluatorUpdateParamsTest {
                 UpdateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         UpdateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
                             .dependencies("dependencies")
                             .language("language")
-                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(
@@ -60,10 +60,10 @@ internal class OnlineEvaluatorUpdateParamsTest {
                     UpdateOnlineEvaluatorRequest.builder()
                         .codeEvaluator(
                             UpdateOnlineCodeEvaluatorRequest.builder()
+                                .advancedFeaturesEnabled(true)
                                 .code("code")
                                 .dependencies("dependencies")
                                 .language("language")
-                                .addWorkspaceSecretsKey("string")
                                 .build()
                         )
                         .llmEvaluator(
@@ -88,10 +88,10 @@ internal class OnlineEvaluatorUpdateParamsTest {
                 UpdateOnlineEvaluatorRequest.builder()
                     .codeEvaluator(
                         UpdateOnlineCodeEvaluatorRequest.builder()
+                            .advancedFeaturesEnabled(true)
                             .code("code")
                             .dependencies("dependencies")
                             .language("language")
-                            .addWorkspaceSecretsKey("string")
                             .build()
                     )
                     .llmEvaluator(

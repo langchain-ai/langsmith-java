@@ -11,8 +11,6 @@ import com.langchain.smith.core.ExcludeMissing
 import com.langchain.smith.core.JsonField
 import com.langchain.smith.core.JsonMissing
 import com.langchain.smith.core.JsonValue
-import com.langchain.smith.core.checkKnown
-import com.langchain.smith.core.toImmutable
 import com.langchain.smith.errors.LangChainInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -22,18 +20,21 @@ import kotlin.jvm.optionals.getOrNull
 class OnlineCodeEvaluator
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
+    private val advancedFeaturesEnabled: JsonField<Boolean>,
     private val code: JsonField<String>,
     private val dependencies: JsonField<String>,
     private val evaluatorBuildError: JsonField<String>,
     private val evaluatorBuildStatus: JsonField<EvaluatorBuildStatus>,
     private val evaluatorId: JsonField<String>,
     private val language: JsonField<String>,
-    private val workspaceSecretsKeys: JsonField<List<String>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
+        @JsonProperty("advanced_features_enabled")
+        @ExcludeMissing
+        advancedFeaturesEnabled: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("code") @ExcludeMissing code: JsonField<String> = JsonMissing.of(),
         @JsonProperty("dependencies")
         @ExcludeMissing
@@ -48,19 +49,23 @@ private constructor(
         @ExcludeMissing
         evaluatorId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("language") @ExcludeMissing language: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("workspace_secrets_keys")
-        @ExcludeMissing
-        workspaceSecretsKeys: JsonField<List<String>> = JsonMissing.of(),
     ) : this(
+        advancedFeaturesEnabled,
         code,
         dependencies,
         evaluatorBuildError,
         evaluatorBuildStatus,
         evaluatorId,
         language,
-        workspaceSecretsKeys,
         mutableMapOf(),
     )
+
+    /**
+     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun advancedFeaturesEnabled(): Optional<Boolean> =
+        advancedFeaturesEnabled.getOptional("advanced_features_enabled")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -103,11 +108,14 @@ private constructor(
     fun language(): Optional<String> = language.getOptional("language")
 
     /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * Returns the raw JSON value of [advancedFeaturesEnabled].
+     *
+     * Unlike [advancedFeaturesEnabled], this method doesn't throw if the JSON field has an
+     * unexpected type.
      */
-    fun workspaceSecretsKeys(): Optional<List<String>> =
-        workspaceSecretsKeys.getOptional("workspace_secrets_keys")
+    @JsonProperty("advanced_features_enabled")
+    @ExcludeMissing
+    fun _advancedFeaturesEnabled(): JsonField<Boolean> = advancedFeaturesEnabled
 
     /**
      * Returns the raw JSON value of [code].
@@ -161,16 +169,6 @@ private constructor(
      */
     @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<String> = language
 
-    /**
-     * Returns the raw JSON value of [workspaceSecretsKeys].
-     *
-     * Unlike [workspaceSecretsKeys], this method doesn't throw if the JSON field has an unexpected
-     * type.
-     */
-    @JsonProperty("workspace_secrets_keys")
-    @ExcludeMissing
-    fun _workspaceSecretsKeys(): JsonField<List<String>> = workspaceSecretsKeys
-
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
         additionalProperties.put(key, value)
@@ -192,26 +190,39 @@ private constructor(
     /** A builder for [OnlineCodeEvaluator]. */
     class Builder internal constructor() {
 
+        private var advancedFeaturesEnabled: JsonField<Boolean> = JsonMissing.of()
         private var code: JsonField<String> = JsonMissing.of()
         private var dependencies: JsonField<String> = JsonMissing.of()
         private var evaluatorBuildError: JsonField<String> = JsonMissing.of()
         private var evaluatorBuildStatus: JsonField<EvaluatorBuildStatus> = JsonMissing.of()
         private var evaluatorId: JsonField<String> = JsonMissing.of()
         private var language: JsonField<String> = JsonMissing.of()
-        private var workspaceSecretsKeys: JsonField<MutableList<String>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(onlineCodeEvaluator: OnlineCodeEvaluator) = apply {
+            advancedFeaturesEnabled = onlineCodeEvaluator.advancedFeaturesEnabled
             code = onlineCodeEvaluator.code
             dependencies = onlineCodeEvaluator.dependencies
             evaluatorBuildError = onlineCodeEvaluator.evaluatorBuildError
             evaluatorBuildStatus = onlineCodeEvaluator.evaluatorBuildStatus
             evaluatorId = onlineCodeEvaluator.evaluatorId
             language = onlineCodeEvaluator.language
-            workspaceSecretsKeys =
-                onlineCodeEvaluator.workspaceSecretsKeys.map { it.toMutableList() }
             additionalProperties = onlineCodeEvaluator.additionalProperties.toMutableMap()
+        }
+
+        fun advancedFeaturesEnabled(advancedFeaturesEnabled: Boolean) =
+            advancedFeaturesEnabled(JsonField.of(advancedFeaturesEnabled))
+
+        /**
+         * Sets [Builder.advancedFeaturesEnabled] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.advancedFeaturesEnabled] with a well-typed [Boolean]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun advancedFeaturesEnabled(advancedFeaturesEnabled: JsonField<Boolean>) = apply {
+            this.advancedFeaturesEnabled = advancedFeaturesEnabled
         }
 
         fun code(code: String) = code(JsonField.of(code))
@@ -287,32 +298,6 @@ private constructor(
          */
         fun language(language: JsonField<String>) = apply { this.language = language }
 
-        fun workspaceSecretsKeys(workspaceSecretsKeys: List<String>) =
-            workspaceSecretsKeys(JsonField.of(workspaceSecretsKeys))
-
-        /**
-         * Sets [Builder.workspaceSecretsKeys] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.workspaceSecretsKeys] with a well-typed `List<String>`
-         * value instead. This method is primarily for setting the field to an undocumented or not
-         * yet supported value.
-         */
-        fun workspaceSecretsKeys(workspaceSecretsKeys: JsonField<List<String>>) = apply {
-            this.workspaceSecretsKeys = workspaceSecretsKeys.map { it.toMutableList() }
-        }
-
-        /**
-         * Adds a single [String] to [workspaceSecretsKeys].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addWorkspaceSecretsKey(workspaceSecretsKey: String) = apply {
-            workspaceSecretsKeys =
-                (workspaceSecretsKeys ?: JsonField.of(mutableListOf())).also {
-                    checkKnown("workspaceSecretsKeys", it).add(workspaceSecretsKey)
-                }
-        }
-
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -339,13 +324,13 @@ private constructor(
          */
         fun build(): OnlineCodeEvaluator =
             OnlineCodeEvaluator(
+                advancedFeaturesEnabled,
                 code,
                 dependencies,
                 evaluatorBuildError,
                 evaluatorBuildStatus,
                 evaluatorId,
                 language,
-                (workspaceSecretsKeys ?: JsonMissing.of()).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
             )
     }
@@ -365,13 +350,13 @@ private constructor(
             return@apply
         }
 
+        advancedFeaturesEnabled()
         code()
         dependencies()
         evaluatorBuildError()
         evaluatorBuildStatus().ifPresent { it.validate() }
         evaluatorId()
         language()
-        workspaceSecretsKeys()
         validated = true
     }
 
@@ -390,13 +375,13 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (if (code.asKnown().isPresent) 1 else 0) +
+        (if (advancedFeaturesEnabled.asKnown().isPresent) 1 else 0) +
+            (if (code.asKnown().isPresent) 1 else 0) +
             (if (dependencies.asKnown().isPresent) 1 else 0) +
             (if (evaluatorBuildError.asKnown().isPresent) 1 else 0) +
             (evaluatorBuildStatus.asKnown().getOrNull()?.validity() ?: 0) +
             (if (evaluatorId.asKnown().isPresent) 1 else 0) +
-            (if (language.asKnown().isPresent) 1 else 0) +
-            (workspaceSecretsKeys.asKnown().getOrNull()?.size ?: 0)
+            (if (language.asKnown().isPresent) 1 else 0)
 
     class EvaluatorBuildStatus
     @JsonCreator
@@ -558,25 +543,25 @@ private constructor(
         }
 
         return other is OnlineCodeEvaluator &&
+            advancedFeaturesEnabled == other.advancedFeaturesEnabled &&
             code == other.code &&
             dependencies == other.dependencies &&
             evaluatorBuildError == other.evaluatorBuildError &&
             evaluatorBuildStatus == other.evaluatorBuildStatus &&
             evaluatorId == other.evaluatorId &&
             language == other.language &&
-            workspaceSecretsKeys == other.workspaceSecretsKeys &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
         Objects.hash(
+            advancedFeaturesEnabled,
             code,
             dependencies,
             evaluatorBuildError,
             evaluatorBuildStatus,
             evaluatorId,
             language,
-            workspaceSecretsKeys,
             additionalProperties,
         )
     }
@@ -584,5 +569,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "OnlineCodeEvaluator{code=$code, dependencies=$dependencies, evaluatorBuildError=$evaluatorBuildError, evaluatorBuildStatus=$evaluatorBuildStatus, evaluatorId=$evaluatorId, language=$language, workspaceSecretsKeys=$workspaceSecretsKeys, additionalProperties=$additionalProperties}"
+        "OnlineCodeEvaluator{advancedFeaturesEnabled=$advancedFeaturesEnabled, code=$code, dependencies=$dependencies, evaluatorBuildError=$evaluatorBuildError, evaluatorBuildStatus=$evaluatorBuildStatus, evaluatorId=$evaluatorId, language=$language, additionalProperties=$additionalProperties}"
 }
