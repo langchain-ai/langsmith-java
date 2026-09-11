@@ -2,6 +2,7 @@
 
 package com.langchain.smith.models.sandboxes.boxes
 
+import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,6 +15,8 @@ internal class BoxGenerateDownloadUrlParamsTest {
             .path("path")
             .contentDisposition("content_disposition")
             .contentType("content_type")
+            .addCspSandboxFlag(BoxGenerateDownloadUrlParams.CspSandboxFlag.ALLOW_DOWNLOADS)
+            .addCspSourceBundle(BoxGenerateDownloadUrlParams.CspSourceBundle.CDNJS)
             .expiresInSeconds(0L)
             .build()
     }
@@ -35,6 +38,8 @@ internal class BoxGenerateDownloadUrlParamsTest {
                 .path("path")
                 .contentDisposition("content_disposition")
                 .contentType("content_type")
+                .addCspSandboxFlag(BoxGenerateDownloadUrlParams.CspSandboxFlag.ALLOW_DOWNLOADS)
+                .addCspSourceBundle(BoxGenerateDownloadUrlParams.CspSourceBundle.CDNJS)
                 .expiresInSeconds(0L)
                 .build()
 
@@ -43,6 +48,10 @@ internal class BoxGenerateDownloadUrlParamsTest {
         assertThat(body.path()).isEqualTo("path")
         assertThat(body.contentDisposition()).contains("content_disposition")
         assertThat(body.contentType()).contains("content_type")
+        assertThat(body.cspSandboxFlags().getOrNull())
+            .containsExactly(BoxGenerateDownloadUrlParams.CspSandboxFlag.ALLOW_DOWNLOADS)
+        assertThat(body.cspSourceBundles().getOrNull())
+            .containsExactly(BoxGenerateDownloadUrlParams.CspSourceBundle.CDNJS)
         assertThat(body.expiresInSeconds()).contains(0L)
     }
 
