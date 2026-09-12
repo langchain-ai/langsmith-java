@@ -71,7 +71,6 @@ private constructor(
     private val spendUsd: JsonField<Double>,
     private val traceCount: JsonField<Long>,
     private val traceFilter: JsonField<String>,
-    private val trajectoryEvaluators: JsonField<List<EvaluatorTopLevel>>,
     private val isTransient: JsonField<Boolean>,
     private val treeFilter: JsonField<String>,
     private val useCorrectionsDataset: JsonField<Boolean>,
@@ -202,9 +201,6 @@ private constructor(
         @JsonProperty("trace_filter")
         @ExcludeMissing
         traceFilter: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("trajectory_evaluators")
-        @ExcludeMissing
-        trajectoryEvaluators: JsonField<List<EvaluatorTopLevel>> = JsonMissing.of(),
         @JsonProperty("transient")
         @ExcludeMissing
         isTransient: JsonField<Boolean> = JsonMissing.of(),
@@ -261,7 +257,6 @@ private constructor(
         spendUsd,
         traceCount,
         traceFilter,
-        trajectoryEvaluators,
         isTransient,
         treeFilter,
         useCorrectionsDataset,
@@ -558,13 +553,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun traceFilter(): Optional<String> = traceFilter.getOptional("trace_filter")
-
-    /**
-     * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun trajectoryEvaluators(): Optional<List<EvaluatorTopLevel>> =
-        trajectoryEvaluators.getOptional("trajectory_evaluators")
 
     /**
      * @throws LangChainInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -996,16 +984,6 @@ private constructor(
     fun _traceFilter(): JsonField<String> = traceFilter
 
     /**
-     * Returns the raw JSON value of [trajectoryEvaluators].
-     *
-     * Unlike [trajectoryEvaluators], this method doesn't throw if the JSON field has an unexpected
-     * type.
-     */
-    @JsonProperty("trajectory_evaluators")
-    @ExcludeMissing
-    fun _trajectoryEvaluators(): JsonField<List<EvaluatorTopLevel>> = trajectoryEvaluators
-
-    /**
      * Returns the raw JSON value of [isTransient].
      *
      * Unlike [isTransient], this method doesn't throw if the JSON field has an unexpected type.
@@ -1110,7 +1088,6 @@ private constructor(
         private var spendUsd: JsonField<Double> = JsonMissing.of()
         private var traceCount: JsonField<Long> = JsonMissing.of()
         private var traceFilter: JsonField<String> = JsonMissing.of()
-        private var trajectoryEvaluators: JsonField<MutableList<EvaluatorTopLevel>>? = null
         private var isTransient: JsonField<Boolean> = JsonMissing.of()
         private var treeFilter: JsonField<String> = JsonMissing.of()
         private var useCorrectionsDataset: JsonField<Boolean> = JsonMissing.of()
@@ -1164,7 +1141,6 @@ private constructor(
             spendUsd = evaluator.spendUsd
             traceCount = evaluator.traceCount
             traceFilter = evaluator.traceFilter
-            trajectoryEvaluators = evaluator.trajectoryEvaluators.map { it.toMutableList() }
             isTransient = evaluator.isTransient
             treeFilter = evaluator.treeFilter
             useCorrectionsDataset = evaluator.useCorrectionsDataset
@@ -2009,32 +1985,6 @@ private constructor(
          */
         fun traceFilter(traceFilter: JsonField<String>) = apply { this.traceFilter = traceFilter }
 
-        fun trajectoryEvaluators(trajectoryEvaluators: List<EvaluatorTopLevel>) =
-            trajectoryEvaluators(JsonField.of(trajectoryEvaluators))
-
-        /**
-         * Sets [Builder.trajectoryEvaluators] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.trajectoryEvaluators] with a well-typed
-         * `List<EvaluatorTopLevel>` value instead. This method is primarily for setting the field
-         * to an undocumented or not yet supported value.
-         */
-        fun trajectoryEvaluators(trajectoryEvaluators: JsonField<List<EvaluatorTopLevel>>) = apply {
-            this.trajectoryEvaluators = trajectoryEvaluators.map { it.toMutableList() }
-        }
-
-        /**
-         * Adds a single [EvaluatorTopLevel] to [trajectoryEvaluators].
-         *
-         * @throws IllegalStateException if the field was previously set to a non-list.
-         */
-        fun addTrajectoryEvaluator(trajectoryEvaluator: EvaluatorTopLevel) = apply {
-            trajectoryEvaluators =
-                (trajectoryEvaluators ?: JsonField.of(mutableListOf())).also {
-                    checkKnown("trajectoryEvaluators", it).add(trajectoryEvaluator)
-                }
-        }
-
         fun isTransient(isTransient: Boolean) = isTransient(JsonField.of(isTransient))
 
         /**
@@ -2160,7 +2110,6 @@ private constructor(
                 spendUsd,
                 traceCount,
                 traceFilter,
-                (trajectoryEvaluators ?: JsonMissing.of()).map { it.toImmutable() },
                 isTransient,
                 treeFilter,
                 useCorrectionsDataset,
@@ -2229,7 +2178,6 @@ private constructor(
         spendUsd()
         traceCount()
         traceFilter()
-        trajectoryEvaluators().ifPresent { it.forEach { it.validate() } }
         isTransient()
         treeFilter()
         useCorrectionsDataset()
@@ -2297,7 +2245,6 @@ private constructor(
             (if (spendUsd.asKnown().isPresent) 1 else 0) +
             (if (traceCount.asKnown().isPresent) 1 else 0) +
             (if (traceFilter.asKnown().isPresent) 1 else 0) +
-            (trajectoryEvaluators.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (isTransient.asKnown().isPresent) 1 else 0) +
             (if (treeFilter.asKnown().isPresent) 1 else 0) +
             (if (useCorrectionsDataset.asKnown().isPresent) 1 else 0)
@@ -2826,7 +2773,6 @@ private constructor(
             spendUsd == other.spendUsd &&
             traceCount == other.traceCount &&
             traceFilter == other.traceFilter &&
-            trajectoryEvaluators == other.trajectoryEvaluators &&
             isTransient == other.isTransient &&
             treeFilter == other.treeFilter &&
             useCorrectionsDataset == other.useCorrectionsDataset &&
@@ -2881,7 +2827,6 @@ private constructor(
             spendUsd,
             traceCount,
             traceFilter,
-            trajectoryEvaluators,
             isTransient,
             treeFilter,
             useCorrectionsDataset,
@@ -2892,5 +2837,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluatorName=$evaluatorName, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, trajectoryEvaluators=$trajectoryEvaluators, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
+        "Evaluator{id=$id, createdAt=$createdAt, displayName=$displayName, evaluatorVersion=$evaluatorVersion, samplingRate=$samplingRate, tenantId=$tenantId, updatedAt=$updatedAt, webhooks=$webhooks, addToAnnotationQueueId=$addToAnnotationQueueId, addToAnnotationQueueName=$addToAnnotationQueueName, addToDatasetId=$addToDatasetId, addToDatasetName=$addToDatasetName, addToDatasetPreferCorrection=$addToDatasetPreferCorrection, alerts=$alerts, alignmentAnnotationQueueId=$alignmentAnnotationQueueId, backfillCompletedAt=$backfillCompletedAt, backfillError=$backfillError, backfillFrom=$backfillFrom, backfillId=$backfillId, backfillProgress=$backfillProgress, backfillStatus=$backfillStatus, codeEvaluators=$codeEvaluators, correctionsDatasetId=$correctionsDatasetId, datasetId=$datasetId, datasetName=$datasetName, evaluatorId=$evaluatorId, evaluatorName=$evaluatorName, evaluators=$evaluators, extendAnnotationQueueTraceRetention=$extendAnnotationQueueTraceRetention, extendDatasetTraceRetention=$extendDatasetTraceRetention, extendEvaluatorTraceRetention=$extendEvaluatorTraceRetention, extendOnly=$extendOnly, extendWebhookTraceRetention=$extendWebhookTraceRetention, filter=$filter, groupBy=$groupBy, includeExtendedStats=$includeExtendedStats, isEnabled=$isEnabled, isManagedEvaluator=$isManagedEvaluator, isTracingDisabled=$isTracingDisabled, numFewShotExamples=$numFewShotExamples, sessionId=$sessionId, sessionName=$sessionName, spendLimit=$spendLimit, spendUsd=$spendUsd, traceCount=$traceCount, traceFilter=$traceFilter, isTransient=$isTransient, treeFilter=$treeFilter, useCorrectionsDataset=$useCorrectionsDataset, additionalProperties=$additionalProperties}"
 }
